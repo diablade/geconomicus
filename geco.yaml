@@ -1,0 +1,44 @@
+#docker-compose -f geco.yaml up -d --build
+#docker-compose -f geco.yaml down
+version: '3'
+services:
+  geco:
+    build: .
+    image: geco-api:${GECO_VERSION}
+    container_name: geco-api
+    restart: always
+    ports:
+      - "8085:${GECO_PORT_NODE}"
+    volumes:
+      - /volume1/docker/geco/logs:/logs
+    environment:
+      GECO_NODE_ENV: ${GECO_NODE_ENV}
+      GECO_VERSION: ${GECO_VERSION}
+      GECO_PORT_NODE: ${GECO_PORT_NODE}
+      GECO_LOG_DEBUG: ${GECO_LOG_DEBUG}
+      GECO_DB_CONFIG_HOSTNAME: ${GECO_DB_CONFIG_HOSTNAME}
+      GECO_DB_CONFIG_PORT: ${GECO_DB_CONFIG_PORT}
+      GECO_DB_CONFIG_COLLECTION: ${GECO_DB_CONFIG_COLLECTION}
+      GECO_DB_CONFIG_USER: ${GECO_DB_CONFIG_USER}
+      GECO_DB_CONFIG_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.4.10
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - /volume1/docker/mongoData:/data/db
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    ports:
+      - "8083:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${GECO_DB_CONFIG_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb

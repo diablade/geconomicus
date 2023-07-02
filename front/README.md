@@ -1,4 +1,8 @@
-# Front
+# Geconomicus web app game 
+based on paper game with the same name : http://geconomicus.glibre.org/
+
+
+# Front ANGULAR : 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.7.
 

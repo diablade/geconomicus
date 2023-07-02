@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Créer une partie</h1>
+<div mat-dialog-content>
+  <p>Nommer la partie</p>
+  <mat-form-field appearance="fill">
+<!--    <mat-label></mat-label>-->
+    <input matInput [(ngModel)]="name">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Annuler</button>
+  <button mat-button [mat-dialog-close]="name" cdkFocusInitial>Créer</button>
+</div>

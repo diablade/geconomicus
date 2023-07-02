@@ -1,0 +1,32 @@
+<ng-container *ngIf="state=='flipped'">
+  <div class="whenFlipped" (click)="closeCard()"></div>
+</ng-container>
+<div class="card" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
+  <div class="face front">
+    <div *ngIf="data.count>1" [matBadge]="data.count" matBadgeSize="large" class="badge"
+         [ngClass]="data.color+'Color'"></div>
+    <button *ngIf="data.count===4" (click)="transformCarrer()" mat-raised-button color="accent" class="transform">
+      Construire le carré =>
+      <fa-icon [icon]="faGift"></fa-icon>
+    </button>
+    <img (click)="cardClicked()" [src]="'/assets/' + data.color+data.letter+'.png'"/>
+  </div>
+  <div class="face back text-center" (click)="cardClicked()" [ngClass]="data.color">
+    <div class="letter"
+         [ngStyle]="{'font-size': calculateFontSize(),'line-height': calculateFontSize()}">{{data.letter}}</div>
+    <div class="qrcodeImage">
+      <qrcode
+        [qrdata]="getData()"
+        [allowEmptyString]="true"
+        [cssClass]="'qrcodeImage'"
+        [colorDark]="'#000000'"
+        [colorLight]="'#ffffff'"
+        [elementType]="'svg'"
+        [errorCorrectionLevel]="'M'"
+        [margin]="2"
+        [scale]="3"
+        [width]="qrWidthCard"
+      ></qrcode>
+    </div>
+  </div>
+</div>

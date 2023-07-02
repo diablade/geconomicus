@@ -1,0 +1,38 @@
+.svgContainer {
+  width: 60%;
+  max-width: 300px;
+  margin: auto;
+  padding: 0;
+  border: solid black 2px;
+  border-radius: 20px;
+}
+
+.optionsLabel {
+  min-width: 60px;
+}
+
+.settings {
+  border: solid red 2px;
+  overflow: auto;
+}
+
+.items {
+  font-size: 20px;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-wrap: nowrap;
+}
+
+.itemColor {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: center;
+  flex-wrap: nowrap;
+}

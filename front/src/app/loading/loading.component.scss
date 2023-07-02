@@ -1,0 +1,11 @@
+.progressRing {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+}

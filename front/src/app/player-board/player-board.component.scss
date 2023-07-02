@@ -1,0 +1,54 @@
+.svg{
+  width: 50px;
+  height: 50px;
+  border: solid #5398ca 2px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.free{
+  background-image: url("/assets/g1coin.png");
+  height: 40px;
+  width: 40px;
+  background-size: cover;
+}
+.debt{
+  background-image: url("/assets/eurocoin.png");
+  height: 40px;
+  width: 40px;
+  background-size: cover;
+}
+
+.titleBar{
+  height: 50px;
+  margin-bottom: 15px;
+}
+.name{
+  border-radius: 5px;
+  height: fit-content;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.game{
+  background-image: url("/assets/backgroundPlayer.jpeg");
+  background-size: cover;
+}
+
+.sold{
+  font-size: 3rem;
+  line-height: 100%;
+  margin: 10px;
+  font-weight: bold;
+}
+.footer{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+  margin: 15px;
+
+  button {
+    height: 50px;
+  }
+}

@@ -1,0 +1,43 @@
+<div class="p-2 w-100 h-100 game overflow-auto">
+  <div class="titleBar d-flex">
+    <div class="w-50 d-flex">
+      <div class="">
+        <div class="jeuTitle">Solde:</div>
+        <img *ngIf="money=='free'" class="free"/>
+        <img *ngIf="money=='debt'" class="debt"/>
+      </div>
+      <div class="sold">
+        {{player.coins}}
+      </div>
+    </div>
+    <div class="w-50 justify-content-end d-flex">
+      <div class="name">{{player.name}}</div>
+      <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
+    </div>
+  </div>
+  <div class="" *ngIf="status=='waiting'">
+    <div class="text-center h1">En attente...</div>
+  </div>
+  <div class="container">
+    <div @list class="row">
+      <ng-container *ngFor="let card of cards">
+        <div @items class="col-4 mt-2" *ngIf="card.displayed">
+          <app-card
+            [data]="card"
+            [idOwner]="idPlayer"
+            [idGame]="idGame"
+            (squareBuilded)="produceFromSquare($event)"
+            [screenWidth]="screenWidth"
+            [screenHeight]="screenHeight"
+          ></app-card>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="footer">
+    <button mat-raised-button color="accent" [disabled]="status!=='playing'" (click)="scan()">
+      <fa-icon [icon]="faCamera"></fa-icon>
+      ACHETER une Carte
+    </button>
+  </div>
+</div>

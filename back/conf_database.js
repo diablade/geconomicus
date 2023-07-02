@@ -2,16 +2,18 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({path:'./../config/.env'});
 
-const hostname = process.env.DB_CONFIG_HOSTNAME;
-const port = process.env.DB_CONFIG_PORT;
-const user = process.env.DB_CONFIG_USER;
-const pass = process.env.DB_CONFIG_PASSWORD;
-const collection = process.env.DB_CONFIG_COLLECTION;
+const hostname = process.env.GECO_DB_CONFIG_HOSTNAME;
+const port = process.env.GECO_DB_CONFIG_PORT;
+const user = process.env.GECO_DB_CONFIG_USER;
+const pass = process.env.GECO_DB_CONFIG_PASSWORD;
+const collection = process.env.GECO_DB_CONFIG_COLLECTION;
 
 const env = user ? user + ":" + pass + "@" : "";
 const uri = "mongodb://" + env + hostname + ":" + port + "/" + collection + (user ? "?authSource=admin" : "");
+
+console.log(uri);
 
 const options = {
     useNewUrlParser:    true,
