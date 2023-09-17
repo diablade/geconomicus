@@ -14,6 +14,15 @@ let Credit = {
     interest: Number,
 }
 
+let EventGeco = {
+    typeEvent: String,
+    emitter: String,
+    receiver: String,
+    amount: Number,
+    resources: [Card],
+    date: Date,
+}
+
 let Player = {
     name: String,
     image: String,
@@ -45,6 +54,7 @@ let Game = new Schema({
     priceWeight4: {type: Number, required: true},
     players: {type: [Player], required: false},
     decks: {type: [[Card]], required: false},
+    events: {type: [EventGeco], required: false},
     round: {type: Number, required: false},
     roundMax: {type: Number, required: false},
     roundMinutes: {type: Number, required: false},
@@ -53,4 +63,21 @@ let Game = new Schema({
     created: {type: Date, default: Date.now},
 });
 
+
+let constructor = {
+    card: Card = (letter, color, weight, price) => {
+        return {letter: letter, color: color, weight: weight, price: price};
+    },
+    credit: Credit = (amount, interest) => {
+        return {amount: amount, interest: interest}
+    },
+    player: Player = () => {
+        return {}
+    },
+    event: EventGeco = (typeEvent, emitter, receiver, amount, resources, date) => {
+        return {typeEvent: typeEvent, emitter: emitter, receiver: receiver, amount: amount, resources: resources, date: date};
+    }
+}
+
 export default mongoose.model('Game', Game);
+export {constructor};

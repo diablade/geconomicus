@@ -15,6 +15,8 @@ import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../information-dialog/information-dialog.component";
+// @ts-ignore
+import {START_GAME, START_ROUND, STOP_ROUND} from "../../../../config/constantes";
 
 
 @Component({
@@ -99,18 +101,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.socket.on("start-game", async (data: any) => {
-      console.log("start-game", data);
+    this.socket.on(START_GAME, async (data: any) => {
+      console.log(START_GAME, data);
       this.status = "waiting";
       await this.receiveCards(data.cards);
     });
-    this.socket.on("start-round", async (data: any) => {
+    this.socket.on(START_ROUND, async (data: any) => {
       this.status = "playing";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "c'est parti !! le tour à démarré "},
       });
     });
-    this.socket.on("stop-round", async (data: any) => {
+    this.socket.on(STOP_ROUND, async (data: any) => {
       this.status = "waiting";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "tour terminé !"},
@@ -119,7 +121,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
     this.socket.on("connected", (data: any) => {
       console.log("connected", data);
     });
-    this.socket.on("stop-game", (data: any) => {
+    this.socket.on(START_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
       this.router.navigate(['results', this.idGame]);
     });

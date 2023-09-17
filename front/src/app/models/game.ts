@@ -55,3 +55,13 @@ export class Game {
   // @ts-ignore
   created: Date = Date.now();
 }
+
+export class EventGeco {
+  typeEvent: string = "";
+  emitter: string = "";
+  receiver: string = "";
+  amount: number = 0;
+  resources: Card[]=[];
+  // @ts-ignore
+  date: Date = Date.now();
+}

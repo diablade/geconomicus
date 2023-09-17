@@ -19,6 +19,7 @@ export const environment = {
     EXPORT: 'game/export',
     IMPORT: 'game/import',
     START: 'game/start',
+    EVENTS: 'game/events/',
     DELETE_PLAYER: 'game/delete-player',
     RESET: 'game/reset',
     START_ROUND: 'game/start-round/',

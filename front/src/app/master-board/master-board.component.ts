@@ -5,12 +5,14 @@ import {BackService} from "../services/back.service";
 import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {faFlagCheckered, faQrcode, faTrashCan} from '@fortawesome/free-solid-svg-icons';
+import {faFlagCheckered, faPeopleArrows, faQrcode, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import createCountdown from "../services/countDown";
+// @ts-ignore
+import {START_ROUND, STARTED, STOP_ROUND} from "../../../../config/constantes";
 
 @Component({
   selector: 'app-master-board',
@@ -29,6 +31,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   ioURl: string = environment.API_HOST;
   faTrashCan = faTrashCan;
   faFlagCheckered = faFlagCheckered;
+  faPeopleArrows = faPeopleArrows;
   faQrcode = faQrcode;
   timerProgress: number = 0;
 
@@ -91,9 +94,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.socket.on("connected", (players: any) => {
       console.log("connected", players);
     });
-    this.socket.on("start-round", (data: any) => {
+    this.socket.on(START_ROUND, (data: any) => {
     });
-    this.socket.on("stop-round", (data: any) => {
+    this.socket.on(STOP_ROUND, (data: any) => {
     });
   }
 
@@ -116,7 +119,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   startGame() {
     if (this.game) {
       this.backService.startGame(this.game).subscribe((data: any) => {
-        if (data.status == "started") {
+        if (data.status == STARTED) {
           this.game.status = data.status;
           this.game.round += 1;
         }
@@ -127,7 +130,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   startRound() {
     this.backService.startRound(this.idGame).subscribe(() => {
       this.timer.start();
-      console.log("started");
+      console.log(STARTED);
       this.game.status = 'playing';
       this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
     });
@@ -179,6 +182,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe(result => {
     });
+  }
+
+  showEvents() {
+    window.open('game/'+this.idGame+'/events', '_blank');
   }
 }
 

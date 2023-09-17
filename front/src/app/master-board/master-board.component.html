@@ -90,7 +90,7 @@
           Démarrer
           <fa-icon [icon]="faFlagCheckered"></fa-icon>
         </button>
-        <button class="col-sm-4" mat-raised-button color="warn" (click)="resetGame()">RESET CARDS
+        <button class="col-sm-4" mat-raised-button color="warn" (click)="resetGame()">RESET GAME
           <fa-icon [icon]="faFlagCheckered"></fa-icon>
         </button>
       </div>
@@ -116,6 +116,12 @@
       </div>
     </div>
     <div class="d-flex mt-5 justify-content-center">
+      <button class="col-sm-1" mat-raised-button color="warn" (click)="showEvents()">events
+        <fa-icon [icon]="faPeopleArrows"></fa-icon>
+      </button>
+      <button class="col-sm-1" mat-raised-button color="warn" (click)="resetGame()">RESET GAME
+        <fa-icon [icon]="faFlagCheckered"></fa-icon>
+      </button>
       <button *ngIf="game.round<=game.roundMax" [disabled]="!(game.status=='started' || game.status=='intertourDone')"
               class="" mat-raised-button
               color="primary"
@@ -146,7 +152,7 @@
            [ngClass]="game && game.round<1?'col':'col'">
         <div class="flex-grow-1">
           <fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)" [icon]="faTrashCan"></fa-icon>
-          <a href="{{getUserUrl(player._id)}}">{{player.name}}</a>
+          <a href="{{getUserUrl(player._id)}}" target="_blank">{{player.name}} </a>
           <fa-icon class="joinQr" (click)="reJoin(player._id)" [icon]="faQrcode"></fa-icon>
         </div>
         <div class="flex-grow-1" [ngClass]="game && game.round<1?'svg':'svgSmall'"

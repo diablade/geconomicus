@@ -31,6 +31,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {InformationDialogComponent} from "./information-dialog/information-dialog.component";
 import { ResultsComponent } from './results/results.component';
 import { VersionComponent } from './version/version.component';
+import { EventsComponent } from './events/events.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { VersionComponent } from './version/version.component';
     InformationDialogComponent,
     ResultsComponent,
     VersionComponent,
+    EventsComponent,
   ],
   imports: [
     HttpClientModule,

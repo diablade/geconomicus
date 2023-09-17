@@ -1,12 +1,13 @@
-import GameModel from '../game/game.model.js';
+import GameModel, {constructor} from '../game/game.model.js';
 import log from '../../conf_log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
 import {io} from '../../conf_socket.js';
+import {EVENT, MASTER, START_GAME, STOP_ROUND, INTER_TOUR, START_ROUND} from '../../../config/constantes.js';
 
-async function importGame(file) {
+// import constantes from '../../../config/constantes.js';
+// const {EVENT, MASTER} = constantes;
 
-}
 
 export default {
     join: async (req, res, next) => {
@@ -99,7 +100,7 @@ export default {
                         return p._id == idPlayer
                     })
                     if (player) {
-                        player.status=game.status;
+                        player.status = game.status;
                         res.status(200).json(player);
                     } else {
                         next({status: 404, message: "player Not found"});
@@ -124,18 +125,20 @@ export default {
         } else {
             try {
                 const game = await GameModel.findById(idGame);
-                const player = _.find(game.players,{id:idPlayer});
-                const cardsToExchange = _.filter(player.cards, {letter:cards[0].letter, weight: cards[0].weight});
+                const player = _.find(game.players, {id: idPlayer});
+                const cardsToExchange = _.filter(player.cards, {letter: cards[0].letter, weight: cards[0].weight});
                 let weight = cardsToExchange[0].weight;
                 // Remove cards from player's hand
                 await GameModel.updateOne(
                     {_id: idGame, 'players._id': idPlayer},
-                    {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}}
+                    {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}},
+                    {new: true}
                 );
                 // Add cards back to the deck
                 await GameModel.updateOne(
                     {_id: idGame},
-                    {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}}
+                    {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
+                    {new: true}
                 );
                 // Draw a card from the next level
                 if (weight < 2) {
@@ -145,21 +148,35 @@ export default {
                     const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
                     // Draw new cards for the player
                     const newCards = shuffledDeck.slice(0, 4);//same weight
-                    newCards.push(shuffledDeck2.slice(0, 1)[0]);// one superior
+                    const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior gift
+                    const newcardsIds = _.map(newCards,c=>c._id);
+                    newCards.push(newCardSup);
                     await GameModel.updateOne(
                         {_id: idGame},
                         {
-                            $set: {
-                                [`decks.${weight}`]: shuffledDeck,
-                                [`decks.${weight + 1}`]: shuffledDeck2
+                            $pull: {
+                                [`decks.${weight}`]: {id: {$in: newcardsIds}},
+                                [`decks.${weight + 1}`]: {id: newCardSup._id}
                             }
-                        }
+                        },
+                        {new: true}
                     );
                     // Add new cards to player's hand
                     await GameModel.updateOne(
                         {_id: idGame, 'players._id': idPlayer},
                         {$push: {'players.$.cards': {$each: newCards}}}
                     );
+                    let discardEvent = constructor.event("transformDiscard", idPlayer, "master", 0, cardsToExchange, Date.now());
+                    let newCardsEvent = constructor.event('tranformNewCards', "master", idPlayer, 0, newCards, Date.now());
+                    // add event
+                    await GameModel.updateOne(
+                        {_id: idGame},
+                        {
+                            $push: {'events': {$each: [discardEvent, newCardsEvent]}},
+                        }
+                    );
+                    io().to("master").emit(EVENT, {event: discardEvent});
+                    io().to("master").emit(EVENT, {event: newCardsEvent});
                     res.status(200).json(newCards);
                 } else {
                     //TODO changement technologique
@@ -177,9 +194,10 @@ export default {
         if (idGame && idBuyer && idSeller && idCard) {
             try {
                 const game = await GameModel.findById(idGame);
-                const buyer = _.find(game.players,{id:idBuyer});
-                const seller = _.find(game.players,{id:idSeller});
-                const card = _.find(seller.cards, {id:idCard});
+                const buyer = _.find(game.players, {id: idBuyer});
+                const seller = _.find(game.players, {id: idSeller});
+                const card = _.find(seller.cards, {id: idCard});
+                let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
                 if (buyer.coins < card.price) {
                     throw new Error('Not enough coins');
@@ -200,6 +218,14 @@ export default {
                         $inc: {'players.$.coins': -card.price}
                     }
                 );
+                // add event
+                await GameModel.updateOne(
+                    {_id: idGame},
+                    {
+                        $push: {'events': newEvent},
+                    }
+                );
+                io().to("master").emit(EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= card.price;
                 seller.coins += card.price;
@@ -215,5 +241,4 @@ export default {
             });
         }
     }
-}
-;
+};
