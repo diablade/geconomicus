@@ -27,7 +27,7 @@ export default {
                 sold: 0,
                 credits: [],
                 cards: [],
-                status: "waiting",
+                status: "alive",
                 earringsProbability: 100,
                 glassesProbability: 100,
                 featuresProbability: 100
@@ -100,7 +100,7 @@ export default {
                         return p._id == idPlayer
                     })
                     if (player) {
-                        player.status = game.status;
+                        player.typeMoney = game.typeMoney;
                         res.status(200).json(player);
                     } else {
                         next({status: 404, message: "player Not found"});
@@ -197,9 +197,10 @@ export default {
                 const buyer = _.find(game.players, {id: idBuyer});
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
+                const cost = game.typeMoney=== "june" ? (card.price*game.currentDU).toFixed(2) : card.price;
                 let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
-                if (buyer.coins < card.price) {
+                if (buyer.coins < cost) {
                     throw new Error('Not enough coins');
                 }
                 // remove card and add coins to seller
@@ -207,7 +208,7 @@ export default {
                     {_id: idGame, 'players._id': idSeller},
                     {
                         $pull: {'players.$.cards': {_id: idCard}},
-                        $inc: {'players.$.coins': card.price}
+                        $inc: {'players.$.coins': cost}
                     }
                 );
                 // add card to buyer and remove coins
@@ -215,7 +216,7 @@ export default {
                     {_id: idGame, 'players._id': idBuyer},
                     {
                         $push: {'players.$.cards': card},
-                        $inc: {'players.$.coins': -card.price}
+                        $inc: {'players.$.coins': -cost}
                     }
                 );
                 // add event
@@ -227,9 +228,10 @@ export default {
                 );
                 io().to("master").emit(EVENT, newEvent);
                 // Send socket to seller with updated coins
-                buyer.coins -= card.price;
-                seller.coins += card.price;
+                buyer.coins -= cost;
+                seller.coins += cost;
                 io().to(idSeller).emit('transaction-done', {idCardSold: idCard, coins: seller.coins});
+                // Send back to buyer , card with updated coins
                 res.status(200).json({buyedCard: card, coins: buyer.coins});
             } catch (error) {
                 throw error;

@@ -17,7 +17,8 @@ export class Player {
   featuresProbability: number = 100;
   skinColor: string = "#ECAD80";
   hairColor: string = "#3EAC2C";
-  status: string = "";
+  status: string = "alive";
+  typeMoney: string = "june";
 }
 
 export class Card {
@@ -47,9 +48,14 @@ export class Game {
   priceWeight2: number = 3;
   priceWeight3: number = 6;
   priceWeight4: number = 9;
+  currentMassMonetary: number = 0;
+  currentDU: number = 0;
+  inequalityStart: boolean = false;
   round: number = 0;
   roundMax: number = 10;
-  roundMinutes: number = 5;
+  roundMinutes: number = 8;
+  tauxCroissance:number=10;
+  events: EventGeco[] = [];
   // @ts-ignore
   modified: Date = Date.now();
   // @ts-ignore
@@ -61,7 +67,7 @@ export class EventGeco {
   emitter: string = "";
   receiver: string = "";
   amount: number = 0;
-  resources: Card[]=[];
+  resources: Card[] = [];
   // @ts-ignore
   date: Date = Date.now();
 }

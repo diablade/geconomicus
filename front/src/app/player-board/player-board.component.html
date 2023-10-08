@@ -3,8 +3,8 @@
     <div class="w-50 d-flex">
       <div class="">
         <div class="jeuTitle">Solde:</div>
-        <img *ngIf="money=='free'" class="free"/>
-        <img *ngIf="money=='debt'" class="debt"/>
+        <img *ngIf="typeMoney=='june'" class="free"/>
+        <img *ngIf="typeMoney=='debt'" class="debt"/>
       </div>
       <div class="sold">
         {{player.coins}}
@@ -15,7 +15,7 @@
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="status=='waiting'">
+  <div class="" *ngIf="gameStatus!=='playing'">
     <div class="text-center h1">En attente...</div>
   </div>
   <div class="container">
@@ -23,7 +23,8 @@
       <ng-container *ngFor="let card of cards">
         <div @items class="col-4 mt-2" *ngIf="card.displayed">
           <app-card
-            [data]="card"
+            [card]="card"
+            [typeMoney]="typeMoney"
             [idOwner]="idPlayer"
             [idGame]="idGame"
             (squareBuilded)="produceFromSquare($event)"
@@ -35,9 +36,10 @@
     </div>
   </div>
   <div class="footer">
-    <button mat-raised-button color="accent" [disabled]="status!=='playing'" (click)="scan()">
+    <button mat-raised-button color="accent" [disabled]="gameStatus!=='playing'" (click)="scan()">
       <fa-icon [icon]="faCamera"></fa-icon>
       ACHETER une Carte
     </button>
   </div>
 </div>
+

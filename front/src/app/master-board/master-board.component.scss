@@ -5,7 +5,10 @@
   background-size: cover;
   width: 400px;
   height: 400px;
+}
 
+.guny {
+  width: 300px;
 }
 
 .svg {
@@ -47,7 +50,7 @@
 }
 
 .imgText {
-  width: 242px;
+  width: 150px;
 }
 
 .itemRight {
@@ -76,18 +79,40 @@
     height: 100%;
   }
 }
-.deuxpoints{
+
+.deuxpoints {
   line-height: 10px;
 }
 
 .imgCardValeur {
-  //width: 30px;
   height: 50px;
   border-radius: 4px;
 }
 
 .player {
-  margin-top: 10px;
+  margin: 5px;
+  justify-content: space-between;
+
+  &-frame {
+    background: white;
+  }
+  &-action {
+    height: 20px;
+  }
+
+  &-svg {
+    width: 120px;
+    height: 120px;
+    border-radius: 80px;
+    border: solid black 2px;
+  }
+
+  &-svgSmall {
+    width: 70px;
+    height: 70px;
+    border-radius: 80px;
+    border: solid black 2px;
+  }
 
   .joinQr {
     margin-left: 5px;
@@ -95,27 +120,24 @@
 
   .delete {
     padding: 2px;
-    margin-right: 5px;
+    margin-left: 5px;
     cursor: pointer;
     z-index: 10;
     //width: 25px;
     //height: 25px;
     color: #f44336;
   }
+}
 
-  .svg {
-    display: inline-flex;
-    width: 150px;
-    height: 150px;
-    border-radius: 80px;
-    border: solid black 2px;
-  }
+.backgroundPlayers {
+  padding: 5px;
+  background: #f5f5f5;
+  overflow: auto;
+  height: 100%;
 
-  .svgSmall {
-    display: inline-flex;
-    width: 75px;
-    height: 75px;
-    border-radius: 80px;
-    border: solid black 2px;
+  &-Small {
+    padding: 5px;
+    background: #f5f5f5;
+    max-height: 350px;
   }
 }

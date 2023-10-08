@@ -48,6 +48,10 @@ let Game = new Schema({
     status: {type: String, required: true},
     name: {type: String, required: true},
     typeMoney: {type: String, required: false},
+    tauxCroissance: {type: Number, required: true},
+    currentMassMonetary: {type: Number, required: true},
+    currentDU: {type: Number, required: true},
+    inequalityStart: {type:Boolean, required:true},
     priceWeight1: {type: Number, required: true},
     priceWeight2: {type: Number, required: true},
     priceWeight3: {type: Number, required: true},
@@ -75,7 +79,14 @@ let constructor = {
         return {}
     },
     event: EventGeco = (typeEvent, emitter, receiver, amount, resources, date) => {
-        return {typeEvent: typeEvent, emitter: emitter, receiver: receiver, amount: amount, resources: resources, date: date};
+        return {
+            typeEvent: typeEvent,
+            emitter: emitter,
+            receiver: receiver,
+            amount: amount,
+            resources: resources,
+            date: date
+        };
     }
 }
 

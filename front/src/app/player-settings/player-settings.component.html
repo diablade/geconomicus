@@ -7,6 +7,13 @@
   </div>
   <div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
   <p class="text-center">Votre Avatar</p>
+  <div class="d-flex mt-2 justify-content-evenly">
+    <button (click)="close()" mat-raised-button color="accent">Annuler</button>
+    <button (click)="randomize()" mat-raised-button color="warn">
+      <fa-icon [icon]="faShuffle"></fa-icon>
+    </button>
+    <button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
+  </div>
   <div class="items">
     <div class="itemColor">
       <div class="optionsLabel">peau</div>
@@ -25,10 +32,10 @@
         <mat-icon>chevron_right</mat-icon>
       </button>
     </div>
-    <!--    <div class="item">-->
-    <!--      <div class="optionsLabel">couleur fond :</div>-->
-    <!--      <ngx-colors [palette]="hairPalette" class="color-box" ngx-colors-trigger (change)="changeBackground()" [(ngModel)]="backgroundColor"></ngx-colors>-->
-    <!--    </div>-->
+<!--        <div class="item">-->
+<!--          <div class="optionsLabel">table de jeu :</div>-->
+<!--          <ngx-colors [palette]="hairPalette" class="color-box" ngx-colors-trigger (change)="changeBackground()" [(ngModel)]="backgroundColor"></ngx-colors>-->
+<!--        </div>-->
     <div class="item">
       <button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
         <fa-icon [icon]="faChevronLeft"></fa-icon>
@@ -89,13 +96,6 @@
         <fa-icon [icon]="faChevronRight"></fa-icon>
       </button>
     </div>
-  </div>
-  <div class="d-flex mt-2 justify-content-evenly">
-    <button (click)="close()" mat-raised-button color="accent">X</button>
-    <button (click)="randomize()" mat-raised-button color="warn">
-      <fa-icon [icon]="faShuffle"></fa-icon>
-    </button>
-    <button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
   </div>
 </div>
 <app-version></app-version>

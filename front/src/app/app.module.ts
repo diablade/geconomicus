@@ -3,7 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {PlayerBoardComponent} from './player-board/player-board.component';
-import {JoinQrDialog, MasterBoardComponent} from './master-board/master-board.component';
+import {GameInfosDialog, JoinQrDialog, MasterBoardComponent} from './master-board/master-board.component';
 import {CreateGameDialog, HomeComponent} from './home/home.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {MatRadioModule} from "@angular/material/radio";
@@ -13,7 +13,7 @@ import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
-import {ScannerDialogComponent} from './scanner-dialog/scanner-dialog.component';
+import {ScannerDialogComponent} from './dialogs/scanner-dialog/scanner-dialog.component';
 import {JoinComponent} from './join/join.component';
 import {MatIconModule} from "@angular/material/icon";
 import {PlayerSettingsComponent} from './player-settings/player-settings.component';
@@ -28,10 +28,13 @@ import {LoadingComponent} from './loading/loading.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {HttpRequestInterceptor} from "./services/http-request-interceptor.service";
 import {MatSelectModule} from "@angular/material/select";
-import {InformationDialogComponent} from "./information-dialog/information-dialog.component";
-import { ResultsComponent } from './results/results.component';
-import { VersionComponent } from './version/version.component';
-import { EventsComponent } from './events/events.component';
+import {InformationDialogComponent} from "./dialogs/information-dialog/information-dialog.component";
+import {ResultsComponent} from './results/results.component';
+import {VersionComponent} from './version/version.component';
+import {EventsComponent} from './events/events.component';
+import {NgChartsModule} from 'ng2-charts';
+import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -39,17 +42,19 @@ import { EventsComponent } from './events/events.component';
     PlayerBoardComponent,
     MasterBoardComponent,
     HomeComponent,
-    CreateGameDialog,
-    ScannerDialogComponent,
     JoinComponent,
     PlayerSettingsComponent,
     CardComponent,
     LoadingComponent,
-    JoinQrDialog,
-    InformationDialogComponent,
     ResultsComponent,
     VersionComponent,
     EventsComponent,
+    CreateGameDialog,
+    ScannerDialogComponent,
+    JoinQrDialog,
+    GameInfosDialog,
+    GameOptionsDialogComponent,
+    InformationDialogComponent,
   ],
   imports: [
     HttpClientModule,
@@ -71,6 +76,8 @@ import { EventsComponent } from './events/events.component';
     QRCodeModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    NgChartsModule,
+    MatCheckboxModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}

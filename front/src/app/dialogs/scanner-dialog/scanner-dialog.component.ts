@@ -1,6 +1,6 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
-import {Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats} from 'html5-qrcode';
+import {Html5QrcodeScanner, Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats} from 'html5-qrcode';
 
 
 @Component({
@@ -14,11 +14,13 @@ export class ScannerDialogComponent implements AfterViewInit {
 
   constructor(public dialogRef: MatDialogRef<ScannerDialogComponent>) {
   }
-
   ngAfterViewInit(): void {
     this.qrScanner = new Html5QrcodeScanner('qrreader', {
       fps: 10,
       qrbox: 250,
+      videoConstraints: {
+        facingMode: { ideal: "environment" }
+      },
       rememberLastUsedCamera: true,
       // Only support camera scan type.
       supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],

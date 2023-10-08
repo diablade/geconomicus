@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
-import {ScannerDialogComponent} from "../scanner-dialog/scanner-dialog.component";
+import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
@@ -33,7 +33,6 @@ export class HomeComponent {
   join() {
     const dialogRef = this.dialog.open(ScannerDialogComponent, {});
     dialogRef.afterClosed().subscribe(url => {
-      console.log(url);
       window.location.href = url;
     });
   }
@@ -42,7 +41,7 @@ export class HomeComponent {
 
 @Component({
   selector: 'create-game-dialog',
-  templateUrl: 'create-game-dialog.html',
+  templateUrl: './../dialogs/create-game-dialog.html',
 })
 export class CreateGameDialog {
   name: String = "";

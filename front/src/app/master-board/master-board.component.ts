@@ -5,7 +5,7 @@ import {BackService} from "../services/back.service";
 import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {faFlagCheckered, faPeopleArrows, faQrcode, faTrashCan} from '@fortawesome/free-solid-svg-icons';
+import {faFlagCheckered, faPeopleArrows, faQrcode, faCogs, faTrashCan, faCircleInfo} from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -13,6 +13,10 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 import createCountdown from "../services/countDown";
 // @ts-ignore
 import {START_ROUND, STARTED, STOP_ROUND} from "../../../../config/constantes";
+import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
+import {CreateGameDialog} from "../home/home.component";
+
+// import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-master-board',
@@ -33,11 +37,14 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faFlagCheckered = faFlagCheckered;
   faPeopleArrows = faPeopleArrows;
   faQrcode = faQrcode;
+  faCogs = faCogs;
+  faInfo = faCircleInfo;
+
   timerProgress: number = 0;
 
   options = [
-    {value: 'moneyLibre', label: 'Monnaie libre'},
-    {value: 'moneyDette', label: 'Monnaie dette'},
+    {value: 'june', label: 'Monnaie libre', isDisabled:false},
+    {value: 'Debt', label: 'Monnaie dette (coming soon)', isDisabled: true},
   ];
   minutes: string = "00";
   seconds: string = "00";
@@ -97,6 +104,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.socket.on(START_ROUND, (data: any) => {
     });
     this.socket.on(STOP_ROUND, (data: any) => {
+    });
+    this.socket.on('disconnect', () => {
+      console.log('Socket has been disconnected');
     });
   }
 
@@ -185,19 +195,46 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   }
 
   showEvents() {
-    window.open('game/'+this.idGame+'/events', '_blank');
+    window.open('game/' + this.idGame + '/events', '_blank');
+  }
+
+  showOptions() {
+    const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
+      data: {game:this.game},
+    });
+    dialogRef.afterClosed().subscribe(results => {
+      this.game.roundMax=results.roundMax;
+      this.game.roundMinutes=results.roundMinutes;
+      this.game.priceWeight1=results.priceWeight1;
+      this.game.priceWeight2=results.priceWeight2;
+      this.game.priceWeight3=results.priceWeight3;
+      this.game.priceWeight4=results.priceWeight4;
+      this.game.inequalityStart=results.inequalityStart;
+      this.game.name=results.name;
+    });
+  }
+
+  showRules() {
+    this.dialog.open(GameInfosDialog, {});
   }
 }
 
 @Component({
   selector: 'join-qr-dialog',
-  templateUrl: 'join-qr-dialog.html',
+  templateUrl: '../dialogs/join-qr-dialog.html',
 })
 export class JoinQrDialog {
   constructor(public dialogRef: MatDialogRef<JoinQrDialog>, @Inject(MAT_DIALOG_DATA) public data: any) {
   }
-
   back(): void {
     this.dialogRef.close();
+  }
+}
+@Component({
+  selector: 'game-infos-dialog',
+  templateUrl: '../dialogs/game-infos-dialog.html',
+})
+export class GameInfosDialog {
+  constructor(public dialogRef: MatDialogRef<GameInfosDialog>) {
   }
 }

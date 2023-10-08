@@ -1,0 +1,70 @@
+<div class="option">
+  <div class="title m-auto fs-4">
+    Options de jeu
+  </div>
+  <div class="">
+    <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+      <mat-label>nom de la partie</mat-label>
+      <input type="text" matInput placeholder="" [(ngModel)]="game.name">
+    </mat-form-field>
+  </div>
+  <div class="">
+    <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+      <mat-label>nombre de tours</mat-label>
+      <input type="text" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
+    </mat-form-field>
+  </div>
+  <div class="">
+    <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+      <mat-label>minutes par tour</mat-label>
+      <input type="text" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+    </mat-form-field>
+  </div>
+  <div class="mb-2">
+    <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
+      Début de partie inégale en monnaie
+    </mat-checkbox>
+  </div>
+  <div class="d-inline-flex">
+    <div class="imgText">
+      <img class="imgCardValeur" src="assets/level1.png">
+      Alimentation
+    </div>
+    <mat-form-field *ngIf="game" class="input" appearance="fill">
+      <mat-label>{{game.typeMoney==='june'?"prix DU:":"prix net:"}}}</mat-label>
+      <input type="text" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
+    </mat-form-field>
+  </div>
+  <div class="d-inline-flex">
+    <div class="imgText">
+      <img class="imgCardValeur" src="assets/level2.png">
+      Culture savoir
+    </div>
+    <mat-form-field *ngIf="game" class="input">
+      <mat-label>{{game.typeMoney==='june'?"prix DU:":"prix net:"}}}</mat-label>
+      <input type="text" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
+    </mat-form-field>
+  </div>
+  <div class="d-inline-flex">
+    <div class="imgText"><img class="imgCardValeur" src="assets/level3.png">
+      Energie
+    </div>
+    <mat-form-field *ngIf="game" class="input">
+      <mat-label>{{game.typeMoney==='june'?"prix DU:":"prix net:"}}}</mat-label>
+      <input type="text" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
+    </mat-form-field>
+  </div>
+  <div class="d-inline-flex">
+    <div class="imgText"><img class="imgCardValeur" src="assets/level4.png">
+      Technologie
+    </div>
+    <mat-form-field *ngIf="game" class="input">
+      <mat-label>{{game.typeMoney==='june'?"prix DU:":"prix net:"}}}</mat-label>
+      <input type="text" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Annuler</button>
+    <button mat-button [mat-dialog-close]="game" cdkFocusInitial>Appliquer</button>
+  </div>
+</div>

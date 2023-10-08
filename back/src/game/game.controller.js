@@ -1,7 +1,9 @@
 import GameModel, {constructor} from './game.model.js';
-import {EVENT, MASTER, START_GAME, START_ROUND, STOP_ROUND, INTER_TOUR} from '../../../config/constantes.js';
-// import pkg from '../../../config/constantes.js';
-// const {EVENT, MASTER, START_GAME, STOP_ROUND} = pkg;
+import {
+    OPEN, STARTED, EVENT, MASTER,
+    START_GAME, START_ROUND, STOP_ROUND,
+    INTER_TOUR, DISTRIB_DU,RESET_GAME
+} from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
 import _ from "lodash";
@@ -10,6 +12,7 @@ import {io} from "../../conf_socket.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
+const startAmountCoins = 5;
 
 async function generateOneCard(letter, color, weight, price) {
     const comId = new mongoose.Types.ObjectId();
@@ -41,21 +44,63 @@ async function generateCardsPerPlayers(nbPlayers, prices) {
     return tableDecks;
 }
 
-async function startGame(game) {
+async function generateDU(game) {
+    const nbPlayer = Number.parseInt(_.countBy(game.players, p => p.status === 'alive').true);
+    const moyenne = game.currentMassMonetary / nbPlayer;
+    return (moyenne * (game.tauxCroissance/100)).toFixed(2);
+}
+
+async function distribDU(gameId) {
+    GameModel.findById(gameId)
+        .then(async (game) => {
+            const du = await generateDU(game);
+            var newEvents = [];
+            game.currentDU = du;
+            for await (let player of game.players) {
+                if (player.status === "alive") {
+                    player.coins += du;
+                    game.currentMassMonetary += du;
+                    io().to(player.id).emit(DISTRIB_DU, {du: du});
+
+                    let newEvent = constructor.event(DISTRIB_DU, MASTER, player.id, du, [], Date.now());
+                    io().to(MASTER).emit(EVENT, {event: newEvent});
+                    newEvents.push(newEvent);
+                }
+            }
+            //TODO $inc for players not dead
+            GameModel.findByIdAndUpdate(gameId,
+                {
+                    $inc: {"players.$[].coins": du},
+                    $push: {events: {$each: newEvents}},
+                    $set: {currentMassMonetary: game.currentMassMonetary, currentDU: game.currentDU}
+                }, {new: true})
+                .then(updatedGame => {
+                    log.info(updatedGame.currentDU);
+                    log.info(updatedGame.currentMassMonetary);
+                })
+                .catch(err => {
+                    log.error('update game error', err);
+                })
+        })
+        .catch(err => {
+            log.error('get game error', err);
+        })
+}
+
+async function initGameDebt(game) {
     const nbPlayer = game.players.length;
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
     let decks = await generateCardsPerPlayers(nbPlayer, prices);
 
-    //TODO coins
     for await (let player of game.players) {
-        // const pull 4 cards from the deck and distribute to the player
+        // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
-        player.status = "waiting";
-        player.coins = 5;
-        io().to(player.id).emit(START_GAME, {cards: cards, coins: 5});
-        let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
+        player.status = "alive";
+        player.coins = 0;
 
+        io().to(player.id).emit(START_GAME, {cards: cards, coins: 0});
+        let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
         io().to(MASTER).emit(EVENT, {event: newEvent});
         game.events.push(newEvent);
     }
@@ -63,21 +108,87 @@ async function startGame(game) {
     return game;
 }
 
-export default {
-    import: async (req, res, next) => {
-        if (req) {
-            res.status(200).json("I'm on it!");
-            await importGame()
-        } else {
-            next({
-                status: 400,
-                message: "bad request"
-            });
+async function initGameJune(game) {
+    const nbPlayer = game.players.length;
+    const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
+    let decks = await generateCardsPerPlayers(nbPlayer, prices);
+
+    for await (let player of game.players) {
+        // pull 4 cards from the deck and distribute to the player
+        const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
+        player.cards = cards;
+        player.status = "alive";
+        //TODO INEQUALITY START
+        player.coins = startAmountCoins;
+        game.currentMassMonetary += startAmountCoins;
+
+        io().to(player.id).emit(START_GAME, {cards: cards, coins: 5});
+        let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
+        io().to(MASTER).emit(EVENT, {event: newEvent});
+        game.events.push(newEvent);
+    }
+    game.currentDU = await generateDU(game);
+    let firstDUevent = constructor.event("first_DU", MASTER, MASTER, game.currentDU, [], Date.now());
+    game.events.push(firstDUevent);
+    game.decks = decks;
+    return game;
+}
+
+async function stopRound(gameId) {
+    let stopRoundEvent = constructor.event(STOP_ROUND, MASTER, "", 0, [], Date.now());
+    GameModel.updateOne({_id: gameId}, {
+        $set: {
+            status: INTER_TOUR,
+            modified: Date.now(),
+        },
+        $push: {events: stopRoundEvent}
+    })
+        .then(previousGame => {
+            io().to(gameId).emit(STOP_ROUND);
+            io().to(MASTER).emit(EVENT, stopRoundEvent);
+        })
+        .catch(err => {
+            log.error('stop round game error', err);
+        })
+}
+
+function startRoundMoneyLibre(gameId, roundMinutes) {
+    let minutesPassed = 0;
+    const timer = setInterval(() => {
+        minutesPassed++;
+        distribDU(gameId);
+
+        if (minutesPassed >= roundMinutes) {
+            clearInterval(timer);
+            console.log(roundMinutes + ' minutes have passed');
+            stopRound(gameId);
         }
-    },
-    export: async (req, res, next) => {
-        log.error('body' + req.body);
-    },
+    }, 60 * 1000); // 60 seconds * 1000 milliseconds
+}
+
+function startRoundMoneyDebt(gameId, roundMinutes) {
+    let minutesPassed = 0;
+    const timer = setInterval(() => {
+        minutesPassed++;
+        //every 8mn do the pay interest ...
+
+        if (minutesPassed >= roundMinutes) {
+            clearInterval(timer);
+            console.log(roundMinutes + ' minutes have passed');
+            stopRound(gameId);
+        }
+    }, 60 * 1000); // 60 seconds * 1000 milliseconds
+}
+
+function startRound(updatedGame) {
+    if (updatedGame.typeMoney === "june") {
+        startRoundMoneyLibre(updatedGame._id, updatedGame.roundMinutes);
+    } else {
+        startRoundMoneyDebt(updatedGame);
+    }
+}
+
+export default {
     create: async (req, res, next) => {
         if (!req.body.gameName) {
             next({
@@ -88,7 +199,7 @@ export default {
             let body = req.body;
             const newGame = new GameModel({
                 name: req.body.gameName,
-                status: "open",
+                status: OPEN,
                 typeMoney: "june",
                 players: [],
                 decks: [],
@@ -97,7 +208,11 @@ export default {
                 priceWeight2: body.priceWeight2 ? body.priceWeight2 : 3,
                 priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
                 priceWeight4: body.priceWeight4 ? body.priceWeight4 : 9,
+                inequalityStart: false,
+                tauxCroissance:10,
                 round: 0,
+                currentDU: 0,
+                currentMassMonetary: 0,
                 roundMax: body.roundMax ? body.roundMax : 10,
                 roundMinutes: body.roundMax ? body.roundMax : 5,
                 modified: Date.now(),
@@ -128,17 +243,18 @@ export default {
             });
         } else {
             let startEvent = constructor.event(START_ROUND, MASTER, "", 0, [], Date.now());
-            GameModel.updateOne({_id: id}, {
+            GameModel.findByIdAndUpdate(id, {
                 $set: {
                     status: "playing",
                     round: round,
                     modified: Date.now(),
                 },
-                $push: { events: startEvent }
+                $push: {events: startEvent}
             }, {new: true})
                 .then(updatedGame => {
                     io().to(id).emit(START_ROUND);
                     io().to(MASTER).emit(EVENT, startEvent);
+                    startRound(updatedGame);
                     res.status(200).send({
                         status: "playing",
                     });
@@ -218,7 +334,7 @@ export default {
     start: async (req, res, next) => {
         const id = req.body.idGame;
         const body = req.body;
-        if (!id) {
+        if (!id && !body.typeMoney) {
             next({
                 status: 400,
                 message: "bad request"
@@ -232,8 +348,14 @@ export default {
                     game.priceWeight4 = body.priceWeight4 ? body.priceWeight4 : 9;
                     game.round = 1;
                     game.roundMax = body.roundMax ? body.roundMax : 10;
-                    game.roundMinutes = body.roundMinutes ? body.roundMinutes : 5;
-                    const gameUpdated = await startGame(game);
+                    game.roundMinutes = body.roundMinutes ? body.roundMinutes : 8;
+                    game.inequalityStart = body.inequalityStart? body.inequalityStart : false;
+                    let gameUpdated;
+                    if (body.typeMoney === "june") {
+                        gameUpdated = await initGameJune(game);
+                    } else if (body.typeMoney === "debt") {
+                        gameUpdated = await initGameDebt(game);
+                    }
                     //and save the rest
                     GameModel.updateOne({_id: id}, {
                         $set: {
@@ -248,10 +370,12 @@ export default {
                             round: gameUpdated.round,
                             roundMax: gameUpdated.roundMax,
                             roundMinutes: gameUpdated.roundMinutes,
-
+                            currentDU: gameUpdated.currentDU,
+                            currentMassMonetary: gameUpdated.currentMassMonetary,
+                            inequalityStart: gameUpdated.inequalityStart,
                             modified: Date.now(),
                         }
-                    }, {new: true})
+                    })
                         .then(updatedGame => {
                             res.status(200).send({
                                 status: STARTED,
@@ -283,7 +407,7 @@ export default {
             });
         } else {
             try {
-                let stopGameEvent = constructor.event(START_GAME, MASTER, MASTER, 0, [], Date.now());
+                let stopGameEvent = constructor.event(STOP_GAME, MASTER, MASTER, 0, [], Date.now());
                 GameModel.updateOne({_id: id}, {
                     $set: {
                         status: "stopped",
@@ -402,15 +526,27 @@ export default {
         } else {
             GameModel.findByIdAndUpdate(idGame, {
                 $set: {
-                    'players.$[].cards': [],
-                    decks: [],
-                    events: [],
                     status: "open",
-                    round: 0
+                    typeMoney: "june",
+                    'players.$[].cards': [],
+                    'players.$[].coins': 0,
+                    decks: [],
+                    priceWeight1: 1,
+                    priceWeight2: 3,
+                    priceWeight3: 6,
+                    priceWeight4: 9,
+                    currentMassMonetary: 0,
+                    currentDU: 0,
+                    inequalityStart: false,
+                    tauxCroissance:10,
+                    round: 0,
+                    roundMax: 1,
+                    roundMinutes: 40,
+                    events: [],
                 }
             }, {new: true})
                 .then((updatedGame) => {
-                    io().to(idGame).emit("reset-cards");
+                    io().to(idGame).emit(RESET_GAME);
                     res.status(200).json({"status": "reset done"});
                 })
                 .catch((error) => {

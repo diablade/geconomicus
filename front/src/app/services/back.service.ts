@@ -118,6 +118,7 @@ export class BackService {
       priceWeight3 : game.priceWeight3,
       priceWeight4 : game.priceWeight4,
       round: game.round,
+      typeMoney: game.typeMoney,
       roundMax : game.roundMax,
       roundMinutes : game.roundMinutes
     })

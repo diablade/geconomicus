@@ -6,17 +6,17 @@ import io from 'socket.io-client';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Player} from "../models/game";
 import {BackService} from "../services/back.service";
-import {ScannerDialogComponent} from "../scanner-dialog/scanner-dialog.component";
+import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
-import {InformationDialogComponent} from "../information-dialog/information-dialog.component";
+import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 // @ts-ignore
-import {START_GAME, START_ROUND, STOP_ROUND} from "../../../../config/constantes";
+import {START_GAME, STOP_GAME, START_ROUND, STOP_ROUND, DISTRIB_DU, RESET_GAME} from "../../../../config/constantes";
 
 
 @Component({
@@ -58,8 +58,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   player: Player = new Player();
   private subscription: Subscription | undefined;
   options: Partial<adventurer.Options & Options> = {};
-  status: string = "playing";
-  money: string = "free";
+  gameStatus: string = "waiting";
+  typeMoney: string = "june";
   cards: Card[] = [];
   faCamera = faCamera;
 
@@ -87,7 +87,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
 
       this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async player => {
         this.player = player;
-        this.status = player.status;
+        this.typeMoney = player.typeMoney;
         if (this.player.image === "") {
           this.options.seed = player.name.toString();
           const avatar = createAvatar(adventurer, this.options);
@@ -103,17 +103,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.socket.on(START_GAME, async (data: any) => {
       console.log(START_GAME, data);
-      this.status = "waiting";
+      this.gameStatus = "waiting";
+      this.player.coins = data.coins;
       await this.receiveCards(data.cards);
     });
     this.socket.on(START_ROUND, async (data: any) => {
-      this.status = "playing";
+      this.gameStatus = "playing";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "c'est parti !! le tour à démarré "},
       });
     });
     this.socket.on(STOP_ROUND, async (data: any) => {
-      this.status = "waiting";
+      this.gameStatus = "waiting";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "tour terminé !"},
       });
@@ -121,32 +122,49 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
     this.socket.on("connected", (data: any) => {
       console.log("connected", data);
     });
-    this.socket.on(START_GAME, (data: any) => {
+    this.socket.on('disconnect', () => {
+      console.log('Socket has been disconnected');
+    });
+    this.socket.on(STOP_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
       this.router.navigate(['results', this.idGame]);
     });
-    this.socket.on("reset-cards", async (data: any) => {
-      console.log("reset-cards");
+    this.socket.on(DISTRIB_DU, (data: any) => {
+      this.snackbarService.showSuccess("Dividende Universel Reçu!");
+      console.log(data);
+      this.player.coins += Number.parseInt(data.du);
+    });
+    this.socket.on(RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       this.cards = [];
+      this.player.coins = 0;
     });
     this.socket.on("transaction-done", async (data: any) => {
-      console.log("transaction-done");
-      let card = _.find(this.cards, {_id: data.idCardSold});
-      if (card) {
+      this.player.coins = data.coins;
+      let cardSold = _.find(this.cards, {_id: data.idCardSold});
+      if (cardSold) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         _.remove(this.cards, {_id: data.idCardSold});
+        //display the card that was bellow (if stacked)
+        _.forEach(this.cards, c => {
+          // @ts-ignore
+          if (!c.displayed && c.weight == cardSold.weight && c.letter == cardSold.letter) {
+            c.displayed = true;
+          }
+        });
+        this.countOccurrencesAndHideDuplicates();
       }
     });
   }
 
   countOccurrencesAndHideDuplicates() {
+    _.orderBy(this.cards, ["weight", "letter"]);
     const countByResult = _.countBy(this.cards, (obj: any) => `${obj.weight}-${obj.letter}`);
     let keyDuplicates: string[] = [];
     for (const c of this.cards) {
       const countKey = `${c.weight}-${c.letter}`;
       c.count = countByResult[countKey] || 0;
-      let existCountKey = _.find(keyDuplicates, k => k === countKey);
+      let existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
       if (c.count > 1 && existCountKey) {
         c.displayed = false;
       }

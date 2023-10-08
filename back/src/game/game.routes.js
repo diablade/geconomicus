@@ -15,7 +15,7 @@ router.put('/start', game.start);
 router.post('/stop', game.stop);
 router.put('/reset', game.reset);
 
-router.post('/import', game.import);
-router.get('/export', game.export);
+// router.post('/import', game.import);
+// router.get('/export', game.export);
 
 export default router;

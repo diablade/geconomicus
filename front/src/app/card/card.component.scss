@@ -22,12 +22,42 @@
 }
 
 .letter {
-  font-size: calc(5vw);
-  max-font-size: 40px;
+  font-size: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  font-family: serif;
+  z-index: 10;
 }
+
+.price {
+  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  font-size: calc(28vw*0.1);
+  font-family: serif;
+}
+
+.containerLetter {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  padding: 5%;
+}
+
+.topLeft {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bottomRight {
+  position: absolute;
+  transform: rotate(180deg);
+  bottom: 0;
+  right: 0;
+}
+
 
 .badge {
   position: absolute;
+  color: #FFFFFF;
   z-index: 2;
   right: 5px;
   top: 5px;
@@ -48,13 +78,8 @@
   height: 100%;
   border-radius: inherit;
   backface-visibility: hidden;
-
-  > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
-  }
+  background-position: center;
+  background-size: 135%;
 }
 
 .back {
@@ -62,51 +87,50 @@
   transform: rotateY(180deg);
 }
 
-.red {
+.level1 {
   background-image: url("/assets/red.png");
 }
 
-.yellow {
+.level2 {
   background-image: url("/assets/yellow.png");
 }
 
-.green {
+.level3 {
   background-image: url("/assets/green.png");
 }
 
-.blue {
+.level4 {
   background-image: url("/assets/blue.png");
 }
 
-/** CUSTOM **/
-.redColor {
+.red {
+  background-color: #E8A7A6;
+
   .mat-badge-content {
     background: #ce1421;
-    color: #ffffff;
   }
 }
 
-.yellowColor {
+.yellow {
+  background-color: #F3EFAD;
   .mat-badge-content {
     background: #c4bb13;
-    color: #ffffff;
   }
 }
 
-.greenColor {
+.green {
+  background-color: #A2CBA2;
   .mat-badge-content {
     background: #14a549;
-    color: #ffffff;
   }
 }
 
-.blueColor {
+.blue {
+  background-color: #BBDAE3;
   .mat-badge-content {
     background: #3c8fa2;
-    color: #ffffff;
   }
 }
-
 
 .qrcodeImage {
   max-width: 500px;
