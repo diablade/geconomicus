@@ -3,3 +3,16 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 * {touch-action: manipulation;}
+
+.letter {
+  font-size: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  font-family: serif;
+  z-index: 10;
+}
+
+.price {
+  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  font-size: calc(28vw*0.1);
+  font-family: serif;
+}

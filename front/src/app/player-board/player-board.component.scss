@@ -41,6 +41,11 @@
   margin: 10px;
   font-weight: bold;
 }
+.du{
+  //width: calc(28vw*0.33);
+  height: 100%;
+  object-fit: cover;
+}
 .footer{
   position: absolute;
   bottom: 0;

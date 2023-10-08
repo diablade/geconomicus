@@ -7,7 +7,8 @@
         <img *ngIf="typeMoney=='debt'" class="debt"/>
       </div>
       <div class="sold">
-        {{player.coins}}
+        {{player.coins| number : '1.2-2'}}
+        <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
       </div>
     </div>
     <div class="w-50 justify-content-end d-flex">
@@ -15,7 +16,7 @@
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="gameStatus!=='playing'">
+  <div class="" *ngIf="statusGame!=='playing'">
     <div class="text-center h1">En attente...</div>
   </div>
   <div class="container">
@@ -36,7 +37,7 @@
     </div>
   </div>
   <div class="footer">
-    <button mat-raised-button color="accent" [disabled]="gameStatus!=='playing'" (click)="scan()">
+    <button mat-raised-button color="accent" [disabled]="statusGame!=='playing'" (click)="scan()">
       <fa-icon [icon]="faCamera"></fa-icon>
       ACHETER une Carte
     </button>

@@ -2,7 +2,7 @@ import GameModel, {constructor} from './game.model.js';
 import {
     OPEN, STARTED, EVENT, MASTER,
     START_GAME, START_ROUND, STOP_ROUND,
-    INTER_TOUR, DISTRIB_DU,RESET_GAME
+    INTER_TOUR, DISTRIB_DU, RESET_GAME
 } from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
@@ -47,19 +47,21 @@ async function generateCardsPerPlayers(nbPlayers, prices) {
 async function generateDU(game) {
     const nbPlayer = Number.parseInt(_.countBy(game.players, p => p.status === 'alive').true);
     const moyenne = game.currentMassMonetary / nbPlayer;
-    return (moyenne * (game.tauxCroissance/100)).toFixed(2);
+    const du = moyenne * game.tauxCroissance / 100;
+    const duRounded = _.round(du, 2);
+    return duRounded;
 }
 
 async function distribDU(gameId) {
     GameModel.findById(gameId)
         .then(async (game) => {
-            const du = await generateDU(game);
             var newEvents = [];
-            game.currentDU = du;
+            const du = await generateDU(game);
+            var newMassMoney = game.currentMassMonetary;
             for await (let player of game.players) {
                 if (player.status === "alive") {
                     player.coins += du;
-                    game.currentMassMonetary += du;
+                    newMassMoney += du;
                     io().to(player.id).emit(DISTRIB_DU, {du: du});
 
                     let newEvent = constructor.event(DISTRIB_DU, MASTER, player.id, du, [], Date.now());
@@ -72,7 +74,7 @@ async function distribDU(gameId) {
                 {
                     $inc: {"players.$[].coins": du},
                     $push: {events: {$each: newEvents}},
-                    $set: {currentMassMonetary: game.currentMassMonetary, currentDU: game.currentDU}
+                    $set: {currentMassMonetary: newMassMoney, currentDU: du}
                 }, {new: true})
                 .then(updatedGame => {
                     log.info(updatedGame.currentDU);
@@ -118,6 +120,9 @@ async function initGameJune(game) {
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
         player.status = "alive";
+        player.typeMoney = "june";
+        player.statusGame=STARTED;
+
         //TODO INEQUALITY START
         player.coins = startAmountCoins;
         game.currentMassMonetary += startAmountCoins;
@@ -163,7 +168,7 @@ function startRoundMoneyLibre(gameId, roundMinutes) {
             console.log(roundMinutes + ' minutes have passed');
             stopRound(gameId);
         }
-    }, 60 * 1000); // 60 seconds * 1000 milliseconds
+    }, 30 * 1000); // 60 seconds * 1000 milliseconds
 }
 
 function startRoundMoneyDebt(gameId, roundMinutes) {
@@ -209,7 +214,7 @@ export default {
                 priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
                 priceWeight4: body.priceWeight4 ? body.priceWeight4 : 9,
                 inequalityStart: false,
-                tauxCroissance:10,
+                tauxCroissance: 10,
                 round: 0,
                 currentDU: 0,
                 currentMassMonetary: 0,
@@ -349,7 +354,7 @@ export default {
                     game.round = 1;
                     game.roundMax = body.roundMax ? body.roundMax : 10;
                     game.roundMinutes = body.roundMinutes ? body.roundMinutes : 8;
-                    game.inequalityStart = body.inequalityStart? body.inequalityStart : false;
+                    game.inequalityStart = body.inequalityStart ? body.inequalityStart : false;
                     let gameUpdated;
                     if (body.typeMoney === "june") {
                         gameUpdated = await initGameJune(game);
@@ -538,7 +543,7 @@ export default {
                     currentMassMonetary: 0,
                     currentDU: 0,
                     inequalityStart: false,
-                    tauxCroissance:10,
+                    tauxCroissance: 10,
                     round: 0,
                     roundMax: 1,
                     roundMinutes: 40,

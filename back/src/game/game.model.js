@@ -42,6 +42,8 @@ let Player = {
     glassesProbability: Number,
     featuresProbability: Number,
     status: String,
+    statusGame:String,
+    typeMoney:String,
 }
 
 let Game = new Schema({

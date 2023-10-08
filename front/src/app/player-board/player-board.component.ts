@@ -12,11 +12,12 @@ import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
-import {animate, animateChild, query, stagger, style, transition, trigger} from "@angular/animations";
+import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 // @ts-ignore
 import {START_GAME, STOP_GAME, START_ROUND, STOP_ROUND, DISTRIB_DU, RESET_GAME} from "../../../../config/constantes";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -43,6 +44,18 @@ import {START_GAME, STOP_GAME, START_ROUND, STOP_ROUND, DISTRIB_DU, RESET_GAME} 
         animate('600ms',
           style({transform: 'translateY(-100rem)'}))
       ]),
+    ]),
+    trigger('duReceived', [
+      state('void', style({
+        opacity: 0,
+        transform: 'rotate(0deg)'
+      })),
+      state('*', style({
+        opacity:1,
+        transform: 'rotate(360deg)'
+      })),
+      transition(':enter', animate('1500ms ease')),
+      transition(':leave', animate('1500ms ease'))
     ])
   ],
   styleUrls: ['./player-board.component.scss']
@@ -58,12 +71,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   player: Player = new Player();
   private subscription: Subscription | undefined;
   options: Partial<adventurer.Options & Options> = {};
-  gameStatus: string = "waiting";
+  statusGame: string = "waiting";
   typeMoney: string = "june";
   cards: Card[] = [];
   faCamera = faCamera;
 
-  constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
+  constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
 
   updateScreenSize() {
@@ -88,6 +101,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
       this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async player => {
         this.player = player;
         this.typeMoney = player.typeMoney;
+        this.statusGame= player.statusGame;
         if (this.player.image === "") {
           this.options.seed = player.name.toString();
           const avatar = createAvatar(adventurer, this.options);
@@ -103,18 +117,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.socket.on(START_GAME, async (data: any) => {
       console.log(START_GAME, data);
-      this.gameStatus = "waiting";
+      this.statusGame = "waiting";
       this.player.coins = data.coins;
       await this.receiveCards(data.cards);
     });
     this.socket.on(START_ROUND, async (data: any) => {
-      this.gameStatus = "playing";
+      this.statusGame = "playing";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "c'est parti !! le tour à démarré "},
       });
     });
     this.socket.on(STOP_ROUND, async (data: any) => {
-      this.gameStatus = "waiting";
+      this.statusGame = "waiting";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "tour terminé !"},
       });
@@ -130,9 +144,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
       this.router.navigate(['results', this.idGame]);
     });
     this.socket.on(DISTRIB_DU, (data: any) => {
-      this.snackbarService.showSuccess("Dividende Universel Reçu!");
+      //TODO ANIMATE RECEIVE DU
+      this.duVisible=true;
+      this.player.coins += data.du;
+      setTimeout(() => {
+        this.duVisible = false;
+      }, 1500);
       console.log(data);
-      this.player.coins += Number.parseInt(data.du);
     });
     this.socket.on(RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -176,6 +194,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   }
 
   //To prevent memory leak
+  duVisible: boolean=false;
   ngOnDestroy(): void {
     if (this.subscription)
       this.subscription.unsubscribe()

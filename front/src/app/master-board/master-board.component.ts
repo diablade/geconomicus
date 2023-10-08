@@ -16,8 +16,6 @@ import {START_ROUND, STARTED, STOP_ROUND} from "../../../../config/constantes";
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
 import {CreateGameDialog} from "../home/home.component";
 
-// import {MatSelectChange} from "@angular/material/select";
-
 @Component({
   selector: 'app-master-board',
   templateUrl: './master-board.component.html',
@@ -140,7 +138,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   startRound() {
     this.backService.startRound(this.idGame).subscribe(() => {
       this.timer.start();
-      console.log(STARTED);
       this.game.status = 'playing';
       this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
     });

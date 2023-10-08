@@ -100,7 +100,7 @@ export default {
                         return p._id == idPlayer
                     })
                     if (player) {
-                        player.typeMoney = game.typeMoney;
+                        player.statusGame = game.status;
                         res.status(200).json(player);
                     } else {
                         next({status: 404, message: "player Not found"});
@@ -149,7 +149,7 @@ export default {
                     // Draw new cards for the player
                     const newCards = shuffledDeck.slice(0, 4);//same weight
                     const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior gift
-                    const newcardsIds = _.map(newCards,c=>c._id);
+                    const newcardsIds = _.map(newCards, c => c._id);
                     newCards.push(newCardSup);
                     await GameModel.updateOne(
                         {_id: idGame},
@@ -197,7 +197,7 @@ export default {
                 const buyer = _.find(game.players, {id: idBuyer});
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
-                const cost = game.typeMoney=== "june" ? (card.price*game.currentDU).toFixed(2) : card.price;
+                const cost = game.typeMoney === "june" ? _.round(card.price * game.currentDU, 2) : card.price;
                 let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
                 if (buyer.coins < cost) {
