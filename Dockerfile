@@ -7,7 +7,7 @@ VOLUME /logs
 WORKDIR /back
 RUN npm install && npm cache clean --force
 ENV GECO_NODE_ENV=production \
-    GECO_VERSION=0.4.4 \
+    GECO_VERSION=0.5.2 \
     GECO_PORT_NODE=8085 \
     GECO_LOG_DEBUG=false \
     GECO_DB_CONFIG_HOSTNAME=mongodb \
