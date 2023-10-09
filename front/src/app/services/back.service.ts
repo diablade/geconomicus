@@ -174,10 +174,10 @@ export class BackService {
       );
   }
 
-  getEvents(idGame: string) {
-    return this.http.get<any>(environment.API_HOST + environment.GAME.EVENTS+ idGame)
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
-      );
-  }
+  // getEvents(idGame: string) {
+  //   return this.http.get<any>(environment.API_HOST + environment.GAME.EVENTS+ idGame)
+  //     .pipe(
+  //       catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
+  //     );
+  // }
 }
