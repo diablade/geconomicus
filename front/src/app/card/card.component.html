@@ -2,7 +2,7 @@
   <div class="whenFlipped" (click)="closeCard()"></div>
 </ng-container>
 <div class="card" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
-  <div class="face front" (click)="cardClicked()" [ngClass]="[card.color]">
+  <div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
     <img [src]="'/assets/lvl'+(card.weight+1)+'.png'"/>
     <div class="containerLetter topLeft">
       <span class="letter">{{card.letter}}</span>

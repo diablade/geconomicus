@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  version: "0.4.8",
+  version: "0.5.2",
 
   API_HOST: 'http://localhost:8080/',
   WEB_HOST: 'http://localhost:4200/',

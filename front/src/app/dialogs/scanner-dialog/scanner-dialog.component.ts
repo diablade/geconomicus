@@ -1,6 +1,7 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
 import {Html5QrcodeScanner, Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats} from 'html5-qrcode';
+import {Html5QrcodeScannerConfig} from "html5-qrcode/html5-qrcode-scanner";
 
 
 @Component({
@@ -8,27 +9,32 @@ import {Html5QrcodeScanner, Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupport
   templateUrl: './scanner-dialog.component.html',
   styleUrls: ['./scanner-dialog.component.scss']
 })
-export class ScannerDialogComponent implements AfterViewInit {
-  qrScanner: Html5QrcodeScanner | undefined;
+export class ScannerDialogComponent implements OnInit, AfterViewInit {
   scannedCode = '';
-
-  constructor(public dialogRef: MatDialogRef<ScannerDialogComponent>) {
-  }
-  ngAfterViewInit(): void {
-    this.qrScanner = new Html5QrcodeScanner('qrreader', {
+  config: Html5QrcodeScannerConfig =
+    {
       fps: 10,
       qrbox: 250,
       videoConstraints: {
-        facingMode: { ideal: "environment" }
+        facingMode: {ideal: "environment"}
       },
       rememberLastUsedCamera: true,
-      // Only support camera scan type.
       supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
       formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-    }, false);
-    this.qrScanner.render((qrCodeMessage: string)=> {
+    };
+  qrScanner: Html5QrcodeScanner | undefined;
+
+  constructor(public dialogRef: MatDialogRef<ScannerDialogComponent>) {
+  }
+  ngOnInit(): void {
+    this.qrScanner = new Html5QrcodeScanner('qrreader', this.config, false);
+  }
+
+  ngAfterViewInit(): void {
+    // @ts-ignore
+    this.qrScanner.render((qrCodeMessage: string) => {
       console.log('QR code scanned:', qrCodeMessage);
-      this.scannedCode=qrCodeMessage;
+      this.scannedCode = qrCodeMessage;
       this.qrScanner?.clear();
       this.dialogRef.close(this.scannedCode);
       // Handle the scanned QR code data here
