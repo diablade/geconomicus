@@ -128,61 +128,69 @@ export default {
                 const player = _.find(game.players, {id: idPlayer});
                 const cardsToExchange = _.filter(player.cards, {letter: cards[0].letter, weight: cards[0].weight});
                 let weight = cardsToExchange[0].weight;
+
                 // Remove cards from player's hand
                 await GameModel.updateOne(
                     {_id: idGame, 'players._id': idPlayer},
                     {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}},
-                    {new: true}
                 );
                 // Add cards back to the deck
-                await GameModel.updateOne(
+                GameModel.findByIdAndUpdate(
                     {_id: idGame},
                     {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
-                    {new: true}
-                );
-                // Draw a card from the next level
-                if (weight < 2) {
-                    // Shuffle the deck
-                    const updatedGame = await GameModel.findById(idGame);
-                    const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
-                    const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
-                    // Draw new cards for the player
-                    const newCards = shuffledDeck.slice(0, 4);//same weight
-                    const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior gift
-                    const newcardsIds = _.map(newCards, c => c._id);
-                    newCards.push(newCardSup);
-                    await GameModel.updateOne(
-                        {_id: idGame},
-                        {
-                            $pull: {
-                                [`decks.${weight}`]: {id: {$in: newcardsIds}},
-                                [`decks.${weight + 1}`]: {id: newCardSup._id}
+                    {new: true})
+                    .then(async updatedGame => {
+                            // Draw a card from the next level
+                            if (weight < 2) {
+                                // Shuffle the decks
+                                const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
+                                const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
+                                // Draw new cards for the player
+                                const newCards = shuffledDeck.slice(0, 4);//same weight
+                                const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior gift
+                                // const newcardsIds = _.map(newCards, c => c._id);
+                                const cardsDraw = _.concat(newCards, [newCardSup]);
+                                //create events
+                                let discardEvent = constructor.event("transformDiscard", idPlayer, "master", 0, cardsToExchange, Date.now());
+                                let newCardsEvent = constructor.event('tranformNewCards', "master", idPlayer, 0, cardsDraw, Date.now());
+
+                                // remove from decks, add events
+                                await GameModel.updateOne(
+                                    {_id: idGame},
+                                    {
+                                        $pull: {
+                                            [`decks.${weight}`]: {_id: {$in: newCards.map(c => c._id)}},
+                                            [`decks.${weight + 1}`]: {_id: newCardSup._id}
+                                        },
+                                        $push: {
+                                            'events': {$each: [discardEvent, newCardsEvent]}
+                                        }
+                                    }
+                                );
+                                // and Add new cards to player's hand
+                                await GameModel.updateOne(
+                                    {_id: idGame, 'players._id': idPlayer},
+                                    {
+                                        $push: {
+                                            'players.$.cards': {$each: cardsDraw},
+                                        }
+                                    }
+                                );
+                                io().to("master").emit(EVENT, {event: discardEvent});
+                                io().to("master").emit(EVENT, {event: newCardsEvent});
+                                res.status(200).json(cardsDraw);
+                            } else {
+                                //TODO changement technologique
                             }
-                        },
-                        {new: true}
-                    );
-                    // Add new cards to player's hand
-                    await GameModel.updateOne(
-                        {_id: idGame, 'players._id': idPlayer},
-                        {$push: {'players.$.cards': {$each: newCards}}}
-                    );
-                    let discardEvent = constructor.event("transformDiscard", idPlayer, "master", 0, cardsToExchange, Date.now());
-                    let newCardsEvent = constructor.event('tranformNewCards', "master", idPlayer, 0, newCards, Date.now());
-                    // add event
-                    await GameModel.updateOne(
-                        {_id: idGame},
-                        {
-                            $push: {'events': {$each: [discardEvent, newCardsEvent]}},
+                        }
+                    )
+                    .catch(error => {
+                            log(error);
+                            next({status: 404, message: "update game goes wrong (transform square)"});
                         }
                     );
-                    io().to("master").emit(EVENT, {event: discardEvent});
-                    io().to("master").emit(EVENT, {event: newCardsEvent});
-                    res.status(200).json(newCards);
-                } else {
-                    //TODO changement technologique
-                }
-            } catch (error) {
-                throw error;
+            } catch (err) {
+                log.error('update game error', err);
             }
         }
     },
@@ -197,7 +205,7 @@ export default {
                 const buyer = _.find(game.players, {id: idBuyer});
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
-                const cost = game.typeMoney === "june" ? _.round(card.price * game.currentDU, 2) : card.price;
+                const cost = game.typeMoney === "june" ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
                 let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
                 if (buyer.coins < cost) {
@@ -234,6 +242,7 @@ export default {
                 // Send back to buyer , card with updated coins
                 res.status(200).json({buyedCard: card, coins: buyer.coins});
             } catch (error) {
+                log.error('transaction error', error);
                 throw error;
             }
         } else {

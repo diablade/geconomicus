@@ -70,12 +70,17 @@ async function distribDU(gameId) {
                 }
             }
             //TODO $inc for players not dead
+            // $inc: {"players.$[].coins": du},
             GameModel.findByIdAndUpdate(gameId,
                 {
-                    $inc: {"players.$[].coins": du},
+                    $inc: {"players.$[elem].coins": du},
                     $push: {events: {$each: newEvents}},
                     $set: {currentMassMonetary: newMassMoney, currentDU: du}
-                }, {new: true})
+                },
+                {
+                    arrayFilters: [{"elem.status": "alive"}],
+                    new: true
+                })
                 .then(updatedGame => {
                     log.info(updatedGame.currentDU);
                     log.info(updatedGame.currentMassMonetary);
@@ -121,7 +126,7 @@ async function initGameJune(game) {
         player.cards = cards;
         player.status = "alive";
         player.typeMoney = "june";
-        player.statusGame=STARTED;
+        player.statusGame = STARTED;
 
         //TODO INEQUALITY START
         player.coins = startAmountCoins;
