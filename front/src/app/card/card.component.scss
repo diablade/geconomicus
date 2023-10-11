@@ -22,6 +22,13 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
+.hide{
+  opacity: 0;
+}
+.show{
+  opacity: 1;
+}
+
 .containerLetter {
   backface-visibility: hidden;
   z-index: 2;

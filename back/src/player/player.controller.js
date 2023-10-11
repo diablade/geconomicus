@@ -5,9 +5,6 @@ import mongoose from "mongoose";
 import {io} from '../../conf_socket.js';
 import {EVENT, MASTER, START_GAME, STOP_ROUND, INTER_TOUR, START_ROUND} from '../../../config/constantes.js';
 
-// import constantes from '../../../config/constantes.js';
-// const {EVENT, MASTER} = constantes;
-
 
 export default {
     join: async (req, res, next) => {
@@ -234,7 +231,7 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
-                io().to("master").emit(EVENT, newEvent);
+                io().to(MASTER).emit(EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= cost;
                 seller.coins += cost;
