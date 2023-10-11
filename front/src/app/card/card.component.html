@@ -4,10 +4,10 @@
 <div class="card" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
   <div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
     <img [src]="'/assets/lvl'+(card.weight+1)+'.png'"/>
-    <div class="containerLetter topLeft">
+    <div class="containerLetter topLeft" [ngClass]="state=='flipped' ? 'hide' : 'show'">
       <span class="letter">{{card.letter}}</span>
     </div>
-    <div class="containerLetter bottomRight">
+    <div class="containerLetter bottomRight" [ngClass]="state=='flipped' ? 'hide' : 'show'">
       <span class="letter">{{card.letter}}</span>
     </div>
     <div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
