@@ -22,10 +22,10 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-.hide{
+.hide {
   opacity: 0;
 }
-.show{
+.show {
   opacity: 1;
 }
 
@@ -55,6 +55,7 @@
 
 
 .badge {
+  backface-visibility: hidden;
   position: absolute;
   color: #FFFFFF;
   z-index: 3;
@@ -95,7 +96,6 @@
 
 .red {
   background-color: #E8A7A6;
-
   .mat-badge-content {
     background: #ce1421;
   }
