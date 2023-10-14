@@ -16,8 +16,6 @@ const app = express();
 // CORS POLICY
 app.use(cors())
 
-// WEB APP
-app.use(express.static(process.cwd() + "/../front/dist/geconomicus"));
 // USE MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

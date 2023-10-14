@@ -1,22 +1,15 @@
 #docker build -t geco:1.0 .
 FROM node:18.16.1-alpine
 MAINTAINER Nicolas Markovic
-COPY . .
+COPY ./config/.env ./back/.env
+COPY ./config/constantes.js ./config/constantes.js
+COPY ./back ./back
 VOLUME /logs
 
 WORKDIR /back
+ENV PATH /app/node_modules/.bin:$PATH
 RUN npm install && npm cache clean --force
-ENV GECO_NODE_ENV=production \
-    GECO_VERSION=0.5.4 \
-    GECO_PORT_NODE=8085 \
-    GECO_LOG_DEBUG=false \
-    GECO_DB_CONFIG_HOSTNAME=mongodb \
-    GECO_DB_CONFIG_PORT=27017 \
-    GECO_DB_CONFIG_COLLECTION=geconomicus \
-    GECO_DB_CONFIG_USER=admin \
-    GECO_DB_CONFIG_PASSWORD=admin
-    # NODE_OPTIONS="--max-old-space-size=5120"
-    # Increases to 5 GB
+
 RUN npm run cleanProd
 CMD ["node","app.js"]
 EXPOSE 8085

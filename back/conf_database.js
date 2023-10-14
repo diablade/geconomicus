@@ -13,7 +13,6 @@ const collection = process.env.GECO_DB_CONFIG_COLLECTION;
 const env = user ? user + ":" + pass + "@" : "";
 const uri = "mongodb://" + env + hostname + ":" + port + "/" + collection + (user ? "?authSource=admin" : "");
 
-console.log(uri);
 
 const options = {
     useNewUrlParser:    true,
