@@ -1,6 +1,6 @@
 import {createAvatar, Options} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import io from 'socket.io-client';
 import {ActivatedRoute, Router} from "@angular/router";
@@ -15,8 +15,16 @@ import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
+import {
+  START_GAME,
+  STOP_GAME,
+  START_ROUND,
+  STOP_ROUND,
+  DISTRIB_DU,
+  FIRST_DU,
+  RESET_GAME,
 // @ts-ignore
-import {START_GAME, STOP_GAME, START_ROUND, STOP_ROUND, DISTRIB_DU, RESET_GAME} from "../../../../config/constantes";
+} from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 
@@ -51,7 +59,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
         transform: 'rotate(0deg)'
       })),
       state('*', style({
-        opacity:1,
+        opacity: 1,
         transform: 'rotate(360deg)'
       })),
       transition(':enter', animate('1500ms ease')),
@@ -60,7 +68,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
   ],
   styleUrls: ['./player-board.component.scss']
 })
-export class PlayerBoardComponent implements OnInit, AfterViewInit {
+export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('svgContainer') svgContainer!: ElementRef;
   ioURl: string = environment.API_HOST;
   private socket: any;
@@ -73,6 +81,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   options: Partial<adventurer.Options & Options> = {};
   statusGame: string = "waiting";
   typeMoney: string = "june";
+  currentDU: number = 0;
   cards: Card[] = [];
   faCamera = faCamera;
 
@@ -98,12 +107,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
         },
       });
 
-      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async player => {
-        this.player = player;
-        this.typeMoney = player.typeMoney;
-        this.statusGame= player.statusGame;
+      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
+        this.player = data.player;
+        this.typeMoney = data.typeMoney;
+        this.currentDU = data.currentDU;
+        this.statusGame = data.statusGame;
         if (this.player.image === "") {
-          this.options.seed = player.name.toString();
+          this.options.seed = data.player.name.toString();
           const avatar = createAvatar(adventurer, this.options);
           this.player.image = avatar.toString();
         }
@@ -116,7 +126,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.socket.on(START_GAME, async (data: any) => {
-      console.log(START_GAME, data);
       this.statusGame = "waiting";
       this.player.coins = data.coins;
       await this.receiveCards(data.cards);
@@ -144,18 +153,34 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
       this.router.navigate(['results', this.idGame]);
     });
     this.socket.on(DISTRIB_DU, (data: any) => {
-      //TODO ANIMATE RECEIVE DU
-      this.duVisible=true;
+      this.duVisible = true;
       this.player.coins += data.du;
+      this.currentDU = data.du;
       setTimeout(() => {
         this.duVisible = false;
-      }, 1500);
+      }, 4000);
       console.log(data);
     });
     this.socket.on(RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       this.cards = [];
       this.player.coins = 0;
+    });
+    this.socket.on(FIRST_DU, async (data: any) => {
+      this.currentDU = data.du;
+    });
+    this.socket.on("you are dead", async (data: any) => {
+      this.player.status = "dead";
+      this.dialog.closeAll();
+      const dialogRef = this.dialog.open(InformationDialogComponent, {
+        data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️"},
+      });
+      this.cards = [];
+      if (this.typeMoney === "debt") {
+        this.player.coins = 0;
+      }
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      this.resurrection();
     });
     this.socket.on("transaction-done", async (data: any) => {
       this.player.coins = data.coins;
@@ -194,7 +219,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
   }
 
   //To prevent memory leak
-  duVisible: boolean=false;
+  duVisible: boolean = false;
+
   ngOnDestroy(): void {
     if (this.subscription)
       this.subscription.unsubscribe()
@@ -209,6 +235,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(dataRaw => {
       this.buy(dataRaw);
     });
+  }
+
+  async resurrection() {
+    this.router.navigate(['game', this.idGame, 'join', '?r=', true]);
   }
 
   formatNewCards(newCards: Card[]) {
@@ -253,5 +283,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit {
     } else {
       this.snackbarService.showError("Fond insuffisant !");
     }
+  }
+
+  onDestroy() {
+    // Remember to disconnect the socket when the component is destroyed.
+    this.socket.disconnect();
   }
 }

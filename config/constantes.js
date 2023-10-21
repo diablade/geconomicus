@@ -9,7 +9,8 @@ const STARTED = 'started';
 const EVENT = 'event';
 const MASTER = 'master';
 const DISTRIB_DU = 'distrib_du';
-const RESET_GAME= 'reset-game';
+const FIRST_DU = 'first_du';
+const RESET_GAME = 'reset-game';
 
 if (typeof module !== 'undefined' && module.exports) {
 // Export the constants for use in other scripts if needed (for ES6 and later).
@@ -25,7 +26,8 @@ if (typeof module !== 'undefined' && module.exports) {
         EVENT: EVENT,
         MASTER: MASTER,
         DISTRIB_DU: DISTRIB_DU,
-        RESET_GAME:RESET_GAME,
+        FIRST_DU: FIRST_DU,
+        RESET_GAME: RESET_GAME,
     };
 }
 

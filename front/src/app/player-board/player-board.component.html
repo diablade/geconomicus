@@ -1,17 +1,16 @@
 <div class="p-2 w-100 h-100 game overflow-auto">
-  <div class="titleBar d-flex">
-    <div class="w-50 d-flex">
-      <div class="">
-        <div class="jeuTitle">Solde:</div>
-        <img *ngIf="typeMoney=='june'" class="free"/>
-        <img *ngIf="typeMoney=='debt'" class="debt"/>
-      </div>
-      <div class="sold">
-        {{player.coins| number : '1.2-2'}}
-        <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
-      </div>
+  <div class="titleBar d-flex flex-row">
+    <div class="symbol">
+      <div class="jeuTitle">Solde:</div>
+      <img *ngIf="typeMoney=='june'" class="free"/>
+      <img *ngIf="typeMoney=='debt'" class="debt"/>
     </div>
-    <div class="w-50 justify-content-end d-flex">
+    <div class="sold flex-grow-1">
+      {{player.coins| number : '1.2-2'}}
+      <span class="enDU">{{(player.coins/currentDU) | number : '1.2-2'}}DU</span>
+      <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
+    </div>
+    <div class="user d-flex">
       <div class="name">{{player.name}}</div>
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
@@ -28,6 +27,7 @@
             [typeMoney]="typeMoney"
             [idOwner]="idPlayer"
             [idGame]="idGame"
+            [currentDU]="currentDU"
             (squareBuilded)="produceFromSquare($event)"
             [screenWidth]="screenWidth"
             [screenHeight]="screenHeight"
@@ -38,7 +38,7 @@
   </div>
   <div class="footer">
     <button mat-raised-button color="accent" [disabled]="false" (click)="scan()">
-<!--      statusGame!=='playing'"-->
+      <!--      statusGame!=='playing'"-->
       <fa-icon [icon]="faCamera"></fa-icon>
       ACHETER une Carte
     </button>

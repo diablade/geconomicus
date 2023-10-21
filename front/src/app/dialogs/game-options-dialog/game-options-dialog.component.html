@@ -20,9 +20,27 @@
       <input type="text" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
     </mat-form-field>
   </div>
+  <div class="">
+    <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+      <mat-label>taux de croissance Dividende Universel</mat-label>
+      <input type="text" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
+    </mat-form-field>
+  </div>
+  <div class="">
+    <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+      <mat-label>monnaie libre de départ</mat-label>
+      <input type="text" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
+    </mat-form-field>
+  </div>
   <div class="mb-2">
     <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
-      Début de partie inégale en monnaie
+      <p>Début de partie inégale en monnaie libre</p>
+      <div>
+        -10% de riche (monnaies de départ * 2)
+      </div>
+      <div>
+        -10% de pauvre (monnaie de départ / 2)
+      </div>
     </mat-checkbox>
   </div>
   <div class="d-inline-flex">
@@ -64,7 +82,7 @@
     </mat-form-field>
   </div>
   <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Annuler</button>
-    <button mat-button [mat-dialog-close]="game" cdkFocusInitial>Appliquer</button>
+<!--    <button mat-button (click)="onNoClick()">Annuler</button>-->
+    <button mat-button [mat-dialog-close]="game" cdkFocusInitial>OK</button>
   </div>
 </div>

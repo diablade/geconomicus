@@ -69,8 +69,8 @@ export class BackService {
       );
   }
 
-  getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<Player> {
-    return this.http.get<Player>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
+  getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<any> {
+    return this.http.get<any>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
       .pipe(
         catchError(err => this.handleError(err, this.REDIRECT_HOME, "joueur inexistant"))
       );
@@ -117,6 +117,9 @@ export class BackService {
       priceWeight2 : game.priceWeight2,
       priceWeight3 : game.priceWeight3,
       priceWeight4 : game.priceWeight4,
+      tauxCroissance: game.tauxCroissance,
+      startAmountCoins: game.startAmountCoins,
+      inequalityStart: game.inequalityStart,
       round: game.round,
       typeMoney: game.typeMoney,
       roundMax : game.roundMax,
@@ -143,7 +146,7 @@ export class BackService {
     console.log(body);
     return this.http.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, body)
       .pipe(
-        catchError(err => this.handleError(err, "", "transaction impossible"))
+        catchError(err => this.handleError(err, "", err))
       );
   }
 
@@ -153,6 +156,7 @@ export class BackService {
         catchError(err => this.handleError(err, "", "demarrer tour impossible"))
       );
   }
+
   stopRound(idGame: string) {
     return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame})
       .pipe(
@@ -180,4 +184,15 @@ export class BackService {
   //       catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
   //     );
   // }
+  killUser(idPlayer: string, idGame: string) {
+    return this.http.post<Game>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
+        idGame: idGame,
+        idPlayer: idPlayer
+    })
+      .pipe(
+        catchError(err => this.handleError(err, "", "kill impossible")
+          //TODO ré actualise
+        )
+      );
+  }
 }

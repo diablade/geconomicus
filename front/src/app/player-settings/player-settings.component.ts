@@ -38,8 +38,8 @@ export class PlayerSettingsComponent implements OnInit {
     this.subscription = this.route.params.subscribe(params => {
       this.idGame = params['idGame'];
       this.idPlayer = params['idPlayer'];
-      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(player => {
-        this.player = player;
+      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(data => {
+        this.player = data.player;
         if (this.player.image === "" || this.player.image === undefined) {
           this.randomize();
         } else {

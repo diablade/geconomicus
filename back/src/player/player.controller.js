@@ -98,7 +98,12 @@ export default {
                     })
                     if (player) {
                         player.statusGame = game.status;
-                        res.status(200).json(player);
+                        res.status(200).json({
+                            player: player,
+                            statusGame: game.status,
+                            typeMoney: game.typeMoney,
+                            currentDU: game.currentDU
+                        });
                     } else {
                         next({status: 404, message: "player Not found"});
                     }
@@ -178,6 +183,10 @@ export default {
                                 res.status(200).json(cardsDraw);
                             } else {
                                 //TODO changement technologique
+                                next({
+                                    status: 404,
+                                    message: "bravo !!! vous etes sur le point de faire un changement technologique"
+                                });
                             }
                         }
                     )
@@ -205,7 +214,23 @@ export default {
                 const cost = game.typeMoney === "june" ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
                 let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
-                if (buyer.coins < cost) {
+                if (buyer.status === "dead") {
+                    next({
+                        status: 400,
+                        message: "you should be dead"
+                    });
+                    throw new Error('you should be dead fool !');
+                } else if (seller.status === "dead") {
+                    next({
+                        status: 400,
+                        message: "seller is dead"
+                    });
+                    throw new Error('seller is dead');
+                } else if (buyer.coins < cost) {
+                    next({
+                        status: 400,
+                        message: "fond insuffisant"
+                    });
                     throw new Error('Not enough coins');
                 }
                 // remove card and add coins to seller

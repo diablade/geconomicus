@@ -42,8 +42,6 @@ let Player = {
     glassesProbability: Number,
     featuresProbability: Number,
     status: String,
-    statusGame:String,
-    typeMoney:String,
 }
 
 let Game = new Schema({
@@ -53,7 +51,8 @@ let Game = new Schema({
     tauxCroissance: {type: Number, required: true},
     currentMassMonetary: {type: Number, required: true},
     currentDU: {type: Number, required: true},
-    inequalityStart: {type:Boolean, required:true},
+    inequalityStart: {type: Boolean, required: true},
+    startAmountCoins: {type: Number, required: true},
     priceWeight1: {type: Number, required: true},
     priceWeight2: {type: Number, required: true},
     priceWeight3: {type: Number, required: true},

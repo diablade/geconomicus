@@ -154,9 +154,12 @@ export class EventsComponent implements OnInit, AfterViewInit {
       borderColor: this.hexToRgb(player.hairColor),
       pointBackgroundColor: this.hexToRgb(player.hairColor),
       pointBorderColor: player.hairColor,
+      borderWidth: 2, // Line thickness
+      pointRadius: 1, // Point thickness
       total: 0,
       playerId: player._id
     }));
+
     const datasetsRelatif: ChartDataset[] = players.map(player => ({
       data: [],
       label: player.name,
@@ -164,6 +167,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
       borderColor: this.hexToRgb(player.hairColor),
       pointBackgroundColor: this.hexToRgb(player.hairColor),
       pointBorderColor: player.hairColor,
+      borderWidth: 2, // Line thickness
+      pointRadius: 1, // Point thickness
       total: 0,
       playerId: player._id
     }));

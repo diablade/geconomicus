@@ -11,6 +11,7 @@ import {Subscription} from "rxjs";
 })
 export class JoinComponent {
   idGame: string="";
+  resurrection=false;
   name: string="";
   private subscription: Subscription | undefined;
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {
@@ -18,6 +19,7 @@ export class JoinComponent {
   ngOnInit(): void {
     this.subscription = this.route.params.subscribe(params => {
       this.idGame = params['idGame'];
+      this.resurrection = params['r'];
     });
   }
   //To prevent memory leak

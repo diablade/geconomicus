@@ -2,7 +2,7 @@ import GameModel, {constructor} from './game.model.js';
 import {
     OPEN, STARTED, EVENT, MASTER,
     START_GAME, START_ROUND, STOP_ROUND,
-    INTER_TOUR, DISTRIB_DU, RESET_GAME
+    INTER_TOUR, DISTRIB_DU, FIRST_DU, RESET_GAME
 } from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
@@ -12,7 +12,6 @@ import {io} from "../../conf_socket.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
-const startAmountCoins = 5;
 
 async function generateOneCard(letter, color, weight, price) {
     const comId = new mongoose.Types.ObjectId();
@@ -67,10 +66,12 @@ async function distribDU(gameId) {
                     let newEvent = constructor.event(DISTRIB_DU, MASTER, player.id, du, [], Date.now());
                     io().to(MASTER).emit(EVENT, {event: newEvent});
                     newEvents.push(newEvent);
+                } else if (player.status !== "dead") {
+                    let newEvent = constructor.event("DEAD", MASTER, player.id, 0, [], Date.now());
+                    io().to(MASTER).emit(EVENT, {event: newEvent});
+                    newEvents.push(newEvent);
                 }
             }
-            //TODO $inc for players not dead
-            // $inc: {"players.$[].coins": du},
             GameModel.findByIdAndUpdate(gameId,
                 {
                     $inc: {"players.$[elem].coins": du},
@@ -115,10 +116,22 @@ async function initGameDebt(game) {
     return game;
 }
 
+async function generateInequality(nbPlayer) {
+    //10% de riche = 2x le median
+    //10% de pauvre = 1/2 le median
+    //80% classe moyenne = la moyenne
+    const classHaute = Math.floor(nbPlayer * 0.1);
+    const classBasse = Math.floor(nbPlayer * 0.1);
+    const classMoyenne = nbPlayer - classHaute - classBasse;
+
+    return [classBasse, classMoyenne, classHaute];
+}
+
 async function initGameJune(game) {
     const nbPlayer = game.players.length;
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
     let decks = await generateCardsPerPlayers(nbPlayer, prices);
+    const classes = game.inequalityStart ? await generateInequality(nbPlayer) : [];
 
     for await (let player of game.players) {
         // pull 4 cards from the deck and distribute to the player
@@ -128,16 +141,32 @@ async function initGameJune(game) {
         player.typeMoney = "june";
         player.statusGame = STARTED;
 
-        //TODO INEQUALITY START
-        player.coins = startAmountCoins;
-        game.currentMassMonetary += startAmountCoins;
+        if (game.inequalityStart) {
+            if (classes[0] >= 1) {
+                //classe basses
+                player.coins = Math.floor(game.startAmountCoins / 2);
+                classes[0]--;
+            } else if (classes[2] >= 1) {
+                // classe haute
+                player.coins = Math.floor(game.startAmountCoins * 2);
+                classes[2]--;
+            } else {
+                //classe moyenne
+                player.coins = game.startAmountCoins;
+            }
+        } else {
+            player.coins = game.startAmountCoins;
+        }
+        game.currentMassMonetary += game.startAmountCoins;
 
-        io().to(player.id).emit(START_GAME, {cards: cards, coins: 5});
+        io().to(player.id).emit(START_GAME, {cards: cards, coins: player.coins});
         let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
         io().to(MASTER).emit(EVENT, {event: newEvent});
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
+    io().to(game._id.toString()).emit(FIRST_DU, {du: game.currentDU});
+
     let firstDUevent = constructor.event("first_DU", MASTER, MASTER, game.currentDU, [], Date.now());
     game.events.push(firstDUevent);
     game.decks = decks;
@@ -162,10 +191,68 @@ async function stopRound(gameId) {
         })
 }
 
+async function killPlayer(idGame, idPlayer) {
+    const game = await GameModel.findById(idGame);
+    const player = _.find(game.players, {id: idPlayer});
+    const groupedCards = _.groupBy(_.sortBy(player.cards, 'weight'), 'weight');
+
+    // make him dead, Remove cards from player's hand, reset coins if debt
+    await GameModel.updateOne(
+        {_id: idGame, 'players._id': idPlayer},
+        {
+            $pull: {
+                'players.$.cards': {
+                    _id: {$in: player.cards.map(c => c.id)}
+                }
+            },
+            $set: {
+                'players.$.status': "dead",
+                'players.$.coins': game.typeMoney === "june" ? player.coins : 0
+            },
+        },
+    );
+
+    let newEvent = constructor.event("dead_event", "master", idPlayer, 0, [], Date.now());
+    //PUT BACK CARDS IN THE DECKs
+    GameModel.updateOne(
+        {_id: idGame, 'players._id': idPlayer},
+        {
+            $push: {
+                decks: {
+                    $each: [
+                        {$each: groupedCards[0]},
+                        {$each: groupedCards[1]},
+                        {$each: groupedCards[2]},
+                        {$each: groupedCards[3]}
+                    ]
+                },
+                'events': newEvent
+            },
+        }
+    )
+        .then(updatedGame => {
+            io().to(MASTER).emit(EVENT, newEvent);
+            io().to(idPlayer).emit("you are dead");
+        })
+        .catch(err => {
+            log.error('player escape dead, error', err);
+        })
+}
+
+async function deadPassing(roundMinutes, minutesPassed) {
+    const modulo3 = roundMinutes / 3;
+    if (minutesPassed > modulo3) {
+        // killPlayer(idGame,idPlayer)
+    }
+}
+
 function startRoundMoneyLibre(gameId, roundMinutes) {
     let minutesPassed = 0;
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
         minutesPassed++;
+        io().to(MASTER).emit("minutes_passed", minutesPassed);
+
+        // TODO  the dead is coming ;
         distribDU(gameId);
 
         if (minutesPassed >= roundMinutes) {
@@ -173,7 +260,7 @@ function startRoundMoneyLibre(gameId, roundMinutes) {
             console.log(roundMinutes + ' minutes have passed');
             stopRound(gameId);
         }
-    }, 30 * 1000); // 60 seconds * 1000 milliseconds
+    }, 60 * 1000); // 60 seconds * 1000 milliseconds
 }
 
 function startRoundMoneyDebt(gameId, roundMinutes) {
@@ -214,10 +301,11 @@ export default {
                 players: [],
                 decks: [],
                 events: [],
-                priceWeight1: body.priceWeight1 ? body.priceWeight1 : 1,
-                priceWeight2: body.priceWeight2 ? body.priceWeight2 : 3,
-                priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
-                priceWeight4: body.priceWeight4 ? body.priceWeight4 : 9,
+                priceWeight1: 1,
+                priceWeight2: 3,
+                priceWeight3: 6,
+                priceWeight4: 9,
+                startAmountCoins: 5,
                 inequalityStart: false,
                 tauxCroissance: 10,
                 round: 0,
@@ -240,8 +328,6 @@ export default {
                 });
             }
         }
-    },
-    update: async (req, res, next) => {
     },
     startRound: async (req, res, next) => {
         const id = req.body.idGame;
@@ -356,6 +442,8 @@ export default {
                     game.priceWeight2 = body.priceWeight2 ? body.priceWeight2 : 3;
                     game.priceWeight3 = body.priceWeight3 ? body.priceWeight3 : 6;
                     game.priceWeight4 = body.priceWeight4 ? body.priceWeight4 : 9;
+                    game.startAmountCoins = body.startAmountCoins ? body.startAmountCoins : 5;
+                    game.tauxCroissance = body.tauxCroissance ? body.tauxCroissance : 10;
                     game.round = 1;
                     game.roundMax = body.roundMax ? body.roundMax : 10;
                     game.roundMinutes = body.roundMinutes ? body.roundMinutes : 8;
@@ -381,6 +469,7 @@ export default {
                             roundMax: gameUpdated.roundMax,
                             roundMinutes: gameUpdated.roundMinutes,
                             currentDU: gameUpdated.currentDU,
+                            startAmountCoins: gameUpdated.startAmountCoins,
                             currentMassMonetary: gameUpdated.currentMassMonetary,
                             inequalityStart: gameUpdated.inequalityStart,
                             modified: Date.now(),
@@ -526,6 +615,19 @@ export default {
                 );
         }
     },
+    killPlayer: async (req, res, next) => {
+        const idGame = req.body.idGame;
+        const idPlayer = req.body.idPlayer;
+        if (!idPlayer || !idGame) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            await killPlayer(idGame, idPlayer);
+            res.status(200).json({status: "done"});
+        }
+    },
     reset: async (req, res, next) => {
         const idGame = req.body.idGame;
         if (!idGame) {
@@ -540,6 +642,7 @@ export default {
                     typeMoney: "june",
                     'players.$[].cards': [],
                     'players.$[].coins': 0,
+                    'players.$[].status': "alive",
                     decks: [],
                     priceWeight1: 1,
                     priceWeight2: 3,
@@ -549,6 +652,7 @@ export default {
                     currentDU: 0,
                     inequalityStart: false,
                     tauxCroissance: 10,
+                    startAmountCoins: 5,
                     round: 0,
                     roundMax: 1,
                     roundMinutes: 40,

@@ -123,8 +123,6 @@
     margin-left: 5px;
     cursor: pointer;
     z-index: 10;
-    //width: 25px;
-    //height: 25px;
     color: #f44336;
   }
 }
@@ -141,4 +139,19 @@
     background: #f5f5f5;
     max-height: 350px;
   }
+}
+
+.dead{
+  position: relative;
+  left: 56%;
+  top: 15%;
+  font-size: 30px;
+}
+
+.deadprompt{
+  position:relative;
+  cursor:pointer ;
+  left:15%;
+  top:43%;
+  font-size: 50px;
 }

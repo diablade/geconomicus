@@ -31,7 +31,7 @@
       <div class="">
         <mat-form-field class="justify-content-center" appearance="fill">
           <mat-label>Type de monnaie</mat-label>
-          <mat-select [(value)]="selectedMoney">
+          <mat-select [(value)]="game.typeMoney">
             <mat-option [value]="option.value" [disabled]="option.isDisabled"
                         *ngFor="let option of options">{{ option.label }}</mat-option>
           </mat-select>
@@ -112,7 +112,7 @@
     </div>
   </div>
   <div class="w-100" *ngIf="game && game.status==='open'">
-    <div class="text-center" *ngIf="game && game.status==='open'">
+    <div class="text-center">
       <h2 class="fs-3 ">Joueurs connectés</h2>
       <section class="">
         <mat-slide-toggle
@@ -120,6 +120,19 @@
           [color]="'warn'"
           [(ngModel)]="deleteUser">
           Supprimer un joueur ?
+        </mat-slide-toggle>
+      </section>
+    </div>
+  </div>
+  <div class="w-100" *ngIf="game && game.status!=='open'">
+    <div class="text-center">
+      <h2 class="fs-3 ">Joueurs</h2>
+      <section class="">
+        <mat-slide-toggle
+          class=""
+          [color]="'warn'"
+          [(ngModel)]="killUser">
+          faire passer la mort ? 😈☠️⚰️🪦
         </mat-slide-toggle>
       </section>
     </div>
@@ -132,6 +145,12 @@
           <a href="{{getUserUrl(player._id)}}" target="_blank">{{player.name}} </a>
           <fa-icon class="joinQr" (click)="reJoin(player._id)" [icon]="faQrcode"></fa-icon>
           <fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)" [icon]="faTrashCan"></fa-icon>
+        </div>
+        <div class="dead" *ngIf="player.status==='dead'">
+          🪦
+        </div>
+        <div class="deadprompt" *ngIf="killUser && player.status==='alive'" (click)="onKillUser(player)" >
+          ☠️
         </div>
         <div class="player-frame" [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
              [ngStyle]="{'border-color':'#'+player.hairColor}"

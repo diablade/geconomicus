@@ -44,6 +44,7 @@ export class CardComponent implements AfterViewInit {
   @Input() idOwner: string | undefined;
   @Input() idGame: string | undefined;
   @Input() typeMoney: string | undefined;
+  @Input() currentDU: number = 1;
   @Input() screenWidth: number = 1;
   @Input() screenHeight: number = 1;
   state = "default";

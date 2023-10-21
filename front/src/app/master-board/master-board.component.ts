@@ -5,7 +5,14 @@ import {BackService} from "../services/back.service";
 import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {faFlagCheckered, faPeopleArrows, faQrcode, faCogs, faTrashCan, faCircleInfo} from '@fortawesome/free-solid-svg-icons';
+import {
+  faFlagCheckered,
+  faPeopleArrows,
+  faQrcode,
+  faCogs,
+  faTrashCan,
+  faCircleInfo,
+} from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -26,9 +33,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   idGame: string = "";
   public game: Game = new Game;
   data: string = "";
-  selectedMoney: any;
   private socket: any;
   deleteUser = false;
+  killUser = false;
   protected readonly environment = environment;
   ioURl: string = environment.API_HOST;
   faTrashCan = faTrashCan;
@@ -41,7 +48,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   timerProgress: number = 0;
 
   options = [
-    {value: 'june', label: 'Monnaie libre', isDisabled:false},
+    {value: 'june', label: 'Monnaie libre', isDisabled: false},
     {value: 'Debt', label: 'Monnaie dette (coming soon)', isDisabled: true},
   ];
   minutes: string = "00";
@@ -197,22 +204,30 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 
   showOptions() {
     const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-      data: {game:this.game},
+      data: {game: this.game},
     });
     dialogRef.afterClosed().subscribe(results => {
-      this.game.roundMax=results.roundMax;
-      this.game.roundMinutes=results.roundMinutes;
-      this.game.priceWeight1=results.priceWeight1;
-      this.game.priceWeight2=results.priceWeight2;
-      this.game.priceWeight3=results.priceWeight3;
-      this.game.priceWeight4=results.priceWeight4;
-      this.game.inequalityStart=results.inequalityStart;
-      this.game.name=results.name;
+      this.game.roundMax = results.roundMax;
+      this.game.roundMinutes = results.roundMinutes;
+      this.game.priceWeight1 = results.priceWeight1;
+      this.game.priceWeight2 = results.priceWeight2;
+      this.game.priceWeight3 = results.priceWeight3;
+      this.game.priceWeight4 = results.priceWeight4;
+      this.game.inequalityStart = results.inequalityStart;
+      this.game.startAmountCoins = results.startAmountCoins;
+      this.game.tauxCroissance = results.tauxCroissance;
+      this.game.name = results.name;
     });
   }
 
   showRules() {
     this.dialog.open(GameInfosDialog, {});
+  }
+
+  onKillUser(player: Player) {
+    this.backService.killUser(player._id, this.idGame).subscribe((game: Game) => {
+      this.game = game;
+    });
   }
 }
 
@@ -223,10 +238,12 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 export class JoinQrDialog {
   constructor(public dialogRef: MatDialogRef<JoinQrDialog>, @Inject(MAT_DIALOG_DATA) public data: any) {
   }
+
   back(): void {
     this.dialogRef.close();
   }
 }
+
 @Component({
   selector: 'game-infos-dialog',
   templateUrl: '../dialogs/game-infos-dialog.html',

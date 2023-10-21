@@ -18,8 +18,6 @@ export class Player {
   skinColor: string = "#ECAD80";
   hairColor: string = "#3EAC2C";
   status: string = "alive";
-  typeMoney: string = "june";
-  statusGame: string = "waiting";
 }
 
 export class Card {
@@ -42,7 +40,7 @@ export class Game {
   _id: string = "";
   status: string = "";
   name: string = "";
-  typeMoney: string = "";
+  typeMoney: string = "june";
   players: Player[] = [];
   decks: Card[][] = [[]];
   priceWeight1: number = 1;
@@ -56,6 +54,7 @@ export class Game {
   roundMax: number = 10;
   roundMinutes: number = 8;
   tauxCroissance: number = 10;
+  startAmountCoins: number = 5;
   events: EventGeco[] = [];
   // @ts-ignore
   modified: Date = Date.now();
