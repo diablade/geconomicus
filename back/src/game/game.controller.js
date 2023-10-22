@@ -181,6 +181,7 @@ async function initGameJune(game) {
 }
 
 async function stopRound(gameId) {
+    stopTimer();
     let stopRoundEvent = constructor.event(STOP_ROUND, MASTER, "", 0, [], Date.now());
     GameModel.updateOne({_id: gameId}, {
         $set: {
@@ -262,7 +263,6 @@ function startRoundMoneyLibre(gameId, roundMinutes, minutesLeft) {
 
         if (minutesLeft <= 0) {
             stopRound(gameId);
-            stopTimer();
         } else {
             // Continue the timer
             startRoundMoneyLibre(gameId, roundMinutes, minutesLeft - 1);
@@ -410,28 +410,10 @@ export default {
                 message: "bad request"
             });
         } else {
-            let stopRoundEvent = constructor.event(STOP_ROUND, MASTER, "", 0, [], Date.now());
-            GameModel.updateOne({_id: id}, {
-                $set: {
-                    status: INTER_TOUR,
-                    modified: Date.now(),
-                },
-                $push: {events: stopRoundEvent}
-            }, {new: true})
-                .then(updatedGame => {
-                    io().to(id).emit(STOP_ROUND);
-                    io().to(MASTER).emit(EVENT, stopRoundEvent);
-                    res.status(200).send({
-                        status: INTER_TOUR,
-                    });
-                })
-                .catch(err => {
-                    log.error('get game error', err);
-                    next({
-                        status: 404,
-                        message: "not found"
-                    });
-                })
+            await stopRound(id);
+            res.status(200).send({
+                status: INTER_TOUR,
+            });
         }
     },
     start: async (req, res, next) => {
