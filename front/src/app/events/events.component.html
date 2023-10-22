@@ -1,25 +1,35 @@
-<div class="row">
-  <div class="col-9 graph">
-    <canvas baseChart
-            class="chart"
-            height="100"
-            [data]="lineChartData"
-            [options]="lineChartOptions"
-            [type]="lineChartType">
-    </canvas>
+<div class="w-100 h-100 d-flex flex-row">
+  <div class="d-sm-none d-md-block events">
+    <h1>Evenements</h1>
+    <div class="event" *ngFor="let event of events">
+      {{event.date | date:"HH:mm:ss"}}: {{event.typeEvent + " " + event.amount}}
+    </div>
   </div>
-  <div class="col-3 events">
-    <div class="" *ngFor="let event of events">{{event.date + " " + event.typeEvent + " " + event.amount}}</div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-9 graph">
-    <canvas baseChart
-            class="chart"
-            height="100"
-            [data]="lineChartDataRelatif"
-            [options]="lineChartOptionsRelatif"
-            [type]="lineChartTypeRelatif">
-    </canvas>
+  <div class="flex-grow-1 d-flex flex-column">
+    <h1 class="m-2">Comptes en quantitatif</h1>
+    <div class="graph">
+      <canvas baseChart
+              class="chart"
+              height="100"
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [type]="lineChartType">
+      </canvas>
+    </div>
+    <h1 class="m-2">Comptes en relatif (en DU)</h1>
+    <div class="graph">
+      <canvas baseChart
+              class="chart"
+              height="100"
+              [data]="lineChartDataRelatif"
+              [options]="lineChartOptionsRelatif"
+              [type]="lineChartTypeRelatif">
+      </canvas>
+    </div>
+    <div class="d-sm-block d-md-none eventsSmall">
+      <div class="event" *ngFor="let event of events">
+        {{event.date | date:"HH:mm:ss"}}: {{event.typeEvent + " " + event.amount}}
+      </div>
+    </div>
   </div>
 </div>

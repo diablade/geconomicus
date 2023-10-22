@@ -11,13 +11,13 @@ const MASTER = 'master';
 const DISTRIB_DU = 'distrib_du';
 const FIRST_DU = 'first_du';
 const RESET_GAME = 'reset-game';
+const TRANSACTION = 'transaction';
 
 if (typeof module !== 'undefined' && module.exports) {
 // Export the constants for use in other scripts if needed (for ES6 and later).
     module.exports = {
         OPEN: OPEN,
         START_GAME: START_GAME,
-        STOP_GAME: STOP_GAME,
         STOP_GAME: STOP_GAME,
         START_ROUND: START_ROUND,
         STOP_ROUND: STOP_ROUND,
@@ -28,6 +28,7 @@ if (typeof module !== 'undefined' && module.exports) {
         DISTRIB_DU: DISTRIB_DU,
         FIRST_DU: FIRST_DU,
         RESET_GAME: RESET_GAME,
+        TRANSACTION: TRANSACTION,
     };
 }
 

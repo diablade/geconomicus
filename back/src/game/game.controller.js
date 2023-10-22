@@ -12,6 +12,13 @@ import {io} from "../../conf_socket.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
+let timer;
+
+function stopTimer() {
+    if (timer) {
+        clearTimeout(timer);
+    }
+}
 
 async function generateOneCard(letter, color, weight, price) {
     const comId = new mongoose.Types.ObjectId();
@@ -161,13 +168,13 @@ async function initGameJune(game) {
 
         io().to(player.id).emit(START_GAME, {cards: cards, coins: player.coins});
         let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
-        io().to(MASTER).emit(EVENT, {event: newEvent});
+        io().to(MASTER).emit(EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
     io().to(game._id.toString()).emit(FIRST_DU, {du: game.currentDU});
 
-    let firstDUevent = constructor.event("first_DU", MASTER, MASTER, game.currentDU, [], Date.now());
+    let firstDUevent = constructor.event(FIRST_DU, MASTER, MASTER, game.currentDU, [], Date.now());
     game.events.push(firstDUevent);
     game.decks = decks;
     return game;
@@ -246,19 +253,19 @@ async function deadPassing(roundMinutes, minutesPassed) {
     }
 }
 
-function startRoundMoneyLibre(gameId, roundMinutes) {
-    let minutesPassed = 0;
-    const timer = setInterval(async () => {
-        minutesPassed++;
-        io().to(MASTER).emit("minutes_passed", minutesPassed);
+function startRoundMoneyLibre(gameId, roundMinutes, minutesLeft) {
+    timer = setTimeout(async () => {
+        io().to(MASTER).emit("minutes_left", minutesLeft);
 
         // TODO  the dead is coming ;
         distribDU(gameId);
 
-        if (minutesPassed >= roundMinutes) {
-            clearInterval(timer);
-            console.log(roundMinutes + ' minutes have passed');
+        if (minutesLeft <= 0) {
             stopRound(gameId);
+            stopTimer();
+        } else {
+            // Continue the timer
+            startRoundMoneyLibre(gameId, roundMinutes, minutesLeft - 1);
         }
     }, 60 * 1000); // 60 seconds * 1000 milliseconds
 }
@@ -279,7 +286,7 @@ function startRoundMoneyDebt(gameId, roundMinutes) {
 
 function startRound(updatedGame) {
     if (updatedGame.typeMoney === "june") {
-        startRoundMoneyLibre(updatedGame._id, updatedGame.roundMinutes);
+        startRoundMoneyLibre(updatedGame._id, updatedGame.roundMinutes, updatedGame.roundMinutes);
     } else {
         startRoundMoneyDebt(updatedGame);
     }

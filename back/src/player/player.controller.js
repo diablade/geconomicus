@@ -178,8 +178,8 @@ export default {
                                         }
                                     }
                                 );
-                                io().to("master").emit(EVENT, {event: discardEvent});
-                                io().to("master").emit(EVENT, {event: newCardsEvent});
+                                io().to(MASTER).emit(EVENT, discardEvent);
+                                io().to(MASTER).emit(EVENT, newCardsEvent);
                                 res.status(200).json(cardsDraw);
                             } else {
                                 //TODO changement technologique

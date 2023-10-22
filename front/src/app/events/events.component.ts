@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import io from "socket.io-client";
 import * as _ from 'lodash-es';
 import {ActivatedRoute, Router} from "@angular/router";
@@ -8,8 +8,10 @@ import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
 import {EventGeco, Game, Player} from "../models/game";
 import {Subscription} from "rxjs";
+import {
+  EVENT, STARTED, FIRST_DU, DISTRIB_DU, STOP_ROUND, START_ROUND, TRANSACTION
 // @ts-ignore
-import {START_ROUND, STARTED, STOP_ROUND} from "../../../../config/constantes";
+} from "../../../../config/constantes";
 
 import {ChartConfiguration, ChartDataset, ChartData, ChartType} from 'chart.js';
 import 'chartjs-adapter-date-fns';
@@ -17,9 +19,6 @@ import 'chartjs-adapter-date-fns';
 import {subSeconds, parseISO} from 'date-fns';
 
 // import { Chart, ChartEvent, ChartOptions, PluginChartOptions} from 'chart.js';
-
-// @ts-ignore
-import {EVENT} from "../../../../config/constantes";
 
 
 @Component({
@@ -35,6 +34,9 @@ export class EventsComponent implements OnInit, AfterViewInit {
   game: Game | undefined;
   events: EventGeco[] = [];
   players: Player[] = [];
+  datasets: ChartDataset[] = [];
+  datasetsRelatif: ChartDataset[] = [];
+  currentDU = 0;
 
   public lineChartData: ChartConfiguration['data'] | undefined;
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -70,8 +72,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
   };
   public lineChartType: ChartType = 'line';
 
-  // @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
-
   public lineChartDataRelatif: ChartConfiguration['data'] | undefined;
   public lineChartOptionsRelatif: ChartConfiguration['options'] = {
     elements: {
@@ -97,18 +97,21 @@ export class EventsComponent implements OnInit, AfterViewInit {
   };
   public lineChartTypeRelatif: ChartType = 'line';
 
-  // @ViewChild(BaseChartDirective) chartRelatif?: BaseChartDirective;
-
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
   }
 
   ngOnInit(): void {
     this.subscription = this.route.params.subscribe(params => {
       this.idGame = params['idGame'];
-      this.backService.getGame(this.idGame).subscribe(game => {
+      this.backService.getGame(this.idGame).subscribe(async game => {
         this.events = game.events;
         this.players = game.players;
-        this.convertEventsToDatasets(this.events, this.players);
+        await this.initDatasets();
+        const firstDu = await _.find(this.events,e=>{return e.typeEvent == FIRST_DU});
+        if(firstDu){
+          this.currentDU=firstDu.amount;
+        }
+        this.addEventsToDatasets(this.events);
       });
       this.socket = io(environment.API_HOST, {
         query: {
@@ -122,7 +125,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.socket.on(EVENT, async (data: any) => {
       console.log(EVENT, data);
-      this.events.push(data)
+      this.events.push(data.event);
     });
   }
 
@@ -142,62 +145,66 @@ export class EventsComponent implements OnInit, AfterViewInit {
     return `rgba(${red}, ${green}, ${blue},1)`;
   }
 
-  convertEventsToDatasets(unsortedEvents: EventGeco[], unsortedPlayers: Player[]) {
-    // Initialize an empty dataset for each player with a running total
-    const players = _.sortBy(unsortedPlayers, 'name');
+  async initDatasets() {
+    // Initialize empty dataset for each player with a running total
+    const players = _.sortBy(this.players, 'name');
+
+    this.datasets = _.map(players, player => ({
+      data: [],
+      label: player.name,
+      backgroundColor: this.hexToRgb(player.hairColor),
+      borderColor: this.hexToRgb(player.hairColor),
+      pointBackgroundColor: this.hexToRgb(player.hairColor),
+      pointBorderColor: this.hexToRgb(player.hairColor),
+      borderWidth: 2, // Line thickness
+      pointRadius: 0.8, // Point thickness
+      total: 0,
+      playerId: player._id
+    }));
+
+    this.datasetsRelatif = _.map(players, player => ({
+      data: [],
+      label: player.name,
+      backgroundColor: this.hexToRgb(player.hairColor),
+      borderColor: this.hexToRgb(player.hairColor),
+      pointBackgroundColor: this.hexToRgb(player.hairColor),
+      pointBorderColor: this.hexToRgb(player.hairColor),
+      borderWidth: 2, // Line thickness
+      pointRadius: 0.8, // Point thickness
+      total: 0,
+      playerId: player._id
+    }));
+  }
+
+  addEventsToDatasets(unsortedEvents: EventGeco[]) {
     const events = _.sortBy(unsortedEvents, 'date');
 
-    const datasets: ChartDataset[] = players.map(player => ({
-      data: [],
-      label: player.name,
-      backgroundColor: this.hexToRgb(player.hairColor),
-      borderColor: this.hexToRgb(player.hairColor),
-      pointBackgroundColor: this.hexToRgb(player.hairColor),
-      pointBorderColor: player.hairColor,
-      borderWidth: 2, // Line thickness
-      pointRadius: 1, // Point thickness
-      total: 0,
-      playerId: player._id
-    }));
-
-    const datasetsRelatif: ChartDataset[] = players.map(player => ({
-      data: [],
-      label: player.name,
-      backgroundColor: this.hexToRgb(player.hairColor),
-      borderColor: this.hexToRgb(player.hairColor),
-      pointBackgroundColor: this.hexToRgb(player.hairColor),
-      pointBorderColor: player.hairColor,
-      borderWidth: 2, // Line thickness
-      pointRadius: 1, // Point thickness
-      total: 0,
-      playerId: player._id
-    }));
-
-    let currentDU = 0;
     // Iterate over each event
     for (const event of events) {
       if (event.typeEvent === STOP_ROUND || event.typeEvent === START_ROUND || event.typeEvent === "tranformNewCards" || event.typeEvent === "transformDiscard") {
         continue
-      } else if (event.typeEvent === "first_DU") {
-        currentDU = event.amount;
+      } else if (event.typeEvent === FIRST_DU) {
+        this.currentDU = event.amount;
         continue
-      } else if (event.typeEvent === "distrib_du") {
-        currentDU = event.amount;
+      } else if (event.typeEvent === DISTRIB_DU) {
+        this.currentDU = event.amount;
+      } else if (event.typeEvent === "distrib") {
+        console.log("distrib yooo");
       }
 
       // Find the dataset for the emitter and receiver
       // @ts-ignore
-      const emitterDataset = _.find(datasets, dataset => dataset.playerId === event.emitter);
+      const emitterDataset = _.find(this.datasets, dataset => dataset.playerId === event.emitter);
       // @ts-ignore
-      const emitterDatasetRelatif = _.find(datasetsRelatif, dataset => dataset.playerId === event.emitter);
+      const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.emitter);
       // @ts-ignore
-      const receiverDataset = _.find(datasets, dataset => dataset.playerId === event.receiver);
+      const receiverDataset = _.find(this.datasets, dataset => dataset.playerId === event.receiver);
       // @ts-ignore
-      const receiverDatasetRelatif = _.find(datasetsRelatif, dataset => dataset.playerId === event.receiver);
+      const receiverDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.receiver);
 
       // Add the event to the emitter's and receiver's datasets and update the running total
       if (emitterDataset) {
-        if (event.typeEvent === "transaction") {
+        if (event.typeEvent === TRANSACTION) {
           // @ts-ignore before
           emitterDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDataset.total});
           // @ts-ignore before
@@ -205,18 +212,21 @@ export class EventsComponent implements OnInit, AfterViewInit {
             // @ts-ignore before
             x: subSeconds(parseISO(event.date), 1),
             // @ts-ignore before
-            y: (emitterDataset.total / currentDU)
+            y: (emitterDataset.total / this.currentDU)
           });
+        }
+        if (event.typeEvent === "distrib") {
+          console.log("distrib yoo emitter");
         }
         // @ts-ignore
         emitterDataset.total -= event.amount;
         // @ts-ignore after transaction
         emitterDataset.data.push({x: event.date, y: emitterDataset.total});
         // @ts-ignore after transaction
-        emitterDatasetRelatif.data.push({x: event.date, y: emitterDataset.total / currentDU});
+        emitterDatasetRelatif.data.push({x: event.date, y: (emitterDataset.total / this.currentDU)});
       }
       if (receiverDataset) {
-        if (event.typeEvent === "transaction") {
+        if (event.typeEvent === TRANSACTION) {
           // @ts-ignore before
           receiverDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDataset.total});
           // @ts-ignore before
@@ -224,15 +234,19 @@ export class EventsComponent implements OnInit, AfterViewInit {
             // @ts-ignore before
             x: subSeconds(parseISO(event.date), 1),
             // @ts-ignore before
-            y: receiverDataset.total / currentDU
+            y: (receiverDataset.total / this.currentDU)
           });
+        }
+        if (event.typeEvent === "distrib") {
+        // @ts-ignore
+          console.log("distrib yoo receiver",receiverDataset.total, this.currentDU);
         }
         // @ts-ignore
         receiverDataset.total += event.amount;
         // @ts-ignore after
         receiverDataset.data.push({x: event.date, y: receiverDataset.total});
         // @ts-ignore after
-        receiverDatasetRelatif.data.push({x: event.date, y: receiverDataset.total / currentDU});
+        receiverDatasetRelatif.data.push({x: event.date, y: (receiverDataset.total / this.currentDU)});
       }
 
     }
@@ -241,10 +255,12 @@ export class EventsComponent implements OnInit, AfterViewInit {
     // datasets.forEach(dataset => delete dataset.total);
 
     this.lineChartData = {
-      datasets: datasets
+      // @ts-ignore
+      datasets: this.datasets
     };
     this.lineChartDataRelatif = {
-      datasets: datasetsRelatif
+      // @ts-ignore
+      datasets: this.datasetsRelatif
     };
   }
 

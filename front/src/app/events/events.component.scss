@@ -1,4 +1,17 @@
 .events{
+  min-width: 250px;
+  background-color: #D7D7D7;
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
+}
+.eventsSmall{
+  background-color: #d7d7d7;
+  width: 100%;
   height: 400px;
   overflow: auto;
+  padding: 10px;
+}
+.graph{
+  height: 400px;
 }
