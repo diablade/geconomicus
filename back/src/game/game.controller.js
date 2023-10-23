@@ -345,7 +345,7 @@ export default {
                 message: "bad request"
             });
         } else {
-            let startEvent = constructor.event(START_ROUND, MASTER, "", 0, [], Date.now());
+            let startEvent = constructor.event(START_ROUND, MASTER, "", round, [], Date.now());
             GameModel.findByIdAndUpdate(id, {
                 $set: {
                     status: "playing",

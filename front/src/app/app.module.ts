@@ -35,6 +35,7 @@ import {EventsComponent} from './events/events.component';
 import {NgChartsModule} from 'ng2-charts';
 import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -56,29 +57,30 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     GameOptionsDialogComponent,
     InformationDialogComponent,
   ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    MatRadioModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatInputModule,
-    FormsModule,
-    NgxColorsModule,
-    NgOptimizedImage,
-    MatBadgeModule,
-    MatSlideToggleModule,
-    FontAwesomeModule,
-    QRCodeModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    NgChartsModule,
-    MatCheckboxModule
-  ],
+    imports: [
+        HttpClientModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        MatRadioModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatInputModule,
+        FormsModule,
+        NgxColorsModule,
+        NgOptimizedImage,
+        MatBadgeModule,
+        MatSlideToggleModule,
+        FontAwesomeModule,
+        QRCodeModule,
+        MatProgressSpinnerModule,
+        MatSelectModule,
+        NgChartsModule,
+        MatCheckboxModule,
+        MatTooltipModule
+    ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}
   ],

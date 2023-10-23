@@ -3,7 +3,7 @@ import log from '../../conf_log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
 import {io} from '../../conf_socket.js';
-import {EVENT, MASTER, START_GAME, STOP_ROUND, INTER_TOUR, START_ROUND} from '../../../config/constantes.js';
+import * as C from '../../../config/constantes.js';
 
 
 export default {
@@ -153,8 +153,8 @@ export default {
                                 // const newcardsIds = _.map(newCards, c => c._id);
                                 const cardsDraw = _.concat(newCards, [newCardSup]);
                                 //create events
-                                let discardEvent = constructor.event("transformDiscard", idPlayer, "master", 0, cardsToExchange, Date.now());
-                                let newCardsEvent = constructor.event('tranformNewCards', "master", idPlayer, 0, cardsDraw, Date.now());
+                                let discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
+                                let newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
 
                                 // remove from decks, add events
                                 await GameModel.updateOne(
@@ -178,8 +178,8 @@ export default {
                                         }
                                     }
                                 );
-                                io().to(MASTER).emit(EVENT, discardEvent);
-                                io().to(MASTER).emit(EVENT, newCardsEvent);
+                                io().to(C.MASTER).emit(C.EVENT, discardEvent);
+                                io().to(C.MASTER).emit(C.EVENT, newCardsEvent);
                                 res.status(200).json(cardsDraw);
                             } else {
                                 //TODO changement technologique
@@ -211,8 +211,8 @@ export default {
                 const buyer = _.find(game.players, {id: idBuyer});
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
-                const cost = game.typeMoney === "june" ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
-                let newEvent = constructor.event('transaction', idBuyer, idSeller, card.price, [card], Date.now());
+                const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
+                let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
                 if (buyer.status === "dead") {
                     next({
@@ -256,11 +256,11 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
-                io().to(MASTER).emit(EVENT, newEvent);
+                io().to(MASTER).emit(C.EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= cost;
                 seller.coins += cost;
-                io().to(idSeller).emit('transaction-done', {idCardSold: idCard, coins: seller.coins});
+                io().to(idSeller).emit(C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
                 // Send back to buyer , card with updated coins
                 res.status(200).json({buyedCard: card, coins: buyer.coins});
             } catch (error) {

@@ -6,12 +6,10 @@ import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
-import {EventGeco, Game, Player} from "../models/game";
+import {Card, EventGeco, Game, Player} from "../models/game";
 import {Subscription} from "rxjs";
-import {
-  EVENT, STARTED, FIRST_DU, DISTRIB_DU, STOP_ROUND, START_ROUND, TRANSACTION
 // @ts-ignore
-} from "../../../../config/constantes";
+import * as C from "../../../../config/constantes";
 
 import {ChartConfiguration, ChartDataset, ChartData, ChartType} from 'chart.js';
 import 'chartjs-adapter-date-fns';
@@ -37,6 +35,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
   datasets: ChartDataset[] = [];
   datasetsRelatif: ChartDataset[] = [];
   currentDU = 0;
+  C = C;
+
 
   public lineChartData: ChartConfiguration['data'] | undefined;
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -107,9 +107,11 @@ export class EventsComponent implements OnInit, AfterViewInit {
         this.events = game.events;
         this.players = game.players;
         await this.initDatasets();
-        const firstDu = await _.find(this.events,e=>{return e.typeEvent == FIRST_DU});
-        if(firstDu){
-          this.currentDU=firstDu.amount;
+        const firstDu = await _.find(this.events, e => {
+          return e.typeEvent == C.FIRST_DU
+        });
+        if (firstDu) {
+          this.currentDU = firstDu.amount;
         }
         this.addEventsToDatasets(this.events);
       });
@@ -123,8 +125,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.socket.on(EVENT, async (data: any) => {
-      console.log(EVENT, data);
+    this.socket.on(C.EVENT, async (data: any) => {
       this.events.push(data.event);
     });
   }
@@ -181,15 +182,13 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
     // Iterate over each event
     for (const event of events) {
-      if (event.typeEvent === STOP_ROUND || event.typeEvent === START_ROUND || event.typeEvent === "tranformNewCards" || event.typeEvent === "transformDiscard") {
+      if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND || event.typeEvent === C.TRANSFORM_NEW || event.typeEvent === C.TRANSFORM_DISCARD) {
         continue
-      } else if (event.typeEvent === FIRST_DU) {
+      } else if (event.typeEvent === C.FIRST_DU) {
         this.currentDU = event.amount;
         continue
-      } else if (event.typeEvent === DISTRIB_DU) {
+      } else if (event.typeEvent === C.DISTRIB_DU) {
         this.currentDU = event.amount;
-      } else if (event.typeEvent === "distrib") {
-        console.log("distrib yooo");
       }
 
       // Find the dataset for the emitter and receiver
@@ -204,7 +203,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
       // Add the event to the emitter's and receiver's datasets and update the running total
       if (emitterDataset) {
-        if (event.typeEvent === TRANSACTION) {
+        if (event.typeEvent === C.TRANSACTION) {
           // @ts-ignore before
           emitterDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDataset.total});
           // @ts-ignore before
@@ -215,7 +214,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
             y: (emitterDataset.total / this.currentDU)
           });
         }
-        if (event.typeEvent === "distrib") {
+        if (event.typeEvent === C.DISTRIB) {
           console.log("distrib yoo emitter");
         }
         // @ts-ignore
@@ -226,7 +225,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
         emitterDatasetRelatif.data.push({x: event.date, y: (emitterDataset.total / this.currentDU)});
       }
       if (receiverDataset) {
-        if (event.typeEvent === TRANSACTION) {
+        if (event.typeEvent === C.TRANSACTION) {
           // @ts-ignore before
           receiverDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDataset.total});
           // @ts-ignore before
@@ -237,9 +236,9 @@ export class EventsComponent implements OnInit, AfterViewInit {
             y: (receiverDataset.total / this.currentDU)
           });
         }
-        if (event.typeEvent === "distrib") {
-        // @ts-ignore
-          console.log("distrib yoo receiver",receiverDataset.total, this.currentDU);
+        if (event.typeEvent === C.DISTRIB) {
+          // @ts-ignore
+          console.log("distrib yoo receiver", receiverDataset.total, this.currentDU);
         }
         // @ts-ignore
         receiverDataset.total += event.amount;
@@ -264,4 +263,27 @@ export class EventsComponent implements OnInit, AfterViewInit {
     };
   }
 
+  getResourcesEmoji(color: string) {
+    switch (color) {
+      case "red":
+        return "🟥";
+      case "yellow":
+        return "🟨";
+      case "green":
+        return "🟩";
+      case "blue":
+        return "🟦";
+      default:
+        return "🟥";
+    }
+  }
+
+  getPlayerName(playerId: string) {
+    const player = _.find(this.players,p=>p._id===playerId);
+    return player ? player.name : "undefined";
+  }
+
+  getTextCard(card: Card) {
+    return card.letter+this.getResourcesEmoji(card.color);
+  }
 }

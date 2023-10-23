@@ -15,16 +15,8 @@ import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-import {
-  START_GAME,
-  STOP_GAME,
-  START_ROUND,
-  STOP_ROUND,
-  DISTRIB_DU,
-  FIRST_DU,
-  RESET_GAME,
 // @ts-ignore
-} from "../../../../config/constantes";
+import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 
@@ -125,18 +117,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.socket.on(START_GAME, async (data: any) => {
+    this.socket.on(C.START_GAME, async (data: any) => {
       this.statusGame = "waiting";
       this.player.coins = data.coins;
       await this.receiveCards(data.cards);
     });
-    this.socket.on(START_ROUND, async (data: any) => {
+    this.socket.on(C.START_ROUND, async (data: any) => {
       this.statusGame = "playing";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "c'est parti !! le tour à démarré "},
       });
     });
-    this.socket.on(STOP_ROUND, async (data: any) => {
+    this.socket.on(C.STOP_ROUND, async (data: any) => {
       this.statusGame = "waiting";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "tour terminé !"},
@@ -148,11 +140,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on('disconnect', () => {
       console.log('Socket has been disconnected');
     });
-    this.socket.on(STOP_GAME, (data: any) => {
+    this.socket.on(C.STOP_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
       this.router.navigate(['results', this.idGame]);
     });
-    this.socket.on(DISTRIB_DU, (data: any) => {
+    this.socket.on(C.DISTRIB_DU, (data: any) => {
       this.duVisible = true;
       this.player.coins += data.du;
       this.currentDU = data.du;
@@ -161,12 +153,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 4000);
       console.log(data);
     });
-    this.socket.on(RESET_GAME, async (data: any) => {
+    this.socket.on(C.RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       this.cards = [];
       this.player.coins = 0;
     });
-    this.socket.on(FIRST_DU, async (data: any) => {
+    this.socket.on(C.FIRST_DU, async (data: any) => {
       this.currentDU = data.du;
     });
     this.socket.on("you are dead", async (data: any) => {
@@ -182,7 +174,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       await new Promise(resolve => setTimeout(resolve, 4000));
       this.resurrection();
     });
-    this.socket.on("transaction-done", async (data: any) => {
+    this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
       this.player.coins = data.coins;
       let cardSold = _.find(this.cards, {_id: data.idCardSold});
       if (cardSold) {
