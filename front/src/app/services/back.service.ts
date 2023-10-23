@@ -206,7 +206,7 @@ export class BackService {
   //     );
   // }
   killUser(idPlayer: string, idGame: string) {
-    return this.http.post<Game>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
       idGame: idGame,
       idPlayer: idPlayer
     })

@@ -19,9 +19,8 @@ import {SnackbarService} from "../services/snackbar.service";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
-import {START_ROUND, STARTED, STOP_ROUND} from "../../../../config/constantes";
+import * as C from "../../../../config/constantes";
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
-import {CreateGameDialog} from "../home/home.component";
 
 @Component({
   selector: 'app-master-board',
@@ -106,9 +105,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.socket.on("connected", (players: any) => {
       console.log("connected", players);
     });
-    this.socket.on(START_ROUND, (data: any) => {
+    this.socket.on(C.START_ROUND, (data: any) => {
     });
-    this.socket.on(STOP_ROUND, (data: any) => {
+    this.socket.on(C.STOP_ROUND, (data: any) => {
     });
     this.socket.on('disconnect', () => {
       console.log('Socket has been disconnected');
@@ -134,7 +133,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   startGame() {
     if (this.game) {
       this.backService.startGame(this.game).subscribe((data: any) => {
-        if (data.status == STARTED) {
+        if (data.status == C.STARTED) {
           this.game.status = data.status;
           this.game.round += 1;
         }
@@ -225,8 +224,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   }
 
   onKillUser(player: Player) {
-    this.backService.killUser(player._id, this.idGame).subscribe((game: Game) => {
-      this.game = game;
+    this.backService.killUser(player._id, this.idGame).subscribe((data) => {
+      player.status=C.DEAD;
     });
   }
 }
