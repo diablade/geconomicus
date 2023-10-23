@@ -24,7 +24,7 @@ export default {
                 sold: 0,
                 credits: [],
                 cards: [],
-                status: "alive",
+                status: C.ALIVE,
                 earringsProbability: 100,
                 glassesProbability: 100,
                 featuresProbability: 100
@@ -32,6 +32,67 @@ export default {
             GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}},)
                 .then(updatedGame =>
                     res.status(200).json(player._id))
+                .catch(error => {
+                        log(error);
+                        next({status: 404, message: "Not found"});
+                    }
+                );
+        }
+    },
+    joinInGame: async (req, res, next) => {
+    },
+    joinReincarnate: async (req, res, next) => {
+        const id = req.body.idGame;
+        const name = req.body.name;
+        if (!id && !name) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            const playerId = new mongoose.Types.ObjectId();
+            let player = {
+                _id: playerId,
+                name: name,
+                image: "",
+                sold: 0,
+                credits: [],
+                cards: [],
+                status: C.ALIVE,
+                earringsProbability: 100,
+                glassesProbability: 100,
+                featuresProbability: 100
+            };
+            GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}}, {new: true})
+                .then(async updatedGame => {
+                    const shuffledDeck = _.shuffle(updatedGame.decks[0]);
+                    // Draw new cards for the player
+                    const newCards = shuffledDeck.slice(0, 4);//same weight
+                    //create events
+                    let birthEvent = constructor.event(C.BIRTH, C.MASTER, playerId, 0, newCards, Date.now());
+
+                    // remove from decks, add events
+                    await GameModel.updateOne(
+                        {_id: id},
+                        {
+                            $pull: {
+                                [`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},
+                            },
+                            $push: {
+                                'events': {$each: [birthEvent]}
+                            }
+                        }
+                    );
+                    // and Add new cards to player's hand
+                    await GameModel.updateOne(
+                        {_id: id, 'players._id': playerId},
+                        {
+                            $push: {'players.$.cards': {$each: newCards}}
+                        }
+                    );
+                    io().to(C.MASTER).emit(C.EVENT, birthEvent);
+                    res.status(200).json(player._id);
+                })
                 .catch(error => {
                         log(error);
                         next({status: 404, message: "Not found"});
@@ -214,13 +275,13 @@ export default {
                 const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
                 let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, card.price, [card], Date.now());
                 // Check if buyer has enough coins
-                if (buyer.status === "dead") {
+                if (buyer.status === C.DEAD) {
                     next({
                         status: 400,
                         message: "you should be dead"
                     });
                     throw new Error('you should be dead fool !');
-                } else if (seller.status === "dead") {
+                } else if (seller.status === C.DEAD) {
                     next({
                         status: 400,
                         message: "seller is dead"

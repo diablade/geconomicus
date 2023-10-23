@@ -161,8 +161,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.FIRST_DU, async (data: any) => {
       this.currentDU = data.du;
     });
-    this.socket.on("you are dead", async (data: any) => {
-      this.player.status = "dead";
+    this.socket.on(C.DEAD, async (data: any) => {
+      this.player.status = C.DEAD;
       this.dialog.closeAll();
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️"},
@@ -229,8 +229,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  async resurrection() {
-    this.router.navigate(['game', this.idGame, 'join', '?r=', true]);
+  resurrection() {
+    this.router.navigate(['game', this.idGame, 'join', 'true']);
   }
 
   formatNewCards(newCards: Card[]) {

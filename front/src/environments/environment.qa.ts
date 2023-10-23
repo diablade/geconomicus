@@ -6,6 +6,8 @@ export const environment = {
 
   PLAYER: {
     JOIN: 'player/join/',
+    JOIN_REINCARNATE: 'player/joinReincarnate/',
+    JOIN_IN_GAME: 'player/joinInGame/',
     UPDATE: 'player/update',
     GET: 'player/',
     PRODUCE: 'player/produceFromSquare',

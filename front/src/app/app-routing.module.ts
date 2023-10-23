@@ -13,6 +13,7 @@ const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'results/:idGame', component: ResultsComponent},
     {path: 'game/:idGame/master', component: MasterBoardComponent},
+    {path: 'game/:idGame/join/:reincarnate', component: JoinComponent},
     {path: 'game/:idGame/join', component: JoinComponent},
     {path: 'game/:idGame/events', component: EventsComponent},
     {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},

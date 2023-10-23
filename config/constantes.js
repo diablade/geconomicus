@@ -17,12 +17,20 @@ const TRANSACTION_DONE = 'transaction-done';
 const TRANSACTION = 'transaction';
 const TRANSFORM_DISCARDS = "transformDiscards";
 const TRANSFORM_NEWCARDS = "transformNewCards";
+const DEAD="dead";
+const REMIND_DEAD="remind-dead";
+const ALIVE="alive";
+const BIRTH="birth";
 
 if (typeof module !== 'undefined' && module.exports) {
 // Export the constants for use in other scripts if needed (for ES6 and later).
     module.exports = {
         OPEN: OPEN,
         JUNE: JUNE,
+        DEAD: DEAD,
+        REMIND_DEAD: REMIND_DEAD,
+        ALIVE:ALIVE,
+        BIRTH:BIRTH,
         START_GAME: START_GAME,
         STOP_GAME: STOP_GAME,
         START_ROUND: START_ROUND,

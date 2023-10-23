@@ -47,7 +47,7 @@ async function generateCardsPerPlayers(nbPlayers, prices) {
 }
 
 async function generateDU(game) {
-    const nbPlayer = Number.parseInt(_.countBy(game.players, p => p.status === 'alive').true);
+    const nbPlayer = Number.parseInt(_.countBy(game.players, p => p.status === C.ALIVE).true);
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
     const duRounded = _.round(du, 2);
@@ -61,17 +61,18 @@ async function distribDU(gameId) {
             const du = await generateDU(game);
             var newMassMoney = game.currentMassMonetary;
             for await (let player of game.players) {
-                if (player.status === "alive") {
+                if (player.status === C.ALIVE) {
                     player.coins += du;
                     newMassMoney += du;
                     io().to(player.id).emit(C.DISTRIB_DU, {du: du});
 
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
-                    io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
+                    io().to(C.MASTER).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
-                } else if (player.status !== "dead") {
-                    let newEvent = constructor.event("DEAD", C.MASTER, player.id, 0, [], Date.now());
-                    io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
+                } else if (player.status === C.DEAD) {
+                    //TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
+                    let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, 0, [], Date.now());
+                    io().to(C.MASTER).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 }
             }
@@ -82,7 +83,7 @@ async function distribDU(gameId) {
                     $set: {currentMassMonetary: newMassMoney, currentDU: du}
                 },
                 {
-                    arrayFilters: [{"elem.status": "alive"}],
+                    arrayFilters: [{"elem.status": C.ALIVE}],
                     new: true
                 })
                 .then(updatedGame => {
@@ -107,12 +108,12 @@ async function initGameDebt(game) {
         // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
-        player.status = "alive";
+        player.status = C.ALIVE;
         player.coins = 0;
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0});
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-        io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
+        io().to(C.MASTER).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.decks = decks;
@@ -140,7 +141,7 @@ async function initGameJune(game) {
         // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
-        player.status = "alive";
+        player.status = C.ALIVE;
         player.typeMoney = C.JUNE;
         player.statusGame = C.STARTED;
 
@@ -160,7 +161,7 @@ async function initGameJune(game) {
         } else {
             player.coins = game.startAmountCoins;
         }
-        game.currentMassMonetary += game.startAmountCoins;
+        game.currentMassMonetary += player.coins;
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: player.coins});
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
@@ -210,13 +211,13 @@ async function killPlayer(idGame, idPlayer) {
                 }
             },
             $set: {
-                'players.$.status': "dead",
-                'players.$.coins': game.typeMoney === "june" ? player.coins : 0
+                'players.$.status': C.DEAD,
+                'players.$.coins': game.typeMoney === C.JUNE ? player.coins : 0
             },
         },
     );
 
-    let newEvent = constructor.event("dead_event", "master", idPlayer, 0, [], Date.now());
+    let newEvent = constructor.event(C.DEAD, "master", idPlayer, 0, [], Date.now());
     //PUT BACK CARDS IN THE DECKs
     GameModel.updateOne(
         {_id: idGame, 'players._id': idPlayer},
@@ -236,7 +237,7 @@ async function killPlayer(idGame, idPlayer) {
     )
         .then(updatedGame => {
             io().to(C.MASTER).emit(C.EVENT, newEvent);
-            io().to(idPlayer).emit("you are dead");
+            io().to(idPlayer).emit(C.DEAD);
         })
         .catch(err => {
             log.error('player escape dead, error', err);
@@ -627,7 +628,7 @@ export default {
                     typeMoney: C.JUNE,
                     'players.$[].cards': [],
                     'players.$[].coins': 0,
-                    'players.$[].status': "alive",
+                    'players.$[].status': C.ALIVE,
                     decks: [],
                     priceWeight1: 1,
                     priceWeight2: 3,

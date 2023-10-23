@@ -38,7 +38,7 @@
   </div>
   <div class="footer">
     <button mat-raised-button color="accent"
-            [disabled]="statusGame!=='playing'"
+            [disabled]="statusGame!=='playing'||player.status=='dead'"
             (click)="scan()">
       <fa-icon [icon]="faCamera"></fa-icon>
       ACHETER une Carte

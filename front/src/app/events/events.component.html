@@ -35,6 +35,16 @@
         <span *ngSwitchCase="C.STOP_ROUND">
           <span>🛑FIN du TOUR {{event.amount}}</span>
         </span>
+        <span *ngSwitchCase="C.DEAD">
+          <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦</span>
+        </span>
+        <span *ngSwitchCase="C.REMIND_DEAD">
+          <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦for graph</span>
+        </span>
+        <span *ngSwitchCase="C.BIRTH">
+          <span [matTooltip]="'Naissance de '+getPlayerName(event.receiver)"> 👤👶 {{event.amount}}Ğ1-</span>
+          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
           <span [matTooltip]="'Défausse du carré de cartes identique'">➡️🔄</span>

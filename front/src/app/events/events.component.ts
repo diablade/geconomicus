@@ -143,7 +143,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
       });
       this.socket = io(environment.API_HOST, {
         query: {
-          idPlayer: "master",
+          idPlayer: C.MASTER,
           idGame: this.idGame,
         },
       });
@@ -315,6 +315,14 @@ export class EventsComponent implements OnInit, AfterViewInit {
             receiverDatasetResources.total -= totalResourcesEvent;
             // @ts-ignore
             receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
+          } else if (event.typeEvent === C.DEAD) {
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: event.date, y: 0});
+          } else if (event.typeEvent === C.REMIND_DEAD) {
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: event.date, y: 0});
           } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS || event.typeEvent === "tranformNewCards") {
             // @ts-ignore
             // receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});

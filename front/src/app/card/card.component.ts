@@ -78,8 +78,8 @@ export class CardComponent implements AfterViewInit {
       + '", "idGame":"' + this.idGame
       + '", "color":"' + this.card.color
       + '", "letter":"' + this.card.letter
-      + '", "price":"' + this.card.price
-      + '"}';
+      + '", "price":' + this.card.price
+      + '}';
   }
 
   updateScreenSize() {
