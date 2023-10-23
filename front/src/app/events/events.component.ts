@@ -34,6 +34,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
   players: Player[] = [];
   datasets: ChartDataset[] = [];
   datasetsRelatif: ChartDataset[] = [];
+  datasetsResources: ChartDataset[] = [];
   currentDU = 0;
   C = C;
 
@@ -97,6 +98,31 @@ export class EventsComponent implements OnInit, AfterViewInit {
   };
   public lineChartTypeRelatif: ChartType = 'line';
 
+  public lineChartDataResources: ChartConfiguration['data'] | undefined;
+  public lineChartOptionsResources: ChartConfiguration['options'] = {
+    elements: {
+      line: {
+        tension: 0.1,
+      },
+    },
+    scales: {
+      x: {
+        type: 'time',
+        ticks: {source: "auto"},
+        time: {
+          unit: 'minute',
+          displayFormats: {
+            minute: 'HH:mm'
+          },
+        },
+      },
+      y: {
+        min: 0,
+      },
+    },
+  };
+  public lineChartTypeResources: ChartType = 'line';
+
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
   }
 
@@ -108,7 +134,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
         this.players = game.players;
         await this.initDatasets();
         const firstDu = await _.find(this.events, e => {
-          return e.typeEvent == C.FIRST_DU
+          return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU"
         });
         if (firstDu) {
           this.currentDU = firstDu.amount;
@@ -175,6 +201,19 @@ export class EventsComponent implements OnInit, AfterViewInit {
       total: 0,
       playerId: player._id
     }));
+
+    this.datasetsResources = _.map(players, player => ({
+      data: [],
+      label: player.name,
+      backgroundColor: this.hexToRgb(player.hairColor),
+      borderColor: this.hexToRgb(player.hairColor),
+      pointBackgroundColor: this.hexToRgb(player.hairColor),
+      pointBorderColor: this.hexToRgb(player.hairColor),
+      borderWidth: 2, // Line thickness
+      pointRadius: 0.8, // Point thickness
+      total: 0,
+      playerId: player._id
+    }));
   }
 
   addEventsToDatasets(unsortedEvents: EventGeco[]) {
@@ -182,13 +221,19 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
     // Iterate over each event
     for (const event of events) {
-      if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND || event.typeEvent === C.TRANSFORM_NEW || event.typeEvent === C.TRANSFORM_DISCARD) {
+      let totalResourcesEvent = 0;
+
+      if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND) {
         continue
       } else if (event.typeEvent === C.FIRST_DU) {
         this.currentDU = event.amount;
         continue
       } else if (event.typeEvent === C.DISTRIB_DU) {
         this.currentDU = event.amount;
+      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS ||event.typeEvent === "transformDiscard" ||event.typeEvent === "tranformNewCards" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
+        totalResourcesEvent = _.reduce(event.resources, function (sum, card) {
+          return sum + card.price;
+        }, 0);
       }
 
       // Find the dataset for the emitter and receiver
@@ -197,9 +242,13 @@ export class EventsComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.emitter);
       // @ts-ignore
+      const emitterDatasetResources = _.find(this.datasetsResources, dataset => dataset.playerId === event.emitter);
+      // @ts-ignore
       const receiverDataset = _.find(this.datasets, dataset => dataset.playerId === event.receiver);
       // @ts-ignore
       const receiverDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.receiver);
+      // @ts-ignore
+      const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.playerId === event.receiver);
 
       // Add the event to the emitter's and receiver's datasets and update the running total
       if (emitterDataset) {
@@ -214,9 +263,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
             y: (emitterDataset.total / this.currentDU)
           });
         }
-        if (event.typeEvent === C.DISTRIB) {
-          console.log("distrib yoo emitter");
-        }
         // @ts-ignore
         emitterDataset.total -= event.amount;
         // @ts-ignore after transaction
@@ -224,6 +270,24 @@ export class EventsComponent implements OnInit, AfterViewInit {
         // @ts-ignore after transaction
         emitterDatasetRelatif.data.push({x: event.date, y: (emitterDataset.total / this.currentDU)});
       }
+      if (emitterDatasetResources) {
+        if (event.typeEvent === C.TRANSACTION) {
+          // @ts-ignore
+          emitterDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDatasetResources.total});
+          // @ts-ignore
+          emitterDatasetResources.total += totalResourcesEvent;
+          // @ts-ignore
+          emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
+        } else if (event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard") {
+          // @ts-ignore
+          // emitterDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDatasetResources.total});
+          // @ts-ignore
+          emitterDatasetResources.total -= totalResourcesEvent;
+          // @ts-ignore
+          // emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
+        }
+      }
+
       if (receiverDataset) {
         if (event.typeEvent === C.TRANSACTION) {
           // @ts-ignore before
@@ -236,18 +300,31 @@ export class EventsComponent implements OnInit, AfterViewInit {
             y: (receiverDataset.total / this.currentDU)
           });
         }
-        if (event.typeEvent === C.DISTRIB) {
-          // @ts-ignore
-          console.log("distrib yoo receiver", receiverDataset.total, this.currentDU);
-        }
         // @ts-ignore
         receiverDataset.total += event.amount;
         // @ts-ignore after
         receiverDataset.data.push({x: event.date, y: receiverDataset.total});
         // @ts-ignore after
         receiverDatasetRelatif.data.push({x: event.date, y: (receiverDataset.total / this.currentDU)});
-      }
 
+        if (receiverDatasetResources) {
+          if (event.typeEvent === C.TRANSACTION) {
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
+            // @ts-ignore
+            receiverDatasetResources.total -= totalResourcesEvent;
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
+          } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS || event.typeEvent === "tranformNewCards") {
+            // @ts-ignore
+            // receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
+            // @ts-ignore
+            receiverDatasetResources.total += totalResourcesEvent;
+            // @ts-ignore
+            receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
+          }
+        }
+      }
     }
 
     // Remove the 'total' property from each dataset
@@ -260,6 +337,10 @@ export class EventsComponent implements OnInit, AfterViewInit {
     this.lineChartDataRelatif = {
       // @ts-ignore
       datasets: this.datasetsRelatif
+    };
+    this.lineChartDataResources = {
+      // @ts-ignore
+      datasets: this.datasetsResources
     };
   }
 
@@ -279,11 +360,11 @@ export class EventsComponent implements OnInit, AfterViewInit {
   }
 
   getPlayerName(playerId: string) {
-    const player = _.find(this.players,p=>p._id===playerId);
+    const player = _.find(this.players, p => p._id === playerId);
     return player ? player.name : "undefined";
   }
 
   getTextCard(card: Card) {
-    return card.letter+this.getResourcesEmoji(card.color);
+    return card.letter + this.getResourcesEmoji(card.color);
   }
 }

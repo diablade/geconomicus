@@ -111,7 +111,7 @@ async function initGameDebt(game) {
         player.coins = 0;
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0});
-        let newEvent = constructor.event("distrib", C.MASTER, player.id, player.coins, cards, Date.now());
+        let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
         game.events.push(newEvent);
     }
@@ -163,7 +163,7 @@ async function initGameJune(game) {
         game.currentMassMonetary += game.startAmountCoins;
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: player.coins});
-        let newEvent = constructor.event("distrib", C.MASTER, player.id, player.coins, cards, Date.now());
+        let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(C.MASTER).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }

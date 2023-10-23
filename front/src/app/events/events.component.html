@@ -6,7 +6,7 @@
       <span [ngSwitch]="event.typeEvent">
         <span *ngSwitchCase="C.TRANSACTION">
           <span [matTooltip]="getPlayerName(event.emitter)">👤 </span>
-          <span>{{event.amount}}Ğ1 ↔️ {{getTextCard(event.resources[0])}}</span>
+          <span [matTooltip]="'Transaction'">{{event.amount}}Ğ1 ↔️ {{getTextCard(event.resources[0])}}</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.DISTRIB">
@@ -14,10 +14,13 @@
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.DISTRIB_DU">
-          <span [matTooltip]="'Dividende Universel'">❇️1.DU: {{event.amount}}Ğ1 ➡️</span>
-          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤⬅️</span>
+          <span [matTooltip]="'Dividende Universel'">➕️1DU ({{event.amount}}Ğ1)️</span>
         </span>
         <span *ngSwitchCase="C.FIRST_DU">
+          <span [matTooltip]="'Calcul Dividende Universel de départ'">🧮Premier DU: {{event.amount}}Ğ1</span>
+        </span>
+        <span *ngSwitchCase="'first_DU'">
           <span [matTooltip]="'Calcul Dividende Universel de départ'">🧮Premier DU: {{event.amount}}Ğ1</span>
         </span>
         <span *ngSwitchCase="C.START_GAME">
@@ -34,19 +37,29 @@
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span>📤🔄</span>
+          <span [matTooltip]="'Défausse du carré de cartes identique'">➡️🔄</span>
+          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
+        <span *ngSwitchCase="'transformDiscard'" class="">
+          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
+          <span [matTooltip]="'Défausse du carré de cartes identique'">➡️🔄</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_NEWCARDS" class="">
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
-          <span>📥🎁</span>
+          <span [matTooltip]="'Transformation du carré'">⬅️🎁</span>
+          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
+        <span *ngSwitchCase="'tranformNewCards'" class="">
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+          <span [matTooltip]="'Transformation du carré'">⬅️🎁</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchDefault>{{event.typeEvent}}</span>
       </span>
     </div>
   </div>
-  <div class="flex-grow-1 d-flex flex-column">
+  <div class="flex-grow-1 d-flex flex-column overflow-auto h-100 p-2">
     <h1 class="m-2">Comptes en quantitatif</h1>
     <div class="graph">
       <canvas baseChart
@@ -57,7 +70,7 @@
               [type]="lineChartType">
       </canvas>
     </div>
-    <h1 class="m-2">Comptes en relatif (en DU)</h1>
+    <h1 class="m-2">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
     <div class="graph">
       <canvas baseChart
               class="chart"
@@ -65,6 +78,16 @@
               [data]="lineChartDataRelatif"
               [options]="lineChartOptionsRelatif"
               [type]="lineChartTypeRelatif">
+      </canvas>
+    </div>
+    <h1 class="m-2">Ressources</h1>
+    <div class="graph">
+      <canvas baseChart
+              class="chart"
+              height="100"
+              [data]="lineChartDataResources"
+              [options]="lineChartOptionsResources"
+              [type]="lineChartTypeResources">
       </canvas>
     </div>
     <div class="d-sm-block d-md-none eventsSmall">
