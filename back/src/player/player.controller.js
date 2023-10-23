@@ -256,7 +256,7 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
-                io().to(MASTER).emit(C.EVENT, newEvent);
+                io().to(C.MASTER).emit(C.EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= cost;
                 seller.coins += cost;

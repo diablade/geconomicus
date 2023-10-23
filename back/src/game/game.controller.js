@@ -1,9 +1,5 @@
 import GameModel, {constructor} from './game.model.js';
-import {
-    OPEN, STARTED, EVENT, MASTER,
-    START_GAME, START_ROUND, STOP_ROUND,
-    INTER_TOUR, DISTRIB_DU, FIRST_DU, RESET_GAME
-} from '../../../config/constantes.js';
+import * as C from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
 import _ from "lodash";
@@ -68,14 +64,14 @@ async function distribDU(gameId) {
                 if (player.status === "alive") {
                     player.coins += du;
                     newMassMoney += du;
-                    io().to(player.id).emit(DISTRIB_DU, {du: du});
+                    io().to(player.id).emit(C.DISTRIB_DU, {du: du});
 
-                    let newEvent = constructor.event(DISTRIB_DU, MASTER, player.id, du, [], Date.now());
-                    io().to(MASTER).emit(EVENT, {event: newEvent});
+                    let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
+                    io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
                     newEvents.push(newEvent);
                 } else if (player.status !== "dead") {
-                    let newEvent = constructor.event("DEAD", MASTER, player.id, 0, [], Date.now());
-                    io().to(MASTER).emit(EVENT, {event: newEvent});
+                    let newEvent = constructor.event("DEAD", C.MASTER, player.id, 0, [], Date.now());
+                    io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
                     newEvents.push(newEvent);
                 }
             }
@@ -114,9 +110,9 @@ async function initGameDebt(game) {
         player.status = "alive";
         player.coins = 0;
 
-        io().to(player.id).emit(START_GAME, {cards: cards, coins: 0});
-        let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
-        io().to(MASTER).emit(EVENT, {event: newEvent});
+        io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0});
+        let newEvent = constructor.event("distrib", C.MASTER, player.id, player.coins, cards, Date.now());
+        io().to(C.MASTER).emit(C.EVENT, {event: newEvent});
         game.events.push(newEvent);
     }
     game.decks = decks;
@@ -145,8 +141,8 @@ async function initGameJune(game) {
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
         player.status = "alive";
-        player.typeMoney = "june";
-        player.statusGame = STARTED;
+        player.typeMoney = C.JUNE;
+        player.statusGame = C.STARTED;
 
         if (game.inequalityStart) {
             if (classes[0] >= 1) {
@@ -166,15 +162,15 @@ async function initGameJune(game) {
         }
         game.currentMassMonetary += game.startAmountCoins;
 
-        io().to(player.id).emit(START_GAME, {cards: cards, coins: player.coins});
-        let newEvent = constructor.event("distrib", MASTER, player.id, player.coins, cards, Date.now());
-        io().to(MASTER).emit(EVENT, newEvent);
+        io().to(player.id).emit(C.START_GAME, {cards: cards, coins: player.coins});
+        let newEvent = constructor.event("distrib", C.MASTER, player.id, player.coins, cards, Date.now());
+        io().to(C.MASTER).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
-    io().to(game._id.toString()).emit(FIRST_DU, {du: game.currentDU});
+    io().to(game._id.toString()).emit(C.FIRST_DU, {du: game.currentDU});
 
-    let firstDUevent = constructor.event(FIRST_DU, MASTER, MASTER, game.currentDU, [], Date.now());
+    let firstDUevent = constructor.event(C.FIRST_DU, C.MASTER, C.MASTER, game.currentDU, [], Date.now());
     game.events.push(firstDUevent);
     game.decks = decks;
     return game;
@@ -182,17 +178,17 @@ async function initGameJune(game) {
 
 async function stopRound(gameId) {
     stopTimer();
-    let stopRoundEvent = constructor.event(STOP_ROUND, MASTER, "", 0, [], Date.now());
+    let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", 0, [], Date.now());
     GameModel.updateOne({_id: gameId}, {
         $set: {
-            status: INTER_TOUR,
+            status: C.INTER_TOUR,
             modified: Date.now(),
         },
         $push: {events: stopRoundEvent}
     })
         .then(previousGame => {
-            io().to(gameId).emit(STOP_ROUND);
-            io().to(MASTER).emit(EVENT, stopRoundEvent);
+            io().to(gameId).emit(C.STOP_ROUND);
+            io().to(C.MASTER).emit(C.EVENT, stopRoundEvent);
         })
         .catch(err => {
             log.error('stop round game error', err);
@@ -239,7 +235,7 @@ async function killPlayer(idGame, idPlayer) {
         }
     )
         .then(updatedGame => {
-            io().to(MASTER).emit(EVENT, newEvent);
+            io().to(C.MASTER).emit(C.EVENT, newEvent);
             io().to(idPlayer).emit("you are dead");
         })
         .catch(err => {
@@ -256,7 +252,7 @@ async function deadPassing(roundMinutes, minutesPassed) {
 
 function startRoundMoneyLibre(gameId, roundMinutes, minutesLeft) {
     timer = setTimeout(async () => {
-        io().to(MASTER).emit("minutes_left", minutesLeft);
+        io().to(C.MASTER).emit("minutes_left", minutesLeft);
 
         // TODO  the dead is coming ;
         distribDU(gameId);
@@ -285,7 +281,7 @@ function startRoundMoneyDebt(gameId, roundMinutes) {
 }
 
 function startRound(updatedGame) {
-    if (updatedGame.typeMoney === "june") {
+    if (updatedGame.typeMoney === C.JUNE) {
         startRoundMoneyLibre(updatedGame._id, updatedGame.roundMinutes, updatedGame.roundMinutes);
     } else {
         startRoundMoneyDebt(updatedGame);
@@ -303,7 +299,7 @@ export default {
             let body = req.body;
             const newGame = new GameModel({
                 name: req.body.gameName,
-                status: OPEN,
+                status: C.OPEN,
                 typeMoney: "june",
                 players: [],
                 decks: [],
@@ -345,7 +341,7 @@ export default {
                 message: "bad request"
             });
         } else {
-            let startEvent = constructor.event(START_ROUND, MASTER, "", round, [], Date.now());
+            let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
             GameModel.findByIdAndUpdate(id, {
                 $set: {
                     status: "playing",
@@ -355,8 +351,8 @@ export default {
                 $push: {events: startEvent}
             }, {new: true})
                 .then(updatedGame => {
-                    io().to(id).emit(START_ROUND);
-                    io().to(MASTER).emit(EVENT, startEvent);
+                    io().to(id).emit(C.START_ROUND);
+                    io().to(C.MASTER).emit(C.EVENT, startEvent);
                     startRound(updatedGame);
                     res.status(200).send({
                         status: "playing",
@@ -412,7 +408,7 @@ export default {
         } else {
             await stopRound(id);
             res.status(200).send({
-                status: INTER_TOUR,
+                status: C.INTER_TOUR,
             });
         }
     },
@@ -446,7 +442,7 @@ export default {
                     //and save the rest
                     GameModel.updateOne({_id: id}, {
                         $set: {
-                            status: STARTED,
+                            status: C.STARTED,
                             decks: gameUpdated.decks,
                             events: gameUpdated.events,
                             players: gameUpdated.players,
@@ -466,7 +462,7 @@ export default {
                     })
                         .then(updatedGame => {
                             res.status(200).send({
-                                status: STARTED,
+                                status: C.STARTED,
                             });
                         })
                         .catch(err => {
@@ -495,7 +491,7 @@ export default {
             });
         } else {
             try {
-                let stopGameEvent = constructor.event(STOP_GAME, MASTER, MASTER, 0, [], Date.now());
+                let stopGameEvent = constructor.event(STOP_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
                 GameModel.updateOne({_id: id}, {
                     $set: {
                         status: "stopped",
@@ -503,8 +499,8 @@ export default {
                     },
                     $push: {events: stopGameEvent}
                 }).then(() => {
-                    io().to(id).emit(START_GAME);
-                    io().to(MASTER).emit(EVENT, stopGameEvent);
+                    io().to(id).emit(C.START_GAME);
+                    io().to(C.MASTER).emit(C.EVENT, stopGameEvent);
                     res.status(200).send({
                         status: "stopped",
                     });
@@ -627,8 +623,8 @@ export default {
         } else {
             GameModel.findByIdAndUpdate(idGame, {
                 $set: {
-                    status: "open",
-                    typeMoney: "june",
+                    status: C.OPEN,
+                    typeMoney: C.JUNE,
                     'players.$[].cards': [],
                     'players.$[].coins': 0,
                     'players.$[].status': "alive",
@@ -649,7 +645,7 @@ export default {
                 }
             }, {new: true})
                 .then((updatedGame) => {
-                    io().to(idGame).emit(RESET_GAME);
+                    io().to(idGame).emit(C.RESET_GAME);
                     res.status(200).json({"status": "reset done"});
                 })
                 .catch((error) => {
