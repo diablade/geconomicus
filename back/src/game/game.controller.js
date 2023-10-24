@@ -8,11 +8,12 @@ import {io} from "../../conf_socket.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
-let timer;
+let gameTimers = {};
 
-function stopTimer() {
-    if (timer) {
-        clearTimeout(timer);
+function stopTimer(gameId) {
+    if (gameTimers[gameId]) {
+        clearTimeout(gameTimers[gameId]);
+        gameTimers[gameId] = undefined;
     }
 }
 
@@ -67,12 +68,12 @@ async function distribDU(gameId) {
                     io().to(player.id).emit(C.DISTRIB_DU, {du: du});
 
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
-                    io().to(C.MASTER).emit(C.EVENT, newEvent);
+                    io().to(gameId).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 } else if (player.status === C.DEAD) {
                     //TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
                     let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, 0, [], Date.now());
-                    io().to(C.MASTER).emit(C.EVENT, newEvent);
+                    io().to(gameId).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 }
             }
@@ -113,7 +114,7 @@ async function initGameDebt(game) {
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0});
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-        io().to(C.MASTER).emit(C.EVENT, newEvent);
+        io().to(game._id.toString()).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.decks = decks;
@@ -165,7 +166,7 @@ async function initGameJune(game) {
 
         io().to(player.id).emit(C.START_GAME, {cards: cards, coins: player.coins});
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-        io().to(C.MASTER).emit(C.EVENT, newEvent);
+        io().to(game._id.toString()).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
@@ -177,9 +178,9 @@ async function initGameJune(game) {
     return game;
 }
 
-async function stopRound(gameId) {
-    stopTimer();
-    let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", 0, [], Date.now());
+async function stopRound(gameId, gameRound) {
+    stopTimer(gameId);
+    let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
     GameModel.updateOne({_id: gameId}, {
         $set: {
             status: C.INTER_TOUR,
@@ -189,7 +190,7 @@ async function stopRound(gameId) {
     })
         .then(previousGame => {
             io().to(gameId).emit(C.STOP_ROUND);
-            io().to(C.MASTER).emit(C.EVENT, stopRoundEvent);
+            io().to(gameId).emit(C.EVENT, stopRoundEvent);
         })
         .catch(err => {
             log.error('stop round game error', err);
@@ -215,33 +216,28 @@ async function killPlayer(idGame, idPlayer) {
                 'players.$.coins': game.typeMoney === C.JUNE ? player.coins : 0
             },
         },
-    );
+    ).catch(err => {
+        log.error('player escape dead, error', err);
+    });
 
     let newEvent = constructor.event(C.DEAD, "master", idPlayer, 0, [], Date.now());
     //PUT BACK CARDS IN THE DECKs
-    GameModel.updateOne(
+    await GameModel.updateOne(
         {_id: idGame, 'players._id': idPlayer},
         {
             $push: {
-                decks: {
-                    $each: [
-                        {$each: groupedCards[0]},
-                        {$each: groupedCards[1]},
-                        {$each: groupedCards[2]},
-                        {$each: groupedCards[3]}
-                    ]
-                },
+                [`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
+                [`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
+                [`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
+                [`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
                 'events': newEvent
             },
         }
-    )
-        .then(updatedGame => {
-            io().to(C.MASTER).emit(C.EVENT, newEvent);
-            io().to(idPlayer).emit(C.DEAD);
-        })
-        .catch(err => {
-            log.error('player escape dead, error', err);
-        })
+    ).catch(err => {
+        log.error('player dead cards are not back in decks, error', err);
+    });
+    io().to(idGame).emit(C.EVENT, newEvent);
+    io().to(idPlayer).emit(C.DEAD);
 }
 
 async function deadPassing(roundMinutes, minutesPassed) {
@@ -251,21 +247,24 @@ async function deadPassing(roundMinutes, minutesPassed) {
     }
 }
 
-function startRoundMoneyLibre(gameId, roundMinutes, minutesLeft) {
-    timer = setTimeout(async () => {
-        io().to(C.MASTER).emit("minutes_left", minutesLeft);
+function startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft) {
+    const timer = setTimeout(async () => {
+        io().to(gameId).emit(C.TIMER_LEFT, minutesLeft - 1);
 
-        // TODO  the dead is coming ;
+        // TODO: the automatic dead is coming ;
         distribDU(gameId);
 
-        if (minutesLeft <= 0) {
-            stopRound(gameId);
+        if (minutesLeft - 1 <= 0) {
+            stopRound(gameId, gameRound);
         } else {
             // Continue the timer
-            startRoundMoneyLibre(gameId, roundMinutes, minutesLeft - 1);
+            startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft - 1);
         }
     }, 60 * 1000); // 60 seconds * 1000 milliseconds
+    // Store the timer in the gameTimers object using the gameId as the key.
+    gameTimers[gameId] = timer;
 }
+
 
 function startRoundMoneyDebt(gameId, roundMinutes) {
     let minutesPassed = 0;
@@ -276,14 +275,14 @@ function startRoundMoneyDebt(gameId, roundMinutes) {
         if (minutesPassed >= roundMinutes) {
             clearInterval(timer);
             console.log(roundMinutes + ' minutes have passed');
-            stopRound(gameId);
+            stopRound(gameId, round);
         }
     }, 60 * 1000); // 60 seconds * 1000 milliseconds
 }
 
 function startRound(updatedGame) {
     if (updatedGame.typeMoney === C.JUNE) {
-        startRoundMoneyLibre(updatedGame._id, updatedGame.roundMinutes, updatedGame.roundMinutes);
+        startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes, updatedGame.roundMinutes);
     } else {
         startRoundMoneyDebt(updatedGame);
     }
@@ -315,8 +314,8 @@ export default {
                 round: 0,
                 currentDU: 0,
                 currentMassMonetary: 0,
-                roundMax: body.roundMax ? body.roundMax : 10,
-                roundMinutes: body.roundMax ? body.roundMax : 5,
+                roundMax: 1,
+                roundMinutes: 40,
                 modified: Date.now(),
                 created: Date.now(),
             });
@@ -353,7 +352,7 @@ export default {
             }, {new: true})
                 .then(updatedGame => {
                     io().to(id).emit(C.START_ROUND);
-                    io().to(C.MASTER).emit(C.EVENT, startEvent);
+                    io().to(id).emit(C.EVENT, startEvent);
                     startRound(updatedGame);
                     res.status(200).send({
                         status: "playing",
@@ -376,8 +375,6 @@ export default {
                 message: "bad request"
             });
         } else {
-            //calculate DU
-
             GameModel.updateOne({_id: id}, {
                 $inc: {round: 1},
                 $set: {
@@ -401,16 +398,55 @@ export default {
     },
     stopRound: async (req, res, next) => {
         const id = req.body.idGame;
+        const round = req.body.round;
         if (!id) {
             next({
                 status: 400,
                 message: "bad request"
             });
         } else {
-            await stopRound(id);
+            await stopRound(id, round);
             res.status(200).send({
-                status: C.INTER_TOUR,
+                status: C.STOP_ROUND,
             });
+        }
+    },
+    update: async (req, res, next) => {
+        const id = req.body.idGame;
+        const body = req.body;
+        if (!id && !body.typeMoney) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            GameModel.updateOne({_id: id}, {
+                $set: {
+                    typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
+                    priceWeight1: body.priceWeight1 ? body.priceWeight1 : 1,
+                    priceWeight2: body.priceWeight2 ? body.priceWeight2 : 3,
+                    priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
+                    priceWeight4: body.priceWeight4 ? body.priceWeight4 : 9,
+                    roundMax: body.roundMax ? body.roundMax : 1,
+                    roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
+                    tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
+                    startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
+                    inequalityStart: body.inequalityStart ? body.inequalityStart : false,
+                    modified: Date.now(),
+                }
+            })
+                .then(updatedGame => {
+                    res.status(200).send({
+                        status: "updated",
+                    });
+                })
+                .catch(err => {
+                    log.error('get game error', err);
+                    next({
+                        status: 404,
+                        message: "not found"
+                    });
+                })
         }
     },
     start: async (req, res, next) => {
@@ -455,6 +491,7 @@ export default {
                             roundMax: gameUpdated.roundMax,
                             roundMinutes: gameUpdated.roundMinutes,
                             currentDU: gameUpdated.currentDU,
+                            tauxCroissance: gameUpdated.tauxCroissance,
                             startAmountCoins: gameUpdated.startAmountCoins,
                             currentMassMonetary: gameUpdated.currentMassMonetary,
                             inequalityStart: gameUpdated.inequalityStart,
@@ -501,7 +538,7 @@ export default {
                     $push: {events: stopGameEvent}
                 }).then(() => {
                     io().to(id).emit(C.START_GAME);
-                    io().to(C.MASTER).emit(C.EVENT, stopGameEvent);
+                    io().to(id).emit(C.EVENT, stopGameEvent);
                     res.status(200).send({
                         status: "stopped",
                     });

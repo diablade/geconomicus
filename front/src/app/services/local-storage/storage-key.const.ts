@@ -1,4 +1,4 @@
 export const StorageKey = {
   prefixItem: 'geco-',
-  timerRemaining: 'timerRemaining',
+  timerRemaining: 'timerRemaining_',
 };

@@ -16,11 +16,12 @@ import {
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
-import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
+import {SessionStorageService} from "../services/local-storage/session-storage.service";
+import {StorageKey} from "../services/local-storage/storage-key.const";
 
 @Component({
   selector: 'app-master-board',
@@ -44,7 +45,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faCogs = faCogs;
   faInfo = faCircleInfo;
 
-  timerProgress: number = 0;
+  timerProgress: number = 100;
 
   options = [
     {value: 'june', label: 'Monnaie libre', isDisabled: false},
@@ -54,20 +55,20 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   seconds: string = "00";
   timer = createCountdown({h: 0, m: 0, s: 0}, {
     listen: ({hh, mm, ss, s, h, m}) => {
-      console.log(`${hh}:${mm}:${ss}`);
       this.minutes = mm;
       this.seconds = ss;
       let secondsRemaining = s + (m * 60);
-      this.localStorageService.setTimerRemaining(secondsRemaining);
+      this.sessionStorageService.setItem(StorageKey.timerRemaining,secondsRemaining);
       this.timerProgress = secondsRemaining / (this.game.roundMinutes * 60) * 100;
     },
     done: () => {
-      this.stopRound();
+      // this.stopRound();
+      this.snackbarService.showSuccess("Tour terminé");
     }
   });
 
   constructor(private route: ActivatedRoute,
-              private localStorageService: LocalStorageService,
+              private sessionStorageService: SessionStorageService,
               private backService: BackService,
               private snackbarService: SnackbarService,
               private router: Router,
@@ -87,7 +88,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     });
     this.backService.getGame(this.idGame).subscribe(game => {
       this.game = game;
-      let timerRemaining = this.localStorageService.getTimerRemaining();
+      this.minutes = this.game.roundMinutes.toString();
+      let timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
+
       if (timerRemaining && game.status == "playing") {
         this.timer.set({h: 0, m: 0, s: timerRemaining});
         this.timer.start();
@@ -105,12 +108,19 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.socket.on("connected", (players: any) => {
       console.log("connected", players);
     });
-    this.socket.on(C.START_ROUND, (data: any) => {
-    });
-    this.socket.on(C.STOP_ROUND, (data: any) => {
-    });
     this.socket.on('disconnect', () => {
       console.log('Socket has been disconnected');
+    });
+    this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
+      console.log("timer left ", minutesRemaining);
+      this.sessionStorageService.setItem(StorageKey.timerRemaining,minutesRemaining*60);
+
+      if (minutesRemaining && this.game.status == "playing") {
+        this.timer.stop();
+        this.timer.reset();
+        this.timer.set({h: 0, m: minutesRemaining, s: 0});
+        this.timer.start();
+      }
     });
   }
 
@@ -153,8 +163,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.timer.stop();
     this.game.status = 'intertour';
     this.timerProgress = 100;
-    this.localStorageService.removeRemaining();
-    this.backService.stopRound(this.idGame).subscribe(() => {
+    this.sessionStorageService.removeItem(StorageKey.timerRemaining);
+    this.backService.stopRound(this.idGame, this.game.round).subscribe(() => {
       this.snackbarService.showSuccess("le tour " + this.game.round + " à terminé");
     });
   }
@@ -225,7 +235,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 
   onKillUser(player: Player) {
     this.backService.killUser(player._id, this.idGame).subscribe((data) => {
-      player.status=C.DEAD;
+      player.status = C.DEAD;
     });
   }
 }

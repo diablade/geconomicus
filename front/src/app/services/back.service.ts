@@ -178,8 +178,8 @@ export class BackService {
       );
   }
 
-  stopRound(idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame})
+  stopRound(idGame: string, round:number) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round:round})
       .pipe(
         catchError(err => this.handleError(err, "", "stop tour impossible"))
       );

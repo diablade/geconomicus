@@ -151,7 +151,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       setTimeout(() => {
         this.duVisible = false;
       }, 4000);
-      console.log(data);
     });
     this.socket.on(C.RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));

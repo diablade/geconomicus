@@ -7,24 +7,8 @@ import {BehaviorSubject} from "rxjs";
   providedIn: 'root'
 })
 export class LocalStorageService {
-  // Observable source
-  private _timerRemaining = new BehaviorSubject<any>(this.getTimerRemaining());
-  // Observable stream
-  timerRemaining = this._timerRemaining.asObservable();
 
   constructor() {
-  }
-
-  getTimerRemaining() {
-    return this.getItem("timerRemaining");
-  }
-  setTimerRemaining(timer: number) {
-    this.setItem("timerRemaining", timer);
-    this._timerRemaining.next(this.getTimerRemaining());
-  }
-
-  removeRemaining() {
-    this.removeItem("timerRemaining");
   }
 
   getItem(key: string) {

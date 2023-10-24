@@ -5,6 +5,7 @@ const START_GAME = 'start-game';
 const STOP_GAME = 'stop-game';
 const START_ROUND = 'start-round';
 const STOP_ROUND = 'stop-round';
+const TIMER_LEFT = 'timer-left';
 const INTER_TOUR = 'intertour';
 const STARTED = 'started';
 const EVENT = 'event';
@@ -34,6 +35,7 @@ if (typeof module !== 'undefined' && module.exports) {
         START_GAME: START_GAME,
         STOP_GAME: STOP_GAME,
         START_ROUND: START_ROUND,
+        TIMER_LEFT:TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,
         INTER_TOUR: INTER_TOUR,
         STARTED: STARTED,

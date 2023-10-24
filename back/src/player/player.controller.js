@@ -21,7 +21,7 @@ export default {
                 _id: comId,
                 name: name,
                 image: "",
-                sold: 0,
+                coins: 0,
                 credits: [],
                 cards: [],
                 status: C.ALIVE,
@@ -55,7 +55,7 @@ export default {
                 _id: playerId,
                 name: name,
                 image: "",
-                sold: 0,
+                coins: 0,
                 credits: [],
                 cards: [],
                 status: C.ALIVE,
@@ -71,7 +71,7 @@ export default {
                     //create events
                     let birthEvent = constructor.event(C.BIRTH, C.MASTER, playerId, 0, newCards, Date.now());
 
-                    // remove from decks, add events
+                    // remove cards given to player from the deck, add events
                     await GameModel.updateOne(
                         {_id: id},
                         {
@@ -90,7 +90,7 @@ export default {
                             $push: {'players.$.cards': {$each: newCards}}
                         }
                     );
-                    io().to(C.MASTER).emit(C.EVENT, birthEvent);
+                    io().to(id).emit(C.EVENT, birthEvent);
                     res.status(200).json(player._id);
                 })
                 .catch(error => {
@@ -158,7 +158,6 @@ export default {
                         return p._id == idPlayer
                     })
                     if (player) {
-                        player.statusGame = game.status;
                         res.status(200).json({
                             player: player,
                             statusGame: game.status,
@@ -239,8 +238,8 @@ export default {
                                         }
                                     }
                                 );
-                                io().to(C.MASTER).emit(C.EVENT, discardEvent);
-                                io().to(C.MASTER).emit(C.EVENT, newCardsEvent);
+                                io().to(idGame).emit(C.EVENT, discardEvent);
+                                io().to(idGame).emit(C.EVENT, newCardsEvent);
                                 res.status(200).json(cardsDraw);
                             } else {
                                 //TODO changement technologique
@@ -317,7 +316,7 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
-                io().to(C.MASTER).emit(C.EVENT, newEvent);
+                io().to(idGame).emit(C.EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= cost;
                 seller.coins += cost;
