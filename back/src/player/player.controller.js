@@ -272,7 +272,7 @@ export default {
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
                 const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
-                let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, card.price, [card], Date.now());
+                let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
                 // Check if buyer has enough coins
                 if (buyer.status === C.DEAD) {
                     next({
