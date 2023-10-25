@@ -44,7 +44,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faQrcode = faQrcode;
   faCogs = faCogs;
   faInfo = faCircleInfo;
-
+  C=C;
   timerProgress: number = 100;
 
   options = [
@@ -191,7 +191,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   finishGame() {
     this.backService.stopGame(this.idGame).subscribe((data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
-      this.router.navigate(['results', this.idGame]);
+      this.router.navigate(['game', this.idGame,'events']);
     });
   }
 

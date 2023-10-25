@@ -23,7 +23,7 @@
       <div class="price">prix :</div>
       <div class="prices d-flex flex-column">
         <div class="price">{{card.price}} {{typeMoney === "june" ? "DU" : ""}}</div>
-        <div class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)}} Ğ1</div>
+        <div class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)| number:'1.2-2'}} Ğ1</div>
       </div>
     </div>
     <div class="qrcodeImage">

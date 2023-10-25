@@ -183,7 +183,7 @@ async function stopRound(gameId, gameRound) {
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
     GameModel.updateOne({_id: gameId}, {
         $set: {
-            status: C.INTER_TOUR,
+            status: C.STOP_ROUND,
             modified: Date.now(),
         },
         $push: {events: stopRoundEvent}
@@ -476,8 +476,10 @@ export default {
                     } else if (body.typeMoney === "debt") {
                         gameUpdated = await initGameDebt(game);
                     }
+                    let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
                     //and save the rest
                     GameModel.updateOne({_id: id}, {
+                        $push: {events: startGameEvent},
                         $set: {
                             status: C.STARTED,
                             decks: gameUpdated.decks,
@@ -528,28 +530,27 @@ export default {
                 message: "bad request"
             });
         } else {
-            try {
-                let stopGameEvent = constructor.event(STOP_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
-                GameModel.updateOne({_id: id}, {
-                    $set: {
-                        status: "stopped",
-                        modified: Date.now(),
-                    },
-                    $push: {events: stopGameEvent}
-                }).then(() => {
-                    io().to(id).emit(C.START_GAME);
-                    io().to(id).emit(C.EVENT, stopGameEvent);
-                    res.status(200).send({
-                        status: "stopped",
-                    });
-                })
-            } catch (err) {
+            let stopGameEvent = constructor.event(C.STOP_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
+            GameModel.updateOne({_id: id}, {
+                $set: {
+                    status: C.STOP_GAME,
+                    modified: Date.now(),
+                },
+                $push: {events: stopGameEvent}
+            }).then(() => {
+                io().to(id).emit(C.STOP_GAME);
+                io().to(id).emit(C.EVENT, stopGameEvent);
+                res.status(200).send({
+                    status: C.STOP_GAME,
+                });
+            }).catch(err => {
                 log.error('get game error', err);
                 next({
                     status: 404,
                     message: "not found"
                 });
-            }
+
+            });
         }
     },
     getGameById: async (req, res, next) => {

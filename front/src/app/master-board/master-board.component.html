@@ -106,7 +106,7 @@
 <!--              (click)="doIntertour()">distribuer les DU / administratif-->
 <!--      </button>-->
       <button *ngIf="game.status=='playing'" mat-raised-button color="warn" (click)="stopRound()">Stop</button>
-      <button *ngIf="game.round>game.roundMax" mat-raised-button color="warn"
+      <button *ngIf="game.status==C.STOP_ROUND && game.round>=game.roundMax" mat-raised-button color="warn"
               (click)="finishGame()">Terminier le jeu, afficher les resultats
       </button>
     </div>

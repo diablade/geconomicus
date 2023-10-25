@@ -15,8 +15,10 @@ import {ChartConfiguration, ChartDataset, ChartData, ChartType} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 // import {fr} from 'date-fns/locale';
 import {subSeconds, parseISO} from 'date-fns';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import Chart from 'chart.js/auto';
 
-// import { Chart, ChartEvent, ChartOptions, PluginChartOptions} from 'chart.js';
+Chart.register(zoomPlugin);
 
 
 @Component({
@@ -36,8 +38,48 @@ export class EventsComponent implements OnInit, AfterViewInit {
   datasetsRelatif: ChartDataset[] = [];
   datasetsResources: ChartDataset[] = [];
   currentDU = 0;
+  initialDU = 0;
+  initialMM = 0;
+  reincarnates=0;
+  startGameDate: Date | undefined;
+  stopGameDate: Date | undefined;
   C = C;
+  zoomQuant = true;
+  // zoomRelat=false;
+  // zoomResou=false;
 
+  durationGame() {
+    if (this.startGameDate && this.stopGameDate) {
+      let start = new Date(this.startGameDate);
+      let end = new Date(this.stopGameDate);
+      let durationInMilliseconds = end.getTime() - start.getTime();
+      let durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
+      return durationInMinutes + " minutes";
+    }
+    return "-";
+  }
+
+  getStatus() {
+    switch (this.game?.status) {
+      case C.OPEN:
+        return "Ouvert à rejoindre";
+      case "playing":
+        return "En cours";
+      case C.START_ROUND:
+        return "En cours";
+      case C.STOP_GAME:
+        return "Jeu Terminé";
+      case C.STOP_ROUND:
+        return "Tour terminé";
+      case C.INTER_TOUR :
+        return 'Inter tour';
+      case C.STARTED :
+        return 'Pret à démarré';
+      default:
+        return "-";
+
+    }
+  }
 
   public lineChartData: ChartConfiguration['data'] | undefined;
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -46,6 +88,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
         tension: 0.1,
       },
     },
+    responsive:true,
+    maintainAspectRatio:false,
     scales: {
       x: {
         type: 'time',
@@ -70,6 +114,23 @@ export class EventsComponent implements OnInit, AfterViewInit {
         // }
       },
     },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: this.zoomQuant,
+          mode: 'xy', // Enable both X and Y panning
+        },
+        zoom: {
+          wheel: {
+            enabled: this.zoomQuant,
+          },
+          pinch: {
+            enabled: this.zoomQuant,
+          },
+          mode: 'xy', // Enable both X and Y zooming
+        },
+      },
+    },
   };
   public lineChartType: ChartType = 'line';
 
@@ -80,6 +141,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
         tension: 0.1,
       },
     },
+    responsive:true,
+    maintainAspectRatio:false,
     scales: {
       x: {
         type: 'time',
@@ -95,6 +158,23 @@ export class EventsComponent implements OnInit, AfterViewInit {
         min: 0,
       },
     },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'xy'
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'xy'
+        }
+      }
+    }
   };
   public lineChartTypeRelatif: ChartType = 'line';
 
@@ -105,6 +185,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
         tension: 0.1,
       },
     },
+    responsive:true,
+    maintainAspectRatio:false,
     scales: {
       x: {
         type: 'time',
@@ -120,16 +202,42 @@ export class EventsComponent implements OnInit, AfterViewInit {
         min: 0,
       },
     },
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'xy'
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'xy'
+        }
+      }
+    }
   };
   public lineChartTypeResources: ChartType = 'line';
 
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
   }
 
+  toggleZoomQuant() {
+    //TODO NOT WORKING -_-!
+    // @ts-ignore
+    this.lineChartOptions.plugins.zoom.zoom.wheel.enabled = this.zoomQuant;
+    // @ts-ignore
+    this.lineChartOptions.plugins.zoom.zoom.pinch.enabled = this.zoomQuant;
+  }
+
   ngOnInit(): void {
     this.subscription = this.route.params.subscribe(params => {
       this.idGame = params['idGame'];
       this.backService.getGame(this.idGame).subscribe(async game => {
+        this.game = game;
         this.events = game.events;
         this.players = game.players;
         await this.initDatasets();
@@ -223,17 +331,27 @@ export class EventsComponent implements OnInit, AfterViewInit {
     for (const event of events) {
       let totalResourcesEvent = 0;
 
-      if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND) {
+      if (event.typeEvent === C.START_GAME) {
+        this.startGameDate = event.date;
+      } else if (event.typeEvent === C.STOP_GAME) {
+        this.stopGameDate = event.date;
+      } else if (event.typeEvent === C.DEAD) {
+        this.reincarnates += 1;
+      } else if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND) {
         continue
       } else if (event.typeEvent === C.FIRST_DU) {
         this.currentDU = event.amount;
+        this.initialDU = event.amount;
         continue
       } else if (event.typeEvent === C.DISTRIB_DU) {
         this.currentDU = event.amount;
-      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS ||event.typeEvent === "transformDiscard" ||event.typeEvent === "tranformNewCards" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
+      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard" || event.typeEvent === "tranformNewCards" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
         totalResourcesEvent = _.reduce(event.resources, function (sum, card) {
           return sum + card.price;
         }, 0);
+        if (event.typeEvent === C.DISTRIB) {
+          this.initialMM += event.amount;
+        }
       }
 
       // Find the dataset for the emitter and receiver
@@ -310,14 +428,24 @@ export class EventsComponent implements OnInit, AfterViewInit {
         if (receiverDatasetResources) {
           if (event.typeEvent === C.TRANSACTION) {
             // @ts-ignore
-            receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
+            receiverDatasetResources.data.push({
+              // @ts-ignore
+              x: subSeconds(parseISO(event.date), 1),
+              // @ts-ignore
+              y: receiverDatasetResources.total
+            });
             // @ts-ignore
             receiverDatasetResources.total -= totalResourcesEvent;
             // @ts-ignore
             receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
           } else if (event.typeEvent === C.DEAD) {
             // @ts-ignore
-            receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
+            receiverDatasetResources.data.push({
+              // @ts-ignore
+              x: subSeconds(parseISO(event.date), 1),
+              // @ts-ignore
+              y: receiverDatasetResources.total
+            });
             // @ts-ignore
             receiverDatasetResources.data.push({x: event.date, y: 0});
           } else if (event.typeEvent === C.REMIND_DEAD) {

@@ -36,6 +36,8 @@ import {NgChartsModule} from 'ng2-charts';
 import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
 
 @NgModule({
   declarations: [
