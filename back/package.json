@@ -1,6 +1,6 @@
 {
     "name": "back",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "dependencies": {
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
