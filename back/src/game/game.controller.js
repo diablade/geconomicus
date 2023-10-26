@@ -423,6 +423,7 @@ export default {
             GameModel.updateOne({_id: id}, {
                 $set: {
                     typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
+                    name: body.name ? body.name : "sans nom",
                     priceWeight1: body.priceWeight1 ? body.priceWeight1 : 1,
                     priceWeight2: body.priceWeight2 ? body.priceWeight2 : 3,
                     priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
@@ -460,35 +461,22 @@ export default {
         } else {
             GameModel.findById(id)
                 .then(async (game) => {
-                    game.priceWeight1 = body.priceWeight1 ? body.priceWeight1 : 1;
-                    game.priceWeight2 = body.priceWeight2 ? body.priceWeight2 : 3;
-                    game.priceWeight3 = body.priceWeight3 ? body.priceWeight3 : 6;
-                    game.priceWeight4 = body.priceWeight4 ? body.priceWeight4 : 9;
-                    game.startAmountCoins = body.startAmountCoins ? body.startAmountCoins : 5;
-                    game.tauxCroissance = body.tauxCroissance ? body.tauxCroissance : 10;
-                    game.round = 1;
-                    game.roundMax = body.roundMax ? body.roundMax : 10;
-                    game.roundMinutes = body.roundMinutes ? body.roundMinutes : 8;
-                    game.inequalityStart = body.inequalityStart ? body.inequalityStart : false;
+                    game.typeMoney = body.typeMoney ? body.typeMoney : C.JUNE;
                     let gameUpdated;
-                    if (body.typeMoney === "june") {
+                    if (game.typeMoney === "june") {
                         gameUpdated = await initGameJune(game);
-                    } else if (body.typeMoney === "debt") {
+                    } else if (game.typeMoney === "debt") {
                         gameUpdated = await initGameDebt(game);
                     }
                     let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
+                    gameUpdated.events.push(startGameEvent);
                     //and save the rest
                     GameModel.updateOne({_id: id}, {
-                        $push: {events: startGameEvent},
                         $set: {
                             status: C.STARTED,
                             decks: gameUpdated.decks,
                             events: gameUpdated.events,
                             players: gameUpdated.players,
-                            priceWeight1: gameUpdated.priceWeight1,
-                            priceWeight2: gameUpdated.priceWeight2,
-                            priceWeight3: gameUpdated.priceWeight3,
-                            priceWeight4: gameUpdated.priceWeight4,
                             round: gameUpdated.round,
                             roundMax: gameUpdated.roundMax,
                             roundMinutes: gameUpdated.roundMinutes,
@@ -498,7 +486,7 @@ export default {
                             currentMassMonetary: gameUpdated.currentMassMonetary,
                             inequalityStart: gameUpdated.inequalityStart,
                             modified: Date.now(),
-                        }
+                        },
                     })
                         .then(updatedGame => {
                             res.status(200).send({

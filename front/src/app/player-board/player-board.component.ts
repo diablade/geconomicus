@@ -125,13 +125,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.START_ROUND, async (data: any) => {
       this.statusGame = "playing";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
-        data: {text: "c'est parti !! le tour à démarré "},
+        data: {text: "Le tour démarre ! "},
       });
     });
     this.socket.on(C.STOP_ROUND, async (data: any) => {
       this.statusGame = "waiting";
       const dialogRef = this.dialog.open(InformationDialogComponent, {
-        data: {text: "tour terminé !"},
+        data: {text: "Tour terminé !"},
       });
     });
     this.socket.on("connected", (data: any) => {

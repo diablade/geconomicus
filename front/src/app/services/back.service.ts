@@ -45,8 +45,12 @@ export class BackService {
   /**
    * join party
    */
-  public join(idGame: string, name: string, reincarnate: string|undefined): Observable<any> {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {idGame: idGame, name: name, reincarnate:reincarnate})
+  public join(idGame: string, name: string, reincarnate: string | undefined): Observable<any> {
+    return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {
+      idGame: idGame,
+      name: name,
+      reincarnate: reincarnate
+    })
       .pipe(
         catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
       );
@@ -134,17 +138,7 @@ export class BackService {
   startGame(game: Game) {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.START, {
       idGame: game._id,
-      priceWeight1: game.priceWeight1,
-      priceWeight2: game.priceWeight2,
-      priceWeight3: game.priceWeight3,
-      priceWeight4: game.priceWeight4,
-      tauxCroissance: game.tauxCroissance,
-      startAmountCoins: game.startAmountCoins,
-      inequalityStart: game.inequalityStart,
-      round: game.round,
       typeMoney: game.typeMoney,
-      roundMax: game.roundMax,
-      roundMinutes: game.roundMinutes
     })
       .pipe(
         catchError(err => this.handleError(err, "", "start game impossible"))
@@ -178,8 +172,8 @@ export class BackService {
       );
   }
 
-  stopRound(idGame: string, round:number) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round:round})
+  stopRound(idGame: string, round: number) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
       .pipe(
         catchError(err => this.handleError(err, "", "stop tour impossible"))
       );
@@ -215,5 +209,24 @@ export class BackService {
           //TODO ré actualise
         )
       );
+  }
+
+  updateGame(idGame: string, results: any) {
+    return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
+      idGame: idGame,
+      priceWeight1: results.priceWeight1,
+      priceWeight2: results.priceWeight2,
+      priceWeight3: results.priceWeight3,
+      priceWeight4: results.priceWeight4,
+      tauxCroissance: results.tauxCroissance,
+      startAmountCoins: results.startAmountCoins,
+      inequalityStart: results.inequalityStart,
+      round: results.round,
+      typeMoney: results.typeMoney,
+      roundMax: results.roundMax,
+      roundMinutes: results.roundMinutes
+    }).pipe(
+      catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
+    );
   }
 }

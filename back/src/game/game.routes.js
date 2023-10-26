@@ -14,5 +14,6 @@ router.get('/events/:idGame', game.getEvents);
 router.put('/start', game.start);
 router.post('/stop', game.stop);
 router.put('/reset', game.reset);
+router.put('/update', game.update);
 
 export default router;

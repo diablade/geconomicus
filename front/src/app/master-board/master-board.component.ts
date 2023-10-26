@@ -19,6 +19,7 @@ import {SnackbarService} from "../services/snackbar.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
+import * as _ from 'lodash-es';
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
 import {SessionStorageService} from "../services/local-storage/session-storage.service";
 import {StorageKey} from "../services/local-storage/storage-key.const";
@@ -213,19 +214,22 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 
   showOptions() {
     const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-      data: {game: this.game},
+      data: {game: _.clone(this.game)},
     });
     dialogRef.afterClosed().subscribe(results => {
-      this.game.roundMax = results.roundMax;
-      this.game.roundMinutes = results.roundMinutes;
+      this.backService.updateGame(this.idGame, results).subscribe((data: any) => {
+        this.snackbarService.showSuccess("Option sauvegardé !");
+      });
+      this.game.name = results.name;
       this.game.priceWeight1 = results.priceWeight1;
       this.game.priceWeight2 = results.priceWeight2;
       this.game.priceWeight3 = results.priceWeight3;
       this.game.priceWeight4 = results.priceWeight4;
+      this.game.roundMax = results.roundMax;
+      this.game.roundMinutes = results.roundMinutes;
       this.game.inequalityStart = results.inequalityStart;
       this.game.startAmountCoins = results.startAmountCoins;
       this.game.tauxCroissance = results.tauxCroissance;
-      this.game.name = results.name;
     });
   }
 

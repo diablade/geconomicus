@@ -116,16 +116,21 @@ export class EventsComponent implements OnInit, AfterViewInit {
     },
     plugins: {
       zoom: {
+        limits:{
+          y: {min: 0},
+        },
         pan: {
-          enabled: this.zoomQuant,
+          enabled: true,
           mode: 'xy', // Enable both X and Y panning
         },
         zoom: {
           wheel: {
-            enabled: this.zoomQuant,
+            enabled: true,
+            modifierKey:'ctrl',
+
           },
           pinch: {
-            enabled: this.zoomQuant,
+            enabled: true,
           },
           mode: 'xy', // Enable both X and Y zooming
         },
@@ -160,6 +165,9 @@ export class EventsComponent implements OnInit, AfterViewInit {
     },
     plugins: {
       zoom: {
+        limits:{
+          y: {min: 0},
+        },
         pan: {
           enabled: true,
           mode: 'xy'
@@ -167,6 +175,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
         zoom: {
           wheel: {
             enabled: true,
+            modifierKey:'ctrl',
           },
           pinch: {
             enabled: true
@@ -204,12 +213,16 @@ export class EventsComponent implements OnInit, AfterViewInit {
     },
     plugins: {
       zoom: {
+        limits:{
+          y: {min: 0},
+        },
         pan: {
           enabled: true,
           mode: 'xy'
         },
         zoom: {
           wheel: {
+            modifierKey:'ctrl',
             enabled: true,
           },
           pinch: {
