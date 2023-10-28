@@ -23,6 +23,7 @@ import * as _ from 'lodash-es';
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
 import {SessionStorageService} from "../services/local-storage/session-storage.service";
 import {StorageKey} from "../services/local-storage/storage-key.const";
+import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 
 @Component({
   selector: 'app-master-board',
@@ -45,7 +46,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faQrcode = faQrcode;
   faCogs = faCogs;
   faInfo = faCircleInfo;
-  C=C;
+  C = C;
   timerProgress: number = 100;
 
   options = [
@@ -59,7 +60,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.minutes = mm;
       this.seconds = ss;
       let secondsRemaining = s + (m * 60);
-      this.sessionStorageService.setItem(StorageKey.timerRemaining,secondsRemaining);
+      this.sessionStorageService.setItem(StorageKey.timerRemaining, secondsRemaining);
       this.timerProgress = secondsRemaining / (this.game.roundMinutes * 60) * 100;
     },
     done: () => {
@@ -89,10 +90,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     });
     this.backService.getGame(this.idGame).subscribe(game => {
       this.game = game;
-      this.minutes = this.game.roundMinutes.toString();
+      this.minutes = this.game.roundMinutes > 9 ? this.game.roundMinutes.toString() : "0" + this.game.roundMinutes.toString();
       let timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
-      if (timerRemaining && game.status == "playing") {
+      if (timerRemaining && game.status == C.START_ROUND) {
         this.timer.set({h: 0, m: 0, s: timerRemaining});
         this.timer.start();
       } else {
@@ -114,14 +115,16 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     });
     this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
       console.log("timer left ", minutesRemaining);
-      this.sessionStorageService.setItem(StorageKey.timerRemaining,minutesRemaining*60);
-
-      if (minutesRemaining && this.game.status == "playing") {
+      this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
+      if (minutesRemaining && this.game.status == C.START_ROUND) {
         this.timer.stop();
         this.timer.reset();
         this.timer.set({h: 0, m: minutesRemaining, s: 0});
         this.timer.start();
       }
+    });
+    this.socket.on(C.STOP_ROUND, async (data: any) => {
+      this.stopRound();
     });
   }
 
@@ -144,7 +147,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   startGame() {
     if (this.game) {
       this.backService.startGame(this.game).subscribe((data: any) => {
-        if (data.status == C.STARTED) {
+        if (data.status == C.START_GAME) {
           this.game.status = data.status;
           this.game.round += 1;
         }
@@ -153,20 +156,28 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   }
 
   startRound() {
-    this.backService.startRound(this.idGame).subscribe(() => {
+    this.backService.startRound(this.idGame, this.game.round).subscribe(() => {
+      this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
       this.timer.start();
-      this.game.status = 'playing';
+      this.game.status = C.START_ROUND;
       this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
     });
   }
 
   stopRound() {
     this.timer.stop();
-    this.game.status = 'intertour';
-    this.timerProgress = 100;
+    this.timer.reset();
+    this.game.status = C.STOP_ROUND;
+    this.timerProgress = 0;
     this.sessionStorageService.removeItem(StorageKey.timerRemaining);
+    // this.snackbarService.showSuccess("le tour " + this.game.round + " à terminé");
+    const dialogRef = this.dialog.open(InformationDialogComponent, {
+      data: {text: "Tour terminé !"},
+    });
+  }
+
+  stopRoundForce() {
     this.backService.stopRound(this.idGame, this.game.round).subscribe(() => {
-      this.snackbarService.showSuccess("le tour " + this.game.round + " à terminé");
     });
   }
 
@@ -175,10 +186,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
     this.backService.interRound(this.idGame).subscribe((data) => {
       console.log(data);
-      if (data.status == 'intertourDone') {
+      if (data.status == C.INTER_ROUND) {
         this.game.status = data.status;
         this.game.round += 1;
-        this.snackbarService.showSuccess("Dividendes Universels distribués");
       }
     });
   }
@@ -186,14 +196,19 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   resetGame() {
     this.backService.resetGame(this.idGame).subscribe((data: any) => {
       this.snackbarService.showSuccess("RESET GAME");
+      location.reload();
     });
   }
 
   finishGame() {
-    this.backService.stopGame(this.idGame).subscribe((data: any) => {
+    this.backService.endGame(this.idGame).subscribe((data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
-      this.router.navigate(['game', this.idGame,'events']);
+      this.goToResults();
     });
+  }
+
+  goToResults() {
+    this.router.navigate(['game', this.idGame, 'events']);
   }
 
   getUserUrl(idPlayer: string) {
@@ -220,6 +235,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.backService.updateGame(this.idGame, results).subscribe((data: any) => {
         this.snackbarService.showSuccess("Option sauvegardé !");
       });
+      this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
       this.game.name = results.name;
       this.game.priceWeight1 = results.priceWeight1;
       this.game.priceWeight2 = results.priceWeight2;

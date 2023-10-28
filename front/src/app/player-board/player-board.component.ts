@@ -76,6 +76,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   currentDU: number = 0;
   cards: Card[] = [];
   faCamera = faCamera;
+  C=C;
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
@@ -123,7 +124,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.receiveCards(data.cards);
     });
     this.socket.on(C.START_ROUND, async (data: any) => {
-      this.statusGame = "playing";
+      this.statusGame = C.START_ROUND;
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "Le tour démarre ! "},
       });
@@ -140,9 +141,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on('disconnect', () => {
       console.log('Socket has been disconnected');
     });
-    this.socket.on(C.STOP_GAME, (data: any) => {
+    this.socket.on(C.END_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
-      this.statusGame=C.STOP_GAME;
+      this.statusGame=C.END_GAME;
       this.router.navigate(['game', this.idGame,'events']);
     });
     this.socket.on(C.DISTRIB_DU, (data: any) => {

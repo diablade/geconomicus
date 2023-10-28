@@ -63,18 +63,16 @@ export class EventsComponent implements OnInit, AfterViewInit {
     switch (this.game?.status) {
       case C.OPEN:
         return "Ouvert à rejoindre";
-      case "playing":
-        return "En cours";
       case C.START_ROUND:
         return "En cours";
-      case C.STOP_GAME:
+      case C.END_GAME:
         return "Jeu Terminé";
       case C.STOP_ROUND:
         return "Tour terminé";
-      case C.INTER_TOUR :
+      case C.INTER_ROUND :
         return 'Inter tour';
-      case C.STARTED :
-        return 'Pret à démarré';
+      case C.START_GAME :
+        return 'Jeu démarré';
       default:
         return "-";
 
@@ -346,7 +344,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
       if (event.typeEvent === C.START_GAME) {
         this.startGameDate = event.date;
-      } else if (event.typeEvent === C.STOP_GAME) {
+      } else if (event.typeEvent === C.END_GAME) {
         this.stopGameDate = event.date;
       } else if (event.typeEvent === C.DEAD) {
         this.reincarnates += 1;

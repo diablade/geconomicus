@@ -165,8 +165,8 @@ export class BackService {
       );
   }
 
-  startRound(idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame})
+  startRound(idGame: string, round:number) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round:round})
       .pipe(
         catchError(err => this.handleError(err, "", "demarrer tour impossible"))
       );
@@ -186,19 +186,13 @@ export class BackService {
       );
   }
 
-  stopGame(idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP, {idGame: idGame})
+  endGame(idGame: string) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
       .pipe(
         catchError(err => this.handleError(err, "", "stop jeu impossible"))
       );
   }
 
-  // getEvents(idGame: string) {
-  //   return this.http.get<any>(environment.API_HOST + environment.GAME.EVENTS+ idGame)
-  //     .pipe(
-  //       catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
-  //     );
-  // }
   killUser(idPlayer: string, idGame: string) {
     return this.http.post<any>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
       idGame: idGame,
@@ -214,6 +208,7 @@ export class BackService {
   updateGame(idGame: string, results: any) {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
       idGame: idGame,
+      name:results.name,
       priceWeight1: results.priceWeight1,
       priceWeight2: results.priceWeight2,
       priceWeight3: results.priceWeight3,

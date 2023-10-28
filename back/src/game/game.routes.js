@@ -12,7 +12,7 @@ router.delete('/delete-player', game.deletePlayer);
 router.post('/kill-player', game.killPlayer);
 router.get('/events/:idGame', game.getEvents);
 router.put('/start', game.start);
-router.post('/stop', game.stop);
+router.post('/end', game.end);
 router.put('/reset', game.reset);
 router.put('/update', game.update);
 

@@ -27,6 +27,6 @@ export const environment = {
     START_ROUND: 'game/start-round/',
     STOP_ROUND: 'game/stop-round',
     INTER_ROUND: 'game/inter-round',
-    STOP: 'game/stop',
+    END: 'game/end',
   },
 };

@@ -15,7 +15,7 @@
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="statusGame!=='playing'">
+  <div class="" *ngIf="statusGame!==C.START_ROUND">
     <div class="text-center h1">En attente...</div>
   </div>
   <div class="container">
@@ -38,7 +38,7 @@
   </div>
   <div class="footer">
     <button mat-raised-button color="accent"
-            [disabled]="statusGame!=='playing'||player.status=='dead'"
+            [disabled]="statusGame!== C.START_ROUND||player.status== C.DEAD"
             (click)="scan()">
       <fa-icon [icon]="faCamera"></fa-icon>
       ACHETER une Carte

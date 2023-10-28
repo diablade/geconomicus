@@ -2,12 +2,11 @@
 const OPEN = 'open';
 const JUNE= 'june';
 const START_GAME = 'start-game';
-const STOP_GAME = 'stop-game';
+const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
 const STOP_ROUND = 'stop-round';
 const TIMER_LEFT = 'timer-left';
-const INTER_TOUR = 'intertour';
-const STARTED = 'started';
+const INTER_ROUND = 'inter-round';
 const EVENT = 'event';
 const MASTER = 'master';
 const DISTRIB_DU = 'distrib_du';
@@ -33,12 +32,11 @@ if (typeof module !== 'undefined' && module.exports) {
         ALIVE:ALIVE,
         BIRTH:BIRTH,
         START_GAME: START_GAME,
-        STOP_GAME: STOP_GAME,
+        END_GAME: END_GAME,
         START_ROUND: START_ROUND,
         TIMER_LEFT:TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,
-        INTER_TOUR: INTER_TOUR,
-        STARTED: STARTED,
+        INTER_ROUND: INTER_ROUND,
         EVENT: EVENT,
         MASTER: MASTER,
         DISTRIB_DU: DISTRIB_DU,

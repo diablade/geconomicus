@@ -138,13 +138,16 @@ async function initGameJune(game) {
     let decks = await generateCardsPerPlayers(nbPlayer, prices);
     const classes = game.inequalityStart ? await generateInequality(nbPlayer) : [];
 
+    let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
+    game.events.push(startGameEvent);
+
     for await (let player of game.players) {
         // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
         player.cards = cards;
         player.status = C.ALIVE;
         player.typeMoney = C.JUNE;
-        player.statusGame = C.STARTED;
+        player.statusGame = C.START_GAME;
 
         if (game.inequalityStart) {
             if (classes[0] >= 1) {
@@ -252,11 +255,11 @@ function startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft) {
         io().to(gameId).emit(C.TIMER_LEFT, minutesLeft - 1);
 
         // TODO: the automatic dead is coming ;
-        distribDU(gameId);
-
         if (minutesLeft - 1 <= 0) {
+            await distribDU(gameId);
             stopRound(gameId, gameRound);
         } else {
+            distribDU(gameId);
             // Continue the timer
             startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft - 1);
         }
@@ -332,85 +335,6 @@ export default {
             }
         }
     },
-    startRound: async (req, res, next) => {
-        const id = req.body.idGame;
-        const round = req.body.round;
-        if (!id) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
-            GameModel.findByIdAndUpdate(id, {
-                $set: {
-                    status: "playing",
-                    round: round,
-                    modified: Date.now(),
-                },
-                $push: {events: startEvent}
-            }, {new: true})
-                .then(updatedGame => {
-                    io().to(id).emit(C.START_ROUND);
-                    io().to(id).emit(C.EVENT, startEvent);
-                    startRound(updatedGame);
-                    res.status(200).send({
-                        status: "playing",
-                    });
-                })
-                .catch(err => {
-                    log.error('get game error', err);
-                    next({
-                        status: 404,
-                        message: "not found"
-                    });
-                })
-        }
-    },
-    interRound: async (req, res, next) => {
-        const id = req.body.idGame;
-        if (!id) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.updateOne({_id: id}, {
-                $inc: {round: 1},
-                $set: {
-                    status: "intertourDone",
-                    modified: Date.now(),
-                },
-            }, {new: true})
-                .then(updatedGame => {
-                    res.status(200).send({
-                        status: "intertourDone",
-                    });
-                })
-                .catch(err => {
-                    log.error('get game error', err);
-                    next({
-                        status: 404,
-                        message: "not found"
-                    });
-                })
-        }
-    },
-    stopRound: async (req, res, next) => {
-        const id = req.body.idGame;
-        const round = req.body.round;
-        if (!id) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            await stopRound(id, round);
-            res.status(200).send({
-                status: C.STOP_ROUND,
-            });
-        }
-    },
     update: async (req, res, next) => {
         const id = req.body.idGame;
         const body = req.body;
@@ -468,16 +392,14 @@ export default {
                     } else if (game.typeMoney === "debt") {
                         gameUpdated = await initGameDebt(game);
                     }
-                    let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
-                    gameUpdated.events.push(startGameEvent);
                     //and save the rest
                     GameModel.updateOne({_id: id}, {
                         $set: {
-                            status: C.STARTED,
+                            status: C.START_GAME,
                             decks: gameUpdated.decks,
                             events: gameUpdated.events,
                             players: gameUpdated.players,
-                            round: gameUpdated.round,
+                            round: gameUpdated.round + 1,
                             roundMax: gameUpdated.roundMax,
                             roundMinutes: gameUpdated.roundMinutes,
                             currentDU: gameUpdated.currentDU,
@@ -490,7 +412,7 @@ export default {
                     })
                         .then(updatedGame => {
                             res.status(200).send({
-                                status: C.STARTED,
+                                status: C.START_GAME,
                             });
                         })
                         .catch(err => {
@@ -510,7 +432,41 @@ export default {
                 })
         }
     },
-    stop: async (req, res, next) => {
+    startRound: async (req, res, next) => {
+        const id = req.body.idGame;
+        const round = req.body.round;
+        if (!id) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
+            GameModel.findByIdAndUpdate(id, {
+                $set: {
+                    status: C.START_ROUND,
+                    modified: Date.now(),
+                },
+                $push: {events: startEvent}
+            }, {new: true})
+                .then(updatedGame => {
+                    io().to(id).emit(C.START_ROUND);
+                    io().to(id).emit(C.EVENT, startEvent);
+                    startRound(updatedGame);
+                    res.status(200).send({
+                        status: C.START_ROUND,
+                    });
+                })
+                .catch(err => {
+                    log.error('get game error', err);
+                    next({
+                        status: 404,
+                        message: "not found"
+                    });
+                })
+        }
+    },
+    interRound: async (req, res, next) => {
         const id = req.body.idGame;
         if (!id) {
             next({
@@ -518,18 +474,62 @@ export default {
                 message: "bad request"
             });
         } else {
-            let stopGameEvent = constructor.event(C.STOP_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
+            GameModel.updateOne({_id: id}, {
+                $inc: {round: 1},
+                $set: {
+                    status: C.INTER_ROUND,
+                    modified: Date.now(),
+                },
+            }, {new: true})
+                .then(updatedGame => {
+                    res.status(200).send({
+                        status: C.INTER_ROUND,
+                    });
+                })
+                .catch(err => {
+                    log.error('get game error', err);
+                    next({
+                        status: 404,
+                        message: "not found"
+                    });
+                })
+        }
+    },
+    stopRound: async (req, res, next) => {
+        const id = req.body.idGame;
+        const round = req.body.round;
+        if (!id && !round) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            await stopRound(id, round);
+            res.status(200).send({
+                status: C.STOP_ROUND,
+            });
+        }
+    },
+    end: async (req, res, next) => {
+        const id = req.body.idGame;
+        if (!id) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            let stopGameEvent = constructor.event(C.END_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
             GameModel.updateOne({_id: id}, {
                 $set: {
-                    status: C.STOP_GAME,
+                    status: C.END_GAME,
                     modified: Date.now(),
                 },
                 $push: {events: stopGameEvent}
             }).then(() => {
-                io().to(id).emit(C.STOP_GAME);
+                io().to(id).emit(C.END_GAME);
                 io().to(id).emit(C.EVENT, stopGameEvent);
                 res.status(200).send({
-                    status: C.STOP_GAME,
+                    status: C.END_GAME,
                 });
             }).catch(err => {
                 log.error('get game error', err);
