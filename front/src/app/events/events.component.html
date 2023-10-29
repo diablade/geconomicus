@@ -84,8 +84,9 @@
         <div>Taux de croissance : {{game?.tauxCroissance}}</div>
         <div>Mass monetaire initial : {{initialMM | number:'1.2-2'}} Ğ1</div>
         <div>Mass monetaire final : {{game?.currentMassMonetary | number:'1.2-2'}} Ğ1</div>
-        <div>DU initial : {{initialDU}} Ğ1</div>
-        <div>DU final : {{game?.currentDU}} Ğ1</div>
+        <div>Formule de calcul du DU: (MasseM / nb Joueur) * Taux </div>
+        <div>DU initial : ({{initialMM}} / {{game?.players?.length}} * {{game?.tauxCroissance | number:'1.2-2'}}) = {{initialDU}} Ğ1</div>
+        <div>DU final : ({{game?.currentMassMonetary}} / {{game?.players?.length}} * {{game?.tauxCroissance | number:'1.2-2'}}) = {{game?.currentDU}} Ğ1</div>
       </div>
       <div class="col-sm-12 col-md-4">
         <div>début: {{startGameDate| date:"YYYY-MMM-dd HH:mm"}}</div>

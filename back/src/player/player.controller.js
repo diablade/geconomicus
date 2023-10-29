@@ -298,6 +298,7 @@ export default {
                     throw new Error('seller is dead');
                 }
                 // Check if buyer has enough coins
+                const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
                 if (buyer.coins < cost) {
                     log.error("buyer has not enough coins");
                     next({
@@ -306,7 +307,6 @@ export default {
                     });
                     throw new Error('Not enough coins');
                 }
-                const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
                 let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
                 // remove card and add coins to seller
                 await GameModel.updateOne(

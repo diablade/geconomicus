@@ -307,6 +307,19 @@ export class EventsComponent implements OnInit, AfterViewInit {
       total: 0,
       playerId: player._id
     }));
+    this.datasets.push({
+      data: [],
+      label: "Masse monétaire",
+      backgroundColor: this.hexToRgb("#000000"),
+      borderColor: this.hexToRgb("#000000"),
+      pointBackgroundColor: this.hexToRgb("#000000"),
+      pointBorderColor: this.hexToRgb("#000000"),
+      borderWidth: 2, // Line thickness
+      pointRadius: 0.8, // Point thickness
+    // @ts-ignore
+      total: 0,
+      playerId: "masseMoney"
+    });
 
     this.datasetsRelatif = _.map(players, player => ({
       data: [],
@@ -367,6 +380,8 @@ export class EventsComponent implements OnInit, AfterViewInit {
 
       // Find the dataset for the emitter and receiver
       // @ts-ignore
+      const mmDataset = _.find(this.datasets, dataset => dataset.playerId === "masseMoney");
+      // @ts-ignore
       const emitterDataset = _.find(this.datasets, dataset => dataset.playerId === event.emitter);
       // @ts-ignore
       const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.emitter);
@@ -379,6 +394,13 @@ export class EventsComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.playerId === event.receiver);
 
+      if(mmDataset && (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU)){
+        // @ts-ignore
+        mmDataset.total += event.amount;
+        // @ts-ignore
+        mmDataset.data.push({x: event.date, y: mmDataset.total});
+
+      }
       // Add the event to the emitter's and receiver's datasets and update the running total
       if (emitterDataset) {
         if (event.typeEvent === C.TRANSACTION) {
@@ -409,11 +431,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
           emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
         } else if (event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard") {
           // @ts-ignore
-          // emitterDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDatasetResources.total});
-          // @ts-ignore
           emitterDatasetResources.total -= totalResourcesEvent;
-          // @ts-ignore
-          // emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
         }
       }
 
@@ -463,8 +481,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
             // @ts-ignore
             receiverDatasetResources.data.push({x: event.date, y: 0});
           } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS || event.typeEvent === "tranformNewCards") {
-            // @ts-ignore
-            // receiverDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDatasetResources.total});
             // @ts-ignore
             receiverDatasetResources.total += totalResourcesEvent;
             // @ts-ignore
