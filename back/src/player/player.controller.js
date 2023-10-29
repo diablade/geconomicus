@@ -266,33 +266,48 @@ export default {
         const idSeller = req.body.idSeller;
         const idCard = req.body.idCard;
         if (idGame && idBuyer && idSeller && idCard) {
-            try {
-                const game = await GameModel.findById(idGame);
+            GameModel.findById(idGame).then(async game => {
                 const buyer = _.find(game.players, {id: idBuyer});
                 const seller = _.find(game.players, {id: idSeller});
                 const card = _.find(seller.cards, {id: idCard});
-                const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
-                let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
-                // Check if buyer has enough coins
+                // Check if card seller buyer exist
+                if (!card || !seller || !buyer) {
+                    log.error("card or buyer or seller doesn't exist");
+                    next({
+                        status: 400,
+                        message: "card or buyer or seller doesn't exist"
+                    });
+                    throw new Error('card or buyer or seller doesn\'t exist');
+                }
+                // Check if buyer is dead
                 if (buyer.status === C.DEAD) {
+                    log.error("buyer should be dead");
                     next({
                         status: 400,
                         message: "you should be dead"
                     });
                     throw new Error('you should be dead fool !');
-                } else if (seller.status === C.DEAD) {
+                }
+                // Check if seller is dead
+                if (seller.status === C.DEAD) {
+                    log.error("seller should be dead");
                     next({
                         status: 400,
                         message: "seller is dead"
                     });
                     throw new Error('seller is dead');
-                } else if (buyer.coins < cost) {
+                }
+                // Check if buyer has enough coins
+                if (buyer.coins < cost) {
+                    log.error("buyer has not enough coins");
                     next({
                         status: 400,
                         message: "fond insuffisant"
                     });
                     throw new Error('Not enough coins');
                 }
+                const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;
+                let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
                 // remove card and add coins to seller
                 await GameModel.updateOne(
                     {_id: idGame, 'players._id': idSeller},
@@ -323,10 +338,11 @@ export default {
                 io().to(idSeller).emit(C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
                 // Send back to buyer , card with updated coins
                 res.status(200).json({buyedCard: card, coins: buyer.coins});
-            } catch (error) {
-                log.error('transaction error', error);
-                throw error;
-            }
+            })
+                .catch((error) => {
+                    log.error('transaction error', error);
+                    throw error;
+                });
         } else {
             next({
                 status: 400,

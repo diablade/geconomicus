@@ -255,7 +255,7 @@ function startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft) {
         io().to(gameId).emit(C.TIMER_LEFT, minutesLeft - 1);
 
         // TODO: the automatic dead is coming ;
-        if (minutesLeft - 1 <= 0) {
+        if ((minutesLeft - 1) <= 0) {
             await distribDU(gameId);
             stopRound(gameId, gameRound);
         } else {
