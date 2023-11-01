@@ -21,12 +21,14 @@ export class HomeComponent {
     const dialogRef = this.dialog.open(CreateGameDialog, {});
 
     dialogRef.afterClosed().subscribe(gameName => {
-      this.backService.createGame({'gameName': gameName})
-        .subscribe(
-          game => {
-            this.router.navigate(['game', game._id, 'master']);
-          },
-        );
+      if (gameName) {
+        this.backService.createGame({'gameName': gameName})
+          .subscribe(
+            game => {
+              this.router.navigate(['game', game._id, 'master']);
+            },
+          );
+      }
     });
   }
 
