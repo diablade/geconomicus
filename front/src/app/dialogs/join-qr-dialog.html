@@ -1,16 +1,17 @@
-<div class="qrcodeImage">
+<div style="width: 210px; height: 210px;display: flex;
+    justify-content: center;
+    align-items: center;">
   <qrcode
     [qrdata]="data.url"
     [allowEmptyString]="true"
     [ariaLabel]="'QR Code image with the following content...'"
-    [cssClass]="'qrcodeImage'"
-    [colorDark]="'#000000ff'"
-    [colorLight]="'#ffffffff'"
-    [elementType]="'svg'"
+    [colorDark]="'#000000'"
+    [colorLight]="'#ffffff'"
+    [elementType]="'canvas'"
     [errorCorrectionLevel]="'M'"
     [margin]="1"
     [scale]="1"
-    [width]="100"
+    [width]="200"
     [title]="'A cust om title attribute'"
   ></qrcode>
 </div>

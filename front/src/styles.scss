@@ -16,3 +16,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-size: calc(26vw*0.1);
   font-family: serif;
 }
+/* Apply a conditional statement to limit the font size */
+@media (min-width: 1080px) {
+  .letter {
+    font-size: 7rem;
+    line-height: 7rem;
+    font-family: serif;
+    z-index: 10;
+  }
+}
+/* Apply a conditional statement to limit the font size */
+@media (min-width: 1080px) {
+  .price {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    font-family: serif;
+  }
+}
