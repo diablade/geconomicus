@@ -121,12 +121,12 @@ async function initGameDebt(game) {
     return game;
 }
 
-async function generateInequality(nbPlayer) {
+async function generateInequality(nbPlayer, pctRich, pctPoor) {
     //10% de riche = 2x le median
     //10% de pauvre = 1/2 le median
     //80% classe moyenne = la moyenne
-    const classHaute = Math.floor(nbPlayer * 0.1);
-    const classBasse = Math.floor(nbPlayer * 0.1);
+    const classHaute = Math.floor(nbPlayer * (pctRich/100));
+    const classBasse = Math.floor(nbPlayer * (pctPoor/100));
     const classMoyenne = nbPlayer - classHaute - classBasse;
 
     return [classBasse, classMoyenne, classHaute];
@@ -136,7 +136,7 @@ async function initGameJune(game) {
     const nbPlayer = game.players.length;
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
     let decks = await generateCardsPerPlayers(nbPlayer, prices);
-    const classes = game.inequalityStart ? await generateInequality(nbPlayer) : [];
+    const classes = game.inequalityStart ? await generateInequality(nbPlayer,game.pctRich,game.pctPoor) : [];
 
     let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
     game.events.push(startGameEvent);
@@ -314,6 +314,8 @@ export default {
                 startAmountCoins: 5,
                 inequalityStart: false,
                 tauxCroissance: 10,
+                pctRich: 10,
+                pctPoor: 10,
                 round: 0,
                 currentDU: 0,
                 currentMassMonetary: 0,
@@ -355,6 +357,8 @@ export default {
                     roundMax: body.roundMax ? body.roundMax : 1,
                     roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
                     tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
+                    pctRich: body.pctRich ? body.pctRich : 10,
+                    pctPoor: body.pctPoor ? body.pctPoor : 10,
                     startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
                     inequalityStart: body.inequalityStart ? body.inequalityStart : false,
                     modified: Date.now(),
@@ -400,13 +404,8 @@ export default {
                             events: gameUpdated.events,
                             players: gameUpdated.players,
                             round: gameUpdated.round + 1,
-                            roundMax: gameUpdated.roundMax,
-                            roundMinutes: gameUpdated.roundMinutes,
                             currentDU: gameUpdated.currentDU,
-                            tauxCroissance: gameUpdated.tauxCroissance,
-                            startAmountCoins: gameUpdated.startAmountCoins,
                             currentMassMonetary: gameUpdated.currentMassMonetary,
-                            inequalityStart: gameUpdated.inequalityStart,
                             modified: Date.now(),
                         },
                     })
@@ -664,6 +663,9 @@ export default {
                     currentDU: 0,
                     inequalityStart: false,
                     tauxCroissance: 10,
+                    pctRich: 10,
+                    pctMoy: 80,
+                    pctPoor: 10,
                     startAmountCoins: 5,
                     round: 0,
                     roundMax: 1,

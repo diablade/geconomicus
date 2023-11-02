@@ -246,6 +246,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.game.inequalityStart = results.inequalityStart;
       this.game.startAmountCoins = results.startAmountCoins;
       this.game.tauxCroissance = results.tauxCroissance;
+      this.game.pctRich = results.pctRich;
+      this.game.pctPoor = results.pctPoor;
     });
   }
 

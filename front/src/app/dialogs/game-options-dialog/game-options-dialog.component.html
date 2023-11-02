@@ -1,6 +1,6 @@
 <div class="option">
   <div class="title m-auto fs-4 mb-2">
-    Options de jeu
+    Options en monnaie {{game.typeMoney == C.JUNE ? "libre" : "dette"}}
   </div>
   <div class="overflow-auto text-center">
     <div class="">
@@ -9,53 +9,13 @@
         <input type="text" matInput placeholder="" [(ngModel)]="game.name">
       </mat-form-field>
     </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
-        <mat-label>nombre de tours</mat-label>
-        <input type="text" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
-      </mat-form-field>
-    </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
-        <mat-label>minutes par tour</mat-label>
-        <input type="text" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
-      </mat-form-field>
-    </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
-        <mat-label>taux de croissance Dividende Universel</mat-label>
-        <input type="text" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
-      </mat-form-field>
-    </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
-        <mat-label>bourse de départ (moyenne classe)</mat-label>
-        <input type="text" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
-      </mat-form-field>
-    </div>
-    <div class="mb-4">
-      <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
-        Début inégale en monnaie libre
-      </mat-checkbox>
-      <div class="infoLabel">
-        <div>
-          • 10% de riche (bourse de départ * 2)
-        </div>
-        <div>
-          • 80% classe moyenne (bourse de départ)
-        </div>
-        <div>
-          • 10% de pauvre (bourse de départ / 2)
-        </div>
-      </div>
-    </div>
     <div class="d-inline-flex">
       <div class="imgText">
         <img class="imgCardValeur" src="assets/level1.png">
         Alimentation
       </div>
       <mat-form-field *ngIf="game" class="input" appearance="fill">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}}</mat-label>
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
         <input type="number" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
       </mat-form-field>
     </div>
@@ -65,7 +25,7 @@
         Culture savoir
       </div>
       <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}}</mat-label>
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
         <input type="number" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
       </mat-form-field>
     </div>
@@ -74,7 +34,7 @@
         Energie
       </div>
       <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}}</mat-label>
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
         <input type="number" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
       </mat-form-field>
     </div>
@@ -83,9 +43,52 @@
         Technologie
       </div>
       <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}}</mat-label>
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
         <input type="number" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
       </mat-form-field>
+    </div>
+    <div class="title m-auto fs-5 mb-2">
+      Options avancé
+    </div>
+    <div class="">
+      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+        <mat-label>nombre de tours</mat-label>
+        <input type="number" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
+      </mat-form-field>
+    </div>
+    <div class="">
+      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+        <mat-label>minutes par tour</mat-label>
+        <input type="number" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+      </mat-form-field>
+    </div>
+    <div class="">
+      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+        <mat-label>taux de croissance Dividende Universel</mat-label>
+        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
+      </mat-form-field>
+    </div>
+    <div class="">
+      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+        <mat-label>bourse de départ (moyenne classe)</mat-label>
+        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
+      </mat-form-field>
+    </div>
+    <div class="mb-4 d-flex flex-column">
+      <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
+        Début inégale en monnaie libre
+      </mat-checkbox>
+      <div class="infoLabel">
+        <div>
+          •<input class="smallInput" type="number" [disabled]="!game.inequalityStart" [(ngModel)]="game.pctRich">% de riche (bourse de départ * 2)
+        </div>
+        <div>
+          •{{100-(game.pctPoor+game.pctRich)}}% classe moyenne (bourse de départ)
+        </div>
+        <div>
+          •<input class="smallInput" type="number" [disabled]="!game.inequalityStart" [(ngModel)]="game.pctPoor">% de pauvre (bourse de départ / 2)
+        </div>
+      </div>
     </div>
   </div>
   <div mat-dialog-actions>

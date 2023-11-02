@@ -54,6 +54,8 @@ export class Game {
   roundMax: number = 10;
   roundMinutes: number = 8;
   tauxCroissance: number = 5;
+  pctPoor: number = 10;
+  pctRich: number = 10;
   startAmountCoins: number = 5;
   events: EventGeco[] = [];
   // @ts-ignore

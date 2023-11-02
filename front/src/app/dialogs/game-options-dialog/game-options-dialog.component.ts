@@ -1,7 +1,8 @@
 import {Component, Inject} from '@angular/core';
-import {MatSelectChange} from "@angular/material/select";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Game} from "../../models/game";
+// @ts-ignore
+import * as C from "../../../../../config/constantes";
 
 @Component({
   selector: 'app-game-options-dialog',
@@ -10,9 +11,10 @@ import {Game} from "../../models/game";
 })
 export class GameOptionsDialogComponent {
   game: Game;
+  C = C;
 
   constructor(public dialogRef: MatDialogRef<GameOptionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
-   this.game=data.game;
+    this.game = data.game;
   }
 
   onNoClick() {

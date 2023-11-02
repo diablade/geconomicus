@@ -214,6 +214,8 @@ export class BackService {
       priceWeight3: results.priceWeight3,
       priceWeight4: results.priceWeight4,
       tauxCroissance: results.tauxCroissance,
+      pctRich: results.pctRich,
+      pctPoor: results.pctPoor,
       startAmountCoins: results.startAmountCoins,
       inequalityStart: results.inequalityStart,
       round: results.round,

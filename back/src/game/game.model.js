@@ -49,6 +49,8 @@ let Game = new Schema({
     name: {type: String, required: true},
     typeMoney: {type: String, required: false},
     tauxCroissance: {type: Number, required: true},
+    pctRich: {type: Number, required: true},
+    pctPoor: {type: Number, required: true},
     currentMassMonetary: {type: Number, required: true},
     currentDU: {type: Number, required: true},
     inequalityStart: {type: Boolean, required: true},
