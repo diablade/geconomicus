@@ -17,7 +17,7 @@
       <fa-icon [icon]="faGift"></fa-icon>
     </button>
   </div>
-  <div class="face back text-center" (click)="cardClicked()" [ngClass]="card.color">
+  <div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
     <div class="d-flex flex-row align-items-center">
       <div class="letter m-2">{{card.letter}}</div>
       <div class="price">prix :</div>
@@ -26,18 +26,11 @@
         <div class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)| number:'1.2-2'}} Ğ1</div>
       </div>
     </div>
-    <div class="qrcodeImage">
-      <qrcode
-        [qrdata]="getData()"
-        [allowEmptyString]="true"
-        [colorDark]="'#000000ff'"
-        [colorLight]="'#ffffffff'"
-        [elementType]="'canvas'"
-        [errorCorrectionLevel]="'M'"
-        [margin]="2"
-        [scale]="3"
-        [width]="qrWidthCard"
-      ></qrcode>
+    <div class="qrcodeWrapper flex-grow-1">
+      <ngx-kjua
+        [text]="getData()"
+        [cssClass]="'innerQrCode'"
+      ></ngx-kjua>
     </div>
   </div>
 </div>

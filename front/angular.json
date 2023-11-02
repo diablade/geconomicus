@@ -43,6 +43,7 @@
                 "input": "src/index.prod.html",
                 "output": "index.html"
               },
+              "aot": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

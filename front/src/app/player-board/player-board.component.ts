@@ -18,6 +18,7 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 
 
 @Component({
@@ -76,7 +77,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   currentDU: number = 0;
   cards: Card[] = [];
   faCamera = faCamera;
-  C=C;
+  scanV2=false;
+  C = C;
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
@@ -143,8 +145,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.socket.on(C.END_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
-      this.statusGame=C.END_GAME;
-      this.router.navigate(['game', this.idGame,'events']);
+      this.statusGame = C.END_GAME;
+      this.router.navigate(['game', this.idGame, 'events']);
     });
     this.socket.on(C.DISTRIB_DU, (data: any) => {
       this.duVisible = true;
@@ -224,10 +226,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   scan() {
-    const dialogRef = this.dialog.open(ScannerDialogComponent, {});
-    dialogRef.afterClosed().subscribe(dataRaw => {
-      this.buy(dataRaw);
-    });
+    if (this.scanV2) {
+      const dialogRef = this.dialog.open(ScannerDialogV2Component, {});
+      dialogRef.afterClosed().subscribe(dataRaw => {
+        this.buy(dataRaw);
+      });
+    } else {
+      const dialogRef = this.dialog.open(ScannerDialogComponent, {});
+      dialogRef.afterClosed().subscribe(dataRaw => {
+        this.buy(dataRaw);
+      });
+    }
   }
 
   resurrection() {
@@ -263,10 +272,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   buy(dataRaw: any) {
     let data = JSON.parse(dataRaw);
-    if (this.idGame != data.idGame) {
+    let cost = this.typeMoney == C.JUNE ? data.p * this.currentDU : data.p;
+    if (this.idGame != data.g) {
       this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
-    } else if (this.player.coins >= data.price) {
-      const body = {idGame: this.idGame, idBuyer: this.idPlayer, idSeller: data.idOwner, idCard: data.idCard};
+    } else if (this.player.coins >= cost) {
+      const body = {idGame: this.idGame, idBuyer: this.idPlayer, idSeller: data.o, idCard: data.c};
       this.backService.transaction(body).subscribe(async dataReceived => {
         if (dataReceived?.buyedCard) {
           this.receiveCards([dataReceived.buyedCard]);

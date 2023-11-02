@@ -11,7 +11,7 @@
       <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">
-      <div class="name">{{player.name}}</div>
+<!--      <div class="name">{{player.name}}</div>-->
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
@@ -37,6 +37,7 @@
     </div>
   </div>
   <div class="footer">
+    <mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2 </mat-slide-toggle>
     <button mat-raised-button color="accent"
             [disabled]="statusGame!== C.START_ROUND||player.status== C.DEAD"
             (click)="scan()">

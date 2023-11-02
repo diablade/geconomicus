@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import {animate, AnimationBuilder, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
-import {faA, faGift} from "@fortawesome/free-solid-svg-icons";
+import {faGift} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: 'app-card',
@@ -73,12 +73,10 @@ export class CardComponent implements AfterViewInit {
   }
 
   getData() {
-    return '{ "idCard":"' + this.card._id
-      + '", "idOwner":"' + this.idOwner
-      + '", "idGame":"' + this.idGame
-      + '", "color":"' + this.card.color
-      + '", "letter":"' + this.card.letter
-      + '", "price":' + this.card.price
+    return '{ "c":"' + this.card._id
+      + '", "o":"' + this.idOwner
+      + '", "g":"' + this.idGame
+      + '", "p":' + this.card.price
       + '}';
   }
 
@@ -131,5 +129,4 @@ export class CardComponent implements AfterViewInit {
   }
 
   protected readonly faGift = faGift;
-  protected readonly faA = faA;
 }

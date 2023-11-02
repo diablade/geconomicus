@@ -7,18 +7,10 @@
       <div class="text text-center">scanner le QrCode ou via {{environment.WEB_HOST}} et cliquer sur "rejoindre"</div>
       <div class="templateQrCode">
         <div class="qrcodeImage">
-          <qrcode
-            [qrdata]="data"
-            [allowEmptyString]="true"
-            [cssClass]="'innerQr'"
-            [colorDark]="'#000000'"
-            [colorLight]="'#ffffff'"
-            [elementType]="'url'"
-            [errorCorrectionLevel]="'M'"
-            [margin]="1"
-            [scale]="1"
-            [width]="230"
-          ></qrcode>
+          <ngx-kjua
+            [size]="230"
+            [text]="data"
+          ></ngx-kjua>
         </div>
       </div>
     </div>

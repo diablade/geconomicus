@@ -12,8 +12,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .price {
-  line-height: calc(26vw * 0.2); /* Adjust the multiplier as needed */
-  font-size: calc(26vw*0.1);
+  line-height: calc(25vw * 0.2); /* Adjust the multiplier as needed */
+  font-size: calc(25vw*0.1);
   font-family: serif;
 }
 /* Apply a conditional statement to limit the font size */
@@ -32,4 +32,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     line-height: 1.5rem;
     font-family: serif;
   }
+}
+
+.innerQrCode{
+  height: 100px !important;
+  width: 100px !important;
 }

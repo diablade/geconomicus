@@ -23,7 +23,6 @@ import {NgOptimizedImage} from "@angular/common";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {QRCodeModule} from "angularx-qrcode";
 import {LoadingComponent} from './loading/loading.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {HttpRequestInterceptor} from "./services/http-request-interceptor.service";
@@ -36,8 +35,16 @@ import {NgChartsModule} from 'ng2-charts';
 import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {ZXingScannerModule} from "@zxing/ngx-scanner";
+import {NgxKjuaComponent} from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
+import {
+  AppInfoDialogComponent,
+  ScannerDialogV2Component
+} from './dialogs/scanner-dialog-v2/scanner-dialog-v2.component';
+import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -58,31 +65,36 @@ import 'chartjs-plugin-zoom';
     GameInfosDialog,
     GameOptionsDialogComponent,
     InformationDialogComponent,
+    NgxKjuaComponent,
+    ScannerDialogV2Component,
+    AppInfoDialogComponent,
   ],
-    imports: [
-        HttpClientModule,
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        MatRadioModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatIconModule,
-        MatSnackBarModule,
-        MatInputModule,
-        FormsModule,
-        NgxColorsModule,
-        NgOptimizedImage,
-        MatBadgeModule,
-        MatSlideToggleModule,
-        FontAwesomeModule,
-        QRCodeModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        NgChartsModule,
-        MatCheckboxModule,
-        MatTooltipModule
-    ],
+  imports: [
+    HttpClientModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    MatRadioModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatInputModule,
+    FormsModule,
+    NgxColorsModule,
+    NgOptimizedImage,
+    MatBadgeModule,
+    MatSlideToggleModule,
+    FontAwesomeModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    NgChartsModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    ZXingScannerModule,
+    MatListModule,
+    MatMenuModule,
+  ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}
   ],
