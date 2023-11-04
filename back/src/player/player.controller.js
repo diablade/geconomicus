@@ -16,27 +16,38 @@ export default {
                 message: "bad request"
             });
         } else {
-            const comId = new mongoose.Types.ObjectId();
-            let player = {
-                _id: comId,
-                name: name,
-                image: "",
-                coins: 0,
-                credits: [],
-                cards: [],
-                status: C.ALIVE,
-                earringsProbability: 100,
-                glassesProbability: 100,
-                featuresProbability: 100
-            };
-            GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}},)
-                .then(updatedGame =>
-                    res.status(200).json(player._id))
-                .catch(error => {
-                        log(error);
-                        next({status: 404, message: "Not found"});
+            GameModel.findById(id).then(async game => {
+                    if (game.players.length < 25) {
+                        const comId = new mongoose.Types.ObjectId();
+                        let player = {
+                            _id: comId,
+                            name: name,
+                            image: "",
+                            coins: 0,
+                            credits: [],
+                            cards: [],
+                            status: C.ALIVE,
+                            earringsProbability: 100,
+                            glassesProbability: 100,
+                            featuresProbability: 100
+                        };
+                        GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}},)
+                            .then(updatedGame =>
+                                res.status(200).json(player._id))
+                            .catch(error => {
+                                    log(error);
+                                    next({status: 404, message: "Not found"});
+                                }
+                            );
+                    } else {
+                        next({status: 400, message: "25 joueurs max sorry..."});
                     }
-                );
+                }
+            ).catch(error => {
+                    log(error);
+                    next({status: 404, message: "Not found"});
+                }
+            );
         }
     },
     joinInGame: async (req, res, next) => {

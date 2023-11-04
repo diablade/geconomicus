@@ -25,10 +25,6 @@ async function generateOneCard(letter, color, weight, price) {
 }
 
 async function generateCardsPerPlayers(nbPlayers, prices) {
-    if (nbPlayers > 20) {
-        log.error("interdit");
-        throw null;
-    }
     let tableDecks = [[], [], [], []];
     const nbCarre = Math.floor((5 / 4) * nbPlayers);
     //pour chaque paquet de valeur de 1 à 4

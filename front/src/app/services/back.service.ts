@@ -25,7 +25,8 @@ export class BackService {
   }
 
   private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
-    this.snackbarService.showError(whatToSay);
+    if(whatToSay) this.snackbarService.showError(whatToSay);
+    else this.snackbarService.showError(error.error.message);
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.
       console.error('An error occurred:', error.error);
@@ -52,7 +53,7 @@ export class BackService {
       reincarnate: reincarnate
     })
       .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
+        catchError(err => this.handleError(err, this.REDIRECT_HOME, ''))
       );
   }
 
