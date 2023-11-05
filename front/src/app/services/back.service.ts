@@ -109,7 +109,7 @@ export class BackService {
       );
   }
 
-  produceFromSquare(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
+  produceLevelUp(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
     return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
       idGame: idGame,
       idPlayer: idPlayer,
@@ -215,6 +215,8 @@ export class BackService {
       priceWeight3: results.priceWeight3,
       priceWeight4: results.priceWeight4,
       tauxCroissance: results.tauxCroissance,
+      generatedIdenticalCards: results.generatedIdenticalCards,
+      amountCardsForProd: results.amountCardsForProd,
       pctRich: results.pctRich,
       pctPoor: results.pctPoor,
       startAmountCoins: results.startAmountCoins,

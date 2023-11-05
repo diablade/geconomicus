@@ -232,22 +232,28 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       data: {game: _.clone(this.game)},
     });
     dialogRef.afterClosed().subscribe(results => {
-      this.backService.updateGame(this.idGame, results).subscribe((data: any) => {
-        this.snackbarService.showSuccess("Option sauvegardé !");
-      });
-      this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
-      this.game.name = results.name;
-      this.game.priceWeight1 = results.priceWeight1;
-      this.game.priceWeight2 = results.priceWeight2;
-      this.game.priceWeight3 = results.priceWeight3;
-      this.game.priceWeight4 = results.priceWeight4;
-      this.game.roundMax = results.roundMax;
-      this.game.roundMinutes = results.roundMinutes;
-      this.game.inequalityStart = results.inequalityStart;
-      this.game.startAmountCoins = results.startAmountCoins;
-      this.game.tauxCroissance = results.tauxCroissance;
-      this.game.pctRich = results.pctRich;
-      this.game.pctPoor = results.pctPoor;
+      if (results === "reset") {
+        this.resetGame();
+      } else {
+        this.backService.updateGame(this.idGame, results).subscribe((data: any) => {
+          this.snackbarService.showSuccess("Option sauvegardé !");
+        });
+        this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
+        this.game.name = results.name;
+        this.game.priceWeight1 = results.priceWeight1;
+        this.game.priceWeight2 = results.priceWeight2;
+        this.game.priceWeight3 = results.priceWeight3;
+        this.game.priceWeight4 = results.priceWeight4;
+        this.game.roundMax = results.roundMax;
+        this.game.roundMinutes = results.roundMinutes;
+        this.game.inequalityStart = results.inequalityStart;
+        this.game.startAmountCoins = results.startAmountCoins;
+        this.game.tauxCroissance = results.tauxCroissance;
+        this.game.amountCardsForProd = results.amountCardsForProd;
+        this.game.generatedIdenticalCards = results.generatedIdenticalCards;
+        this.game.pctRich = results.pctRich;
+        this.game.pctPoor = results.pctPoor;
+      }
     });
   }
 

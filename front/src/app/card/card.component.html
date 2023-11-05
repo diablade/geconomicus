@@ -12,7 +12,7 @@
     </div>
     <div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
          [ngClass]="card.color+'Color'"></div>
-    <button *ngIf="card.count===4" (click)="transformCarrer()" mat-raised-button color="accent" class="transform">
+    <button *ngIf="card.count===amountCardsForProd" (click)="transformCarrer()" mat-raised-button color="accent" class="transform">
       Construire le carré
       <fa-icon [icon]="faGift"></fa-icon>
     </button>

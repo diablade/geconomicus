@@ -24,16 +24,15 @@ async function generateOneCard(letter, color, weight, price) {
     return card;
 }
 
-async function generateCardsPerPlayers(nbPlayers, prices) {
+async function generateDecks(generatedIdenticalCards, nbPlayers, prices) {
     let tableDecks = [[], [], [], []];
-    const nbCarre = Math.floor((5 / 4) * nbPlayers);
-    //pour chaque paquet de valeur de 1 à 4
+    const lettersInGame = nbPlayers;
+    // genere cartes pour les 4 lots
     for (let weight = 0; weight <= 3; weight++) {
         let deck = [];
-        //Pour N joueurs, prévoir au moins 5*N en cartes (= au moins 5/4*N carrés) par niveau.
-        for (let letter = 0; letter <= nbCarre; letter++) {
-            // faire le carré (4 cartes identiques)
-            for (let j = 0; j <= 3; j++) {
+        for (let letter = 0; letter <= lettersInGame; letter++) {
+            // genere 3, 4 ou 5 cartes identiques
+            for (let j = 1; j <= generatedIdenticalCards; j++) {
                 const card = await generateOneCard(letters[letter], colors[weight], weight, prices[weight]);
                 deck.push(card);
             }
@@ -99,11 +98,11 @@ async function distribDU(gameId) {
 async function initGameDebt(game) {
     const nbPlayer = game.players.length;
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
-    let decks = await generateCardsPerPlayers(nbPlayer, prices);
+    let decks = await generateDecks(game.generatedIdenticalCards, nbPlayer, prices);
 
     for await (let player of game.players) {
         // pull 4 cards from the deck and distribute to the player
-        const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
+        const cards = _.pullAt(decks[0], game.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
         player.cards = cards;
         player.status = C.ALIVE;
         player.coins = 0;
@@ -121,8 +120,8 @@ async function generateInequality(nbPlayer, pctRich, pctPoor) {
     //10% de riche = 2x le median
     //10% de pauvre = 1/2 le median
     //80% classe moyenne = la moyenne
-    const classHaute = Math.floor(nbPlayer * (pctRich/100));
-    const classBasse = Math.floor(nbPlayer * (pctPoor/100));
+    const classHaute = Math.floor(nbPlayer * (pctRich / 100));
+    const classBasse = Math.floor(nbPlayer * (pctPoor / 100));
     const classMoyenne = nbPlayer - classHaute - classBasse;
 
     return [classBasse, classMoyenne, classHaute];
@@ -131,19 +130,17 @@ async function generateInequality(nbPlayer, pctRich, pctPoor) {
 async function initGameJune(game) {
     const nbPlayer = game.players.length;
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
-    let decks = await generateCardsPerPlayers(nbPlayer, prices);
-    const classes = game.inequalityStart ? await generateInequality(nbPlayer,game.pctRich,game.pctPoor) : [];
+    let decks = await generateDecks(game.generatedIdenticalCards, nbPlayer, prices);
+    const classes = game.inequalityStart ? await generateInequality(nbPlayer, game.pctRich, game.pctPoor) : [];
 
     let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
     game.events.push(startGameEvent);
 
     for await (let player of game.players) {
         // pull 4 cards from the deck and distribute to the player
-        const cards = _.pullAt(decks[0], [0, 1, 2, 3]);
+        const cards = _.pullAt(decks[0], game.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
         player.cards = cards;
         player.status = C.ALIVE;
-        player.typeMoney = C.JUNE;
-        player.statusGame = C.START_GAME;
 
         if (game.inequalityStart) {
             if (classes[0] >= 1) {
@@ -163,7 +160,13 @@ async function initGameJune(game) {
         }
         game.currentMassMonetary += player.coins;
 
-        io().to(player.id).emit(C.START_GAME, {cards: cards, coins: player.coins});
+        io().to(player.id).emit(C.START_GAME, {
+            cards: cards,
+            coins: player.coins,
+            typeMoney: C.JUNE,
+            statusGame: C.START_GAME,
+            amountCardsForProd: game.amountCardsForProd,
+        });
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(game._id.toString()).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
@@ -303,13 +306,15 @@ export default {
                 players: [],
                 decks: [],
                 events: [],
-                priceWeight1: 1,
-                priceWeight2: 3,
-                priceWeight3: 6,
-                priceWeight4: 9,
+                priceWeight1: 3,
+                priceWeight2: 6,
+                priceWeight3: 9,
+                priceWeight4: 12,
                 startAmountCoins: 5,
                 inequalityStart: false,
                 tauxCroissance: 10,
+                generatedIdenticalCards: 4,
+                amountCardsForProd: 4,
                 pctRich: 10,
                 pctPoor: 10,
                 round: 0,
@@ -346,13 +351,15 @@ export default {
                 $set: {
                     typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
                     name: body.name ? body.name : "sans nom",
-                    priceWeight1: body.priceWeight1 ? body.priceWeight1 : 1,
-                    priceWeight2: body.priceWeight2 ? body.priceWeight2 : 3,
-                    priceWeight3: body.priceWeight3 ? body.priceWeight3 : 6,
-                    priceWeight4: body.priceWeight4 ? body.priceWeight4 : 9,
+                    priceWeight1: body.priceWeight1 ? body.priceWeight1 : 3,
+                    priceWeight2: body.priceWeight2 ? body.priceWeight2 : 6,
+                    priceWeight3: body.priceWeight3 ? body.priceWeight3 : 9,
+                    priceWeight4: body.priceWeight4 ? body.priceWeight4 : 12,
                     roundMax: body.roundMax ? body.roundMax : 1,
                     roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
                     tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
+                    amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
+                    generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
                     pctRich: body.pctRich ? body.pctRich : 10,
                     pctPoor: body.pctPoor ? body.pctPoor : 10,
                     startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
@@ -651,14 +658,16 @@ export default {
                     'players.$[].coins': 0,
                     'players.$[].status': C.ALIVE,
                     decks: [],
-                    priceWeight1: 1,
-                    priceWeight2: 3,
-                    priceWeight3: 6,
-                    priceWeight4: 9,
+                    priceWeight1: 3,
+                    priceWeight2: 6,
+                    priceWeight3: 9,
+                    priceWeight4: 12,
                     currentMassMonetary: 0,
                     currentDU: 0,
                     inequalityStart: false,
                     tauxCroissance: 10,
+                    generatedIdenticalCards: 4,
+                    amountCardsForProd: 4,
                     pctRich: 10,
                     pctMoy: 80,
                     pctPoor: 10,

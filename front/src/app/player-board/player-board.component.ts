@@ -74,10 +74,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   options: Partial<adventurer.Options & Options> = {};
   statusGame: string = "waiting";
   typeMoney: string = "june";
+  amountCardsForProd: number = 4;
   currentDU: number = 0;
   cards: Card[] = [];
   faCamera = faCamera;
-  scanV2=false;
+  scanV2 = false;
   C = C;
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
@@ -107,6 +108,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.typeMoney = data.typeMoney;
         this.currentDU = data.currentDU;
         this.statusGame = data.statusGame;
+        this.amountCardsForProd = data.amountCardsForProd;
         if (this.player.image === "") {
           this.options.seed = data.player.name.toString();
           const avatar = createAvatar(adventurer, this.options);
@@ -258,10 +260,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.countOccurrencesAndHideDuplicates();
   }
 
-  produceFromSquare($event: Card) {
+  produceLevelUp($event: Card) {
     const cardsToRemove = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
-    if (cardsToRemove.length === 4 && cardsToRemove[0].count === 4) {
-      this.backService.produceFromSquare(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
+    if (cardsToRemove.length === this.amountCardsForProd) {
+      this.backService.produceLevelUp(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
         _.remove(this.cards, {letter: $event.letter, weight: $event.weight,});
         this.receiveCards(newCards);
       });

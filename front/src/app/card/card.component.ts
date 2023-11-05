@@ -47,12 +47,14 @@ export class CardComponent implements AfterViewInit {
   @Input() currentDU: number = 1;
   @Input() screenWidth: number = 1;
   @Input() screenHeight: number = 1;
+  @Input() amountCardsForProd: number= 4;
   state = "default";
   translateX = 0;
   translateY = 0;
   middleX = 0;
   middleY = 0;
   qrWidthCard = 0;
+  protected readonly faGift = faGift;
   @Output() squareBuilded: EventEmitter<Card> = new EventEmitter<Card>();
 
   constructor(private animationBuilder: AnimationBuilder, private elementRef: ElementRef) {
@@ -128,5 +130,4 @@ export class CardComponent implements AfterViewInit {
     }, 0);
   }
 
-  protected readonly faGift = faGift;
 }

@@ -8,7 +8,7 @@ router.post('/joinInGame', player.joinInGame);
 router.post('/joinReincarnate', player.joinReincarnate);
 router.post('/update', player.update);
 router.post('/transaction', player.transaction);
-router.post('/produceFromSquare', player.produceFromSquare);
+router.post('/produceLevelUp', player.produceLevelUp);
 router.get('/:idGame/:idPlayer', player.getById);
 
 export default router;

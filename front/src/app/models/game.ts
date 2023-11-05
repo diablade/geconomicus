@@ -43,10 +43,10 @@ export class Game {
   typeMoney: string = "june";
   players: Player[] = [];
   decks: Card[][] = [[]];
-  priceWeight1: number = 1;
-  priceWeight2: number = 3;
-  priceWeight3: number = 6;
-  priceWeight4: number = 9;
+  priceWeight1: number = 3;
+  priceWeight2: number = 6;
+  priceWeight3: number = 9;
+  priceWeight4: number = 12;
   currentMassMonetary: number = 0;
   currentDU: number = 0;
   inequalityStart: boolean = false;
@@ -57,6 +57,8 @@ export class Game {
   pctPoor: number = 10;
   pctRich: number = 10;
   startAmountCoins: number = 5;
+  generatedIdenticalCards: number = 4;
+  amountCardsForProd: number = 4;
   events: EventGeco[] = [];
   // @ts-ignore
   modified: Date = Date.now();

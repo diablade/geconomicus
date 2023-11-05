@@ -55,6 +55,8 @@ let Game = new Schema({
     currentDU: {type: Number, required: true},
     inequalityStart: {type: Boolean, required: true},
     startAmountCoins: {type: Number, required: true},
+    amountCardsForProd: {type: Number, required: true},
+    generatedIdenticalCards: {type: Number, required: true},
     priceWeight1: {type: Number, required: true},
     priceWeight2: {type: Number, required: true},
     priceWeight3: {type: Number, required: true},

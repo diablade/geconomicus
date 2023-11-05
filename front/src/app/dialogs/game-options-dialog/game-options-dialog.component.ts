@@ -20,4 +20,8 @@ export class GameOptionsDialogComponent {
   onNoClick() {
     this.dialogRef.close();
   }
+
+  onReset() {
+    this.dialogRef.close("reset");
+  }
 }

@@ -28,7 +28,8 @@
             [idOwner]="idPlayer"
             [idGame]="idGame"
             [currentDU]="currentDU"
-            (squareBuilded)="produceFromSquare($event)"
+            [amountCardsForProd]="amountCardsForProd"
+            (squareBuilded)="produceLevelUp($event)"
             [screenWidth]="screenWidth"
             [screenHeight]="screenHeight"
           ></app-card>

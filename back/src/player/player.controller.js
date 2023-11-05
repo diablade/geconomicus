@@ -173,7 +173,8 @@ export default {
                             player: player,
                             statusGame: game.status,
                             typeMoney: game.typeMoney,
-                            currentDU: game.currentDU
+                            currentDU: game.currentDU,
+                            amountCardsForProd: game.amountCardsForProd
                         });
                     } else {
                         next({status: 404, message: "player Not found"});
@@ -186,11 +187,11 @@ export default {
                 );
         }
     },
-    produceFromSquare: async (req, res, next) => {
+    produceLevelUp: async (req, res, next) => {
         const idGame = req.body.idGame;
         const idPlayer = req.body.idPlayer;
         const cards = req.body.cards;
-        if (!idGame || !idPlayer || !cards || cards.length !== 4 || cards[0].weight !== cards[1].weight || cards[0].letter !== cards[1].letter) {
+        if (!idGame || !idPlayer || !cards || cards.length < 3 || cards[0].weight !== cards[1].weight || cards[0].letter !== cards[1].letter) {
             next({
                 status: 400,
                 message: "bad request"
@@ -200,72 +201,75 @@ export default {
                 const game = await GameModel.findById(idGame);
                 const player = _.find(game.players, {id: idPlayer});
                 const cardsToExchange = _.filter(player.cards, {letter: cards[0].letter, weight: cards[0].weight});
-                let weight = cardsToExchange[0].weight;
+                if (cardsToExchange.length === game.amountCardsForProd) {
+                    let weight = cardsToExchange[0].weight;
 
-                // Remove cards from player's hand
-                await GameModel.updateOne(
-                    {_id: idGame, 'players._id': idPlayer},
-                    {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}},
-                );
-                // Add cards back to the deck
-                GameModel.findByIdAndUpdate(
-                    {_id: idGame},
-                    {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
-                    {new: true})
-                    .then(async updatedGame => {
-                            // Draw a card from the next level
-                            if (weight < 2) {
-                                // Shuffle the decks
-                                const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
-                                const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
-                                // Draw new cards for the player
-                                const newCards = shuffledDeck.slice(0, 4);//same weight
-                                const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior gift
-                                // const newcardsIds = _.map(newCards, c => c._id);
-                                const cardsDraw = _.concat(newCards, [newCardSup]);
-                                //create events
-                                let discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
-                                let newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
-
-                                // remove from decks, add events
-                                await GameModel.updateOne(
-                                    {_id: idGame},
-                                    {
-                                        $pull: {
-                                            [`decks.${weight}`]: {_id: {$in: newCards.map(c => c._id)}},
-                                            [`decks.${weight + 1}`]: {_id: newCardSup._id}
-                                        },
-                                        $push: {
-                                            'events': {$each: [discardEvent, newCardsEvent]}
-                                        }
-                                    }
-                                );
-                                // and Add new cards to player's hand
-                                await GameModel.updateOne(
-                                    {_id: idGame, 'players._id': idPlayer},
-                                    {
-                                        $push: {
-                                            'players.$.cards': {$each: cardsDraw},
-                                        }
-                                    }
-                                );
-                                io().to(idGame).emit(C.EVENT, discardEvent);
-                                io().to(idGame).emit(C.EVENT, newCardsEvent);
-                                res.status(200).json(cardsDraw);
-                            } else {
-                                //TODO changement technologique
-                                next({
-                                    status: 404,
-                                    message: "bravo !!! vous etes sur le point de faire un changement technologique"
-                                });
-                            }
-                        }
-                    )
-                    .catch(error => {
-                            log(error);
-                            next({status: 404, message: "update game goes wrong (transform square)"});
-                        }
+                    // Remove cards from player's hand
+                    await GameModel.updateOne(
+                        {_id: idGame, 'players._id': idPlayer},
+                        {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}},
                     );
+                    // Add cards back to the deck
+                    GameModel.findByIdAndUpdate(
+                        {_id: idGame},
+                        {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
+                        {new: true})
+                        .then(async updatedGame => {
+                                // Draw a card from the next level
+                                if (weight < 2) {
+                                    // Shuffle the decks
+                                    const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
+                                    const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
+                                    // Draw new cards for the player
+                                    const newCards = shuffledDeck.slice(0, game.amountCardsForProd);//same weight
+                                    const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior produced
+                                    const cardsDraw = _.concat(newCards, [newCardSup]);
+                                    //create events
+                                    let discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
+                                    let newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
+
+                                    // remove from decks, add events
+                                    await GameModel.updateOne(
+                                        {_id: idGame},
+                                        {
+                                            $pull: {
+                                                [`decks.${weight}`]: {_id: {$in: newCards.map(c => c._id)}},
+                                                [`decks.${weight + 1}`]: {_id: newCardSup._id}
+                                            },
+                                            $push: {
+                                                'events': {$each: [discardEvent, newCardsEvent]}
+                                            }
+                                        }
+                                    );
+                                    // and Add new cards to player's hand
+                                    await GameModel.updateOne(
+                                        {_id: idGame, 'players._id': idPlayer},
+                                        {
+                                            $push: {
+                                                'players.$.cards': {$each: cardsDraw},
+                                            }
+                                        }
+                                    );
+                                    io().to(idGame).emit(C.EVENT, discardEvent);
+                                    io().to(idGame).emit(C.EVENT, newCardsEvent);
+                                    res.status(200).json(cardsDraw);
+                                } else {
+                                    //TODO changement technologique
+                                    next({
+                                        status: 404,
+                                        message: "bravo !!! vous etes sur le point de faire un changement technologique"
+                                    });
+                                }
+                            }
+                        )
+                        .catch(error => {
+                                log(error);
+                                next({status: 404, message: "update game goes wrong (transform square)"});
+                            }
+                        );
+                } else {
+                    next({status: 400, message: "not enough cards to produce level up"});
+                }
             } catch (err) {
                 log.error('update game error', err);
             }
