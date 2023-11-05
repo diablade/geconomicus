@@ -55,7 +55,7 @@ export class CardComponent implements AfterViewInit {
   middleY = 0;
   qrWidthCard = 0;
   protected readonly faGift = faGift;
-  @Output() squareBuilded: EventEmitter<Card> = new EventEmitter<Card>();
+  @Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
 
   constructor(private animationBuilder: AnimationBuilder, private elementRef: ElementRef) {
     this.updateScreenSize();
@@ -108,17 +108,8 @@ export class CardComponent implements AfterViewInit {
     this.translateX = (this.screenWidth / 2) - this.middleX;
   }
 
-  calculateFontSize(): string {
-    const maxFontSize = 40; // Maximum font size in pixels
-    let baseFontSize = (5 / 100 * this.screenWidth); // Base font size in em
-
-    baseFontSize = baseFontSize > maxFontSize ? maxFontSize : baseFontSize;
-
-    return `${baseFontSize}px`;
-  }
-
-  transformCarrer() {
-    this.squareBuilded.emit(this.card);
+  buildCardLvlUp() {
+    this.onBuildCardLvlUp.emit(this.card);
   }
 
   ngOnInit() {
