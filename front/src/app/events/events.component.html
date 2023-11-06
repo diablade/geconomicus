@@ -6,7 +6,7 @@
       <span [ngSwitch]="event.typeEvent">
         <span *ngSwitchCase="C.TRANSACTION">
           <span [matTooltip]="getPlayerName(event.emitter)">👤 </span>
-          <span [matTooltip]="'Transaction'">{{event.amount}}Ğ1 ↔️ {{getTextCard(event.resources[0])}}</span>
+          <span [matTooltip]="'Transaction'">{{event.amount}}Ğ1 🔄 {{getTextCard(event.resources[0])}}</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.DISTRIB">
@@ -19,9 +19,6 @@
           <span [matTooltip]="'Dividende Universel'">➕️1DU ({{event.amount}}Ğ1)️</span>
         </span>
         <span *ngSwitchCase="C.FIRST_DU">
-          <span [matTooltip]="'Calcul Dividende Universel de départ'">🧮Premier DU: {{event.amount}}Ğ1</span>
-        </span>
-        <span *ngSwitchCase="'first_DU'">
           <span [matTooltip]="'Calcul Dividende Universel de départ'">🧮Premier DU: {{event.amount}}Ğ1</span>
         </span>
         <span *ngSwitchCase="C.START_GAME">
@@ -48,22 +45,12 @@
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'Défausse du carré de cartes identique'">➡️🔄</span>
-          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
-        </span>
-        <span *ngSwitchCase="'transformDiscard'" class="">
-          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'Défausse du carré de cartes identique'">➡️🔄</span>
+          <span [matTooltip]="'Défausse de cartes pour construire'">➡️🛠</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_NEWCARDS" class="">
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
-          <span [matTooltip]="'Transformation du carré'">⬅️🎁</span>
-          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
-        </span>
-        <span *ngSwitchCase="'tranformNewCards'" class="">
-          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
-          <span [matTooltip]="'Transformation du carré'">⬅️🎁</span>
+          <span [matTooltip]="'Carte superieur créée'">⬅️🎁</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchDefault>{{event.typeEvent}}</span>
