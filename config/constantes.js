@@ -1,6 +1,7 @@
 // (ES5 compatible)
 const OPEN = 'open';
 const JUNE= 'june';
+const DEBT= 'debt';
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
@@ -28,6 +29,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         OPEN: OPEN,
         JUNE: JUNE,
+        DEBT: DEBT,
         DEAD: DEAD,
         REMIND_DEAD: REMIND_DEAD,
         ALIVE:ALIVE,

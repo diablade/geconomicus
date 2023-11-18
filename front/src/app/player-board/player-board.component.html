@@ -11,9 +11,11 @@
       <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">
-<!--      <div class="name">{{player.name}}</div>-->
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
+  </div>
+  <div class="" *ngIf="typeMoney==C.DEBT">
+    <div class="">écheance interet:</div>
   </div>
   <div class="" *ngIf="statusGame!==C.START_ROUND">
     <div class="text-center h1">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>

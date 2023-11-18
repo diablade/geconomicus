@@ -410,5 +410,8 @@ export default {
                 });
             });
         }
+    },
+    contractDebt: async (req, res, next) => {
+
     }
 };

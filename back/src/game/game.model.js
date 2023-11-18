@@ -12,6 +12,7 @@ let Card = {
 let Credit = {
     amount: Number,
     interest: Number,
+    emitDate: Date,
 }
 
 let EventGeco = {
