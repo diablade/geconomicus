@@ -35,7 +35,7 @@ export default {
                             .then(updatedGame =>
                                 res.status(200).json(player._id))
                             .catch(error => {
-                                    log(error);
+                                    log.error(error);
                                     next({status: 404, message: "Not found"});
                                 }
                             );
@@ -44,7 +44,7 @@ export default {
                     }
                 }
             ).catch(error => {
-                    log(error);
+                    log.error(error);
                     next({status: 404, message: "Not found"});
                 }
             );
@@ -105,7 +105,7 @@ export default {
                     res.status(200).json(player._id);
                 })
                 .catch(error => {
-                        log(error);
+                        log.error(error);
                         next({status: 404, message: "Not found"});
                     }
                 );
@@ -145,7 +145,7 @@ export default {
                     res.status(200).json({"status": "updated"});
                 })
                 .catch((error) => {
-                    console.log(error);
+                    log.error(error);
                     next({
                         status: 404,
                         message: "Not found"
@@ -181,7 +181,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                        log(error);
+                        log.error(error);
                         next({status: 404, message: "game Not found"});
                     }
                 );
@@ -263,7 +263,7 @@ export default {
                             }
                         )
                         .catch(error => {
-                                log(error);
+                                log.error(error);
                                 next({status: 404, message: "update game goes wrong (transform square)"});
                             }
                         );

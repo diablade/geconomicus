@@ -15,7 +15,7 @@ const routes: Routes = [
     {path: 'game/:idGame/master', component: MasterBoardComponent},
     {path: 'game/:idGame/join/:reincarnate', component: JoinComponent},
     {path: 'game/:idGame/join', component: JoinComponent},
-    {path: 'game/:idGame/events', component: EventsComponent},
+    {path: 'game/:idGame/results', component: ResultsComponent},
     {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},
     {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
     {path: '**', redirectTo: '/'},

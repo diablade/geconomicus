@@ -208,7 +208,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   }
 
   goToResults() {
-    this.router.navigate(['game', this.idGame, 'events']);
+    this.router.navigate(['game', this.idGame, 'results']);
   }
 
   getUserUrl(idPlayer: string) {
@@ -224,7 +224,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   }
 
   showEvents() {
-    window.open('game/' + this.idGame + '/events', '_blank');
+    window.open('game/' + this.idGame + '/results', '_blank');
   }
 
   showOptions() {

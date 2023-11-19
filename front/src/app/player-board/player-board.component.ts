@@ -148,7 +148,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.END_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
       this.statusGame = C.END_GAME;
-      this.router.navigate(['game', this.idGame, 'events']);
+      this.router.navigate(['game', this.idGame, 'results']);
     });
     this.socket.on(C.DISTRIB_DU, (data: any) => {
       this.duVisible = true;
