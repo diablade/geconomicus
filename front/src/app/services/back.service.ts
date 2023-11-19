@@ -229,4 +229,11 @@ export class BackService {
       catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
     );
   }
+
+  getGames(): Observable<any> {
+    return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
+      .pipe(
+        catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
+      );
+  }
 }

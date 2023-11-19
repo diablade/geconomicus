@@ -1,0 +1,26 @@
+<div class="games">
+  <h1 mat-dialog-title>Historique des parties crées</h1>
+  <mat-nav-list>
+    <mat-list-item class="item" *ngFor="let game of games">
+      <div class="date">•{{game.created | date: "dd/MMM/YYYY hh:mm"}}
+        <span class="name">{{game.name}} </span>
+      </div>
+      <div>
+        Jeu: {{game.typeMoney == C.JUNE ? "monnaie libre" : "monnaie dette" }}
+        <span class="players"> 👥{{game.playersCount}} Joueurs </span>
+        <span class="status" [ngClass]="getStatusClass(game.status)">{{getStatus(game.status)}}</span>
+        <button
+          class="ms-2 bt" mat-raised-button
+          [routerLink]="['/game',game._id,'master']" color="accent"
+        >voir
+          <!--        [disabled]="C.END_GAME != game.status" -->
+        </button>
+      </div>
+    </mat-list-item>
+  </mat-nav-list>
+
+  <!--  GUNY  -->
+  <div class="mt-1 col-md-12 text-center m-auto">
+    <img class="guny" src="./assets/Guny.png" alt="">
+  </div>
+</div>

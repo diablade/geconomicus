@@ -642,6 +642,31 @@ export default {
             res.status(200).json({status: "done"});
         }
     },
+    all: async (req, res, next) => {
+        GameModel.aggregate([
+            {
+                $project: {
+                    name: 1,
+                    status :1,
+                    typeMoney:1,
+                    modified:1,
+                    created:1,
+                    playersCount: { $size: '$players' },
+                },
+            },
+        ])
+            .exec()
+            .then(games => {
+                res.status(200).json({"games": games});
+            })
+            .catch(err => {
+                log.error(err);
+                next({
+                    status: 500,
+                    message: "error server " + err
+                });
+            });
+    },
     reset: async (req, res, next) => {
         const idGame = req.body.idGame;
         if (!idGame) {

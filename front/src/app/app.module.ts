@@ -45,6 +45,7 @@ import {
 } from './dialogs/scanner-dialog-v2/scanner-dialog-v2.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
+import { HistoryGamesComponent } from './history-games/history-games.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import {MatMenuModule} from "@angular/material/menu";
     NgxKjuaComponent,
     ScannerDialogV2Component,
     AppInfoDialogComponent,
+    HistoryGamesComponent,
   ],
   imports: [
     HttpClientModule,
