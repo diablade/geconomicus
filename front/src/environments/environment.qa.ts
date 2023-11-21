@@ -15,6 +15,7 @@ export const environment = {
   },
   GAME: {
     GET: 'game/',
+    GETALL: 'game/all',
     CREATE: 'game/create',
     UPDATE: 'game/update',
     EXPORT: 'game/export',
