@@ -247,6 +247,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
         this.game.roundMax = results.roundMax;
         this.game.roundMinutes = results.roundMinutes;
         this.game.inequalityStart = results.inequalityStart;
+        this.game.surveyEnabled = results.surveyEnabled;
         this.game.startAmountCoins = results.startAmountCoins;
         this.game.tauxCroissance = results.tauxCroissance;
         this.game.amountCardsForProd = results.amountCardsForProd;

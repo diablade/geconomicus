@@ -25,7 +25,7 @@ export class BackService {
   }
 
   private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
-    if(whatToSay) this.snackbarService.showError(whatToSay);
+    if (whatToSay) this.snackbarService.showError(whatToSay);
     else this.snackbarService.showError(error.error.message);
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.
@@ -166,8 +166,8 @@ export class BackService {
       );
   }
 
-  startRound(idGame: string, round:number) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round:round})
+  startRound(idGame: string, round: number) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
       .pipe(
         catchError(err => this.handleError(err, "", "demarrer tour impossible"))
       );
@@ -209,12 +209,13 @@ export class BackService {
   updateGame(idGame: string, results: any) {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
       idGame: idGame,
-      name:results.name,
+      name: results.name,
       priceWeight1: results.priceWeight1,
       priceWeight2: results.priceWeight2,
       priceWeight3: results.priceWeight3,
       priceWeight4: results.priceWeight4,
       tauxCroissance: results.tauxCroissance,
+      surveyEnabled: results.surveyEnabled,
       generatedIdenticalCards: results.generatedIdenticalCards,
       amountCardsForProd: results.amountCardsForProd,
       pctRich: results.pctRich,
@@ -235,5 +236,22 @@ export class BackService {
       .pipe(
         catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
       );
+  }
+
+  sendFeedback(idGame: any, idPlayer: any, individualCollective: any, greedyGenerous: any, irritableTolerant: any, depressedHappy: any, competitiveCooperative: any, dependantAutonomous: any, anxiousConfident: any, agressiveAvenant: any) {
+    return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY, {
+      idGame: idGame,
+      idPlayer: idPlayer,
+      individualCollective: individualCollective,
+      greedyGenerous: greedyGenerous,
+      irritableTolerant: irritableTolerant,
+      depressedHappy: depressedHappy,
+      competitiveCooperative: competitiveCooperative,
+      dependantAutonomous: dependantAutonomous,
+      anxiousConfident: anxiousConfident,
+      agressiveAvenant: agressiveAvenant
+    }).pipe(
+      catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
+    );
   }
 }

@@ -1,25 +1,3 @@
-export class Player {
-  name: string = "";
-  _id: string = "";
-  image: string = "";
-  coins: number = 0;
-  credits: Credit[] = [];
-  cards: Card[] = [];
-  eye: number = 3;
-  earrings: number = 0;
-  eyebrows: number = 0;
-  features: number = 0;
-  hair: number = 3;
-  glasses: number = 0;
-  mouth: number = 14;
-  earringsProbability: number = 100;
-  glassesProbability: number = 100;
-  featuresProbability: number = 100;
-  skinColor: string = "#ECAD80";
-  hairColor: string = "#3EAC2C";
-  status: string = "alive";
-}
-
 export class Card {
   _id: string = "";
   color: string = "";
@@ -36,6 +14,61 @@ export class Credit {
   interest: number = 0;
 }
 
+export class Feedback {
+  depressedHappy: number = 0;
+  individualCollective: number = 0;
+  aloneIntegrated: number = 0;
+  greedyGenerous: number = 0;
+  competitiveCooperative: number = 0;
+  anxiousConfident: number = 0;
+  agressiveAvenant: number = 0;
+  irritableTolerant: number = 0;
+  dependantAutonomous: number = 0;
+}
+
+export class EventGeco {
+  typeEvent: string = "";
+  emitter: string = "";
+  receiver: string = "";
+  amount: number = 0;
+  resources: Card[] = [];
+  // @ts-ignore
+  date: Date = Date.now();
+}
+
+export class Player {
+  name: string = "";
+  _id: string = "";
+  image: string = "";
+  coins: number = 0;
+  credits: Credit[] = [];
+  cards: Card[] = [];
+  survey: Feedback = {
+    agressiveAvenant: 0,
+    aloneIntegrated: 0,
+    anxiousConfident: 0,
+    competitiveCooperative: 0,
+    dependantAutonomous: 0,
+    depressedHappy: 0,
+    greedyGenerous: 0,
+    individualCollective: 0,
+    irritableTolerant: 0
+  };
+  eye: number = 3;
+  earrings: number = 0;
+  eyebrows: number = 0;
+  features: number = 0;
+  hair: number = 3;
+  glasses: number = 0;
+  mouth: number = 14;
+  earringsProbability: number = 100;
+  glassesProbability: number = 100;
+  featuresProbability: number = 100;
+  skinColor: string = "#ECAD80";
+  hairColor: string = "#3EAC2C";
+  status: string = "alive";
+}
+
 export class Game {
   _id: string = "";
   status: string = "";
@@ -50,6 +83,7 @@ export class Game {
   currentMassMonetary: number = 0;
   currentDU: number = 0;
   inequalityStart: boolean = false;
+  surveyEnabled: boolean = true;
   round: number = 0;
   roundMax: number = 10;
   roundMinutes: number = 8;
@@ -64,14 +98,4 @@ export class Game {
   modified: Date = Date.now();
   // @ts-ignore
   created: Date = Date.now();
-}
-
-export class EventGeco {
-  typeEvent: string = "";
-  emitter: string = "";
-  receiver: string = "";
-  amount: number = 0;
-  resources: Card[] = [];
-  // @ts-ignore
-  date: Date = Date.now();
 }

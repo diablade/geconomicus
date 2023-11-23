@@ -46,6 +46,8 @@ import {
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import { HistoryGamesComponent } from './history-games/history-games.component';
+import {SurveyComponent} from "./survey/survey.component";
+import {MatSliderModule} from "@angular/material/slider";
 
 @NgModule({
   declarations: [
@@ -70,6 +72,7 @@ import { HistoryGamesComponent } from './history-games/history-games.component';
     ScannerDialogV2Component,
     AppInfoDialogComponent,
     HistoryGamesComponent,
+    SurveyComponent,
   ],
   imports: [
     HttpClientModule,
@@ -96,6 +99,7 @@ import { HistoryGamesComponent } from './history-games/history-games.component';
     ZXingScannerModule,
     MatListModule,
     MatMenuModule,
+    MatSliderModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}

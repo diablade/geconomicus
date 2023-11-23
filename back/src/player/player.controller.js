@@ -364,5 +364,8 @@ export default {
                 message: "bad request"
             });
         }
+    },
+    addFeedback: async (req, res, next) => {
+
     }
 };

@@ -102,7 +102,7 @@
       </button>
       <button *ngIf="game.status==C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
               color="accent"
-              (click)="finishGame()">Terminier le jeu, afficher les resultats
+              (click)="finishGame()">Terminier le jeu, lancer le questionnaire et afficher les resultats
       </button>
       <button *ngIf="game.status==C.START_ROUND" mat-raised-button color="warn" class="ms-2" (click)="stopRoundForce()">
         Stop

@@ -23,12 +23,25 @@ let EventGeco = {
     date: Date,
 }
 
+let Feedback = {
+    depressedHappy: Number,
+    individualCollective: Number,
+    aloneIntegrated: Number,
+    greedyGenerous: Number,
+    competitiveCooperative: Number,
+    anxiousConfident: Number,
+    agressiveAffable: Number,
+    irritableTolerant: Number,
+    dependantAutonomous: Number,
+}
+
 let Player = {
     name: String,
     image: String,
     coins: Number,
     credits: [Credit],
     cards: [Card],
+    survey: [Feedback],
     eye: Number,
     earrings: Number,
     eyebrows: Number,
@@ -44,6 +57,7 @@ let Player = {
     status: String,
 }
 
+
 let Game = new Schema({
     status: {type: String, required: true},
     name: {type: String, required: true},
@@ -57,6 +71,7 @@ let Game = new Schema({
     startAmountCoins: {type: Number, required: true},
     amountCardsForProd: {type: Number, required: true},
     generatedIdenticalCards: {type: Number, required: true},
+    surveyEnabled: {type: Boolean, required: true},
     priceWeight1: {type: Number, required: true},
     priceWeight2: {type: Number, required: true},
     priceWeight3: {type: Number, required: true},

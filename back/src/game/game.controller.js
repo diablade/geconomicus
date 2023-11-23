@@ -312,6 +312,7 @@ export default {
                 priceWeight4: 12,
                 startAmountCoins: 5,
                 inequalityStart: false,
+                surveyEnabled: true,
                 tauxCroissance: 10,
                 generatedIdenticalCards: 4,
                 amountCardsForProd: 4,
@@ -364,6 +365,7 @@ export default {
                     pctPoor: body.pctPoor ? body.pctPoor : 10,
                     startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
                     inequalityStart: body.inequalityStart ? body.inequalityStart : false,
+                    surveyEnabled: body.surveyEnabled ? body.surveyEnabled : true,
                     modified: Date.now(),
                 }
             })
@@ -482,19 +484,17 @@ export default {
                     status: C.INTER_ROUND,
                     modified: Date.now(),
                 },
-            }, {new: true})
-                .then(updatedGame => {
-                    res.status(200).send({
-                        status: C.INTER_ROUND,
-                    });
-                })
-                .catch(err => {
-                    log.error('get game error', err);
-                    next({
-                        status: 404,
-                        message: "not found"
-                    });
-                })
+            }).then(updatedGame => {
+                res.status(200).send({
+                    status: C.INTER_ROUND,
+                });
+            }).catch(err => {
+                log.error('get game error', err);
+                next({
+                    status: 404,
+                    message: "not found"
+                });
+            })
         }
     },
     stopRound: async (req, res, next) => {
@@ -527,8 +527,8 @@ export default {
                     modified: Date.now(),
                 },
                 $push: {events: stopGameEvent}
-            }).then(() => {
-                io().to(id).emit(C.END_GAME);
+            }).then(game => {
+                io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'survey': 'survey'} : {});
                 io().to(id).emit(C.EVENT, stopGameEvent);
                 res.status(200).send({
                     status: C.END_GAME,
@@ -647,11 +647,11 @@ export default {
             {
                 $project: {
                     name: 1,
-                    status :1,
-                    typeMoney:1,
-                    modified:1,
-                    created:1,
-                    playersCount: { $size: '$players' },
+                    status: 1,
+                    typeMoney: 1,
+                    modified: 1,
+                    created: 1,
+                    playersCount: {$size: '$players'},
                 },
             },
         ])
@@ -690,6 +690,7 @@ export default {
                     currentMassMonetary: 0,
                     currentDU: 0,
                     inequalityStart: false,
+                    surveyEnabled: true,
                     tauxCroissance: 10,
                     generatedIdenticalCards: 4,
                     amountCardsForProd: 4,

@@ -1,0 +1,155 @@
+<div class="survey">
+
+  <h1>Quels ont été vos ressentis durant cette partie ?</h1>
+  <h3>Soyez le plus honnête possible 🙏</h3>
+
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Déprimé
+      </div>
+      <div class="float-end">
+        Joyeux
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="depressedHappy">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Cupide
+      </div>
+      <div class="float-end">
+        Généreux
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="greedyGenerous">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Irritable
+      </div>
+      <div class="float-end">
+        Tolérant
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="irritableTolerant">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Individuel
+      </div>
+      <div class="float-end">
+        Collectif
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="individualCollective">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Dépendant
+      </div>
+      <div class="float-end">
+        Autonome
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="dependantAutonomous">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Compétitif
+      </div>
+      <div class="float-end">
+        Coopératif
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="competitiveCooperative">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Anxieux
+      </div>
+      <div class="float-end">
+        Confiant
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="anxiousConfident">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <div class="label">
+      <div class="float-start">
+        Agressif
+      </div>
+      <div class="float-end">
+        Avenant
+      </div>
+    </div>
+    <mat-radio-group class="group" [(ngModel)]="agressiveAvenant">
+      <mat-radio-button value="-3"></mat-radio-button>
+      <mat-radio-button value="-2"></mat-radio-button>
+      <mat-radio-button value="-1"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="3"></mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <div class="question">
+    <button mat-raised-button color="warn" class="ms-2" (click)="sendFeedback()">
+      Envoyer
+    </button>
+  </div>
+</div>

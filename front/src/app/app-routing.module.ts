@@ -7,6 +7,7 @@ import {JoinComponent} from "./join/join.component";
 import {PlayerSettingsComponent} from "./player-settings/player-settings.component";
 import {ResultsComponent} from "./results/results.component";
 import {HistoryGamesComponent} from "./history-games/history-games.component";
+import {SurveyComponent} from "./survey/survey.component";
 
 const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
     {path: 'game/:idGame/join', component: JoinComponent},
     {path: 'game/:idGame/results', component: ResultsComponent},
     {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},
+    {path: 'game/:idGame/player/:idPlayer/survey', component: SurveyComponent},
     {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
     {path: '**', redirectTo: '/'},
 ];

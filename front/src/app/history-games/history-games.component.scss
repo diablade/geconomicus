@@ -13,9 +13,20 @@
   font-weight: bold;
   font-size: large;
 }
+.items{
+  height: 500px;
+  overflow: auto;
+}
+
 .item {
-  min-height: 55px;
-  margin-bottom: 30px;
+  min-height: 72px;
+  margin-bottom: 10px;
+  &-date{
+    height: 25px;
+  }
+  &-detail{
+    height: 42px;
+  }
 }
 .status{
   font-size: small;

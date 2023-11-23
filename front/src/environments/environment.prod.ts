@@ -11,7 +11,8 @@ export const environment = {
     UPDATE: 'player/update',
     GET: 'player/',
     PRODUCE: 'player/produceLevelUp',
-    TRANSACTION: 'player/transaction'
+    TRANSACTION: 'player/transaction',
+    SURVEY: 'player/survey'
   },
   GAME: {
     GET: 'game/',
