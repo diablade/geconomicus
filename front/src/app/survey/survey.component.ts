@@ -23,6 +23,7 @@ export class SurveyComponent implements OnInit {
   dependantAutonomous: number = 0;
   anxiousConfident: number = 0;
   agressiveAvenant: number = 0;
+  aloneIntegrated: number = 0;
 
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
   }
@@ -36,14 +37,15 @@ export class SurveyComponent implements OnInit {
 
   sendFeedback() {
     this.backService.sendFeedback(this.idGame, this.idPlayer,
-      this.individualCollective,
-      this.greedyGenerous,
-      this.irritableTolerant,
-      this.depressedHappy,
-      this.competitiveCooperative,
-      this.dependantAutonomous,
-      this.anxiousConfident,
-      this.agressiveAvenant).subscribe(async (data: any) => {
+      +this.individualCollective,
+      +this.greedyGenerous,
+      +this.irritableTolerant,
+      +this.depressedHappy,
+      +this.competitiveCooperative,
+      +this.dependantAutonomous,
+      +this.anxiousConfident,
+      +this.aloneIntegrated,
+      +this.agressiveAvenant).subscribe(async (data: any) => {
       this.snackbarService.showSuccess("Merci ! Redirection vers les resultats...");
 
       await new Promise(resolve => setTimeout(resolve, 4000));

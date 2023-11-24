@@ -238,18 +238,19 @@ export class BackService {
       );
   }
 
-  sendFeedback(idGame: any, idPlayer: any, individualCollective: any, greedyGenerous: any, irritableTolerant: any, depressedHappy: any, competitiveCooperative: any, dependantAutonomous: any, anxiousConfident: any, agressiveAvenant: any) {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY, {
-      idGame: idGame,
-      idPlayer: idPlayer,
-      individualCollective: individualCollective,
-      greedyGenerous: greedyGenerous,
-      irritableTolerant: irritableTolerant,
-      depressedHappy: depressedHappy,
-      competitiveCooperative: competitiveCooperative,
-      dependantAutonomous: dependantAutonomous,
-      anxiousConfident: anxiousConfident,
-      agressiveAvenant: agressiveAvenant
+  sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
+    return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY + idGame + '/' + idPlayer, {
+      idGame,
+      idPlayer,
+      individualCollective,
+      greedyGenerous,
+      irritableTolerant,
+      depressedHappy,
+      competitiveCooperative,
+      dependantAutonomous,
+      anxiousConfident,
+      aloneIntegrated,
+      agressiveAvenant
     }).pipe(
       catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
     );

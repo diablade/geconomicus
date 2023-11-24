@@ -366,6 +366,43 @@ export default {
         }
     },
     addFeedback: async (req, res, next) => {
-
+        const idGame = req.body.idGame;
+        const idPlayer = req.body.idPlayer;
+        const body = req.body;
+        if (!idGame && !idPlayer) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            const feedback = constructor.feedback(
+                body.depressedHappy,
+                body.individualCollective,
+                body.aloneIntegrated,
+                body.greedyGenerous,
+                body.competitiveCooperative,
+                body.anxiousConfident,
+                body.agressiveAvenant,
+                body.irritableTolerant,
+                body.dependantAutonomous,
+            )
+            GameModel.findByIdAndUpdate(idGame, {
+                $set: {
+                    'players.$[elem].survey': feedback,
+                }
+            }, {
+                arrayFilters: [{'elem._id': idPlayer}],
+                new: true
+            }).then((updatedGame) => {
+                io().to(idGame).emit(C.NEW_FEEDBACK);
+                res.status(200).json({"status": "feedback saved"});
+            }).catch((error) => {
+                log.error(error);
+                next({
+                    status: 404,
+                    message: "Not found"
+                });
+            });
+        }
     }
 };

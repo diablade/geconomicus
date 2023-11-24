@@ -4,14 +4,14 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import io from "socket.io-client";
-import {Card, EventGeco, Game, Player} from "../models/game";
+import {EventGeco, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
 import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
-import {ChartConfiguration, ChartDataset, ChartType} from 'chart.js';
+import {ChartConfiguration, ChartDataset} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 // import {fr} from 'date-fns/locale';
 import {parseISO, subSeconds} from 'date-fns';
@@ -37,6 +37,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   datasets: ChartDataset[] = [];
   datasetsRelatif: ChartDataset[] = [];
   datasetsResources: ChartDataset[] = [];
+  datasetsFeedback: ChartDataset[] = [];
   currentDU = 0;
   initialDU = 0;
   initialMM = 0;
@@ -44,6 +45,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   startGameDate: Date | undefined;
   stopGameDate: Date | undefined;
   C = C;
+  baseRadius: number = 2.1;
 
   durationGame() {
     if (this.startGameDate && this.stopGameDate) {
@@ -132,7 +134,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       },
     },
   };
-  public lineChartType: ChartType = 'line';
 
   public lineChartDataRelatif: ChartConfiguration['data'] | undefined;
   public lineChartOptionsRelatif: ChartConfiguration['options'] = {
@@ -180,7 +181,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       }
     }
   };
-  public lineChartTypeRelatif: ChartType = 'line';
 
   public lineChartDataResources: ChartConfiguration['data'] | undefined;
   public lineChartOptionsResources: ChartConfiguration['options'] = {
@@ -228,7 +228,60 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       }
     }
   };
-  public lineChartTypeResources: ChartType = 'line';
+
+  public feedbacksData: ChartConfiguration['data'] | undefined;
+
+  public feedbacksLabelsTop = [
+    "Joyeux",
+    "Collectif",
+    "En Communauté",
+    "Génereux",
+    "Coopératif",
+    "Confiant",
+    "Avenant",
+    "Tolérant",
+    "Autonome"];
+  public feedbacksLabelsBottom = [
+    "Déprimé",
+    "Individuel",
+    "Seul(e)",
+    "Avar",
+    "Compétitif",
+    "Anxieux",
+    "Agréssif",
+    "Irritable",
+    "Dépendant"];
+  public leftLabels = [
+    "Trés",
+    "Assez",
+    "Un peu",
+    "neutre",
+    "Un peu",
+    "Assez",
+    "Trés"];
+  public feedbacksOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          // @ts-ignore
+          label: function (tooltipItem) {
+            // @ts-ignore
+            return tooltipItem.raw.count;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {display: false, ticks: {stepSize: 1}},
+      y: {display: false, ticks: {stepSize: 1}},
+      x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
+      x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
+      y2: {position: "left", type: "category", labels: this.leftLabels,},
+    },
+  };
+
 
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
   }
@@ -262,6 +315,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     this.socket.on(C.EVENT, async (data: any) => {
       this.events.push(data.event);
     });
+    this.socket.on(C.NEW_FEEDBACK, async (data: any) => {
+      window.location.reload();
+    });
   }
 
   hexToRgb(hex: string): string {
@@ -278,6 +334,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
     // Create the RGB string
     return `rgba(${red}, ${green}, ${blue},1)`;
+  }
+
+  getRandomColor(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, ${0.6})`;
   }
 
   async initDatasets() {
@@ -335,6 +398,57 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       total: 0,
       playerId: player._id
     }));
+
+    this.initFeedbacks();
+  }
+
+  initFeedbacks() {
+    const playersWithFeedbacks = _.filter(this.players, p => p.survey != undefined);
+    const feedbacks = _.map(playersWithFeedbacks, p => p.survey);
+    const feedbacksCounts1 = _.countBy(feedbacks, "depressedHappy");
+    const feedbacksCounts2 = _.countBy(feedbacks, "individualCollective");
+    const feedbacksCounts3 = _.countBy(feedbacks, "aloneIntegrated");
+    const feedbacksCounts4 = _.countBy(feedbacks, "greedyGenerous");
+    const feedbacksCounts5 = _.countBy(feedbacks, "competitiveCooperative");
+    const feedbacksCounts6 = _.countBy(feedbacks, "anxiousConfident");
+    const feedbacksCounts7 = _.countBy(feedbacks, "agressiveAvenant");
+    const feedbacksCounts8 = _.countBy(feedbacks, "irritableTolerant");
+    const feedbacksCounts9 = _.countBy(feedbacks, "dependantAutonomous");
+    const feedbacksCounted = [feedbacksCounts1, feedbacksCounts2, feedbacksCounts3, feedbacksCounts4, feedbacksCounts5, feedbacksCounts6, feedbacksCounts7, feedbacksCounts8, feedbacksCounts9];
+
+    // @ts-ignore
+    this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
+      let data = _.map(feedback, (count, key) => {
+        return {x: index, y: +key, r: Math.log(count * 2) * 6, count: count}
+      });
+      return {
+        data: data,
+        type: 'bubble',
+        backgroundColor: this.getRandomColor()
+      }
+    });
+    // this.datasetsFeedback.push(
+    //   {
+    //     data: [0, 1, 3, 2, 1, 2, 0, 3, 0],
+    //     label: "Median",
+    //     type: 'line',
+    //     fill: false,
+    //     indexAxis: "x",
+    //     hidden: false,
+    //     showLine: true, xAxisID: "x", stack: "true",
+    //     backgroundColor: this.hexToRgb("#000000"),
+    //     borderColor: this.hexToRgb("#000000"),
+    //     pointBackgroundColor: this.hexToRgb("#000000"),
+    //     pointBorderColor: this.hexToRgb("#000000"),
+    //     borderWidth: 2, // Line thickness
+    //     tension: 0.1,
+    //     pointRadius: 0.8, // Point thickness
+    //   });
+
+    this.feedbacksData = {
+      // @ts-ignore
+      datasets: this.datasetsFeedback
+    };
   }
 
   addEventsToDatasets(unsortedEvents: EventGeco[]) {

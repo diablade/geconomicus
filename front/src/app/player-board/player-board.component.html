@@ -16,7 +16,10 @@
     </div>
   </div>
   <div class="" *ngIf="statusGame!==C.START_ROUND">
-    <div class="text-center h1">En attente...</div>
+    <div class="text-center h1">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
+    <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
+      Répondre au questionnaire
+    </button>
   </div>
   <div class="container">
     <div @list class="row">

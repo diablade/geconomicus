@@ -30,7 +30,7 @@ let Feedback = {
     greedyGenerous: Number,
     competitiveCooperative: Number,
     anxiousConfident: Number,
-    agressiveAffable: Number,
+    agressiveAvenant: Number,
     irritableTolerant: Number,
     dependantAutonomous: Number,
 }
@@ -41,7 +41,7 @@ let Player = {
     coins: Number,
     credits: [Credit],
     cards: [Card],
-    survey: [Feedback],
+    survey: Feedback,
     eye: Number,
     earrings: Number,
     eyebrows: Number,
@@ -107,6 +107,29 @@ let constructor = {
             resources: resources,
             date: date
         };
+    },
+    feedback: Feedback = (
+        depressedHappy,
+        individualCollective,
+        aloneIntegrated,
+        greedyGenerous,
+        competitiveCooperative,
+        anxiousConfident,
+        agressiveAvenant,
+        irritableTolerant,
+        dependantAutonomous,
+    )=>{
+        return {
+            depressedHappy,
+            individualCollective,
+            aloneIntegrated,
+            greedyGenerous,
+            competitiveCooperative,
+            anxiousConfident,
+            agressiveAvenant,
+            irritableTolerant,
+            dependantAutonomous,
+        }
     }
 }
 

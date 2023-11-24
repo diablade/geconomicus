@@ -43,17 +43,7 @@ export class Player {
   coins: number = 0;
   credits: Credit[] = [];
   cards: Card[] = [];
-  survey: Feedback = {
-    agressiveAvenant: 0,
-    aloneIntegrated: 0,
-    anxiousConfident: 0,
-    competitiveCooperative: 0,
-    dependantAutonomous: 0,
-    depressedHappy: 0,
-    greedyGenerous: 0,
-    individualCollective: 0,
-    irritableTolerant: 0
-  };
+  survey: Feedback | undefined;
   eye: number = 3;
   earrings: number = 0;
   eyebrows: number = 0;

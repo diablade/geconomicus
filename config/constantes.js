@@ -13,6 +13,7 @@ const DISTRIB_DU = 'distrib_du';
 const DISTRIB = 'distrib';
 const FIRST_DU = 'first_du';
 const RESET_GAME = 'reset-game';
+const NEW_FEEDBACK = 'new-feedback';
 const TRANSACTION_DONE = 'transaction-done';
 const TRANSACTION = 'transaction';
 const TRANSFORM_DISCARDS = "transformDiscards";
@@ -33,6 +34,7 @@ if (typeof module !== 'undefined' && module.exports) {
         BIRTH:BIRTH,
         START_GAME: START_GAME,
         END_GAME: END_GAME,
+        NEW_FEEDBACK:NEW_FEEDBACK,
         START_ROUND: START_ROUND,
         TIMER_LEFT:TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,

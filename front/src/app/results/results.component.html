@@ -41,7 +41,7 @@
               height="500"
               [data]="lineChartData"
               [options]="lineChartOptions"
-              [type]="lineChartType">
+              [type]="'line'">
       </canvas>
     </div>
     <h1 class="m-2">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
@@ -51,7 +51,7 @@
               height="500"
               [data]="lineChartDataRelatif"
               [options]="lineChartOptionsRelatif"
-              [type]="lineChartTypeRelatif">
+              [type]="'line'">
       </canvas>
     </div>
     <h1 class="m-2">Ressources</h1>
@@ -61,7 +61,18 @@
               height="500"
               [data]="lineChartDataResources"
               [options]="lineChartOptionsResources"
-              [type]="lineChartTypeResources">
+              [type]="'line'">
+      </canvas>
+    </div>
+    <h1 class="m-2">Résultat du sondage sur vos ressentis</h1>
+    <div class="graph">
+      <canvas baseChart
+              class="chart"
+              height="300"
+              [data]="feedbacksData"
+              [options]="feedbacksOptions"
+              [legend]="false"
+              [type]="'bubble'">
       </canvas>
     </div>
     <div class="d-block d-md-none eventsSmall">

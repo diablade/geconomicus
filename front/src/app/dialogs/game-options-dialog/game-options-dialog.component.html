@@ -47,6 +47,11 @@
         <input type="number" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
       </mat-form-field>
     </div>
+    <div>
+      <mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
+        Questionnaire de ressenti en fin de partie
+      </mat-checkbox>
+    </div>
     <div class="title m-auto fs-5 mt-2 mb-2">
       Options avancé
     </div>
@@ -73,11 +78,6 @@
         <mat-label>bourse de départ (moyenne classe)</mat-label>
         <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
       </mat-form-field>
-    </div>
-    <div>
-      <mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
-        Questionnaire de ressenti en fin de partie
-      </mat-checkbox>
     </div>
     <div class="mb-4 d-flex flex-column">
       <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">

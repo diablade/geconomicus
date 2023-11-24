@@ -12,7 +12,7 @@ export const environment = {
     GET: 'player/',
     PRODUCE: 'player/produceLevelUp',
     TRANSACTION: 'player/transaction',
-    SURVEY: 'player/survey'
+    SURVEY: 'player/survey/'
   },
   GAME: {
     GET: 'game/',

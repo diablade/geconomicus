@@ -148,8 +148,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.END_GAME, (data: any) => {
       this.snackbarService.showSuccess("Jeu terminé !");
       this.statusGame = C.END_GAME;
-      if (data && data.redirect == "survey") {
-        this.router.navigate(['game', this.idGame, 'survey']);
+      if (data && data.redirect =='survey') {
+        this.router.navigate(['game', this.idGame, 'player',this.idPlayer,'survey']);
       } else {
         this.router.navigate(['game', this.idGame, 'results']);
       }
@@ -165,6 +165,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       this.cards = [];
+      this.statusGame = C.OPEN;
       this.player.coins = 0;
     });
     this.socket.on(C.FIRST_DU, async (data: any) => {

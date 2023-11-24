@@ -521,14 +521,16 @@ export default {
             });
         } else {
             let stopGameEvent = constructor.event(C.END_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
-            GameModel.updateOne({_id: id}, {
-                $set: {
-                    status: C.END_GAME,
-                    modified: Date.now(),
+            GameModel.findByIdAndUpdate({_id: id}, {
+                    $set: {
+                        status: C.END_GAME,
+                        modified: Date.now(),
+                    },
+                    $push: {events: stopGameEvent}
                 },
-                $push: {events: stopGameEvent}
-            }).then(game => {
-                io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'survey': 'survey'} : {});
+                {new: true}
+            ).then(game => {
+                io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'redirect': 'survey'} : {});
                 io().to(id).emit(C.EVENT, stopGameEvent);
                 res.status(200).send({
                     status: C.END_GAME,
