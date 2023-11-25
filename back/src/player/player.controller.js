@@ -17,7 +17,9 @@ export default {
             });
         } else {
             GameModel.findById(id).then(async game => {
-                    if (game.players.length < 25) {
+                    if (game.status != C.OPEN) {
+                        next({status:400, message: "la partie est terminé mon poto, faut rentrer maintenant..."})
+                    } else if (game.players.length < 25) {
                         const comId = new mongoose.Types.ObjectId();
                         let player = {
                             _id: comId,
