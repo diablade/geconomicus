@@ -54,6 +54,8 @@ let Player = {
     earringsProbability: Number,
     glassesProbability: Number,
     featuresProbability: Number,
+    boardConf: String,
+    boardColor: String,
     status: String,
 }
 

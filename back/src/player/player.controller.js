@@ -134,6 +134,8 @@ export default {
                     'players.$[elem].mouth': player.mouth,
                     'players.$[elem].skinColor': player.skinColor,
                     'players.$[elem].hairColor': player.hairColor,
+                    'players.$[elem].boardConf': player.boardConf,
+                    'players.$[elem].boardColor': player.boardColor,
                     // add any other fields you want to update here
                 }
             }, {
