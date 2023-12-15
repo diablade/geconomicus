@@ -11,7 +11,7 @@ import {
   faQrcode,
   faCogs,
   faTrashCan,
-  faCircleInfo,
+  faCircleInfo, faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -46,6 +46,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faQrcode = faQrcode;
   faCogs = faCogs;
   faInfo = faCircleInfo;
+  faWarning = faWarning;
+
   C = C;
   timerProgress: number = 100;
 
@@ -167,10 +169,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   stopRound() {
     this.timer.stop();
     this.timer.reset();
+    this.timer.set({h: 0, m: 0, s: 0});
     this.game.status = C.STOP_ROUND;
     this.timerProgress = 0;
     this.sessionStorageService.removeItem(StorageKey.timerRemaining);
-    // this.snackbarService.showSuccess("le tour " + this.game.round + " à terminé");
     const dialogRef = this.dialog.open(InformationDialogComponent, {
       data: {text: "Tour terminé !"},
     });

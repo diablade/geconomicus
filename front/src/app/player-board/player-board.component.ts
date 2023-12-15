@@ -19,6 +19,7 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
+import {CreditsDialogComponent} from "../dialogs/credits-dialog/credits-dialog.component";
 
 
 @Component({
@@ -310,5 +311,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
             default:
                 return {"background-image": "url('/assets/woodJapAlt.jpg')"};
         }
+    }
+
+    showCredits() {
+        const dialogRef = this.dialog.open(CreditsDialogComponent, {});
+        dialogRef.afterClosed().subscribe(data => {
+
+        });
     }
 }

@@ -17,6 +17,11 @@
   <div class="" *ngIf="typeMoney==C.DEBT">
     <div class="">écheance interet:</div>
   </div>
+  <div class="" *ngIf="typeMoney!==C.DEBT">
+    <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">
+      voir mes crédits
+    </button>
+  </div>
   <div class="" *ngIf="statusGame!==C.START_ROUND">
     <div class="text-center h1">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
     <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">

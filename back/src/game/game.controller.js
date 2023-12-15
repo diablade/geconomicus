@@ -1,19 +1,23 @@
 import GameModel, {constructor} from './game.model.js';
+import GameTimer from './GameTimer.js';
 import * as C from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
 import _ from "lodash";
 import mongoose from "mongoose";
 import {io} from "../../conf_socket.js";
+import {differenceInMilliseconds} from "date-fns";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
-let gameTimers = {};
+let gameTimers = [];
+const minute = 60 * 1000;
 
-function stopTimer(gameId) {
-    if (gameTimers[gameId]) {
-        clearTimeout(gameTimers[gameId]);
-        gameTimers[gameId] = undefined;
+function stopAndRemoveTimer(gameId) {
+    let timer = _.find(gameTimers, (timer) => timer.id === gameId);
+    if (timer) {
+        timer.stop();
+        _.remove(gameTimers, {"id": gameId});
     }
 }
 
@@ -181,7 +185,7 @@ async function initGameJune(game) {
 }
 
 async function stopRound(gameId, gameRound) {
-    stopTimer(gameId);
+    stopAndRemoveTimer(gameId);
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
     GameModel.updateOne({_id: gameId}, {
         $set: {
@@ -242,52 +246,58 @@ async function killPlayer(idGame, idPlayer) {
     io().to(idPlayer).emit(C.DEAD);
 }
 
-async function deadPassing(roundMinutes, minutesPassed) {
+async function deadPassingThrough(roundMinutes, minutesPassed) {
     const modulo3 = roundMinutes / 3;
     if (minutesPassed > modulo3) {
         // killPlayer(idGame,idPlayer)
     }
 }
 
-function startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft) {
-    const timer = setTimeout(async () => {
-        io().to(gameId).emit(C.TIMER_LEFT, minutesLeft - 1);
+// const intervalTimerMoneyLibre =
+const intervalTimerMoneyDebt = (timer) => {
+    console.log('interval fired');
+    let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+    io().to(timer.id).emit(C.TIMER_LEFT, remainingTime);
 
-        // TODO: the automatic dead is coming ;
-        if ((minutesLeft - 1) <= 0) {
-            await distribDU(gameId);
-            stopRound(gameId, gameRound);
-        } else {
-            distribDU(gameId);
-            // Continue the timer
-            startRoundMoneyLibre(gameId, gameRound, roundMinutes, minutesLeft - 1);
-        }
-    }, 60 * 1000); // 60 seconds * 1000 milliseconds
-    // Store the timer in the gameTimers object using the gameId as the key.
-    gameTimers[gameId] = timer;
+    // TODO: the automatic dead is coming ;
+}
+// const endTimerMoneyLibre =
+const endTimerMoneyDebt = (timer) => {
+    console.log('Timer end');
+    stopRound(timer.id, timer.data.gameRound);
 }
 
+async function startRoundMoneyLibre(gameId, gameRound, roundMinutes) {
+    let timer = new GameTimer(gameId, roundMinutes * minute, minute, {gameRound: gameRound},
+        (timer) => {
+            console.log('interval fired');
+            distribDU(timer.id);
+            let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+            let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
+            io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
+
+            // TODO: the automatic dead is coming ;
+        },
+        (timer) => {
+            console.log('Timer end');
+            distribDU(timer.id).then(r =>
+                stopRound(timer.id, timer.data.gameRound)
+            )
+        });
+    timer.start();
+
+    //remove any previous with same id
+    await stopAndRemoveTimer(gameId);
+    // Store the timer in the gameTimers object using the gameId as the key.
+    gameTimers.push(timer);
+}
 
 function startRoundMoneyDebt(gameId, roundMinutes) {
-    let minutesPassed = 0;
-    const timer = setInterval(() => {
-        minutesPassed++;
-        //every 8mn do the pay interest ...
+    let timer = new GameTimer(gameId, roundMinutes, minute, {gameRound: gameRound}, intervalTimerMoneyDebt, endTimerMoneyDebt);
+    timer.start();
 
-        if (minutesPassed >= roundMinutes) {
-            clearInterval(timer);
-            console.log(roundMinutes + ' minutes have passed');
-            stopRound(gameId, round);
-        }
-    }, 60 * 1000); // 60 seconds * 1000 milliseconds
-}
-
-function startRound(updatedGame) {
-    if (updatedGame.typeMoney === C.JUNE) {
-        startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes, updatedGame.roundMinutes);
-    } else {
-        startRoundMoneyDebt(updatedGame);
-    }
+    // Store the timer in the gameTimers object using the gameId as the key.
+    gameTimers.push(timer);
 }
 
 export default {
@@ -456,7 +466,11 @@ export default {
                 .then(updatedGame => {
                     io().to(id).emit(C.START_ROUND);
                     io().to(id).emit(C.EVENT, startEvent);
-                    startRound(updatedGame);
+                    if (updatedGame.typeMoney === C.JUNE) {
+                        startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes, updatedGame.roundMinutes);
+                    } else {
+                        startRoundMoneyDebt(updatedGame);
+                    }
                     res.status(200).send({
                         status: C.START_ROUND,
                     });
@@ -677,6 +691,7 @@ export default {
                 message: "bad request"
             });
         } else {
+            stopAndRemoveTimer(idGame);
             GameModel.findByIdAndUpdate(idGame, {
                 $set: {
                     status: C.OPEN,

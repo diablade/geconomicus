@@ -48,6 +48,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import { HistoryGamesComponent } from './history-games/history-games.component';
 import {SurveyComponent} from "./survey/survey.component";
 import {MatSliderModule} from "@angular/material/slider";
+import { CreditsDialogComponent } from './dialogs/credits-dialog/credits-dialog.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import {MatSliderModule} from "@angular/material/slider";
     AppInfoDialogComponent,
     HistoryGamesComponent,
     SurveyComponent,
+    CreditsDialogComponent,
   ],
   imports: [
     HttpClientModule,

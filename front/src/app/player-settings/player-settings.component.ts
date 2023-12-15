@@ -31,7 +31,7 @@ export class PlayerSettingsComponent implements OnInit {
     };
     skinPalette: Array<any> = ['#f2d3b1', '#ecad80', '#9e5622', '#763900'];
     hairPalette: Array<any> = ['#ac6511', '#cb6820', '#ab2a18', '#e5d7a3', '#b9a05f', '#796a45', '#6a4e35', '#562306', '#0e0e0e', '#afafaf', '#3eac2c', '#85c2c6', '#dba3be', '#592454'];
-    boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#d56f15', '#0019aa64'];
+    boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
     constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private sanitizer: DomSanitizer) {
         // @ts-ignore
@@ -61,7 +61,7 @@ export class PlayerSettingsComponent implements OnInit {
             case "green":
                 return {"background-image": "url('/assets/green-carpet.jpg')"};
             case "custom":
-                return {"background-color": ""+this.player.boardColor};
+                return {"background-color": "" + this.player.boardColor};
             case "wood":
             default:
                 return {"background-image": "url('/assets/woodJapAlt.jpg')"};
