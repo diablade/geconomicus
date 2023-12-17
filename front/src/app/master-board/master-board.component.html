@@ -2,13 +2,13 @@
     <div class="">
         <img class="geco" src="./assets/geconomicus.png" alt="">
     </div>
-    <div class="fs-1 text-center pt-4 pb-4" *ngIf="game && game.status==='open'">
-        Rejoint la
-        partie {{game.name}}</div>
+    <div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
+        Rejoins la partie {{game.name}}</div>
     <div class="text text-center" *ngIf="game && game.status==='open'">
         soit en scannant le QrCode ou via {{environment.WEB_HOST}}, puis cliquez sur "rejoindre" !
     </div>
-    <div class="fs-1 text-center pt-4 pb-4 text-capitalize" *ngIf="game && game.status!=='open'">{{game.name}}</div>
+    <div class="fs-1 text-center pt-4 pb-4 text-capitalize gecoFont shadowed"
+         *ngIf="game && game.status!=='open'">{{game.name}}</div>
     <div class="row g-0" *ngIf="game && game.status==='open'">
         <!-- QR CODE    -->
         <div class="col-md-12 col-lg-4">
@@ -23,7 +23,8 @@
         </div>
         <!--  GUNY  -->
         <div class="col-md-12 col-lg-4 text-center m-auto">
-            <img class="guny" src="./assets/Guny.jpg" alt="">
+            <div class="mt-4 text-center bulle gecoFont bienvenue">Bienvenue !</div>
+            <img class="guny" src="./assets/guny.png" alt="">
         </div>
         <!--  OPTIONS  -->
         <div class="col-md-12 col-lg-4 text-center m-auto">
@@ -38,19 +39,19 @@
             </div>
             <div class="d-flex flex-row justify-content-center align-items-center">
                 <img class="imgCardValeur" src="assets/level1.png">
-                <div class="imgText">Alimentation : {{game.priceWeight1}} DU</div>
+                <div class="imgText d-flex justify-content-between ps-1">Alimentation: <div class="fw-bold">{{game.priceWeight1}} DU</div></div>
             </div>
             <div class=" d-flex flex-row justify-content-center align-items-center">
                 <img class="imgCardValeur" src="assets/level2.png">
-                <div class="imgText">Culture et savoir : {{game.priceWeight2}} DU</div>
+                <div class="imgText d-flex justify-content-between ps-1">Culture et savoir: <div class="fw-bold">{{game.priceWeight2}} DU</div></div>
             </div>
             <div class="d-flex flex-row justify-content-center align-items-center">
                 <img class="imgCardValeur" src="assets/level3.png">
-                <div class="imgText">Energie : {{game.priceWeight3}} DU</div>
+                <div class="imgText d-flex justify-content-between ps-1">Energie: <div class="fw-bold">{{game.priceWeight3}} DU</div></div>
             </div>
             <div class="d-flex flex-row justify-content-center align-items-center">
                 <img class="imgCardValeur" src="assets/level4.png">
-                <div class="imgText">Technologie : {{game.priceWeight4}} DU</div>
+                <div class="imgText d-flex justify-content-between ps-1">Technologie: <div class="fw-bold">{{game.priceWeight4}} DU</div></div>
             </div>
             <button class="text-center mb-4 mt-4 ms-4" mat-raised-button (click)="showOptions()">Options de Jeu
                 <fa-icon [icon]="faCogs"></fa-icon>
@@ -73,9 +74,9 @@
         <div class="row justify-content-center">
             <div class="countDownContainer">
                 <div class="time">
-                    <div class="minute">{{minutes}}</div>
-                    <div class="deuxpoints">:</div>
-                    <div class="seconds">{{seconds}}</div>
+                    <div class="minute shadowed">{{minutes}}</div>
+                    <div class="deuxpoints shadowed">:</div>
+                    <div class="seconds shadowed">{{seconds}}</div>
                 </div>
                 <mat-progress-spinner
                         class="spinner"
@@ -121,7 +122,7 @@
     </div>
     <div class="w-100" *ngIf="game && game.status===C.OPEN">
         <div class="text-center">
-            <h2 class="fs-3 ">Joueurs connectés</h2>
+            <h2 class="fs-3 shadowed gecoFont">Joueurs connectés</h2>
             <section class="">
                 <mat-slide-toggle
                         class=""
@@ -134,7 +135,7 @@
     </div>
     <div class="w-100" *ngIf="game && game.status!=='open'">
         <div class="text-center">
-            <h2 class="fs-3 ">Joueurs</h2>
+            <h2 class="fs-3 gecoFont shadowed">Joueurs</h2>
             <section class="">
                 <mat-slide-toggle
                         class=""
@@ -145,7 +146,7 @@
             </section>
         </div>
     </div>
-    <div class="p-3" [ngClass]="game.status == C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">
+    <div class="p-3 sunyBg" [ngClass]="game.status == C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">
         <div class="d-flex flex-row justify-content-center flex-wrap">
             <div *ngFor="let player of game?.players"
                  class="player d-flex flex-column">

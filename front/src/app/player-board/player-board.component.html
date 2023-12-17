@@ -17,13 +17,13 @@
   <div class="" *ngIf="typeMoney==C.DEBT">
     <div class="">écheance interet:</div>
   </div>
-  <div class="" *ngIf="typeMoney!==C.DEBT">
+  <div class="" *ngIf="typeMoney==C.DEBT">
     <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">
       voir mes crédits
     </button>
   </div>
   <div class="" *ngIf="statusGame!==C.START_ROUND">
-    <div class="text-center h1">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
+    <div class="text-center h1 gecoFont contour">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
     <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
       Répondre au questionnaire
     </button>
@@ -53,7 +53,7 @@
             [disabled]="statusGame!== C.START_ROUND||player.status== C.DEAD"
             (click)="scan()">
       <fa-icon [icon]="faCamera"></fa-icon>
-      ACHETER une Carte
+      ACHETER
     </button>
   </div>
 </div>

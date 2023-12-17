@@ -53,7 +53,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 
   options = [
     {value: 'june', label: 'Monnaie libre', isDisabled: false},
-    {value: 'Debt', label: 'Monnaie dette (coming soon)', isDisabled: true},
+    {value: 'Debt', label: 'Monnaie dette', isDisabled: false},
   ];
   minutes: string = "00";
   seconds: string = "00";

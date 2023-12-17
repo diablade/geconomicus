@@ -18,7 +18,11 @@
 
 .guny {
   width: 300px;
-  border-radius: 90px;
+}
+.bienvenue{
+  position: relative;
+  top: 25px;
+  left: 25%;
 }
 
 .svg {
@@ -139,21 +143,13 @@
 
 .backgroundPlayers {
   padding: 5px;
-  //background: #D7D7D7;
   overflow: auto;
   height: 100%;
   min-height: 400px;
-  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
 
   &-Small {
     padding: 5px;
-    //background: #D7D7D7;
     max-height: 350px;
-    background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
   }
 }
 

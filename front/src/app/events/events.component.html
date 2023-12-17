@@ -1,5 +1,5 @@
 <div class="w-100 h-100 d-flex flex-column">
-  <h1 class="shadowed">Evenements</h1>
+  <h1 class="contour">Evenements</h1>
   <div class="" *ngFor="let event of events">
     {{event.date | date:"HH:mm:ss"}}:
     <span [ngSwitch]="event.typeEvent">

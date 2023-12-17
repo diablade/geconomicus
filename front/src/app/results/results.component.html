@@ -6,7 +6,7 @@
         <div class="">
             <img class="geco" src="./assets/geconomicus.png" alt="">
         </div>
-        <h1 class="m-2 mt-4 shadowed">{{game?.name}}</h1>
+        <h1 class="m-2 mt-4 contour">{{game?.name}}</h1>
         <div class="row g-0 p-2 bg-white rounded shadow">
             <div class="col-sm-12 col-md-4">
                 <div><span class="fw-bold">Status: </span>{{getStatus()}}</div>
@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <h1 class="m-2 mt-4 shadowed">Comptes en quantitatif
+        <h1 class="m-2 mt-4 contour">Comptes en quantitatif
         </h1>
         <div class="graph bg-white rounded shadow">
             <canvas baseChart
@@ -52,7 +52,7 @@
                     [type]="'line'">
             </canvas>
         </div>
-        <h1 class="m-2 mt-4 shadowed">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
+        <h1 class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
         <div class="graph bg-white rounded shadow">
             <canvas baseChart
                     class="chart"
@@ -62,7 +62,7 @@
                     [type]="'line'">
             </canvas>
         </div>
-        <h1 class="m-2 mt-4 shadowed">Ressources</h1>
+        <h1 class="m-2 mt-4 contour">Ressources</h1>
         <div class="graph bg-white rounded shadow">
             <canvas baseChart
                     class="chart"
@@ -72,7 +72,7 @@
                     [type]="'line'">
             </canvas>
         </div>
-        <h1 class="m-2 mt-4 shadowed">Résultat du sondage sur vos ressentis</h1>
+        <h1 class="m-2 mt-4 contour">Résultat du sondage sur vos ressentis</h1>
         <div class="graph bg-white rounded shadow">
             <canvas baseChart
                     class="chart"
