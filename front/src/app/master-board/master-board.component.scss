@@ -1,7 +1,8 @@
-.board{
+.board {
   background: #ffd89b;
 }
-.geco{
+
+.geco {
   width: 200px;
   margin-top: 10px;
   margin-left: 10px;
@@ -19,7 +20,8 @@
 .guny {
   width: 300px;
 }
-.bienvenue{
+
+.bienvenue {
   position: relative;
   top: 25px;
   left: 25%;
@@ -75,22 +77,26 @@
   justify-content: end;
 }
 
+.videoCard {
+  object-fit: cover;
+  width: 200px;
+  height: 200px;
+  border-radius: 200px;
+}
+
 .countDownContainer {
-  width: 320px;
-  height: 320px;
-  margin: 10px;
+  display: block;
+  position: relative;
 
   .time {
     font-size: 65px;
-    position: relative;
+    position: absolute;
     display: flex;
-    justify-content: center;
-    top: 47%;
+    top: 46%;
+    left: 23%;
   }
 
   .spinner {
-    width: 100%;
-    height: 100%;
   }
 }
 
@@ -110,6 +116,7 @@
   &-frame {
     background: white;
   }
+
   &-action {
     height: 20px;
   }
@@ -153,17 +160,17 @@
   }
 }
 
-.dead{
+.dead {
   position: relative;
   left: 56%;
   top: 15%;
   font-size: 30px;
 }
 
-.deadprompt{
-  position:relative;
-  cursor:pointer ;
-  left:15%;
-  top:43%;
+.deadprompt {
+  position: relative;
+  cursor: pointer;
+  left: 15%;
+  top: 43%;
   font-size: 50px;
 }

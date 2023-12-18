@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {BackService} from "../services/back.service";
@@ -32,6 +32,8 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 })
 export class MasterBoardComponent implements OnInit, AfterViewInit {
   private subscription: Subscription | undefined;
+  @ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
+  @ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
   idGame: string = "";
   public game: Game = new Game;
   data: string = "";
@@ -70,7 +72,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.snackbarService.showSuccess("Tour terminé");
     }
   });
-
   constructor(private route: ActivatedRoute,
               private sessionStorageService: SessionStorageService,
               private backService: BackService,
@@ -117,6 +118,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     });
     this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
       console.log("timer left ", minutesRemaining);
+      this.startVideos();
       this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
       if (minutesRemaining && this.game.status == C.START_ROUND) {
         this.timer.stop();
@@ -129,6 +131,11 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.stopRound();
     });
   }
+  startVideos() {
+    this.videoPlayerL.nativeElement.play();
+    this.videoPlayerR.nativeElement.play();
+  }
+
 
   //To prevent memory leak
   ngOnDestroy(): void {
