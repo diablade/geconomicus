@@ -1,5 +1,4 @@
-
-.option{
+.option {
   width: 450px;
   height: 600px;
   overflow: auto;
@@ -9,17 +8,20 @@
   align-items: center;
 }
 
-.input{
+.input {
   width: 90px;
 }
-.smallInput{
+
+.smallInput {
   width: 40px;
 }
+
 .imgCardValeur {
   height: 50px;
   border-radius: 4px;
   margin-right: 5px;
 }
+
 .imgText {
   width: 170px;
   height: 56px;
@@ -27,6 +29,10 @@
   align-items: center;
 }
 
-.infoLabel{
+.infoLabel {
   font-size: smaller;
+}
+
+.red {
+  color: red;
 }

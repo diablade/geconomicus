@@ -65,13 +65,10 @@ let Game = new Schema({
     status: {type: String, required: true},
     name: {type: String, required: true},
     typeMoney: {type: String, required: false},
-    tauxCroissance: {type: Number, required: true},
-    pctRich: {type: Number, required: true},
-    pctPoor: {type: Number, required: true},
+    events: {type: [EventGeco], required: false},
+    decks: {type: [[Card]], required: false},
+    players: {type: [Player], required: false},
     currentMassMonetary: {type: Number, required: true},
-    currentDU: {type: Number, required: true},
-    inequalityStart: {type: Boolean, required: true},
-    startAmountCoins: {type: Number, required: true},
     amountCardsForProd: {type: Number, required: true},
     generatedIdenticalCards: {type: Number, required: true},
     surveyEnabled: {type: Boolean, required: true},
@@ -79,12 +76,27 @@ let Game = new Schema({
     priceWeight2: {type: Number, required: true},
     priceWeight3: {type: Number, required: true},
     priceWeight4: {type: Number, required: true},
-    players: {type: [Player], required: false},
-    decks: {type: [[Card]], required: false},
-    events: {type: [EventGeco], required: false},
     round: {type: Number, required: false},
     roundMax: {type: Number, required: false},
     roundMinutes: {type: Number, required: false},
+
+    //option june
+    currentDU: {type: Number, required: true},
+    inequalityStart: {type: Boolean, required: true},
+    tauxCroissance: {type: Number, required: true},
+    startAmountCoins: {type: Number, required: true},
+    pctPoor: {type: Number, required: true},
+    pctRich: {type: Number, required: true},
+
+    //option debt
+    defaultCreditAmount: {type: Number, required: true},
+    defaultInterestAmount: {type: Number, required: true},
+    timerInterestPayment: {type: Number, required: true},
+    timerPrison: {type: Number, required: true},
+    manualBank: {type: Boolean, required: true},
+    seizureType: {type: String, required: true},
+    seizureCosts: {type: Number, required: true},
+    seizureDecote: {type: Number, required: true},
 
     modified: {type: Date, default: Date.now},
     created: {type: Date, default: Date.now},
@@ -121,7 +133,7 @@ let constructor = {
         agressiveAvenant,
         irritableTolerant,
         dependantAutonomous,
-    )=>{
+    ) => {
         return {
             depressedHappy,
             individualCollective,

@@ -179,7 +179,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
                 data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️"},
             });
             this.cards = [];
-            if (this.typeMoney === "debt") {
+            if (this.typeMoney === C.DEBT) {
                 this.player.coins = 0;
             }
             await new Promise(resolve => setTimeout(resolve, 4000));

@@ -275,7 +275,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     },
     scales: {
       x: {display: false, ticks: {stepSize: 1}},
-      y: {display: false, ticks: {stepSize: 1}},
+      y: {display: false, ticks: {stepSize: 1}, type:"linear", min:-3, max:3,},
       x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
       x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
       y2: {position: "left", type: "category", labels: this.leftLabels,},
@@ -419,7 +419,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     // @ts-ignore
     this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
       let data = _.map(feedback, (count, key) => {
-        return {x: index, y: +key, r: Math.log(count * 2) * 6, count: count}
+        return {x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count}
       });
       return {
         data: data,

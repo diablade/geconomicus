@@ -320,19 +320,32 @@ export default {
                 priceWeight2: 6,
                 priceWeight3: 9,
                 priceWeight4: 12,
-                startAmountCoins: 5,
-                inequalityStart: false,
                 surveyEnabled: true,
-                tauxCroissance: 10,
                 generatedIdenticalCards: 4,
                 amountCardsForProd: 4,
-                pctRich: 10,
-                pctPoor: 10,
-                round: 0,
-                currentDU: 0,
                 currentMassMonetary: 0,
+                round: 0,
                 roundMax: 1,
                 roundMinutes: 40,
+
+                //option june
+                currentDU: 0,
+                tauxCroissance: 10,
+                inequalityStart: false,
+                startAmountCoins: 5,
+                pctPoor: 10,
+                pctRich: 10,
+
+                //option debt
+                defaultCreditAmount: 3,
+                defaultInterestAmount: 1,
+                timerInterestPayment: 5,
+                timerPrison: 5,
+                manualBank: false,
+                seizureType: "decote",
+                seizureCosts: 2,
+                seizureDecote: 25,
+
                 modified: Date.now(),
                 created: Date.now(),
             });
@@ -368,14 +381,27 @@ export default {
                     priceWeight4: body.priceWeight4 ? body.priceWeight4 : 12,
                     roundMax: body.roundMax ? body.roundMax : 1,
                     roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
-                    tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
+                    surveyEnabled: body.surveyEnabled ? body.surveyEnabled : true,
                     amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
                     generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
-                    pctRich: body.pctRich ? body.pctRich : 10,
-                    pctPoor: body.pctPoor ? body.pctPoor : 10,
+
+                    //option june
+                    tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
                     startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
                     inequalityStart: body.inequalityStart ? body.inequalityStart : false,
-                    surveyEnabled: body.surveyEnabled ? body.surveyEnabled : true,
+                    pctPoor: body.pctPoor ? body.pctPoor : 10,
+                    pctRich: body.pctRich ? body.pctRich : 10,
+
+                    //option debt
+                    defaultCreditAmount: body.defaultCreditAmount ? body.defaultCreditAmount : 3,
+                    defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount :1,
+                    timerInterestPayment: body.timerInterestPayment ? body.timerInterestPayment:  5,
+                    timerPrison: body.timerPrison ? body.timerPrison: 5,
+                    manualBank : body.manualBank ? body.manualBank: false,
+                    seizureType : body.seizureType ? body.seizureType: "decote",
+                    seizureCosts : body.seizureCosts ? body.seizureCosts: 2,
+                    seizureDecote : body.seizureDecote ? body.seizureDecote : 25,
+
                     modified: Date.now(),
                 }
             })
@@ -700,25 +726,36 @@ export default {
                     'players.$[].coins': 0,
                     'players.$[].status': C.ALIVE,
                     decks: [],
+                    events: [],
                     priceWeight1: 3,
                     priceWeight2: 6,
                     priceWeight3: 9,
                     priceWeight4: 12,
                     currentMassMonetary: 0,
-                    currentDU: 0,
-                    inequalityStart: false,
                     surveyEnabled: true,
-                    tauxCroissance: 10,
                     generatedIdenticalCards: 4,
                     amountCardsForProd: 4,
-                    pctRich: 10,
-                    pctMoy: 80,
-                    pctPoor: 10,
-                    startAmountCoins: 5,
                     round: 0,
                     roundMax: 1,
                     roundMinutes: 40,
-                    events: [],
+
+                    //option debt
+                    currentDU: 0,
+                    tauxCroissance: 10,
+                    inequalityStart: false,
+                    startAmountCoins: 5,
+                    pctPoor: 10,
+                    pctRich: 10,
+
+                    //option debt
+                    defaultCreditAmount: 3,
+                    defaultInterestAmount: 1,
+                    timerInterestPayment: 5,
+                    timerPrison: 5,
+                    manualBank: false,
+                    seizureType: "decote",
+                    seizureCosts: 2,
+                    seizureDecote: 25,
                 }
             }, {new: true})
                 .then((updatedGame) => {

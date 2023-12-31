@@ -2,9 +2,11 @@
     <div class="">
         <img class="geco" src="./assets/geconomicus.png" alt="">
     </div>
-    <div class="">
-        <img class="img-top" src="./assets/G1-logo-bleu_la-june.webp" alt="">
-    </div>
+  <!--  GUNY  -->
+  <div class="mt-4 d-flex flex-column align-items-center">
+    <div class="text-center bulle gecoFont bienvenue">Découvrez la monnaie libre par le jeu !</div>
+    <img class="guny" src="./assets/guny.png" alt="" (click)="beep()">
+  </div>
     <div class="mt4">
         <button mat-raised-button color="accent" (click)="onCreate()">Créer une partie</button>
     </div>
@@ -19,6 +21,10 @@
     <div class="mt4">
       <a href="https://geconomicus.glibre.org/" target="_blank">L'original en version papier ?</a>
     </div>
+  <audio #coins>
+    <source src="assets/coins-on-table.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
 </div>
 <app-version></app-version>
 

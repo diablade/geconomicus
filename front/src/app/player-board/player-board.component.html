@@ -2,12 +2,12 @@
   <div class="titleBar d-flex flex-row">
     <div class="symbol">
       <div class="jeuTitle">Solde:</div>
-      <img *ngIf="typeMoney=='june'" class="free"/>
-      <img *ngIf="typeMoney=='debt'" class="debt"/>
+      <img *ngIf="typeMoney==C.JUNE" class="free"/>
+      <img *ngIf="typeMoney==C.DEBT" class="debt"/>
     </div>
-    <div class="sold flex-grow-1">
+    <div class="sold flex-grow-1 contour">
       {{player.coins| number : '1.2-2'}}
-      <span class="enDU">{{(player.coins/currentDU) | number : '1.2-2'}}DU</span>
+      <span *ngIf="typeMoney==C.JUNE" class="enDU">{{(player.coins/currentDU) | number : '1.2-2'}}DU</span>
       <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">

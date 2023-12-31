@@ -54,8 +54,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   timerProgress: number = 100;
 
   options = [
-    {value: 'june', label: 'Monnaie libre', isDisabled: false},
-    {value: 'Debt', label: 'Monnaie dette', isDisabled: false},
+    {value: C.JUNE, label: 'Monnaie libre', isDisabled: false},
+    {value: C.DEBT, label: 'Monnaie dette', isDisabled: false},
   ];
   minutes: string = "00";
   seconds: string = "00";
@@ -72,6 +72,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.snackbarService.showSuccess("Tour terminé");
     }
   });
+
   constructor(private route: ActivatedRoute,
               private sessionStorageService: SessionStorageService,
               private backService: BackService,
@@ -131,6 +132,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.stopRound();
     });
   }
+
   startVideos() {
     this.videoPlayerL.nativeElement.play();
     this.videoPlayerR.nativeElement.play();
@@ -255,14 +257,26 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
         this.game.priceWeight4 = results.priceWeight4;
         this.game.roundMax = results.roundMax;
         this.game.roundMinutes = results.roundMinutes;
-        this.game.inequalityStart = results.inequalityStart;
         this.game.surveyEnabled = results.surveyEnabled;
-        this.game.startAmountCoins = results.startAmountCoins;
-        this.game.tauxCroissance = results.tauxCroissance;
         this.game.amountCardsForProd = results.amountCardsForProd;
         this.game.generatedIdenticalCards = results.generatedIdenticalCards;
+
+        //option june
+        this.game.inequalityStart = results.inequalityStart;
+        this.game.startAmountCoins = results.startAmountCoins;
+        this.game.tauxCroissance = results.tauxCroissance;
         this.game.pctRich = results.pctRich;
         this.game.pctPoor = results.pctPoor;
+
+        //option debt
+        this.game.defaultCreditAmount = results.defaultCreditAmount;
+        this.game.defaultInterestAmount = results.defaultInterestAmount;
+        this.game.timerInterestPayment = results.timerInterestPayment;
+        this.game.timerPrison = results.timerPrison;
+        this.game.manualBank = results.manualBank;
+        this.game.seizureType = results.seizureType;
+        this.game.seizureCosts = results.seizureCosts;
+        this.game.seizureDecote = results.seizureDecote;
       }
     });
   }
@@ -275,6 +289,27 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.backService.killUser(player._id, this.idGame).subscribe((data) => {
       player.status = C.DEAD;
     });
+  }
+
+  onMoneyChange(event: any) {
+    if (event.value === C.DEBT) {
+      this.game.priceWeight1 = 1
+      this.game.priceWeight2 = 2
+      this.game.priceWeight3 = 4
+      this.game.priceWeight4 = 8
+    } else {
+      this.game.priceWeight1 = 3
+      this.game.priceWeight2 = 6
+      this.game.priceWeight3 = 9
+      this.game.priceWeight4 = 12
+    }
+    this.backService.updateGame(this.idGame, this.game).subscribe((data: any) => {
+      this.snackbarService.showSuccess("Option sauvegardé !");
+    });
+  }
+
+  saveCreditValues() {
+
   }
 }
 

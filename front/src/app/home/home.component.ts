@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
@@ -11,7 +11,13 @@ import {faCamera} from "@fortawesome/free-solid-svg-icons";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  protected readonly faCamera = faCamera;
+  faCamera = faCamera;
+  @ViewChild('coins') coins!: ElementRef;
+
+  beep() {
+    const audio: HTMLAudioElement = this.coins.nativeElement;
+    audio.play();
+  }
 
   constructor(private router: Router, private backService: BackService, public dialog: MatDialog) {
   }
