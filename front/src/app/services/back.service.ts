@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
-import {Card, Game, Player} from "../models/game";
+import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
@@ -254,5 +254,17 @@ export class BackService {
     }).pipe(
       catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
     );
+  }
+
+  createCredit(data: any) {
+    return this.http.post<any>(environment.API_HOST + environment.GAME.CREATE_CREDIT, data).pipe(
+      catchError(err => this.handleError(err, "", "creation du credit impossible"))
+    );
+  }
+
+  getPlayerCredits(idGame: any, idPlayer: any){
+    return this.http.get<any>(environment.API_HOST+environment.GAME.GET_CREDITS+ idGame + '/' + idPlayer).pipe(
+      catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
+    )
   }
 }

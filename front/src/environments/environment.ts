@@ -23,6 +23,9 @@ export const environment = {
     IMPORT: 'game/import',
     START: 'game/start',
     EVENTS: 'game/events/',
+    CREATE_CREDIT: 'game/create-credit',
+    DELETE_CREDIT: 'game/delete-credit',
+    GET_CREDITS: "game/get-credits/",
     DELETE_PLAYER: 'game/delete-player',
     KILL_PLAYER: "game/kill-player",
     RESET: 'game/reset',
@@ -30,5 +33,6 @@ export const environment = {
     STOP_ROUND: 'game/stop-round',
     INTER_ROUND: 'game/inter-round',
     END: 'game/end',
+
   },
 };

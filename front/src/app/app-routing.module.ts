@@ -8,12 +8,14 @@ import {PlayerSettingsComponent} from "./player-settings/player-settings.compone
 import {ResultsComponent} from "./results/results.component";
 import {HistoryGamesComponent} from "./history-games/history-games.component";
 import {SurveyComponent} from "./survey/survey.component";
+import {BankBoardComponent} from "./bank-board/bank-board.component";
 
 const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'results/:idGame', component: ResultsComponent},
     {path: 'games', component: HistoryGamesComponent},
     {path: 'game/:idGame/master', component: MasterBoardComponent},
+    {path: 'game/:idGame/bank', component: BankBoardComponent},
     {path: 'game/:idGame/join/:reincarnate', component: JoinComponent},
     {path: 'game/:idGame/join', component: JoinComponent},
     {path: 'game/:idGame/results', component: ResultsComponent},

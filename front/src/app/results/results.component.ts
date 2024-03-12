@@ -357,7 +357,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       borderWidth: 2, // Line thickness
       pointRadius: 0.8, // Point thickness
       total: 0,
-      playerId: player._id
+      idPlayer: player._id
     }));
     this.datasets.push({
       data: [],
@@ -370,7 +370,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       pointRadius: 0.8, // Point thickness
       // @ts-ignore
       total: 0,
-      playerId: "masseMoney"
+      idPlayer: "masseMoney"
     });
 
     this.datasetsRelatif = _.map(players, player => ({
@@ -383,7 +383,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       borderWidth: 2, // Line thickness
       pointRadius: 0.8, // Point thickness
       total: 0,
-      playerId: player._id
+      idPlayer: player._id
     }));
 
     this.datasetsResources = _.map(players, player => ({
@@ -396,7 +396,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       borderWidth: 2, // Line thickness
       pointRadius: 0.8, // Point thickness
       total: 0,
-      playerId: player._id
+      idPlayer: player._id
     }));
 
     this.initFeedbacks();
@@ -483,19 +483,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
       // Find the dataset for the emitter and receiver
       // @ts-ignore
-      const mmDataset = _.find(this.datasets, dataset => dataset.playerId === "masseMoney");
+      const mmDataset = _.find(this.datasets, dataset => dataset.idPlayer === "masseMoney");
       // @ts-ignore
-      const emitterDataset = _.find(this.datasets, dataset => dataset.playerId === event.emitter);
+      const emitterDataset = _.find(this.datasets, dataset => dataset.idPlayer === event.emitter);
       // @ts-ignore
-      const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.emitter);
+      const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.idPlayer === event.emitter);
       // @ts-ignore
-      const emitterDatasetResources = _.find(this.datasetsResources, dataset => dataset.playerId === event.emitter);
+      const emitterDatasetResources = _.find(this.datasetsResources, dataset => dataset.idPlayer === event.emitter);
       // @ts-ignore
-      const receiverDataset = _.find(this.datasets, dataset => dataset.playerId === event.receiver);
+      const receiverDataset = _.find(this.datasets, dataset => dataset.idPlayer === event.receiver);
       // @ts-ignore
-      const receiverDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.playerId === event.receiver);
+      const receiverDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.idPlayer === event.receiver);
       // @ts-ignore
-      const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.playerId === event.receiver);
+      const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.idPlayer === event.receiver);
 
       if (mmDataset && (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU)) {
         // @ts-ignore

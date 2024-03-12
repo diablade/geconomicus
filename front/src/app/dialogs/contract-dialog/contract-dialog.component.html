@@ -1,0 +1,39 @@
+<div class="contract">
+  <div class="d-flex align-items-center flex-column">
+    <h2 class="fs-4 shadowed gecoFont">Contrat crédit</h2>
+    <mat-form-field class="input">
+      <mat-label>Credit</mat-label>
+      <input type="number" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
+    </mat-form-field>
+    <mat-form-field class="input">
+      <mat-label>Interet</mat-label>
+      <input type="number" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
+    </mat-form-field>
+    <div>
+      - Taux d'interet : <b>{{game.defaultInterestAmount / game.defaultCreditAmount * 100 | number:'1.2-2'}} % </b>
+      <br>
+      - Annulation du crédit à tout moment en remboursant
+      :<b>{{game.defaultInterestAmount + game.defaultCreditAmount}} </b> <br>
+      - Saisie d'un interet <b>{{game.defaultInterestAmount}}</b> toutes les <b>{{game.timerInterestPayment}}</b>
+      minutes, <br>
+      jusqu'à remboursement complet du credit + interet<br>
+
+    </div>
+    <mat-form-field class="mt-2" appearance="fill">
+      <mat-label>passer le contract avec</mat-label>
+      <mat-select [(value)]="idPlayer">
+        <mat-option [value]="player._id"
+                    *ngFor="let player of game.players">{{ player.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div>
+      <button class="m-2" mat-raised-button
+              (click)="cancel()">annuler
+      </button>
+      <button class="m-2" mat-raised-button color="accent"
+              (click)="saveUserCredit()">Conclure
+        <fa-icon [icon]="faFileSignature"></fa-icon>
+      </button>
+    </div>
+  </div>
+</div>

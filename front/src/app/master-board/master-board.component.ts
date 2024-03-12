@@ -6,12 +6,8 @@ import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
-  faFlagCheckered,
-  faPeopleArrows,
-  faQrcode,
-  faCogs,
-  faTrashCan,
-  faCircleInfo, faWarning,
+  faFlagCheckered, faPeopleArrows, faQrcode, faCogs, faTrashCan,
+  faCircleInfo, faWarning, faBuildingColumns
 } from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -49,6 +45,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
   faCogs = faCogs;
   faInfo = faCircleInfo;
   faWarning = faWarning;
+  faBuildingColumns = faBuildingColumns;
 
   C = C;
   timerProgress: number = 100;
@@ -238,6 +235,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     window.open('game/' + this.idGame + '/results', '_blank');
   }
 
+  showBank() {
+    window.open('game/' + this.idGame + '/bank', '_blank');
+  }
+
   showOptions() {
     const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
       data: {game: _.clone(this.game)},
@@ -306,10 +307,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.backService.updateGame(this.idGame, this.game).subscribe((data: any) => {
       this.snackbarService.showSuccess("Option sauvegardé !");
     });
-  }
-
-  saveCreditValues() {
-
   }
 }
 

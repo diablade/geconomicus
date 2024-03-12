@@ -1,0 +1,17 @@
+<div class="contract d-flex flex-column">
+  <mat-chip [ngClass]="credit.status == 'running' ? 'good':'warning'">
+    <b>
+      {{ credit.status == "running" ? "En cours" : "Terminé" }}</b>
+    <fa-icon mat-raised-button [icon]="faCircleInfo"
+             matTooltip="remboursé le ... par exemple">
+    </fa-icon>
+  </mat-chip>
+  <div class="fw-bold text-truncate">{{ contractor }}</div>
+  <div class="fontName">créé : {{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
+  <div class="fontName">credit : {{ credit.amount }}</div>
+  <div class="fontName">interet : {{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
+  <div *ngIf="credit.status=='closed'" class="fontName">clos le : {{ credit.endDate }} payable toutes les {{ interestMinutes }} minutes</div>
+  <button *ngIf="credit.status=='running'" class="buttonContrat" mat-raised-button color="primary" (click)="terminate()"> Annuler la dette
+    <fa-icon [icon]="faSackDollar"></fa-icon>
+  </button>
+</div>

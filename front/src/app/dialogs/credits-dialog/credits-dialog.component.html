@@ -1,1 +1,5 @@
-<p>credits-dialog works!</p>
+<div class="credits">
+  <div class="d-inline-flex" *ngFor="let credit of credits">
+    <app-credit-contract [credit]="credit" [contractor]="playerName" (settlement)="settlementDebt(credit)"></app-credit-contract>
+  </div>
+</div>

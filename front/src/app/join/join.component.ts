@@ -32,18 +32,18 @@ export class JoinComponent {
   }
 
   join() {
-    this.backService.join(this.idGame, this.name,this.reincarnate).subscribe(playerId => {
-      this.router.navigate(['game', this.idGame, 'player', playerId, 'settings']);
+    this.backService.join(this.idGame, this.name,this.reincarnate).subscribe(idPlayer => {
+      this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
     });
   }
   joinReincarnate() {
-    this.backService.joinReincarnate(this.idGame, this.name).subscribe(playerId => {
-      this.router.navigate(['game', this.idGame, 'player', playerId, 'settings']);
+    this.backService.joinReincarnate(this.idGame, this.name).subscribe(idPlayer => {
+      this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
     });
   }
   joinInGame() {
-    this.backService.joinInGame(this.idGame, this.name).subscribe(playerId => {
-      this.router.navigate(['game', this.idGame, 'player', playerId, 'settings']);
+    this.backService.joinInGame(this.idGame, this.name).subscribe(idPlayer => {
+      this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
     });
   }
 }

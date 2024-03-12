@@ -134,21 +134,12 @@
       </button>
     </div>
     <div class="d-flex mt-4 align-items-center flex-column" *ngIf="game.typeMoney==C.DEBT">
-      <h2 class="fs-4 shadowed gecoFont">Ajuster le crédit courant</h2>
-      <div class="d-flex flex-row ">
-        <mat-form-field class="input ms-2">
-          <mat-label>Credit</mat-label>
-          <input type="number" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
-        </mat-form-field>
-        <mat-form-field class="input ms-2">
-          <mat-label>Interet</mat-label>
-          <input type="number" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultInterestAmount">
-        </mat-form-field>
-        <button class="m-2" mat-raised-button
-                color="accent"
-                (click)="saveCreditValues()">Sauvegarder
-        </button>
-      </div>
+      <h2 class="fs-4 shadowed gecoFont">Voir la banque</h2>
+      <button class="m-2" mat-raised-button
+              color="accent"
+              (click)="showBank()">Banque
+        <fa-icon [icon]="faBuildingColumns"></fa-icon>
+      </button>
     </div>
   </div>
   <div class="text-center" *ngIf="game && game.status===C.OPEN">

@@ -32,7 +32,7 @@ import {ResultsComponent} from './results/results.component';
 import {VersionComponent} from './version/version.component';
 import {EventsComponent} from './events/events.component';
 import {NgChartsModule} from 'ng2-charts';
-import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
+import {GameOptionsDialogComponent} from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ZXingScannerModule} from "@zxing/ngx-scanner";
@@ -45,10 +45,14 @@ import {
 } from './dialogs/scanner-dialog-v2/scanner-dialog-v2.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
-import { HistoryGamesComponent } from './history-games/history-games.component';
+import {HistoryGamesComponent} from './history-games/history-games.component';
 import {SurveyComponent} from "./survey/survey.component";
 import {MatSliderModule} from "@angular/material/slider";
-import { CreditsDialogComponent } from './dialogs/credits-dialog/credits-dialog.component';
+import {CreditsDialogComponent} from './dialogs/credits-dialog/credits-dialog.component';
+import {BankBoardComponent} from './bank-board/bank-board.component';
+import {MatChipsModule} from "@angular/material/chips";
+import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
+import { CreditContractComponent } from './credit-contract/credit-contract.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +79,9 @@ import { CreditsDialogComponent } from './dialogs/credits-dialog/credits-dialog.
     HistoryGamesComponent,
     SurveyComponent,
     CreditsDialogComponent,
+    BankBoardComponent,
+    ContractDialogComponent,
+    CreditContractComponent,
   ],
   imports: [
     HttpClientModule,
@@ -102,6 +109,7 @@ import { CreditsDialogComponent } from './dialogs/credits-dialog/credits-dialog.
     MatListModule,
     MatMenuModule,
     MatSliderModule,
+    MatChipsModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}

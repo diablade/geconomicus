@@ -40,8 +40,8 @@ export class EventsComponent {
     }
   }
 
-  getPlayerName(playerId: string) {
-    const player = _.find(this.players, p => p._id === playerId);
+  getPlayerName(idPlayer: string) {
+    const player = _.find(this.players, p => p._id === idPlayer);
     return player ? player.name : "undefined";
   }
 

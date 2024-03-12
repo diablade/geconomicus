@@ -10,9 +10,15 @@ let Card = {
 }
 
 let Credit = {
+    id: String,
     amount: Number,
     interest: Number,
-    emitDate: Date,
+    idGame: String,
+    idPlayer: String,
+    status: String,
+    createDate: Date,
+    startDate: Date,
+    endDate: Date,
 }
 
 let EventGeco = {
@@ -40,7 +46,6 @@ let Player = {
     name: String,
     image: String,
     coins: Number,
-    credits: [Credit],
     cards: [Card],
     survey: Feedback,
     eye: Number,
@@ -89,6 +94,7 @@ let Game = new Schema({
     pctRich: {type: Number, required: true},
 
     //option debt
+    credits: [Credit],
     defaultCreditAmount: {type: Number, required: true},
     defaultInterestAmount: {type: Number, required: true},
     timerInterestPayment: {type: Number, required: true},
@@ -107,8 +113,18 @@ let constructor = {
     card: Card = (letter, color, weight, price) => {
         return {letter: letter, color: color, weight: weight, price: price};
     },
-    credit: Credit = (amount, interest) => {
-        return {amount: amount, interest: interest}
+    credit: Credit = (id, amount, interest, idGame, idPlayer, status, createDate, startDate, endDate) => {
+        return {
+            id,
+            amount,
+            interest,
+            idGame,
+            idPlayer,
+            status,
+            createDate,
+            startDate,
+            endDate,
+        }
     },
     player: Player = () => {
         return {}

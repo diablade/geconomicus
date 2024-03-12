@@ -1,3 +1,4 @@
+import {body, validationResult} from 'express-validator';
 import GameModel, {constructor} from './game.model.js';
 import GameTimer from './GameTimer.js';
 import * as C from '../../../config/constantes.js';
@@ -10,14 +11,31 @@ import {differenceInMilliseconds} from "date-fns";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
+
 let gameTimers = [];
+let debtTimers = [];
+
 const minute = 60 * 1000;
 
-function stopAndRemoveTimer(gameId) {
-    let timer = _.find(gameTimers, (timer) => timer.id === gameId);
+function addDebtTimer(id, startTickNow, credit, intervalInterestDuration) {
+    let debtTimer = new GameTimer(id, "untilEnd", intervalInterestDuration, {credit: credit},
+        (timer) => {
+            io().to(timer.id).emit(C.TIMER_INTEREST);
+        },
+        () => {
+        });
+    if (startTickNow) {
+        debtTimer.start();
+    }
+    // Store the debt timer in the list
+    debtTimers.push(debtTimer);
+}
+
+function stopAndRemoveTimer(idGame) {
+    let timer = _.find(gameTimers, (timer) => timer.id === idGame);
     if (timer) {
         timer.stop();
-        _.remove(gameTimers, {"id": gameId});
+        _.remove(gameTimers, {"id": idGame});
     }
 }
 
@@ -54,8 +72,8 @@ async function generateDU(game) {
     return duRounded;
 }
 
-async function distribDU(gameId) {
-    GameModel.findById(gameId)
+async function distribDU(idGame) {
+    GameModel.findById(idGame)
         .then(async (game) => {
             var newEvents = [];
             const du = await generateDU(game);
@@ -67,16 +85,16 @@ async function distribDU(gameId) {
                     io().to(player.id).emit(C.DISTRIB_DU, {du: du});
 
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
-                    io().to(gameId).emit(C.EVENT, newEvent);
+                    io().to(idGame).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 } else if (player.status === C.DEAD) {
                     //TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
                     let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, 0, [], Date.now());
-                    io().to(gameId).emit(C.EVENT, newEvent);
+                    io().to(idGame).emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 }
             }
-            GameModel.findByIdAndUpdate(gameId,
+            GameModel.findByIdAndUpdate(idGame,
                 {
                     $inc: {"players.$[elem].coins": du},
                     $push: {events: {$each: newEvents}},
@@ -184,10 +202,10 @@ async function initGameJune(game) {
     return game;
 }
 
-async function stopRound(gameId, gameRound) {
-    stopAndRemoveTimer(gameId);
+async function stopRound(idGame, gameRound) {
+    stopAndRemoveTimer(idGame);
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
-    GameModel.updateOne({_id: gameId}, {
+    GameModel.updateOne({_id: idGame}, {
         $set: {
             status: C.STOP_ROUND,
             modified: Date.now(),
@@ -195,8 +213,8 @@ async function stopRound(gameId, gameRound) {
         $push: {events: stopRoundEvent}
     })
         .then(previousGame => {
-            io().to(gameId).emit(C.STOP_ROUND);
-            io().to(gameId).emit(C.EVENT, stopRoundEvent);
+            io().to(idGame).emit(C.STOP_ROUND);
+            io().to(idGame).emit(C.EVENT, stopRoundEvent);
         })
         .catch(err => {
             log.error('stop round game error', err);
@@ -253,22 +271,8 @@ async function deadPassingThrough(roundMinutes, minutesPassed) {
     }
 }
 
-// const intervalTimerMoneyLibre =
-const intervalTimerMoneyDebt = (timer) => {
-    console.log('interval fired');
-    let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
-    io().to(timer.id).emit(C.TIMER_LEFT, remainingTime);
-
-    // TODO: the automatic dead is coming ;
-}
-// const endTimerMoneyLibre =
-const endTimerMoneyDebt = (timer) => {
-    console.log('Timer end');
-    stopRound(timer.id, timer.data.gameRound);
-}
-
-async function startRoundMoneyLibre(gameId, gameRound, roundMinutes) {
-    let timer = new GameTimer(gameId, roundMinutes * minute, minute, {gameRound: gameRound},
+async function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
+    let timer = new GameTimer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
         (timer) => {
             console.log('interval fired');
             distribDU(timer.id);
@@ -287,16 +291,29 @@ async function startRoundMoneyLibre(gameId, gameRound, roundMinutes) {
     timer.start();
 
     //remove any previous with same id
-    await stopAndRemoveTimer(gameId);
-    // Store the timer in the gameTimers object using the gameId as the key.
+    await stopAndRemoveTimer(idGame);
+    // Store the timer in the gameTimers object using the idGame as the key.
     gameTimers.push(timer);
 }
 
-function startRoundMoneyDebt(gameId, roundMinutes) {
-    let timer = new GameTimer(gameId, roundMinutes, minute, {gameRound: gameRound}, intervalTimerMoneyDebt, endTimerMoneyDebt);
+function startRoundMoneyDebt(idGame, roundMinutes) {
+    let timer = new GameTimer(idGame, roundMinutes, minute, {gameRound: gameRound},
+        (timer) => {
+            console.log('interval fired');
+
+            let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+            let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
+            io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
+
+            // TODO: the automatic dead is coming ;
+        },
+        (timer) => {
+            console.log('Round end');
+            stopRound(timer.id, timer.data.gameRound);
+        });
     timer.start();
 
-    // Store the timer in the gameTimers object using the gameId as the key.
+    // Store the timer in the gameTimers object using the idGame as the key.
     gameTimers.push(timer);
 }
 
@@ -394,13 +411,13 @@ export default {
 
                     //option debt
                     defaultCreditAmount: body.defaultCreditAmount ? body.defaultCreditAmount : 3,
-                    defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount :1,
-                    timerInterestPayment: body.timerInterestPayment ? body.timerInterestPayment:  5,
-                    timerPrison: body.timerPrison ? body.timerPrison: 5,
-                    manualBank : body.manualBank ? body.manualBank: false,
-                    seizureType : body.seizureType ? body.seizureType: "decote",
-                    seizureCosts : body.seizureCosts ? body.seizureCosts: 2,
-                    seizureDecote : body.seizureDecote ? body.seizureDecote : 25,
+                    defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount : 1,
+                    timerInterestPayment: body.timerInterestPayment ? body.timerInterestPayment : 5,
+                    timerPrison: body.timerPrison ? body.timerPrison : 5,
+                    manualBank: body.manualBank ? body.manualBank : false,
+                    seizureType: body.seizureType ? body.seizureType : "decote",
+                    seizureCosts: body.seizureCosts ? body.seizureCosts : 2,
+                    seizureDecote: body.seizureDecote ? body.seizureDecote : 25,
 
                     modified: Date.now(),
                 }
@@ -552,7 +569,7 @@ export default {
             });
         }
     },
-    end: async (req, res, next) => {
+    end: [body('idGame').trim().escape(), async (req, res, next) => {
         const id = req.body.idGame;
         if (!id) {
             next({
@@ -584,7 +601,7 @@ export default {
 
             });
         }
-    },
+    }],
     getGameById: async (req, res, next) => {
         const id = req.params.idGame;
         if (!id) {
@@ -669,6 +686,122 @@ export default {
                         next({status: 404, message: "game Not found"});
                     }
                 );
+        }
+    },
+    createCredit: async (req, res, next) => {
+        console.log(req.body);
+        const idGame = req.body.idGame;
+        const idPlayer = req.body.idPlayer;
+        const interest = req.body.interest;
+        const amount = req.body.amount;
+        if (!idPlayer || !idGame || !interest || !amount) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            GameModel.findOneAndUpdate(
+                {_id: idGame, 'players._id': idPlayer},
+                {
+                    $inc: {'players.$.coins': amount}
+                }, {new: true}
+            ).then(updatedGame => {
+                const startNow = updatedGame.status == C.START_ROUND
+                let id = new mongoose.Types.ObjectId();
+                const credit = constructor.credit(
+                    id,
+                    amount,
+                    interest,
+                    idGame,
+                    idPlayer,
+                    startNow ? "running" : "created",
+                    Date.now(),
+                    startNow ? Date.now() : null,
+                    null
+                )
+                let newEvent = constructor.event(C.NEW_CREDIT, C.MASTER, idPlayer, amount, [credit], Date.now());
+                GameModel.findByIdAndUpdate(idGame, {
+                    $push: {
+                        'credits': credit,
+                        'events': newEvent,
+                    },
+                    $inc: {
+                        'currentMassMonetary': amount
+                    }
+                }, {
+                    new: true
+                }).then((updatedGame) => {
+                    addDebtTimer(idGame, id, startNow, credit, updatedGame.timerInterestPayment);
+                    io().to(idGame).emit(C.EVENT, newEvent);
+                    io().to(idPlayer).emit(C.NEW_CREDIT, credit);
+                    res.status(200).json({"status": "credit added"});
+                }).catch((error) => {
+                    log.error(error);
+                    next({
+                        status: 404,
+                        message: "Not found"
+                    });
+                });
+            }).catch((error) => {
+                log.error(error);
+                next({
+                    status: 404,
+                    message: "Not found"
+                });
+            });
+        }
+    },
+    updateCredit: async (req, res, next) => {
+        const idGame = req.body.idGame;
+        const idPlayer = req.body.idPlayer;
+        const idCredit = req.body.idCredit;
+        if (!idPlayer || !idGame || !idCredit) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            GameModel.findByIdAndUpdate(idGame, {
+                $pull: {credits: {_id: idCredit}}
+            }, {new: true})
+                .then(newGame => {
+
+                })
+                .catch(error => {
+                        log(error);
+                        next({status: 404, message: "game Not found"});
+                    }
+                );
+        }
+    },
+    getCreditsByIdPlayer: async (req, res, next) => {
+        const idGame = req.params.idGame;
+        const idPlayer = req.params.idPlayer;
+        if (!idGame && !idPlayer) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            GameModel.findById(idGame)
+                .then(game => {
+                    if (game) {
+                        let credits = _.filter(game.credits, {idPlayer: idPlayer});
+                        res.status(200).json(credits);
+                    } else {
+                        next({
+                            status: 404,
+                            message: "Not found"
+                        });
+                    }
+                })
+                .catch(error => {
+                    log.error('get game error', error);
+                    next({
+                        status: 404,
+                        message: "not found"
+                    });
+                });
         }
     },
     killPlayer: async (req, res, next) => {

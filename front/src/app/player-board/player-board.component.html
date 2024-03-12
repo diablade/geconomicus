@@ -14,10 +14,8 @@
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="typeMoney==C.DEBT">
+  <div class="d-flex flex-row justify-content-between" *ngIf="typeMoney==C.DEBT">
     <div class="">écheance interet:</div>
-  </div>
-  <div class="" *ngIf="typeMoney==C.DEBT">
     <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">
       voir mes crédits
     </button>

@@ -2,6 +2,7 @@
 const OPEN = 'open';
 const JUNE= 'june';
 const DEBT= 'debt';
+const NEW_CREDIT = "new-credit";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
@@ -31,6 +32,7 @@ if (typeof module !== 'undefined' && module.exports) {
         JUNE: JUNE,
         DEBT: DEBT,
         DEAD: DEAD,
+        NEW_CREDIT: NEW_CREDIT,
         REMIND_DEAD: REMIND_DEAD,
         ALIVE:ALIVE,
         BIRTH:BIRTH,

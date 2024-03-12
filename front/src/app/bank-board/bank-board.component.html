@@ -1,0 +1,53 @@
+<div class="p-3 bank" *ngIf="game.typeMoney==C.DEBT">
+  <h1 class="d-flex justify-content-center fs-4 shadowed gecoFont">Banque
+    <fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
+  </h1>
+  <div>
+    <h2 class="fs-4 shadowed gecoFont">Indicateur économique courant</h2>
+    <div>
+      Masse Monétaire en circulation :
+      <mat-chip>
+        {{ game.currentMassMonetary }}
+      </mat-chip>
+    </div>
+    <div>
+      Moyenne par joueur :
+      <mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
+        <b>{{ getAverageCurrency() }} </b>
+        <fa-icon mat-raised-button [icon]="faCircleInfo"
+                 matTooltip="Un ratio de minimum 2 est conseillé à maintenir,
+                 vous pouvez peut etre faire des offres unique de baisse des taux,
+                 0% par exemple.">
+        </fa-icon>
+      </mat-chip>
+    </div>
+    <div>
+      Dettes courantes :
+      <mat-chip>
+        {{ "-" }}
+      </mat-chip>
+    </div>
+    <div>
+      interet récuperé :
+      <mat-chip>
+        {{ "-" }}
+      </mat-chip>
+    </div>
+    <div>
+      credit remboursé :
+      <mat-chip>
+        {{ "-" }}
+      </mat-chip>
+    </div>
+  </div>
+  <div class="mt-5 d-flex align-items-baseline">
+    <h2 class="fs-4 shadowed gecoFont">Détails des crédits</h2>
+    <button class="ms-4" mat-raised-button color="accent" (click)="showContract()"> Octroyer un crédit
+      <fa-icon [icon]="faSackDollar"></fa-icon>
+    </button>
+  </div>
+  <div class="d-inline-flex" *ngFor="let credit of game.credits">
+    <app-credit-contract [credit]="credit" [contractor]="getPlayerName(credit.idPlayer)" (settlement)="settlementDebt(credit)"></app-credit-contract>
+  </div>
+</div>
+<div *ngIf="game.typeMoney==C.JUNE">Pas de banque en monnaie libre ;)</div>

@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import {io} from '../../conf_socket.js';
 import * as C from '../../../config/constantes.js';
 
-
 export default {
     join: async (req, res, next) => {
         const id = req.body.idGame;
@@ -18,9 +17,9 @@ export default {
         } else {
             GameModel.findById(id).then(async game => {
                     if (game.status == C.DEAD) {
-                        next({status:400, message: "la partie est terminé mon poto, faut rentrer maintenant..."})
+                        next({status: 400, message: "la partie est terminé mon poto, faut rentrer maintenant..."})
                     } else if (game.status != C.OPEN) {
-                        next({status:400, message: "la partie est déjà commencé... sorry mon poto"})
+                        next({status: 400, message: "la partie est déjà commencé... sorry mon poto"})
                     } else if (game.players.length < 25) {
                         const comId = new mongoose.Types.ObjectId();
                         let player = {
@@ -65,9 +64,9 @@ export default {
                 message: "bad request"
             });
         } else {
-            const playerId = new mongoose.Types.ObjectId();
+            const idPlayer = new mongoose.Types.ObjectId();
             let player = {
-                _id: playerId,
+                _id: idPlayer,
                 name: name,
                 image: "",
                 coins: 0,
@@ -84,7 +83,7 @@ export default {
                     // Draw new cards for the player
                     const newCards = shuffledDeck.slice(0, 4);//same weight
                     //create events
-                    let birthEvent = constructor.event(C.BIRTH, C.MASTER, playerId, 0, newCards, Date.now());
+                    let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
 
                     // remove cards given to player from the deck, add events
                     await GameModel.updateOne(
@@ -100,7 +99,7 @@ export default {
                     );
                     // and Add new cards to player's hand
                     await GameModel.updateOne(
-                        {_id: id, 'players._id': playerId},
+                        {_id: id, 'players._id': idPlayer},
                         {
                             $push: {'players.$.cards': {$each: newCards}}
                         }
@@ -118,8 +117,8 @@ export default {
     update: async (req, res, next) => {
         const idGame = req.body.idGame;
         const player = req.body;
-        const playerId = player._id
-        if (!idGame && !playerId) {
+        const idPlayer = player._id
+        if (!idGame && !idPlayer) {
             next({
                 status: 400,
                 message: "bad request"
@@ -143,7 +142,7 @@ export default {
                     // add any other fields you want to update here
                 }
             }, {
-                arrayFilters: [{'elem._id': playerId}],
+                arrayFilters: [{'elem._id': idPlayer}],
                 new: true
             })
                 .then((updatedGame) => {
@@ -411,7 +410,34 @@ export default {
             });
         }
     },
-    contractDebt: async (req, res, next) => {
-
+    checkSolvability: async (req, res, next) => {
+        const idGame = req.body.idGame;
+        const idPlayer = req.body.idPlayer;
+        const amount = req.body.amount;
+        const interest = req.body.interest;
+        if (!idGame && !idPlayer) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            GameModel.findById(idGame).then(async game => {
+                    const player = _.find(game.players, {id: idPlayer});
+                    if (player.coins >= amount) {
+                        next({status: 200, message: ""})
+                    } else if (player.cards.length > 3) {
+                        next({status: 200, message: ""})
+                        // } else if (etc...) {
+                        //     next({status: 400, message: ""})
+                    } else {
+                        next({status: 400, message: "non solvable"});
+                    }
+                }
+            ).catch(error => {
+                    log.error(error);
+                    next({status: 404, message: "Not found"});
+                }
+            );
+        }
     }
 };

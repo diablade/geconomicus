@@ -10,8 +10,18 @@ export class Card {
 }
 
 export class Credit {
+  id: string = "";
+  idPlayer: string = "";
+  idGame: string = "";
   amount: number = 0;
   interest: number = 0;
+  status: string = "created" // created,running,ended
+  // @ts-ignore
+  createDate: Date = undefined;
+  // @ts-ignore
+  startDate: Date = undefined;
+  // @ts-ignore
+  endDate: Date = undefined;
 }
 
 export class Feedback {
@@ -41,7 +51,6 @@ export class Player {
   _id: string = "";
   image: string = "";
   coins: number = 0;
-  credits: Credit[] = [];
   cards: Card[] = [];
   survey: Feedback | undefined;
   eye: number = 3;
@@ -92,14 +101,15 @@ export class Game {
   pctRich: number = 10;
 
   //option debt
+  credits: Credit[] = [];
   defaultCreditAmount: number = 3;
   defaultInterestAmount: number = 1;
   timerInterestPayment: number = 5;
   timerPrison: number = 5;
   manualBank: boolean = false;
-  seizureType:string = "decote";
-  seizureCosts:number = 2;
-  seizureDecote:number=25;
+  seizureType: string = "decote";
+  seizureCosts: number = 2;
+  seizureDecote: number = 25;
 
   // @ts-ignore
   modified: Date = Date.now();

@@ -26,16 +26,18 @@ services:
       - /volume1/docker/geco/logs:/logs
     depends_on:
       - mongodb
+    networks:
+      - backnet
   mongodb:
     container_name: mongodb
     image: mongo:4.4.10
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
-    ports:
-      - "${GECO_DB_CONFIG_PORT}:27017"
     volumes:
       - /volume1/docker/mongoData:/data/db
+    networks:
+      - backnet
   mongo-express:
     image: mongo-express
     container_name: mongo-express
@@ -48,3 +50,7 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${GECO_DB_CONFIG_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${GECO_DB_CONFIG_PASSWORD}
       ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - backnet
+networks:
+  backnet:
