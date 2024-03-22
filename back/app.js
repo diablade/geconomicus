@@ -7,6 +7,7 @@ import socket from './conf_socket.js';
 import http from 'http';
 
 // IMPORT ROUTES
+import bankRoutes from "./src/bank/bank.routes.js";
 import gameRoutes from './src/game/game.routes.js';
 import playerRoutes from './src/player/player.routes.js';
 
@@ -23,6 +24,7 @@ app.use(morgan(":remote-addr | :remote-user |[:date[clf]] " + "| :method | \":ur
 
 
 // MAIN ROUTES middleware
+app.use('/bank', bankRoutes);
 app.use('/game', gameRoutes);
 app.use('/player', playerRoutes);
 //api health routes

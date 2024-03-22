@@ -1,6 +1,8 @@
 import {Component, Inject, Input} from '@angular/core';
 import {BackService} from "../../services/back.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
+import {Credit} from "../../models/game";
 
 @Component({
   selector: 'app-credits-dialog',
@@ -10,10 +12,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 export class CreditsDialogComponent {
   idGame: string | undefined;
   idPlayer: string | undefined;
-  playerName: string= "";
+  playerName: string = "";
   credits: any;
 
-  constructor(private backService: BackService,public dialogRef: MatDialogRef<CreditsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(private dialog: MatDialog, private backService: BackService, public dialogRef: MatDialogRef<CreditsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.idGame = data.idGame;
     this.idPlayer = data.idPlayer;
     this.playerName = data.playerName;
@@ -29,7 +31,23 @@ export class CreditsDialogComponent {
     })
   }
 
-  settlementDebt(credit: any) {
-
+  openConfirmationDialog(credit: Credit): void {
+    const confDialogRef = this.dialog.open(ConfirmDialogComponent,{
+      data: {
+        message: "Etes vous sur de rembourser votre crédit , en payant: "+(credit.amount+credit.interest)+" ?",
+        labelBtn1: "Rembourser intégralement",
+        labelBtn2: "Annuler",
+        autoClickBtn2: true,
+        timerBtn2: 10,
+      }
+    });
+    confDialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.backService.settlementCredit(this.idGame, this.idPlayer, credit).subscribe(data => {
+          console.log("done", data);
+        });
+      } else {
+      }
+    });
   }
 }

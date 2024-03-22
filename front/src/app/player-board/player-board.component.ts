@@ -20,6 +20,7 @@ import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 import {CreditsDialogComponent} from "../dialogs/credits-dialog/credits-dialog.component";
+import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 
 
 @Component({
@@ -321,7 +322,22 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         playerName: this.player.name
       }
     });
-    dialogRef.afterClosed().subscribe(data => {
+    dialogRef.afterClosed().subscribe(credit => {
+
+    });
+  }
+  requestingWhenCreditEnds() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: "Votre crédit est arrivé à expiration ! " +
+          "\n rembourser l'intégralité \nou prolongé 5 mn en payant 1 d'interet",
+        labeltBtn1: "Rembourser intégralement",
+        labelBtn2: "Prolonger",
+        autoClickBtn2: true,
+        timerBtn2: "7"//en secondes
+      }
+    });
+    dialogRef.afterClosed().subscribe(options => {
 
     });
   }

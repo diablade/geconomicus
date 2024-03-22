@@ -1,0 +1,10 @@
+<div class="autoBtn">
+  <button mat-button [mat-dialog-close]="false">
+    {{ label }}
+  </button>
+  <div class="progressContainer">
+    <div class="progress progress-bar-striped progress-bar-animated" role="progressbar"
+         [style.width.%]="progress">
+    </div>
+  </div>
+</div>

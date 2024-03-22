@@ -257,13 +257,19 @@ export class BackService {
   }
 
   createCredit(data: any) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.CREATE_CREDIT, data).pipe(
+    return this.http.post<any>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
       catchError(err => this.handleError(err, "", "creation du credit impossible"))
     );
   }
 
   getPlayerCredits(idGame: any, idPlayer: any){
-    return this.http.get<any>(environment.API_HOST+environment.GAME.GET_CREDITS+ idGame + '/' + idPlayer).pipe(
+    return this.http.get<any>(environment.API_HOST+environment.BANK.GET_CREDITS+ idGame + '/' + idPlayer).pipe(
+      catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
+    )
+  }
+
+  settlementCredit(idGame: any, idPlayer: any, credit: any) {
+    return this.http.post<any>(environment.API_HOST+environment.BANK.SETTLEMENT_CREDITS, {idGame:idGame,idPlayer:idPlayer,credit:credit}).pipe(
       catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
     )
   }

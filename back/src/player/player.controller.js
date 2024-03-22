@@ -410,34 +410,4 @@ export default {
             });
         }
     },
-    checkSolvability: async (req, res, next) => {
-        const idGame = req.body.idGame;
-        const idPlayer = req.body.idPlayer;
-        const amount = req.body.amount;
-        const interest = req.body.interest;
-        if (!idGame && !idPlayer) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.findById(idGame).then(async game => {
-                    const player = _.find(game.players, {id: idPlayer});
-                    if (player.coins >= amount) {
-                        next({status: 200, message: ""})
-                    } else if (player.cards.length > 3) {
-                        next({status: 200, message: ""})
-                        // } else if (etc...) {
-                        //     next({status: 400, message: ""})
-                    } else {
-                        next({status: 400, message: "non solvable"});
-                    }
-                }
-            ).catch(error => {
-                    log.error(error);
-                    next({status: 404, message: "Not found"});
-                }
-            );
-        }
-    }
 };

@@ -13,23 +13,7 @@ const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
 const colors = ["red", "yellow", "green", "blue"];
 
 let gameTimers = [];
-let debtTimers = [];
-
 const minute = 60 * 1000;
-
-function addDebtTimer(id, startTickNow, credit, intervalInterestDuration) {
-    let debtTimer = new GameTimer(id, "untilEnd", intervalInterestDuration, {credit: credit},
-        (timer) => {
-            io().to(timer.id).emit(C.TIMER_INTEREST);
-        },
-        () => {
-        });
-    if (startTickNow) {
-        debtTimer.start();
-    }
-    // Store the debt timer in the list
-    debtTimers.push(debtTimer);
-}
 
 function stopAndRemoveTimer(idGame) {
     let timer = _.find(gameTimers, (timer) => timer.id === idGame);
@@ -686,122 +670,6 @@ export default {
                         next({status: 404, message: "game Not found"});
                     }
                 );
-        }
-    },
-    createCredit: async (req, res, next) => {
-        console.log(req.body);
-        const idGame = req.body.idGame;
-        const idPlayer = req.body.idPlayer;
-        const interest = req.body.interest;
-        const amount = req.body.amount;
-        if (!idPlayer || !idGame || !interest || !amount) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.findOneAndUpdate(
-                {_id: idGame, 'players._id': idPlayer},
-                {
-                    $inc: {'players.$.coins': amount}
-                }, {new: true}
-            ).then(updatedGame => {
-                const startNow = updatedGame.status == C.START_ROUND
-                let id = new mongoose.Types.ObjectId();
-                const credit = constructor.credit(
-                    id,
-                    amount,
-                    interest,
-                    idGame,
-                    idPlayer,
-                    startNow ? "running" : "created",
-                    Date.now(),
-                    startNow ? Date.now() : null,
-                    null
-                )
-                let newEvent = constructor.event(C.NEW_CREDIT, C.MASTER, idPlayer, amount, [credit], Date.now());
-                GameModel.findByIdAndUpdate(idGame, {
-                    $push: {
-                        'credits': credit,
-                        'events': newEvent,
-                    },
-                    $inc: {
-                        'currentMassMonetary': amount
-                    }
-                }, {
-                    new: true
-                }).then((updatedGame) => {
-                    addDebtTimer(idGame, id, startNow, credit, updatedGame.timerInterestPayment);
-                    io().to(idGame).emit(C.EVENT, newEvent);
-                    io().to(idPlayer).emit(C.NEW_CREDIT, credit);
-                    res.status(200).json({"status": "credit added"});
-                }).catch((error) => {
-                    log.error(error);
-                    next({
-                        status: 404,
-                        message: "Not found"
-                    });
-                });
-            }).catch((error) => {
-                log.error(error);
-                next({
-                    status: 404,
-                    message: "Not found"
-                });
-            });
-        }
-    },
-    updateCredit: async (req, res, next) => {
-        const idGame = req.body.idGame;
-        const idPlayer = req.body.idPlayer;
-        const idCredit = req.body.idCredit;
-        if (!idPlayer || !idGame || !idCredit) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.findByIdAndUpdate(idGame, {
-                $pull: {credits: {_id: idCredit}}
-            }, {new: true})
-                .then(newGame => {
-
-                })
-                .catch(error => {
-                        log(error);
-                        next({status: 404, message: "game Not found"});
-                    }
-                );
-        }
-    },
-    getCreditsByIdPlayer: async (req, res, next) => {
-        const idGame = req.params.idGame;
-        const idPlayer = req.params.idPlayer;
-        if (!idGame && !idPlayer) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.findById(idGame)
-                .then(game => {
-                    if (game) {
-                        let credits = _.filter(game.credits, {idPlayer: idPlayer});
-                        res.status(200).json(credits);
-                    } else {
-                        next({
-                            status: 404,
-                            message: "Not found"
-                        });
-                    }
-                })
-                .catch(error => {
-                    log.error('get game error', error);
-                    next({
-                        status: 404,
-                        message: "not found"
-                    });
-                });
         }
     },
     killPlayer: async (req, res, next) => {

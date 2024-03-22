@@ -1,0 +1,31 @@
+.wholeContainer {
+  //display: block;
+  //position: absolute;
+  background-color: #ccc;
+  border-radius: 4px;
+
+}
+
+.btnContainer {
+
+}
+
+.progress {
+  //display: block;
+  position: relative;
+  height: 100%;
+  background-color: #4caf50;
+  //border-radius: 4px;
+}
+
+.text2 {
+  z-index: 2;
+}
+
+.progressContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  bottom: 100%;
+}
+

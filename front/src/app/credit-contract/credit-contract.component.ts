@@ -16,10 +16,24 @@ export class CreditContractComponent {
   @Output() settlement= new EventEmitter<void>();
   faSackDollar = faSackDollar;
   interestMinutes= 5;
+  @Input() bankOption= false;
 
   constructor(backService : BackService) {
   }
   terminate() {
     this.settlement.emit();
+  }
+
+  getStatus(status: string) {
+    switch (status) {
+      case "running" : return "En cours";
+      case "warning" : return  "defaut de paiment";
+      case "closed" : return "Terminé";
+      default : return "error";
+    }
+  }
+
+  seizure() {
+
   }
 }

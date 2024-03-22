@@ -10,9 +10,8 @@
   font-size: small;
 
 }
-/* Set custom color for MatChip */
+
 .warning {
-  background-color: #ff706e !important; /* Your custom color code */
 }
 
 .good {
@@ -21,4 +20,15 @@
 
 .buttonContrat{
   border-radius: 20px;
+}
+
+@keyframes cops {
+  0%   { background: #3153ff; }
+  50%  { background: #e80303; }
+  100%   { background: #3153ff; }
+}
+
+.warning {
+  background-color: #ff706e; /* Fallback */
+  animation: cops 1s infinite ease;
 }

@@ -53,6 +53,8 @@ import {BankBoardComponent} from './bank-board/bank-board.component';
 import {MatChipsModule} from "@angular/material/chips";
 import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
 import { CreditContractComponent } from './credit-contract/credit-contract.component';
+import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
+import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +84,8 @@ import { CreditContractComponent } from './credit-contract/credit-contract.compo
     BankBoardComponent,
     ContractDialogComponent,
     CreditContractComponent,
+    ConfirmDialogComponent,
+    BtnTimerAutoClickComponent,
   ],
   imports: [
     HttpClientModule,
