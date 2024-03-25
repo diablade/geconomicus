@@ -272,7 +272,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
         //option debt
         this.game.defaultCreditAmount = results.defaultCreditAmount;
         this.game.defaultInterestAmount = results.defaultInterestAmount;
-        this.game.timerInterestPayment = results.timerInterestPayment;
+        this.game.timerCredit = results.timerCredit;
         this.game.timerPrison = results.timerPrison;
         this.game.manualBank = results.manualBank;
         this.game.seizureType = results.seizureType;

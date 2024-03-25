@@ -15,7 +15,8 @@ export class Credit {
   idGame: string = "";
   amount: number = 0;
   interest: number = 0;
-  status: string = "created" // created,running,ended
+  status: string = "created"
+  // created,running,requesting,ended
   // @ts-ignore
   createDate: Date = undefined;
   // @ts-ignore
@@ -104,9 +105,9 @@ export class Game {
   credits: Credit[] = [];
   defaultCreditAmount: number = 3;
   defaultInterestAmount: number = 1;
-  timerInterestPayment: number = 5;
+  timerCredit: number = 5;
   timerPrison: number = 5;
-  manualBank: boolean = false;
+  manualBank: boolean = true;
   seizureType: string = "decote";
   seizureCosts: number = 2;
   seizureDecote: number = 25;

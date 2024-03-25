@@ -4,7 +4,7 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from
 import {Subscription} from "rxjs";
 import io from 'socket.io-client';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Card, Player} from "../models/game";
+import {Card, Credit, Player} from "../models/game";
 import {BackService} from "../services/back.service";
 import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
@@ -79,6 +79,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   amountCardsForProd: number = 4;
   currentDU: number = 0;
   cards: Card[] = [];
+  credits: Credit[] = [];
   faCamera = faCamera;
   scanV2 = false;
   C = C;
@@ -120,6 +121,16 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.svgContainer.nativeElement.innerHTML = this.player.image;
         this.receiveCards(this.player.cards);
       });
+
+      this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
+        this.credits = data;
+        _.forEach(data, d => {
+          if (d.status == "requesting") {
+            this.statusGame = "waiting";
+            this.requestingWhenCreditEnds(d);
+          }
+        })
+      })
     });
   }
 
@@ -201,6 +212,31 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         this.countOccurrencesAndHideDuplicates();
       }
+    });
+    this.socket.on(C.NEW_CREDIT, async (data: any) => {
+      // this.dialog.closeAll();
+      const dialogRef = this.dialog.open(InformationDialogComponent, {
+        data: {text: "💰Vous venez d'obtenir un CREDIT !️ (+" + data.amount + ")"},
+      });
+    });
+    this.socket.on("oneMinuteCreditPassed", async (data: any) => {
+      console.log("oneMinuteCreditPassed");
+    });
+    this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
+      this.dialog.closeAll();
+      console.log("status  credit : ", data.status);
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: "Votre crédit est arrivé à expiration, soit vous remboursez intégralement " + (data.amount + data.interest) + ", soit vous prolongé de 5mn en payant l'interet de " + data.interest + " ?",
+          labelBtn1: "Rembourser",
+          labelBtn2: "Prolonger",
+          autoClickBtn2: true,
+          timerBtn2: 10,
+        }
+      });
+      dialogRef.afterClosed().subscribe(options => {
+
+      });
     });
   }
 
@@ -326,12 +362,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     });
   }
-  requestingWhenCreditEnds() {
+
+  requestingWhenCreditEnds(credit: Credit) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        message: "Votre crédit est arrivé à expiration ! " +
-          "\n rembourser l'intégralité \nou prolongé 5 mn en payant 1 d'interet",
-        labeltBtn1: "Rembourser intégralement",
+        title:"Le crédit est arrivé à expiration !",
+        message:
+          "Rembourser l'intégralité ("+(credit.amount+credit.interest)+"\nou prolongé de 5 mn en payant l'intéret de "+credit.interest,
+        labelBtn1: "Rembourser intégralement",
         labelBtn2: "Prolonger",
         autoClickBtn2: true,
         timerBtn2: "7"//en secondes

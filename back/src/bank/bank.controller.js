@@ -4,42 +4,64 @@ import mongoose from "mongoose";
 import {io} from "../../conf_socket.js";
 import log from "../../conf_log.js";
 import _ from "lodash";
-import GameTimer from "../game/GameTimer.js";
-
-let debtTimers = [];
+import Timer from "../misc/Timer.js";
+import bankTimerManager from "./BankTimerManager.js";
 
 const minute = 60 * 1000;
 
-
-function addDebtTimer(id, startTickNow, credit, intervalInterestDuration) {
-    let debtTimer = new GameTimer(id, "untilEnd", intervalInterestDuration, {credit: credit},
+function addDebtTimer(id, startTickNow, duration, data) {
+    // let debtTimer = new GameTimer(id, duration * minute, minute, data,
+    bankTimerManager.addTimer(new Timer(id, 10000, 1000, data,
         (timer) => {
-            io().to(timer.id).emit(C.TIMER_INTEREST);
+            console.log("atInterval", timer.id, "idplayer:", timer.data.idPlayer);
+            io().to(timer.data.idPlayer).emit("oneMinuteCreditPassed", timer.data);
         },
-        () => {
-        });
-    if (startTickNow) {
-        debtTimer.start();
-    }
-    // Store the debt timer in the list
-    debtTimers.push(debtTimer);
+        (timer) => {
+            console.log("atEnd", timer.id);
+            timeoutCredit(timer);
+        }), startTickNow);
 }
 
-function startAllDebtTimer(){
-    _.forEach(debtTimers, (timer)=> timer.start());
-}
-
-function stopAndRemoveTimer(idDebt) {
-    let timer = _.find(debtTimers, (timer) => timer.id === idDebt);
+function timeoutCredit(timer) {
     if (timer) {
-        timer.stop();
-        _.remove(debtTimers, {"id": idDebt});
+        bankTimerManager.stopAndRemoveTimer(timer.id).then(() => {
+                let credit = timer.data;
+                let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
+                GameModel.findOneAndUpdate(
+                    {_id: credit.idGame, 'credits._id': credit._id},
+                    {
+                        $set: {'credits.$.status': C.REQUEST_CREDIT},
+                        $push: {'events': newEvent},
+                    }, {new: true}
+                ).then(updatedGame => {
+                    credit.status = C.REQUEST_CREDIT;
+                    io().to(credit.idGame).emit(C.EVENT, newEvent);
+                    io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
+                    io().to(credit.idGame).emit(C.TIMEOUT_CREDIT, credit);
+                }).catch((error) => {
+                    log.error(error);
+                });
+            }
+        );
     }
+}
+
+function checkSolvability(idGame, idPlayer, amountToCheck) {
+    //get game credits
+    //get player coins and ressources
+    // check with amount
+
+}
+
+function checkPayment(idGame, idPlayer, amountToCheck) {
+    //get game credits
+    //get player coins and ressources
+    // check with amount
+
 }
 
 export default {
     createCredit: async (req, res, next) => {
-        console.log(req.body);
         const idGame = req.body.idGame;
         const idPlayer = req.body.idPlayer;
         const interest = req.body.interest;
@@ -64,24 +86,19 @@ export default {
                     interest,
                     idGame,
                     idPlayer,
-                    startNow ? "running" : "created",
+                    startNow ? "running" : "paused",
                     Date.now(),
                     startNow ? Date.now() : null,
                     null
                 )
                 let newEvent = constructor.event(C.NEW_CREDIT, C.MASTER, idPlayer, amount, [credit], Date.now());
                 GameModel.findByIdAndUpdate(idGame, {
-                    $push: {
-                        'credits': credit,
-                        'events': newEvent,
-                    },
-                    $inc: {
-                        'currentMassMonetary': amount
-                    }
+                    $push: {'credits': credit, 'events': newEvent,},
+                    $inc: {'currentMassMonetary': amount}
                 }, {
                     new: true
                 }).then((updatedGame) => {
-                    addDebtTimer(idGame, id, startNow, credit, updatedGame.timerInterestPayment);
+                    addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
                     io().to(idGame).emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
                     res.status(200).json({"status": "credit added"});
@@ -148,6 +165,20 @@ export default {
                             // check solvability
                             //
                             //...
+                            // GameModel.findOneAndUpdate(
+                            //     {_id: credit.idGame, 'credits._id': credit._id},
+                            //     {
+                            //         $set: {'credits.$.status': C.REQUEST_CREDIT},
+                            //         $push: {'events': newEvent},
+                            //     }, {new: true}
+                            // ).then(updatedGame => {
+                            //     credit.status = C.REQUEST_CREDIT;
+                            //     io().to(credit.idGame).emit(C.EVENT, newEvent);
+                            //     io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
+                            //     io().to(credit.idGame).emit(C.TIMEOUT_CREDIT, credit);
+                            // }).catch((error) => {
+                            //     log.error(error);
+                            // });
                             res.status(200).json("done");
                         } else {
                             next({
@@ -195,5 +226,22 @@ export default {
                 }
             );
         }
+    },
+    resetIdGameDebtTimers(idGame) {
+        bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
+    },
+    startCreditsByIdGame(idGame) {
+        // $push: {'events': newEvent},
+        GameModel.findOneAndUpdate(
+            {_id: idGame, 'credits.status': 'paused'},
+            {
+                $set: {'credits.$.status': 'running'},
+            }, {new: true}
+        ).then(updatedGame => {
+            bankTimerManager.startAllIdGameDebtTimer(idGame);
+            io().to(idGame).emit("credits-started");
+        }).catch((error) => {
+            log.error(error);
+        });
     }
 }

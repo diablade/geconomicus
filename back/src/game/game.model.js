@@ -97,7 +97,7 @@ let Game = new Schema({
     credits: [Credit],
     defaultCreditAmount: {type: Number, required: true},
     defaultInterestAmount: {type: Number, required: true},
-    timerInterestPayment: {type: Number, required: true},
+    timerCredit: {type: Number, required: true},
     timerPrison: {type: Number, required: true},
     manualBank: {type: Boolean, required: true},
     seizureType: {type: String, required: true},
@@ -115,7 +115,7 @@ let constructor = {
     },
     credit: Credit = (id, amount, interest, idGame, idPlayer, status, createDate, startDate, endDate) => {
         return {
-            id,
+            _id:id,
             amount,
             interest,
             idGame,

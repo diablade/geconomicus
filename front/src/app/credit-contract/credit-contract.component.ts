@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {faCircleInfo, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faCommentsDollar, faHourglassEnd, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import {Credit} from "../models/game";
 import {BackService} from "../services/back.service";
 
@@ -11,12 +11,15 @@ import {BackService} from "../services/back.service";
 export class CreditContractComponent {
 
 	protected readonly faCircleInfo = faCircleInfo;
+  protected readonly faCommentsDollar = faCommentsDollar;
+  protected readonly faHourglassEnd = faHourglassEnd;
+  faSackDollar = faSackDollar;
   @Input() credit!: Credit;
   @Input() contractor!: string | undefined;
   @Output() settlement= new EventEmitter<void>();
-  faSackDollar = faSackDollar;
   interestMinutes= 5;
   @Input() bankOption= false;
+  progress = 78;
 
   constructor(backService : BackService) {
   }
@@ -26,8 +29,10 @@ export class CreditContractComponent {
 
   getStatus(status: string) {
     switch (status) {
-      case "running" : return "En cours";
-      case "warning" : return  "defaut de paiment";
+      case "paused" : return "Jeu en pause...";
+      case "running" : return "En cours...";
+      case "requesting" : return  "Prolonger ?";
+      case "warning" : return  "Défaut de paiement";
       case "closed" : return "Terminé";
       default : return "error";
     }
@@ -36,4 +41,9 @@ export class CreditContractComponent {
   seizure() {
 
   }
+
+  answer() {
+
+  }
+
 }

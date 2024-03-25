@@ -32,7 +32,7 @@ export const environment = {
     DELETE_PLAYER: 'game/delete-player',
     KILL_PLAYER: "game/kill-player",
     RESET: 'game/reset',
-    START_ROUND: 'game/start-round/',
+    START_ROUND: 'game/start-round',
     STOP_ROUND: 'game/stop-round',
     INTER_ROUND: 'game/inter-round',
     END: 'game/end',

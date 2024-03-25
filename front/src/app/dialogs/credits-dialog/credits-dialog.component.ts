@@ -37,16 +37,13 @@ export class CreditsDialogComponent {
         message: "Etes vous sur de rembourser votre crédit , en payant: "+(credit.amount+credit.interest)+" ?",
         labelBtn1: "Rembourser intégralement",
         labelBtn2: "Annuler",
-        autoClickBtn2: true,
-        timerBtn2: 10,
       }
     });
     confDialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && result == "btn1") {
         this.backService.settlementCredit(this.idGame, this.idPlayer, credit).subscribe(data => {
           console.log("done", data);
         });
-      } else {
       }
     });
   }

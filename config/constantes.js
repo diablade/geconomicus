@@ -3,6 +3,8 @@ const OPEN = 'open';
 const JUNE= 'june';
 const DEBT= 'debt';
 const NEW_CREDIT = "new-credit";
+const TIMEOUT_CREDIT = "timeout-credit";
+const REQUEST_CREDIT = "requesting";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
@@ -33,6 +35,8 @@ if (typeof module !== 'undefined' && module.exports) {
         DEBT: DEBT,
         DEAD: DEAD,
         NEW_CREDIT: NEW_CREDIT,
+        TIMEOUT_CREDIT: TIMEOUT_CREDIT,
+        REQUEST_CREDIT: REQUEST_CREDIT,
         REMIND_DEAD: REMIND_DEAD,
         ALIVE:ALIVE,
         BIRTH:BIRTH,

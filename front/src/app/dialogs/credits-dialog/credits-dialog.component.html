@@ -1,4 +1,4 @@
-<div class="credits">
+<div class="credits overflow-auto">
   <div class="d-flex" *ngFor="let credit of credits">
     <app-credit-contract [credit]="credit" [contractor]="playerName" (settlement)="openConfirmationDialog(credit)"></app-credit-contract>
   </div>

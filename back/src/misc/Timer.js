@@ -1,10 +1,10 @@
 import {addMilliseconds} from 'date-fns';
 
-export default class GameTimer {
-    constructor(id, duration, intervalDuration, data, callbackAtInterval, callbackAtEnd) {
-        this.id = id;
+export default class Timer {
+    constructor(uniqueId, duration, interval, data, callbackAtInterval, callbackAtEnd) {
+        this.id = uniqueId;
         this.duration = duration;
-        this.interval = intervalDuration;
+        this.interval = interval;
         this.data = data;
         this.callbackAtInterval = callbackAtInterval;
         this.callbackAtEnd = callbackAtEnd;
@@ -16,15 +16,16 @@ export default class GameTimer {
     start() {
         this.stop(); // Stop any existing timer
         this.endTime = addMilliseconds(new Date(), this.duration);
+
+        // Start the timer
         this.timer = setTimeout(() => {
             this.callbackAtEnd(this);
-            this.start(); // Restart the timer
-        }, this.duration);
+            }, this.duration);
 
         // Start the heartbeat
         this.heartbeat = setInterval(() => {
             this.callbackAtInterval(this);
-        }, this.interval); // Every minute
+        }, this.interval); // Every interval
     }
 
     stop() {

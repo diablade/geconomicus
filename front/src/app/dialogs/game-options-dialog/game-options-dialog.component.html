@@ -98,7 +98,7 @@
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>Paiement d'intérêts toutes les (en minutes) :</mat-label>
-        <input type="number" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerInterestPayment">
+        <input type="number" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">

@@ -1,6 +1,5 @@
 import {body, validationResult} from 'express-validator';
 import GameModel, {constructor} from './game.model.js';
-import GameTimer from './GameTimer.js';
 import * as C from '../../../config/constantes.js';
 
 import log from '../../conf_log.js';
@@ -8,20 +7,15 @@ import _ from "lodash";
 import mongoose from "mongoose";
 import {io} from "../../conf_socket.js";
 import {differenceInMilliseconds} from "date-fns";
+import BankController from "../bank/bank.controller.js";
+import gameTimerManager from "./GameTimerManager.js";
+import Timer from "../misc/Timer.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
 
-let gameTimers = [];
 const minute = 60 * 1000;
 
-function stopAndRemoveTimer(idGame) {
-    let timer = _.find(gameTimers, (timer) => timer.id === idGame);
-    if (timer) {
-        timer.stop();
-        _.remove(gameTimers, {"id": idGame});
-    }
-}
 
 async function generateOneCard(letter, color, weight, price) {
     const comId = new mongoose.Types.ObjectId();
@@ -187,7 +181,7 @@ async function initGameJune(game) {
 }
 
 async function stopRound(idGame, gameRound) {
-    stopAndRemoveTimer(idGame);
+    gameTimerManager.stopAndRemoveTimer(idGame);
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
     GameModel.updateOne({_id: idGame}, {
         $set: {
@@ -196,7 +190,7 @@ async function stopRound(idGame, gameRound) {
         },
         $push: {events: stopRoundEvent}
     })
-        .then(previousGame => {
+        .then(res => {
             io().to(idGame).emit(C.STOP_ROUND);
             io().to(idGame).emit(C.EVENT, stopRoundEvent);
         })
@@ -255,10 +249,10 @@ async function deadPassingThrough(roundMinutes, minutesPassed) {
     }
 }
 
-async function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
-    let timer = new GameTimer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
+function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
+    let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
         (timer) => {
-            console.log('interval fired');
+            console.log('DU distribution fired');
             distribDU(timer.id);
             let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
             let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
@@ -274,14 +268,11 @@ async function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
         });
     timer.start();
 
-    //remove any previous with same id
-    await stopAndRemoveTimer(idGame);
-    // Store the timer in the gameTimers object using the idGame as the key.
-    gameTimers.push(timer);
+    gameTimerManager.addTimer(timer);
 }
 
-function startRoundMoneyDebt(idGame, roundMinutes) {
-    let timer = new GameTimer(idGame, roundMinutes, minute, {gameRound: gameRound},
+function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
+    let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
         (timer) => {
             console.log('interval fired');
 
@@ -296,9 +287,10 @@ function startRoundMoneyDebt(idGame, roundMinutes) {
             stopRound(timer.id, timer.data.gameRound);
         });
     timer.start();
+    gameTimerManager.addTimer(timer);
 
-    // Store the timer in the gameTimers object using the idGame as the key.
-    gameTimers.push(timer);
+    //Start credits
+    BankController.startCreditsByIdGame(idGame);
 }
 
 export default {
@@ -317,6 +309,7 @@ export default {
                 players: [],
                 decks: [],
                 events: [],
+                credits: [],
                 priceWeight1: 3,
                 priceWeight2: 6,
                 priceWeight3: 9,
@@ -340,7 +333,7 @@ export default {
                 //option debt
                 defaultCreditAmount: 3,
                 defaultInterestAmount: 1,
-                timerInterestPayment: 5,
+                timerCredit: 5,
                 timerPrison: 5,
                 manualBank: false,
                 seizureType: "decote",
@@ -396,7 +389,7 @@ export default {
                     //option debt
                     defaultCreditAmount: body.defaultCreditAmount ? body.defaultCreditAmount : 3,
                     defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount : 1,
-                    timerInterestPayment: body.timerInterestPayment ? body.timerInterestPayment : 5,
+                    timerCredit: body.timerCredit ? body.timerCredit : 5,
                     timerPrison: body.timerPrison ? body.timerPrison : 5,
                     manualBank: body.manualBank ? body.manualBank : false,
                     seizureType: body.seizureType ? body.seizureType : "decote",
@@ -494,9 +487,9 @@ export default {
                     io().to(id).emit(C.START_ROUND);
                     io().to(id).emit(C.EVENT, startEvent);
                     if (updatedGame.typeMoney === C.JUNE) {
-                        startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes, updatedGame.roundMinutes);
+                        startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes);
                     } else {
-                        startRoundMoneyDebt(updatedGame);
+                        startRoundMoneyDebt(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes);
                     }
                     res.status(200).send({
                         status: C.START_ROUND,
@@ -718,7 +711,8 @@ export default {
                 message: "bad request"
             });
         } else {
-            stopAndRemoveTimer(idGame);
+            gameTimerManager.stopAndRemoveTimer(idGame);
+            BankController.resetIdGameDebtTimers(idGame);
             GameModel.findByIdAndUpdate(idGame, {
                 $set: {
                     status: C.OPEN,
@@ -727,6 +721,7 @@ export default {
                     'players.$[].coins': 0,
                     'players.$[].status': C.ALIVE,
                     decks: [],
+                    credits: [],
                     events: [],
                     priceWeight1: 3,
                     priceWeight2: 6,
@@ -751,7 +746,7 @@ export default {
                     //option debt
                     defaultCreditAmount: 3,
                     defaultInterestAmount: 1,
-                    timerInterestPayment: 5,
+                    timerCredit: 5,
                     timerPrison: 5,
                     manualBank: false,
                     seizureType: "decote",

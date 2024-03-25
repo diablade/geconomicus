@@ -1,20 +1,31 @@
 <div class="contract d-flex flex-column">
-  <mat-chip [ngClass]="credit.status == 'running' ? 'good':'warning'">
-    <b>
-      {{ getStatus(credit.status) }}</b>
-    <fa-icon mat-raised-button [icon]="faCircleInfo"
-             matTooltip="remboursé le ... par exemple">
-    </fa-icon>
-  </mat-chip>
+  <div class="status" [ngClass]="credit.status">
+    <div>
+      <div *ngIf="credit.status == 'running'" class="progress progress-bar-striped progress-bar-animated"
+           role="progressbar"
+           [style.width.%]="progress">
+      </div>
+      <div class="statusLabel">{{ getStatus(credit.status) }}</div>
+    </div>
+  </div>
+
   <div class="fw-bold text-truncate">{{ contractor }}</div>
   <div class="fontName">créé : {{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
   <div class="fontName">credit : {{ credit.amount }}</div>
   <div class="fontName">interet : {{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
-  <div *ngIf="credit.status=='closed'" class="fontName">clos le : {{ credit.endDate }} payable toutes les {{ interestMinutes }} minutes</div>
-  <button *ngIf="credit.status=='running'" class="buttonContrat" mat-raised-button color="primary" (click)="terminate()"> Annuler la dette
+  <div *ngIf="credit.status=='closed'" class="fontName">clos le : {{ credit.endDate }} payable toutes
+    les {{ interestMinutes }} minutes
+  </div>
+  <button *ngIf="credit.status=='running'" class="buttonContrat" mat-raised-button color="primary"
+          (click)="terminate()"> Annuler la dette
     <fa-icon [icon]="faSackDollar"></fa-icon>
   </button>
-  <button *ngIf="bankOption && credit.status=='warning'" class="buttonContrat" mat-raised-button color="warn" (click)="seizure()">Saisir
+  <button *ngIf="credit.status=='requesting'" class="buttonContrat" mat-raised-button color="accent"
+          (click)="answer()">Répondre
+    <fa-icon [icon]="faCommentsDollar"></fa-icon>
+  </button>
+  <button *ngIf="bankOption && credit.status=='warning'" class="buttonContrat" mat-raised-button color="warn"
+          (click)="seizure()">Saisir
     <fa-icon [icon]="faSackDollar"></fa-icon>
   </button>
 </div>
