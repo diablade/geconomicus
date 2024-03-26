@@ -219,12 +219,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {text: "💰Vous venez d'obtenir un CREDIT !️ (+" + data.amount + ")"},
       });
     });
-    this.socket.on("oneMinuteCreditPassed", async (data: any) => {
-      console.log("oneMinuteCreditPassed");
-    });
     this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
       this.dialog.closeAll();
-      console.log("status  credit : ", data.status);
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {
           message: "Votre crédit est arrivé à expiration, soit vous remboursez intégralement " + (data.amount + data.interest) + ", soit vous prolongé de 5mn en payant l'interet de " + data.interest + " ?",

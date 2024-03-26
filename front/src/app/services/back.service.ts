@@ -257,7 +257,7 @@ export class BackService {
   }
 
   createCredit(data: any) {
-    return this.http.post<any>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
+    return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
       catchError(err => this.handleError(err, "", "creation du credit impossible"))
     );
   }

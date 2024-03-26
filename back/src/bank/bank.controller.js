@@ -6,18 +6,21 @@ import log from "../../conf_log.js";
 import _ from "lodash";
 import Timer from "../misc/Timer.js";
 import bankTimerManager from "./BankTimerManager.js";
+import {differenceInMilliseconds} from "date-fns";
 
 const minute = 60 * 1000;
+const fiveSeconds = 10 * 1000;
 
 function addDebtTimer(id, startTickNow, duration, data) {
-    // let debtTimer = new GameTimer(id, duration * minute, minute, data,
-    bankTimerManager.addTimer(new Timer(id, 10000, 1000, data,
+    bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data,
         (timer) => {
-            console.log("atInterval", timer.id, "idplayer:", timer.data.idPlayer);
-            io().to(timer.data.idPlayer).emit("oneMinuteCreditPassed", timer.data);
+            let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+            let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+
+            timer.data.progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+            io().to(timer.data.idGame).emit(C.PROGRESS_CREDIT, timer.data);
         },
         (timer) => {
-            console.log("atEnd", timer.id);
             timeoutCredit(timer);
         }), startTickNow);
 }
@@ -101,7 +104,7 @@ export default {
                     addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
                     io().to(idGame).emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
-                    res.status(200).json({"status": "credit added"});
+                    res.status(200).json(credit);
                 }).catch((error) => {
                     log.error(error);
                     next({

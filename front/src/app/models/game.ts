@@ -10,13 +10,14 @@ export class Card {
 }
 
 export class Credit {
-  id: string = "";
+  _id: string = "";
   idPlayer: string = "";
   idGame: string = "";
   amount: number = 0;
   interest: number = 0;
   status: string = "created"
   // created,running,requesting,ended
+  progress: number = 0;
   // @ts-ignore
   createDate: Date = undefined;
   // @ts-ignore

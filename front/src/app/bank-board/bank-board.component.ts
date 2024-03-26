@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {Credit, Game} from "../models/game";
 import {ActivatedRoute} from "@angular/router";
@@ -6,22 +6,24 @@ import {SessionStorageService} from "../services/local-storage/session-storage.s
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
-// import io from "socket.io-client";
+import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-bank-board',
   templateUrl: './bank-board.component.html',
   styleUrls: ['./bank-board.component.scss']
 })
-export class BankBoardComponent {
+export class BankBoardComponent implements OnInit, AfterViewInit {
   faSackDollar = faSackDollar;
   faCircleInfo = faCircleInfo;
   faLandMark = faLandmark;
+  ioURl: string = environment.API_HOST;
   subscription: Subscription | undefined;
   idGame: string = "";
   game: Game = new Game;
@@ -39,15 +41,31 @@ export class BankBoardComponent {
   ngOnInit(): void {
     this.subscription = this.route.params.subscribe(params => {
       this.idGame = params['idGame'];
-      // this.socket = io(this.ioURl, {
-      //   query: {
-      //     idPlayer: 'master',
-      //     idGame: this.idGame,
-      //   },
-      // });
+      this.socket = io(this.ioURl, {
+        query: {
+          idPlayer: 'master',
+          idGame: this.idGame,
+        },
+      });
       this.backService.getGame(this.idGame).subscribe(game => {
         this.game = game;
-        console.log(game);
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c._id == data._id) {
+          c.progress = data.progress;
+        }
+      });
+    });
+    this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c._id == data._id) {
+          c.status = data.status;
+        }
       });
     });
   }
@@ -55,6 +73,7 @@ export class BankBoardComponent {
   getAverageCurrency() {
     return this.game.currentMassMonetary / _.size(_.filter(this.game.players, {'status': 'alive'}));
   }
+
   getPlayerName(idPlayer: string) {
     const player = _.find(this.game.players, p => p._id === idPlayer);
     return player ? player.name : idPlayer;
@@ -64,11 +83,10 @@ export class BankBoardComponent {
     const dialogRef = this.dialog.open(ContractDialogComponent, {
       data: {game: _.clone(this.game)},
     });
-    dialogRef.afterClosed().subscribe(data => {
-      console.log(data);
-      this.backService.createCredit({...data, idGame: this.idGame}).subscribe((data: any) => {
-        this.snackbarService.showSuccess("Credit octroyer à ");
-
+    dialogRef.afterClosed().subscribe(contrat => {
+      this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
+        this.snackbarService.showSuccess("Credit octroyer à " + this.getPlayerName(credit.idPlayer));
+        this.game.credits.push(credit);
       });
     });
   }

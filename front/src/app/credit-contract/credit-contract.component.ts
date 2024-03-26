@@ -19,7 +19,6 @@ export class CreditContractComponent {
   @Output() settlement= new EventEmitter<void>();
   interestMinutes= 5;
   @Input() bankOption= false;
-  progress = 78;
 
   constructor(backService : BackService) {
   }

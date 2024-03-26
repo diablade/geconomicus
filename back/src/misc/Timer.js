@@ -3,7 +3,7 @@ import {addMilliseconds} from 'date-fns';
 export default class Timer {
     constructor(uniqueId, duration, interval, data, callbackAtInterval, callbackAtEnd) {
         this.id = uniqueId;
-        this.duration = duration;
+        this.duration = duration; // in milliseconds
         this.interval = interval;
         this.data = data;
         this.callbackAtInterval = callbackAtInterval;
@@ -11,11 +11,13 @@ export default class Timer {
         this.timer = null;
         this.heartbeat = null;
         this.endTime = null;
+        this.startTime = null;
     }
 
     start() {
         this.stop(); // Stop any existing timer
         this.endTime = addMilliseconds(new Date(), this.duration);
+        this.startTime = new Date();
 
         // Start the timer
         this.timer = setTimeout(() => {

@@ -5,6 +5,7 @@ const DEBT= 'debt';
 const NEW_CREDIT = "new-credit";
 const TIMEOUT_CREDIT = "timeout-credit";
 const REQUEST_CREDIT = "requesting";
+const PROGRESS_CREDIT = "credit-progress";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
@@ -37,6 +38,7 @@ if (typeof module !== 'undefined' && module.exports) {
         NEW_CREDIT: NEW_CREDIT,
         TIMEOUT_CREDIT: TIMEOUT_CREDIT,
         REQUEST_CREDIT: REQUEST_CREDIT,
+        PROGRESS_CREDIT: PROGRESS_CREDIT,
         REMIND_DEAD: REMIND_DEAD,
         ALIVE:ALIVE,
         BIRTH:BIRTH,
