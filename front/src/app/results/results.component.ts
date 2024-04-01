@@ -62,7 +62,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     switch (this.game?.status) {
       case C.OPEN:
         return "Ouvert à rejoindre";
-      case C.START_ROUND:
+      case C.PLAYING:
         return "En cours";
       case C.END_GAME:
         return "Jeu Terminé";

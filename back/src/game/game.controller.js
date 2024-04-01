@@ -107,7 +107,13 @@ async function initGameDebt(game) {
         player.status = C.ALIVE;
         player.coins = 0;
 
-        io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0});
+        io().to(player.id).emit(C.START_GAME, {cards: cards, coins: 0,
+            typeMoney: C.DEBT,
+            statusGame: C.START_GAME,
+            amountCardsForProd: game.amountCardsForProd,
+            timerCredit: game.timerCredit,
+            timerPrison: game.timerPrison
+        });
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(game._id.toString()).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
@@ -445,6 +451,8 @@ export default {
                         .then(updatedGame => {
                             res.status(200).send({
                                 status: C.START_GAME,
+                                timerCredit: gameUpdated.timerCredit,
+                                typeMoney: gameUpdated.typeMoney
                             });
                         })
                         .catch(err => {
@@ -476,14 +484,14 @@ export default {
             let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
             GameModel.findByIdAndUpdate(id, {
                 $set: {
-                    status: C.START_ROUND,
+                    status: C.PLAYING,
                     modified: Date.now(),
                 },
                 $push: {events: startEvent}
             }, {new: true})
                 .then(updatedGame => {
                     io().to(id).emit(C.START_ROUND);
-                    io().to(id).emit(C.EVENT, startEvent);
+                    io().to(id+"event").emit(C.EVENT, startEvent);
                     if (updatedGame.typeMoney === C.JUNE) {
                         startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes);
                     } else {

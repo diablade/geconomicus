@@ -94,7 +94,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       this.minutes = this.game.roundMinutes > 9 ? this.game.roundMinutes.toString() : "0" + this.game.roundMinutes.toString();
       let timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
-      if (timerRemaining && game.status == C.START_ROUND) {
+      if (timerRemaining && game.status == C.PLAYING) {
         this.timer.set({h: 0, m: 0, s: timerRemaining});
         this.timer.start();
       } else {
@@ -117,7 +117,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
       this.startVideos();
       this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
-      if (minutesRemaining && this.game.status == C.START_ROUND) {
+      if (minutesRemaining && this.game.status == C.PLAYING) {
         this.timer.stop();
         this.timer.reset();
         this.timer.set({h: 0, m: minutesRemaining, s: 0});
@@ -166,7 +166,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.backService.startRound(this.idGame, this.game.round).subscribe(() => {
       this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
       this.timer.start();
-      this.game.status = C.START_ROUND;
+      this.game.status = C.PLAYING;
       this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
     });
   }

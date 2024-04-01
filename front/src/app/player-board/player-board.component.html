@@ -6,37 +6,26 @@
       <img *ngIf="typeMoney==C.DEBT" class="debt"/>
     </div>
     <div class="sold flex-grow-1 contour">
-      {{player.coins| number : '1.2-2'}}
-      <span *ngIf="typeMoney==C.JUNE" class="enDU">{{(player.coins/currentDU) | number : '1.2-2'}}DU</span>
+      {{ player.coins| number : '1.2-2' }}
+      <span *ngIf="typeMoney==C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
+      <span *ngIf="typeMoney==C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
       <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="statusGame!==C.START_ROUND">
-    <div class="text-center h1 gecoFont contour">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
-    <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
+  <div class="d-flex flex-row w-100" *ngIf="typeMoney==C.DEBT">
+
+  </div>
+  <div class="" *ngIf="statusGame!==C.PLAYING">
+    <div
+      class="text-center h1 gecoFont contour">{{ statusGame !== C.END_GAME ? "En attente..." : "Partie terminé..." }}
+    </div>
+    <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
+            color="accent">
       Répondre au questionnaire
     </button>
-  </div>
-  <div class="d-flex flex-row w-100" *ngIf="typeMoney==C.DEBT">
-<!--    <div class="">écheance interet:</div>-->
-<!--    <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">-->
-<!--      voir mes crédits-->
-<!--    </button>-->
-    <mat-expansion-panel color="accent" (opened)="panelOpenState = true"
-                         (closed)="panelOpenState = false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{panelOpenState ? 'Fermer' : 'Voir mes credits'}}
-        </mat-panel-title>
-<!--        <mat-panel-description>-->
-<!--          {{credits.length}} credits-->
-<!--        </mat-panel-description>-->
-      </mat-expansion-panel-header>
-      <p>I'm visible because I am open</p>
-    </mat-expansion-panel>
   </div>
   <div class="container">
     <div @list class="row">
@@ -58,13 +47,30 @@
     </div>
   </div>
   <div class="footer">
-    <mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2 </mat-slide-toggle>
-    <button mat-raised-button color="accent"
-            [disabled]="statusGame!== C.START_ROUND||player.status== C.DEAD"
-            (click)="scan()">
-      <fa-icon [icon]="faCamera"></fa-icon>
-      ACHETER
-    </button>
+    <div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
+      <div class="d-inline-flex" *ngFor="let credit of credits">
+        <app-credit-contract [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+                             [contractor]="player.name" (actionBtn)="creditActionBtn($event,credit)"></app-credit-contract>
+      </div>
+    </div>
+    <div class="d-flex flex-row justify-content-between">
+      <div>
+        <button *ngIf="typeMoney==C.DEBT" class="buy" mat-raised-button color="primary"
+                (click)="panelCreditOpenState = !panelCreditOpenState">
+          <fa-icon [icon]="faFileContract"></fa-icon>
+          CREDITS
+        </button>
+      </div>
+      <div>
+        <mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2</mat-slide-toggle>
+        <button class="buy" mat-raised-button color="accent"
+                [disabled]="statusGame!== C.PLAYING||player.status== C.DEAD"
+                (click)="scan()">
+          <fa-icon [icon]="faCamera"></fa-icon>
+          ACHETER
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 

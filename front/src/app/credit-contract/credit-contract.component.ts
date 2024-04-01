@@ -21,15 +21,16 @@ export class CreditContractComponent {
   @Input() contractor!: string | undefined;
   @Input() interestMinutes = 5;
   @Input() bankOption = false;
-  @Output() settlement = new EventEmitter<void>();
+  @Output() actionBtn = new EventEmitter<string>();
+  @Input() small= false;
 
   C = C;
 
   constructor() {
   }
 
-  terminate() {
-    this.settlement.emit();
+  actionBtnClick(action:string) {
+    this.actionBtn.emit(action);
   }
 
   getStatus(status: string) {

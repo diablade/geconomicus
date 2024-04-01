@@ -14,6 +14,7 @@ const PROGRESS_CREDIT = "credit-progress";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
+const PLAYING = 'playing';
 const STOP_ROUND = 'stop-round';
 const TIMER_LEFT = 'timer-left';
 const INTER_ROUND = 'inter-round';
@@ -56,6 +57,7 @@ if (typeof module !== 'undefined' && module.exports) {
         END_GAME: END_GAME,
         NEW_FEEDBACK: NEW_FEEDBACK,
         START_ROUND: START_ROUND,
+        PLAYING:PLAYING,
         TIMER_LEFT: TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,
         INTER_ROUND: INTER_ROUND,

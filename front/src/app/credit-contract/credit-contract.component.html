@@ -8,22 +8,21 @@
       <div class="statusLabel">{{ getStatus(credit.status) }}</div>
     </div>
   </div>
-
-  <div class="fw-bold text-truncate">{{ contractor }}</div>
-  <div class="fontName">créé : {{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
+  <div *ngIf="!small" class="fw-bold text-truncate">{{ contractor }}</div>
+  <div *ngIf="!small" class="fontName">créé : {{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
   <div class="fontName">credit : {{ credit.amount }}</div>
   <div class="fontName">interet : {{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
   <div *ngIf="credit.status==C.CREDIT_DONE" class="fontName">clos le : {{ credit.endDate }}</div>
-  <button *ngIf="credit.status==C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button color="primary"
-          (click)="terminate()">Rembourser la dette
+  <button *ngIf="!bankOption && credit.status==C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button color="primary"
+          (click)="actionBtnClick('settle')">Rembourser la dette
     <fa-icon [icon]="faSackDollar"></fa-icon>
   </button>
-  <button *ngIf="credit.status==C.REQUEST_CREDIT" class="buttonContrat" mat-raised-button color="accent"
-          (click)="answer()">Répondre
+  <button *ngIf="!bankOption && credit.status==C.REQUEST_CREDIT" class="buttonContrat" mat-raised-button color="accent"
+          (click)="actionBtnClick('answer')">Répondre
     <fa-icon [icon]="faCommentsDollar"></fa-icon>
   </button>
   <button *ngIf="bankOption && credit.status==C.DEFAULT_CREDIT" class="buttonContrat" mat-raised-button color="warn"
-          (click)="seizure()">Saisir
+          (click)="actionBtnClick('seizure')">Saisir
     <fa-icon [icon]="faSackDollar"></fa-icon>
   </button>
 </div>

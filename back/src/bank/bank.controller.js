@@ -19,6 +19,7 @@ function addDebtTimer(id, startTickNow, duration, data) {
 
             const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
             io().to(timer.data.idGame + "bank").emit(C.PROGRESS_CREDIT, {id, progress});
+            io().to(timer.data.idPlayer).emit(C.PROGRESS_CREDIT, {id, progress});
         },
         (timer) => {
             timeoutCredit(timer);
@@ -109,7 +110,7 @@ export default {
                     $inc: {'players.$.coins': amount}
                 }, {new: true}
             ).then(updatedGame => {
-                const startNow = updatedGame.status == C.START_ROUND
+                const startNow = updatedGame.status == C.PLAYING
                 let id = new mongoose.Types.ObjectId();
                 const credit = constructor.credit(
                     id,
@@ -130,7 +131,7 @@ export default {
                     new: true
                 }).then((updatedGame) => {
                     addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
-                    io().to(idGame).emit(C.EVENT, newEvent);
+                    io().to(idGame+"event").emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
                     res.status(200).json(credit);
                 }).catch((error) => {

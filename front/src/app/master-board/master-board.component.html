@@ -124,7 +124,7 @@
               color="accent"
               (click)="finishGame()">Terminier le jeu, lancer le questionnaire et afficher les resultats
       </button>
-      <button *ngIf="game.status==C.START_ROUND" mat-raised-button color="warn" class="ms-2"
+      <button *ngIf="game.status==C.PLAYING" mat-raised-button color="warn" class="ms-2"
               (click)="stopRoundForce()">
         Stop
       </button>

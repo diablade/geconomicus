@@ -10,7 +10,7 @@ import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.c
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
-import {faCamera} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faFileContract} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
@@ -19,7 +19,6 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
-import {CreditsDialogComponent} from "../dialogs/credits-dialog/credits-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 
 
@@ -81,10 +80,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   cards: Card[] = [];
   credits: Credit[] = [];
   faCamera = faCamera;
+  faFileContract = faFileContract;
   scanV2 = false;
   duVisible: boolean = false;
-  panelOpenState = false;
+  panelCreditOpenState = true;
   C = C;
+  timerCredit = 5;
+  timerPrison = 5;
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
@@ -140,10 +142,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.START_GAME, async (data: any) => {
       this.statusGame = "waiting";
       this.player.coins = data.coins;
+      this.typeMoney = data.typeMoney;
+      this.timerCredit = data.timerCredit;
+      this.timerPrison = data.timerPrison;
       await this.receiveCards(data.cards);
     });
     this.socket.on(C.START_ROUND, async (data: any) => {
-      this.statusGame = C.START_ROUND;
+      this.statusGame = C.PLAYING;
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "Le tour démarre ! "},
       });
@@ -180,6 +185,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       this.cards = [];
+      this.credits = [];
       this.statusGame = C.OPEN;
       this.player.coins = 0;
     });
@@ -215,15 +221,29 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.countOccurrencesAndHideDuplicates();
       }
     });
-    this.socket.on(C.NEW_CREDIT, async (data: any) => {
+    this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
       // this.dialog.closeAll();
       const dialogRef = this.dialog.open(InformationDialogComponent, {
         data: {text: "💰Vous venez d'obtenir un CREDIT !️ (+" + data.amount + ")"},
       });
+      this.player.coins += data.amount;
+      this.credits.push(data);
     });
     this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
       this.statusGame = "waiting";
+      _.forEach(this.credits, c => {
+        if (c._id == data._id) {
+          c.status = data.status;
+        }
+      });
       this.requestingWhenCreditEnds(data);
+    });
+    this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
+      _.forEach(this.credits, c => {
+        if (c._id == data.id) {
+          c.progress = data.progress;
+        }
+      });
     });
   }
 
@@ -306,7 +326,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.idGame != data.g) {
       this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
     } else if (this.player.coins >= cost) {
-      this.backService.transaction(this.idGame, this.idPlayer,data.o, data.c).subscribe(async dataReceived => {
+      this.backService.transaction(this.idGame, this.idPlayer, data.o, data.c).subscribe(async dataReceived => {
         if (dataReceived?.buyedCard) {
           this.receiveCards([dataReceived.buyedCard]);
           this.player.coins = dataReceived.coins;
@@ -334,23 +354,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  showCredits() {
-    const dialogRef = this.dialog.open(CreditsDialogComponent, {
-      data: {
-        idGame: this.idGame,
-        player: this.player
-      }
-    });
-    dialogRef.afterClosed().subscribe(credit => {
-    });
-  }
-
   requestingWhenCreditEnds(credit: Credit) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title:"Le crédit est arrivé à expiration !",
+        title: "Le crédit est arrivé à expiration !",
         message:
-          "Rembourser l'intégralité ("+(credit.amount+credit.interest)+"\nou prolongé de 5 mn en payant l'intéret de "+credit.interest,
+          "Rembourser l'intégralité (" + (credit.amount + credit.interest) + "\nou prolongé de 5 mn en payant l'intéret de " + credit.interest,
         labelBtn1: "Rembourser",
         labelBtn2: "Prolonger",
         autoClickBtn2: true,
@@ -358,19 +367,23 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     dialogRef.afterClosed().subscribe(options => {
-      if(options=="btn2"){
+      if (options == "btn2") {
         this.backService.payInterest(credit).subscribe(data => {
           if (data) {
-            _.forEach(this.credits,c=>{if(c._id==data._id){c.status=data.status}});
+            _.forEach(this.credits, c => {
+              if (c._id == data._id) {
+                c.status = data.status
+              }
+            });
             this.player.coins -= credit.interest;
-            this.statusGame = C.START_ROUND;
+            this.statusGame = C.PLAYING;
           }
         });
-      }
-      else if(options=="btn1"){
-        if(this.player.coins>=(credit.amount+credit.interest)){
+      } else if (options == "btn1") {
+        if (this.player.coins >= (credit.amount + credit.interest)) {
           this.backService.settleCredit(credit).subscribe(data => {
             if (data) {
+
 
             }
           });
@@ -379,5 +392,49 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
+  }
+
+  getDebts() {
+    let debts = 0;
+    _.forEach(this.credits, c => {
+      if (c.status != C.CREDIT_DONE) {
+        debts += c.amount;
+        debts += c.interest;
+      }
+    });
+    return debts;
+  }
+
+  settleDebt(credit: Credit) {
+    const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: "Etes vous sur de rembourser votre crédit , en payant: " + (credit.amount + credit.interest) + " ?",
+        labelBtn1: "Rembourser intégralement",
+        labelBtn2: "Annuler",
+      }
+    });
+    confDialogRef.afterClosed().subscribe(result => {
+      if (result && result == "btn1") {
+        this.backService.settleCredit(credit).subscribe(data => {
+        });
+        if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
+          this.backService.settleCredit(credit).subscribe(data => {
+            if (data) {
+
+            }
+          });
+        } else {
+          this.snackbarService.showError("Fond insuffisant...");
+        }
+      }
+    });
+  }
+
+  creditActionBtn($event: string, credit: Credit) {
+    if ($event == 'settle') {
+      this.settleDebt(credit);
+    } else if ($event == 'answer') {
+      this.requestingWhenCreditEnds(credit);
+    }
   }
 }
