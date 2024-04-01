@@ -33,9 +33,8 @@ export class PlayerSettingsComponent implements OnInit {
     hairPalette: Array<any> = ['#ac6511', '#cb6820', '#ab2a18', '#e5d7a3', '#b9a05f', '#796a45', '#6a4e35', '#562306', '#0e0e0e', '#afafaf', '#3eac2c', '#85c2c6', '#dba3be', '#592454'];
     boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
-    constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private sanitizer: DomSanitizer) {
-        // @ts-ignore
-        console.log(adventurer.schema.properties);
+    constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {
+
     }
 
     ngOnInit(): void {

@@ -115,7 +115,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       console.log('Socket has been disconnected');
     });
     this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
-      console.log("timer left ", minutesRemaining);
       this.startVideos();
       this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
       if (minutesRemaining && this.game.status == C.START_ROUND) {
@@ -193,7 +192,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
     this.timer.reset();
     this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
     this.backService.interRound(this.idGame).subscribe((data) => {
-      console.log(data);
       if (data.status == C.INTER_ROUND) {
         this.game.status = data.status;
         this.game.round += 1;

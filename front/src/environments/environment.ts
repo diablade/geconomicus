@@ -15,10 +15,11 @@ export const environment = {
     SURVEY: 'player/survey/'
   },
   BANK: {
+    GET_CREDITS: "bank/get-credits/",
     CREATE_CREDIT: 'bank/create-credit',
     DELETE_CREDIT: 'bank/delete-credit',
-    SETTLEMENT_CREDITS: 'bank/settle-credit',
-    GET_CREDITS: "bank/get-credits/",
+    SETTLE_CREDIT: 'bank/settle-credit',
+    PAY_INTEREST: 'bank/pay-interest',
   },
   GAME: {
     GET: 'game/',

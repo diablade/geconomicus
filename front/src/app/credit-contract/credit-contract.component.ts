@@ -1,7 +1,9 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faCircleInfo, faCommentsDollar, faHourglassEnd, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import {Credit} from "../models/game";
-import {BackService} from "../services/back.service";
+
+// @ts-ignore
+import * as C from "../../../../config/constantes";
 
 @Component({
   selector: 'app-credit-contract',
@@ -10,30 +12,40 @@ import {BackService} from "../services/back.service";
 })
 export class CreditContractComponent {
 
-	protected readonly faCircleInfo = faCircleInfo;
-  protected readonly faCommentsDollar = faCommentsDollar;
-  protected readonly faHourglassEnd = faHourglassEnd;
+  faCircleInfo = faCircleInfo;
+  faHourglassEnd = faHourglassEnd;
   faSackDollar = faSackDollar;
+  faCommentsDollar = faCommentsDollar;
+
   @Input() credit!: Credit;
   @Input() contractor!: string | undefined;
-  @Output() settlement= new EventEmitter<void>();
-  interestMinutes= 5;
-  @Input() bankOption= false;
+  @Input() interestMinutes = 5;
+  @Input() bankOption = false;
+  @Output() settlement = new EventEmitter<void>();
 
-  constructor(backService : BackService) {
+  C = C;
+
+  constructor() {
   }
+
   terminate() {
     this.settlement.emit();
   }
 
   getStatus(status: string) {
     switch (status) {
-      case "paused" : return "Jeu en pause...";
-      case "running" : return "En cours...";
-      case "requesting" : return  "Prolonger ?";
-      case "warning" : return  "Défaut de paiement";
-      case "closed" : return "Terminé";
-      default : return "error";
+      case C.PAUSED_CREDIT :
+        return "Jeu en pause...";
+      case C.RUNNING_CREDIT :
+        return "En cours...";
+      case C.REQUEST_CREDIT :
+        return "Prolonger ?";
+      case C.DEFAULT_CREDIT :
+        return "Défaut de paiement";
+      case C.CREDIT_DONE :
+        return "Terminé";
+      default :
+        return "error";
     }
   }
 

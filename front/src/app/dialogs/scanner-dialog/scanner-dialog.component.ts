@@ -33,7 +33,6 @@ export class ScannerDialogComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     // @ts-ignore
     this.qrScanner.render((qrCodeMessage: string) => {
-      console.log('QR code scanned:', qrCodeMessage);
       this.scannedCode = qrCodeMessage;
       this.qrScanner?.clear();
       this.dialogRef.close(this.scannedCode);

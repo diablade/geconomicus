@@ -252,7 +252,7 @@ async function deadPassingThrough(roundMinutes, minutesPassed) {
 function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
     let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
         (timer) => {
-            console.log('DU distribution fired');
+            log.info('DU distribution for idGame:', idGame);
             distribDU(timer.id);
             let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
             let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
@@ -261,7 +261,7 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
             // TODO: the automatic dead is coming ;
         },
         (timer) => {
-            console.log('Timer end');
+            console.log('Round ended');
             distribDU(timer.id).then(r =>
                 stopRound(timer.id, timer.data.gameRound)
             )
@@ -274,8 +274,6 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
 function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
     let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
         (timer) => {
-            console.log('interval fired');
-
             let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
             let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
             io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
@@ -714,52 +712,54 @@ export default {
             gameTimerManager.stopAndRemoveTimer(idGame);
             BankController.resetIdGameDebtTimers(idGame);
             GameModel.findByIdAndUpdate(idGame, {
-                $set: {
-                    status: C.OPEN,
-                    typeMoney: C.JUNE,
-                    'players.$[].cards': [],
-                    'players.$[].coins': 0,
-                    'players.$[].status': C.ALIVE,
-                    decks: [],
-                    credits: [],
-                    events: [],
-                    priceWeight1: 3,
-                    priceWeight2: 6,
-                    priceWeight3: 9,
-                    priceWeight4: 12,
-                    currentMassMonetary: 0,
-                    surveyEnabled: true,
-                    generatedIdenticalCards: 4,
-                    amountCardsForProd: 4,
-                    round: 0,
-                    roundMax: 1,
-                    roundMinutes: 40,
+                    $set: {
+                        status: C.OPEN,
+                        typeMoney: C.JUNE,
+                        'players.$[].cards': [],
+                        'players.$[].coins': 0,
+                        'players.$[].status': C.ALIVE,
+                        decks: [],
+                        credits: [],
+                        events: [],
+                        priceWeight1: 3,
+                        priceWeight2: 6,
+                        priceWeight3: 9,
+                        priceWeight4: 12,
+                        currentMassMonetary: 0,
+                        surveyEnabled: true,
+                        generatedIdenticalCards: 4,
+                        amountCardsForProd: 4,
+                        round: 0,
+                        roundMax: 1,
+                        roundMinutes: 40,
 
-                    //option debt
-                    currentDU: 0,
-                    tauxCroissance: 10,
-                    inequalityStart: false,
-                    startAmountCoins: 5,
-                    pctPoor: 10,
-                    pctRich: 10,
+                        //option june
+                        currentDU: 0,
+                        tauxCroissance: 10,
+                        inequalityStart: false,
+                        startAmountCoins: 5,
+                        pctPoor: 10,
+                        pctRich: 10,
 
-                    //option debt
-                    defaultCreditAmount: 3,
-                    defaultInterestAmount: 1,
-                    timerCredit: 5,
-                    timerPrison: 5,
-                    manualBank: false,
-                    seizureType: "decote",
-                    seizureCosts: 2,
-                    seizureDecote: 25,
-                }
-            }, {new: true})
+                        //option debt
+                        defaultCreditAmount: 3,
+                        defaultInterestAmount: 1,
+                        bankInterestEarned:0,
+                        timerCredit: 5,
+                        timerPrison: 5,
+                        manualBank: false,
+                        seizureType: "decote",
+                        seizureCosts: 2,
+                        seizureDecote: 25,
+                    }
+                },
+                {new: true})
                 .then((updatedGame) => {
                     io().to(idGame).emit(C.RESET_GAME);
                     res.status(200).json({"status": "reset done"});
                 })
                 .catch((error) => {
-                    console.log(error);
+                    log.error(error);
                     next({
                         status: 404,
                         message: "Not found"

@@ -14,17 +14,29 @@
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="d-flex flex-row justify-content-between" *ngIf="typeMoney==C.DEBT">
-    <div class="">écheance interet:</div>
-    <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">
-      voir mes crédits
-    </button>
-  </div>
   <div class="" *ngIf="statusGame!==C.START_ROUND">
     <div class="text-center h1 gecoFont contour">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
     <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
       Répondre au questionnaire
     </button>
+  </div>
+  <div class="d-flex flex-row w-100" *ngIf="typeMoney==C.DEBT">
+<!--    <div class="">écheance interet:</div>-->
+<!--    <button [disabled]="statusGame===C.END_GAME" (click)="showCredits()" mat-raised-button color="accent">-->
+<!--      voir mes crédits-->
+<!--    </button>-->
+    <mat-expansion-panel color="accent" (opened)="panelOpenState = true"
+                         (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{panelOpenState ? 'Fermer' : 'Voir mes credits'}}
+        </mat-panel-title>
+<!--        <mat-panel-description>-->
+<!--          {{credits.length}} credits-->
+<!--        </mat-panel-description>-->
+      </mat-expansion-panel-header>
+      <p>I'm visible because I am open</p>
+    </mat-expansion-panel>
   </div>
   <div class="container">
     <div @list class="row">

@@ -24,13 +24,13 @@
     <div>
       Dettes courantes :
       <mat-chip>
-        {{ "-" }}
+        {{ getDebts() }}
       </mat-chip>
     </div>
     <div>
       interet récuperé :
       <mat-chip>
-        {{ "-" }}
+        {{ game.bankInterestEarned }}
       </mat-chip>
     </div>
     <div>
@@ -47,7 +47,7 @@
     </button>
   </div>
   <div class="d-inline-flex" *ngFor="let credit of game.credits">
-    <app-credit-contract [credit]="credit" [bankOption]=true [contractor]="getPlayerName(credit.idPlayer)" (settlement)="settlementDebt(credit)"></app-credit-contract>
+    <app-credit-contract [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true [contractor]="getPlayerName(credit.idPlayer)" (settlement)="settlementDebt(credit)"></app-credit-contract>
   </div>
 </div>
 <div *ngIf="game.typeMoney==C.JUNE">Pas de banque en monnaie libre ;)</div>

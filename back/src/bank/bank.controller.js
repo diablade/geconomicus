@@ -17,51 +17,79 @@ function addDebtTimer(id, startTickNow, duration, data) {
             let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
             let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
 
-            timer.data.progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-            io().to(timer.data.idGame).emit(C.PROGRESS_CREDIT, timer.data);
+            const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+            io().to(timer.data.idGame + "bank").emit(C.PROGRESS_CREDIT, {id, progress});
         },
         (timer) => {
             timeoutCredit(timer);
         }), startTickNow);
 }
 
-function timeoutCredit(timer) {
-    if (timer) {
-        bankTimerManager.stopAndRemoveTimer(timer.id).then(() => {
-                let credit = timer.data;
-                let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
-                GameModel.findOneAndUpdate(
-                    {_id: credit.idGame, 'credits._id': credit._id},
-                    {
-                        $set: {'credits.$.status': C.REQUEST_CREDIT},
-                        $push: {'events': newEvent},
-                    }, {new: true}
-                ).then(updatedGame => {
-                    credit.status = C.REQUEST_CREDIT;
-                    io().to(credit.idGame).emit(C.EVENT, newEvent);
-                    io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
-                    io().to(credit.idGame).emit(C.TIMEOUT_CREDIT, credit);
-                }).catch((error) => {
-                    log.error(error);
-                });
-            }
-        );
+
+async function checkAbilityPayment(idGame, idPlayer, checkAmountToPay) {
+    try {
+        const game = await GameModel.findById(idGame);
+        const player = _.find(game.players, {id: idPlayer});
+        if (!player) {
+            throw new Error("Can't find player to check amount to pay");
+        }
+        return player.coins >= checkAmountToPay;
+    } catch (error) {
+        log.error('Get game error', error);
+        throw error;
     }
 }
 
 function checkSolvability(idGame, idPlayer, amountToCheck) {
     //get game credits
     //get player coins and ressources
-    // check with amount
+    // check capabilty with amount and ressources
 
 }
 
-function checkPayment(idGame, idPlayer, amountToCheck) {
-    //get game credits
-    //get player coins and ressources
-    // check with amount
-
+function timeoutCredit(timer) {
+    if (timer) {
+        const credit = timer.data;
+        bankTimerManager.stopAndRemoveTimer(timer.id).then(async () => {
+                const canPay = await checkAbilityPayment(credit.idGame, credit.idPlayer, credit.interest);
+                if (canPay) {
+                    let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
+                    GameModel.findOneAndUpdate(
+                        {_id: credit.idGame, 'credits._id': credit._id},
+                        {
+                            $set: {'credits.$.status': C.REQUEST_CREDIT},
+                            $push: {'events': newEvent},
+                        }, {new: true}
+                    ).then(updatedGame => {
+                        credit.status = C.REQUEST_CREDIT;
+                        io().to(credit.idGame).emit(C.EVENT, newEvent);
+                        io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
+                        io().to(credit.idGame + "bank").emit(C.TIMEOUT_CREDIT, credit);
+                    }).catch((error) => {
+                        log.error(error);
+                    });
+                } else {
+                    let newEvent = constructor.event(C.DEFAULT_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
+                    GameModel.findOneAndUpdate(
+                        {_id: credit.idGame, 'credits._id': credit._id},
+                        {
+                            $set: {'credits.$.status': C.DEFAULT_CREDIT},
+                            $push: {'events': newEvent},
+                        }, {new: true}
+                    ).then(updatedGame => {
+                        credit.status = C.DEFAULT_CREDIT;
+                        io().to(credit.idGame).emit(C.EVENT, newEvent);
+                        io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
+                        io().to(credit.idGame + "bank").emit(C.DEFAULT_CREDIT, credit);
+                    }).catch((error) => {
+                        log.error(error);
+                    });
+                }
+            }
+        );
+    }
 }
+
 
 export default {
     createCredit: async (req, res, next) => {
@@ -151,42 +179,40 @@ export default {
                 });
         }
     },
-    settlementCredit: async (req, res, next) => {
-        const idGame = req.body.idGame;
-        const idPlayer = req.body.idPlayer;
+    settleCredit: async (req, res, next) => {
         const credit = req.body.credit;
-        if (!idGame && !idPlayer && !credit) {
+        if (!credit) {
             next({
                 status: 400,
                 message: "bad request"
             });
         } else {
-            GameModel.findById({_id: idGame})
+            GameModel.findById({_id: credit.idGame})
                 .then((game) => {
-                        if (game) {
-                            // TODO
-                            // check solvability
-                            //
-                            //...
-                            // GameModel.findOneAndUpdate(
-                            //     {_id: credit.idGame, 'credits._id': credit._id},
-                            //     {
-                            //         $set: {'credits.$.status': C.REQUEST_CREDIT},
-                            //         $push: {'events': newEvent},
-                            //     }, {new: true}
-                            // ).then(updatedGame => {
-                            //     credit.status = C.REQUEST_CREDIT;
-                            //     io().to(credit.idGame).emit(C.EVENT, newEvent);
-                            //     io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
-                            //     io().to(credit.idGame).emit(C.TIMEOUT_CREDIT, credit);
-                            // }).catch((error) => {
-                            //     log.error(error);
-                            // });
-                            res.status(200).json("done");
+                        const canPay = checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));
+                        //...
+                        if (canPay) {
+                            let newEvent = constructor.event(C.CREDIT_DONE, C.MASTER, credit.idPlayer, credit.interest, [credit], Date.now());
+                            GameModel.findOneAndUpdate(
+                                {_id: credit.idGame, 'credits._id': credit._id},
+                                {
+                                    $set: {'credits.$.status': C.CREDIT_DONE},
+                                    $inc:{'bankInterestEarned':credit.interest,'currentMassMonetary':-credit.amount},
+                                    $push: {'events': newEvent},
+                                }, {new: true}
+                            ).then(updatedGame => {
+                                credit.status = C.CREDIT_DONE;
+                                io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
+                                io().to(credit.idPlayer).emit(C.CREDIT_DONE, credit);
+                                io().to(credit.idGame + "bank").emit(C.CREDIT_DONE, credit);
+                                res.status(200).json("done");
+                            }).catch((error) => {
+                                log.error(error);
+                            });
                         } else {
                             next({
                                 status: 404,
-                                message: "Not found"
+                                message: "Fond insuffisant!"
                             });
                         }
                     }
@@ -198,6 +224,63 @@ export default {
                         message: "not found"
                     });
                 });
+        }
+    },
+    payInterest: async (req, res, next) => {
+        const credit = req.body.credit;
+        if (!credit) {
+            next({
+                status: 400,
+                message: "bad request"
+            });
+        } else {
+            let newEvent = constructor.event(C.PAYED_INTEREST, C.MASTER, credit.idPlayer, credit.interest, [credit], Date.now());
+            GameModel.findOneAndUpdate(
+                {_id: credit.idGame, 'players._id': credit.idPlayer, "players.coins": {$gte: credit.interest}}, // condition
+                {
+                    $inc: {
+                        "players.$.coins": -credit.interest,
+                        'currentMassMonetary': -credit.interest,
+                        'bankInterestEarned': credit.interest
+                    },
+                    $push: {'events': newEvent}
+                }, {new: true}
+            ).then(updatedGame => {
+                if (updatedGame) {
+                    GameModel.findOneAndUpdate(
+                        {_id: credit.idGame, 'credits._id': credit._id},
+                        {
+                            $set: {'credits.$.status': C.RUNNING_CREDIT},
+                            $inc: {'credits.$.extended': 1},
+                        }, {new: true}
+                    ).then(updatedGame => {
+                            if (updatedGame) {
+                                const creditUpdated = _.find(updatedGame.credits, c => {
+                                    return c._id == credit._id
+                                });
+                                addDebtTimer(credit._id, true, updatedGame.timerCredit, creditUpdated);
+                                io().to(credit.idGame).emit(C.EVENT, newEvent);
+                                io().to(credit.idGame).emit(C.PAYED_INTEREST, creditUpdated);
+                                res.status(200).json({credit: creditUpdated});
+                            }
+                        }
+                    ).catch((error) => {
+                        log.error(error);
+                        next({
+                            status: 404,
+                            message: "coins updated but credit not found ??"
+                        });
+                    });
+                } else {
+                    log.error('Not enough coins to remove or player not found.');
+                }
+            }).catch((error) => {
+                log.error(error);
+                next({
+                    status: 404,
+                    message: "Not found"
+                });
+            });
         }
     },
     checkSolvability: async (req, res, next) => {

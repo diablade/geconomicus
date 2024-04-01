@@ -15,8 +15,9 @@ export class Credit {
   idGame: string = "";
   amount: number = 0;
   interest: number = 0;
+  extended: number = 0;
   status: string = "created"
-  // created,running,requesting,ended
+  // created,paused,running,requesting,settled
   progress: number = 0;
   // @ts-ignore
   createDate: Date = undefined;
@@ -104,6 +105,7 @@ export class Game {
 
   //option debt
   credits: Credit[] = [];
+  bankInterestEarned = 0;
   defaultCreditAmount: number = 3;
   defaultInterestAmount: number = 1;
   timerCredit: number = 5;

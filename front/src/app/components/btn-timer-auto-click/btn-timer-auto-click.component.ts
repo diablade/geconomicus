@@ -21,6 +21,10 @@ export class BtnTimerAutoClickComponent implements OnInit, OnDestroy {
       this.startTimer();
   }
 
+  click(){
+        this.timerEnd.emit(this.label);
+  }
+
 
   startTimer() {
     this.progress = 0;
@@ -35,7 +39,7 @@ export class BtnTimerAutoClickComponent implements OnInit, OnDestroy {
       // this.timeLeft = totalSeconds - Math.floor(iteration / (1000 / interval));
       if (iteration >= totalIterations) {
         clearInterval(this.timer);
-        this.timerEnd.emit(this.label);
+        this.click();
       }
     }, interval);
   }

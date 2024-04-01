@@ -33,7 +33,7 @@ class BankTimerManager {
         _.forEach(this.timers, (timer) => {
             if (timer && timer.data && timer.data.idGame == idGame) {
                 timer.start();
-                timer.data.status="running";
+                timer.data.status = "running";
             }
         });
     }

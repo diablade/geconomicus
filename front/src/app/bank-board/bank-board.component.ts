@@ -43,7 +43,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       this.idGame = params['idGame'];
       this.socket = io(this.ioURl, {
         query: {
-          idPlayer: 'master',
+          idPlayer: this.idGame + 'bank',
           idGame: this.idGame,
         },
       });
@@ -56,7 +56,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
       _.forEach(this.game.credits, c => {
-        if (c._id == data._id) {
+        if (c._id == data.id) {
           c.progress = data.progress;
         }
       });
@@ -65,6 +65,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       _.forEach(this.game.credits, c => {
         if (c._id == data._id) {
           c.status = data.status;
+        }
+      });
+    });
+    this.socket.on(C.PAYED_INTEREST, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c._id == data._id) {
+          c.status = data.status;
+          c.extended = data.extended;
         }
       });
     });
@@ -95,5 +103,15 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     // this.backService.settlement(credit).subscribe(data=>{
     //   this.snackbarService.showSuccess("credit remboursé")
     // })
+  }
+
+  getDebts() {
+    let debt = 0;
+    _.forEach(this.game.credits, c => {
+      if (c.status != C.CREDIT_DONE) {
+        debt += (c.amount + c.interest)
+      }
+    });
+    return debt;
   }
 }
