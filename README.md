@@ -16,4 +16,4 @@ start front
 - npm start
 
 player view :
-![image](https://github.com/diablade/geconomicus/assets/3831334/d62f0ba4-df53-47ed-81b7-aa3df61f9733)
+![Screen Shot 2024-04-04 at 16 09 44](https://github.com/diablade/geconomicus/assets/3831334/6bd90529-6848-430f-8849-4fb3782cfdd7)
