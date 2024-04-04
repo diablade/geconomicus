@@ -14,3 +14,6 @@ start backend api
 
 start front 
 - npm start
+
+player view :
+![image](https://github.com/diablade/geconomicus/assets/3831334/d62f0ba4-df53-47ed-81b7-aa3df61f9733)
