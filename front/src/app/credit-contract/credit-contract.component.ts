@@ -49,13 +49,4 @@ export class CreditContractComponent {
         return "error";
     }
   }
-
-  seizure() {
-
-  }
-
-  answer() {
-
-  }
-
 }

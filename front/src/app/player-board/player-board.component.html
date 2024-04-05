@@ -1,3 +1,24 @@
+<div class="blocked" *ngIf="prison || defaultCredit">
+  <div class="default-credit" *ngIf="defaultCredit">
+    ALLEZ VOIR LA BANQUE !!!
+  </div>
+  <div class="prison" *ngIf="prison">
+    <div class="countDownContainer">
+      <div class="time">
+        <div class="minute shadowed">{{ minutesPrison }}</div>
+        <div class="deuxpoints shadowed">:</div>
+        <div class="seconds shadowed">{{ secondsPrison }}</div>
+      </div>
+      <mat-progress-spinner
+        [color]="'warn'"
+        [mode]="'determinate'"
+        [diameter]="300"
+        strokeWidth="20"
+        [value]="prisonProgress">
+      </mat-progress-spinner>
+    </div>
+  </div>
+</div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
   <div class="titleBar d-flex flex-row">
     <div class="symbol">
@@ -47,18 +68,21 @@
     </div>
   </div>
   <div class="footer">
-    <div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
+    <div class="credits w-100 d-flex flex-row"
+         [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
       <div class="d-inline-flex" *ngFor="let credit of credits">
         <app-credit-contract [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
-                             [contractor]="player.name" (actionBtn)="creditActionBtn($event,credit)"></app-credit-contract>
+                             [contractor]="player.name"
+                             (actionBtn)="creditActionBtn($event,credit)"></app-credit-contract>
       </div>
     </div>
     <div class="d-flex flex-row justify-content-between">
       <div>
         <button *ngIf="typeMoney==C.DEBT" class="buy" mat-raised-button color="primary"
                 (click)="panelCreditOpenState = !panelCreditOpenState">
-          <fa-icon [icon]="faFileContract"></fa-icon>
           CREDITS
+          <fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
+          <fa-icon *ngIf="!panelCreditOpenState" [icon]="faEyeSlash"></fa-icon>
         </button>
       </div>
       <div>

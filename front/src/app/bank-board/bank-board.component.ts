@@ -13,6 +13,8 @@ import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
 import {environment} from "../../environments/environment";
+import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
+import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
 
 @Component({
   selector: 'app-bank-board',
@@ -32,7 +34,6 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   C = C;
 
   constructor(private route: ActivatedRoute,
-              private sessionStorageService: SessionStorageService,
               private backService: BackService,
               private snackbarService: SnackbarService,
               public dialog: MatDialog) {
@@ -54,9 +55,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.socket.on(C.RESET_GAME, async (data: any) => {
+      window.location.reload();
+    });
     this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
       _.forEach(this.game.credits, c => {
         if (c._id == data.id) {
+          c.status = C.RUNNING_CREDIT;
           c.progress = data.progress;
         }
       });
@@ -76,6 +81,15 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
         }
       });
     });
+    this.socket.on(C.DEFAULT_CREDIT, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c._id == data._id) {
+          c.status = data.status;
+        }
+      });
+      this.snackbarService.showError("!!! UN CREDIT EST EN DEFAULT !!!");
+    });
+
   }
 
   getAverageCurrency() {
@@ -113,5 +127,25 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       }
     });
     return debt;
+  }
+
+  seizureProcedure(credit: Credit) {
+    const confDialogRef = this.dialog.open(SeizureDialogComponent, {
+      data: {credit: credit}
+    });
+    confDialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // this.backService.seizure(credit).subscribe(data => {
+        // });
+      } else {
+        this.snackbarService.showError("saisie annulé...");
+      }
+    });
+  }
+
+  actionBtn($event: string, credit: Credit) {
+    if ($event == 'seizure') {
+      this.seizureProcedure(credit);
+    }
   }
 }

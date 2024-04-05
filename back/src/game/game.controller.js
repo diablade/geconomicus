@@ -63,12 +63,12 @@ async function distribDU(idGame) {
                     io().to(player.id).emit(C.DISTRIB_DU, {du: du});
 
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
-                    io().to(idGame).emit(C.EVENT, newEvent);
+                    io().to(idGame+"event").emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 } else if (player.status === C.DEAD) {
                     //TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
                     let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, 0, [], Date.now());
-                    io().to(idGame).emit(C.EVENT, newEvent);
+                    io().to(idGame+"event").emit(C.EVENT, newEvent);
                     newEvents.push(newEvent);
                 }
             }
@@ -115,7 +115,7 @@ async function initGameDebt(game) {
             timerPrison: game.timerPrison
         });
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-        io().to(game._id.toString()).emit(C.EVENT, newEvent);
+        io().to(game._id.toString()+"event").emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.decks = decks;
@@ -174,7 +174,7 @@ async function initGameJune(game) {
             amountCardsForProd: game.amountCardsForProd,
         });
         let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-        io().to(game._id.toString()).emit(C.EVENT, newEvent);
+        io().to(game._id.toString()+"event").emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
@@ -198,7 +198,7 @@ async function stopRound(idGame, gameRound) {
     })
         .then(res => {
             io().to(idGame).emit(C.STOP_ROUND);
-            io().to(idGame).emit(C.EVENT, stopRoundEvent);
+            io().to(idGame+"event").emit(C.EVENT, stopRoundEvent);
         })
         .catch(err => {
             log.error('stop round game error', err);
@@ -244,7 +244,7 @@ async function killPlayer(idGame, idPlayer) {
     ).catch(err => {
         log.error('player dead cards are not back in decks, error', err);
     });
-    io().to(idGame).emit(C.EVENT, newEvent);
+    io().to(idGame+"event").emit(C.EVENT, newEvent);
     io().to(idPlayer).emit(C.DEAD);
 }
 
@@ -571,7 +571,7 @@ export default {
                 {new: true}
             ).then(game => {
                 io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'redirect': 'survey'} : {});
-                io().to(id).emit(C.EVENT, stopGameEvent);
+                io().to(id+"event").emit(C.EVENT, stopGameEvent);
                 res.status(200).send({
                     status: C.END_GAME,
                 });

@@ -15,38 +15,6 @@ body {
   touch-action: manipulation;
 }
 
-.letter {
-  font-size: calc(28vw * 0.33); /* Adjust the multiplier as needed */
-  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
-  font-family: serif;
-  z-index: 10;
-}
-
-.price {
-  line-height: calc(25vw * 0.2); /* Adjust the multiplier as needed */
-  font-size: calc(25vw * 0.1);
-  font-family: serif;
-}
-
-/* Apply a conditional statement to limit the font size */
-@media (min-width: 1080px) {
-  .letter {
-    font-size: 7rem;
-    line-height: 7rem;
-    font-family: serif;
-    z-index: 10;
-  }
-}
-
-/* Apply a conditional statement to limit the font size */
-@media (min-width: 1080px) {
-  .price {
-    font-size: 1.5rem;
-    line-height: 1.5rem;
-    font-family: serif;
-  }
-}
-
 .innerQrCode {
   height: 100px !important;
   width: 100px !important;

@@ -1,8 +1,10 @@
 .card {
   box-shadow: 10px 10px 43px -18px rgba(0, 0, 0, 0.75);
   border-radius: 5px;
-  height: calc(28vw * 1.5);
-  width: calc(28vw);
+  //height: calc(28vw * 1.5);
+  //width: calc(28vw);
+  //width: calc(100% * 1.5);
+  //height: calc(100% * 1.5);
   max-width: 250px;
   max-height: 375px;
   cursor: pointer;
@@ -89,7 +91,6 @@
 }
 
 .back {
-  //backface-visibility: hidden;
   background-size: contain;
   transform: rotateY(180deg);
 }
@@ -133,3 +134,36 @@
   justify-content: center;
   contain: strict;
 }
+
+
+.letter {
+  //font-size: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  //line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
+  font-family: serif;
+  z-index: 10;
+}
+
+.price {
+  //line-height: calc(25vw * 0.2); /* Adjust the multiplier as needed */
+  //font-size: calc(25vw * 0.1);
+  font-family: serif;
+}
+
+/* Apply a conditional statement to limit the font size */
+//@media (min-width: 1080px) {
+//  .letter {
+    //font-size: 7rem !important;
+    //line-height: 7rem !important;
+    //font-family: serif;
+    //z-index: 10;
+  //}
+//}
+
+/* Apply a conditional statement to limit the font size */
+//@media (min-width: 1080px) {
+//  .price {
+//    font-size: 1.5rem !important;
+//    line-height: 1.5rem !important;
+//    font-family: serif;
+//  }
+//}

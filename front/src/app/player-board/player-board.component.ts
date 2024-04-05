@@ -10,7 +10,7 @@ import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.c
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
-import {faCamera, faFileContract} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faEye, faEyeSlash, faFileContract} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
@@ -81,12 +81,19 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   credits: Credit[] = [];
   faCamera = faCamera;
   faFileContract = faFileContract;
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
   scanV2 = false;
   duVisible: boolean = false;
   panelCreditOpenState = true;
   C = C;
   timerCredit = 5;
   timerPrison = 5;
+  prison = false;
+  defaultCredit = false;
+  prisonProgress = 50;
+  minutesPrison: string = "00";
+  secondsPrison: string = "00";
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
@@ -124,12 +131,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         // @ts-ignore
         this.svgContainer.nativeElement.innerHTML = this.player.image;
         this.receiveCards(this.player.cards);
+        if (data.player.status == "prison") {
+          this.prison = true;
+        }
       });
 
       this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
         this.credits = data;
         _.forEach(data, d => {
-          if (d.status == "requesting") {
+          if (d.status == C.DEFAULT_CREDIT) {
+            this.defaultCredit = true;
+          } else if (d.status == "requesting") {
             this.statusGame = "waiting";
             this.requestingWhenCreditEnds(d);
           }
@@ -245,6 +257,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     });
+    this.socket.on(C.DEFAULT_CREDIT, async (data: any) => {
+      _.forEach(this.credits, c => {
+        if (c._id == data._id) {
+          c.status = data.status;
+        }
+      });
+      this.snackbarService.showError("DEFAULT DE PAIEMENT");
+      this.defaultCredit = true;
+    });
   }
 
   countOccurrencesAndHideDuplicates() {
@@ -267,8 +288,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //To prevent memory leak
   ngOnDestroy(): void {
-    if (this.subscription)
-      this.subscription.unsubscribe()
+    if (this.subscription) this.subscription.unsubscribe()
+    // Remember to disconnect the socket when the component is destroyed.
+    this.socket.disconnect();
   }
 
   updatePlayer() {
@@ -337,11 +359,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  onDestroy() {
-    // Remember to disconnect the socket when the component is destroyed.
-    this.socket.disconnect();
-  }
-
   getBackgroundStyle() {
     switch (this.player.boardConf) {
       case "green":
@@ -372,7 +389,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (data) {
             _.forEach(this.credits, c => {
               if (c._id == data._id) {
-                c.status = data.status
+                c.status = data.status;
+                c.extended = data.extended;
               }
             });
             this.player.coins -= credit.interest;
@@ -384,11 +402,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.backService.settleCredit(credit).subscribe(data => {
             if (data) {
 
-
             }
           });
         } else {
           this.snackbarService.showError("Fond insuffisant !");
+          this.requestingWhenCreditEnds(credit);
         }
       }
     });

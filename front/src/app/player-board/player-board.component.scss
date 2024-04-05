@@ -66,13 +66,40 @@
 .buy {
   height: 50px;
 }
-.credits{
+
+.credits {
   visibility: hidden;
   height: 150px;
   overflow: auto;
 }
 
-.creditsPanelOpen{
+.creditsPanelOpen {
   visibility: visible;
   animation: ease 1s;
+}
+
+.blocked {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.prison {
+  background-image: url('/assets/prison.png');
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.default-credit {
+  background: white;
 }

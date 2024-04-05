@@ -29,7 +29,7 @@ import {HttpRequestInterceptor} from "./services/http-request-interceptor.servic
 import {MatSelectModule} from "@angular/material/select";
 import {InformationDialogComponent} from "./dialogs/information-dialog/information-dialog.component";
 import {ResultsComponent} from './results/results.component';
-import {VersionComponent} from './version/version.component';
+import {VersionComponent} from './components/version/version.component';
 import {EventsComponent} from './events/events.component';
 import {NgChartsModule} from 'ng2-charts';
 import {GameOptionsDialogComponent} from './dialogs/game-options-dialog/game-options-dialog.component';
@@ -56,6 +56,8 @@ import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.
 import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {CdkMenuTrigger} from "@angular/cdk/menu";
+import { SeizureDialogComponent } from './dialogs/seizure-dialog/seizure-dialog.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -86,6 +88,7 @@ import {CdkMenuTrigger} from "@angular/cdk/menu";
     CreditContractComponent,
     ConfirmDialogComponent,
     BtnTimerAutoClickComponent,
+    SeizureDialogComponent,
   ],
 	imports: [
 		HttpClientModule,
@@ -116,6 +119,7 @@ import {CdkMenuTrigger} from "@angular/cdk/menu";
 		MatChipsModule,
 		MatExpansionModule,
 		CdkMenuTrigger,
+    DragDropModule,
 	],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}

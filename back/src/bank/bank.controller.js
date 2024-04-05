@@ -26,6 +26,24 @@ function addDebtTimer(id, startTickNow, duration, data) {
         }), startTickNow);
 }
 
+function timeoutPrison(timer) {
+
+}
+function addPrisonTimer(id, duration, data) {
+    bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data,
+        (timer) => {
+            let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+            let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+
+            const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+            io().to(timer.data.idGame + "bank").emit(C.PROGRESS_PRISON, {id, progress});
+            io().to(timer.data.idPlayer).emit(C.PROGRESS_PRISON, {id, progress});
+        },
+        (timer) => {
+            timeoutPrison(timer);
+        }), true);
+}
+
 
 async function checkAbilityPayment(idGame, idPlayer, checkAmountToPay) {
     try {
@@ -63,7 +81,7 @@ function timeoutCredit(timer) {
                         }, {new: true}
                     ).then(updatedGame => {
                         credit.status = C.REQUEST_CREDIT;
-                        io().to(credit.idGame).emit(C.EVENT, newEvent);
+                        io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
                         io().to(credit.idGame + "bank").emit(C.TIMEOUT_CREDIT, credit);
                     }).catch((error) => {
@@ -79,7 +97,7 @@ function timeoutCredit(timer) {
                         }, {new: true}
                     ).then(updatedGame => {
                         credit.status = C.DEFAULT_CREDIT;
-                        io().to(credit.idGame).emit(C.EVENT, newEvent);
+                        io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
                         io().to(credit.idGame + "bank").emit(C.DEFAULT_CREDIT, credit);
                     }).catch((error) => {
@@ -131,7 +149,7 @@ export default {
                     new: true
                 }).then((updatedGame) => {
                     addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
-                    io().to(idGame+"event").emit(C.EVENT, newEvent);
+                    io().to(idGame + "event").emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
                     res.status(200).json(credit);
                 }).catch((error) => {
@@ -198,7 +216,7 @@ export default {
                                 {_id: credit.idGame, 'credits._id': credit._id},
                                 {
                                     $set: {'credits.$.status': C.CREDIT_DONE},
-                                    $inc:{'bankInterestEarned':credit.interest,'currentMassMonetary':-credit.amount},
+                                    $inc: {'bankInterestEarned': credit.interest, 'currentMassMonetary': -credit.amount},
                                     $push: {'events': newEvent},
                                 }, {new: true}
                             ).then(updatedGame => {
@@ -260,7 +278,7 @@ export default {
                                     return c._id == credit._id
                                 });
                                 addDebtTimer(credit._id, true, updatedGame.timerCredit, creditUpdated);
-                                io().to(credit.idGame).emit(C.EVENT, newEvent);
+                                io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                                 io().to(credit.idGame).emit(C.PAYED_INTEREST, creditUpdated);
                                 res.status(200).json({credit: creditUpdated});
                             }
@@ -282,36 +300,6 @@ export default {
                     message: "Not found"
                 });
             });
-        }
-    },
-    checkSolvability: async (req, res, next) => {
-        const idGame = req.body.idGame;
-        const idPlayer = req.body.idPlayer;
-        const amount = req.body.amount;
-        const interest = req.body.interest;
-        if (!idGame && !idPlayer) {
-            next({
-                status: 400,
-                message: "bad request"
-            });
-        } else {
-            GameModel.findById(idGame).then(async game => {
-                    const player = _.find(game.players, {id: idPlayer});
-                    if (player.coins >= amount) {
-                        next({status: 200, message: ""})
-                    } else if (player.cards.length > 3) {
-                        next({status: 200, message: ""})
-                        // } else if (etc...) {
-                        //     next({status: 400, message: ""})
-                    } else {
-                        next({status: 400, message: "non solvable"});
-                    }
-                }
-            ).catch(error => {
-                    log.error(error);
-                    next({status: 404, message: "Not found"});
-                }
-            );
         }
     },
     resetIdGameDebtTimers(idGame) {

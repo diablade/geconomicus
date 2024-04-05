@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
-import {Player} from "../models/game";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 

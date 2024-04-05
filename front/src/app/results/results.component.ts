@@ -304,7 +304,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       });
       this.socket = io(environment.API_HOST, {
         query: {
-          idPlayer: C.MASTER,
+          idPlayer: this.idGame+"event",
           idGame: this.idGame,
         },
       });

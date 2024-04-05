@@ -1,0 +1,49 @@
+.seizure {
+  //width: 800px;
+  //height: 600px;
+}
+
+.player-board {
+  width: 200px;
+  height: 300px;
+}
+
+.bank-board {
+  width: 200px;
+  height: 300px;
+}
+
+.header-board {
+  height: 100px;
+}
+
+.dropZone {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  border: red dashed 2px;
+  overflow: auto;
+  height: 200px;
+  width: 200px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.svg {
+  width: 75px;
+  height: 75px;
+  border: solid #5398ca 2px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.dropText {
+  position: absolute;
+  color: gray;
+}
+
+.smallInput {
+  width: 40px;
+}
