@@ -104,7 +104,7 @@ export default {
                             $push: {'players.$.cards': {$each: newCards}}
                         }
                     );
-                    io().to(id+"event").emit(C.EVENT, birthEvent);
+                    io().to(id + "event").emit(C.EVENT, birthEvent);
                     res.status(200).json(player._id);
                 })
                 .catch(error => {
@@ -170,9 +170,7 @@ export default {
             GameModel.findById(idGame)
                 .then(game => {
                     let players = game.players;
-                    let player = _.find(players, function (p) {
-                        return p._id == idPlayer
-                    })
+                    let player = _.find(players, p => p._id == idPlayer);
                     if (player) {
                         res.status(200).json({
                             player: player,
@@ -255,8 +253,8 @@ export default {
                                             }
                                         }
                                     );
-                                    io().to(idGame+"event").emit(C.EVENT, discardEvent);
-                                    io().to(idGame+"event").emit(C.EVENT, newCardsEvent);
+                                    io().to(idGame + "event").emit(C.EVENT, discardEvent);
+                                    io().to(idGame + "event").emit(C.EVENT, newCardsEvent);
                                     res.status(200).json(cardsDraw);
                                 } else {
                                     //TODO changement technologique
@@ -351,7 +349,7 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
-                io().to(idGame+"event").emit(C.EVENT, newEvent);
+                io().to(idGame + "event").emit(C.EVENT, newEvent);
                 // Send socket to seller with updated coins
                 buyer.coins -= cost;
                 seller.coins += cost;

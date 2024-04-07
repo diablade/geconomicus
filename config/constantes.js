@@ -11,6 +11,7 @@ const TIMEOUT_CREDIT = "timeout-credit";
 const DEFAULT_CREDIT = "default-credit";
 const REQUEST_CREDIT = "requesting";
 const PROGRESS_CREDIT = "credit-progress";
+const SEIZURE = "seizure";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';
@@ -20,6 +21,7 @@ const TIMER_LEFT = 'timer-left';
 const INTER_ROUND = 'inter-round';
 const EVENT = 'event';
 const MASTER = 'master';
+const BANK = 'bank';
 const DISTRIB_DU = 'distrib_du';
 const DISTRIB = 'distrib';
 const FIRST_DU = 'first_du';
@@ -32,6 +34,9 @@ const TRANSFORM_NEWCARDS = "transformNewCards";
 const DEAD = "dead";
 const REMIND_DEAD = "remind-dead";
 const ALIVE = "alive";
+const PRISON = "prison"
+const PRISON_ENDED = "prison-ended"
+const PROGRESS_PRISON = "progress-prison"
 const BIRTH = "birth";
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -50,6 +55,10 @@ if (typeof module !== 'undefined' && module.exports) {
         REQUEST_CREDIT: REQUEST_CREDIT,
         DEFAULT_CREDIT: DEFAULT_CREDIT,
         PROGRESS_CREDIT: PROGRESS_CREDIT,
+        PROGRESS_PRISON: PROGRESS_PRISON,
+        PRISON_ENDED: PRISON_ENDED,
+        PRISON: PRISON,
+        SEIZURE: SEIZURE,
         REMIND_DEAD: REMIND_DEAD,
         ALIVE: ALIVE,
         BIRTH: BIRTH,
@@ -57,12 +66,13 @@ if (typeof module !== 'undefined' && module.exports) {
         END_GAME: END_GAME,
         NEW_FEEDBACK: NEW_FEEDBACK,
         START_ROUND: START_ROUND,
-        PLAYING:PLAYING,
+        PLAYING: PLAYING,
         TIMER_LEFT: TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,
         INTER_ROUND: INTER_ROUND,
         EVENT: EVENT,
         MASTER: MASTER,
+        BANK: BANK,
         DISTRIB_DU: DISTRIB_DU,
         DISTRIB: DISTRIB,
         FIRST_DU: FIRST_DU,

@@ -6,7 +6,8 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag
 import * as C from "../../../../../config/constantes";
 import {BackService} from "../../services/back.service";
 import * as _ from 'lodash-es';
-import {faArrowTurnDown, faInfoCircle, faLandmark} from "@fortawesome/free-solid-svg-icons";
+import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {retry} from "rxjs";
 
 @Component({
   selector: 'app-seizure-dialog',
@@ -15,18 +16,26 @@ import {faArrowTurnDown, faInfoCircle, faLandmark} from "@fortawesome/free-solid
 })
 export class SeizureDialogComponent implements OnInit {
   credit: Credit | undefined;
-  player: Player | undefined;
+  player: Player = new Player();
   @ViewChild('svgContainer') svgContainer!: ElementRef;
   C = C;
   playerCards: Card[] = [];
   seizureCards: Card[] = [];
+  seizureCoins: number = 0;
   faLandMark = faLandmark;
   faArrowTurnDown = faArrowTurnDown;
   faInfoCircle = faInfoCircle;
+  faSackDollar = faSackDollar;
   prisonTime: number = 0;
+  seizureType: string;
+  seizureCost: number;
+  seizureDecote: number;
 
   constructor(private backService: BackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.credit = data.credit;
+    this.seizureType = data.seizureType;
+    this.seizureCost = data.seizureCosts;
+    this.seizureDecote = data.seizureDecote;
   }
 
   ngOnInit(): void {
@@ -62,21 +71,50 @@ export class SeizureDialogComponent implements OnInit {
     }
   }
 
+  seizeCoins() {
+    this.seizureCoins = this.player.coins;
+    this.player.coins = 0;
+  }
+
   getSeizure() {
     let seize = 0;
     _.forEach(this.seizureCards, c => {
-      seize += c.price;
+      if (this.seizureType == "decote") {
+        seize += (c.price - (this.seizureDecote / 100));
+      } else {
+        seize += c.price;
+      }
     });
     return seize;
   }
 
   getSeizureObjective() {
     // @ts-ignore
-    return (this.credit?.amount + this.credit?.interest - this.player?.coins) * 1.5;
+    if (this.seizureType == "decote") {
+      // @ts-ignore
+      return this.credit?.amount + this.credit?.interest - this.seizureCoins;
+    } else {
+      // @ts-ignore
+      return this.credit?.amount + this.credit?.interest - this.seizureCoins + this.seizureCost;
+
+    }
   }
 
   getProgressSeizure() {
-    const progress = this.getSeizure()/this.getSeizureObjective()*100;
-    return progress >100 ? 100 : progress;
+    const progress = this.getSeizure() / this.getSeizureObjective() * 100;
+    return progress > 100 ? 100 : progress;
   }
+
+  cancel() {
+    this.dialogRef.close();
+  }
+
+  validate() {
+    this.dialogRef.close({
+      cards: this.seizureCards,
+      coins: this.seizureCoins,
+      prisonTime: this.prisonTime
+    })
+  }
+
 }

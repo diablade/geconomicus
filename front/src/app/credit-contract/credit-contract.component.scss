@@ -23,6 +23,7 @@
 .requesting {
   background-color: #ffaf4d !important;
 }
+
 .credit-done {
   background-color: #a4a4a4 !important;
 }
@@ -36,7 +37,7 @@
     background: #3153ff;
   }
   50% {
-    background: #e80303;
+    background: #ff0000;
   }
   100% {
     background: #3153ff;
@@ -46,6 +47,7 @@
 .default-credit {
   background-color: #ff706e; /* Fallback */
   animation: cops 1s infinite ease;
+  color: white;
 }
 
 

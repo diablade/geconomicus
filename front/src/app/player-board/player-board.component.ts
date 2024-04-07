@@ -91,9 +91,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   timerPrison = 5;
   prison = false;
   defaultCredit = false;
-  prisonProgress = 50;
-  minutesPrison: string = "00";
-  secondsPrison: string = "00";
+  prisonProgress = 0;
+  minutesPrison = 0;
+  secondsPrison = 0;
 
   constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
   }
@@ -117,7 +117,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       });
 
-      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
+      this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(data => {
         this.player = data.player;
         this.typeMoney = data.typeMoney;
         this.currentDU = data.currentDU;
@@ -253,6 +253,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
       _.forEach(this.credits, c => {
         if (c._id == data.id) {
+          c.status = C.RUNNING_CREDIT;
           c.progress = data.progress;
         }
       });
@@ -265,6 +266,19 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.snackbarService.showError("DEFAULT DE PAIEMENT");
       this.defaultCredit = true;
+    });
+    this.socket.on(C.PRISON, async (data: any) => {
+      this.defaultCredit=false;
+      this.prison = true;
+    });
+    this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
+      this.prisonProgress = data.progress;
+      this.minutesPrison = Math.floor((data.remainingTime / (1000 * 60)) % 60);
+      this.secondsPrison = Math.floor((data.remainingTime / 1000) % 60);
+    });
+    this.socket.on(C.PRISON_ENDED, async (data: any) => {
+      console.log("FIN PRISON RECU");
+      this.prison = false;
     });
   }
 
@@ -399,11 +413,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       } else if (options == "btn1") {
         if (this.player.coins >= (credit.amount + credit.interest)) {
-          this.backService.settleCredit(credit).subscribe(data => {
-            if (data) {
-
-            }
-          });
+          this.settleCredit(credit);
         } else {
           this.snackbarService.showError("Fond insuffisant !");
           this.requestingWhenCreditEnds(credit);
@@ -433,19 +443,21 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     confDialogRef.afterClosed().subscribe(result => {
       if (result && result == "btn1") {
-        this.backService.settleCredit(credit).subscribe(data => {
-        });
-        if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
-          this.backService.settleCredit(credit).subscribe(data => {
-            if (data) {
-
-            }
-          });
-        } else {
-          this.snackbarService.showError("Fond insuffisant...");
-        }
+        this.settleCredit(credit);
       }
     });
+  }
+
+  settleCredit(credit: Credit) {
+    if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
+      this.backService.settleCredit(credit).subscribe(data => {
+        if (data) {
+
+        }
+      });
+    } else {
+      this.snackbarService.showError("Fond insuffisant...");
+    }
   }
 
   creditActionBtn($event: string, credit: Credit) {

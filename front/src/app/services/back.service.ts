@@ -280,4 +280,10 @@ export class BackService {
       catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
     )
   }
+
+  seizure(seizure: any, credit: Credit) {
+    return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {credit:credit,seizure:seizure}).pipe(
+      catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
+    )
+  }
 }

@@ -6,16 +6,17 @@
            (cdkDropListDropped)="onDrop($event)"
            [cdkDropListData]="playerCards"
            [ngStyle]="getBackgroundStyle('')"
-           class="d-flex flex-column player-board">
-        <div class="header-board d-flex flex-row">
+           class="d-flex flex-column player-board m-2">
+        <div class="header-board d-flex flex-row p-2">
           <div class="user d-flex">
-            <div class="svg" [ngStyle]="{'border-color':'#'+player?.hairColor}"
+            <div class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
                  #svgContainer></div>
           </div>
-          <div class="d-flex flex-column align-items-center">
-            <div class="fs-5 justify-content-end gecoFont shadowed m-2">Joueur</div>
-            <div class="fs-6 gecoFont shadowed"> {{ player?.name }}</div>
-            <div class="">Solde: {{ player?.coins| number : '1.2-2' }}</div>
+          <div class="d-flex flex-column align-items-center flex-grow-1">
+            <div class="fs-6 gecoFont shadowed"> {{ player.name }}</div>
+            <div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
+            <button *ngIf="player.coins>0" mat-raised-button color="primary" (click)="seizeCoins()">saisir <fa-icon [icon]="faSackDollar"></fa-icon>
+            </button>
           </div>
         </div>
         <div class="dropZone">
@@ -23,7 +24,7 @@
             <app-card
               [card]="card"
               [typeMoney]="'debt'"
-              [idOwner]="player?._id"
+              [idOwner]="player._id"
               [idGame]="credit?.idGame"
               [height]="'75px'"
               [width]="'50px'"
@@ -37,17 +38,22 @@
       <div cdkDropList
            [ngStyle]="getBackgroundStyle('bank')"
            (cdkDropListDropped)="onDrop($event)"
-           [cdkDropListData]="seizureCards" class="bank-board">
+           [cdkDropListData]="seizureCards" class="bank-board m-2">
         <div class="header-board d-flex flex-column">
-          <div class="fs-5 align-items-center gecoFont shadowed m-2">
+          <div class="ms-2 fs-5 justify-content-between d-flex gecoFont shadowed m-2">
+            <fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>
             Banque
             <fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>
           </div>
-          <div class="flex-grow-1">
-            Objectif : 1,5 x la dette
+          <div class="ms-2 flex-grow-1">
+            {{ seizureType == "decote" ? "Décote de " + seizureDecote + "% sur les cartes" : "frais en sus " + seizureCost }}
           </div>
-          <div class="progress " role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated" [style.width.%]="getProgressSeizure()">A saisir : {{ getSeizure() | number : '1.2-2' }}/{{getSeizureObjective()}}</div>
+          <div class="progress m-2" role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0"
+               aria-valuemax="100">
+            <div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
+                 [style.width.%]="getProgressSeizure()">A saisir : {{ getSeizure() | number : '1.2-2' }}
+              /{{ getSeizureObjective() }}
+            </div>
           </div>
         </div>
 
@@ -59,7 +65,7 @@
             <app-card
               [card]="card"
               [typeMoney]="'debt'"
-              [idOwner]="player?._id"
+              [idOwner]="player._id"
               [idGame]="credit?.idGame"
               [height]="'75px'"
               [width]="'50px'"
@@ -72,15 +78,17 @@
       </div>
     </div>
   </div>
-  <div class="prison d-flex flex-row justify-content-center">
+  <div class="m-2 d-flex flex-row justify-content-center">
     <div>
-      <fa-icon class="ms-2 icon" [matTooltip]="'çà depend du manque à gagner, plus important il est plus la sanction doit etre grande, max 5 minutes'" [icon]="faInfoCircle"></fa-icon>
+      <fa-icon class="ms-2 icon"
+               [matTooltip]="'Si l\'objectif est remplis, 0 minute, si le manque à gagner est important, la sanction doit etre grande, max 5 minutes'"
+               [icon]="faInfoCircle"></fa-icon>
       Décision pour la prison : durée de
       <input class="smallInput" type="number" [(ngModel)]="prisonTime"> minutes
     </div>
   </div>
-  <div class="mt-2 d-flex flex-row justify-content-end">
-    <button mat-raised-button class="">annuler</button>
-    <button mat-raised-button color="accent">Valider la saisie</button>
+  <div class="d-flex flex-row justify-content-end">
+    <button mat-raised-button (click)="cancel()">annuler</button>
+    <button mat-raised-button (click)="validate()" color="accent" class="ms-2">Valider la saisie</button>
   </div>
 </div>

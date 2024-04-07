@@ -5,9 +5,9 @@
   <div class="prison" *ngIf="prison">
     <div class="countDownContainer">
       <div class="time">
-        <div class="minute shadowed">{{ minutesPrison }}</div>
+        <div class="minute shadowed">{{ minutesPrison | number:'2.0'}}</div>
         <div class="deuxpoints shadowed">:</div>
-        <div class="seconds shadowed">{{ secondsPrison }}</div>
+        <div class="seconds shadowed">{{ secondsPrison | number: '2.0'}}</div>
       </div>
       <mat-progress-spinner
         [color]="'warn'"

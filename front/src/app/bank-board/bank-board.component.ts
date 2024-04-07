@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
-import {Credit, Game} from "../models/game";
+import {Credit, Game, Player} from "../models/game";
 import {ActivatedRoute} from "@angular/router";
 import {SessionStorageService} from "../services/local-storage/session-storage.service";
 import {BackService} from "../services/back.service";
@@ -15,6 +15,7 @@ import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialo
 import {environment} from "../../environments/environment";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-bank-board',
@@ -32,10 +33,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   data: string = "";
   socket: any;
   C = C;
+  prisoners: Player[] = [];
 
   constructor(private route: ActivatedRoute,
               private backService: BackService,
               private snackbarService: SnackbarService,
+              private sanitizer: DomSanitizer,
               public dialog: MatDialog) {
   }
 
@@ -50,6 +53,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       });
       this.backService.getGame(this.idGame).subscribe(game => {
         this.game = game;
+        this.prisoners = _.filter(game.players, {"status": "prison"});
       });
     });
   }
@@ -89,7 +93,16 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       });
       this.snackbarService.showError("!!! UN CREDIT EST EN DEFAULT !!!");
     });
-
+    this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
+      _.forEach(this.prisoners, p => {
+        if (p._id == data.id) {
+          p.progressPrison = data.progress;
+        }
+      });
+    });
+    this.socket.on(C.PRISON_ENDED, async (data: any) => {
+      _.remove(this.prisoners, p => p._id == data.idPlayer);
+    });
   }
 
   getAverageCurrency() {
@@ -113,12 +126,6 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  settlementDebt(credit: Credit) {
-    // this.backService.settlement(credit).subscribe(data=>{
-    //   this.snackbarService.showSuccess("credit remboursé")
-    // })
-  }
-
   getDebts() {
     let debt = 0;
     _.forEach(this.game.credits, c => {
@@ -131,12 +138,30 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 
   seizureProcedure(credit: Credit) {
     const confDialogRef = this.dialog.open(SeizureDialogComponent, {
-      data: {credit: credit}
+      data: {
+        credit: credit,
+        seizureType: this.game.seizureType,
+        seizureCosts: this.game.seizureCosts,
+        seizureDecote: this.game.seizureDecote,
+      }
     });
-    confDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // this.backService.seizure(credit).subscribe(data => {
-        // });
+    confDialogRef.afterClosed().subscribe(seizure => {
+      if (seizure) {
+        console.log(seizure);
+        this.backService.seizure(seizure, credit).subscribe((data: any) => {
+          this.snackbarService.showSuccess("Saisie effectué !");
+          console.log("saisie effectué", data);
+          if (data) {
+            _.forEach(this.game.credits, c => {
+              if (c._id == data.credit._id) {
+                c = data.credit;
+              }
+            });
+            if (data.prisoner) {
+              this.prisoners.push(data.prisoner);
+            }
+          }
+        });
       } else {
         this.snackbarService.showError("saisie annulé...");
       }
@@ -147,5 +172,9 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     if ($event == 'seizure') {
       this.seizureProcedure(credit);
     }
+  }
+
+  getSanitizedSvgFromString(svgString: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(svgString);
   }
 }

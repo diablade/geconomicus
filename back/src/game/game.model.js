@@ -99,6 +99,7 @@ let Game = new Schema({
     defaultCreditAmount: {type: Number, required: true},
     defaultInterestAmount: {type: Number, required: true},
     bankInterestEarned: {type: Number, required: true},
+    bankGoodsEarned: {type: Number, required: true},
     timerCredit: {type: Number, required: true},
     timerPrison: {type: Number, required: true},
     manualBank: {type: Boolean, required: true},

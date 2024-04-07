@@ -71,6 +71,7 @@ export class Player {
   boardConf: string = "wood";
   boardColor: string = "";
   status: string = "alive";
+  progressPrison: number = 0;
 }
 
 export class Game {
@@ -113,7 +114,7 @@ export class Game {
   manualBank: boolean = true;
   seizureType: string = "decote";
   seizureCosts: number = 2;
-  seizureDecote: number = 25;
+  seizureDecote: number = 33;
 
   // @ts-ignore
   modified: Date = Date.now();

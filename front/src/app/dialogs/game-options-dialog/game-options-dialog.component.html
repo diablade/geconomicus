@@ -102,7 +102,7 @@
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
-      <mat-label>Defaut de paiment, saisir</mat-label>
+      <mat-label>Défaut de paiement, saisir</mat-label>
       <mat-radio-group class="w-100" [(ngModel)]="game.seizureType">
         <mat-radio-button class="d-flex ms-3" [value]="'fixe'">
           <div class="d-flex flex-row infoLabel">
@@ -115,29 +115,26 @@
         </mat-radio-button>
         <mat-radio-button class="d-flex ms-3 w-100" [value]="'decote'">
           <div class="d-flex flex-row infoLabel">en valeur carte avec décote de :<input type="number" class="smallInput"
-                                                                              placeholder="25"
+                                                                              placeholder="33"
                                                                               [(ngModel)]="game.seizureDecote">%
           </div>
         </mat-radio-button>
       </mat-radio-group>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
-      Si crédit non recouvré, mise en prison
+      Si crédit non recouvré, mise en prison maximum
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-        <mat-label>Durée de la prison (en minutes):</mat-label>
+        <mat-label>Durée de la prison max (en minutes):</mat-label>
         <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="mb-4 d-flex flex-column">
-      <mat-checkbox class="m-auto" disabled [(ngModel)]="game.manualBank">
-        Convertir un joueur en banquier d'affaire (comming soon)(décoché banque automatique)
+      <mat-checkbox class="m-auto" [disabled]="true">
+        Convertir un joueur en banquier d'affaire (comming soon)
       </mat-checkbox>
       <div class="infoLabel">
         <div>
-          •A la possibilité d'octroyer, negocier, refuser des credits
-        </div>
-        <div>
-          • ... TODO
+          •A la possibilité d'octroyer, negocier, refuser des credits, revendre les saisies
         </div>
       </div>
     </div>
