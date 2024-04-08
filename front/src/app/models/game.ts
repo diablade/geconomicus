@@ -107,6 +107,7 @@ export class Game {
   //option debt
   credits: Credit[] = [];
   bankInterestEarned = 0;
+  bankGoodsEarned = 0;
   defaultCreditAmount: number = 3;
   defaultInterestAmount: number = 1;
   timerCredit: number = 5;

@@ -250,6 +250,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.requestingWhenCreditEnds(data);
     });
+    this.socket.on(C.CREDITS_STARTED, async (data: any) => {
+      _.forEach(this.credits, c => {
+        if (c.status == C.PAUSED_CREDIT) {
+          c.status = C.RUNNING_CREDIT;
+        }
+      });
+    });
     this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
       _.forEach(this.credits, c => {
         if (c._id == data.id) {
@@ -277,8 +284,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.secondsPrison = Math.floor((data.remainingTime / 1000) % 60);
     });
     this.socket.on(C.PRISON_ENDED, async (data: any) => {
-      console.log("FIN PRISON RECU");
       this.prison = false;
+    });
+    this.socket.on(C.SEIZURE, async (data: any) => {
+      _.forEach(data.seizureCards,c=>{
+        _.remove(this.cards, {_id: c._id});
+      });
+      this.player.coins -= data.seizureCoins;
     });
   }
 
@@ -452,7 +464,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
       this.backService.settleCredit(credit).subscribe(data => {
         if (data) {
-
+          _.forEach(this.credits, c => {
+            if (c._id == data._id) {
+              c.status = data.status;
+              c.endDate = data.endDate;
+            }
+          });
         }
       });
     } else {

@@ -3,6 +3,7 @@ const OPEN = 'open';
 const JUNE = 'june';
 const DEBT = 'debt';
 const NEW_CREDIT = "new-credit";
+const CREDITS_STARTED = "credits-started";
 const RUNNING_CREDIT = "running";
 const PAUSED_CREDIT = "paused";
 const PAYED_INTEREST = "payed-interest";
@@ -51,6 +52,7 @@ if (typeof module !== 'undefined' && module.exports) {
         PAUSED_CREDIT: PAUSED_CREDIT,
         PAYED_INTEREST: PAYED_INTEREST,
         CREDIT_DONE: CREDIT_DONE,
+        CREDITS_STARTED: CREDITS_STARTED,
         TIMEOUT_CREDIT: TIMEOUT_CREDIT,
         REQUEST_CREDIT: REQUEST_CREDIT,
         DEFAULT_CREDIT: DEFAULT_CREDIT,

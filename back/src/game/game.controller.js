@@ -754,6 +754,7 @@ export default {
                         defaultCreditAmount: 3,
                         defaultInterestAmount: 1,
                         bankInterestEarned:0,
+                        bankGoodsEarned:0,
                         timerCredit: 5,
                         timerPrison: 5,
                         manualBank: false,

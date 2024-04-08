@@ -62,11 +62,25 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     this.socket.on(C.RESET_GAME, async (data: any) => {
       window.location.reload();
     });
+    this.socket.on(C.CREDITS_STARTED, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c.status == C.PAUSED_CREDIT) {
+          c.status = C.RUNNING_CREDIT;
+        }
+      });
+    });
     this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
       _.forEach(this.game.credits, c => {
         if (c._id == data.id) {
           c.status = C.RUNNING_CREDIT;
           c.progress = data.progress;
+        }
+      });
+    });
+    this.socket.on(C.CREDIT_DONE, async (data: any) => {
+      _.forEach(this.game.credits, c => {
+        if (c._id == data._id) {
+          c.status = C.CREDIT_DONE;
         }
       });
     });
@@ -101,6 +115,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       });
     });
     this.socket.on(C.PRISON_ENDED, async (data: any) => {
+      this.snackbarService.showSuccess("un prisonnier viens de purger sa peine");
       _.remove(this.prisoners, p => p._id == data.idPlayer);
     });
   }

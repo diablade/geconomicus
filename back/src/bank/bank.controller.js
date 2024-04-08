@@ -231,16 +231,17 @@ export default {
                             GameModel.findOneAndUpdate(
                                 {_id: credit.idGame, 'credits._id': credit._id},
                                 {
-                                    $set: {'credits.$.status': C.CREDIT_DONE},
+                                    $set: {'credits.$.status': C.CREDIT_DONE, 'credits.$.endDate': Date.now()},
                                     $inc: {'bankInterestEarned': credit.interest, 'currentMassMonetary': -credit.amount},
                                     $push: {'events': newEvent},
                                 }, {new: true}
                             ).then(updatedGame => {
-                                credit.status = C.CREDIT_DONE;
+                                let creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
+                                bankTimerManager.stopAndRemoveTimer(credit._id);
                                 io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
-                                io().to(credit.idPlayer).emit(C.CREDIT_DONE, credit);
-                                io().to(credit.idGame + "bank").emit(C.CREDIT_DONE, credit);
-                                res.status(200).json("done");
+                                io().to(credit.idPlayer).emit(C.CREDIT_DONE, creditUpdated);
+                                io().to(credit.idGame + "bank").emit(C.CREDIT_DONE, creditUpdated);
+                                res.status(200).json(creditUpdated);
                             }).catch((error) => {
                                 log.error(error);
                             });
@@ -335,6 +336,7 @@ export default {
                         $push: {'events': newEvent},
                     }
                 );
+                io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
                 // add cards back to the deck
                 GameModel.findById(credit.idGame, function (err, game) {
                     if (err) {
@@ -367,9 +369,11 @@ export default {
                 io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                 io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
                 // PRISON ?
+                console.log('prison ???');
                 if (seizure.prisonTime && seizure.prisonTime > 0) {
+                    console.log("prison !!!")
                     let newEvent2 = constructor.event(C.PRISON, "bank", credit.idPlayer, seizure.prisonTime, [], Date.now());
-                    GameModel.updateOne(
+                    GameModel.findByIdAndUpdate(
                         {_id: credit.idGame, 'players._id': credit.idPlayer},
                         {
                             $set: {'players.$.status': C.PRISON},
@@ -381,12 +385,14 @@ export default {
                             idPlayer: credit.idPlayer,
                             idGame: credit.idGame
                         })
+                        console.log("prisoner:", prisoner);
                         io().to(credit.idGame + "event").emit(C.EVENT, newEvent2);
                         io().to(credit.idPlayer).emit(C.PRISON, {});
-                        res.status(200).json({credit, prisoner: prisoner});
+                        res.status(200).json({credit: credit, prisoner: prisoner});
                     });
                 } else {
-                    res.status(200).json({credit});
+                    console.log("pas prison :/ ...")
+                    res.status(200).json({credit: credit});
                 }
             } catch (e) {
                 log.error(e);
@@ -398,15 +404,14 @@ export default {
         bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
     },
     startCreditsByIdGame(idGame) {
-        // $push: {'events': newEvent},
-        GameModel.findOneAndUpdate(
-            {_id: idGame, 'credits.status': 'paused'},
+        GameModel.updateMany(
+            {_id: idGame, 'credits.status': C.PAUSED_CREDIT},
             {
-                $set: {'credits.$.status': 'running'},
+                $set: {'credits.$[].status': C.RUNNING_CREDIT},
             }, {new: true}
         ).then(updatedGame => {
             bankTimerManager.startAllIdGameDebtTimer(idGame);
-            io().to(idGame).emit("credits-started");
+            io().to(idGame).emit(C.CREDITS_STARTED);
         }).catch((error) => {
             log.error(error);
         });
