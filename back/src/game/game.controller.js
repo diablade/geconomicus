@@ -363,8 +363,8 @@ export default {
         }
     },
     update: async (req, res, next) => {
-        const id = req.body.idGame;
         const body = req.body;
+        const id = req.body.idGame;
         if (!id && !body.typeMoney) {
             next({
                 status: 400,
@@ -381,14 +381,14 @@ export default {
                     priceWeight4: body.priceWeight4 ? body.priceWeight4 : 12,
                     roundMax: body.roundMax ? body.roundMax : 1,
                     roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
-                    surveyEnabled: body.surveyEnabled ? body.surveyEnabled : true,
+                    surveyEnabled: body.surveyEnabled == undefined ? true : body.surveyEnabled,
                     amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
                     generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
 
                     //option june
                     tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
                     startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
-                    inequalityStart: body.inequalityStart ? body.inequalityStart : false,
+                    inequalityStart: body.inequalityStart == undefined ? false : body.inequalityStart,
                     pctPoor: body.pctPoor ? body.pctPoor : 10,
                     pctRich: body.pctRich ? body.pctRich : 10,
 
