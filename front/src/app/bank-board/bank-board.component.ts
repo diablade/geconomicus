@@ -96,6 +96,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
         if (c._id == data._id) {
           c.status = data.status;
           c.extended = data.extended;
+          c.progress = 0;
         }
       });
     });

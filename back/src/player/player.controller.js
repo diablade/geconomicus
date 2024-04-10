@@ -1,8 +1,8 @@
 import GameModel, {constructor} from '../game/game.model.js';
-import log from '../../conf_log.js';
+import log from '../../config/log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
-import {io} from '../../conf_socket.js';
+import {io} from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 
 export default {

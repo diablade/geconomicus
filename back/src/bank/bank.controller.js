@@ -1,8 +1,8 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import * as C from "../../../config/constantes.js";
 import mongoose from "mongoose";
-import {io} from "../../conf_socket.js";
-import log from "../../conf_log.js";
+import {io} from "../../config/socket.js";
+import log from "../../config/log.js";
 import _ from "lodash";
 import Timer from "../misc/Timer.js";
 import bankTimerManager from "./BankTimerManager.js";
@@ -272,7 +272,7 @@ export default {
         } else {
             let newEvent = constructor.event(C.PAYED_INTEREST, C.MASTER, credit.idPlayer, credit.interest, [credit], Date.now());
             GameModel.findOneAndUpdate(
-                {_id: credit.idGame, 'players._id': credit.idPlayer, "players.coins": {$gte: credit.interest}}, // condition
+                {_id: credit.idGame, 'players._id': credit.idPlayer},
                 {
                     $inc: {
                         "players.$.coins": -credit.interest,
@@ -291,13 +291,11 @@ export default {
                         }, {new: true}
                     ).then(updatedGame => {
                             if (updatedGame) {
-                                const creditUpdated = _.find(updatedGame.credits, c => {
-                                    return c._id == credit._id
-                                });
+                                const creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
                                 addDebtTimer(credit._id, true, updatedGame.timerCredit, creditUpdated);
                                 io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                                 io().to(credit.idGame).emit(C.PAYED_INTEREST, creditUpdated);
-                                res.status(200).json({credit: creditUpdated});
+                                res.status(200).json(creditUpdated);
                             }
                         }
                     ).catch((error) => {

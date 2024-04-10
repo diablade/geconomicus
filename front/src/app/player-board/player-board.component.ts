@@ -200,6 +200,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.credits = [];
       this.statusGame = C.OPEN;
       this.player.coins = 0;
+      this.defaultCredit = false;
+      this.prison = false;
     });
     this.socket.on(C.FIRST_DU, async (data: any) => {
       this.currentDU = data.du;
@@ -417,6 +419,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
               if (c._id == data._id) {
                 c.status = data.status;
                 c.extended = data.extended;
+                c.progress = 0;
               }
             });
             this.player.coins -= credit.interest;

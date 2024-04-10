@@ -16,14 +16,19 @@
         "winston": "^3.8.2"
     },
     "type": "module",
-    "main": "app.js",
+    "main": "./src/app.js",
     "scripts": {
-        "startMon": "nodemon app.js",
+        "startMon": "nodemon ./src/app.js",
         "cleanProd": "npm ci --only=production && npm cache clean --force",
-        "run": "node app.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "run": "node ./src/app.js",
+        "test": "export GECO_NODE_ENV=test && node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand"
     },
     "author": "Nicolas Markovic",
     "license": "ISC",
-    "description": ""
+    "description": "",
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "mongodb-memory-server": "^9.1.8",
+        "supertest": "^6.3.4"
+    }
 }

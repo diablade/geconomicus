@@ -2,10 +2,10 @@ import {body, validationResult} from 'express-validator';
 import GameModel, {constructor} from './game.model.js';
 import * as C from '../../../config/constantes.js';
 
-import log from '../../conf_log.js';
+import log from '../../config/log.js';
 import _ from "lodash";
 import mongoose from "mongoose";
-import {io} from "../../conf_socket.js";
+import {io} from "../../config/socket.js";
 import {differenceInMilliseconds} from "date-fns";
 import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
@@ -338,6 +338,7 @@ export default {
                 defaultCreditAmount: 3,
                 defaultInterestAmount: 1,
                 bankInterestEarned: 0,
+                bankGoodsEarned:0,
                 timerCredit: 5,
                 timerPrison: 5,
                 manualBank: true,
