@@ -21,9 +21,9 @@ export default {
                     } else if (game.status != C.OPEN) {
                         next({status: 400, message: "la partie est déjà commencé... sorry mon poto"})
                     } else if (game.players.length < 25) {
-                        const comId = new mongoose.Types.ObjectId();
+                        const idPlayer = new mongoose.Types.ObjectId();
                         let player = {
-                            _id: comId,
+                            _id: idPlayer,
                             name: name,
                             image: "",
                             coins: 0,
@@ -34,9 +34,13 @@ export default {
                             glassesProbability: 100,
                             featuresProbability: 100
                         };
-                        GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}},)
-                            .then(updatedGame =>
-                                res.status(200).json(player._id))
+                        GameModel.findByIdAndUpdate({_id: id}, {$push: {players: player}}, {new: true})
+                            .then(updatedGame => {
+                                    const newPlayer = _.find(updatedGame.players, p => p._id == idPlayer.toString());
+                                    io().to(id).emit("new-player", newPlayer);
+                                    res.status(200).json(player._id);
+                                }
+                            )
                             .catch(error => {
                                     log.error(error);
                                     next({status: 404, message: "Not found"});
@@ -124,29 +128,28 @@ export default {
                 message: "bad request"
             });
         } else {
-            GameModel.findByIdAndUpdate(idGame, {
+            GameModel.findOneAndUpdate({_id: idGame, 'players._id': idPlayer}, {
                 $set: {
-                    'players.$[elem].name': player.name,
-                    'players.$[elem].image': player.image,
-                    'players.$[elem].eye': player.eye,
-                    'players.$[elem].eyebrows': player.eyebrows,
-                    'players.$[elem].earrings': player.earrings,
-                    'players.$[elem].features': player.features,
-                    'players.$[elem].hair': player.hair,
-                    'players.$[elem].glasses': player.glasses,
-                    'players.$[elem].mouth': player.mouth,
-                    'players.$[elem].skinColor': player.skinColor,
-                    'players.$[elem].hairColor': player.hairColor,
-                    'players.$[elem].boardConf': player.boardConf,
-                    'players.$[elem].boardColor': player.boardColor,
-                    // add any other fields you want to update here
+                    'players.$.name': player.name,
+                    'players.$.image': player.image,
+                    'players.$.eye': player.eye,
+                    'players.$.eyebrows': player.eyebrows,
+                    'players.$.earrings': player.earrings,
+                    'players.$.features': player.features,
+                    'players.$.hair': player.hair,
+                    'players.$.glasses': player.glasses,
+                    'players.$.mouth': player.mouth,
+                    'players.$.skinColor': player.skinColor,
+                    'players.$.hairColor': player.hairColor,
+                    'players.$.boardConf': player.boardConf,
+                    'players.$.boardColor': player.boardColor,
                 }
             }, {
-                arrayFilters: [{'elem._id': idPlayer}],
                 new: true
             })
                 .then((updatedGame) => {
-                    io().to(idGame).emit("updated-game", updatedGame);
+                    const updatedPlayer = _.find(updatedGame.players, p => p._id == idPlayer);
+                    io().to(idGame).emit("updated-player", updatedPlayer);
                     res.status(200).json({"status": "updated"});
                 })
                 .catch((error) => {
