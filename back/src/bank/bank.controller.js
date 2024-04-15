@@ -74,8 +74,8 @@ function timeoutCredit(timer) {
                         {
                             $set: {'credits.$.status': C.REQUEST_CREDIT},
                             $push: {'events': newEvent},
-                        }, {new: true}
-                    ).then(updatedGame => {
+                        },
+                    ).then(result => {
                         credit.status = C.REQUEST_CREDIT;
                         io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
@@ -90,8 +90,8 @@ function timeoutCredit(timer) {
                         {
                             $set: {'credits.$.status': C.DEFAULT_CREDIT},
                             $push: {'events': newEvent},
-                        }, {new: true}
-                    ).then(updatedGame => {
+                        }
+                    ).then(update => {
                         credit.status = C.DEFAULT_CREDIT;
                         io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);

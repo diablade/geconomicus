@@ -3,6 +3,8 @@ const OPEN = 'open';
 const JUNE = 'june';
 const DEBT = 'debt';
 const NEW_CREDIT = "new-credit";
+const NEW_PLAYER = "new-player";
+const UPDATED_PLAYER = "updated-player";
 const CREDITS_STARTED = "credits-started";
 const RUNNING_CREDIT = "running";
 const PAUSED_CREDIT = "paused";
@@ -46,24 +48,31 @@ if (typeof module !== 'undefined' && module.exports) {
         OPEN: OPEN,
         JUNE: JUNE,
         DEBT: DEBT,
+        EVENT: EVENT,
+        MASTER: MASTER,
+        BANK: BANK,
+
+        NEW_PLAYER: NEW_PLAYER,
+        UPDATED_PLAYER: UPDATED_PLAYER,
         DEAD: DEAD,
+        REMIND_DEAD: REMIND_DEAD,
+        ALIVE: ALIVE,
+        BIRTH: BIRTH,
+
         NEW_CREDIT: NEW_CREDIT,
+        CREDITS_STARTED: CREDITS_STARTED,
         RUNNING_CREDIT: RUNNING_CREDIT,
         PAUSED_CREDIT: PAUSED_CREDIT,
         PAYED_INTEREST: PAYED_INTEREST,
-        CREDIT_DONE: CREDIT_DONE,
-        CREDITS_STARTED: CREDITS_STARTED,
         TIMEOUT_CREDIT: TIMEOUT_CREDIT,
         REQUEST_CREDIT: REQUEST_CREDIT,
         DEFAULT_CREDIT: DEFAULT_CREDIT,
         PROGRESS_CREDIT: PROGRESS_CREDIT,
+        CREDIT_DONE: CREDIT_DONE,
         PROGRESS_PRISON: PROGRESS_PRISON,
         PRISON_ENDED: PRISON_ENDED,
         PRISON: PRISON,
         SEIZURE: SEIZURE,
-        REMIND_DEAD: REMIND_DEAD,
-        ALIVE: ALIVE,
-        BIRTH: BIRTH,
         START_GAME: START_GAME,
         END_GAME: END_GAME,
         NEW_FEEDBACK: NEW_FEEDBACK,
@@ -72,9 +81,6 @@ if (typeof module !== 'undefined' && module.exports) {
         TIMER_LEFT: TIMER_LEFT,
         STOP_ROUND: STOP_ROUND,
         INTER_ROUND: INTER_ROUND,
-        EVENT: EVENT,
-        MASTER: MASTER,
-        BANK: BANK,
         DISTRIB_DU: DISTRIB_DU,
         DISTRIB: DISTRIB,
         FIRST_DU: FIRST_DU,
