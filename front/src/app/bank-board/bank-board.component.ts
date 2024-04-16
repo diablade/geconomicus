@@ -138,6 +138,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
       this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
         this.snackbarService.showSuccess("Credit octroyer à " + this.getPlayerName(credit.idPlayer));
         this.game.credits.push(credit);
+        this.game.currentMassMonetary += credit.amount;
       });
     });
   }
