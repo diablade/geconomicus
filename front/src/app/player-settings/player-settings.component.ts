@@ -58,12 +58,12 @@ export class PlayerSettingsComponent implements OnInit {
     getBackgroundStyle() {
         switch (this.player.boardConf) {
             case "green":
-                return {"background-image": "url('/assets/green-carpet.jpg')"};
+                return {"background-image": "url('/assets/images/green-carpet.jpg')"};
             case "custom":
                 return {"background-color": "" + this.player.boardColor};
             case "wood":
             default:
-                return {"background-image": "url('/assets/woodJapAlt.jpg')"};
+                return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
         }
     }
 

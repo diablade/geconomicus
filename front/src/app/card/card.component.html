@@ -3,7 +3,7 @@
 </ng-container>
 <div class="card" [style.width]="width" [style.height]="height" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
   <div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
-    <img [src]="'/assets/lvl'+(card.weight+1)+'.png'"/>
+    <img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
     <div class="containerLetter topLeft" [ngClass]="state=='flipped' ? 'hide' : 'show'">
       <span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{card.letter}}</span>
     </div>
@@ -35,7 +35,7 @@
   </div>
 </div>
 <!-- Preload the image -->
-<img src="/assets/lvl1.png" style="display: none;"/>
-<img src="/assets/lvl2.png" style="display: none;"/>
-<img src="/assets/lvl3.png" style="display: none;"/>
-<img src="/assets/lvl4.png" style="display: none;"/>
+<img src="/assets/images/lvl1.png" style="display: none;"/>
+<img src="/assets/images/lvl2.png" style="display: none;"/>
+<img src="/assets/images/lvl3.png" style="display: none;"/>
+<img src="/assets/images/lvl4.png" style="display: none;"/>

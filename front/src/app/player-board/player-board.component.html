@@ -30,7 +30,7 @@
       {{ player.coins| number : '1.2-2' }}
       <span *ngIf="typeMoney==C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
       <span *ngIf="typeMoney==C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
-      <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
+      <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
