@@ -128,4 +128,15 @@ export class CardComponent implements AfterViewInit {
     // }, 0);
   }
 
+  getBuildText(card: Card) {
+    switch (card.weight) {
+      case 0:
+        return "Obtenir une carte savoir";
+      case 1:
+        return "Obtenir une carte Energie";
+      case 2:
+        return "Obtenir une carte Technologie";
+    }
+    return "Obtenir une carte supérieur";
+  }
 }

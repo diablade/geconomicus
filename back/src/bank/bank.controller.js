@@ -336,7 +336,7 @@ export default {
                 );
                 io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
                 // add cards back to the deck
-                GameModel.findById(credit.idGame, function (err, game) {
+                await GameModel.findById(credit.idGame, function (err, game) {
                     if (err) {
                         log.error("Error fetching game: ", err);
                     } else {
@@ -366,12 +366,10 @@ export default {
                 credit.endDate = Date.now();
                 io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
                 io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
-                // PRISON ?
-                console.log('prison ???');
+                // PRISON OU PAS ...
                 if (seizure.prisonTime && seizure.prisonTime > 0) {
-                    console.log("prison !!!")
                     let newEvent2 = constructor.event(C.PRISON, "bank", credit.idPlayer, seizure.prisonTime, [], Date.now());
-                    GameModel.findByIdAndUpdate(
+                    GameModel.findOneAndUpdate(
                         {_id: credit.idGame, 'players._id': credit.idPlayer},
                         {
                             $set: {'players.$.status': C.PRISON},
@@ -383,14 +381,12 @@ export default {
                             idPlayer: credit.idPlayer,
                             idGame: credit.idGame
                         })
-                        console.log("prisoner:", prisoner);
                         io().to(credit.idGame + "event").emit(C.EVENT, newEvent2);
                         io().to(credit.idPlayer).emit(C.PRISON, {});
-                        res.status(200).json({credit: credit, prisoner: prisoner});
+                        res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
                     });
                 } else {
-                    console.log("pas prison :/ ...")
-                    res.status(200).json({credit: credit});
+                    res.status(200).json({credit: credit, seizure: seizure});
                 }
             } catch (e) {
                 log.error(e);

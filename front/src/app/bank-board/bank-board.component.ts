@@ -177,6 +177,9 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
             if (data.prisoner) {
               this.prisoners.push(data.prisoner);
             }
+            if(data.seizure){
+              this.game.currentMassMonetary -= seizure.coins;
+            }
           }
         });
       } else {
