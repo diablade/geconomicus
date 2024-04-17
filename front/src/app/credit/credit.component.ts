@@ -1,19 +1,16 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {faCircleInfo, faCommentsDollar, faHourglassEnd, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import {Credit} from "../models/game";
 
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
 @Component({
-  selector: 'app-credit-contract',
-  templateUrl: './credit-contract.component.html',
-  styleUrls: ['./credit-contract.component.scss']
+  selector: 'app-credit',
+  templateUrl: './credit.component.html',
+  styleUrls: ['./credit.component.scss']
 })
-export class CreditContractComponent {
-
-  faCircleInfo = faCircleInfo;
-  faHourglassEnd = faHourglassEnd;
+export class CreditComponent {
   faSackDollar = faSackDollar;
   faCommentsDollar = faCommentsDollar;
 

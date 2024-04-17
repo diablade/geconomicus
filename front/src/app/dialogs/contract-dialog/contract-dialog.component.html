@@ -3,11 +3,11 @@
     <h2 class="fs-4 shadowed gecoFont">Contrat crédit</h2>
     <mat-form-field class="input">
       <mat-label>Credit</mat-label>
-      <input type="number" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
+      <input type="number" min="0" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
     </mat-form-field>
     <mat-form-field class="input">
       <mat-label>Interet</mat-label>
-      <input type="number" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
+      <input type="number" min="0" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
     </mat-form-field>
     <div>
       - Taux d'interet : <b>{{game.defaultInterestAmount / game.defaultCreditAmount * 100 | number:'1.2-2'}} % </b>

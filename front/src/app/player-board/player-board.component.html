@@ -71,9 +71,9 @@
     <div class="credits w-100 d-flex flex-row"
          [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
       <div class="d-inline-flex" *ngFor="let credit of credits">
-        <app-credit-contract [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+        <app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
                              [contractor]="player.name"
-                             (actionBtn)="creditActionBtn($event,credit)"></app-credit-contract>
+                             (actionBtn)="creditActionBtn($event,credit)"></app-credit>
       </div>
     </div>
     <div class="d-flex flex-row justify-content-between">

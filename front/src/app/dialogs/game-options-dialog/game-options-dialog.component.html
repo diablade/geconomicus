@@ -24,13 +24,13 @@
     <div class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>nombre de tours</mat-label>
-        <input type="number" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
+        <input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
       </mat-form-field>
     </div>
     <div class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>minutes par tour</mat-label>
-        <input type="number" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+        <input type="number" min="1" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
       </mat-form-field>
     </div>
     <div class="d-inline-flex">
@@ -40,7 +40,7 @@
       </div>
       <mat-form-field *ngIf="game" class="input" appearance="fill">
         <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
+        <input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
       </mat-form-field>
     </div>
     <div class="d-inline-flex">
@@ -50,7 +50,7 @@
       </div>
       <mat-form-field *ngIf="game" class="input">
         <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
+        <input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
       </mat-form-field>
     </div>
     <div class="d-inline-flex">
@@ -59,7 +59,7 @@
       </div>
       <mat-form-field *ngIf="game" class="input">
         <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
+        <input type="number" min="0" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
       </mat-form-field>
     </div>
     <div class="d-inline-flex">
@@ -68,37 +68,37 @@
       </div>
       <mat-form-field *ngIf="game" class="input">
         <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
+        <input type="number" min="0" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.JUNE" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>taux de croissance Dividende Universel</mat-label>
-        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.JUNE" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>bourse de départ (moyenne classe)</mat-label>
-        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>Crédit par défault:</mat-label>
-        <input type="number" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
+        <input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>Intéret:</mat-label>
-        <input type="number" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
+        <input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>Paiement d'intérêts toutes les (en minutes) :</mat-label>
-        <input type="number" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
+        <input type="number" min="0" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
@@ -110,11 +110,11 @@
               <div>en valeur carte, 1 pour 1</div>
               <div>+ frais fixes (equivalent cartes faible) :</div>
             </div>
-            <input type="number" class="smallInput" placeholder="2" [(ngModel)]="game.seizureCosts">
+            <input type="number" min="0" class="smallInput" placeholder="2" [(ngModel)]="game.seizureCosts">
           </div>
         </mat-radio-button>
         <mat-radio-button class="d-flex ms-3 w-100" [value]="'decote'">
-          <div class="d-flex flex-row infoLabel">en valeur carte avec décote de :<input type="number" class="smallInput"
+          <div class="d-flex flex-row infoLabel">en valeur carte avec décote de :<input type="number" min="0" class="smallInput"
                                                                               placeholder="33"
                                                                               [(ngModel)]="game.seizureDecote">%
           </div>
@@ -125,7 +125,7 @@
       Si crédit non recouvré, mise en prison maximum
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>Durée de la prison max (en minutes):</mat-label>
-        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="mb-4 d-flex flex-column">

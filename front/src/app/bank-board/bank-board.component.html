@@ -68,9 +68,9 @@
     </button>
   </div>
   <div class="d-inline-flex" *ngFor="let credit of game.credits">
-    <app-credit-contract [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
+    <app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
                          [contractor]="getPlayerName(credit.idPlayer)"
-                         (actionBtn)="actionBtn($event,credit)"></app-credit-contract>
+                         (actionBtn)="actionBtn($event,credit)"></app-credit>
   </div>
 </div>
 <div *ngIf="game.typeMoney==C.JUNE">Pas de banque en monnaie libre ;)</div>

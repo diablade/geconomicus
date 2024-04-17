@@ -414,7 +414,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(options => {
       if (options == "btn2") {
-        if (this.player.coins >= credit.interest){
+        if (this.player.coins >= credit.interest) {
           this.backService.payInterest(credit).subscribe(data => {
             if (data) {
               _.forEach(this.credits, c => {
@@ -472,11 +472,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
       this.backService.settleCredit(credit).subscribe(data => {
         if (data) {
-          _.forEach(this.credits, c => {
+          this.credits = _.map(this.credits, c => {
             if (c._id == data._id) {
               c.status = data.status;
               c.endDate = data.endDate;
+              this.player.coins -= (c.amount + c.interest);
             }
+            return c;
           });
         }
       });

@@ -18,7 +18,7 @@ function addDebtTimer(id, startTickNow, duration, data) {
             let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
 
             const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-            io().to(timer.data.idGame + "bank").emit(C.PROGRESS_CREDIT, {id, progress});
+            io().to(timer.data.idGame + C.BANK).emit(C.PROGRESS_CREDIT, {id, progress});
             io().to(timer.data.idPlayer).emit(C.PROGRESS_CREDIT, {id, progress});
         },
         (timer) => {
@@ -33,7 +33,7 @@ function addPrisonTimer(id, duration, data) {
             let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
 
             const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-            io().to(timer.data.idGame + "bank").emit(C.PROGRESS_PRISON, {id, progress, remainingTime});
+            io().to(timer.data.idGame + C.BANK).emit(C.PROGRESS_PRISON, {id, progress, remainingTime});
             io().to(timer.data.idPlayer).emit(C.PROGRESS_PRISON, {id, progress, remainingTime});
         },
         (timer) => {
@@ -45,6 +45,7 @@ function addPrisonTimer(id, duration, data) {
 async function checkAbilityPayment(idGame, idPlayer, checkAmountToPay) {
     try {
         const game = await GameModel.findById(idGame);
+        //TODO OPTIMISE RETURN game to be only player
         const player = _.find(game.players, {id: idPlayer});
         if (!player) {
             throw new Error("Can't find player to check amount to pay");
@@ -77,9 +78,9 @@ function timeoutCredit(timer) {
                         },
                     ).then(result => {
                         credit.status = C.REQUEST_CREDIT;
-                        io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
+                        io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
-                        io().to(credit.idGame + "bank").emit(C.TIMEOUT_CREDIT, credit);
+                        io().to(credit.idGame + C.BANK).emit(C.TIMEOUT_CREDIT, credit);
                     }).catch((error) => {
                         log.error(error);
                     });
@@ -93,9 +94,9 @@ function timeoutCredit(timer) {
                         }
                     ).then(update => {
                         credit.status = C.DEFAULT_CREDIT;
-                        io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
+                        io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
                         io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
-                        io().to(credit.idGame + "bank").emit(C.DEFAULT_CREDIT, credit);
+                        io().to(credit.idGame + C.BANK).emit(C.DEFAULT_CREDIT, credit);
                     }).catch((error) => {
                         log.error(error);
                     });
@@ -117,9 +118,9 @@ function timeoutPrison(timer) {
                     $push: {'events': newEvent},
                 }
             ).then(updatedGame => {
-                io().to(data.idGame + "event").emit(C.EVENT, newEvent);
+                io().to(data.idGame + C.EVENT).emit(C.EVENT, newEvent);
                 io().to(data.idPlayer).emit(C.PRISON_ENDED, {});
-                io().to(data.idGame + "bank").emit(C.PRISON_ENDED, {idPlayer: data.idPlayer});
+                io().to(data.idGame + C.BANK).emit(C.PRISON_ENDED, {idPlayer: data.idPlayer});
             }).catch((error) => {
                 log.error(error);
             });
@@ -133,7 +134,7 @@ export default {
         const idPlayer = req.body.idPlayer;
         const interest = req.body.interest;
         const amount = req.body.amount;
-        if (!idPlayer || !idGame || !interest || !amount) {
+        if (!idPlayer || !idGame || interest < 0 || amount < 0) {
             next({
                 status: 400,
                 message: "bad request"
@@ -166,7 +167,7 @@ export default {
                     new: true
                 }).then((updatedGame) => {
                     addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
-                    io().to(idGame + "event").emit(C.EVENT, newEvent);
+                    io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
                     res.status(200).json(credit);
                 }).catch((error) => {
@@ -223,43 +224,46 @@ export default {
                 message: "bad request"
             });
         } else {
-            GameModel.findById({_id: credit.idGame})
-                .then((game) => {
-                        const canPay = checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));
-                        if (canPay) {
-                            let newEvent = constructor.event(C.CREDIT_DONE, C.MASTER, credit.idPlayer, credit.interest, [credit], Date.now());
-                            GameModel.findOneAndUpdate(
-                                {_id: credit.idGame, 'credits._id': credit._id},
-                                {
-                                    $set: {'credits.$.status': C.CREDIT_DONE, 'credits.$.endDate': Date.now()},
-                                    $inc: {'bankInterestEarned': credit.interest, 'currentMassMonetary': -credit.amount},
-                                    $push: {'events': newEvent},
-                                }, {new: true}
-                            ).then(updatedGame => {
-                                let creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
-                                bankTimerManager.stopAndRemoveTimer(credit._id);
-                                io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
-                                io().to(credit.idPlayer).emit(C.CREDIT_DONE, creditUpdated);
-                                io().to(credit.idGame + "bank").emit(C.CREDIT_DONE, creditUpdated);
-                                res.status(200).json(creditUpdated);
-                            }).catch((error) => {
-                                log.error(error);
-                            });
-                        } else {
-                            next({
-                                status: 404,
-                                message: "Fond insuffisant!"
-                            });
-                        }
-                    }
-                )
-                .catch(error => {
-                    log.error('get game error', error);
+            try {
+                const canPay = await checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));
+                if (canPay) {
+                    const game = await GameModel.findOneAndUpdate(
+                        {_id: credit.idGame, 'players._id': credit.idPlayer},
+                        {
+                            $inc: {
+                                'players.$.coins': -(credit.interest + credit.amount),
+                                'bankInterestEarned': credit.interest,
+                                'currentMassMonetary': -credit.amount
+                            },
+                        },{new:true});
+
+                    let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, credit.interest, [credit], Date.now());
+                    const updatedGame = await GameModel.findOneAndUpdate(
+                        {_id: credit.idGame, 'credits._id': credit._id},
+                        {
+                            $set: {'credits.$.status': C.CREDIT_DONE, 'credits.$.endDate': Date.now()},
+                            $push: {'events': newEvent},
+                        }, {new: true});
+
+                    let creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
+                    await bankTimerManager.stopAndRemoveTimer(credit._id);
+                    io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
+                    io().to(credit.idPlayer).emit(C.CREDIT_DONE, creditUpdated);
+                    io().to(credit.idGame + C.BANK).emit(C.CREDIT_DONE, creditUpdated);
+                    res.status(200).json(creditUpdated);
+                } else {
                     next({
                         status: 404,
-                        message: "not found"
+                        message: "Fond insuffisant!"
                     });
+                }
+            } catch (err) {
+                log.error(err);
+                next({
+                    status: 400,
+                    message: "error game"
                 });
+            }
         }
     },
     payInterest: async (req, res, next) => {
@@ -293,7 +297,7 @@ export default {
                             if (updatedGame) {
                                 const creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
                                 addDebtTimer(credit._id, true, updatedGame.timerCredit, creditUpdated);
-                                io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
+                                io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
                                 io().to(credit.idGame).emit(C.PAYED_INTEREST, creditUpdated);
                                 res.status(200).json(creditUpdated);
                             }
@@ -317,84 +321,86 @@ export default {
             });
         }
     },
-    seizure: async (req, res, next) => {
-        const credit = req.body.credit;
-        const seizure = req.body.seizure;
-        if (!credit && !seizure) {
-            next({status: 400, message: "bad request"});
-        } else {
-            try {
-                let newEvent = constructor.event(C.SEIZURE, credit.idPlayer, "bank", seizure.coins, [seizure.cards], Date.now());
-                // remove card and coins of player
-                await GameModel.updateOne(
-                    {_id: credit.idGame, 'players._id': credit.idPlayer},
-                    {
-                        $pull: {'players.$.cards': {_id: {$in: seizure.cards.map(c => c.id)}}},
-                        $inc: {'players.$.coins': -seizure.coins},
-                        $push: {'events': newEvent},
-                    }
-                );
-                io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
-
-                const groupedCards = _.groupBy(_.sortBy(seizure.cards, 'weight'), 'weight');
-                //PUT BACK CARDS IN THE DECKs
-                await GameModel.updateOne(
-                    {_id: credit.idGame},
-                    {
-                        $push: {
-                            [`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
-                            [`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
-                            [`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
-                            [`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
-                        },
-                    }
-                );
-                // remove coins MMonetary and update status credit
-                await GameModel.updateOne(
-                    {_id: credit.idGame, 'credits._id': credit._id},
-                    {
-                        $inc: {'currentMassMonetary': -seizure.coins},
-                        $set: {
-                            'credits.$.status': C.CREDIT_DONE,
-                            'credits.$.endDate': Date.now(),
-                        },
-                    }
-                );
-                credit.status = C.CREDIT_DONE;
-                credit.endDate = Date.now();
-                io().to(credit.idGame + "event").emit(C.EVENT, newEvent);
-                io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
-                // PRISON OU PAS ...
-                if (seizure.prisonTime && seizure.prisonTime > 0) {
-                    let newEvent2 = constructor.event(C.PRISON, "bank", credit.idPlayer, seizure.prisonTime, [], Date.now());
-                    GameModel.findOneAndUpdate(
+    seizure:
+        async (req, res, next) => {
+            const credit = req.body.credit;
+            const seizure = req.body.seizure;
+            if (!credit && !seizure) {
+                next({status: 400, message: "bad request"});
+            } else {
+                try {
+                    let newEvent = constructor.event(C.SEIZURE, credit.idPlayer, C.BANK, seizure.coins, [seizure.cards], Date.now());
+                    // remove card and coins of player
+                    await GameModel.updateOne(
                         {_id: credit.idGame, 'players._id': credit.idPlayer},
                         {
-                            $set: {'players.$.status': C.PRISON},
-                            $push: {'events': newEvent2},
-                        }, {new: true}
-                    ).then(updatedGame => {
-                        let prisoner = _.find(updatedGame.players, p => p._id == credit.idPlayer);
-                        addPrisonTimer(credit.idPlayer, seizure.prisonTime, {
-                            idPlayer: credit.idPlayer,
-                            idGame: credit.idGame
-                        })
-                        io().to(credit.idGame + "event").emit(C.EVENT, newEvent2);
-                        io().to(credit.idPlayer).emit(C.PRISON, {});
-                        res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
-                    });
-                } else {
-                    res.status(200).json({credit: credit, seizure: seizure});
+                            $pull: {'players.$.cards': {_id: {$in: seizure.cards.map(c => c.id)}}},
+                            $inc: {'players.$.coins': -seizure.coins},
+                            $push: {'events': newEvent},
+                        }
+                    );
+                    io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
+
+                    const groupedCards = _.groupBy(_.sortBy(seizure.cards, 'weight'), 'weight');
+                    //PUT BACK CARDS IN THE DECKs
+                    await GameModel.updateOne(
+                        {_id: credit.idGame},
+                        {
+                            $push: {
+                                [`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
+                                [`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
+                                [`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
+                                [`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
+                            },
+                        }
+                    );
+                    // remove coins MMonetary and update status credit
+                    await GameModel.updateOne(
+                        {_id: credit.idGame, 'credits._id': credit._id},
+                        {
+                            $inc: {'currentMassMonetary': -seizure.coins},
+                            $set: {
+                                'credits.$.status': C.CREDIT_DONE,
+                                'credits.$.endDate': Date.now(),
+                            },
+                        }
+                    );
+                    credit.status = C.CREDIT_DONE;
+                    credit.endDate = Date.now();
+                    io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
+                    io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
+                    // PRISON OU PAS ...
+                    if (seizure.prisonTime && seizure.prisonTime > 0) {
+                        let newEvent2 = constructor.event(C.PRISON, C.BANK, credit.idPlayer, seizure.prisonTime, [], Date.now());
+                        GameModel.findOneAndUpdate(
+                            {_id: credit.idGame, 'players._id': credit.idPlayer},
+                            {
+                                $set: {'players.$.status': C.PRISON},
+                                $push: {'events': newEvent2},
+                            }, {new: true}
+                        ).then(updatedGame => {
+                            let prisoner = _.find(updatedGame.players, p => p._id == credit.idPlayer);
+                            addPrisonTimer(credit.idPlayer, seizure.prisonTime, {
+                                idPlayer: credit.idPlayer,
+                                idGame: credit.idGame
+                            })
+                            io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent2);
+                            io().to(credit.idPlayer).emit(C.PRISON, {});
+                            res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
+                        });
+                    } else {
+                        res.status(200).json({credit: credit, seizure: seizure});
+                    }
+                } catch (e) {
+                    log.error(e);
+                    next({status: 500, message: e});
                 }
-            } catch (e) {
-                log.error(e);
-                next({status: 500, message: e});
             }
-        }
-    },
+        },
     resetIdGameDebtTimers(idGame) {
         bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-    },
+    }
+    ,
     startCreditsByIdGame(idGame) {
         GameModel.updateMany(
             {_id: idGame, 'credits.status': C.PAUSED_CREDIT},

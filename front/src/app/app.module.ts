@@ -51,12 +51,12 @@ import {MatSliderModule} from "@angular/material/slider";
 import {BankBoardComponent} from './bank-board/bank-board.component';
 import {MatChipsModule} from "@angular/material/chips";
 import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
-import { CreditContractComponent } from './credit-contract/credit-contract.component';
-import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
-import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
+import {CreditComponent} from './credit/credit.component';
+import {ConfirmDialogComponent} from './dialogs/confirm-dialog/confirm-dialog.component';
+import {BtnTimerAutoClickComponent} from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {CdkMenuTrigger} from "@angular/cdk/menu";
-import { SeizureDialogComponent } from './dialogs/seizure-dialog/seizure-dialog.component';
+import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
@@ -85,42 +85,42 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     SurveyComponent,
     BankBoardComponent,
     ContractDialogComponent,
-    CreditContractComponent,
+    CreditComponent,
     ConfirmDialogComponent,
     BtnTimerAutoClickComponent,
     SeizureDialogComponent,
   ],
-	imports: [
-		HttpClientModule,
-		BrowserModule,
-		BrowserAnimationsModule,
-		AppRoutingModule,
-		MatRadioModule,
-		MatButtonModule,
-		MatDialogModule,
-		MatIconModule,
-		MatSnackBarModule,
-		MatInputModule,
-		FormsModule,
-		NgxColorsModule,
-		NgOptimizedImage,
-		MatBadgeModule,
-		MatSlideToggleModule,
-		FontAwesomeModule,
-		MatProgressSpinnerModule,
-		MatSelectModule,
-		NgChartsModule,
-		MatCheckboxModule,
-		MatTooltipModule,
-		ZXingScannerModule,
-		MatListModule,
-		MatMenuModule,
-		MatSliderModule,
-		MatChipsModule,
-		MatExpansionModule,
-		CdkMenuTrigger,
+  imports: [
+    HttpClientModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    MatRadioModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatInputModule,
+    FormsModule,
+    NgxColorsModule,
+    NgOptimizedImage,
+    MatBadgeModule,
+    MatSlideToggleModule,
+    FontAwesomeModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    NgChartsModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    ZXingScannerModule,
+    MatListModule,
+    MatMenuModule,
+    MatSliderModule,
+    MatChipsModule,
+    MatExpansionModule,
+    CdkMenuTrigger,
     DragDropModule,
-	],
+  ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}
   ],

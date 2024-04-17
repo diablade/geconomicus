@@ -2,12 +2,17 @@
 const OPEN = 'open';
 const JUNE = 'june';
 const DEBT = 'debt';
+const EVENT = 'event';
+const MASTER = 'master';
+const BANK = 'bank';
+
 const NEW_CREDIT = "new-credit";
 const NEW_PLAYER = "new-player";
 const UPDATED_PLAYER = "updated-player";
 const CREDITS_STARTED = "credits-started";
 const RUNNING_CREDIT = "running";
 const PAUSED_CREDIT = "paused";
+const SETTLE_CREDIT = "settle-credit";
 const PAYED_INTEREST = "payed-interest";
 const CREDIT_DONE = "credit-done";
 const TIMEOUT_CREDIT = "timeout-credit";
@@ -22,9 +27,6 @@ const PLAYING = 'playing';
 const STOP_ROUND = 'stop-round';
 const TIMER_LEFT = 'timer-left';
 const INTER_ROUND = 'inter-round';
-const EVENT = 'event';
-const MASTER = 'master';
-const BANK = 'bank';
 const DISTRIB_DU = 'distrib_du';
 const DISTRIB = 'distrib';
 const FIRST_DU = 'first_du';
@@ -65,6 +67,7 @@ if (typeof module !== 'undefined' && module.exports) {
         PAUSED_CREDIT: PAUSED_CREDIT,
         PAYED_INTEREST: PAYED_INTEREST,
         TIMEOUT_CREDIT: TIMEOUT_CREDIT,
+        SETTLE_CREDIT: SETTLE_CREDIT,
         REQUEST_CREDIT: REQUEST_CREDIT,
         DEFAULT_CREDIT: DEFAULT_CREDIT,
         PROGRESS_CREDIT: PROGRESS_CREDIT,
