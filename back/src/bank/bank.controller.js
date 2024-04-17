@@ -335,22 +335,20 @@ export default {
                     }
                 );
                 io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
-                // add cards back to the deck
-                await GameModel.findById(credit.idGame, function (err, game) {
-                    if (err) {
-                        log.error("Error fetching game: ", err);
-                    } else {
-                        _.forEach(seizure.cards, card => {
-                            game.decks[card.weight].push(card);
-                        });
-                        // Save the updated game
-                        game.save(function (err, updatedGame) {
-                            if (err) {
-                                log.error("Error updating game: ", err);
-                            }
-                        });
+
+                const groupedCards = _.groupBy(_.sortBy(seizure.cards, 'weight'), 'weight');
+                //PUT BACK CARDS IN THE DECKs
+                await GameModel.updateOne(
+                    {_id: credit.idGame},
+                    {
+                        $push: {
+                            [`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
+                            [`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
+                            [`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
+                            [`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
+                        },
                     }
-                });
+                );
                 // remove coins MMonetary and update status credit
                 await GameModel.updateOne(
                     {_id: credit.idGame, 'credits._id': credit._id},

@@ -97,6 +97,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
           c.status = data.status;
           c.extended = data.extended;
           c.progress = 0;
+          this.game.currentMassMonetary -= c.interest;
         }
       });
     });
@@ -167,17 +168,18 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
         console.log(seizure);
         this.backService.seizure(seizure, credit).subscribe((data: any) => {
           this.snackbarService.showSuccess("Saisie effectué !");
-          console.log("saisie effectué", data);
           if (data) {
-            _.forEach(this.game.credits, c => {
+            this.game.credits = _.map(this.game.credits, c => {
               if (c._id == data.credit._id) {
-                c = data.credit;
+                return data.credit;
+              } else {
+                return c;
               }
             });
             if (data.prisoner) {
               this.prisoners.push(data.prisoner);
             }
-            if(data.seizure){
+            if (data.seizure) {
               this.game.currentMassMonetary -= seizure.coins;
             }
           }

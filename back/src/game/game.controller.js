@@ -10,6 +10,7 @@ import {differenceInMilliseconds} from "date-fns";
 import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import Timer from "../misc/Timer.js";
+import bankTimerManager from "../bank/BankTimerManager.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
@@ -197,6 +198,7 @@ async function stopRound(idGame, gameRound) {
         $push: {events: stopRoundEvent}
     })
         .then(res => {
+            bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
             io().to(idGame).emit(C.STOP_ROUND);
             io().to(idGame+"event").emit(C.EVENT, stopRoundEvent);
         })

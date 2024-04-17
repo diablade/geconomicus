@@ -24,7 +24,7 @@ class BankTimerManager {
     async stopAndRemoveTimer(id) {
         let timer = this.getTimer(id);
         if (timer) {
-            timer.stop();
+            await timer.stop();
             _.remove(this.timers, {"id": id});
         }
     }

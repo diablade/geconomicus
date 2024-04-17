@@ -5,7 +5,7 @@
   <div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
     Rejoins la partie {{game.name}}</div>
   <div class="text text-center" *ngIf="game && game.status==='open'">
-    soit en scannant le QrCode ou via {{environment.WEB_HOST}}, puis cliquez sur "rejoindre" !
+    Scanne le QrCode via {{environment.WEB_HOST}}, puis clique sur "rejoindre" !
   </div>
   <div class="fs-1 text-center pt-4 pb-4 text-capitalize gecoFont shadowed"
        *ngIf="game && game.status!=='open'">{{game.name}}</div>

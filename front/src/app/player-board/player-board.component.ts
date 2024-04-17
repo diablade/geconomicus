@@ -196,6 +196,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.socket.on(C.RESET_GAME, async (data: any) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
+      this.dialog.closeAll();
       this.cards = [];
       this.credits = [];
       this.statusGame = C.OPEN;
@@ -277,7 +278,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.defaultCredit = true;
     });
     this.socket.on(C.PRISON, async (data: any) => {
-      this.defaultCredit=false;
+      this.defaultCredit = false;
       this.prison = true;
     });
     this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
@@ -289,7 +290,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.prison = false;
     });
     this.socket.on(C.SEIZURE, async (data: any) => {
-      _.forEach(data.seizureCards,c=>{
+      _.forEach(data.seizureCards, c => {
         _.remove(this.cards, {_id: c._id});
       });
       this.player.coins -= data.seizureCoins;
@@ -413,19 +414,23 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(options => {
       if (options == "btn2") {
-        this.backService.payInterest(credit).subscribe(data => {
-          if (data) {
-            _.forEach(this.credits, c => {
-              if (c._id == data._id) {
-                c.status = data.status;
-                c.extended = data.extended;
-                c.progress = 0;
-              }
-            });
-            this.player.coins -= credit.interest;
-            this.statusGame = C.PLAYING;
-          }
-        });
+        if (this.player.coins >= credit.interest){
+          this.backService.payInterest(credit).subscribe(data => {
+            if (data) {
+              _.forEach(this.credits, c => {
+                if (c._id == data._id) {
+                  c.status = data.status;
+                  c.extended = data.extended;
+                  c.progress = 0;
+                }
+              });
+              this.player.coins -= credit.interest;
+              this.statusGame = C.PLAYING;
+            }
+          });
+        } else {
+          this.snackbarService.showError("Fond insuffisant ! allez voir la banque");
+        }
       } else if (options == "btn1") {
         if (this.player.coins >= (credit.amount + credit.interest)) {
           this.settleCredit(credit);

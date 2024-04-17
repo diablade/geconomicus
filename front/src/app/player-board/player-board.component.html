@@ -41,7 +41,7 @@
   </div>
   <div class="" *ngIf="statusGame!==C.PLAYING">
     <div
-      class="text-center gecoFont shadowed fs-1">{{ statusGame !== C.END_GAME ? "En attente..." : "Partie terminé..." }}
+      class="text-center gecoFont shadowed fs-1 m-4">{{ statusGame !== C.END_GAME ? "En attente..." : "Partie terminé..." }}
     </div>
     <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
             color="accent">

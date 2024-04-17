@@ -4,7 +4,7 @@
   </h1>
   <div class="d-flex flex-row">
     <div class="w-50">
-      <h2 class="fs-4 shadowed gecoFont">Indicateur économique courant</h2>
+      <h2 class="fs-4 shadowed gecoFont">Indicateurs économique courant</h2>
       <div>
         Masse Monétaire en circulation :
         <mat-chip>
@@ -45,7 +45,7 @@
       <h2 class="fs-4 shadowed gecoFont">Prison</h2>
       <div class="prison">
         <div *ngFor="let prisoner of prisoners">
-          <div class="player d-flex flex-column justify-content-center">
+          <div class="player m-2 d-flex flex-column justify-content-center">
             <div class="player-frame player-svg"
                  [ngStyle]="{'border-color':'#'+prisoner.hairColor}"
                  [innerHTML]="getSanitizedSvgFromString(prisoner.image)">

@@ -15,7 +15,6 @@ export default class Timer {
     }
 
     start() {
-        this.stop(); // Stop any existing timer
         this.endTime = addMilliseconds(new Date(), this.duration);
         this.startTime = new Date();
 
@@ -33,11 +32,19 @@ export default class Timer {
     stop() {
         if (this.timer) {
             clearTimeout(this.timer);
-            this.timer = null;
         }
         if (this.heartbeat) {
             clearInterval(this.heartbeat);
-            this.heartbeat = null;
         }
+        // this.id = null;
+        this.duration = null
+        this.interval = null;
+        this.data = null;
+        this.callbackAtInterval = null;
+        this.callbackAtEnd = null;
+        this.timer = null;
+        this.heartbeat = null;
+        this.endTime = null;
+        this.startTime = null;
     }
 }
