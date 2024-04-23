@@ -27,7 +27,7 @@ let EventGeco = {
     emitter: String,
     receiver: String,
     amount: Number,
-    resources: [Card],
+    resources: [],
     date: Date,
 }
 

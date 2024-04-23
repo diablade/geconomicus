@@ -44,7 +44,7 @@ export class EventGeco {
   emitter: string = "";
   receiver: string = "";
   amount: number = 0;
-  resources: Card[] = [];
+  resources: any[] = [];
   // @ts-ignore
   date: Date = Date.now();
 }

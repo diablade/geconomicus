@@ -324,8 +324,7 @@ export default {
             });
         }
     },
-    seizure:
-        async (req, res, next) => {
+    seizure: async (req, res, next) => {
             const credit = req.body.credit;
             const seizure = req.body.seizure;
             if (!credit && !seizure) {
@@ -370,7 +369,6 @@ export default {
                     credit.status = C.CREDIT_DONE;
                     credit.endDate = Date.now();
                     io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-                    // io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
                     // PRISON OU PAS ...
                     if (seizure.prisonTime && seizure.prisonTime > 0) {
                         let newEvent2 = constructor.event(C.PRISON, C.BANK, credit.idPlayer, seizure.prisonTime, [], Date.now());
@@ -406,8 +404,7 @@ export default {
         },
     resetIdGameDebtTimers(idGame) {
         bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-    }
-    ,
+    },
     startCreditsByIdGame(idGame) {
         GameModel.updateMany(
             {_id: idGame, 'credits.status': C.PAUSED_CREDIT},

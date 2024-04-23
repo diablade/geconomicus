@@ -6,9 +6,9 @@ const EVENT = 'event';
 const MASTER = 'master';
 const BANK = 'bank';
 
-const NEW_CREDIT = "new-credit";
 const NEW_PLAYER = "new-player";
 const UPDATED_PLAYER = "updated-player";
+const NEW_CREDIT = "new-credit";
 const CREDITS_STARTED = "credits-started";
 const RUNNING_CREDIT = "running";
 const PAUSED_CREDIT = "paused";

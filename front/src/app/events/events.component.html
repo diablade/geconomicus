@@ -44,13 +44,41 @@
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'Défausse de cartes pour construire'">➡️🛠</span>
+          <span [matTooltip]="'Défausse de cartes pour établir'">➡️🛠</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_NEWCARDS" class="">
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
           <span [matTooltip]="'Carte superieur créée'">⬅️🎁</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
+        <span *ngSwitchCase="C.NEW_CREDIT" class="">
+          <span [matTooltip]="'la banque crédite'">{{event.amount}}💰️</span>
+          <span [matTooltip]="'interet'">{{event.resources[0].interest}}📃➡️</span>
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+        </span>
+        <span *ngSwitchCase="C.PAYED_INTEREST" class="">
+          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
+          <span [matTooltip]="'interet payé'">{{event.amount}}💰️➡️🏦</span>
+        </span>
+        <span *ngSwitchCase="C.DEFAULT_CREDIT" class="">
+          <span [matTooltip]="'défaut de credit'">️🚨🏦➡️</span>
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+        </span>
+        <span *ngSwitchCase="C.SEIZURE" class="">
+          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
+          <span [matTooltip]="'la banque à saisie'">➡️🏦</span>
+          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
+        <span *ngSwitchCase="C.PRISON" class="">
+          <span [matTooltip]="'en prison'">⛓️</span>
+          <span [matTooltip]="getPlayerName(event.receiver)">👤</span>
+          <span [matTooltip]="'en prison'">⛓️</span>
+          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+        </span>
+        <span *ngSwitchCase="C.PRISON_ENDED" class="">
+          <span [matTooltip]="'fin de prison'">⛓️➡🆓</span>
+          <span [matTooltip]="getPlayerName(event.receiver)">👤</span>
         </span>
         <span *ngSwitchDefault>{{event.typeEvent}}</span>
       </span>
