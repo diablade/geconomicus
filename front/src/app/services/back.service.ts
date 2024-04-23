@@ -209,22 +209,34 @@ export class BackService {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
       idGame: idGame,
       name: results.name,
+      typeMoney: results.typeMoney,
+      amountCardsForProd: results.amountCardsForProd,
+      generatedIdenticalCards: results.generatedIdenticalCards,
+      surveyEnabled: results.surveyEnabled,
       priceWeight1: results.priceWeight1,
       priceWeight2: results.priceWeight2,
       priceWeight3: results.priceWeight3,
       priceWeight4: results.priceWeight4,
+      round: results.round,
+      roundMax: results.roundMax,
+      roundMinutes: results.roundMinutes,
+
       tauxCroissance: results.tauxCroissance,
-      surveyEnabled: results.surveyEnabled,
-      generatedIdenticalCards: results.generatedIdenticalCards,
-      amountCardsForProd: results.amountCardsForProd,
+      inequalityStart: results.inequalityStart,
+      startAmountCoins: results.startAmountCoins,
       pctRich: results.pctRich,
       pctPoor: results.pctPoor,
-      startAmountCoins: results.startAmountCoins,
-      inequalityStart: results.inequalityStart,
-      round: results.round,
-      typeMoney: results.typeMoney,
-      roundMax: results.roundMax,
-      roundMinutes: results.roundMinutes
+
+      defaultCreditAmount: results.defaultCreditAmount,
+      defaultInterestAmount: results.defaultInterestAmount,
+      bankInterestEarned: results.bankInterestEarned,
+      bankGoodsEarned: results.bankGoodsEarned,
+      timerCredit: results.timerCredit,
+      timerPrison: results.timerPrison,
+      manualBank: results.manualBank,
+      seizureType: results.seizureType,
+      seizureCosts: results.seizureCosts,
+      seizureDecote: results.seizureDecote
     }).pipe(
       catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
     );
@@ -276,13 +288,16 @@ export class BackService {
   }
 
   payInterest(credit: Credit) {
-    return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit:credit}).pipe(
+    return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
       catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
     )
   }
 
   seizure(seizure: any, credit: Credit) {
-    return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {credit:credit,seizure:seizure}).pipe(
+    return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {
+      credit: credit,
+      seizure: seizure
+    }).pipe(
       catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
     )
   }

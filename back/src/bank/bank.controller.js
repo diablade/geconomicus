@@ -9,9 +9,10 @@ import bankTimerManager from "./BankTimerManager.js";
 import {differenceInMilliseconds} from "date-fns";
 
 const minute = 60 * 1000;
-const fiveSeconds = 10 * 1000;
+const fiveSeconds = 5 * 1000;
 
 function addDebtTimer(id, startTickNow, duration, data) {
+    console.log("duration", duration);
     bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data,
         (timer) => {
             let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
@@ -165,8 +166,10 @@ export default {
                     $inc: {'currentMassMonetary': amount}
                 }, {
                     new: true
-                }).then((updatedGame) => {
-                    addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
+                }).then((newUpdatedGame) => {
+                    console.log("timer:", newUpdatedGame.timerCredit);
+                    console.log("timer:", updatedGame.timerCredit);
+                    addDebtTimer(id.toString(), startNow, newUpdatedGame.timerCredit, credit);
                     io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
                     io().to(idPlayer).emit(C.NEW_CREDIT, credit);
                     res.status(200).json(credit);
@@ -235,7 +238,7 @@ export default {
                                 'bankInterestEarned': credit.interest,
                                 'currentMassMonetary': -credit.amount
                             },
-                        },{new:true});
+                        }, {new: true});
 
                     let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, credit.interest, [credit], Date.now());
                     const updatedGame = await GameModel.findOneAndUpdate(
@@ -334,12 +337,11 @@ export default {
                     await GameModel.updateOne(
                         {_id: credit.idGame, 'players._id': credit.idPlayer},
                         {
-                            $pull: {'players.$.cards': {_id: {$in: seizure.cards.map(c => c.id)}}},
+                            $pull: {'players.$.cards': {_id: {$in: seizure.cards.map(c => c._id)}}},
                             $inc: {'players.$.coins': -seizure.coins},
                             $push: {'events': newEvent},
                         }
                     );
-                    io().to(credit.idPlayer).emit(C.SEIZURE, {seizure: seizure});
 
                     const groupedCards = _.groupBy(_.sortBy(seizure.cards, 'weight'), 'weight');
                     //PUT BACK CARDS IN THE DECKs
@@ -368,7 +370,7 @@ export default {
                     credit.status = C.CREDIT_DONE;
                     credit.endDate = Date.now();
                     io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-                    io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
+                    // io().to(credit.idPlayer).emit(C.CREDIT_DONE, {credit});
                     // PRISON OU PAS ...
                     if (seizure.prisonTime && seizure.prisonTime > 0) {
                         let newEvent2 = constructor.event(C.PRISON, C.BANK, credit.idPlayer, seizure.prisonTime, [], Date.now());
@@ -385,10 +387,15 @@ export default {
                                 idGame: credit.idGame
                             })
                             io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent2);
-                            io().to(credit.idPlayer).emit(C.PRISON, {});
+                            io().to(credit.idPlayer).emit(C.SEIZURE, {
+                                credit: credit,
+                                seizure: seizure,
+                                prisoner: prisoner
+                            });
                             res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
                         });
                     } else {
+                        io().to(credit.idPlayer).emit(C.SEIZURE, {credit: credit, seizure: seizure});
                         res.status(200).json({credit: credit, seizure: seizure});
                     }
                 } catch (e) {

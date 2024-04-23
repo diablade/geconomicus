@@ -253,6 +253,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
       data: {game: _.clone(this.game)},
     });
     dialogRef.afterClosed().subscribe(results => {
+      console.log(results);
       if (results === "reset") {
         this.resetGame();
       } else {

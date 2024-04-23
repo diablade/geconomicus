@@ -277,9 +277,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.snackbarService.showError("DEFAULT DE PAIEMENT");
       this.defaultCredit = true;
     });
-    this.socket.on(C.PRISON, async (data: any) => {
-      this.defaultCredit = false;
-      this.prison = true;
+    this.socket.on(C.CREDIT_DONE, async (data: any) => {
+      _.forEach(this.credits, c => {
+        if (c._id == data._id) {
+          c.status = C.CREDIT_DONE;
+        }
+      });
     });
     this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
       this.prisonProgress = data.progress;
@@ -288,12 +291,28 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.socket.on(C.PRISON_ENDED, async (data: any) => {
       this.prison = false;
+      const dialogRef = this.dialog.open(InformationDialogComponent, {
+        data: {text: "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ "},
+      });
     });
     this.socket.on(C.SEIZURE, async (data: any) => {
-      _.forEach(data.seizureCards, c => {
+      console.log("at seizure", data);
+
+      _.forEach(data.seizure.cards, c => {
         _.remove(this.cards, {_id: c._id});
       });
-      this.player.coins -= data.seizureCoins;
+
+      this.credits = _.map(this.credits, c => {
+        if (c._id == data.credit._id) {
+          c.status = C.CREDIT_DONE;
+        }
+        return c;
+      });
+      this.player.coins -= data.seizure.coins;
+      this.defaultCredit = false;
+      if (data.prisoner && data.prisoner._id == this.idPlayer) {
+        this.prison = true;
+      }
     });
   }
 
