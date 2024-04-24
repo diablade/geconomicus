@@ -277,7 +277,7 @@ export default {
                 message: "bad request"
             });
         } else {
-            let newEvent = constructor.event(C.PAYED_INTEREST, C.MASTER, credit.idPlayer, credit.interest, [credit], Date.now());
+            let newEvent = constructor.event(C.PAYED_INTEREST, credit.idPlayer,C.MASTER, credit.interest, [credit], Date.now());
             GameModel.findOneAndUpdate(
                 {_id: credit.idGame, 'players._id': credit.idPlayer},
                 {

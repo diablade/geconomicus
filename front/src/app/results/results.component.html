@@ -16,10 +16,10 @@
                 <div><span class="fw-bold">Meilleur joueur monnaie: </span>🥇TODO</div>
                 <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇TODO</div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
                 <div><span class="fw-bold">Taux de croissance : </span>{{game?.tauxCroissance}}</div>
-                <div><span class="fw-bold">Mass monetaire initial : </span>{{initialMM | number:'1.2-2'}} Ğ1</div>
-                <div><span class="fw-bold">Mass monetaire final : </span>{{game?.currentMassMonetary | number:'1.2-2'}}
+                <div><span class="fw-bold">Mass monétaire initial : </span>{{initialMM | number:'1.2-2'}} Ğ1</div>
+                <div><span class="fw-bold">Mass monétaire final : </span>{{game?.currentMassMonetary | number:'1.2-2'}}
                     Ğ1
                 </div>
                 <div><span class="fw-bold">Formule de calcul du DU: </span>(MasseM / nb Joueur) * Taux  , recalculer toutes les minutes</div>
@@ -31,6 +31,15 @@
                     / {{game?.players?.length}}
                     * {{game?.tauxCroissance | number:'1.2-2'}}) = {{game?.currentDU}} Ğ1
                 </div>
+            </div>
+            <div *ngIf="game?.typeMoney == C.DEBT" class="col-sm-12 col-md-4">
+                <div><span class="fw-bold">Mass monétaire initial : </span>{{initialMM | number:'1.2-2'}} €</div>
+                <div><span class="fw-bold">Mass monétaire final : </span>{{game?.currentMassMonetary | number:'1.2-2'}} €
+                </div>
+                <div><span class="fw-bold">Dettes initial: </span> {{ initialDebts }} €</div>
+                <div><span class="fw-bold">Dettes final : </span>{{getDebts()}} €
+                </div>
+                <div><span class="fw-bold">Interets récupéré au final : </span>{{game?.bankInterestEarned}} €</div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <div><span class="fw-bold">Début: </span>{{startGameDate| date:"YYYY-MMM-dd HH:mm"}}</div>
@@ -52,8 +61,8 @@
                     [type]="'line'">
             </canvas>
         </div>
-        <h1 class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
-        <div class="graph bg-white rounded shadow">
+        <h1 *ngIf="game?.typeMoney==C.JUNE" class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
+        <div *ngIf="game?.typeMoney==C.JUNE" class="graph bg-white rounded shadow">
             <canvas baseChart
                     class="chart"
                     height="500"

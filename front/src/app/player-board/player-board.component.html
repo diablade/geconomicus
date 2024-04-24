@@ -5,9 +5,9 @@
   <div class="prison" *ngIf="prison">
     <div class="countDownContainer">
       <div class="time">
-        <div class="minute shadowed">{{ minutesPrison | number:'2.0'}}</div>
+        <div class="minute shadowed">{{ minutesPrison | number:'2.0' }}</div>
         <div class="deuxpoints shadowed">:</div>
-        <div class="seconds shadowed">{{ secondsPrison | number: '2.0'}}</div>
+        <div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
       </div>
       <mat-progress-spinner
         [color]="'warn'"
@@ -72,8 +72,8 @@
          [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
       <div class="d-inline-flex" *ngFor="let credit of credits">
         <app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
-                             [contractor]="player.name"
-                             (actionBtn)="creditActionBtn($event,credit)"></app-credit>
+                    [contractor]="player.name"
+                    (actionBtn)="creditActionBtn($event,credit)"></app-credit>
       </div>
     </div>
     <div class="d-flex flex-row justify-content-between">

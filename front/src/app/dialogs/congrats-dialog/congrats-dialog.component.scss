@@ -1,0 +1,46 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.wheel-container {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  //left: 13vw;
+  //top: 30vh;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(#ff990000 0% 8.33%, #ffe179c2 8.33% 16.66%, #ff000000 16.66% 25%, #ffe179c2 25% 33.33%, #ff000000 33.33% 41.66%, #ffe179c2 41.66% 50%, #ffffff00 50% 58.33%, #ffe179c2 58.33% 66.66%, #ffffff00 66.66% 75%, #ffe179c2 75% 83.33%, #ffffff00 83.33% 91.66%, #ffe179c2 91.66% 100%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 1s ease-out;
+  animation: spin 10s linear infinite;
+  opacity: 0.5;
+}
+
+.card {
+  position: fixed;
+  background: transparent;
+  margin: 50px;
+  align-items: center;
+  border:transparent;
+}
+
+.congrats-message{
+  background: rgba(255, 216, 155, 0.65);
+  position: fixed;
+  border: white solid 2px;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 33vh;
+}

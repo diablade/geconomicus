@@ -41,6 +41,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   currentDU = 0;
   initialDU = 0;
   initialMM = 0;
+  initialDebts = 0;
   reincarnates = 0;
   startGameDate: Date | undefined;
   stopGameDate: Date | undefined;
@@ -56,6 +57,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       return durationInMinutes + " minutes";
     }
     return "-";
+  }
+
+  getDebts() {
+    let debt = 0;
+    _.forEach(this.game?.credits, c => {
+      if (c.status != C.CREDIT_DONE) {
+        debt += (c.amount + c.interest)
+      }
+    });
+    return debt;
   }
 
   getStatus() {
@@ -275,7 +286,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     },
     scales: {
       x: {display: false, ticks: {stepSize: 1}},
-      y: {display: false, ticks: {stepSize: 1}, type:"linear", min:-3, max:3,},
+      y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3,},
       x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
       x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
       y2: {position: "left", type: "category", labels: this.leftLabels,},
@@ -294,17 +305,22 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         this.events = game.events;
         this.players = game.players;
         await this.initDatasets();
-        const firstDu = await _.find(this.events, e => {
-          return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU"
-        });
-        if (firstDu) {
-          this.currentDU = firstDu.amount;
+        if (this.game?.typeMoney == C.JUNE) {
+          const firstDu = await _.find(this.events, e => {
+            return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU"
+          });
+          if (firstDu) {
+            this.currentDU = firstDu.amount;
+          }
+        } else {
+          //TODO initDebt initMM
         }
+
         this.addEventsToDatasets(this.events);
       });
       this.socket = io(environment.API_HOST, {
         query: {
-          idPlayer: this.idGame+C.EVENT,
+          idPlayer: this.idGame + C.EVENT,
           idGame: this.idGame,
         },
       });
@@ -312,10 +328,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.socket.on(C.EVENT, async (data: any) => {
+    this.socket.on(this.idGame + C.EVENT, async (data: any) => {
       this.events.push(data.event);
     });
-    this.socket.on(C.NEW_FEEDBACK, async (data: any) => {
+    this.socket.on(this.idGame + C.NEW_FEEDBACK, async (data: any) => {
       window.location.reload();
     });
   }
@@ -427,23 +443,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         backgroundColor: this.getRandomColor()
       }
     });
-    // this.datasetsFeedback.push(
-    //   {
-    //     data: [0, 1, 3, 2, 1, 2, 0, 3, 0],
-    //     label: "Median",
-    //     type: 'line',
-    //     fill: false,
-    //     indexAxis: "x",
-    //     hidden: false,
-    //     showLine: true, xAxisID: "x", stack: "true",
-    //     backgroundColor: this.hexToRgb("#000000"),
-    //     borderColor: this.hexToRgb("#000000"),
-    //     pointBackgroundColor: this.hexToRgb("#000000"),
-    //     pointBorderColor: this.hexToRgb("#000000"),
-    //     borderWidth: 2, // Line thickness
-    //     tension: 0.1,
-    //     pointRadius: 0.8, // Point thickness
-    //   });
 
     this.feedbacksData = {
       // @ts-ignore
@@ -457,7 +456,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     // Iterate over each event
     for (const event of events) {
       let totalResourcesEvent = 0;
-
       if (event.typeEvent === C.START_GAME) {
         this.startGameDate = event.date;
       } else if (event.typeEvent === C.END_GAME) {
@@ -472,7 +470,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         continue
       } else if (event.typeEvent === C.DISTRIB_DU) {
         this.currentDU = event.amount;
-      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard" || event.typeEvent === "tranformNewCards" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
+      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
         totalResourcesEvent = _.reduce(event.resources, function (sum, card) {
           return sum + card.price;
         }, 0);
@@ -497,13 +495,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       // @ts-ignore
       const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.idPlayer === event.receiver);
 
-      if (mmDataset && (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU)) {
+      //Masse monetary events into graph
+      if (mmDataset && (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU || event.typeEvent == C.NEW_CREDIT)) {
         // @ts-ignore
         mmDataset.total += event.amount;
         // @ts-ignore
         mmDataset.data.push({x: event.date, y: mmDataset.total});
-
       }
+
       // Add the event to the emitter's and receiver's datasets and update the running total
       if (emitterDataset) {
         if (event.typeEvent === C.TRANSACTION) {
@@ -583,7 +582,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           } else if (event.typeEvent === C.REMIND_DEAD) {
             // @ts-ignore
             receiverDatasetResources.data.push({x: event.date, y: 0});
-          } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS || event.typeEvent === "tranformNewCards") {
+          } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS) {
             // @ts-ignore
             receiverDatasetResources.total += totalResourcesEvent;
             // @ts-ignore

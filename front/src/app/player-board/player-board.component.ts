@@ -20,6 +20,7 @@ import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
+import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 
 
 @Component({
@@ -334,6 +335,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  showGift(card: Card) {
+    const dialogRef = this.dialog.open(CongratsDialogComponent, {
+      data: {text: "Bravo ! vous obtenez une carte supérieur.", card: card},
+      width: '10px',
+      height: '10px'
+    });
+  }
+
   //To prevent memory leak
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe()
@@ -383,6 +392,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (cardsToRemove.length === this.amountCardsForProd) {
       this.backService.produceLevelUp(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
         _.remove(this.cards, {letter: $event.letter, weight: $event.weight,});
+        const cardGift = _.find(newCards, {weight: $event.weight + 1});
+        if (cardGift) {
+          this.showGift(cardGift);
+        }
         this.receiveCards(newCards);
       });
     } else {

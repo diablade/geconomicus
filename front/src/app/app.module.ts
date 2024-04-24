@@ -58,6 +58,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {CdkMenuTrigger} from "@angular/cdk/menu";
 import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import { CongratsDialogComponent } from './dialogs/congrats-dialog/congrats-dialog.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     ConfirmDialogComponent,
     BtnTimerAutoClickComponent,
     SeizureDialogComponent,
+    CongratsDialogComponent,
   ],
   imports: [
     HttpClientModule,
