@@ -65,6 +65,9 @@ import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialo
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('svgContainer') svgContainer!: ElementRef;
+  @ViewChild('audioDu') audioDu!: ElementRef;
+  @ViewChild('audioCops') audioCops!: ElementRef;
+  @ViewChild('audioPrison') audioPrison!: ElementRef;
   ioURl: string = environment.API_HOST;
   private socket: any;
   screenWidth: number = 0;
@@ -158,6 +161,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.typeMoney = data.typeMoney;
       this.timerCredit = data.timerCredit;
       this.timerPrison = data.timerPrison;
+      this.amountCardsForProd = data.amountCardsForProd;
       await this.receiveCards(data.cards);
     });
     this.socket.on(C.START_ROUND, async (data: any) => {
@@ -189,6 +193,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.socket.on(C.DISTRIB_DU, (data: any) => {
       this.duVisible = true;
+      this.audioDu.nativeElement.play();
       this.player.coins += data.du;
       this.currentDU = data.du;
       setTimeout(() => {
@@ -277,6 +282,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.snackbarService.showError("DEFAULT DE PAIEMENT");
       this.defaultCredit = true;
+      this.audioCops.nativeElement.play();
     });
     this.socket.on(C.CREDIT_DONE, async (data: any) => {
       _.forEach(this.credits, c => {
@@ -313,6 +319,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.defaultCredit = false;
       if (data.prisoner && data.prisoner._id == this.idPlayer) {
         this.prison = true;
+        this.audioPrison.nativeElement.play();
       }
     });
   }
