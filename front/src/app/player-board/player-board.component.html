@@ -1,8 +1,8 @@
 <div class="blocked" *ngIf="prison || defaultCredit">
   <div class="default-credit" *ngIf="defaultCredit">
-    ALLEZ VOIR LA BANQUE !!!
+    🚨 ALLEZ VOIR LA BANQUE !!! 🚨
   </div>
-  <div class="prison" *ngIf="prison">
+  <div class="prison" *ngIf="prison" [@prisonDoor]="'in'">
     <div class="countDownContainer">
       <div class="time">
         <div class="minute shadowed">{{ minutesPrison | number:'2.0' }}</div>
@@ -104,6 +104,9 @@
   </audio>
   <audio #audioPrison>
     <source src='./assets/audios/prison.mp3' type="audio/mp3">
+  </audio>
+  <audio #audioCredit>
+    <source src='./assets/audios/coins.mp3' type="audio/mp3">
   </audio>
 </div>
 

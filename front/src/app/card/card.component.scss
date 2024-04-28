@@ -68,9 +68,10 @@
 .transform {
   position: absolute;
   z-index: 20;
-  height: 33%;
+  max-height: 100%;
+  max-width: 100%;
   width: 100%;
-  bottom: 33%;
+  height: 100%;
   left: 0;
 }
 

@@ -119,6 +119,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     this.socket.on(C.PRISON_ENDED, async (data: any) => {
       this.snackbarService.showSuccess("un prisonnier viens de purger sa peine");
       _.remove(this.prisoners, p => p._id == data.idPlayer);
+      _.forEach(this.game.players, p => {
+        if (p._id == data.idPlayer) {
+          p.status = C.ALIVE;
+        }
+      });
     });
   }
 

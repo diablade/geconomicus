@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {animate, AnimationBuilder, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
@@ -26,8 +26,8 @@ import {faGift} from "@fortawesome/free-solid-svg-icons";
         }),
         {params: {translateX: 10, translateY: 10}}
       ),
-      transition("default => flipped", [animate("400ms")]),
-      transition("flipped => default", [animate("400ms")]),
+      transition("default => flipped", [animate("350ms")]),
+      transition("flipped => default", [animate("350ms")]),
     ])
   ]
 })
@@ -61,12 +61,16 @@ export class CardComponent implements AfterViewInit {
   qrWidthCard = 0;
   protected readonly faGift = faGift;
   @Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
+  @ViewChild('cardFlip') cardFlip!: ElementRef;
+  @ViewChild('cardBack') cardBack!: ElementRef;
+
 
   constructor(private animationBuilder: AnimationBuilder, private elementRef: ElementRef) {
     this.updateScreenSize();
   }
 
   closeCard() {
+    this.cardBack.nativeElement.play();
     this.state = "default";
   }
 
@@ -75,7 +79,9 @@ export class CardComponent implements AfterViewInit {
       this.calculatePosition();
       if (this.state === "default") {
         this.state = "flipped";
+        this.cardFlip.nativeElement.play();
       } else {
+        this.cardBack.nativeElement.play();
         this.state = "default";
       }
     }
@@ -131,12 +137,12 @@ export class CardComponent implements AfterViewInit {
   getBuildText(card: Card) {
     switch (card.weight) {
       case 0:
-        return "Obtenir une carte savoir";
+        return "Créer une carte savoir";
       case 1:
-        return "Obtenir une carte Energie";
+        return "Créer une carte Energie";
       case 2:
-        return "Obtenir une carte Technologie";
+        return "Créer une carte Technologie";
     }
-    return "Obtenir une carte supérieur";
+    return "Créer une carte supérieur";
   }
 }

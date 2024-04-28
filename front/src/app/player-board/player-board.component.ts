@@ -59,7 +59,19 @@ import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialo
       })),
       transition(':enter', animate('1500ms ease')),
       transition(':leave', animate('1500ms ease'))
-    ])
+    ]),
+    trigger('prisonDoor', [
+      transition(':enter', [
+        style({transform: 'translateX(-100rem)'}),
+        animate('2000ms',
+          style({transform: 'translateX(0rem)'}))
+      ]),
+      transition(':leave', [
+        style({transform: 'translateX(0rem)'}),
+        animate('2000ms',
+          style({transform: 'translateX(-100rem)'}))
+      ]),
+    ]),
   ],
   styleUrls: ['./player-board.component.scss']
 })
@@ -68,6 +80,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('audioDu') audioDu!: ElementRef;
   @ViewChild('audioCops') audioCops!: ElementRef;
   @ViewChild('audioPrison') audioPrison!: ElementRef;
+  @ViewChild('audioCredit') audioCredit!: ElementRef;
   ioURl: string = environment.API_HOST;
   private socket: any;
   screenWidth: number = 0;
@@ -245,9 +258,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
       // this.dialog.closeAll();
       const dialogRef = this.dialog.open(InformationDialogComponent, {
-        data: {text: "💰Vous venez d'obtenir un CREDIT !️ (+" + data.amount + ")"},
+        data: {text: "Crédit obtenu (+" + data.amount + "💰)"},
       });
       this.player.coins += data.amount;
+      this.audioCredit.nativeElement.play();
       this.credits.push(data);
     });
     this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
