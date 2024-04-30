@@ -85,13 +85,13 @@
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-        <mat-label>Crédit par défault:</mat-label>
+        <mat-label>Crédit par défaut:</mat-label>
         <input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
       </mat-form-field>
     </div>
     <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
       <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-        <mat-label>Intéret:</mat-label>
+        <mat-label>Intéret par défaut:</mat-label>
         <input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
       </mat-form-field>
     </div>

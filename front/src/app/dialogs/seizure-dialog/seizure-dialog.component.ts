@@ -30,6 +30,7 @@ export class SeizureDialogComponent implements OnInit {
   seizureType: string;
   seizureCost: number;
   seizureDecote: number;
+  timerPrisonMax: number=5;
 
   constructor(private backService: BackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.credit = data.credit;
