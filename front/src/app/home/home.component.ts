@@ -12,6 +12,7 @@ import {faCamera} from "@fortawesome/free-solid-svg-icons";
 })
 export class HomeComponent {
   faCamera = faCamera;
+  // faTelegram = faTelegram;
   @ViewChild('coins') coins!: ElementRef;
 
   beep() {
