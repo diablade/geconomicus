@@ -44,7 +44,7 @@ async function generateDecks(generatedIdenticalCards, nbPlayers, prices) {
 }
 
 async function generateDU(game) {
-    const nbPlayer = Number.parseInt(_.countBy(game.players, p => p.status === C.ALIVE).true);
+    const nbPlayer = _.partition(game.players, p => p.status === C.ALIVE).length;
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
     const duRounded = _.round(du, 2);
@@ -115,7 +115,7 @@ async function initGameDebt(game) {
             timerCredit: game.timerCredit,
             timerPrison: game.timerPrison
         });
-        let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
+        let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(game._id.toString()+C.EVENT).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }
@@ -174,7 +174,7 @@ async function initGameJune(game) {
             statusGame: C.START_GAME,
             amountCardsForProd: game.amountCardsForProd,
         });
-        let newEvent = constructor.event(C.DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
+        let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         io().to(game._id.toString()+C.EVENT).emit(C.EVENT, newEvent);
         game.events.push(newEvent);
     }

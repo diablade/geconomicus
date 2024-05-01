@@ -28,7 +28,7 @@ const STOP_ROUND = 'stop-round';
 const TIMER_LEFT = 'timer-left';
 const INTER_ROUND = 'inter-round';
 const DISTRIB_DU = 'distrib_du';
-const DISTRIB = 'distrib';
+const INIT_DISTRIB = 'distrib';
 const FIRST_DU = 'first_du';
 const RESET_GAME = 'reset-game';
 const NEW_FEEDBACK = 'new-feedback';
@@ -85,7 +85,7 @@ if (typeof module !== 'undefined' && module.exports) {
         STOP_ROUND: STOP_ROUND,
         INTER_ROUND: INTER_ROUND,
         DISTRIB_DU: DISTRIB_DU,
-        DISTRIB: DISTRIB,
+        INIT_DISTRIB: INIT_DISTRIB,
         FIRST_DU: FIRST_DU,
         RESET_GAME: RESET_GAME,
         TRANSACTION: TRANSACTION,

@@ -8,7 +8,7 @@
           <span [matTooltip]="'Transaction'">{{event.amount}}Ğ1 🔄 {{getTextCard(event.resources[0])}}</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
-        <span *ngSwitchCase="C.DISTRIB">
+        <span *ngSwitchCase="C.INIT_DISTRIB">
           <span [matTooltip]="'Distribution à '+getPlayerName(event.receiver)"> 👤⬅️</span>
           <span [matTooltip]="'monnaie de départ'">{{event.amount}}Ğ1-</span>
           <span [matTooltip]="'carte de départ'" *ngFor="let card of event.resources">{{getTextCard(card)}}</span>

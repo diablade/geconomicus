@@ -11,7 +11,7 @@ import {environment} from "../../environments/environment";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
-import {ChartConfiguration, ChartDataset} from 'chart.js';
+import {BubbleDataPoint, ChartConfiguration, ChartDataset, ChartTypeRegistry, Point} from 'chart.js';
 import 'chartjs-adapter-date-fns';
 // import {fr} from 'date-fns/locale';
 import {parseISO, subSeconds} from 'date-fns';
@@ -46,8 +46,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   startGameDate: Date | undefined;
   stopGameDate: Date | undefined;
   roundStarted = false;
+  pointsBefore1second = true;
   C = C;
   baseRadius: number = 2.1;
+  nbPlayer = 0;
+
 
   durationGame() {
     if (this.startGameDate && this.stopGameDate) {
@@ -305,6 +308,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         this.game = game;
         this.events = game.events;
         this.players = game.players;
+        this.nbPlayer = _.partition(this.players, p => p.status === C.ALIVE).length;
         await this.initDatasets();
         if (this.game?.typeMoney == C.JUNE) {
           const firstDu = _.find(this.events, e => {
@@ -420,6 +424,20 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         // @ts-ignore
         total: 0,
       });
+    // this.datasetsRelatif.set(
+    //   "masseMoney",
+    //   {
+    //     data: [],
+    //     label: "Masse monétaire",
+    //     backgroundColor: this.hexToRgb("#000000"),
+    //     borderColor: this.hexToRgb("#000000"),
+    //     pointBackgroundColor: this.hexToRgb("#000000"),
+    //     pointBorderColor: this.hexToRgb("#000000"),
+    //     borderWidth: 2, // Line thickness
+    //     pointRadius: 0.8, // Point thickness
+    //     @ts-ignore
+        // total: 0,
+      // });
     this.initFeedbacks();
   }
 
@@ -455,38 +473,20 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     };
   }
 
+  getValueCardsFromEvent(event: EventGeco) {
+    return _.reduce(event.resources, function (sum, card) {
+      return sum + card.price;
+    }, 0);
+  }
+
   addEventsToDatasets(unsortedEvents: EventGeco[]) {
     const events = _.sortBy(unsortedEvents, 'date');
 
     // Iterate over each event
     for (const event of events) {
-      let totalResourcesEvent = 0;
-      if (event.typeEvent === C.START_GAME) {
-        this.startGameDate = event.date;
-      } else if (event.typeEvent === C.END_GAME) {
-        this.stopGameDate = event.date;
-      } else if (event.typeEvent === C.DEAD) {
-        this.reincarnates += 1;
-      } else if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND) {
-        this.roundStarted = true;
-        continue
-      } else if (event.typeEvent === C.FIRST_DU) {
-        this.currentDU = event.amount;
-        this.initialDU = event.amount;
-        continue
-      } else if (event.typeEvent === C.DISTRIB_DU) {
-        this.currentDU = event.amount;
-      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === C.TRANSFORM_NEWCARDS) {
-        totalResourcesEvent = _.reduce(event.resources, function (sum, card) {
-          return sum + card.price;
-        }, 0);
-        if (event.typeEvent === C.DISTRIB) {
-          this.initialMM += event.amount;
-        }
-      }
-
-      // Find the dataset for the emitter and receiver
+      let totalResourcesEvent = 0; //here only because of switch case don't want same name many places
       let mmDataset = this.datasets.get("masseMoney");
+      // let mmDatasetRelatif = this.datasetsRelatif.get("masseMoney");
       let emitterDataset = this.datasets.get(event.emitter);
       let emitterDatasetRelatif = this.datasetsRelatif.get(event.emitter);
       let emitterDatasetResources = this.datasetsResources.get(event.emitter);
@@ -494,109 +494,121 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       let receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
       let receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
-      //Masse monetary events into graph
-      if (mmDataset) {
-        if (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU || event.typeEvent === C.NEW_CREDIT) {
-          // @ts-ignore
-          mmDataset.total += event.amount;
-          // @ts-ignore
-          mmDataset.data.push({x: event.date, y: mmDataset.total});
-        } else if (event.typeEvent === C.CREDIT_DONE) {
-
-        }
-      }
-
-      // Add the event to the emitter's and receiver's datasets and update the running total
-      if (emitterDataset) {
-        if (event.typeEvent === C.TRANSACTION) {
-          // @ts-ignore before
-          emitterDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDataset.total});
-          // @ts-ignore before
-          emitterDatasetRelatif.data.push({
-            // @ts-ignore before
-            x: subSeconds(parseISO(event.date), 1),
-            // @ts-ignore before
-            y: (emitterDataset.total / this.currentDU)
-          });
-        }
-        // @ts-ignore
-        emitterDataset.total -= event.amount;
-        // @ts-ignore after transaction
-        emitterDataset.data.push({x: event.date, y: emitterDataset.total});
-        // @ts-ignore after transaction
-        emitterDatasetRelatif.data.push({x: event.date, y: (emitterDataset.total / this.currentDU)});
-      }
-      if (emitterDatasetResources) {
-        if (event.typeEvent === C.TRANSACTION) {
-          // @ts-ignore
-          emitterDatasetResources.data.push({x: subSeconds(parseISO(event.date), 1), y: emitterDatasetResources.total});
-          // @ts-ignore
-          emitterDatasetResources.total += totalResourcesEvent;
-          // @ts-ignore
-          emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
-        } else if (event.typeEvent === C.TRANSFORM_DISCARDS ) {
-          // @ts-ignore
-          emitterDatasetResources.total -= totalResourcesEvent;
-        }
-      }
-
-      if (receiverDataset) {
-        if (event.typeEvent === C.TRANSACTION) {
-          // @ts-ignore before
-          receiverDataset.data.push({x: subSeconds(parseISO(event.date), 1), y: receiverDataset.total});
-          // @ts-ignore before
-          receiverDatasetRelatif.data.push({
-            // @ts-ignore before
-            x: subSeconds(parseISO(event.date), 1),
-            // @ts-ignore before
-            y: (receiverDataset.total / this.currentDU)
-          });
-        }
-        // @ts-ignore
-        receiverDataset.total += event.amount;
-        // @ts-ignore after
-        receiverDataset.data.push({x: event.date, y: receiverDataset.total});
-        // @ts-ignore after
-        receiverDatasetRelatif.data.push({x: event.date, y: (receiverDataset.total / this.currentDU)});
-
-        if (receiverDatasetResources) {
-          if (event.typeEvent === C.TRANSACTION) {
-            // @ts-ignore
-            receiverDatasetResources.data.push({
-              // @ts-ignore
-              x: subSeconds(parseISO(event.date), 1),
-              // @ts-ignore
-              y: receiverDatasetResources.total
-            });
-            // @ts-ignore
-            receiverDatasetResources.total -= totalResourcesEvent;
-            // @ts-ignore
-            receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
-          } else if (event.typeEvent === C.DEAD) {
-            // @ts-ignore
-            receiverDatasetResources.data.push({
-              // @ts-ignore
-              x: subSeconds(parseISO(event.date), 1),
-              // @ts-ignore
-              y: receiverDatasetResources.total
-            });
-            // @ts-ignore
-            receiverDatasetResources.data.push({x: event.date, y: 0});
-          } else if (event.typeEvent === C.REMIND_DEAD) {
-            // @ts-ignore
-            receiverDatasetResources.data.push({x: event.date, y: 0});
-          } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSFORM_NEWCARDS) {
-            // @ts-ignore
-            receiverDatasetResources.total += totalResourcesEvent;
-            // @ts-ignore
-            receiverDatasetResources.data.push({x: event.date, y: receiverDatasetResources.total});
+      const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new", value: number, relatif: boolean, beforePoint: boolean) => {
+        if (dataset) {
+          const previousTotal = dataset.total;
+          let newTotal = 0;
+          if (operator == "add") {
+            newTotal = previousTotal + value;
+          }else if ( operator == "sub"){
+            newTotal = previousTotal - value;
+          } else{
+            newTotal = value;
           }
+          if (beforePoint) {
+            addPointBefore1second(dataset, date, relatif ? (previousTotal / this.currentDU) : previousTotal);
+          }
+          addPointAtEvent(dataset, date, relatif ? (newTotal / this.currentDU) : newTotal);
+          dataset.total = newTotal;
         }
+      }
+
+      const addPointBefore1second = (dataset: any, date: string | Date, value: number) => {
+        // @ts-ignore before
+        dataset.data.push({
+          // @ts-ignore before
+          x: subSeconds(parseISO(date), 1),
+          // @ts-ignore before
+          y: value
+        });
+      }
+      const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
+        // @ts-ignore
+        dataset.data.push({x: date, y: value});
+      }
+
+      switch (event.typeEvent) {
+        case C.START_GAME:
+          this.startGameDate = event.date;
+          continue;
+        case C.END_GAME:
+          this.stopGameDate = event.date;
+          continue;
+        case C.START_ROUND:
+          this.roundStarted = true;
+          continue;
+        case C.STOP_ROUND:
+          continue;
+        case C.FIRST_DU:
+          this.currentDU = event.amount;
+          this.initialDU = event.amount;
+          continue;
+        case C.INIT_DISTRIB:
+          totalResourcesEvent = this.getValueCardsFromEvent(event);
+          this.initialMM += event.amount;
+          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
+            updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
+          }
+          // @ts-ignore
+          // updateData(mmDatasetRelatif, event.date, "new", (mmDataset.total / this.nbPlayer / this.currentDU), false, false);
+          continue;
+        case C.DISTRIB_DU:
+          this.currentDU = event.amount;
+          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDataset, event.date, "add", event.amount, false, false);
+          updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
+          // @ts-ignore
+          // updateData(mmDatasetRelatif, event.date, "new", (mmDataset.total / this.nbPlayer / this.currentDU), false, false);
+          continue;
+        case C.NEW_CREDIT:
+          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          continue;
+        case C.CREDIT_DONE:
+
+          continue;
+        case C.TRANSACTION:
+          totalResourcesEvent = this.getValueCardsFromEvent(event);
+          updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+          updateData(emitterDatasetRelatif, event.date, "sub", event.amount, true, this.pointsBefore1second);
+          updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, this.pointsBefore1second);
+
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, this.pointsBefore1second);
+          updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, this.pointsBefore1second);
+          continue;
+        case C.TRANSFORM_DISCARDS:
+          totalResourcesEvent = this.getValueCardsFromEvent(event);
+          if (emitterDatasetResources) {
+            // @ts-ignore
+            emitterDatasetResources.total -= totalResourcesEvent;
+          }
+          // no update data to avoid weird graph up and down too quickly
+          continue;
+        case C.TRANSFORM_NEWCARDS:
+          totalResourcesEvent = this.getValueCardsFromEvent(event);
+          // no before point , same reason as transform_discards
+          updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
+          continue;
+        case C.DEAD:
+          if (receiverDatasetResources) {
+            // @ts-ignore
+            addPointBefore1second(receiverDatasetResourcesevent.date, receiverDatasetResources.total);
+            addPointAtEvent(receiverDatasetResources, event.date, 0);
+          }
+          continue;
+        case C.REMIND_DEAD:
+          // @ts-ignore
+          receiverDatasetResources.data.push({x: event.date, y: 0});
+          continue;
+        default:
       }
     }
 
     // Remove the 'total' property from each dataset ? datasets.forEach(dataset => delete dataset.total);
-
     this.lineChartData = {
       datasets: [...this.datasets.values()]
     };
@@ -606,9 +618,5 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     this.lineChartDataResources = {
       datasets: [...this.datasetsResources.values()]
     };
-  }
-
-  updateMM() {
-
   }
 }
