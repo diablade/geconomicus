@@ -34,9 +34,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   game: Game | undefined;
   events: EventGeco[] = [];
   players: Player[] = [];
-  datasets: ChartDataset[] = [];
-  datasetsRelatif: ChartDataset[] = [];
-  datasetsResources: ChartDataset[] = [];
+  datasets: Map<string, ChartDataset> = new Map<string, ChartDataset>();
+  datasetsRelatif: Map<string, ChartDataset> = new Map<string, ChartDataset>();
+  datasetsResources: Map<string, ChartDataset> = new Map<string, ChartDataset>();
   datasetsFeedback: ChartDataset[] = [];
   currentDU = 0;
   initialDU = 0;
@@ -45,6 +45,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   reincarnates = 0;
   startGameDate: Date | undefined;
   stopGameDate: Date | undefined;
+  roundStarted = false;
   C = C;
   baseRadius: number = 2.1;
 
@@ -306,16 +307,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         this.players = game.players;
         await this.initDatasets();
         if (this.game?.typeMoney == C.JUNE) {
-          const firstDu = await _.find(this.events, e => {
-            return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU"
+          const firstDu = _.find(this.events, e => {
+            return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU";
           });
           if (firstDu) {
             this.currentDU = firstDu.amount;
           }
-        } else {
-          //TODO initDebt initMM
         }
-
         this.addEventsToDatasets(this.events);
       });
       this.socket = io(environment.API_HOST, {
@@ -362,59 +360,66 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   async initDatasets() {
     // Initialize empty dataset for each player with a running total
     const players = _.sortBy(this.players, 'name');
+    _.forEach(players, player => {
+      this.datasets.set(
+        player._id,
+        {
+          data: [],
+          label: player.name,
+          backgroundColor: this.hexToRgb(player.hairColor),
+          borderColor: this.hexToRgb(player.hairColor),
+          pointBackgroundColor: this.hexToRgb(player.hairColor),
+          pointBorderColor: this.hexToRgb(player.hairColor),
+          borderWidth: 2, // Line thickness
+          pointRadius: 0.8, // Point thickness
+          // @ts-ignore
+          total: 0,
+        });
 
-    this.datasets = _.map(players, player => ({
-      data: [],
-      label: player.name,
-      backgroundColor: this.hexToRgb(player.hairColor),
-      borderColor: this.hexToRgb(player.hairColor),
-      pointBackgroundColor: this.hexToRgb(player.hairColor),
-      pointBorderColor: this.hexToRgb(player.hairColor),
-      borderWidth: 2, // Line thickness
-      pointRadius: 0.8, // Point thickness
-      total: 0,
-      idPlayer: player._id
-    }));
-    this.datasets.push({
-      data: [],
-      label: "Masse monétaire",
-      backgroundColor: this.hexToRgb("#000000"),
-      borderColor: this.hexToRgb("#000000"),
-      pointBackgroundColor: this.hexToRgb("#000000"),
-      pointBorderColor: this.hexToRgb("#000000"),
-      borderWidth: 2, // Line thickness
-      pointRadius: 0.8, // Point thickness
-      // @ts-ignore
-      total: 0,
-      idPlayer: "masseMoney"
+      this.datasetsRelatif.set(
+        player._id,
+        {
+          data: [],
+          label: player.name,
+          backgroundColor: this.hexToRgb(player.hairColor),
+          borderColor: this.hexToRgb(player.hairColor),
+          pointBackgroundColor: this.hexToRgb(player.hairColor),
+          pointBorderColor: this.hexToRgb(player.hairColor),
+          borderWidth: 2, // Line thickness
+          pointRadius: 0.8, // Point thickness
+          // @ts-ignore
+          total: 0,
+        });
+      this.datasetsResources.set(
+        player._id,
+        {
+          data: [],
+          label: player.name,
+          backgroundColor: this.hexToRgb(player.hairColor),
+          borderColor: this.hexToRgb(player.hairColor),
+          pointBackgroundColor: this.hexToRgb(player.hairColor),
+          pointBorderColor: this.hexToRgb(player.hairColor),
+          borderWidth: 2, // Line thickness
+          pointRadius: 0.8, // Point thickness
+          // @ts-ignore
+          total: 0,
+        });
+
     });
-
-    this.datasetsRelatif = _.map(players, player => ({
-      data: [],
-      label: player.name,
-      backgroundColor: this.hexToRgb(player.hairColor),
-      borderColor: this.hexToRgb(player.hairColor),
-      pointBackgroundColor: this.hexToRgb(player.hairColor),
-      pointBorderColor: this.hexToRgb(player.hairColor),
-      borderWidth: 2, // Line thickness
-      pointRadius: 0.8, // Point thickness
-      total: 0,
-      idPlayer: player._id
-    }));
-
-    this.datasetsResources = _.map(players, player => ({
-      data: [],
-      label: player.name,
-      backgroundColor: this.hexToRgb(player.hairColor),
-      borderColor: this.hexToRgb(player.hairColor),
-      pointBackgroundColor: this.hexToRgb(player.hairColor),
-      pointBorderColor: this.hexToRgb(player.hairColor),
-      borderWidth: 2, // Line thickness
-      pointRadius: 0.8, // Point thickness
-      total: 0,
-      idPlayer: player._id
-    }));
-
+    this.datasets.set(
+      "masseMoney",
+      {
+        data: [],
+        label: "Masse monétaire",
+        backgroundColor: this.hexToRgb("#000000"),
+        borderColor: this.hexToRgb("#000000"),
+        pointBackgroundColor: this.hexToRgb("#000000"),
+        pointBorderColor: this.hexToRgb("#000000"),
+        borderWidth: 2, // Line thickness
+        pointRadius: 0.8, // Point thickness
+        // @ts-ignore
+        total: 0,
+      });
     this.initFeedbacks();
   }
 
@@ -463,6 +468,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       } else if (event.typeEvent === C.DEAD) {
         this.reincarnates += 1;
       } else if (event.typeEvent === C.STOP_ROUND || event.typeEvent === C.START_ROUND) {
+        this.roundStarted = true;
         continue
       } else if (event.typeEvent === C.FIRST_DU) {
         this.currentDU = event.amount;
@@ -470,7 +476,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         continue
       } else if (event.typeEvent === C.DISTRIB_DU) {
         this.currentDU = event.amount;
-      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard" || event.typeEvent === C.TRANSFORM_NEWCARDS) {
+      } else if (event.typeEvent === C.DISTRIB || event.typeEvent === C.TRANSACTION || event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === C.TRANSFORM_NEWCARDS) {
         totalResourcesEvent = _.reduce(event.resources, function (sum, card) {
           return sum + card.price;
         }, 0);
@@ -480,27 +486,24 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       }
 
       // Find the dataset for the emitter and receiver
-      // @ts-ignore
-      const mmDataset = _.find(this.datasets, dataset => dataset.idPlayer === "masseMoney");
-      // @ts-ignore
-      const emitterDataset = _.find(this.datasets, dataset => dataset.idPlayer === event.emitter);
-      // @ts-ignore
-      const emitterDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.idPlayer === event.emitter);
-      // @ts-ignore
-      const emitterDatasetResources = _.find(this.datasetsResources, dataset => dataset.idPlayer === event.emitter);
-      // @ts-ignore
-      const receiverDataset = _.find(this.datasets, dataset => dataset.idPlayer === event.receiver);
-      // @ts-ignore
-      const receiverDatasetRelatif = _.find(this.datasetsRelatif, dataset => dataset.idPlayer === event.receiver);
-      // @ts-ignore
-      const receiverDatasetResources = _.find(this.datasetsResources, dataset => dataset.idPlayer === event.receiver);
+      let mmDataset = this.datasets.get("masseMoney");
+      let emitterDataset = this.datasets.get(event.emitter);
+      let emitterDatasetRelatif = this.datasetsRelatif.get(event.emitter);
+      let emitterDatasetResources = this.datasetsResources.get(event.emitter);
+      let receiverDataset = this.datasets.get(event.receiver);
+      let receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
+      let receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
       //Masse monetary events into graph
-      if (mmDataset && (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU || event.typeEvent == C.NEW_CREDIT)) {
-        // @ts-ignore
-        mmDataset.total += event.amount;
-        // @ts-ignore
-        mmDataset.data.push({x: event.date, y: mmDataset.total});
+      if (mmDataset) {
+        if (event.typeEvent === C.DISTRIB || event.typeEvent === C.DISTRIB_DU || event.typeEvent === C.NEW_CREDIT) {
+          // @ts-ignore
+          mmDataset.total += event.amount;
+          // @ts-ignore
+          mmDataset.data.push({x: event.date, y: mmDataset.total});
+        } else if (event.typeEvent === C.CREDIT_DONE) {
+
+        }
       }
 
       // Add the event to the emitter's and receiver's datasets and update the running total
@@ -531,7 +534,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           emitterDatasetResources.total += totalResourcesEvent;
           // @ts-ignore
           emitterDatasetResources.data.push({x: event.date, y: emitterDatasetResources.total});
-        } else if (event.typeEvent === C.TRANSFORM_DISCARDS || event.typeEvent === "transformDiscard") {
+        } else if (event.typeEvent === C.TRANSFORM_DISCARDS ) {
           // @ts-ignore
           emitterDatasetResources.total -= totalResourcesEvent;
         }
@@ -592,20 +595,20 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // Remove the 'total' property from each dataset
-    // datasets.forEach(dataset => delete dataset.total);
+    // Remove the 'total' property from each dataset ? datasets.forEach(dataset => delete dataset.total);
 
     this.lineChartData = {
-      // @ts-ignore
-      datasets: this.datasets
+      datasets: [...this.datasets.values()]
     };
     this.lineChartDataRelatif = {
-      // @ts-ignore
-      datasets: this.datasetsRelatif
+      datasets: [...this.datasetsRelatif.values()]
     };
     this.lineChartDataResources = {
-      // @ts-ignore
-      datasets: this.datasetsResources
+      datasets: [...this.datasetsResources.values()]
     };
+  }
+
+  updateMM() {
+
   }
 }
