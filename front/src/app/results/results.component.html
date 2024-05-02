@@ -13,8 +13,9 @@
                 <div><span class="fw-bold">Monnaie: </span>{{game?.typeMoney == C.JUNE ? "libre" : "dette"}}</div>
                 <div><span class="fw-bold">Joueurs: </span>{{game?.players?.length}}</div>
                 <div><span class="fw-bold">Morts et reincarnés: </span>{{reincarnates}}</div>
-                <div><span class="fw-bold">Meilleur joueur monnaie: </span>🥇TODO</div>
-                <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇TODO</div>
+                <div><span class="fw-bold">Meilleur joueur monnaie: </span>🥇{{bestPlayerOnMoney}}</div>
+                <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇{{bestPlayerOnRes}}</div>
+                <div><span class="fw-bold">Le joueur le plus actif: </span>🥇{{bestPlayerOnTransaction}}</div>
             </div>
             <div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
                 <div><span class="fw-bold">Taux de croissance : </span>{{game?.tauxCroissance}}</div>

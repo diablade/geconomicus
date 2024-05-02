@@ -240,7 +240,7 @@ export default {
                             },
                         }, {new: true});
 
-                    let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, credit.interest, [credit], Date.now());
+                    let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, (credit.interest + credit.amount), [credit], Date.now());
                     const updatedGame = await GameModel.findOneAndUpdate(
                         {_id: credit.idGame, 'credits._id': credit._id},
                         {

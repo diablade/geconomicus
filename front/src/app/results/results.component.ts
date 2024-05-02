@@ -8,6 +8,7 @@ import {EventGeco, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
 import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
+import {hexToRgb, getRandomColor} from "../services/tools";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
@@ -38,6 +39,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   datasetsRelatif: Map<string, ChartDataset> = new Map<string, ChartDataset>();
   datasetsResources: Map<string, ChartDataset> = new Map<string, ChartDataset>();
   datasetsFeedback: ChartDataset[] = [];
+  MassMonetaryName = "Masse monétaire";
   currentDU = 0;
   initialDU = 0;
   initialMM = 0;
@@ -50,6 +52,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   C = C;
   baseRadius: number = 2.1;
   nbPlayer = 0;
+  bestPlayerOnMoney: string | undefined = "";
+  bestPlayerOnRes: string | undefined = "";
+  bestPlayerOnTransaction: string | undefined = "";
+  maxLastPointMoney = 0;
+  maxLastPointRes = 0;
 
 
   durationGame() {
@@ -260,7 +267,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     "Déprimé",
     "Individuel",
     "Seul(e)",
-    "Avar",
+    "Avare",
     "Compétitif",
     "Anxieux",
     "Agréssif",
@@ -319,6 +326,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           }
         }
         this.addEventsToDatasets(this.events);
+        this.getBestPlayers();
       });
       this.socket = io(environment.API_HOST, {
         query: {
@@ -338,29 +346,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  hexToRgb(hex: string): string {
-    // Remove the # symbol if present
-    hex = hex.replace(/^#/, '');
-
-    // Parse the hex value to an integer
-    const hexValue = parseInt(hex, 16);
-
-    // Extract the red, green, and blue components
-    const red = (hexValue >> 16) & 255;
-    const green = (hexValue >> 8) & 255;
-    const blue = hexValue & 255;
-
-    // Create the RGB string
-    return `rgba(${red}, ${green}, ${blue},1)`;
-  }
-
-  getRandomColor(): string {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-    return `rgba(${r}, ${g}, ${b}, ${0.6})`;
-  }
-
   async initDatasets() {
     // Initialize empty dataset for each player with a running total
     const players = _.sortBy(this.players, 'name');
@@ -370,10 +355,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         {
           data: [],
           label: player.name,
-          backgroundColor: this.hexToRgb(player.hairColor),
-          borderColor: this.hexToRgb(player.hairColor),
-          pointBackgroundColor: this.hexToRgb(player.hairColor),
-          pointBorderColor: this.hexToRgb(player.hairColor),
+          backgroundColor: hexToRgb(player.hairColor),
+          borderColor: hexToRgb(player.hairColor),
+          pointBackgroundColor: hexToRgb(player.hairColor),
+          pointBorderColor: hexToRgb(player.hairColor),
           borderWidth: 2, // Line thickness
           pointRadius: 0.8, // Point thickness
           // @ts-ignore
@@ -385,10 +370,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         {
           data: [],
           label: player.name,
-          backgroundColor: this.hexToRgb(player.hairColor),
-          borderColor: this.hexToRgb(player.hairColor),
-          pointBackgroundColor: this.hexToRgb(player.hairColor),
-          pointBorderColor: this.hexToRgb(player.hairColor),
+          backgroundColor: hexToRgb(player.hairColor),
+          borderColor: hexToRgb(player.hairColor),
+          pointBackgroundColor: hexToRgb(player.hairColor),
+          pointBorderColor: hexToRgb(player.hairColor),
           borderWidth: 2, // Line thickness
           pointRadius: 0.8, // Point thickness
           // @ts-ignore
@@ -399,10 +384,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         {
           data: [],
           label: player.name,
-          backgroundColor: this.hexToRgb(player.hairColor),
-          borderColor: this.hexToRgb(player.hairColor),
-          pointBackgroundColor: this.hexToRgb(player.hairColor),
-          pointBorderColor: this.hexToRgb(player.hairColor),
+          backgroundColor: hexToRgb(player.hairColor),
+          borderColor: hexToRgb(player.hairColor),
+          pointBackgroundColor: hexToRgb(player.hairColor),
+          pointBorderColor: hexToRgb(player.hairColor),
           borderWidth: 2, // Line thickness
           pointRadius: 0.8, // Point thickness
           // @ts-ignore
@@ -414,11 +399,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       "masseMoney",
       {
         data: [],
-        label: "Masse monétaire",
-        backgroundColor: this.hexToRgb("#000000"),
-        borderColor: this.hexToRgb("#000000"),
-        pointBackgroundColor: this.hexToRgb("#000000"),
-        pointBorderColor: this.hexToRgb("#000000"),
+        label: this.MassMonetaryName,
+        backgroundColor: hexToRgb("#000000"),
+        borderColor: hexToRgb("#000000"),
+        pointBackgroundColor: hexToRgb("#000000"),
+        pointBorderColor: hexToRgb("#000000"),
         borderWidth: 2, // Line thickness
         pointRadius: 0.8, // Point thickness
         // @ts-ignore
@@ -428,16 +413,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     //   "masseMoney",
     //   {
     //     data: [],
-    //     label: "Masse monétaire",
-    //     backgroundColor: this.hexToRgb("#000000"),
-    //     borderColor: this.hexToRgb("#000000"),
-    //     pointBackgroundColor: this.hexToRgb("#000000"),
-    //     pointBorderColor: this.hexToRgb("#000000"),
+    //     label: this.MassMonetaryName,
+    //     backgroundColor: hexToRgb("#000000"),
+    //     borderColor: hexToRgb("#000000"),
+    //     pointBackgroundColor: hexToRgb("#000000"),
+    //     pointBorderColor:hexToRgb("#000000"),
     //     borderWidth: 2, // Line thickness
     //     pointRadius: 0.8, // Point thickness
     //     @ts-ignore
-        // total: 0,
-      // });
+    // total: 0,
+    // });
     this.initFeedbacks();
   }
 
@@ -463,7 +448,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       return {
         data: data,
         type: 'bubble',
-        backgroundColor: this.getRandomColor()
+        backgroundColor: getRandomColor()
       }
     });
 
@@ -500,9 +485,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           let newTotal = 0;
           if (operator == "add") {
             newTotal = previousTotal + value;
-          }else if ( operator == "sub"){
+          } else if (operator == "sub") {
             newTotal = previousTotal - value;
-          } else{
+          } else {
             newTotal = value;
           }
           if (beforePoint) {
@@ -512,7 +497,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           dataset.total = newTotal;
         }
       }
-
       const addPointBefore1second = (dataset: any, date: string | Date, value: number) => {
         // @ts-ignore before
         dataset.data.push({
@@ -563,13 +547,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           // @ts-ignore
           // updateData(mmDatasetRelatif, event.date, "new", (mmDataset.total / this.nbPlayer / this.currentDU), false, false);
           continue;
-        case C.NEW_CREDIT:
-          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-          continue;
-        case C.CREDIT_DONE:
-
-          continue;
         case C.TRANSACTION:
           totalResourcesEvent = this.getValueCardsFromEvent(event);
           updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
@@ -604,6 +581,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           // @ts-ignore
           receiverDatasetResources.data.push({x: event.date, y: 0});
           continue;
+        case C.NEW_CREDIT:
+          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          continue;
+        case C.SETTLE_CREDIT:
+          updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+          updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+
+          continue;
         default:
       }
     }
@@ -618,5 +605,38 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     this.lineChartDataResources = {
       datasets: [...this.datasetsResources.values()]
     };
+  }
+
+  getBestPlayers() {
+    [...this.datasets.values()].forEach((dataset, index) => {
+      if (dataset.label != this.MassMonetaryName) {
+        const lastPointValue = dataset.data[dataset.data.length - 1];
+        // @ts-ignore
+        if (lastPointValue && lastPointValue.y > this.maxLastPointMoney) {
+          // @ts-ignore
+          this.maxLastPointMoney = lastPointValue.y;
+          this.bestPlayerOnMoney = dataset.label;
+        }
+      }
+    });
+    [...this.datasetsResources.values()].forEach((dataset, index) => {
+      if (dataset.label != this.MassMonetaryName) {
+        const lastPointValue = dataset.data[dataset.data.length - 1];
+        // @ts-ignore
+        if (lastPointValue && lastPointValue.y > this.maxLastPointRes) {
+          // @ts-ignore
+          this.maxLastPointRes = lastPointValue.y;
+          this.bestPlayerOnRes = dataset.label;
+        }
+      }
+    });
+    let transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
+    let transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
+    let maxKey = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+    this.bestPlayerOnTransaction = this.getPlayerNameById(maxKey);
+  }
+
+  getPlayerNameById(id: string): string | undefined {
+    return _.find(this.players, p => p._id === id)?.name;
   }
 }
