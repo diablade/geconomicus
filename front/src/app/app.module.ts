@@ -29,10 +29,10 @@ import {HttpRequestInterceptor} from "./services/http-request-interceptor.servic
 import {MatSelectModule} from "@angular/material/select";
 import {InformationDialogComponent} from "./dialogs/information-dialog/information-dialog.component";
 import {ResultsComponent} from './results/results.component';
-import {VersionComponent} from './version/version.component';
+import {VersionComponent} from './components/version/version.component';
 import {EventsComponent} from './events/events.component';
 import {NgChartsModule} from 'ng2-charts';
-import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
+import {GameOptionsDialogComponent} from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {ZXingScannerModule} from "@zxing/ngx-scanner";
@@ -45,9 +45,20 @@ import {
 } from './dialogs/scanner-dialog-v2/scanner-dialog-v2.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
-import { HistoryGamesComponent } from './history-games/history-games.component';
+import {HistoryGamesComponent} from './history-games/history-games.component';
 import {SurveyComponent} from "./survey/survey.component";
 import {MatSliderModule} from "@angular/material/slider";
+import {BankBoardComponent} from './bank-board/bank-board.component';
+import {MatChipsModule} from "@angular/material/chips";
+import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
+import {CreditComponent} from './credit/credit.component';
+import {ConfirmDialogComponent} from './dialogs/confirm-dialog/confirm-dialog.component';
+import {BtnTimerAutoClickComponent} from './components/btn-timer-auto-click/btn-timer-auto-click.component';
+import {MatExpansionModule} from "@angular/material/expansion";
+import {CdkMenuTrigger} from "@angular/cdk/menu";
+import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import { CongratsDialogComponent } from './dialogs/congrats-dialog/congrats-dialog.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +84,13 @@ import {MatSliderModule} from "@angular/material/slider";
     AppInfoDialogComponent,
     HistoryGamesComponent,
     SurveyComponent,
+    BankBoardComponent,
+    ContractDialogComponent,
+    CreditComponent,
+    ConfirmDialogComponent,
+    BtnTimerAutoClickComponent,
+    SeizureDialogComponent,
+    CongratsDialogComponent,
   ],
   imports: [
     HttpClientModule,
@@ -100,6 +118,10 @@ import {MatSliderModule} from "@angular/material/slider";
     MatListModule,
     MatMenuModule,
     MatSliderModule,
+    MatChipsModule,
+    MatExpansionModule,
+    CdkMenuTrigger,
+    DragDropModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true}

@@ -1,0 +1,39 @@
+.bank {
+
+}
+
+.icon {
+  color: black;
+}
+
+/* Set custom color for MatChip */
+.warning {
+  background-color: #ff706e !important; /* Your custom color code */
+}
+
+.good {
+  background-color: #A2CBA2 !important;
+}
+
+.prison {
+  border: black dashed 2px;
+  height: 100%;
+  display: flex;
+}
+
+
+.player {
+  max-width: 120px;
+  text-align: center;
+  &-frame {
+    background: white;
+  }
+  &-svg {
+    margin: auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 80px;
+    border: solid black 2px;
+    box-shadow: 2px 2px 4px -2px black;
+  }
+}

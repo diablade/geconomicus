@@ -1,23 +1,50 @@
+<div class="blocked" *ngIf="prison || defaultCredit">
+  <div class="default-credit" *ngIf="defaultCredit">
+    🚨 ALLEZ VOIR LA BANQUE !!! 🚨
+  </div>
+  <div class="prison" *ngIf="prison" [@prisonDoor]="'in'">
+    <div class="countDownContainer">
+      <div class="time">
+        <div class="minute shadowed">{{ minutesPrison | number:'2.0' }}</div>
+        <div class="deuxpoints shadowed">:</div>
+        <div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
+      </div>
+      <mat-progress-spinner
+        [color]="'warn'"
+        [mode]="'determinate'"
+        [diameter]="300"
+        strokeWidth="20"
+        [value]="prisonProgress">
+      </mat-progress-spinner>
+    </div>
+  </div>
+</div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
   <div class="titleBar d-flex flex-row">
     <div class="symbol">
       <div class="jeuTitle">Solde:</div>
-      <img *ngIf="typeMoney=='june'" class="free"/>
-      <img *ngIf="typeMoney=='debt'" class="debt"/>
+      <img *ngIf="typeMoney==C.JUNE" class="free"/>
+      <img *ngIf="typeMoney==C.DEBT" class="debt"/>
     </div>
-    <div class="sold flex-grow-1">
-      {{player.coins| number : '1.2-2'}}
-      <span class="enDU">{{(player.coins/currentDU) | number : '1.2-2'}}DU</span>
-      <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/G1-logo-bleu_la-june.webp">
+    <div class="sold flex-grow-1 contour">
+      {{ player.coins| number : '1.2-2' }}
+      <span *ngIf="typeMoney==C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
+      <span *ngIf="typeMoney==C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
+      <img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
     </div>
     <div class="user d-flex">
-<!--      <div class="name">{{player.name}}</div>-->
       <div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
     </div>
   </div>
-  <div class="" *ngIf="statusGame!==C.START_ROUND">
-    <div class="text-center h1">{{statusGame!==C.END_GAME ? "En attente...":"Partie terminé..."}}</div>
-    <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
+  <div class="d-flex flex-row w-100" *ngIf="typeMoney==C.DEBT">
+
+  </div>
+  <div class="" *ngIf="statusGame!==C.PLAYING">
+    <div
+      class="text-center gecoFont shadowed fs-1 m-4">{{ statusGame !== C.END_GAME ? "En attente..." : "Partie terminé..." }}
+    </div>
+    <button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
+            color="accent">
       Répondre au questionnaire
     </button>
   </div>
@@ -41,13 +68,45 @@
     </div>
   </div>
   <div class="footer">
-    <mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2 </mat-slide-toggle>
-    <button mat-raised-button color="accent"
-            [disabled]="statusGame!== C.START_ROUND||player.status== C.DEAD"
-            (click)="scan()">
-      <fa-icon [icon]="faCamera"></fa-icon>
-      ACHETER une Carte
-    </button>
+    <div class="credits w-100 d-flex flex-row"
+         [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
+      <div class="d-inline-flex" *ngFor="let credit of credits">
+        <app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+                    [contractor]="player.name"
+                    (actionBtn)="creditActionBtn($event,credit)"></app-credit>
+      </div>
+    </div>
+    <div class="d-flex flex-row justify-content-between">
+      <div>
+        <button *ngIf="typeMoney==C.DEBT" class="buy" mat-raised-button color="primary"
+                (click)="panelCreditOpenState = !panelCreditOpenState">
+          CREDITS
+          <fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
+          <fa-icon *ngIf="!panelCreditOpenState" [icon]="faEyeSlash"></fa-icon>
+        </button>
+      </div>
+      <div>
+        <mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2</mat-slide-toggle>
+        <button class="buy" mat-raised-button color="accent"
+                [disabled]="statusGame!== C.PLAYING||player.status== C.DEAD"
+                (click)="scan()">
+          <fa-icon [icon]="faCamera"></fa-icon>
+          ACHETER
+        </button>
+      </div>
+    </div>
   </div>
+  <audio #audioDu>
+    <source src='./assets/audios/audioDu.mp3' type="audio/mp3">
+  </audio>
+  <audio #audioCops>
+    <source src='./assets/audios/police.mp3' type="audio/mp3">
+  </audio>
+  <audio #audioPrison>
+    <source src='./assets/audios/prison.mp3' type="audio/mp3">
+  </audio>
+  <audio #audioCredit>
+    <source src='./assets/audios/coins.mp3' type="audio/mp3">
+  </audio>
 </div>
 

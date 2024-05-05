@@ -3,10 +3,12 @@
     "version": "0.6.11",
     "dependencies": {
         "cors": "^2.8.5",
+        "date-fns": "^2.30.0",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
+        "express-validator": "^7.0.1",
         "lodash": "^4.17.21",
-        "mongoose": "^6.11.0",
+        "mongoose": "^6.12.8",
         "morgan": "^1.10.0",
         "nodemon": "^2.0.22",
         "socket.io": "^4.6.1",
@@ -14,14 +16,19 @@
         "winston": "^3.8.2"
     },
     "type": "module",
-    "main": "app.js",
+    "main": "./src/app.js",
     "scripts": {
-        "startMon": "nodemon app.js",
+        "startMon": "nodemon ./src/app.js",
         "cleanProd": "npm ci --only=production && npm cache clean --force",
-        "run": "node app.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "run": "node ./src/app.js",
+        "test": "export GECO_NODE_ENV=test && node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand"
     },
     "author": "Nicolas Markovic",
     "license": "ISC",
-    "description": ""
+    "description": "",
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "mongodb-memory-server": "^9.1.8",
+        "supertest": "^6.3.4"
+    }
 }

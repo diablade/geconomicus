@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import * as conf from './../../../package.json';
+import * as conf from './../../../../package.json';
 
 @Component({
   selector: 'app-version',

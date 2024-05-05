@@ -1,4 +1,4 @@
-.svg{
+.svg {
   width: 50px;
   height: 50px;
   border: solid #5398ca 2px;
@@ -6,57 +6,120 @@
   background: rgba(255, 255, 255, 0.65);
 }
 
-.free{
-  background-image: url("/assets/g1coin.png");
-  height: 40px;
-  width: 40px;
-  background-size: cover;
-}
-.debt{
-  background-image: url("/assets/eurocoin.png");
+.free {
+  background-image: url("/assets/images/g1coin.png");
   height: 40px;
   width: 40px;
   background-size: cover;
 }
 
-.titleBar{
+.debt {
+  background-image: url("/assets/images/eurocoin.png");
+  height: 40px;
+  width: 40px;
+  background-size: cover;
+}
+
+.titleBar {
   height: 50px;
   margin-bottom: 15px;
 }
-.name{
+
+.name {
   border-radius: 5px;
   height: fit-content;
   padding: 4px;
   background: rgba(255, 255, 255, 0.65);
 }
 
-.game{
+.game {
   background-size: cover;
 }
 
-.sold{
+.sold {
   font-size: 3rem;
   line-height: 100%;
   margin: 10px;
   font-weight: bold;
 }
-.enDU{
+
+.enDU {
   font-size: 0.8rem;
   line-height: 100%;
   font-weight: bold;
 }
-.du{
+
+.du {
   height: 100%;
   object-fit: cover;
 }
-.footer{
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 3;
-  margin: 15px;
 
-  button {
-    height: 50px;
+.footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 3;
+  padding: 15px;
+  left: 0;
+  width: 100%;
+}
+
+.buy {
+  height: 50px;
+}
+
+.credits {
+  visibility: hidden;
+  height: 150px;
+  overflow: auto;
+}
+
+.creditsPanelOpen {
+  visibility: visible;
+  animation: ease 1s;
+}
+
+.blocked {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.prison {
+  background-image: url('/assets/images/prison.png');
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.default-credit {
+  background: white;
+  width: 150px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  border-radius: 20px;
+}
+
+
+.countDownContainer {
+  display: block;
+  position: relative;
+
+  .time {
+    font-size: 65px;
+    position: absolute;
+    display: flex;
+    top: 46%;
+    left: 23%;
   }
 }

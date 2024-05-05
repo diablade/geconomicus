@@ -1,16 +1,34 @@
-.events{
+.results {
+  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.geco {
+  width: 200px;
+}
+
+.gunyResults {
+  height: 100px;
+}
+
+.events {
   min-width: 250px;
-  background-color: #D7D7D7;
   height: 100%;
   overflow: auto;
   padding: 10px;
+
 }
-.eventsSmall{
-  background-color: #d7d7d7;
+
+.eventsSmall {
   width: 100%;
   min-height: 600px;
   overflow: auto;
 }
-.graph{
+
+.graph {
   height: 500px;
+  border-radius: 15px;
+  padding: 0.5rem !important
 }
+

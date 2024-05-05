@@ -1,0 +1,78 @@
+.contract {
+  background: white;
+  width: 160px;
+  border-radius: 20px;
+  padding: 5px;
+  margin: 5px;
+  box-shadow: 7px 7px 15px -10px rgb(0, 0, 0, 0.5);
+}
+
+.fontName {
+  font-size: small;
+
+}
+
+.running {
+  background-color: #A2CBA2 !important;
+}
+
+.paused {
+  background-color: #fff04b !important;
+}
+
+.requesting {
+  background-color: #ffaf4d !important;
+}
+
+.credit-done {
+  background-color: #a4a4a4 !important;
+}
+
+.buttonContrat {
+  border-radius: 20px;
+}
+
+@keyframes cops {
+  0% {
+    background: #3153ff;
+  }
+  50% {
+    background: #ff0000;
+  }
+  100% {
+    background: #3153ff;
+  }
+}
+
+.default-credit {
+  background-color: #ff706e; /* Fallback */
+  animation: cops 1s infinite ease;
+  color: white;
+}
+
+
+.status {
+  position: relative;
+  width: 100%;
+  padding: 5px;
+  height: 30px;
+  border-radius: 20px;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.progress {
+  background-color: #4caf50;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%; /* Match parent height */
+  z-index: 0;
+}
+
+.statusLabel {
+  position: relative;
+  font-weight: bold;
+  vertical-align: middle;
+  z-index: 2;
+}

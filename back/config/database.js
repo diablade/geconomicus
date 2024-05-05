@@ -1,6 +1,7 @@
 //Set up mongoose connection
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import log from "../config/log.js";
 
 dotenv.config({path:'./../config/.env'});
 
@@ -21,23 +22,28 @@ const options = {
     maxPoolSize:        20
 }
 
-mongoose.connect(uri, options, (err, db) => {
-    if (err) {
-        console.error(err);
-    }
-    else {
-        // console.log("database connected!");
-    }
-});
-mongoose.connection.on("connected", function() {
-    // console.log(" Mongoose connected to " + collection);
-});
-mongoose.connection.on("error", function(err) {
-    console.log(" Mongoose connection error: " + err);
-});
-mongoose.connection.on("disconnected", function() {
-    console.log(" Mongoose disconnected");
-});
 
-mongoose.Promise = global.Promise;
+const connect = () => {
+    mongoose.connect(uri, options, (err, db) => {
+        if (err) {
+            log.error(err);
+        }
+        else {
+            // console.log("Database connected!");
+        }
+    });
+    mongoose.connection.on("error", function(err) {
+        log.error("Mongoose connection error: " + err);
+    });
+    mongoose.connection.on("connected", function() {
+        // log.info("Mongoose connected to " + collection);
+    });
+    mongoose.connection.on("disconnected", function() {
+        log.info("Mongoose disconnected");
+    });
+
+    mongoose.Promise = global.Promise;
+}
+
+export { connect };
 export default mongoose;

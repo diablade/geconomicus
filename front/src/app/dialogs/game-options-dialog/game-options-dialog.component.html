@@ -3,48 +3,10 @@
     Options en monnaie {{game.typeMoney == C.JUNE ? "libre" : "dette"}}
   </div>
   <div class="overflow-auto text-center">
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+    <div class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>nom de la partie</mat-label>
         <input type="text" matInput placeholder="" [(ngModel)]="game.name">
-      </mat-form-field>
-    </div>
-    <div class="d-inline-flex">
-      <div class="imgText">
-        <img class="imgCardValeur" src="assets/level1.png">
-        Alimentation
-      </div>
-      <mat-form-field *ngIf="game" class="input" appearance="fill">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
-      </mat-form-field>
-    </div>
-    <div class="d-inline-flex">
-      <div class="imgText">
-        <img class="imgCardValeur" src="assets/level2.png">
-        Culture savoir
-      </div>
-      <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
-      </mat-form-field>
-    </div>
-    <div class="d-inline-flex">
-      <div class="imgText"><img class="imgCardValeur" src="assets/level3.png">
-        Energie
-      </div>
-      <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
-      </mat-form-field>
-    </div>
-    <div class="d-inline-flex">
-      <div class="imgText"><img class="imgCardValeur" src="assets/level4.png">
-        Technologie
-      </div>
-      <mat-form-field *ngIf="game" class="input">
-        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
-        <input type="number" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
       </mat-form-field>
     </div>
     <div>
@@ -52,34 +14,131 @@
         Questionnaire de ressenti en fin de partie
       </mat-checkbox>
     </div>
-    <div class="title m-auto fs-5 mt-2 mb-2">
+    <div class="m-auto fs-5 mt-2 mb-4">
+      ⚠️ Attention, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
+      sinon cliquez sur <span class="red"> "valeur par defaut"</span> en cas d'erreur !
+    </div>
+    <div class="title m-auto fs-4 mt-2 mb-2">
       Options avancé
     </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+    <div class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>nombre de tours</mat-label>
-        <input type="number" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
+        <input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
       </mat-form-field>
     </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+    <div class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>minutes par tour</mat-label>
-        <input type="number" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+        <input type="number" min="1" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
       </mat-form-field>
     </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+    <div class="d-inline-flex">
+      <div class="imgText">
+        <img class="imgCardValeur" src="assets/images/level1.png">
+        Alimentation
+      </div>
+      <mat-form-field *ngIf="game" class="input" appearance="fill">
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
+        <input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.priceWeight1">
+      </mat-form-field>
+    </div>
+    <div class="d-inline-flex">
+      <div class="imgText">
+        <img class="imgCardValeur" src="assets/images/level2.png">
+        Culture savoir
+      </div>
+      <mat-form-field *ngIf="game" class="input">
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
+        <input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.priceWeight2">
+      </mat-form-field>
+    </div>
+    <div class="d-inline-flex">
+      <div class="imgText"><img class="imgCardValeur" src="assets/images/level3.png">
+        Energie
+      </div>
+      <mat-form-field *ngIf="game" class="input">
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
+        <input type="number" min="0" matInput placeholder="(6 par défaut)" [(ngModel)]="game.priceWeight3">
+      </mat-form-field>
+    </div>
+    <div class="d-inline-flex">
+      <div class="imgText"><img class="imgCardValeur" src="assets/images/level4.png">
+        Technologie
+      </div>
+      <mat-form-field *ngIf="game" class="input">
+        <mat-label>{{game.typeMoney === 'june' ? "prix DU:" : "prix net:"}}</mat-label>
+        <input type="number" min="0" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
+      </mat-form-field>
+    </div>
+    <div *ngIf="game.typeMoney==C.JUNE" class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>taux de croissance Dividende Universel</mat-label>
-        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
       </mat-form-field>
     </div>
-    <div class="">
-      <mat-form-field *ngIf="game" class="ms-1" appearance="fill">
+    <div *ngIf="game.typeMoney==C.JUNE" class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
         <mat-label>bourse de départ (moyenne classe)</mat-label>
-        <input type="number" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
       </mat-form-field>
     </div>
-    <div class="mb-4 d-flex flex-column">
+    <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+        <mat-label>Crédit par défaut:</mat-label>
+        <input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
+      </mat-form-field>
+    </div>
+    <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+        <mat-label>Intéret par défaut:</mat-label>
+        <input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
+      </mat-form-field>
+    </div>
+    <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+        <mat-label>Paiement d'intérêts toutes les (en minutes) :</mat-label>
+        <input type="number" min="0" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
+      </mat-form-field>
+    </div>
+    <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+      <mat-label>Défaut de paiement, saisir</mat-label>
+      <mat-radio-group class="w-100" [(ngModel)]="game.seizureType">
+        <mat-radio-button class="d-flex ms-3" [value]="'fixe'">
+          <div class="d-flex flex-row infoLabel">
+            <div class="d-flex flex-column">
+              <div>en valeur carte, 1 pour 1</div>
+              <div>+ frais fixes (equivalent cartes faible) :</div>
+            </div>
+            <input type="number" min="0" class="smallInput" placeholder="2" [(ngModel)]="game.seizureCosts">
+          </div>
+        </mat-radio-button>
+        <mat-radio-button class="d-flex ms-3 w-100" [value]="'decote'">
+          <div class="d-flex flex-row infoLabel">en valeur carte avec décote de :<input type="number" min="0" class="smallInput"
+                                                                              placeholder="33"
+                                                                              [(ngModel)]="game.seizureDecote">%
+          </div>
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+      Si crédit non recouvré, mise en prison maximum
+      <mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+        <mat-label>Durée de la prison max (en minutes):</mat-label>
+        <input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
+      </mat-form-field>
+    </div>
+    <div *ngIf="game.typeMoney==C.DEBT" class="mb-4 d-flex flex-column">
+      <mat-checkbox class="m-auto" [disabled]="true">
+        Convertir un joueur en banquier d'affaire (comming soon)
+      </mat-checkbox>
+      <div class="infoLabel">
+        <div>
+          •A la possibilité d'octroyer, negocier, refuser des credits, revendre les saisies
+        </div>
+      </div>
+    </div>
+    <div *ngIf="game.typeMoney==C.JUNE" class="mb-4 d-flex flex-column">
       <mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
         Début inégale en monnaie libre
       </mat-checkbox>
@@ -98,29 +157,29 @@
       </div>
     </div>
     <div class="mt-2">
-        <mat-label>Nombre de cartes identique généré disponible dans le jeu et cartes de départs</mat-label>
-        <mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
-          <mat-radio-button class="d-flex ms-3" [value]=3>
-            3 (idéal de 3 à 5 joueurs)
-          </mat-radio-button>
-          <mat-radio-button class="d-flex ms-3" [value]=4>
-            4 (de 6 à 17 joueurs)
-          </mat-radio-button>
-          <mat-radio-button class="d-flex ms-3" [value]=5>
-            5 (idéal de 18 à 25 joueurs)
-          </mat-radio-button>
-        </mat-radio-group>
+      <mat-label>Nombre de cartes identique généré disponible dans le jeu et cartes de départs</mat-label>
+      <mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
+        <mat-radio-button class="d-flex ms-3" [value]=3>
+          3 (idéal de 3 à 5 joueurs)
+        </mat-radio-button>
+        <mat-radio-button class="d-flex ms-3" [value]=4>
+          4 (de 6 à 17 joueurs)
+        </mat-radio-button>
+        <mat-radio-button class="d-flex ms-3" [value]=5>
+          5 (idéal de 18 à 25 joueurs)
+        </mat-radio-button>
+      </mat-radio-group>
     </div>
     <div class="mt-2">
-        <mat-label>Nombre de cartes identique pour bâtir une carte supérieur: </mat-label>
-        <mat-radio-group [(ngModel)]="game.amountCardsForProd">
-          <mat-radio-button class="d-flex ms-3" [value]=3>
-            3 (ideal de 3 à 5 joueurs)
-          </mat-radio-button>
-          <mat-radio-button class="d-flex ms-3" [value]=4>
-            4 (pour 6+ joueurs)
-          </mat-radio-button>
-        </mat-radio-group>
+      <mat-label>Nombre de cartes identique pour bâtir une carte supérieur:</mat-label>
+      <mat-radio-group [(ngModel)]="game.amountCardsForProd">
+        <mat-radio-button class="d-flex ms-3" [value]=3>
+          3 (ideal de 3 à 5 joueurs)
+        </mat-radio-button>
+        <mat-radio-button class="d-flex ms-3" [value]=4>
+          4 (pour 6+ joueurs)
+        </mat-radio-button>
+      </mat-radio-group>
     </div>
   </div>
   <div mat-dialog-actions>

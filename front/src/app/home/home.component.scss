@@ -1,18 +1,27 @@
-.img-top{
-  width: 200px;
-  margin-left: 13px;
+.geco {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
 }
-.img-bottom{
+.img-top {
+  width: 150px;
+}
+
+.img-bottom {
   text-align: center;
   max-width: 500px;
   width: 100%;
 }
 
-.home{
+.home {
   display: flex;
   flex-direction: column;
   align-content: center;
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
+
+  background: #ffd89b; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }

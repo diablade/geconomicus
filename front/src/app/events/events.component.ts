@@ -7,9 +7,7 @@ import Chart from 'chart.js/auto';
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
-
 Chart.register(zoomPlugin);
-
 
 @Component({
   selector: 'app-events',
@@ -18,9 +16,10 @@ Chart.register(zoomPlugin);
 })
 export class EventsComponent {
 
+  C = C;
   @Input() events: EventGeco[] = [];
   @Input() players: Player[] = [];
-  C = C;
+  @Input() typeMoney= C.JUNE;
 
   constructor() {
   }
@@ -40,8 +39,8 @@ export class EventsComponent {
     }
   }
 
-  getPlayerName(playerId: string) {
-    const player = _.find(this.players, p => p._id === playerId);
+  getPlayerName(idPlayer: string) {
+    const player = _.find(this.players, p => p._id === idPlayer);
     return player ? player.name : "undefined";
   }
 

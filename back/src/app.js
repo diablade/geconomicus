@@ -1,16 +1,21 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mongoose from './conf_database.js';
+// import {mongoose} from '../config/database.js';
 import morgan from 'morgan';
 import cors from 'cors';
-import socket from './conf_socket.js';
+import socket from '../config/socket.js';
 import http from 'http';
 
 // IMPORT ROUTES
-import gameRoutes from './src/game/game.routes.js';
-import playerRoutes from './src/player/player.routes.js';
+import bankRoutes from "./bank/bank.routes.js";
+import gameRoutes from './game/game.routes.js';
+import playerRoutes from './player/player.routes.js';
+import * as db from "../config/database.js";
 
 dotenv.config();
+if (process.env.GECO_NODE_ENV !== "test") {
+    db.connect();
+}
 
 const app = express();
 // CORS POLICY
@@ -23,6 +28,7 @@ app.use(morgan(":remote-addr | :remote-user |[:date[clf]] " + "| :method | \":ur
 
 
 // MAIN ROUTES middleware
+app.use('/bank', bankRoutes);
 app.use('/game', gameRoutes);
 app.use('/player', playerRoutes);
 //api health routes
@@ -55,14 +61,17 @@ app.use(function (err, req, res, next) {
         message: message
     });
 });
-const server = http.createServer(app);
-let io = socket.initIo(server);
-server.listen(process.env.GECO_PORT_NODE, () => console.log(
-    "\n" +
-    "   ____                                      _                \n" +
-    "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n" +
-    " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" +
-    " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n" +
-    "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" +
-    "                                                              \n"
-    + process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
+if (process.env.GECO_NODE_ENV !== "test") {
+    const server = http.createServer(app);
+    let io = socket.initIo(server);
+    server.listen(process.env.GECO_PORT_NODE, () => console.log(
+        "\n" +
+        "   ____                                      _                \n" +
+        "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n" +
+        " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" +
+        " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n" +
+        "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" +
+        "                                                              \n"
+        + process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
+}
+export default app;

@@ -1,29 +1,29 @@
 <ng-container *ngIf="state=='flipped'">
   <div class="whenFlipped" (click)="closeCard()"></div>
 </ng-container>
-<div class="card" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
+<div class="card" [style.width]="width" [style.height]="height" [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
   <div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
-    <img [src]="'/assets/lvl'+(card.weight+1)+'.png'"/>
+    <img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
     <div class="containerLetter topLeft" [ngClass]="state=='flipped' ? 'hide' : 'show'">
-      <span class="letter">{{card.letter}}</span>
+      <span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{card.letter}}</span>
     </div>
     <div class="containerLetter bottomRight" [ngClass]="state=='flipped' ? 'hide' : 'show'">
-      <span class="letter">{{card.letter}}</span>
+      <span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{card.letter}}</span>
     </div>
     <div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
          [ngClass]="card.color+'Color'"></div>
     <button *ngIf="card.count===amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent" class="transform">
-      Construire la carte supérieur
+      {{getBuildText(card)}}
       <fa-icon [icon]="faGift"></fa-icon>
     </button>
   </div>
   <div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
     <div class="d-flex flex-row align-items-center">
-      <div class="letter m-2">{{card.letter}}</div>
-      <div class="price">prix :</div>
+      <div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">{{card.letter}}</div>
+      <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">prix :</div>
       <div class="prices d-flex flex-column">
-        <div class="price">{{card.price}} {{typeMoney === "june" ? "DU" : ""}}</div>
-        <div class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)| number:'1.2-2'}} Ğ1</div>
+        <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">{{card.price}} {{typeMoney === "june" ? "DU" : ""}}</div>
+        <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)| number:'1.2-2'}} Ğ1</div>
       </div>
     </div>
     <div class="qrcodeWrapper flex-grow-1">
@@ -35,7 +35,13 @@
   </div>
 </div>
 <!-- Preload the image -->
-<img src="/assets/lvl1.png" style="display: none;"/>
-<img src="/assets/lvl2.png" style="display: none;"/>
-<img src="/assets/lvl3.png" style="display: none;"/>
-<img src="/assets/lvl4.png" style="display: none;"/>
+<audio #cardFlip>
+  <source src='/assets/audios/cardFlipGet.mp3' type="audio/mp3">
+</audio>
+<audio #cardBack>
+  <source src='/assets/audios/cardFlipBack.mp3' type="audio/mp3">
+</audio>
+<img src="/assets/images/lvl1.png" style="display: none;"/>
+<img src="/assets/images/lvl2.png" style="display: none;"/>
+<img src="/assets/images/lvl3.png" style="display: none;"/>
+<img src="/assets/images/lvl4.png" style="display: none;"/>

@@ -1,44 +1,113 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-* {touch-action: manipulation;}
 
-.letter {
-  font-size: calc(28vw * 0.33); /* Adjust the multiplier as needed */
-  line-height: calc(28vw * 0.33); /* Adjust the multiplier as needed */
-  font-family: serif;
-  z-index: 10;
+html, body {
+  height: 100%;
+  background: #ffd89b !important;
 }
 
-.price {
-  line-height: calc(25vw * 0.2); /* Adjust the multiplier as needed */
-  font-size: calc(25vw*0.1);
-  font-family: serif;
-}
-/* Apply a conditional statement to limit the font size */
-@media (min-width: 1080px) {
-  .letter {
-    font-size: 7rem;
-    line-height: 7rem;
-    font-family: serif;
-    z-index: 10;
-  }
-}
-/* Apply a conditional statement to limit the font size */
-@media (min-width: 1080px) {
-  .price {
-    font-size: 1.5rem;
-    line-height: 1.5rem;
-    font-family: serif;
-  }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.innerQrCode{
+* {
+  touch-action: manipulation;
+}
+
+.innerQrCode {
   height: 100px !important;
   width: 100px !important;
 }
 
 .guny {
   width: 300px;
+}
+
+.contour {
+  color: white !important;
+  font-weight: bold;
+
+  text-shadow:
+          //TOP
+          0px -1.5px 0px black,
+            //TOP RIGHT
+          1.5px -1.5px 0px black,
+            //RIGHT
+          1.5px 0px 0px black,
+            //BOTTOM
+          0px 1.5px 0px black,
+            //BOTTOM RIGHT
+          1.5px 1.5px 0px black,
+            //BOTTOM LEFT
+          -1.5px 1.5px 0px black,
+            //LEFT
+          -1.5px 0px 0px black,
+            //TOP LEFT
+          -1.5px -1.5px 0px black,
+}
+.sunyBg{
+  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.shadowed {
+  color: white;
+  text-shadow:
+          //TOP
+          0px -1.5px 0px black,
+            //TOP RIGHT
+          1.5px -1.5px 0px black,
+            //RIGHT
+          1.5px 0px 0px black,
+            //BOTTOM
+          0px 1.5px 0px black,
+            //BOTTOM RIGHT
+          1.5px 1.5px 0px black,
+            //BOTTOM LEFT
+          -1.5px 1.5px 0px black,
+            //LEFT
+          -1.5px 0px 0px black,
+            //TOP LEFT
+          -1.5px -1.5px 0px black,
+
+            //la trainé vers en bas à droite
+          1px 1px 0px black,
+          2px 2px 0px black,
+          3px 3px 0px black,
+          4px 4px 0px black,
+          1px 1px 1px black,
+          2px 2px 1px black,
+          3px 3px 1px black,
+          4px 4px 1px black;
+}
+
+.gecoFont {
+  font-family: GecoFont, sans-serif !important;
+}
+
+@font-face {
+  font-family: 'GecoFont';
+  src: url('/assets/Retrow Mentho.woff') format('woff');
+}
+
+
+.bulle {
+  background: #ffffff69;
+  padding: 12px;
+  border-radius: 200px;
+  position: relative;
+  width: fit-content;
+}
+
+.bulle::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: 30px;
+  bottom: -30px;
+  background: #ffffff69;
+  clip-path: polygon(38% 0, 100% 100%, 100% 0);
 }

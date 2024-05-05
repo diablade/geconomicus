@@ -1,41 +1,68 @@
-<div class="w-100 h-100 d-flex flex-row">
+<div class="w-100 h-100 d-flex flex-row results">
   <div class="d-none d-md-block events">
-    <app-events [events]="events" [players]="players"></app-events>
+    <app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
   </div>
   <div class="flex-grow-1 d-flex flex-column overflow-auto h-100 p-4">
-    <h1 class="m-2">Jeu {{game?.name}} en monnaie: {{game?.typeMoney == C.JUNE ? "libre" : "dette"}}</h1>
-    <div class="row no-gutters">
-      <div class="col-sm-12 col-md-4">
-        <div>Status: {{getStatus()}}</div>
-        <div>Joueurs: {{game?.players?.length}}</div>
-        <div>morts et reincarnés: {{reincarnates}}</div>
-        <div>meilleur joueur monnaie: 🥇TODO</div>
-        <div>meilleur joueur ressources: 🥇TODO</div>
+    <div class="d-flex flex-row">
+      <div class="flex-grow-1 d-flex flex-column">
+        <img class="geco" src="./assets/images/geconomicus.png" alt="">
+        <h1 class="m-2 mt-4 contour">Résumé du jeu : {{ game?.name }}</h1>
       </div>
+      <img class="gunyResults" src="./assets/images/guny.png">
+    </div>
+    <div class="row g-0 p-2 bg-white rounded shadow">
       <div class="col-sm-12 col-md-4">
-        <div>Taux de croissance : {{game?.tauxCroissance}}</div>
-        <div>Mass monetaire initial : {{initialMM | number:'1.2-2'}} Ğ1</div>
-        <div>Mass monetaire final : {{game?.currentMassMonetary | number:'1.2-2'}} Ğ1</div>
-        <div>Formule de calcul du DU: (MasseM / nb Joueur) * Taux</div>
-        <div>DU initial : ({{initialMM}} / {{game?.players?.length}} * {{game?.tauxCroissance | number:'1.2-2'}})
-          = {{initialDU}} Ğ1
-        </div>
-        <div>DU final : ({{game?.currentMassMonetary| number:'1.2-2'}} / {{game?.players?.length}}
-          * {{game?.tauxCroissance | number:'1.2-2'}}) = {{game?.currentDU}} Ğ1
+        <div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
+        <div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
+        <div><span class="fw-bold">Joueurs: </span>{{ game?.players?.length }}</div>
+        <div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
+        <div><span class="fw-bold">Meilleur joueur monnaies: </span>🥇{{ bestPlayerOnMoney }}</div>
+        <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇{{ bestPlayerOnRes }}</div>
+        <div><span class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}
         </div>
       </div>
+      <div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
+        <div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
+        <div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux
+        </div>
+        <div><span class="fw-bold">D.U initial : </span>({{ initialMM }} / {{ game?.players?.length }}
+          * {{ game?.tauxCroissance | number:'1.2-2' }})
+          = {{ initialDU }} Ğ1
+        </div>
+        <div><span class="fw-bold">D.U final : </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
+          / {{ game?.players?.length }}
+          * {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} Ğ1
+        </div>
+        <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
+        <div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
+        </div>
+        <div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources) }} (D.U eq)
+        </div>
+        <div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources) }} (D.U eq)
+        </div>
+      </div>
+      <div *ngIf="game?.typeMoney == C.DEBT" class="col-sm-12 col-md-4">
+        <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} €</div>
+        <div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }} €
+        </div>
+        <div><span class="fw-bold">Dettes initial : </span> {{ initialDebts }} €</div>
+        <div><span class="fw-bold">Dettes final : </span>{{ getDebts() }} €</div>
+        <div><span class="fw-bold">Ressources initial : </span> {{ initialResources }} (€)</div>
+        <div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€)</div>
+        <div><span class="fw-bold">Interets récupéré par la banque : </span>{{ game?.bankInterestEarned }} €</div>
+      </div>
       <div class="col-sm-12 col-md-4">
-        <div>début: {{startGameDate| date:"YYYY-MMM-dd HH:mm"}}</div>
-        <div>fin : {{stopGameDate| date:"YYYY-MMM-dd HH:mm"}}</div>
-        <div>Durée total du jeu : {{durationGame()}}</div>
-        <div>Durée d'un tour : {{game?.roundMinutes}} minutes</div>
-        <div>Nombre de tours joué : {{game?.round}}</div>
+        <div><span class="fw-bold">Début: </span>{{ startGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
+        <div><span class="fw-bold">Fin : </span>{{ stopGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
+        <div><span class="fw-bold">Durée total du jeu : </span>{{ durationGame() }}</div>
+        <div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
+        <div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
       </div>
     </div>
 
-    <h1 class="m-2">Comptes en quantitatif
+    <h1 class="m-2 mt-4 contour">Comptes en quantitatif
     </h1>
-    <div class="graph">
+    <div class="graph bg-white rounded shadow">
       <canvas baseChart
               class="chart"
               height="500"
@@ -44,8 +71,9 @@
               [type]="'line'">
       </canvas>
     </div>
-    <h1 class="m-2">Comptes en relatif (Ğ1 rapporté au DU de l'instant)</h1>
-    <div class="graph">
+    <h1 *ngIf="game?.typeMoney==C.JUNE" class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de
+      l'instant)</h1>
+    <div *ngIf="game?.typeMoney==C.JUNE" class="graph bg-white rounded shadow">
       <canvas baseChart
               class="chart"
               height="500"
@@ -54,8 +82,8 @@
               [type]="'line'">
       </canvas>
     </div>
-    <h1 class="m-2">Ressources</h1>
-    <div class="graph">
+    <h1 class="m-2 mt-4 contour">Ressources</h1>
+    <div class="graph bg-white rounded shadow">
       <canvas baseChart
               class="chart"
               height="500"
@@ -64,8 +92,8 @@
               [type]="'line'">
       </canvas>
     </div>
-    <h1 class="m-2">Résultat du sondage sur vos ressentis</h1>
-    <div class="graph">
+    <h1 class="m-2 mt-4 contour">Résultat du sondage sur vos ressentis</h1>
+    <div class="graph bg-white rounded shadow">
       <canvas baseChart
               class="chart"
               height="300"
@@ -76,7 +104,7 @@
       </canvas>
     </div>
     <div class="d-block d-md-none eventsSmall">
-      <app-events [events]="events" [players]="players"></app-events>
+      <app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
     </div>
   </div>
 </div>

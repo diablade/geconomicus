@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {animate, AnimationBuilder, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
@@ -26,8 +26,8 @@ import {faGift} from "@fortawesome/free-solid-svg-icons";
         }),
         {params: {translateX: 10, translateY: 10}}
       ),
-      transition("default => flipped", [animate("400ms")]),
-      transition("flipped => default", [animate("400ms")]),
+      transition("default => flipped", [animate("350ms")]),
+      transition("flipped => default", [animate("350ms")]),
     ])
   ]
 })
@@ -47,7 +47,12 @@ export class CardComponent implements AfterViewInit {
   @Input() currentDU: number = 1;
   @Input() screenWidth: number = 1;
   @Input() screenHeight: number = 1;
-  @Input() amountCardsForProd: number= 4;
+  @Input() amountCardsForProd: number = 4;
+  @Input() width: any = 'calc(28vw)';
+  @Input() height: any = 'calc(28vw * 1.5)';
+  @Input() letterSize: any = 'calc(28vw * 0.33)';
+  @Input() priceSize: any = 'calc(25vw * 0.2)';
+  @Input() flippable: boolean = true;
   state = "default";
   translateX = 0;
   translateY = 0;
@@ -56,21 +61,29 @@ export class CardComponent implements AfterViewInit {
   qrWidthCard = 0;
   protected readonly faGift = faGift;
   @Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
+  @ViewChild('cardFlip') cardFlip!: ElementRef;
+  @ViewChild('cardBack') cardBack!: ElementRef;
+
 
   constructor(private animationBuilder: AnimationBuilder, private elementRef: ElementRef) {
     this.updateScreenSize();
   }
 
-  closeCard(){
+  closeCard() {
+    this.cardBack.nativeElement.play();
     this.state = "default";
   }
 
   cardClicked() {
-    this.calculatePosition();
-    if (this.state === "default") {
-      this.state = "flipped";
-    } else {
-      this.state = "default";
+    if (this.flippable) {
+      this.calculatePosition();
+      if (this.state === "default") {
+        this.state = "flipped";
+        this.cardFlip.nativeElement.play();
+      } else {
+        this.cardBack.nativeElement.play();
+        this.state = "default";
+      }
     }
   }
 
@@ -83,8 +96,8 @@ export class CardComponent implements AfterViewInit {
   }
 
   updateScreenSize() {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
+    // this.screenWidth = window.innerWidth;
+    // this.screenHeight = window.innerHeight;
   }
 
   calculatePosition() {
@@ -116,9 +129,20 @@ export class CardComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.calculatePosition();
-    }, 0);
+    this.calculatePosition();
+    // setTimeout(() => {
+    // }, 0);
   }
 
+  getBuildText(card: Card) {
+    switch (card.weight) {
+      case 0:
+        return "Créer une carte savoir";
+      case 1:
+        return "Créer une carte Energie";
+      case 2:
+        return "Créer une carte Technologie";
+    }
+    return "Créer une carte supérieur";
+  }
 }

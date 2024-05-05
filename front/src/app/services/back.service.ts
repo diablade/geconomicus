@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {catchError, Observable, throwError} from "rxjs";
-import {Card, Game, Player} from "../models/game";
+import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
@@ -48,10 +48,10 @@ export class BackService {
    */
   public join(idGame: string, name: string, reincarnate: string | undefined): Observable<any> {
     return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {
-      idGame: idGame,
-      name: name,
-      reincarnate: reincarnate
-    })
+        idGame: idGame,
+        name: name,
+        reincarnate: reincarnate
+      })
       .pipe(
         catchError(err => this.handleError(err, this.REDIRECT_HOME, ''))
       );
@@ -111,10 +111,10 @@ export class BackService {
 
   produceLevelUp(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
     return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
-      idGame: idGame,
-      idPlayer: idPlayer,
-      cards: cards
-    })
+        idGame: idGame,
+        idPlayer: idPlayer,
+        cards: cards
+      })
       .pipe(
         catchError(err => this.handleError(err, "", "échange impossible")
           //TODO ré actualise
@@ -124,11 +124,11 @@ export class BackService {
 
   deleteUser(idPlayer: string, idGame: string) {
     return this.http.delete<Game>(environment.API_HOST + environment.GAME.DELETE_PLAYER, {
-      body: {
-        idGame: idGame,
-        idPlayer: idPlayer
-      }
-    })
+        body: {
+          idGame: idGame,
+          idPlayer: idPlayer
+        }
+      })
       .pipe(
         catchError(err => this.handleError(err, "", "suppression impossible")
           //TODO ré actualise
@@ -138,9 +138,9 @@ export class BackService {
 
   startGame(game: Game) {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.START, {
-      idGame: game._id,
-      typeMoney: game.typeMoney,
-    })
+        idGame: game._id,
+        typeMoney: game.typeMoney,
+      })
       .pipe(
         catchError(err => this.handleError(err, "", "start game impossible"))
       );
@@ -153,14 +153,13 @@ export class BackService {
       );
   }
 
-  transaction(body: {
-    idGame: string | undefined;
-    idBuyer: string | undefined;
-    idSeller: string | undefined;
-    idCard: any
-  }) {
-    console.log(body);
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, body)
+  transaction(idGame: string | undefined, idBuyer: string | undefined, idSeller: any, idCard: any) {
+    return this.http.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, {
+        idGame,
+        idBuyer,
+        idSeller,
+        idCard
+      })
       .pipe(
         catchError(err => this.handleError(err, "", err))
       );
@@ -196,9 +195,9 @@ export class BackService {
 
   killUser(idPlayer: string, idGame: string) {
     return this.http.post<any>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
-      idGame: idGame,
-      idPlayer: idPlayer
-    })
+        idGame: idGame,
+        idPlayer: idPlayer
+      })
       .pipe(
         catchError(err => this.handleError(err, "", "kill impossible")
           //TODO ré actualise
@@ -210,22 +209,34 @@ export class BackService {
     return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
       idGame: idGame,
       name: results.name,
+      typeMoney: results.typeMoney,
+      amountCardsForProd: results.amountCardsForProd,
+      generatedIdenticalCards: results.generatedIdenticalCards,
+      surveyEnabled: results.surveyEnabled,
       priceWeight1: results.priceWeight1,
       priceWeight2: results.priceWeight2,
       priceWeight3: results.priceWeight3,
       priceWeight4: results.priceWeight4,
+      round: results.round,
+      roundMax: results.roundMax,
+      roundMinutes: results.roundMinutes,
+
       tauxCroissance: results.tauxCroissance,
-      surveyEnabled: results.surveyEnabled,
-      generatedIdenticalCards: results.generatedIdenticalCards,
-      amountCardsForProd: results.amountCardsForProd,
+      inequalityStart: results.inequalityStart,
+      startAmountCoins: results.startAmountCoins,
       pctRich: results.pctRich,
       pctPoor: results.pctPoor,
-      startAmountCoins: results.startAmountCoins,
-      inequalityStart: results.inequalityStart,
-      round: results.round,
-      typeMoney: results.typeMoney,
-      roundMax: results.roundMax,
-      roundMinutes: results.roundMinutes
+
+      defaultCreditAmount: results.defaultCreditAmount,
+      defaultInterestAmount: results.defaultInterestAmount,
+      bankInterestEarned: results.bankInterestEarned,
+      bankGoodsEarned: results.bankGoodsEarned,
+      timerCredit: results.timerCredit,
+      timerPrison: results.timerPrison,
+      manualBank: results.manualBank,
+      seizureType: results.seizureType,
+      seizureCosts: results.seizureCosts,
+      seizureDecote: results.seizureDecote
     }).pipe(
       catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
     );
@@ -254,5 +265,40 @@ export class BackService {
     }).pipe(
       catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
     );
+  }
+
+  createCredit(data: any) {
+    return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
+      catchError(err => this.handleError(err, "", "creation du credit impossible"))
+    );
+  }
+
+  getPlayerCredits(idGame: any, idPlayer: any) {
+    return this.http.get<any>(environment.API_HOST + environment.BANK.GET_CREDITS + idGame + '/' + idPlayer).pipe(
+      catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
+    )
+  }
+
+  settleCredit(credit: Credit) {
+    return this.http.post<any>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
+      credit: credit
+    }).pipe(
+      catchError(err => this.handleError(err, "", "remboursement du credit impossible"))
+    )
+  }
+
+  payInterest(credit: Credit) {
+    return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
+      catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
+    )
+  }
+
+  seizure(seizure: any, credit: Credit) {
+    return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {
+      credit: credit,
+      seizure: seizure
+    }).pipe(
+      catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
+    )
   }
 }

@@ -1,5 +1,5 @@
-<div class="join">
-  <h1 mat-dialog-title>Rejoindre la partie !</h1>
+<div class="join sunyBg h-100">
+  <h1 mat-dialog-title class="shadowed gecoFont">Rejoindre la partie !</h1>
   <div mat-dialog-content>
     <p>Votre petit nom ?</p>
     <mat-form-field appearance="fill">
@@ -11,11 +11,11 @@
     <button *ngIf="reincarnate=='false'" mat-raised-button color="primary" (click)="joinInGame()">Ğo !</button>
     <button *ngIf="reincarnate==undefined" mat-raised-button color="primary" (click)="join()">Ğo !</button>
   </div>
-  <div *ngIf="reincarnate" class="mt-4 text-center">Hey ! Tu as été réincarné ! (Trouve toi un nouveau prénom)</div>
-  <div *ngIf="reincarnate=='false'" class="mt-4 text-center">Hey ! La parti à déjà commencé. Bon courage.</div>
-  <div *ngIf="reincarnate==undefined" class="mt-4 text-center">Hey ! J'm’appelle Ğuny.</div>
+  <div *ngIf="reincarnate" class="mt-4 text-center gecoFont bulle">Hey ! Tu as été réincarné ! (Trouve toi un nouveau prénom)</div>
+  <div *ngIf="reincarnate=='false'" class="mt-4 text-center bulle gecoFont ">Hey ! La parti à déjà commencé. Bon courage.</div>
+  <div *ngIf="reincarnate==undefined" class="mt-4 text-center bulle gecoFont">Hey ! J'm’appelle Ğuny.</div>
   <!--  GUNY  -->
   <div class="mt-1 col-md-12 text-center m-auto">
-    <img class="guny" src="./assets/Guny.jpg" alt="">
+    <img class="guny" src="./assets/images/guny.png" alt="">
   </div>
 </div>
