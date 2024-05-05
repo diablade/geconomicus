@@ -140,9 +140,6 @@ async function initGameJune(game) {
     let decks = await generateDecks(game.generatedIdenticalCards, nbPlayer, prices);
     const classes = game.inequalityStart ? await generateInequality(nbPlayer, game.pctRich, game.pctPoor) : [];
 
-    let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
-    game.events.push(startGameEvent);
-
     for await (let player of game.players) {
         // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], game.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
@@ -434,6 +431,8 @@ export default {
                 .then(async (game) => {
                     game.typeMoney = body.typeMoney ? body.typeMoney : C.JUNE;
                     let gameUpdated;
+                    let startGameEvent = constructor.event(C.START_GAME, C.MASTER, "", 0, [], Date.now());
+                    game.events.push(startGameEvent);
                     if (game.typeMoney === "june") {
                         gameUpdated = await initGameJune(game);
                     } else if (game.typeMoney === "debt") {

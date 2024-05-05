@@ -5,12 +5,12 @@
     <span [ngSwitch]="event.typeEvent">
         <span *ngSwitchCase="C.TRANSACTION">
           <span [matTooltip]="getPlayerName(event.emitter)">👤 </span>
-          <span [matTooltip]="'Transaction'">{{event.amount}}Ğ1 🔄 {{getTextCard(event.resources[0])}}</span>
+          <span [matTooltip]="'Transaction'">{{event.amount}}{{typeMoney == C.JUNE ? "Ğ1":"€"}} 🤝 {{getTextCard(event.resources[0])}}</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.INIT_DISTRIB">
           <span [matTooltip]="'Distribution à '+getPlayerName(event.receiver)"> 👤⬅️</span>
-          <span [matTooltip]="'monnaie de départ'">{{event.amount}}Ğ1-</span>
+          <span [matTooltip]="'monnaie de départ'">{{event.amount}}{{typeMoney == C.JUNE ? "Ğ1":"€"}}-</span>
           <span [matTooltip]="'carte de départ'" *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.DISTRIB_DU">
@@ -39,12 +39,12 @@
           <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦for graph</span>
         </span>
         <span *ngSwitchCase="C.BIRTH">
-          <span [matTooltip]="'Naissance de '+getPlayerName(event.receiver)"> 👤👶 {{event.amount}}Ğ1-</span>
+          <span [matTooltip]="'Naissance de '+getPlayerName(event.receiver)"> 👤👶 {{typeMoney == C.JUNE ? event.amount+"Ğ1":"0€"}}-</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'Défausse de cartes pour établir'">➡️🛠</span>
+          <span [matTooltip]="'Défausse de cartes pour créer'">➡️🛠</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_NEWCARDS" class="">
@@ -53,28 +53,36 @@
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.NEW_CREDIT" class="">
-          <span [matTooltip]="'la banque crédite'">{{event.amount}}💰️</span>
-          <span [matTooltip]="'interet'">{{event.resources[0].interest}}📃➡️</span>
+          <span [matTooltip]="'la banque crédite'">({{event.resources[0].amount}}€️, </span>
+          <span [matTooltip]="'interet'">{{event.resources[0].interest}}€) </span>
+          <span [matTooltip]="'contrat'">📝➡️</span>
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+        </span>
+        <span *ngSwitchCase="C.REQUEST_CREDIT" class="">
+          <span [matTooltip]="'timeout credit'">⌛{{event.resources[0].amount+event.resources[0].interest}}€❓{{event.resources[0].interest}}€❓➡️</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.PAYED_INTEREST" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'interet payé'">{{event.amount}}💰️➡️🏦</span>
+          <span [matTooltip]="'interet payé'">{{event.amount}}€️➡️🏦</span>
         </span>
         <span *ngSwitchCase="C.DEFAULT_CREDIT" class="">
           <span [matTooltip]="'défaut de credit'">️🚨🏦➡️</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
+        <span *ngSwitchCase="C.SETTLE_CREDIT" class="">
+          <span [matTooltip]="'crédit remboursé'">{{event.amount}}€➡️🏦️📝❌</span>
+          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+        </span>
         <span *ngSwitchCase="C.SEIZURE" class="">
-          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'la banque à saisie'">➡️🏦</span>
+          <span [matTooltip]="'la banque saisie'">️🏦🫳</span>
+          <span [matTooltip]="getPlayerName(event.emitter)"> 👤{{event.amount}}€ </span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.PRISON" class="">
           <span [matTooltip]="'en prison'">⛓️</span>
           <span [matTooltip]="getPlayerName(event.receiver)">👤</span>
           <span [matTooltip]="'en prison'">⛓️</span>
-          <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.PRISON_ENDED" class="">
           <span [matTooltip]="'fin de prison'">⛓️➡🆓</span>

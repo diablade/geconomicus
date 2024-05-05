@@ -2,7 +2,6 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {Credit, Game, Player} from "../models/game";
 import {ActivatedRoute} from "@angular/router";
-import {SessionStorageService} from "../services/local-storage/session-storage.service";
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
@@ -13,7 +12,6 @@ import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
 import {environment} from "../../environments/environment";
-import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 

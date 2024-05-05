@@ -39,11 +39,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
   datasetsRelatif: Map<string, ChartDataset> = new Map<string, ChartDataset>();
   datasetsResources: Map<string, ChartDataset> = new Map<string, ChartDataset>();
   datasetsFeedback: ChartDataset[] = [];
-  MassMonetaryName = "Masse monétaire";
+  massMonetaryName = "Masse monétaire";
+  bankName = "Banque";
   currentDU = 0;
   initialDU = 0;
   initialMM = 0;
   initialDebts = 0;
+  initialResources = 0;
+  finalResources = 0;
   reincarnates = 0;
   startGameDate: Date | undefined;
   stopGameDate: Date | undefined;
@@ -304,7 +307,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
     },
   };
 
-
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
   }
 
@@ -393,13 +395,28 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           // @ts-ignore
           total: 0,
         });
-
     });
+    if (this.game?.typeMoney == C.DEBT) {
+      this.datasets.set(
+        C.BANK,
+        {
+          data: [],
+          label: this.bankName,
+          backgroundColor: hexToRgb("#000000"),
+          borderColor: hexToRgb("#000000"),
+          pointBackgroundColor: hexToRgb("#000000"),
+          pointBorderColor: hexToRgb("#000000"),
+          borderWidth: 2, // Line thickness
+          pointRadius: 0.8, // Point thickness
+          // @ts-ignore
+          total: 0,
+        });
+    }
     this.datasets.set(
       "masseMoney",
       {
         data: [],
-        label: this.MassMonetaryName,
+        label: this.massMonetaryName,
         backgroundColor: hexToRgb("#000000"),
         borderColor: hexToRgb("#000000"),
         pointBackgroundColor: hexToRgb("#000000"),
@@ -530,22 +547,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
         case C.INIT_DISTRIB:
           totalResourcesEvent = this.getValueCardsFromEvent(event);
           this.initialMM += event.amount;
+          this.initialResources += totalResourcesEvent;
           updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
           updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
             updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
           }
-          // @ts-ignore
-          // updateData(mmDatasetRelatif, event.date, "new", (mmDataset.total / this.nbPlayer / this.currentDU), false, false);
           continue;
         case C.DISTRIB_DU:
           this.currentDU = event.amount;
           updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           updateData(receiverDataset, event.date, "add", event.amount, false, false);
           updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
-          // @ts-ignore
-          // updateData(mmDatasetRelatif, event.date, "new", (mmDataset.total / this.nbPlayer / this.currentDU), false, false);
           continue;
         case C.TRANSACTION:
           totalResourcesEvent = this.getValueCardsFromEvent(event);
@@ -582,6 +596,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           receiverDatasetResources.data.push({x: event.date, y: 0});
           continue;
         case C.NEW_CREDIT:
+          if (!this.roundStarted) {
+            this.initialMM += event.amount;
+          }
           updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           continue;
@@ -589,7 +606,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
           updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
           updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-
+          continue;
+        case C.PAY_INTEREST:
+          updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+          updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+          updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           continue;
         default:
       }
@@ -609,7 +630,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
   getBestPlayers() {
     [...this.datasets.values()].forEach((dataset, index) => {
-      if (dataset.label != this.MassMonetaryName) {
+      if (dataset.label != this.massMonetaryName && dataset.label != this.bankName) {
         const lastPointValue = dataset.data[dataset.data.length - 1];
         // @ts-ignore
         if (lastPointValue && lastPointValue.y > this.maxLastPointMoney) {
@@ -620,14 +641,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
       }
     });
     [...this.datasetsResources.values()].forEach((dataset, index) => {
-      if (dataset.label != this.MassMonetaryName) {
-        const lastPointValue = dataset.data[dataset.data.length - 1];
+      const lastPointValue = dataset.data[dataset.data.length - 1];
+      // @ts-ignore
+      this.finalResources += lastPointValue.y;
+      // @ts-ignore
+      if (lastPointValue && lastPointValue.y > this.maxLastPointRes) {
         // @ts-ignore
-        if (lastPointValue && lastPointValue.y > this.maxLastPointRes) {
-          // @ts-ignore
-          this.maxLastPointRes = lastPointValue.y;
-          this.bestPlayerOnRes = dataset.label;
-        }
+        this.maxLastPointRes = lastPointValue.y;
+        this.bestPlayerOnRes = dataset.label;
       }
     });
     let transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
@@ -638,5 +659,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
   getPlayerNameById(id: string): string | undefined {
     return _.find(this.players, p => p._id === id)?.name;
+  }
+
+  getInitialResourcesInDU(resources: number) {
+    if((this.game?.priceWeight1)){
+      return resources/this.game.priceWeight1;
+    }
+    else{
+      return "-";
+    }
   }
 }

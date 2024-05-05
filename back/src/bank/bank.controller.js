@@ -277,7 +277,7 @@ export default {
                 message: "bad request"
             });
         } else {
-            let newEvent = constructor.event(C.PAYED_INTEREST, credit.idPlayer,C.MASTER, credit.interest, [credit], Date.now());
+            let newEvent = constructor.event(C.PAYED_INTEREST, credit.idPlayer,C.BANK, credit.interest, [credit], Date.now());
             GameModel.findOneAndUpdate(
                 {_id: credit.idGame, 'players._id': credit.idPlayer},
                 {
@@ -331,7 +331,7 @@ export default {
                 next({status: 400, message: "bad request"});
             } else {
                 try {
-                    let newEvent = constructor.event(C.SEIZURE, credit.idPlayer, C.BANK, seizure.coins, [seizure.cards], Date.now());
+                    let newEvent = constructor.event(C.SEIZURE, credit.idPlayer, C.BANK, seizure.coins, seizure.cards, Date.now());
                     // remove card and coins of player
                     await GameModel.updateOne(
                         {_id: credit.idGame, 'players._id': credit.idPlayer},
