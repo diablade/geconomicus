@@ -3,10 +3,13 @@
     <app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
   </div>
   <div class="flex-grow-1 d-flex flex-column overflow-auto h-100 p-4">
-    <div class="">
-      <img class="geco" src="./assets/images/geconomicus.png" alt="">
+    <div class="d-flex flex-row">
+      <div class="flex-grow-1 d-flex flex-column">
+        <img class="geco" src="./assets/images/geconomicus.png" alt="">
+        <h1 class="m-2 mt-4 contour">Résumé du jeu : {{ game?.name }}</h1>
+      </div>
+      <img class="gunyResults" src="./assets/images/guny.png">
     </div>
-    <h1 class="m-2 mt-4 contour">{{ game?.name }}</h1>
     <div class="row g-0 p-2 bg-white rounded shadow">
       <div class="col-sm-12 col-md-4">
         <div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
@@ -15,11 +18,13 @@
         <div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
         <div><span class="fw-bold">Meilleur joueur monnaies: </span>🥇{{ bestPlayerOnMoney }}</div>
         <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇{{ bestPlayerOnRes }}</div>
-        <div><span class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}</div>
+        <div><span class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}
+        </div>
       </div>
       <div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
         <div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
-        <div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux</div>
+        <div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux
+        </div>
         <div><span class="fw-bold">D.U initial : </span>({{ initialMM }} / {{ game?.players?.length }}
           * {{ game?.tauxCroissance | number:'1.2-2' }})
           = {{ initialDU }} Ğ1
@@ -31,8 +36,10 @@
         <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
         <div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
         </div>
-        <div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources)}} (D.U eq)</div>
-        <div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources)}} (D.U eq)</div>
+        <div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources) }} (D.U eq)
+        </div>
+        <div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources) }} (D.U eq)
+        </div>
       </div>
       <div *ngIf="game?.typeMoney == C.DEBT" class="col-sm-12 col-md-4">
         <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} €</div>
