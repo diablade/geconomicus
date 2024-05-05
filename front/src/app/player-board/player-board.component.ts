@@ -541,10 +541,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   creditActionBtn($event: string, credit: Credit) {
-    if ($event == 'settle') {
-      this.settleDebt(credit);
-    } else if ($event == 'answer') {
-      this.requestingWhenCreditEnds(credit);
+    if (this.statusGame == C.PLAYING && this.player.status != C.DEAD) {
+      if ($event == 'settle') {
+        this.settleDebt(credit);
+      } else if ($event == 'answer') {
+        this.requestingWhenCreditEnds(credit);
+      }
     }
   }
 }
