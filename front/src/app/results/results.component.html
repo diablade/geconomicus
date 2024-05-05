@@ -13,26 +13,26 @@
         <div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
         <div><span class="fw-bold">Joueurs: </span>{{ game?.players?.length }}</div>
         <div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
-        <div><span class="fw-bold">Meilleur joueur monnaie: </span>🥇{{ bestPlayerOnMoney }}</div>
+        <div><span class="fw-bold">Meilleur joueur monnaies: </span>🥇{{ bestPlayerOnMoney }}</div>
         <div><span class="fw-bold">Meilleur joueur ressources: </span>🥇{{ bestPlayerOnRes }}</div>
-        <div><span class="fw-bold">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}</div>
+        <div><span class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}</div>
       </div>
       <div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
-        <div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}</div>
-        <div><span class="fw-bold">Formule de calcul du DU: </span>(MasseM/Joueurs)*Taux, /minute</div>
-        <div><span class="fw-bold">DU initial : </span>({{ initialMM }} / {{ game?.players?.length }}
+        <div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
+        <div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux</div>
+        <div><span class="fw-bold">D.U initial : </span>({{ initialMM }} / {{ game?.players?.length }}
           * {{ game?.tauxCroissance | number:'1.2-2' }})
           = {{ initialDU }} Ğ1
         </div>
-        <div><span class="fw-bold">DU final : </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
+        <div><span class="fw-bold">D.U final : </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
           / {{ game?.players?.length }}
           * {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} Ğ1
         </div>
         <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
         <div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
         </div>
-        <div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources)}} (DU)</div>
-        <div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources)}} (DU)</div>
+        <div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources)}} (D.U eq)</div>
+        <div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources)}} (D.U eq)</div>
       </div>
       <div *ngIf="game?.typeMoney == C.DEBT" class="col-sm-12 col-md-4">
         <div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} €</div>
