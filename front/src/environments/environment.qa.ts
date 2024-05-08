@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
 
   API_HOST: 'http://localhost:8080/',
   WEB_HOST: 'http://localhost:4200/',
@@ -14,6 +14,14 @@ export const environment = {
     TRANSACTION: 'player/transaction',
     SURVEY: 'player/survey/'
   },
+  BANK: {
+    GET_CREDITS: "bank/get-credits/",
+    CREATE_CREDIT: 'bank/create-credit',
+    DELETE_CREDIT: 'bank/delete-credit',
+    SETTLE_CREDIT: 'bank/settle-credit',
+    PAY_INTEREST: 'bank/pay-interest',
+    SEIZURE: 'bank/seizure',
+  },
   GAME: {
     GET: 'game/',
     GETALL: 'game/all',
@@ -26,7 +34,7 @@ export const environment = {
     DELETE_PLAYER: 'game/delete-player',
     KILL_PLAYER: "game/kill-player",
     RESET: 'game/reset',
-    START_ROUND: 'game/start-round/',
+    START_ROUND: 'game/start-round',
     STOP_ROUND: 'game/stop-round',
     INTER_ROUND: 'game/inter-round',
     END: 'game/end',
