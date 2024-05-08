@@ -1,6 +1,4 @@
-#docker-compose -f geco.yaml up -d --build
-#docker-compose -f geco.yaml down
-version: '3'
+version: '3.8'
 services:
   geco:
     build:
