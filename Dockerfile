@@ -1,5 +1,5 @@
 #docker build -t geco:1.0 .
-FROM node:18.16.1-alpine
+FROM node:18.20.2-alpine
 MAINTAINER Nicolas Markovic
 COPY ./config/.env ./back/.env
 COPY ./config/constantes.js ./config/constantes.js
