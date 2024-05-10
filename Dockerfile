@@ -11,5 +11,5 @@ ENV PATH /app/node_modules/.bin:$PATH
 RUN npm install && npm cache clean --force
 
 RUN npm run cleanProd
-CMD ["node","app.js"]
+CMD ["node","./src/app.js"]
 EXPOSE 8085
