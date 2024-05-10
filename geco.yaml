@@ -14,11 +14,11 @@ services:
       GECO_DB_CONFIG_COLLECTION: ${GECO_DB_CONFIG_COLLECTION}
       GECO_DB_CONFIG_USER: ${GECO_DB_CONFIG_USER}
       GECO_DB_CONFIG_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
-    image: geco-api:${GECO_VERSION}
+    image: geconomicus-api:${GECO_VERSION}
     container_name: geco-api
     restart: always
     ports:
-      - "8080:${GECO_PORT_NODE}"
+      - "8085:${GECO_PORT_NODE}"
     volumes:
       - /volume1/docker/geco/logs:/logs
     depends_on:
@@ -39,7 +39,7 @@ services:
     image: mongo-express
     container_name: mongo-express
     ports:
-      - "8585:8081"
+      - "8090:8081"
     environment:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: ${ME_CONFIG_MONGODB_ENABLE_ADMIN}
       ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}

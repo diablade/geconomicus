@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
 
-  API_HOST: 'http://localhost:8080/',
+  API_HOST: 'http://localhost:8085/',
   WEB_HOST: 'http://localhost:4200/',
 
   PLAYER: {
