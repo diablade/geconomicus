@@ -20,7 +20,9 @@
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
+}
 
+.bg{
   background: #ffd89b; /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */

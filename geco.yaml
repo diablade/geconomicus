@@ -27,7 +27,7 @@ services:
       - backnet
   mongodb:
     container_name: mongodb
-    image: mongo:4.4.28
+    image: mongo:4.4.29
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
@@ -39,7 +39,7 @@ services:
     image: mongo-express
     container_name: mongo-express
     ports:
-      - "8090:8081"
+      - "8099:8081"
     environment:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: ${ME_CONFIG_MONGODB_ENABLE_ADMIN}
       ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
