@@ -23,8 +23,8 @@
   <div class="titleBar d-flex flex-row">
     <div class="symbol">
       <div class="jeuTitle">Solde:</div>
-      <img *ngIf="typeMoney==C.JUNE" class="free"/>
-      <img *ngIf="typeMoney==C.DEBT" class="debt"/>
+      <img *ngIf="typeMoney==C.JUNE" [src]="'/assets/images/g1coin.png'" class="free"/>
+      <img *ngIf="typeMoney==C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt"/>
     </div>
     <div class="sold flex-grow-1 contour">
       {{ player.coins| number : '1.2-2' }}

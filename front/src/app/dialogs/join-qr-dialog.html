@@ -1,8 +1,11 @@
-<div style="width: 210px; height: 210px;display: flex;
-    justify-content: center;
-    align-items: center;">
-  <ngx-kjua
-    [text]="data.url"
-    [size]="200"
-  ></ngx-kjua>
+<div class="d-flex flex-column justify-content-center align-items-center">
+  <div style="width: 200px; height: 200px;">
+    <ngx-kjua
+      [text]="data.url"
+      [size]="200"
+    ></ngx-kjua>
+  </div>
+  <div class="">
+    {{ data.text }}
+  </div>
 </div>

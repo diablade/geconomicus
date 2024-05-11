@@ -3,7 +3,8 @@ import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
 import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
-import {faCamera} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faQrcode} from "@fortawesome/free-solid-svg-icons";
+import {JoinQrDialog} from "../master-board/master-board.component";
 
 @Component({
   selector: 'app-home',
@@ -44,6 +45,18 @@ export class HomeComponent {
     dialogRef.afterClosed().subscribe(url => {
       window.location.href = url;
     });
+  }
+
+	protected readonly faQrcode = faQrcode;
+
+  openKeyPub() {
+      const dialogRef = this.dialog.open(JoinQrDialog, {
+        data: {url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
+          text:"Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo"
+        },
+      });
+      dialogRef.afterClosed().subscribe(result => {
+      });
   }
 }
 
