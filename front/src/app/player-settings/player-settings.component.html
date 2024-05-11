@@ -10,7 +10,7 @@
     <div class="d-flex mt-2 justify-content-evenly">
         <button (click)="close()" mat-raised-button color="accent">Annuler</button>
         <button (click)="randomize()" mat-raised-button color="warn">
-            <fa-icon [icon]="faShuffle"></fa-icon>
+            <fa-icon [icon]="faWandMagicSparkles"></fa-icon>
         </button>
         <button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
     </div>
@@ -46,13 +46,9 @@
                         [(ngModel)]="hairColor"></ngx-colors>
             <div class="img-thumbnail">{{player.hair + 1}}/{{properties.hair.default.length}}</div>
             <button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
-                <mat-icon>chevron_right</mat-icon>
+              <fa-icon [icon]="faChevronRight"></fa-icon>
             </button>
         </div>
-        <!--        <div class="item">-->
-        <!--          <div class="optionsLabel">table de jeu :</div>-->
-        <!--          <ngx-colors [palette]="hairPalette" class="color-box" ngx-colors-trigger (change)="changeBackground()" [(ngModel)]="backgroundColor"></ngx-colors>-->
-        <!--        </div>-->
         <div class="item">
             <button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
                 <fa-icon [icon]="faChevronLeft"></fa-icon>

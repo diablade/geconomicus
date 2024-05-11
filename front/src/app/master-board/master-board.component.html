@@ -1,185 +1,189 @@
 <div class="d-flex flex-column h-100">
-  <div class="">
-    <img class="geco" src="./assets/images/geconomicus.png" alt="">
-  </div>
-  <div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
-    Rejoins la partie {{game.name}}</div>
-  <div class="text text-center" *ngIf="game && game.status==='open'">
-    Scanne le QrCode via {{environment.WEB_HOST}}, puis clique sur "rejoindre" !
-  </div>
-  <div class="fs-1 text-center pt-4 pb-4 text-capitalize gecoFont shadowed"
-       *ngIf="game && game.status!=='open'">{{game.name}}</div>
-  <div class="row g-0" *ngIf="game && game.status==='open'">
-    <!-- QR CODE    -->
-    <div class="col-md-12 col-lg-4">
-      <div class="templateQrCode">
-        <div class="qrcodeImage">
-          <ngx-kjua
-            [size]="230"
-            [text]="data"
-          ></ngx-kjua>
-        </div>
-      </div>
-    </div>
-    <!--  GUNY  -->
-    <div class="col-md-12 col-lg-4 text-center m-auto">
-      <div class="mt-4 text-center bulle gecoFont bienvenue">Bienvenue !</div>
-      <img class="guny" src="./assets/images/guny.png" alt="">
-    </div>
-    <!--  OPTIONS  -->
-    <div class="col-md-12 col-lg-4 text-center m-auto">
-      <div class="">
-        <mat-form-field class="justify-content-center" appearance="fill">
-          <mat-label>Type de monnaie</mat-label>
-          <mat-select (selectionChange)="onMoneyChange($event)" [(value)]="game.typeMoney">
-            <mat-option [value]="option.value" [disabled]="option.isDisabled"
-                        *ngFor="let option of options">{{ option.label }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="d-flex flex-row justify-content-center align-items-center">
-        <img class="imgCardValeur" src="assets/images/level1.png">
-        <div class="imgText d-flex justify-content-between ps-1">Alimentation:
-          <div class="fw-bold">{{game.priceWeight1}}{{game.typeMoney == C.JUNE ? " DU" : ""}}</div>
-        </div>
-      </div>
-      <div class=" d-flex flex-row justify-content-center align-items-center">
-        <img class="imgCardValeur" src="assets/images/level2.png">
-        <div class="imgText d-flex justify-content-between ps-1">Culture et savoir:
-          <div class="fw-bold">{{game.priceWeight2}}{{game.typeMoney == C.JUNE ? " DU" : ""}}</div>
-        </div>
-      </div>
-      <div class="d-flex flex-row justify-content-center align-items-center">
-        <img class="imgCardValeur" src="assets/images/level3.png">
-        <div class="imgText d-flex justify-content-between ps-1">Energie:
-          <div class="fw-bold">{{game.priceWeight3}}{{game.typeMoney == C.JUNE ? " DU" : ""}}</div>
-        </div>
-      </div>
-      <div class="d-flex flex-row justify-content-center align-items-center">
-        <img class="imgCardValeur" src="assets/images/level4.png">
-        <div class="imgText d-flex justify-content-between ps-1">Technologie:
-          <div class="fw-bold">{{game.priceWeight4}}{{game.typeMoney == C.JUNE ? " DU" : ""}}</div>
-        </div>
-      </div>
-      <button class="text-center mb-4 mt-4 ms-4" mat-raised-button (click)="showOptions()">Options de Jeu
-        <fa-icon [icon]="faCogs"></fa-icon>
-      </button>
-      <div class="d-flex flex-row justify-content-center">
-        <button class="ms-2" mat-raised-button (click)="showRules()">Regles de Jeu
-          <fa-icon [icon]="faInfo"></fa-icon>
-        </button>
-        <button class="ms-2" mat-raised-button color="warn"
-                (click)="startGame()">
-          Démarrer
-          <fa-icon [icon]="faFlagCheckered"></fa-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="container h-100" *ngIf="game && game.status!==C.OPEN">
-    <div class="fs-1 text-center pt-5 pb-5" *ngIf="game && game.roundMax>1">tour {{game.round}}
-      / {{game.roundMax}}</div>
-    <div class="mt-4 d-flex align-items-center justify-content-evenly flex-row">
-      <video class="videoCard" #videoPlayerL autoplay muted>
-        <source src="assets/videos/bike.mp4" type="video/mp4">
-      </video>
-      <div class="countDownContainer">
-        <div class="time">
-          <div class="minute shadowed">{{minutes}}</div>
-          <div class="deuxpoints shadowed">:</div>
-          <div class="seconds shadowed">{{seconds}}</div>
-        </div>
-        <mat-progress-spinner
-          [color]="'primary'"
-          [mode]="'determinate'"
-          [diameter]="300"
-          strokeWidth="10"
-          [value]="timerProgress">
-        </mat-progress-spinner>
-      </div>
-      <video class="videoCard" #videoPlayerR autoplay muted>
-        <source src="assets/videos/sun_moving.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class="d-flex mt-5 justify-content-center">
-      <button *ngIf="!((game.status==C.STOP_ROUND && game.round>=game.roundMax) || game.status==C.END_GAME)"
-              class="ms-2" mat-raised-button color="primary" (click)="showEvents()">events
-        <fa-icon [icon]="faPeopleArrows"></fa-icon>
-      </button>
-      <button class="ms-2" mat-raised-button color="" (click)="resetGame()">
-        RESET GAME
-        <fa-icon [icon]="faWarning"></fa-icon>
-      </button>
-      <button *ngIf="game.status==C.START_GAME || game.status==C.INTER_ROUND"
-              class="ms-2" mat-raised-button
-              color="warn"
-              (click)="startRound()">Commencer le tour
-      </button>
-      <button *ngIf="game.status==C.STOP_ROUND && game.round<game.roundMax" class="ms-2" mat-raised-button
-              color="accent"
-              (click)="doIntertour()">Tour suivant
-      </button>
-      <button *ngIf="game.status==C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
-              color="accent"
-              (click)="finishGame()">Terminier le jeu, lancer le questionnaire et afficher les resultats
-      </button>
-      <button *ngIf="game.status==C.PLAYING" mat-raised-button color="warn" class="ms-2"
-              (click)="stopRoundForce()">
-        Stop
-      </button>
-      <button *ngIf="game.status==C.END_GAME && game.round>=game.roundMax" class="ms-2" mat-raised-button
-              color="accent"
-              (click)="goToResults()">Jeu terminé, afficher les resultats
-      </button>
-    </div>
-    <div class="d-flex mt-4 align-items-center flex-column" *ngIf="game.typeMoney==C.DEBT">
-      <h2 class="fs-4 shadowed gecoFont">Voir la banque</h2>
-      <button class="m-2" mat-raised-button
-              color="accent"
-              (click)="showBank()">Banque
-        <fa-icon [icon]="faBuildingColumns"></fa-icon>
-      </button>
-    </div>
-  </div>
-  <div class="text-center" *ngIf="game && game.status===C.OPEN">
-    <h2 class="fs-3 shadowed gecoFont">Joueurs connectés</h2>
-    <mat-slide-toggle
-      class=""
-      [color]="'warn'"
-      [(ngModel)]="deleteUser">
-      Supprimer un joueur ?
-    </mat-slide-toggle>
-  </div>
-  <div class="text-center" *ngIf="game && game.status!==C.OPEN">
-    <h2 class="fs-3 gecoFont shadowed">Joueurs</h2>
-    <mat-slide-toggle
-      class=""
-      [color]="'warn'"
-      [(ngModel)]="killUser">
-      faire passer la mort ? ☠️
-    </mat-slide-toggle>
-  </div>
-  <div class="p-3 sunyBg" [ngClass]="game.status == C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">
-    <div class="d-flex flex-row justify-content-center flex-wrap">
-      <div *ngFor="let player of game?.players"
-           class="player d-flex flex-column">
-        <div class="d-flex flex-row justify-content-center player-action">
-          <a href="{{getUserUrl(player._id)}}" target="_blank">{{player.name}} </a>
-          <fa-icon class="joinQr" (click)="reJoin(player._id)" [icon]="faQrcode"></fa-icon>
-          <fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
-                   [icon]="faTrashCan"></fa-icon>
-        </div>
-        <div class="dead" *ngIf="player.status==='dead'">
-          🪦
-        </div>
-        <div class="deadprompt" *ngIf="killUser && player.status==='alive'" (click)="onKillUser(player)">
-          ☠️
-        </div>
-        <div class="player-frame" [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
-             [ngStyle]="{'border-color':'#'+player.hairColor}"
-             [innerHTML]="getSanitizedSvgFromString(player.image)">
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="">
+		<img class="geco" src="./assets/images/geconomicus.png" alt="">
+	</div>
+	<div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
+		Rejoins la partie {{ game.name }}
+	</div>
+	<div class="text text-center" *ngIf="game && game.status==='open'">
+		Scanne le QrCode via {{ environment.WEB_HOST }}, puis clique sur "rejoindre" !
+	</div>
+	<div class="fs-1 text-center pt-4 pb-4 text-capitalize gecoFont shadowed"
+			 *ngIf="game && game.status!=='open'">{{ game.name }}
+	</div>
+	<div class="row g-0" *ngIf="game && game.status==='open'">
+		<!-- QR CODE    -->
+		<div class="col-md-12 col-lg-4">
+			<div class="templateQrCode">
+				<div class="qrcodeImage">
+					<ngx-kjua
+						[size]="230"
+						[text]="data"
+					></ngx-kjua>
+				</div>
+			</div>
+		</div>
+		<!--  GUNY  -->
+		<div class="col-md-12 col-lg-4 text-center m-auto">
+			<div class="mt-4 text-center bulle gecoFont bienvenue">Bienvenue !</div>
+			<img class="guny" src="./assets/images/guny.png" alt="">
+		</div>
+		<!--  OPTIONS  -->
+		<div class="col-md-12 col-lg-4 text-center m-auto">
+			<div class="">
+				<mat-form-field class="justify-content-center" appearance="fill">
+					<mat-label>Type de monnaie</mat-label>
+					<mat-select (selectionChange)="onMoneyChange($event)" [(value)]="game.typeMoney">
+						<mat-option [value]="option.value" [disabled]="option.isDisabled"
+												*ngFor="let option of options">{{ option.label }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
+			<div class="d-flex flex-row justify-content-center align-items-center">
+				<img class="imgCardValeur" src="assets/images/level1.png">
+				<div class="imgText d-flex justify-content-between ps-1">Alimentation:
+					<div class="fw-bold">{{ game.priceWeight1 }}{{ game.typeMoney == C.JUNE ? " DU" : "" }}</div>
+				</div>
+			</div>
+			<div class=" d-flex flex-row justify-content-center align-items-center">
+				<img class="imgCardValeur" src="assets/images/level2.png">
+				<div class="imgText d-flex justify-content-between ps-1">Culture et savoir:
+					<div class="fw-bold">{{ game.priceWeight2 }}{{ game.typeMoney == C.JUNE ? " DU" : "" }}</div>
+				</div>
+			</div>
+			<div class="d-flex flex-row justify-content-center align-items-center">
+				<img class="imgCardValeur" src="assets/images/level3.png">
+				<div class="imgText d-flex justify-content-between ps-1">Energie:
+					<div class="fw-bold">{{ game.priceWeight3 }}{{ game.typeMoney == C.JUNE ? " DU" : "" }}</div>
+				</div>
+			</div>
+			<div class="d-flex flex-row justify-content-center align-items-center">
+				<img class="imgCardValeur" src="assets/images/level4.png">
+				<div class="imgText d-flex justify-content-between ps-1">Technologie:
+					<div class="fw-bold">{{ game.priceWeight4 }}{{ game.typeMoney == C.JUNE ? " DU" : "" }}</div>
+				</div>
+			</div>
+			<button class="text-center mb-4 mt-4 ms-4" mat-raised-button (click)="showOptions()">Options de Jeu
+				<fa-icon [icon]="faCogs"></fa-icon>
+			</button>
+			<div class="d-flex flex-row justify-content-center">
+				<button class="ms-2" mat-raised-button (click)="showRules()">Regles de Jeu
+					<fa-icon [icon]="faInfo"></fa-icon>
+				</button>
+				<button class="ms-2" mat-raised-button color="warn"
+								(click)="startGame()">
+					Démarrer
+					<fa-icon [icon]="faFlagCheckered"></fa-icon>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="container h-100" *ngIf="game && game.status!==C.OPEN">
+		<div class="fs-1 text-center pt-5 pb-5" *ngIf="game && game.roundMax>1">tour {{ game.round }}
+			/ {{ game.roundMax }}
+		</div>
+		<div class="mt-4 d-flex align-items-center justify-content-evenly flex-row">
+			<video class="videoCard" #videoPlayerL autoplay muted>
+				<source src="assets/videos/bike.mp4" type="video/mp4">
+			</video>
+			<div class="countDownContainer">
+				<div class="time">
+					<div class="minute shadowed">{{ minutes }}</div>
+					<div class="deuxpoints shadowed">:</div>
+					<div class="seconds shadowed">{{ seconds }}</div>
+				</div>
+				<mat-progress-spinner
+					[color]="'primary'"
+					[mode]="'determinate'"
+					[diameter]="300"
+					strokeWidth="10"
+					[value]="timerProgress">
+				</mat-progress-spinner>
+			</div>
+			<video class="videoCard" #videoPlayerR autoplay muted>
+				<source src="assets/videos/sun_moving.mp4" type="video/mp4">
+			</video>
+		</div>
+		<div class="d-flex mt-5 justify-content-center">
+			<button *ngIf="!((game.status==C.STOP_ROUND && game.round>=game.roundMax) || game.status==C.END_GAME)"
+							class="ms-2" mat-raised-button color="primary" (click)="showEvents()">events
+				<fa-icon [icon]="faPeopleArrows"></fa-icon>
+			</button>
+			<button class="ms-2" mat-raised-button color="" (click)="resetGame()">
+				RESET GAME
+				<fa-icon [icon]="faWarning"></fa-icon>
+			</button>
+			<button *ngIf="game.status==C.START_GAME || game.status==C.INTER_ROUND"
+							class="ms-2" mat-raised-button
+							color="warn"
+							(click)="startRound()">Commencer le tour
+			</button>
+			<button *ngIf="game.status==C.STOP_ROUND && game.round<game.roundMax" class="ms-2" mat-raised-button
+							color="accent"
+							(click)="doIntertour()">Tour suivant
+			</button>
+			<button *ngIf="game.status==C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
+							color="accent"
+							(click)="finishGame()">Terminier le jeu, lancer le questionnaire et afficher les resultats
+			</button>
+			<button *ngIf="game.status==C.PLAYING" mat-raised-button color="warn" class="ms-2"
+							(click)="stopRoundForce()">
+				Stop
+			</button>
+			<button *ngIf="game.status==C.END_GAME && game.round>=game.roundMax" class="ms-2" mat-raised-button
+							color="accent"
+							(click)="goToResults()">Jeu terminé, afficher les resultats
+			</button>
+		</div>
+		<div class="d-flex mt-4 align-items-center flex-column" *ngIf="game.typeMoney==C.DEBT">
+			<h2 class="fs-4 shadowed gecoFont">Voir la banque</h2>
+			<button class="m-2" mat-raised-button
+							color="accent"
+							(click)="showBank()">Banque
+				<fa-icon [icon]="faBuildingColumns"></fa-icon>
+			</button>
+		</div>
+	</div>
+	<div class="text-center" *ngIf="game && game.status===C.OPEN">
+		<h2 class="fs-3 shadowed gecoFont">Joueurs connectés</h2>
+		<mat-slide-toggle
+			class=""
+			[color]="'warn'"
+			[(ngModel)]="deleteUser">
+			Supprimer un joueur ?
+		</mat-slide-toggle>
+	</div>
+	<div class="text-center" *ngIf="game && game.status!==C.OPEN">
+		<h2 class="fs-3 gecoFont shadowed">Joueurs</h2>
+		<mat-slide-toggle
+			class=""
+			[color]="'warn'"
+			[(ngModel)]="killUser">
+			faire passer la mort ? ☠️
+		</mat-slide-toggle>
+	</div>
+	<div class="p-3 sunyBg" [ngClass]="game.status == C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">
+		<div class="d-flex flex-row justify-content-center flex-wrap">
+			<div *ngFor="let player of game?.players"
+					 class="player d-flex flex-column">
+				<div class="d-flex flex-row justify-content-center player-action">
+					<a href="{{getUserUrl(player._id)}}" target="_blank">{{ player.name }} </a>
+					<fa-icon class="joinQr" (click)="reJoin(player._id)" [icon]="faQrcode"></fa-icon>
+					<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
+									 [icon]="faTrashCan"></fa-icon>
+				</div>
+				<div class="dead" *ngIf="player.status==='dead'">
+					🪦
+				</div>
+				<div class="deadprompt" *ngIf="killUser && player.status==='alive'" (click)="onKillUser(player)">
+					☠️
+				</div>
+				<div class="player-frame" [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
+						 [ngStyle]="{'border-color':'#'+player.hairColor}"
+						 [innerHTML]="getSanitizedSvgFromString(player.image)">
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

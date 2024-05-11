@@ -7,71 +7,72 @@ import {faCamera, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {JoinQrDialog} from "../master-board/master-board.component";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+	selector: 'app-home',
+	templateUrl: './home.component.html',
+	styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  faCamera = faCamera;
-  // faTelegram = faTelegram;
-  @ViewChild('coins') coins!: ElementRef;
+	faCamera = faCamera;
+	// faTelegram = faTelegram;
+	@ViewChild('coins') coins!: ElementRef;
 
-  beep() {
-    const audio: HTMLAudioElement = this.coins.nativeElement;
-    audio.play();
-  }
+	beep() {
+		const audio: HTMLAudioElement = this.coins.nativeElement;
+		audio.play();
+	}
 
-  constructor(private router: Router, private backService: BackService, public dialog: MatDialog) {
-  }
+	constructor(private router: Router, private backService: BackService, public dialog: MatDialog) {
+	}
 
 
-  onCreate() {
-    const dialogRef = this.dialog.open(CreateGameDialog, {});
+	onCreate() {
+		const dialogRef = this.dialog.open(CreateGameDialog, {});
 
-    dialogRef.afterClosed().subscribe(gameName => {
-      if (gameName) {
-        this.backService.createGame({'gameName': gameName})
-          .subscribe(
-            game => {
-              this.router.navigate(['game', game._id, 'master']);
-            },
-          );
-      }
-    });
-  }
+		dialogRef.afterClosed().subscribe(gameName => {
+			if (gameName) {
+				this.backService.createGame({'gameName': gameName})
+					.subscribe(
+						game => {
+							this.router.navigate(['game', game._id, 'master']);
+						},
+					);
+			}
+		});
+	}
 
-  join() {
-    const dialogRef = this.dialog.open(ScannerDialogComponent, {});
-    dialogRef.afterClosed().subscribe(url => {
-      window.location.href = url;
-    });
-  }
+	join() {
+		const dialogRef = this.dialog.open(ScannerDialogComponent, {});
+		dialogRef.afterClosed().subscribe(url => {
+			window.location.href = url;
+		});
+	}
 
 	protected readonly faQrcode = faQrcode;
 
-  openKeyPub() {
-      const dialogRef = this.dialog.open(JoinQrDialog, {
-        data: {url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
-          text:"Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo"
-        },
-      });
-      dialogRef.afterClosed().subscribe(result => {
-      });
-  }
+	openKeyPub() {
+		const dialogRef = this.dialog.open(JoinQrDialog, {
+			data: {
+				url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
+				text: "Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo"
+			},
+		});
+		dialogRef.afterClosed().subscribe(result => {
+		});
+	}
 }
 
 
 @Component({
-  selector: 'create-game-dialog',
-  templateUrl: './../dialogs/create-game-dialog.html',
+	selector: 'create-game-dialog',
+	templateUrl: './../dialogs/create-game-dialog.html',
 })
 export class CreateGameDialog {
-  name: String = "";
+	name: String = "";
 
-  constructor(public dialogRef: MatDialogRef<CreateGameDialog>) {
-  }
+	constructor(public dialogRef: MatDialogRef<CreateGameDialog>) {
+	}
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
+	onNoClick(): void {
+		this.dialogRef.close();
+	}
 }

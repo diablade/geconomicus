@@ -9,296 +9,296 @@ import {Router} from "@angular/router";
 // import {retry} from "rxjs/operators";
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class BackService {
 
-  REDIRECT_HOME: string = "redirectHome";
+	REDIRECT_HOME: string = "redirectHome";
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  };
+	httpOptions = {
+		headers: new HttpHeaders({
+			'Content-Type': 'application/json'
+		})
+	};
 
-  constructor(public http: HttpClient, private router: Router, private snackbarService: SnackbarService) {
-  }
+	constructor(public http: HttpClient, private router: Router, private snackbarService: SnackbarService) {
+	}
 
-  private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
-    if (whatToSay) this.snackbarService.showError(whatToSay);
-    else this.snackbarService.showError(error.error.message);
-    if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(
-        `Backend returned code ${error.status}, body was: `, error.error);
-    }
-    if (whatToDo == this.REDIRECT_HOME) {
-      this.router.navigate([""]);
-    }
-    // Return an observable with a user-facing error message.
-    return throwError(() => new Error('Something bad happened; please try again later.'));
-  }
+	private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
+		if (whatToSay) this.snackbarService.showError(whatToSay);
+		else this.snackbarService.showError(error.error.message);
+		if (error.status === 0) {
+			// A client-side or network error occurred. Handle it accordingly.
+			console.error('An error occurred:', error.error);
+		} else {
+			// The backend returned an unsuccessful response code.
+			// The response body may contain clues as to what went wrong.
+			console.error(
+				`Backend returned code ${error.status}, body was: `, error.error);
+		}
+		if (whatToDo == this.REDIRECT_HOME) {
+			this.router.navigate([""]);
+		}
+		// Return an observable with a user-facing error message.
+		return throwError(() => new Error('Something bad happened; please try again later.'));
+	}
 
-  /**
-   * join party
-   */
-  public join(idGame: string, name: string, reincarnate: string | undefined): Observable<any> {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {
-        idGame: idGame,
-        name: name,
-        reincarnate: reincarnate
-      })
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, ''))
-      );
-  }
+	/**
+	 * join party
+	 */
+	public join(idGame: string, name: string, reincarnate: string | undefined): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {
+				idGame: idGame,
+				name: name,
+				reincarnate: reincarnate
+			})
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, ''))
+			);
+	}
 
-  /**
-   * join reincarnate party
-   */
-  public joinReincarnate(idGame: string, name: string): Observable<any> {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame: idGame, name: name})
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
-      );
-  }
+	/**
+	 * join reincarnate party
+	 */
+	public joinReincarnate(idGame: string, name: string): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame: idGame, name: name})
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
+			);
+	}
 
-  /**
-   * join in game party
-   */
-  public joinInGame(idGame: string, name: string): Observable<any> {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_IN_GAME, {idGame: idGame, name: name})
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
-      );
-  }
+	/**
+	 * join in game party
+	 */
+	public joinInGame(idGame: string, name: string): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_IN_GAME, {idGame: idGame, name: name})
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
+			);
+	}
 
-  /**
-   * Create game
-   */
-  public createGame(body: any): Observable<Game> {
-    return this.http.post<Game>(environment.API_HOST + environment.GAME.CREATE, body)
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "creation impossible"))
-      );
-  }
+	/**
+	 * Create game
+	 */
+	public createGame(body: any): Observable<Game> {
+		return this.http.post<Game>(environment.API_HOST + environment.GAME.CREATE, body)
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "creation impossible"))
+			);
+	}
 
-  getGame(idGame: String): Observable<Game> {
-    return this.http.get<any>(environment.API_HOST + environment.GAME.GET + idGame)
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
-      );
-  }
+	getGame(idGame: String): Observable<Game> {
+		return this.http.get<any>(environment.API_HOST + environment.GAME.GET + idGame)
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
+			);
+	}
 
-  getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<any> {
-    return this.http.get<any>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "joueur inexistant"))
-      );
-  }
+	getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<any> {
+		return this.http.get<any>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "joueur inexistant"))
+			);
+	}
 
-  updatePlayer(idGame: string | undefined, player: Player) {
-    const newPlayer = {...player, idGame: idGame};
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.UPDATE, newPlayer)
-      .pipe(
-        catchError(err => this.handleError(err, "", "modification impossible"))
-      );
-  }
+	updatePlayer(idGame: string | undefined, player: Player) {
+		const newPlayer = {...player, idGame: idGame};
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.UPDATE, newPlayer)
+			.pipe(
+				catchError(err => this.handleError(err, "", "modification impossible"))
+			);
+	}
 
-  produceLevelUp(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
-    return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
-        idGame: idGame,
-        idPlayer: idPlayer,
-        cards: cards
-      })
-      .pipe(
-        catchError(err => this.handleError(err, "", "échange impossible")
-          //TODO ré actualise
-        )
-      );
-  }
+	produceLevelUp(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
+		return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
+				idGame: idGame,
+				idPlayer: idPlayer,
+				cards: cards
+			})
+			.pipe(
+				catchError(err => this.handleError(err, "", "échange impossible")
+					//TODO ré actualise
+				)
+			);
+	}
 
-  deleteUser(idPlayer: string, idGame: string) {
-    return this.http.delete<Game>(environment.API_HOST + environment.GAME.DELETE_PLAYER, {
-        body: {
-          idGame: idGame,
-          idPlayer: idPlayer
-        }
-      })
-      .pipe(
-        catchError(err => this.handleError(err, "", "suppression impossible")
-          //TODO ré actualise
-        )
-      );
-  }
+	deleteUser(idPlayer: string, idGame: string) {
+		return this.http.delete<Game>(environment.API_HOST + environment.GAME.DELETE_PLAYER, {
+				body: {
+					idGame: idGame,
+					idPlayer: idPlayer
+				}
+			})
+			.pipe(
+				catchError(err => this.handleError(err, "", "suppression impossible")
+					//TODO ré actualise
+				)
+			);
+	}
 
-  startGame(game: Game) {
-    return this.http.put<Game>(environment.API_HOST + environment.GAME.START, {
-        idGame: game._id,
-        typeMoney: game.typeMoney,
-      })
-      .pipe(
-        catchError(err => this.handleError(err, "", "start game impossible"))
-      );
-  }
+	startGame(game: Game) {
+		return this.http.put<Game>(environment.API_HOST + environment.GAME.START, {
+				idGame: game._id,
+				typeMoney: game.typeMoney,
+			})
+			.pipe(
+				catchError(err => this.handleError(err, "", "start game impossible"))
+			);
+	}
 
-  resetGame(idGame: string) {
-    return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, {idGame: idGame})
-      .pipe(
-        catchError(err => this.handleError(err, "", "reset game impossible"))
-      );
-  }
+	resetGame(idGame: string) {
+		return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, {idGame: idGame})
+			.pipe(
+				catchError(err => this.handleError(err, "", "reset game impossible"))
+			);
+	}
 
-  transaction(idGame: string | undefined, idBuyer: string | undefined, idSeller: any, idCard: any) {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, {
-        idGame,
-        idBuyer,
-        idSeller,
-        idCard
-      })
-      .pipe(
-        catchError(err => this.handleError(err, "", err))
-      );
-  }
+	transaction(idGame: string | undefined, idBuyer: string | undefined, idSeller: any, idCard: any) {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, {
+				idGame,
+				idBuyer,
+				idSeller,
+				idCard
+			})
+			.pipe(
+				catchError(err => this.handleError(err, "", err))
+			);
+	}
 
-  startRound(idGame: string, round: number) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
-      .pipe(
-        catchError(err => this.handleError(err, "", "demarrer tour impossible"))
-      );
-  }
+	startRound(idGame: string, round: number) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
+			.pipe(
+				catchError(err => this.handleError(err, "", "demarrer tour impossible"))
+			);
+	}
 
-  stopRound(idGame: string, round: number) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
-      .pipe(
-        catchError(err => this.handleError(err, "", "stop tour impossible"))
-      );
-  }
+	stopRound(idGame: string, round: number) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
+			.pipe(
+				catchError(err => this.handleError(err, "", "stop tour impossible"))
+			);
+	}
 
-  interRound(idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, {idGame: idGame})
-      .pipe(
-        catchError(err => this.handleError(err, "", "inter tour impossible"))
-      );
-  }
+	interRound(idGame: string) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, {idGame: idGame})
+			.pipe(
+				catchError(err => this.handleError(err, "", "inter tour impossible"))
+			);
+	}
 
-  endGame(idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
-      .pipe(
-        catchError(err => this.handleError(err, "", "stop jeu impossible"))
-      );
-  }
+	endGame(idGame: string) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
+			.pipe(
+				catchError(err => this.handleError(err, "", "stop jeu impossible"))
+			);
+	}
 
-  killUser(idPlayer: string, idGame: string) {
-    return this.http.post<any>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
-        idGame: idGame,
-        idPlayer: idPlayer
-      })
-      .pipe(
-        catchError(err => this.handleError(err, "", "kill impossible")
-          //TODO ré actualise
-        )
-      );
-  }
+	killUser(idPlayer: string, idGame: string) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.KILL_PLAYER, {
+				idGame: idGame,
+				idPlayer: idPlayer
+			})
+			.pipe(
+				catchError(err => this.handleError(err, "", "kill impossible")
+					//TODO ré actualise
+				)
+			);
+	}
 
-  updateGame(idGame: string, results: any) {
-    return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
-      idGame: idGame,
-      name: results.name,
-      typeMoney: results.typeMoney,
-      amountCardsForProd: results.amountCardsForProd,
-      generatedIdenticalCards: results.generatedIdenticalCards,
-      surveyEnabled: results.surveyEnabled,
-      priceWeight1: results.priceWeight1,
-      priceWeight2: results.priceWeight2,
-      priceWeight3: results.priceWeight3,
-      priceWeight4: results.priceWeight4,
-      round: results.round,
-      roundMax: results.roundMax,
-      roundMinutes: results.roundMinutes,
+	updateGame(idGame: string, results: any) {
+		return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
+			idGame: idGame,
+			name: results.name,
+			typeMoney: results.typeMoney,
+			amountCardsForProd: results.amountCardsForProd,
+			generatedIdenticalCards: results.generatedIdenticalCards,
+			surveyEnabled: results.surveyEnabled,
+			priceWeight1: results.priceWeight1,
+			priceWeight2: results.priceWeight2,
+			priceWeight3: results.priceWeight3,
+			priceWeight4: results.priceWeight4,
+			round: results.round,
+			roundMax: results.roundMax,
+			roundMinutes: results.roundMinutes,
 
-      tauxCroissance: results.tauxCroissance,
-      inequalityStart: results.inequalityStart,
-      startAmountCoins: results.startAmountCoins,
-      pctRich: results.pctRich,
-      pctPoor: results.pctPoor,
+			tauxCroissance: results.tauxCroissance,
+			inequalityStart: results.inequalityStart,
+			startAmountCoins: results.startAmountCoins,
+			pctRich: results.pctRich,
+			pctPoor: results.pctPoor,
 
-      defaultCreditAmount: results.defaultCreditAmount,
-      defaultInterestAmount: results.defaultInterestAmount,
-      bankInterestEarned: results.bankInterestEarned,
-      bankGoodsEarned: results.bankGoodsEarned,
-      timerCredit: results.timerCredit,
-      timerPrison: results.timerPrison,
-      manualBank: results.manualBank,
-      seizureType: results.seizureType,
-      seizureCosts: results.seizureCosts,
-      seizureDecote: results.seizureDecote
-    }).pipe(
-      catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
-    );
-  }
+			defaultCreditAmount: results.defaultCreditAmount,
+			defaultInterestAmount: results.defaultInterestAmount,
+			bankInterestEarned: results.bankInterestEarned,
+			bankGoodsEarned: results.bankGoodsEarned,
+			timerCredit: results.timerCredit,
+			timerPrison: results.timerPrison,
+			manualBank: results.manualBank,
+			seizureType: results.seizureType,
+			seizureCosts: results.seizureCosts,
+			seizureDecote: results.seizureDecote
+		}).pipe(
+			catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
+		);
+	}
 
-  getGames(): Observable<any> {
-    return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
-      .pipe(
-        catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
-      );
-  }
+	getGames(): Observable<any> {
+		return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
+			);
+	}
 
-  sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
-    return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY + idGame + '/' + idPlayer, {
-      idGame,
-      idPlayer,
-      individualCollective,
-      greedyGenerous,
-      irritableTolerant,
-      depressedHappy,
-      competitiveCooperative,
-      dependantAutonomous,
-      anxiousConfident,
-      aloneIntegrated,
-      agressiveAvenant
-    }).pipe(
-      catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
-    );
-  }
+	sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY + idGame + '/' + idPlayer, {
+			idGame,
+			idPlayer,
+			individualCollective,
+			greedyGenerous,
+			irritableTolerant,
+			depressedHappy,
+			competitiveCooperative,
+			dependantAutonomous,
+			anxiousConfident,
+			aloneIntegrated,
+			agressiveAvenant
+		}).pipe(
+			catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
+		);
+	}
 
-  createCredit(data: any) {
-    return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
-      catchError(err => this.handleError(err, "", "creation du credit impossible"))
-    );
-  }
+	createCredit(data: any) {
+		return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
+			catchError(err => this.handleError(err, "", "creation du credit impossible"))
+		);
+	}
 
-  getPlayerCredits(idGame: any, idPlayer: any) {
-    return this.http.get<any>(environment.API_HOST + environment.BANK.GET_CREDITS + idGame + '/' + idPlayer).pipe(
-      catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
-    )
-  }
+	getPlayerCredits(idGame: any, idPlayer: any) {
+		return this.http.get<any>(environment.API_HOST + environment.BANK.GET_CREDITS + idGame + '/' + idPlayer).pipe(
+			catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
+		)
+	}
 
-  settleCredit(credit: Credit) {
-    return this.http.post<any>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
-      credit: credit
-    }).pipe(
-      catchError(err => this.handleError(err, "", "remboursement du credit impossible"))
-    )
-  }
+	settleCredit(credit: Credit) {
+		return this.http.post<any>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
+			credit: credit
+		}).pipe(
+			catchError(err => this.handleError(err, "", "remboursement du credit impossible"))
+		)
+	}
 
-  payInterest(credit: Credit) {
-    return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
-      catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
-    )
-  }
+	payInterest(credit: Credit) {
+		return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
+			catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
+		)
+	}
 
-  seizure(seizure: any, credit: Credit) {
-    return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {
-      credit: credit,
-      seizure: seizure
-    }).pipe(
-      catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
-    )
-  }
+	seizure(seizure: any, credit: Credit) {
+		return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {
+			credit: credit,
+			seizure: seizure
+		}).pipe(
+			catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
+		)
+	}
 }
