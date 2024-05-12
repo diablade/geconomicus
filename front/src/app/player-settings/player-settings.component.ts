@@ -49,7 +49,6 @@ export class PlayerSettingsComponent implements OnInit {
 				} else {
 					this.skin = "#" + this.player.skinColor;
 					this.hairColor = "#" + this.player.hairColor;
-					// @ts-ignore
 					this.svgContainer.nativeElement.innerHTML = this.player.image;
 				}
 			});

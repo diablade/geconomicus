@@ -1,114 +1,114 @@
 <div class="settings w-100 h-100 p-4" [ngStyle]="getBackgroundStyle()">
-    <div class="text-center">
-        <mat-form-field appearance="fill">
-            <mat-label>Prénom ou Pseudo</mat-label>
-            <input matInput [(ngModel)]="player.name">
-        </mat-form-field>
-    </div>
-    <div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
-    <p class="text-center">Votre Avatar</p>
-    <div class="d-flex mt-2 justify-content-evenly">
-        <button (click)="close()" mat-raised-button color="accent">Annuler</button>
-        <button (click)="randomize()" mat-raised-button color="warn">
-            <fa-icon [icon]="faWandMagicSparkles"></fa-icon>
-        </button>
-        <button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
-    </div>
-    <div class="items">
-        <div class="itemBackground d-flex flex-column align-items-center">
-            <div class="optionsLabel img-thumbnail">Table de jeu</div>
-            <div class="d-flex flex-row m-2">
-                <mat-radio-group class="" [(ngModel)]="player.boardConf">
-                    <mat-radio-button value="wood">
-                        <img class="img-thumbnail imgSmall" src="assets/images/wood.png">
-                    </mat-radio-button>
-                    <mat-radio-button value="green">
-                        <img class="img-thumbnail imgSmall" src="assets/images/green.png">
-                    </mat-radio-button>
-                    <mat-radio-button value="custom">
-                        <ngx-colors class="color-box" [palette]="boardPalette" ngx-colors-trigger
-                                    [(ngModel)]="player.boardColor"></ngx-colors>
-                    </mat-radio-button>
-                </mat-radio-group>
-            </div>
-        </div>
-        <div class="itemColor">
-            <div class="optionsLabel img-thumbnail">Peau</div>
-            <ngx-colors class="color-box" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
-                        [(ngModel)]="skin"></ngx-colors>
-        </div>
-        <div class="item">
-            <button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Cheveux</div>
-            <ngx-colors [palette]="hairPalette" class="color-box" ngx-colors-trigger (change)="changeHairColor()"
-                        [(ngModel)]="hairColor"></ngx-colors>
-            <div class="img-thumbnail">{{player.hair + 1}}/{{properties.hair.default.length}}</div>
-            <button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
-              <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Yeux</div>
-            <div class="img-thumbnail">{{player.eye + 1}}/{{properties.eyes.default.length}}</div>
-            <button (click)="changeEyes(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Sourcils</div>
-            <div class="img-thumbnail">{{player.eyebrows + 1}}/{{properties.eyebrows.default.length}}</div>
-            <button (click)="changeEyeBrows(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Bouche</div>
-            <div class="img-thumbnail">{{player.mouth + 1}}/{{properties.mouth.default.length}}</div>
-            <button (click)="changeMouth(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Oreilles</div>
-            <div class="img-thumbnail">{{player.earrings + 1}}/{{properties.earrings.default.length}}</div>
-            <button (click)="changeEarrings(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Divers</div>
-            <div class="img-thumbnail">{{player.features + 1}}/{{properties.features.default.length}}</div>
-            <button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-        <div class="item">
-            <button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
-                <fa-icon [icon]="faChevronLeft"></fa-icon>
-            </button>
-            <div class="optionsLabel img-thumbnail">Lunettes</div>
-            <div class="img-thumbnail">{{player.glasses + 1}}/{{properties.glasses.default.length}}</div>
-            <button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
-                <fa-icon [icon]="faChevronRight"></fa-icon>
-            </button>
-        </div>
-    </div>
+	<div class="text-center">
+		<mat-form-field appearance="fill">
+			<mat-label>Prénom ou Pseudo</mat-label>
+			<input matInput [(ngModel)]="player.name">
+		</mat-form-field>
+	</div>
+	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
+	<p class="text-center">Votre Avatar</p>
+	<div class="d-flex mt-2 justify-content-evenly">
+		<button (click)="close()" mat-raised-button color="accent">Annuler</button>
+		<button (click)="randomize()" mat-raised-button color="warn">
+			<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
+		</button>
+		<button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
+	</div>
+	<div class="items">
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Table de jeu</div>
+			<div class="d-flex flex-row">
+				<mat-radio-group class="" [(ngModel)]="player.boardConf">
+					<mat-radio-button value="wood">
+						<img class="img-thumbnail imgSmall" src="assets/images/wood.png">
+					</mat-radio-button>
+					<mat-radio-button value="green">
+						<img class="img-thumbnail imgSmall" src="assets/images/green.png">
+					</mat-radio-button>
+					<mat-radio-button value="custom">
+						<ngx-colors class="color-box" [palette]="boardPalette" ngx-colors-trigger
+												[(ngModel)]="player.boardColor"></ngx-colors>
+					</mat-radio-button>
+				</mat-radio-group>
+			</div>
+		</div>
+		<div class="item">
+			<ngx-colors class="ms-2" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
+									[(ngModel)]="skin"></ngx-colors>
+			<div class="optionsLabel img-thumbnail">Peau</div>
+		</div>
+		<div class="item">
+			<ngx-colors [palette]="hairPalette" class="" ngx-colors-trigger (change)="changeHairColor()"
+									[(ngModel)]="hairColor"></ngx-colors>
+			<div class="optionsLabel img-thumbnail">Cheveux</div>
+			<button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.hair + 1 }}/{{ properties.hair.default.length }}</div>
+			<button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Yeux</div>
+			<button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.eye + 1 }}/{{ properties.eyes.default.length }}</div>
+			<button (click)="changeEyes(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Sourcils</div>
+			<button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}</div>
+			<button (click)="changeEyeBrows(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Bouche</div>
+			<button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.mouth + 1 }}/{{ properties.mouth.default.length }}</div>
+			<button (click)="changeMouth(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Oreilles</div>
+			<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.earrings + 1 }}/{{ properties.earrings.default.length }}</div>
+			<button (click)="changeEarrings(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Divers</div>
+			<button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.features + 1 }}/{{ properties.features.default.length }}</div>
+			<button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+		<div class="item">
+			<div class="optionsLabel img-thumbnail">Lunettes</div>
+			<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
+				<fa-icon [icon]="faChevronLeft"></fa-icon>
+			</button>
+			<div class="img-thumbnail m-2">{{ player.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
+			<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
+				<fa-icon [icon]="faChevronRight"></fa-icon>
+			</button>
+		</div>
+	</div>
 </div>
 <app-version></app-version>

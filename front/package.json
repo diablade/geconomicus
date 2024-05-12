@@ -40,7 +40,7 @@
 		"kjua-svg": "^1.13.1",
 		"lodash-es": "^4.17.21",
 		"ng2-charts": "^4.1.1",
-		"ngx-colors": "^3.5.3",
+		"ngx-colors": "3.5.2",
 		"rxjs": "~7.8.0",
 		"socket.io-client": "^4.7.5",
 		"tslib": "^2.6.2",
