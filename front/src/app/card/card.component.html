@@ -20,10 +20,9 @@
   <div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
     <div class="d-flex flex-row align-items-center">
       <div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">{{card.letter}}</div>
-      <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">prix :</div>
       <div class="prices d-flex flex-column">
         <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">{{card.price}} {{typeMoney === "june" ? "DU" : ""}}</div>
-        <div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price" *ngIf="typeMoney=='june'">{{(currentDU * card.price)| number:'1.2-2'}} Ğ1</div>
+        <div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price" *ngIf="typeMoney=='june'">({{(currentDU * card.price)| number:'1.2-2'}} Ğ1)</div>
       </div>
     </div>
     <div class="qrcodeWrapper flex-grow-1">

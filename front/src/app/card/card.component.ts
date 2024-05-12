@@ -51,7 +51,8 @@ export class CardComponent implements AfterViewInit {
   @Input() width: any = 'calc(28vw)';
   @Input() height: any = 'calc(28vw * 1.5)';
   @Input() letterSize: any = 'calc(28vw * 0.33)';
-  @Input() priceSize: any = 'calc(25vw * 0.2)';
+  @Input() priceSize: any = 'calc(18vw * 0.2)';
+  smallPriceSize: any = 'calc(11vw * 0.2)';
   @Input() flippable: boolean = true;
   state = "default";
   translateX = 0;
