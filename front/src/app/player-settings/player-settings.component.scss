@@ -19,9 +19,18 @@
 }
 
 .optionsLabel {
-	width: 140px;
+	width: 160px;
 	text-align: center;
 	margin-right: 10px;
+		&-withColor{
+			width: 130px;
+			text-align: center;
+			margin-right: 10px;
+		}
+	&Number{
+		width: 70px;
+		text-align: center;
+	}
 }
 
 
@@ -30,11 +39,12 @@
 	margin-top: 10px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	flex-wrap: nowrap;
-
-	&-label {
-		width: 150px;
+	width: 400px;
+	&-wrap{
+		display: flex;
+		justify-content: center;
 	}
 }
 
@@ -42,6 +52,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	margin-bottom: 6px;
+	//margin-bottom: 6px;
 	flex-wrap: nowrap;
 }
