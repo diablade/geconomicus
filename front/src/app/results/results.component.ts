@@ -548,7 +548,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           totalResourcesEvent = this.getValueCardsFromEvent(event);
           this.initialMM += event.amount;
           this.initialResources += totalResourcesEvent;
-          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(mmDataset, event.date, "add", event.amount, false, false);
           updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
           updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
           if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
@@ -557,7 +557,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
           continue;
         case C.DISTRIB_DU:
           this.currentDU = event.amount;
-          updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+          updateData(mmDataset, event.date, "add", event.amount, false, false);
           updateData(receiverDataset, event.date, "add", event.amount, false, false);
           updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
           continue;
