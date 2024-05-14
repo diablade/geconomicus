@@ -78,6 +78,8 @@ export class Game {
 	_id: string = "";
 	status: string = "";
 	name: string = "";
+	animator: string= "";
+	location: string= "";
 	typeMoney: string = "june";
 	players: Player[] = [];
 	decks: Card[][] = [[]];

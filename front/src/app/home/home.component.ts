@@ -28,9 +28,9 @@ export class HomeComponent {
 	onCreate() {
 		const dialogRef = this.dialog.open(CreateGameDialog, {});
 
-		dialogRef.afterClosed().subscribe(gameName => {
-			if (gameName) {
-				this.backService.createGame({'gameName': gameName})
+		dialogRef.afterClosed().subscribe(data => {
+			if (data.name) {
+				this.backService.createGame(data)
 					.subscribe(
 						game => {
 							this.router.navigate(['game', game._id, 'master']);
@@ -68,6 +68,8 @@ export class HomeComponent {
 })
 export class CreateGameDialog {
 	name: String = "";
+	animator: String = "";
+	location: String = "";
 
 	constructor(public dialogRef: MatDialogRef<CreateGameDialog>) {
 	}

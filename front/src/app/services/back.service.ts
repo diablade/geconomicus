@@ -14,6 +14,7 @@ import {Router} from "@angular/router";
 export class BackService {
 
 	REDIRECT_HOME: string = "redirectHome";
+	RELOAD: string = "reload";
 
 	httpOptions = {
 		headers: new HttpHeaders({
@@ -28,16 +29,14 @@ export class BackService {
 		if (whatToSay) this.snackbarService.showError(whatToSay);
 		else this.snackbarService.showError(error.error.message);
 		if (error.status === 0) {
-			// A client-side or network error occurred. Handle it accordingly.
 			console.error('An error occurred:', error.error);
 		} else {
-			// The backend returned an unsuccessful response code.
-			// The response body may contain clues as to what went wrong.
-			console.error(
-				`Backend returned code ${error.status}, body was: `, error.error);
+			console.error(`Backend returned code ${error.status}, body was: `, error.error);
 		}
 		if (whatToDo == this.REDIRECT_HOME) {
 			this.router.navigate([""]);
+		} else if (whatToDo == this.RELOAD) {
+			window.location.reload();
 		}
 		// Return an observable with a user-facing error message.
 		return throwError(() => new Error('Something bad happened; please try again later.'));
@@ -116,8 +115,7 @@ export class BackService {
 				cards: cards
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "", "échange impossible")
-					//TODO ré actualise
+				catchError(err => this.handleError(err, "RELOAD", "échange impossible")
 				)
 			);
 	}
@@ -130,8 +128,7 @@ export class BackService {
 				}
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "", "suppression impossible")
-					//TODO ré actualise
+				catchError(err => this.handleError(err, "RELOAD", "suppression impossible")
 				)
 			);
 	}
@@ -199,45 +196,16 @@ export class BackService {
 				idPlayer: idPlayer
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "", "kill impossible")
-					//TODO ré actualise
+				catchError(err => this.handleError(err, "RELOAD", "kill impossible")
 				)
 			);
 	}
 
 	updateGame(idGame: string, results: any) {
-		return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE, {
-			idGame: idGame,
-			name: results.name,
-			typeMoney: results.typeMoney,
-			amountCardsForProd: results.amountCardsForProd,
-			generatedIdenticalCards: results.generatedIdenticalCards,
-			surveyEnabled: results.surveyEnabled,
-			priceWeight1: results.priceWeight1,
-			priceWeight2: results.priceWeight2,
-			priceWeight3: results.priceWeight3,
-			priceWeight4: results.priceWeight4,
-			round: results.round,
-			roundMax: results.roundMax,
-			roundMinutes: results.roundMinutes,
-
-			tauxCroissance: results.tauxCroissance,
-			inequalityStart: results.inequalityStart,
-			startAmountCoins: results.startAmountCoins,
-			pctRich: results.pctRich,
-			pctPoor: results.pctPoor,
-
-			defaultCreditAmount: results.defaultCreditAmount,
-			defaultInterestAmount: results.defaultInterestAmount,
-			bankInterestEarned: results.bankInterestEarned,
-			bankGoodsEarned: results.bankGoodsEarned,
-			timerCredit: results.timerCredit,
-			timerPrison: results.timerPrison,
-			manualBank: results.manualBank,
-			seizureType: results.seizureType,
-			seizureCosts: results.seizureCosts,
-			seizureDecote: results.seizureDecote
-		}).pipe(
+		results.idGame = idGame;
+		return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE,
+			results
+		).pipe(
 			catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
 		);
 	}

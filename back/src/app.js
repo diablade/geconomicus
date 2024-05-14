@@ -52,7 +52,7 @@ app.use(function (req, res, next) {
 // handle errors
 app.use(function (err, req, res, next) {
 	if (err.status === 500) {
-		console.log(err);
+		log.error(err);
 	}
 	res.status(err.status || 500);
 	const message = err.message || "something looks wrong :(";

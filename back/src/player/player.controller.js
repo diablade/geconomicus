@@ -148,7 +148,6 @@ export default {
                 },
                 {new: true, returnOriginal: false})
                 .then((doc) => {
-                    console.log("here buddy", doc);
                     const updatedPlayer = _.find(doc.players, p => p._id == idPlayer);
                     io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
                     res.status(200).json({"status": "updated"});

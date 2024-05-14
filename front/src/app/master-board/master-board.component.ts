@@ -253,7 +253,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 			data: {game: _.clone(this.game)},
 		});
 		dialogRef.afterClosed().subscribe(results => {
-			console.log(results);
 			if (results === "reset") {
 				this.resetGame();
 			} else {
@@ -262,6 +261,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 				});
 				this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
 				this.game.name = results.name;
+				this.game.animator = results.animator;
+				this.game.location = results.location;
 				this.game.priceWeight1 = results.priceWeight1;
 				this.game.priceWeight2 = results.priceWeight2;
 				this.game.priceWeight3 = results.priceWeight3;

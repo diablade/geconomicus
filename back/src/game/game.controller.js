@@ -210,7 +210,7 @@ async function killPlayer(idGame, idPlayer) {
 	const player = _.find(game.players, {id: idPlayer});
 	const groupedCards = _.groupBy(_.sortBy(player.cards, 'weight'), 'weight');
 
-	// make him dead, Remove cards from player's hand, reset coins if debt
+	// make him dead, Remove cards from player's hand
 	await GameModel.updateOne(
 		{_id: idGame, 'players._id': idPlayer},
 		{
@@ -221,12 +221,16 @@ async function killPlayer(idGame, idPlayer) {
 			},
 			$set: {
 				'players.$.status': C.DEAD,
-				'players.$.coins': game.typeMoney === C.JUNE ? player.coins : 0
 			},
 		},
 	).catch(err => {
 		log.error('player escape dead, error', err);
 	});
+
+	if(game.typeMoney == C.DEBT){
+		//TODO force settle credit
+		//then remove coins from player
+	}
 
 	let newEvent = constructor.event(C.DEAD, "master", idPlayer, 0, [], Date.now());
 	//PUT BACK CARDS IN THE DECKs
@@ -242,7 +246,7 @@ async function killPlayer(idGame, idPlayer) {
 			},
 		}
 	).catch(err => {
-		log.error('player dead cards are not back in decks, error', err);
+		log.error('dead player\'s cards are not back in decks, error', err);
 	});
 	io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
 	io().to(idPlayer).emit(C.DEAD);
@@ -267,7 +271,6 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
 			// TODO: the automatic dead is coming ;
 		},
 		(timer) => {
-			console.log('Round ended');
 			distribDU(timer.id).then(r =>
 				stopRound(timer.id, timer.data.gameRound)
 			)
@@ -287,7 +290,6 @@ function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
 			// TODO: the automatic dead is coming ;
 		},
 		(timer) => {
-			console.log('Round end');
 			stopRound(timer.id, timer.data.gameRound);
 		});
 	timer.start();
@@ -299,7 +301,7 @@ function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
 
 export default {
 	create: async (req, res, next) => {
-		if (!req.body.gameName) {
+		if (!req.body.name) {
 			next({
 				status: 400,
 				message: "bad request"
@@ -307,7 +309,9 @@ export default {
 		} else {
 			let body = req.body;
 			const newGame = new GameModel({
-				name: req.body.gameName,
+				name: req.body.name,
+				animator: req.body.animator,
+				location: req.body.location,
 				status: C.OPEN,
 				typeMoney: "june",
 				events: [],
@@ -374,7 +378,9 @@ export default {
 			GameModel.updateOne({_id: id}, {
 				$set: {
 					typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
-					name: body.name ? body.name : "sans nom",
+					name: body.name ? body.name : "partie sans nom",
+					animator: body.animator ? body.animator : "sans animateur",
+					location: body.location ? body.location : "sans lieu",
 					priceWeight1: body.priceWeight1 ? body.priceWeight1 : 3,
 					priceWeight2: body.priceWeight2 ? body.priceWeight2 : 6,
 					priceWeight3: body.priceWeight3 ? body.priceWeight3 : 9,
