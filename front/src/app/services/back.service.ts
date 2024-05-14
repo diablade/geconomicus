@@ -5,6 +5,7 @@ import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
+import {id} from "date-fns/locale";
 
 // import {retry} from "rxjs/operators";
 
@@ -267,6 +268,14 @@ export class BackService {
 			seizure: seizure
 		}).pipe(
 			catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
+		)
+	}
+
+	breakFree(idGame: string, idPlayerToFree: string) {
+		return this.http.post<any>(environment.API_HOST + environment.BANK.BREAK_FREE, {
+			idPlayerToFree, idGame
+		}).pipe(
+			catchError(err => this.handleError(err, "", " I can't break prison :/ "))
 		)
 	}
 }

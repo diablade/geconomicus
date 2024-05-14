@@ -1,76 +1,89 @@
 <div class="p-3 bank" *ngIf="game.typeMoney==C.DEBT">
-  <h1 class="d-flex justify-content-center fs-4 shadowed gecoFont">Banque
-    <fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
-  </h1>
-  <div class="d-flex flex-row">
-    <div class="w-50">
-      <h2 class="fs-4 shadowed gecoFont">Indicateurs économique courant</h2>
-      <div>
-        Masse Monétaire en circulation :
-        <mat-chip>
-          {{ game.currentMassMonetary }}
-        </mat-chip>
-      </div>
-      <div>
-        Moyenne par joueur :
-        <mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
-          <b>{{ getAverageCurrency() | number : '1.2-2' }} </b>
-          <fa-icon mat-raised-button [icon]="faCircleInfo"
-                   matTooltip="Un ratio de minimum 2 est conseillé à maintenir,
+	<h1 class="d-flex justify-content-center fs-4 shadowed gecoFont">
+		<fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
+		Banque
+		<fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
+	</h1>
+	<div class="d-flex flex-row">
+		<div class="w-50">
+			<h2 class="fs-4 shadowed gecoFont">Indicateurs économique courant</h2>
+			<div>
+				Masse Monétaire en circulation :
+				<mat-chip>
+					{{ game.currentMassMonetary }}
+				</mat-chip>
+			</div>
+			<div>
+				Moyenne par joueur :
+				<mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
+					<b>{{ getAverageCurrency() | number : '1.2-2' }} </b>
+					<fa-icon mat-raised-button [icon]="faCircleInfo"
+									 matTooltip="Un ratio de minimum 2 est conseillé à maintenir,
                  vous pouvez peut etre faire des offres unique de baisse des taux,
                  0% par exemple.">
-          </fa-icon>
-        </mat-chip>
-      </div>
-      <div>
-        Dettes courantes :
-        <mat-chip>
-          {{ getDebts() }}
-        </mat-chip>
-      </div>
-      <div>
-        interet récuperé :
-        <mat-chip>
-          {{ game.bankInterestEarned }}
-        </mat-chip>
-      </div>
-      <div>
-        credit remboursé :
-        <mat-chip>
-          {{ "-" }}
-        </mat-chip>
-      </div>
-    </div>
-    <div class="w-50">
+					</fa-icon>
+				</mat-chip>
+			</div>
+			<div>
+				Dettes courantes :
+				<mat-chip>
+					{{ getDebts() }}
+				</mat-chip>
+			</div>
+			<div>
+				interet récuperé :
+				<mat-chip>
+					{{ game.bankInterestEarned }}
+				</mat-chip>
+			</div>
+			<div>
+				credit remboursé :
+				<mat-chip>
+					{{ "-" }}
+				</mat-chip>
+			</div>
+		</div>
+		<div class="w-50">
+			<div class="d-flex flex-row justify-content-between align-items-center">
       <h2 class="fs-4 shadowed gecoFont">Prison</h2>
-      <div class="prison">
-        <div *ngFor="let prisoner of prisoners">
-          <div class="player m-2 d-flex flex-column justify-content-center">
-            <div class="player-frame player-svg"
-                 [ngStyle]="{'border-color':'#'+prisoner.hairColor}"
-                 [innerHTML]="getSanitizedSvgFromString(prisoner.image)">
-            </div>
-            <div class="gecoFont shadowed"> {{ prisoner.name }}</div>
-            <div class="progress m-2" role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0"
-                 aria-valuemax="100">
-              <div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
-                   [style.width.%]="prisoner.progressPrison"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="mt-5 d-flex align-items-baseline">
-    <h2 class="fs-4 shadowed gecoFont">Détails des crédits</h2>
-    <button class="ms-4" mat-raised-button color="accent" [disabled]="game.status == C.END_GAME" (click)="showContract()"> Octroyer un crédit
-      <fa-icon [icon]="faSackDollar"></fa-icon>
-    </button>
-  </div>
-  <div class="d-inline-flex" *ngFor="let credit of game.credits">
-    <app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
-                         [contractor]="getPlayerName(credit.idPlayer)"
-                         (actionBtn)="actionBtn($event,credit)"></app-credit>
-  </div>
+			<mat-slide-toggle
+				[color]="'warn'"
+				[(ngModel)]="iWantToBreakFree">
+				libérer un joueur ?
+			</mat-slide-toggle>
+			</div>
+			<div class="prison">
+				<div *ngFor="let prisoner of prisoners">
+					<div class="player m-2 d-flex flex-column justify-content-center">
+						<div class="breakfree" (click)="breakFree(prisoner._id)" *ngIf="iWantToBreakFree">
+							🆓
+						</div>
+						<div class="player-frame player-svg"
+								 [ngStyle]="{'border-color':'#'+prisoner.hairColor}"
+								 [innerHTML]="getSanitizedSvgFromString(prisoner.image)">
+						</div>
+						<div class="gecoFont shadowed"> {{ prisoner.name }}</div>
+						<div class="progress m-2" role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0"
+								 aria-valuemax="100">
+							<div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
+									 [style.width.%]="prisoner.progressPrison"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="mt-5 d-flex align-items-baseline">
+		<h2 class="fs-4 shadowed gecoFont">Détails des crédits</h2>
+		<button class="ms-4" mat-raised-button color="accent" [disabled]="game.status == C.END_GAME"
+						(click)="showContract()"> Octroyer un crédit
+			<fa-icon [icon]="faSackDollar"></fa-icon>
+		</button>
+	</div>
+	<div class="d-inline-flex" *ngFor="let credit of game.credits">
+		<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
+								[contractor]="getPlayerName(credit.idPlayer)"
+								(actionBtn)="actionBtn($event,credit)"></app-credit>
+	</div>
 </div>
 <div *ngIf="game.typeMoney==C.JUNE">Pas de banque en monnaie libre ;)</div>

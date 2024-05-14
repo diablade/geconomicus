@@ -32,6 +32,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   socket: any;
   C = C;
   prisoners: Player[] = [];
+	iWantToBreakFree =false;
 
   constructor(private route: ActivatedRoute,
               private backService: BackService,
@@ -168,7 +169,6 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     });
     confDialogRef.afterClosed().subscribe(seizure => {
       if (seizure) {
-        console.log(seizure);
         this.backService.seizure(seizure, credit).subscribe((data: any) => {
           this.snackbarService.showSuccess("Saisie effectué !");
           if (data) {
@@ -202,4 +202,10 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
   getSanitizedSvgFromString(svgString: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(svgString);
   }
+
+	breakFree(idPlayerToFree: string) {
+		this.backService.breakFree(this.idGame, idPlayerToFree).subscribe((data: any) => {
+			this.snackbarService.showSuccess("I want to break FREEEEEE !");
+		});
+	}
 }

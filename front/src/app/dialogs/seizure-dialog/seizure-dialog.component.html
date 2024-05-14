@@ -3,6 +3,7 @@
 	<div class="flex-grow-1">
 		<div class="d-flex flex-row flex-wrap justify-content-between" cdkDropListGroup>
 			<div cdkDropList
+					 id="player-cards"
 					 (cdkDropListDropped)="onDrop($event)"
 					 [cdkDropListData]="playerCards"
 					 [ngStyle]="getBackgroundStyle('')"
@@ -37,6 +38,7 @@
 				</div>
 			</div>
 			<div cdkDropList
+					 id="bank-cards"
 					 [ngStyle]="getBackgroundStyle('bank')"
 					 (cdkDropListDropped)="onDrop($event)"
 					 [cdkDropListData]="seizureCards" class="bank-board m-2">
@@ -82,10 +84,15 @@
 	<div class="m-2 d-flex flex-row justify-content-center">
 		<div>
 			<fa-icon class="ms-2 icon"
-							 [matTooltip]="'Si l\'objectif est remplis, 0 minute, si le manque à gagner est important, la sanction doit etre grande, max 5 minutes'"
+							 [matTooltip]="'Si l\'objectif est remplis, 0 minute, la prison est uniquement si le joueur n\'as plus de cartes, (min 1mn), Si le manque à gagner est important, la sanction doit etre grande (max 5 mn)'"
 							 [icon]="faInfoCircle"></fa-icon>
 			Décision pour la prison : durée de
-			<input class="smallInput" type="number" [max]="timerPrisonMax" [(ngModel)]="prisonTime"> minutes
+			<input class="smallInput" type="number"
+						 [disabled]="playerCards.length>0"
+						 [min]="getMinTimerPrison()"
+						 [max]="timerPrisonMax"
+						 [(ngModel)]="prisonTime"
+			> minutes
 		</div>
 	</div>
 	<div class="d-flex flex-row justify-content-end">

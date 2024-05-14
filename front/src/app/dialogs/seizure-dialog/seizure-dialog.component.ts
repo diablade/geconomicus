@@ -7,7 +7,6 @@ import * as C from "../../../../../config/constantes";
 import {BackService} from "../../services/back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {retry} from "rxjs";
 
 @Component({
 	selector: 'app-seizure-dialog',
@@ -118,4 +117,12 @@ export class SeizureDialogComponent implements OnInit {
 		})
 	}
 
+	getMinTimerPrison() {
+		if(this.playerCards.length==0 && this.prisonTime==0){
+			this.prisonTime=1;
+		}else if(this.playerCards.length>0 && this.prisonTime>0){
+			this.prisonTime=0;
+		}
+		return this.playerCards.length>0 ? 0 : 1;
+	}
 }

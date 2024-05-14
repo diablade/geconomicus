@@ -8,6 +8,7 @@ router.get('/get-credits/:idGame/:idPlayer', bank.getCreditsByIdPlayer);
 router.post('/settle-credit', bank.settleCredit);
 router.post('/pay-interest', bank.payInterest);
 router.post('/seizure', bank.seizure);
+router.post('/prison-break', bank.iveGotToBreakFree);
 
 
 export default router;
