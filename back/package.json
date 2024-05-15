@@ -1,6 +1,6 @@
 {
   "name": "back",
-  "version": "0.9.16",
+  "version": "0.9.17",
   "dependencies": {
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
