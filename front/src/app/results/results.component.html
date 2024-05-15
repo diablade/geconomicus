@@ -14,12 +14,11 @@
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
 				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
+				<div><span class="fw-bold">Animateur: </span>{{ game?.animator }}</div>
+				<div><span class="fw-bold">Lieu: </span>{{ game?.location }}</div>
+				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
 				<div><span class="fw-bold">Joueurs: </span>{{ game?.players?.length }}</div>
 				<div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
-				<div><span class="fw-bold">Meilleur joueur monnaies: </span>🥇{{ bestPlayerOnMoney }}</div>
-				<div><span class="fw-bold">Meilleur joueur ressources: </span>🥇{{ bestPlayerOnRes }}</div>
-				<div><span class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif: </span>🥇{{ bestPlayerOnTransaction }}
-				</div>
 			</div>
 			<div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
@@ -57,6 +56,40 @@
 				<div><span class="fw-bold">Durée total du jeu : </span>{{ durationGame() }}</div>
 				<div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
 				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
+			</div>
+		</div>
+
+		<h1 class="m-2 mt-4 contour">Meilleurs joueurs
+		</h1>
+		<div class="row g-0 p-2 bg-white rounded shadow">
+			<div class="d-flex flex-row justify-content-evenly flex-wrap">
+				<div class="d-flex flex-column justify-content-center">
+					<div class="fw-bold">Meilleur joueur monnaies</div>
+					<div *ngIf="bestPlayerOnMoney" class="player-frame player-svg"
+							 [ngStyle]="{'border-color':'#'+bestPlayerOnMoney.hairColor}"
+							 [innerHTML]="getSanitizedSvgFromString(bestPlayerOnMoney.image)">
+					</div>
+					<div *ngIf="!bestPlayerOnMoney">aucun...</div>
+					<div *ngIf="bestPlayerOnMoney" class="gecoFont shadowed"> {{ bestPlayerOnMoney.name }}<span class="fs-3"> 🥇</span></div>
+				</div>
+				<div class="d-flex flex-column justify-content-center">
+					<div class="fw-bold">Meilleur joueur ressources</div>
+					<div *ngIf="bestPlayerOnRes" class="player-frame player-svg"
+							 [ngStyle]="{'border-color':'#'+bestPlayerOnRes.hairColor}"
+							 [innerHTML]="getSanitizedSvgFromString(bestPlayerOnRes.image)">
+					</div>
+					<div *ngIf="!bestPlayerOnRes">aucun...</div>
+					<div *ngIf="bestPlayerOnRes" class="gecoFont shadowed"> {{ bestPlayerOnRes.name }}<span class="fs-3"> 🥇</span></div>
+				</div>
+				<div class="d-flex flex-column justify-content-center">
+					<div class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif</div>
+					<div *ngIf="bestPlayerOnTransaction" class="player-frame player-svg"
+							 [ngStyle]="{'border-color':'#'+bestPlayerOnTransaction.hairColor}"
+							 [innerHTML]="getSanitizedSvgFromString(bestPlayerOnTransaction.image)">
+					</div>
+					<div *ngIf="!bestPlayerOnTransaction">aucun...</div>
+					<div *ngIf="bestPlayerOnTransaction" class="gecoFont shadowed"> {{ bestPlayerOnTransaction.name }}<span class="fs-3"> 🥇</span></div>
+				</div>
 			</div>
 		</div>
 

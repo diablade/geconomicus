@@ -21,6 +21,7 @@ export const environment = {
 		SETTLE_CREDIT: 'bank/settle-credit',
 		PAY_INTEREST: 'bank/pay-interest',
 		SEIZURE: 'bank/seizure',
+		BREAK_FREE: "bank/prison-break",
 	},
 	GAME: {
 		GET: 'game/',
