@@ -1,4 +1,4 @@
-<div class="games">
+<div class="d-flex flex-column align-items-center">
 	<h1 mat-dialog-title>Historique des parties crées</h1>
 	<div class="items">
 		<div class="item" *ngFor="let game of games">
@@ -12,8 +12,8 @@
 						<div>
 							{{ game.created | date: "dd/MMM/YYYY HH:mm" }}
 						</div>
-						<div>Animateur:{{ game.animator ? game.animator : "-" }}</div>
-						<div>lieu:{{ game.location ? game.location : "-" }}</div>
+						<div>Animateur: <span class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
+						<div>lieu: <span class="fw-bold">{{ game.location ? game.location : "-" }}</span></div>
 						<div class="d-flex flex-row">
 							<div>Jeu: {{ game.typeMoney == C.JUNE ? "monnaie libre" : "monnaie dette" }}
 							</div>

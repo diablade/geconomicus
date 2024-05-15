@@ -58,12 +58,10 @@
 				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
 			</div>
 		</div>
-
-		<h1 class="m-2 mt-4 contour">Meilleurs joueurs
-		</h1>
-		<div class="row g-0 p-2 bg-white rounded shadow">
+		<h1 class="m-2 mt-4 contour">Meilleurs joueurs</h1>
+		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap">
-				<div class="d-flex flex-column justify-content-center">
+				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold">Meilleur joueur monnaies</div>
 					<div *ngIf="bestPlayerOnMoney" class="player-frame player-svg"
 							 [ngStyle]="{'border-color':'#'+bestPlayerOnMoney.hairColor}"
@@ -72,7 +70,7 @@
 					<div *ngIf="!bestPlayerOnMoney">aucun...</div>
 					<div *ngIf="bestPlayerOnMoney" class="gecoFont shadowed"> {{ bestPlayerOnMoney.name }}<span class="fs-3"> 🥇</span></div>
 				</div>
-				<div class="d-flex flex-column justify-content-center">
+				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold">Meilleur joueur ressources</div>
 					<div *ngIf="bestPlayerOnRes" class="player-frame player-svg"
 							 [ngStyle]="{'border-color':'#'+bestPlayerOnRes.hairColor}"
@@ -81,7 +79,7 @@
 					<div *ngIf="!bestPlayerOnRes">aucun...</div>
 					<div *ngIf="bestPlayerOnRes" class="gecoFont shadowed"> {{ bestPlayerOnRes.name }}<span class="fs-3"> 🥇</span></div>
 				</div>
-				<div class="d-flex flex-column justify-content-center">
+				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif</div>
 					<div *ngIf="bestPlayerOnTransaction" class="player-frame player-svg"
 							 [ngStyle]="{'border-color':'#'+bestPlayerOnTransaction.hairColor}"

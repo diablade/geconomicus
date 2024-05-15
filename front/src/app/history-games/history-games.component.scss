@@ -1,8 +1,4 @@
-.games{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+
 .date{
   font-size: small;
   color: gray;
@@ -21,12 +17,6 @@
 .item {
   min-height: 72px;
   margin: 10px;
-  &-date{
-    height: 25px;
-  }
-  &-detail{
-    //height: 42px;
-  }
 }
 .status{
   font-size: small;
