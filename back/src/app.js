@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import socket from '../config/socket.js';
 import http from 'http';
+import log from '../config/log.js';
 
 // IMPORT ROUTES
 import bankRoutes from "./bank/bank.routes.js";
@@ -38,10 +39,6 @@ app.get('/status', (req, res) => {
 		version: process.env.GECO_VERSION
 	})
 });
-// WEB APP BUILD HOSTING
-// app.get('/', (req, res) => {
-//     res.sendFile(process.cwd() + "/../front/dist/geconomicus/index.html")
-// });
 
 // for all other routes go with 404 error
 app.use(function (req, res, next) {

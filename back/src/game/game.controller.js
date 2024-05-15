@@ -309,9 +309,9 @@ export default {
 		} else {
 			let body = req.body;
 			const newGame = new GameModel({
-				name: req.body.name,
-				animator: req.body.animator,
-				location: req.body.location,
+				name: req.body.name ? req.body.name : "sans nom",
+				animator: req.body.animator ? req.body.animator : "sans animateur",
+				location: req.body.location? req.body.location : "sans lieu",
 				status: C.OPEN,
 				typeMoney: "june",
 				events: [],
@@ -699,6 +699,8 @@ export default {
 			{
 				$project: {
 					name: 1,
+					animator: 1,
+					location: 1,
 					status: 1,
 					typeMoney: 1,
 					modified: 1,
