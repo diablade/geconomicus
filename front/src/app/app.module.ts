@@ -1,10 +1,10 @@
-import {NgModule} from '@angular/core';
+import {NgModule, isDevMode} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {PlayerBoardComponent} from './player-board/player-board.component';
 import {GameInfosDialog, JoinQrDialog, MasterBoardComponent} from './master-board/master-board.component';
-import {CreateGameDialog, HomeComponent} from './home/home.component';
+import {CreateGameDialog, HomeComponent, InstallAppDialog} from './home/home.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {MatRadioModule} from "@angular/material/radio";
 import {MatButtonModule} from "@angular/material/button";
@@ -59,6 +59,7 @@ import {CdkMenuTrigger} from "@angular/cdk/menu";
 import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
 	declarations: [
@@ -74,6 +75,7 @@ import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog
 		VersionComponent,
 		EventsComponent,
 		CreateGameDialog,
+		InstallAppDialog,
 		ScannerDialogComponent,
 		JoinQrDialog,
 		GameInfosDialog,
@@ -122,6 +124,12 @@ import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog
 		MatExpansionModule,
 		CdkMenuTrigger,
 		DragDropModule,
+  ServiceWorkerModule.register('ngsw-worker.js', {
+    enabled: !isDevMode(),
+    // Register the ServiceWorker as soon as the application is stable
+    // or after 30 seconds (whichever comes first).
+    registrationStrategy: 'registerWhenStable:30000'
+  }),
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
