@@ -25,15 +25,20 @@ async function generateOneCard(letter, color, weight, price) {
 	return card;
 }
 
-async function generateDecks(generatedIdenticalCards, nbPlayers, prices) {
+async function generateDecks(game) {
+	const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
+
 	let tableDecks = [[], [], [], []];
-	const lettersInGame = nbPlayers;
+	let lettersInGame = game.players.length;
+	if (!game.generateLettersAuto) {
+		lettersInGame = game.generateLettersInDeck;
+	}
 	// genere cartes pour les 4 lots
 	for (let weight = 0; weight <= 3; weight++) {
 		let deck = [];
 		for (let letter = 0; letter <= lettersInGame; letter++) {
 			// genere 3, 4 ou 5 cartes identiques
-			for (let j = 1; j <= generatedIdenticalCards; j++) {
+			for (let j = 1; j <= game.generatedIdenticalCards; j++) {
 				const card = await generateOneCard(letters[letter], colors[weight], weight, prices[weight]);
 				deck.push(card);
 			}
@@ -97,13 +102,11 @@ async function distribDU(idGame) {
 }
 
 async function initGameDebt(game) {
-	const nbPlayer = game.players.length;
-	const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
-	let decks = await generateDecks(game.generatedIdenticalCards, nbPlayer, prices);
+	let decks = await generateDecks(game);
 
 	for await (let player of game.players) {
-		// pull 4 cards from the deck and distribute to the player
-		const cards = _.pullAt(decks[0], game.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+		// pull cards from the deck and distribute to the player
+		const cards = _.pullAt(decks[0], game.distribInitCards === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
 		player.cards = cards;
 		player.status = C.ALIVE;
 		player.coins = 0;
@@ -136,10 +139,9 @@ async function generateInequality(nbPlayer, pctRich, pctPoor) {
 }
 
 async function initGameJune(game) {
-	const nbPlayer = game.players.length;
-	const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
-	let decks = await generateDecks(game.generatedIdenticalCards, nbPlayer, prices);
-	const classes = game.inequalityStart ? await generateInequality(nbPlayer, game.pctRich, game.pctPoor) : [];
+	let decks = await generateDecks(game);
+
+	const classes = game.inequalityStart ? await generateInequality(game.players.length, game.pctRich, game.pctPoor) : [];
 
 	for await (let player of game.players) {
 		// pull 4 cards from the deck and distribute to the player
@@ -227,7 +229,7 @@ async function killPlayer(idGame, idPlayer) {
 		log.error('player escape dead, error', err);
 	});
 
-	if(game.typeMoney == C.DEBT){
+	if (game.typeMoney == C.DEBT) {
 		//TODO force settle credit
 		//then remove coins from player
 	}
@@ -311,7 +313,7 @@ export default {
 			const newGame = new GameModel({
 				name: req.body.name ? req.body.name : "sans nom",
 				animator: req.body.animator ? req.body.animator : "sans animateur",
-				location: req.body.location? req.body.location : "sans lieu",
+				location: req.body.location ? req.body.location : "sans lieu",
 				status: C.OPEN,
 				typeMoney: "june",
 				events: [],
@@ -319,6 +321,9 @@ export default {
 				players: [],
 				amountCardsForProd: 4,
 				currentMassMonetary: 0,
+				distribInitCards: 4,
+				generateLettersAuto:true,
+				generateLettersInDeck:0,
 				generatedIdenticalCards: 4,
 				surveyEnabled: true,
 				priceWeight1: 3,
@@ -389,6 +394,9 @@ export default {
 					roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
 					surveyEnabled: body.surveyEnabled == undefined ? true : body.surveyEnabled,
 					amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
+					distribInitCards: body.distribInitCards ? body.distribInitCards : 4,
+					generateLettersAuto: body.generateLettersAuto == undefined ? true : body.generateLettersAuto,
+					generateLettersInDeck: body.generateLettersInDeck ? body.generateLettersInDeck : 0,
 					generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
 
 					//option june
@@ -748,6 +756,9 @@ export default {
 						currentMassMonetary: 0,
 						surveyEnabled: true,
 						generatedIdenticalCards: 4,
+						distribInitCards:4,
+						generateLettersAuto:true,
+						generateLettersInDeck:0,
 						amountCardsForProd: 4,
 						round: 0,
 						roundMax: 1,

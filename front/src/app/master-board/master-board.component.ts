@@ -260,35 +260,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 					this.snackbarService.showSuccess("Option sauvegardé !");
 				});
 				this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
-				this.game.name = results.name;
-				this.game.animator = results.animator;
-				this.game.location = results.location;
-				this.game.priceWeight1 = results.priceWeight1;
-				this.game.priceWeight2 = results.priceWeight2;
-				this.game.priceWeight3 = results.priceWeight3;
-				this.game.priceWeight4 = results.priceWeight4;
-				this.game.roundMax = results.roundMax;
-				this.game.roundMinutes = results.roundMinutes;
-				this.game.surveyEnabled = results.surveyEnabled;
-				this.game.amountCardsForProd = results.amountCardsForProd;
-				this.game.generatedIdenticalCards = results.generatedIdenticalCards;
-
-				//option june
-				this.game.inequalityStart = results.inequalityStart;
-				this.game.startAmountCoins = results.startAmountCoins;
-				this.game.tauxCroissance = results.tauxCroissance;
-				this.game.pctRich = results.pctRich;
-				this.game.pctPoor = results.pctPoor;
-
-				//option debt
-				this.game.defaultCreditAmount = results.defaultCreditAmount;
-				this.game.defaultInterestAmount = results.defaultInterestAmount;
-				this.game.timerCredit = results.timerCredit;
-				this.game.timerPrison = results.timerPrison;
-				this.game.manualBank = results.manualBank;
-				this.game.seizureType = results.seizureType;
-				this.game.seizureCosts = results.seizureCosts;
-				this.game.seizureDecote = results.seizureDecote;
+				this.game = {...results};
 			}
 		});
 	}

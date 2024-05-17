@@ -1,27 +1,21 @@
 <div class="option">
-	<div class="w-100 overflow-auto">
+	<div class="w-100 d-flex flex-column overflow-auto">
 		<div class="text-center fs-4 m-4 gecoFont shadowed">
 			Options générales
 		</div>
 		<div class="text-center">
-			<div class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-					<mat-label>nom de la partie</mat-label>
-					<input type="text" matInput placeholder="" [(ngModel)]="game.name">
-				</mat-form-field>
-			</div>
-			<div class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-					<mat-label>nom de l'animateur</mat-label>
-					<input type="text" matInput placeholder="" [(ngModel)]="game.animator">
-				</mat-form-field>
-			</div>
-			<div class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-					<mat-label>Lieu</mat-label>
-					<input type="text" matInput placeholder="" [(ngModel)]="game.location">
-				</mat-form-field>
-			</div>
+			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+				<mat-label>nom de la partie</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="game.name">
+			</mat-form-field>
+			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+				<mat-label>nom de l'animateur</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="game.animator">
+			</mat-form-field>
+			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+				<mat-label>Lieu</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="game.location">
+			</mat-form-field>
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
 					Questionnaire de ressenti en fin de partie
@@ -34,18 +28,14 @@
 				⚠️ Attention ⚠️, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
 				sinon cliquez sur <span class="red"> "valeur par defaut"</span> en cas d'erreur !
 			</div>
-			<div class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-					<mat-label>nombre de tours</mat-label>
-					<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
-				</mat-form-field>
-			</div>
-			<div class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
-					<mat-label>minutes par tour</mat-label>
-					<input type="number" min="1" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
-				</mat-form-field>
-			</div>
+			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+				<mat-label>nombre de tours</mat-label>
+				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
+			</mat-form-field>
+			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+				<mat-label>minutes par tour</mat-label>
+				<input type="number" min="1" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+			</mat-form-field>
 			<div class="d-inline-flex">
 				<div class="imgText">
 					<img class="imgCardValeur" src="assets/images/level1.png">
@@ -84,32 +74,32 @@
 					<input type="number" min="0" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.JUNE" class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+			<div *ngIf="game.typeMoney==C.JUNE">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>taux de croissance Dividende Universel</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.JUNE" class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+			<div *ngIf="game.typeMoney==C.JUNE">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>bourse de départ (moyenne classe)</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+			<div *ngIf="game.typeMoney==C.DEBT">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Crédit par défaut:</mat-label>
 					<input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+			<div *ngIf="game.typeMoney==C.DEBT">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Intéret par défaut:</mat-label>
 					<input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="w-100">
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+			<div *ngIf="game.typeMoney==C.DEBT">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Paiement d'intérêts toutes les (en minutes) :</mat-label>
 					<input type="number" min="0" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
 				</mat-form-field>
@@ -126,7 +116,7 @@
 							<input type="number" min="0" class="smallInput" placeholder="2" [(ngModel)]="game.seizureCosts">
 						</div>
 					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3 w-100" [value]="'decote'">
+					<mat-radio-button class="d-flex ms-3" [value]="'decote'">
 						<div class="d-flex flex-row infoLabel">en valeur carte avec décote de :<input type="number" min="0"
 																																													class="smallInput"
 																																													placeholder="33"
@@ -135,9 +125,9 @@
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+			<div *ngIf="game.typeMoney==C.DEBT">
 				Si crédit non recouvré, mise en prison maximum
-				<mat-form-field *ngIf="game" class="ms-1 w-100" appearance="fill">
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Durée de la prison max (en minutes):</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
 				</mat-form-field>
@@ -170,28 +160,45 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-2">
-				<mat-label>Nombre de cartes identique généré disponible dans le jeu et cartes de départs</mat-label>
-				<mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
-					<mat-radio-button class="d-flex ms-3" [value]=3>
-						3 (idéal de 3 à 5 joueurs)
+			<div class="d-flex flex-column">
+				<mat-label class="mt-2 fw-bold">Nombre de lettres générées en jeu</mat-label>
+				<mat-radio-group [(ngModel)]="game.generateLettersAuto">
+					<mat-radio-button class="d-flex ms-3" [value]=true>
+						auto ( nb joueurs + 1 )
 					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=4>
-						4 (de 6 à 17 joueurs)
-					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=5>
-						5 (idéal de 18 à 25 joueurs)
+					<mat-radio-button class="d-flex ms-3" [value]=false>
+						manuel <input class="smallInput" type="number" [disabled]="game.generateLettersAuto"
+													[(ngModel)]="game.generateLettersInDeck">
 					</mat-radio-button>
 				</mat-radio-group>
-			</div>
-			<div class="mt-2">
-				<mat-label>Nombre de cartes identique pour bâtir une carte supérieur:</mat-label>
-				<mat-radio-group [(ngModel)]="game.amountCardsForProd">
+				<mat-label class="mt-2 fw-bold">Nombre de cartes identique généré dans le jeu et cartes de départs</mat-label>
+				<mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
 					<mat-radio-button class="d-flex ms-3" [value]=3>
-						3 (ideal de 3 à 5 joueurs)
+						3 (de 3 à 5 joueurs) ⚠️ EXPERIMENTAL
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=4>
-						4 (pour 6+ joueurs)
+						4 (de 6 à 15 joueurs)
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]=5>
+						5 (16+ joueurs)
+					</mat-radio-button>
+				</mat-radio-group>
+				<mat-label class="mt-2 fw-bold">Nombre de cartes distribués au joueurs au début du jeu</mat-label>
+				<mat-radio-group [(ngModel)]="game.distribInitCards">
+					<mat-radio-button class="d-flex ms-3" [value]=3>
+						3 (3 à 5 joueurs) ⚠️ EXPERIMENTAL
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]=4>
+						4 (6+ joueurs)
+					</mat-radio-button>
+				</mat-radio-group>
+				<mat-label class="mt-2fw-bold">Nombre de cartes identique pour bâtir une carte supérieur:</mat-label>
+				<mat-radio-group [(ngModel)]="game.amountCardsForProd">
+					<mat-radio-button class="d-flex ms-3" [value]=3>
+						3 (de 3 à 5 joueurs) ⚠️EXPERIMENTAL
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]=4>
+						4 (6+ joueurs)
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>

@@ -92,6 +92,9 @@ export class Game {
 	priceWeight4: number = 12;
 	currentMassMonetary: number = 0;
 	amountCardsForProd: number = 4;
+	distribInitCards: number = 4;
+	generateLettersInDeck:number=0;
+	generateLettersAuto:boolean = true;
 	generatedIdenticalCards: number = 4;
 	surveyEnabled: boolean = true;
 	round: number = 0;
