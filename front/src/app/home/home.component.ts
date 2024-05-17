@@ -6,6 +6,7 @@ import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.c
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
+import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 
 @Component({
 	selector: 'app-home',
@@ -49,7 +50,9 @@ export class HomeComponent implements OnInit {
 	join() {
 		const dialogRef = this.dialog.open(ScannerDialogComponent, {});
 		dialogRef.afterClosed().subscribe(url => {
-			window.location.href = url;
+			let u = new URL(url);
+			let paths = u.pathname.split('/').filter(Boolean);
+			this.router.navigate(paths);
 		});
 	}
 
