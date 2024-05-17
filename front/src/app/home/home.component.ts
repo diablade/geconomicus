@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
 		audio.play();
 	}
 
-	constructor( private router: Router,private platform: Platform, private backService: BackService, public dialog: MatDialog) {
+	constructor(private router: Router, private platform: Platform, private backService: BackService, public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -57,7 +57,8 @@ export class HomeComponent implements OnInit {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
 				url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
-				text: "Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo"
+				text: "Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
+				textSize: "10px"
 			},
 		});
 		dialogRef.afterClosed().subscribe(result => {
