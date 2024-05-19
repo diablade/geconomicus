@@ -7,9 +7,6 @@ import * as _ from 'lodash';
 })
 export class SessionStorageService {
 
-  constructor() {
-  }
-
   getItem(key:string) {
     // @ts-ignore
     return JSON.parse(sessionStorage.getItem(this.formatKey(key)));

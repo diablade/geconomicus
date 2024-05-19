@@ -23,20 +23,20 @@
 	<div class="titleBar d-flex flex-row">
 		<div class="symbol">
 			<div class="jeuTitle">Solde:</div>
-			<img *ngIf="typeMoney==C.JUNE" [src]="'/assets/images/g1coin.png'" class="free"/>
-			<img *ngIf="typeMoney==C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt"/>
+			<img *ngIf="typeMoney===C.JUNE" [src]="'/assets/images/g1coin.png'" class="free"/>
+			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt"/>
 		</div>
 		<div class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }}
-			<span *ngIf="typeMoney==C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
-			<span *ngIf="typeMoney==C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
+			<span *ngIf="typeMoney===C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
+			<span *ngIf="typeMoney===C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
 			<img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
 		</div>
 		<div class="user d-flex">
 			<div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
 		</div>
 	</div>
-	<div class="d-flex flex-row w-100" *ngIf="typeMoney==C.DEBT">
+	<div class="d-flex flex-row w-100" *ngIf="typeMoney===C.DEBT">
 
 	</div>
 	<div class="" *ngIf="statusGame!==C.PLAYING">
@@ -78,7 +78,7 @@
 		</div>
 		<div class="d-flex flex-row justify-content-between">
 			<div>
-				<button *ngIf="typeMoney==C.DEBT" class="buy" mat-raised-button color="primary"
+				<button *ngIf="typeMoney===C.DEBT" class="buy" mat-raised-button color="primary"
 								(click)="panelCreditOpenState = !panelCreditOpenState">
 					CREDITS
 					<fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
@@ -88,7 +88,7 @@
 			<div>
 				<mat-slide-toggle [(ngModel)]="scanV2" name="scanV2">scan v2</mat-slide-toggle>
 				<button class="buy" mat-raised-button color="accent"
-								[disabled]="statusGame!== C.PLAYING||player.status== C.DEAD"
+								[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD"
 								(click)="scan()">
 					<fa-icon [icon]="faCamera"></fa-icon>
 					ACHETER

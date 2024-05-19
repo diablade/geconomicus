@@ -341,7 +341,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		this.socket.on(this.idGame + C.EVENT, async (data: any) => {
 			this.events.push(data.event);
 		});
-		this.socket.on(this.idGame + C.NEW_FEEDBACK, async (data: any) => {
+		this.socket.on(this.idGame + C.NEW_FEEDBACK, async () => {
 			window.location.reload();
 		});
 	}
@@ -513,11 +513,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				}
 			}
 			const addPointBefore1second = (dataset: any, date: string | Date, value: number) => {
-				// @ts-ignore before
+				// @ts-ignore
 				dataset.data.push({
-					// @ts-ignore before
+					// @ts-ignore
 					x: subSeconds(parseISO(date), 1),
-					// @ts-ignore before
+					// @ts-ignore
 					y: value
 				});
 			}

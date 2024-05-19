@@ -8,9 +8,6 @@ import {BehaviorSubject} from "rxjs";
 })
 export class LocalStorageService {
 
-  constructor() {
-  }
-
   getItem(key: string) {
     // @ts-ignore
     return JSON.parse(localStorage.getItem(this.formatKey(key)));

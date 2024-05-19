@@ -44,7 +44,7 @@ export class SurveyComponent implements OnInit {
       +this.dependantAutonomous,
       +this.anxiousConfident,
       +this.aloneIntegrated,
-      +this.agressiveAvenant).subscribe(async (data: any) => {
+      +this.agressiveAvenant).subscribe(async () => {
       this.snackbarService.showSuccess("Merci ! Redirection vers les resultats...");
 
       await new Promise(resolve => setTimeout(resolve, 4000));

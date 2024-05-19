@@ -1,7 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
-import {MatDialog} from "@angular/material/dialog";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -9,7 +8,7 @@ import {Subscription} from "rxjs";
   templateUrl: './join.component.html',
   styleUrls: ['./join.component.scss']
 })
-export class JoinComponent {
+export class JoinComponent implements OnInit, OnDestroy{
   idGame = "";
   reincarnate: string | undefined;
   name = "";

@@ -10,7 +10,7 @@ import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.c
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
-import {faCamera, faEye, faEyeSlash, faFileContract} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
@@ -176,15 +176,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.amountCardsForProd = data.amountCardsForProd;
 			await this.receiveCards(data.cards);
 		});
-		this.socket.on(C.START_ROUND, async (data: any) => {
+		this.socket.on(C.START_ROUND, async () => {
 			this.statusGame = C.PLAYING;
-			const dialogRef = this.dialog.open(InformationDialogComponent, {
+			this.dialog.open(InformationDialogComponent, {
 				data: {text: "Le tour démarre ! "},
 			});
 		});
-		this.socket.on(C.STOP_ROUND, async (data: any) => {
+		this.socket.on(C.STOP_ROUND, async () => {
 			this.statusGame = "waiting";
-			const dialogRef = this.dialog.open(InformationDialogComponent, {
+			this.dialog.open(InformationDialogComponent, {
 				data: {text: "Tour terminé !"},
 			});
 		});
@@ -225,10 +225,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.FIRST_DU, async (data: any) => {
 			this.currentDU = data.du;
 		});
-		this.socket.on(C.DEAD, async (data: any) => {
+		this.socket.on(C.DEAD, async () => {
 			this.player.status = C.DEAD;
 			this.dialog.closeAll();
-			const dialogRef = this.dialog.open(InformationDialogComponent, {
+			this.dialog.open(InformationDialogComponent, {
 				data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️"},
 			});
 			this.cards = [];
@@ -255,8 +255,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
-			// this.dialog.closeAll();
-			const dialogRef = this.dialog.open(InformationDialogComponent, {
+			this.dialog.open(InformationDialogComponent, {
 				data: {text: "Crédit obtenu (+" + data.amount + "💰)"},
 			});
 			this.player.coins += data.amount;
@@ -272,7 +271,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.requestingWhenCreditEnds(data);
 		});
-		this.socket.on(C.CREDITS_STARTED, async (data: any) => {
+		this.socket.on(C.CREDITS_STARTED, async () => {
 			_.forEach(this.credits, c => {
 				if (c.status == C.PAUSED_CREDIT) {
 					c.status = C.RUNNING_CREDIT;
@@ -314,7 +313,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (data && data.cards) {
 				await this.receiveCards(data.cards);
 			}
-			const dialogRef = this.dialog.open(InformationDialogComponent, {
+			this.dialog.open(InformationDialogComponent, {
 				data: {text: "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ "},
 			});
 		});
@@ -356,7 +355,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	showGift(card: Card) {
-		const dialogRef = this.dialog.open(CongratsDialogComponent, {
+		this.dialog.open(CongratsDialogComponent, {
 			data: {text: "Bravo ! vous obtenez une carte supérieur.", card: card},
 			width: '10px',
 			height: '10px'

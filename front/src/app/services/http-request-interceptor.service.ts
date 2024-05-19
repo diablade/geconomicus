@@ -2,13 +2,12 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor, HttpResponse
+  HttpInterceptor
 } from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {catchError, finalize} from 'rxjs/operators'
+import {finalize} from 'rxjs/operators'
 import {Injectable} from '@angular/core';
 import {LoadingService} from '../services/loading.service';
-import {SnackbarService} from "../services/snackbar.service";
 
 @Injectable({
   providedIn: 'root'

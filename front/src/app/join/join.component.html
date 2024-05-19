@@ -9,11 +9,11 @@
   <div mat-dialog-actions>
     <button *ngIf="reincarnate" mat-raised-button color="primary" (click)="joinReincarnate()">Ğo !</button>
     <button *ngIf="reincarnate==='false'" mat-raised-button color="primary" (click)="joinInGame()">Ğo !</button>
-    <button *ngIf="reincarnate==undefined" mat-raised-button color="primary" (click)="join()">Ğo !</button>
+    <button *ngIf="reincarnate===undefined" mat-raised-button color="primary" (click)="join()">Ğo !</button>
   </div>
   <div *ngIf="reincarnate" class="mt-4 text-center gecoFont bulle">Hey ! Tu as été réincarné ! (Trouve toi un nouveau prénom)</div>
   <div *ngIf="reincarnate==='false'" class="mt-4 text-center bulle gecoFont ">Hey ! La parti à déjà commencé. Bon courage.</div>
-  <div *ngIf="reincarnate==undefined" class="mt-4 text-center bulle gecoFont">Hey ! J'm’appelle Ğuny.</div>
+  <div *ngIf="reincarnate===undefined" class="mt-4 text-center bulle gecoFont">Hey ! J'm’appelle Ğuny.</div>
   <!--  GUNY  -->
   <div class="mt-1 col-md-12 text-center m-auto">
     <img class="guny" src="./assets/images/guny.png" alt="">

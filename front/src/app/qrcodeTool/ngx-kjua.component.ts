@@ -166,9 +166,6 @@ export class NgxKjuaComponent implements AfterViewInit, OnChanges {
 
   private viewInitialized = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-  }
-
   ngAfterViewInit(): void {
     this.viewInitialized = true;
     this.updateView();

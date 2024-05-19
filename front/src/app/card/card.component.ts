@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {animate, AnimationBuilder, state, style, transition, trigger} from "@angular/animations";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
 

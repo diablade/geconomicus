@@ -6,7 +6,6 @@ import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.c
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
-import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 
 @Component({
 	selector: 'app-home',
@@ -57,14 +56,13 @@ export class HomeComponent implements OnInit {
 	}
 
 	openKeyPub() {
-		const dialogRef = this.dialog.open(JoinQrDialog, {
+		this.dialog.open(JoinQrDialog, {
 			data: {
 				url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
 				text: "Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
 				textSize: "10px"
 			},
 		});
-		dialogRef.afterClosed().subscribe(() => {});
 	}
 
 	private loadModalPwa(): void {

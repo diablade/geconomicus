@@ -5,9 +5,6 @@ import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
-import {id} from "date-fns/locale";
-
-// import {retry} from "rxjs/operators";
 
 @Injectable({
 	providedIn: 'root'
@@ -249,7 +246,7 @@ export class BackService {
 	}
 
 	settleCredit(credit: Credit) {
-		return this.http.post<any>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
+		return this.http.post<Credit>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
 			credit: credit
 		}).pipe(
 			catchError(err => this.handleError(err, "", "remboursement du credit impossible"))

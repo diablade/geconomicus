@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {BackService} from "../services/back.service";
@@ -26,7 +26,7 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 	templateUrl: './master-board.component.html',
 	styleUrls: ['./master-board.component.scss']
 })
-export class MasterBoardComponent implements OnInit, AfterViewInit {
+export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscription: Subscription | undefined;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
@@ -135,7 +135,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 				this.timer.start();
 			}
 		});
-		this.socket.on(C.STOP_ROUND, async (data: any) => {
+		this.socket.on(C.STOP_ROUND, async () => {
 			this.stopRound();
 		});
 	}
@@ -189,14 +189,13 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 		this.game.status = C.STOP_ROUND;
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
-		const dialogRef = this.dialog.open(InformationDialogComponent, {
+		this.dialog.open(InformationDialogComponent, {
 			data: {text: "Tour terminé !"},
 		});
 	}
 
 	stopRoundForce() {
-		this.backService.stopRound(this.idGame, this.game.round).subscribe(() => {
-		});
+		this.backService.stopRound(this.idGame, this.game.round);
 	}
 
 	doIntertour() {
@@ -211,14 +210,14 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 	}
 
 	resetGame() {
-		this.backService.resetGame(this.idGame).subscribe((data: any) => {
+		this.backService.resetGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess("RESET GAME");
 			location.reload();
 		});
 	}
 
 	finishGame() {
-		this.backService.endGame(this.idGame).subscribe((data: any) => {
+		this.backService.endGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess("Jeu terminé !");
 			this.goToResults();
 		});
@@ -236,7 +235,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {url: this.getUserUrl(idPlayer)},
 		});
-		dialogRef.afterClosed().subscribe(result => {
+		dialogRef.afterClosed().subscribe(() => {
 		});
 	}
 
@@ -256,7 +255,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 			if (results === "reset") {
 				this.resetGame();
 			} else {
-				this.backService.updateGame(this.idGame, results).subscribe((data: any) => {
+				this.backService.updateGame(this.idGame, results).subscribe(() => {
 					this.snackbarService.showSuccess("Option sauvegardé !");
 				});
 				this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
@@ -270,7 +269,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 	}
 
 	onKillUser(player: Player) {
-		this.backService.killUser(player._id, this.idGame).subscribe((data) => {
+		this.backService.killUser(player._id, this.idGame).subscribe(() => {
 			player.status = C.DEAD;
 		});
 	}
@@ -287,7 +286,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 			this.game.priceWeight3 = 9
 			this.game.priceWeight4 = 12
 		}
-		this.backService.updateGame(this.idGame, this.game).subscribe((data: any) => {
+		this.backService.updateGame(this.idGame, this.game).subscribe(() => {
 			this.snackbarService.showSuccess("Option sauvegardé !");
 		});
 	}

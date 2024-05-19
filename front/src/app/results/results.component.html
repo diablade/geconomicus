@@ -13,14 +13,14 @@
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
-				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
+				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
 				<div><span class="fw-bold">Animateur: </span>{{ game?.animator }}</div>
 				<div><span class="fw-bold">Lieu: </span>{{ game?.location }}</div>
-				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney == C.JUNE ? "libre" : "dette" }}</div>
+				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
 				<div><span class="fw-bold">Joueurs: </span>{{ game?.players?.length }}</div>
 				<div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
 			</div>
-			<div *ngIf="game?.typeMoney == C.JUNE" class="col-sm-12 col-md-4">
+			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
 				<div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux
 				</div>
@@ -40,7 +40,7 @@
 				<div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources) }} (D.U eq)
 				</div>
 			</div>
-			<div *ngIf="game?.typeMoney == C.DEBT" class="col-sm-12 col-md-4">
+			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} €</div>
 				<div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }} €
 				</div>
@@ -102,9 +102,9 @@
 							[type]="'line'">
 			</canvas>
 		</div>
-		<h1 *ngIf="game?.typeMoney==C.JUNE" class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de
+		<h1 *ngIf="game?.typeMoney===C.JUNE" class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de
 			l'instant)</h1>
-		<div *ngIf="game?.typeMoney==C.JUNE" class="graph bg-white rounded shadow">
+		<div *ngIf="game?.typeMoney===C.JUNE" class="graph bg-white rounded shadow">
 			<canvas baseChart
 							class="chart"
 							height="500"

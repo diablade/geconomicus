@@ -1,19 +1,18 @@
 import {createAvatar, Options as Opt, schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Player} from "../models/game";
 import {BackService} from "../services/back.service";
-import {DomSanitizer} from "@angular/platform-browser";
-import {faChevronLeft, faChevronRight, faShuffle, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
+import {faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
 	selector: 'app-player-settings',
 	templateUrl: './player-settings.component.html',
 	styleUrls: ['./player-settings.component.scss']
 })
-export class PlayerSettingsComponent implements OnInit {
+export class PlayerSettingsComponent implements OnInit , OnDestroy{
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	idGame: string | undefined;
 	idPlayer: string | undefined;
@@ -163,7 +162,7 @@ export class PlayerSettingsComponent implements OnInit {
 	}
 
 	saveAndClose() {
-		this.backService.updatePlayer(this.idGame, this.player).subscribe(res => {
+		this.backService.updatePlayer(this.idGame, this.player).subscribe(() => {
 			this.close();
 		});
 	}
