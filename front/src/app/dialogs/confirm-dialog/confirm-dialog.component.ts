@@ -12,7 +12,7 @@ export class ConfirmDialogComponent {
   labelBtn1 = "Oui";
   labelBtn2 = "Annuler";
   autoClickBtn2 = false;
-  timerBtn2: number = 5;
+  timerBtn2 = 5;
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.title = data.title ? data.title: this.title;

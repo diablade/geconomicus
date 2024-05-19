@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
-import {Html5QrcodeScanner, Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats} from 'html5-qrcode';
+import {Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats} from 'html5-qrcode';
 import {Html5QrcodeScannerConfig} from "html5-qrcode/html5-qrcode-scanner";
 
 
@@ -41,7 +41,6 @@ export class ScannerDialogComponent implements OnInit, AfterViewInit {
   }
 
   onScanFailure(error: any) {
-    // console.error('Failed to scan QR code:', error);
-    // Handle the scan failure here
+    console.error('Failed to scan QR code:', error);
   }
 }

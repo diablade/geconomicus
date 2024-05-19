@@ -50,8 +50,8 @@ export class HomeComponent implements OnInit {
 	join() {
 		const dialogRef = this.dialog.open(ScannerDialogComponent, {});
 		dialogRef.afterClosed().subscribe(url => {
-			let u = new URL(url);
-			let paths = u.pathname.split('/').filter(Boolean);
+			const u = new URL(url);
+			const paths = u.pathname.split('/').filter(Boolean);
 			this.router.navigate(paths);
 		});
 	}
@@ -64,8 +64,7 @@ export class HomeComponent implements OnInit {
 				textSize: "10px"
 			},
 		});
-		dialogRef.afterClosed().subscribe(result => {
-		});
+		dialogRef.afterClosed().subscribe(() => {});
 	}
 
 	private loadModalPwa(): void {
@@ -89,7 +88,7 @@ export class HomeComponent implements OnInit {
 			this.modalPwaEvent.prompt();
 		}
 		if (this.platform.IOS) {
-			const dialogRef = this.dialog.open(InstallAppDialog);
+			this.dialog.open(InstallAppDialog);
 		}
 	}
 }

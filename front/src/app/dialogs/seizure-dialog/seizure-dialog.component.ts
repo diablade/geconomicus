@@ -20,16 +20,16 @@ export class SeizureDialogComponent implements OnInit {
 	C = C;
 	playerCards: Card[] = [];
 	seizureCards: Card[] = [];
-	seizureCoins: number = 0;
+	seizureCoins = 0;
 	faLandMark = faLandmark;
 	faArrowTurnDown = faArrowTurnDown;
 	faInfoCircle = faInfoCircle;
 	faSackDollar = faSackDollar;
-	prisonTime: number = 0;
+	prisonTime = 0;
 	seizureType: string;
 	seizureCost: number;
 	seizureDecote: number;
-	timerPrisonMax: number = 5;
+	timerPrisonMax = 5;
 
 	constructor(private backService: BackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.credit = data.credit;
@@ -89,15 +89,14 @@ export class SeizureDialogComponent implements OnInit {
 	}
 
 	getSeizureObjective() {
-		// @ts-ignore
-		if (this.seizureType == "decote") {
-			// @ts-ignore
-			return this.credit?.amount + this.credit?.interest - this.seizureCoins;
-		} else {
-			// @ts-ignore
-			return this.credit?.amount + this.credit?.interest - this.seizureCoins + this.seizureCost;
-
+		if (this.credit) {
+			if (this.seizureType === "decote") {
+				return this.credit.amount + this.credit.interest - this.seizureCoins;
+			} else {
+				return this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;
+			}
 		}
+		return 1;
 	}
 
 	getProgressSeizure() {
@@ -118,11 +117,11 @@ export class SeizureDialogComponent implements OnInit {
 	}
 
 	getMinTimerPrison() {
-		if(this.playerCards.length==0 && this.prisonTime==0){
-			this.prisonTime=1;
-		}else if(this.playerCards.length>0 && this.prisonTime>0){
-			this.prisonTime=0;
+		if (this.playerCards.length == 0 && this.prisonTime == 0) {
+			this.prisonTime = 1;
+		} else if (this.playerCards.length > 0 && this.prisonTime > 0) {
+			this.prisonTime = 0;
 		}
-		return this.playerCards.length>0 ? 0 : 1;
+		return this.playerCards.length > 0 ? 0 : 1;
 	}
 }

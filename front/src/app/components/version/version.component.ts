@@ -7,10 +7,10 @@ import * as conf from './../../../../package.json';
   styleUrls: ['./version.component.scss']
 })
 export class VersionComponent {
-  version: string = "";
+  version = "";
 
   constructor() {
-    let intermediateJson = conf;
+    const intermediateJson = conf;
     this.version = intermediateJson.version;
   }
 }

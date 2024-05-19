@@ -1,4 +1,4 @@
-<div class="p-3 bank" *ngIf="game.typeMoney==C.DEBT">
+<div class="p-3 bank" *ngIf="game.typeMoney===C.DEBT">
 	<h1 class="d-flex justify-content-center fs-4 shadowed gecoFont">
 		<fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
 		Banque
@@ -75,7 +75,7 @@
 	</div>
 	<div class="mt-5 d-flex align-items-baseline">
 		<h2 class="fs-4 shadowed gecoFont">Détails des crédits</h2>
-		<button class="ms-4" mat-raised-button color="accent" [disabled]="game.status == C.END_GAME"
+		<button class="ms-4" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
 						(click)="showContract()"> Octroyer un crédit
 			<fa-icon [icon]="faSackDollar"></fa-icon>
 		</button>
@@ -86,4 +86,4 @@
 								(actionBtn)="actionBtn($event,credit)"></app-credit>
 	</div>
 </div>
-<div *ngIf="game.typeMoney==C.JUNE">Pas de banque en monnaie libre ;)</div>
+<div *ngIf="game.typeMoney===C.JUNE">Pas de banque en monnaie libre ;)</div>

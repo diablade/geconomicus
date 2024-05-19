@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import * as _ from 'lodash-es';
 import {Card, EventGeco, Player} from "../models/game";
 import 'chartjs-adapter-date-fns';
@@ -21,8 +21,6 @@ export class EventsComponent {
   @Input() players: Player[] = [];
   @Input() typeMoney= C.JUNE;
 
-  constructor() {
-  }
 
   getResourcesEmoji(color: string) {
     switch (color) {

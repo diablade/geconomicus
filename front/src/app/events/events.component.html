@@ -5,12 +5,12 @@
     <span [ngSwitch]="event.typeEvent">
         <span *ngSwitchCase="C.TRANSACTION">
           <span [matTooltip]="getPlayerName(event.emitter)">👤 </span>
-          <span [matTooltip]="'Transaction'">{{event.amount}}{{typeMoney == C.JUNE ? "Ğ1":"€"}} 🤝 {{getTextCard(event.resources[0])}}</span>
+          <span [matTooltip]="'Transaction'">{{event.amount}}{{typeMoney === C.JUNE ? "Ğ1":"€"}} 🤝 {{getTextCard(event.resources[0])}}</span>
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.INIT_DISTRIB">
           <span [matTooltip]="'Distribution à '+getPlayerName(event.receiver)"> 👤⬅️</span>
-          <span [matTooltip]="'monnaie de départ'">{{event.amount}}{{typeMoney == C.JUNE ? "Ğ1":"€"}}-</span>
+          <span [matTooltip]="'monnaie de départ'">{{event.amount}}{{typeMoney === C.JUNE ? "Ğ1":"€"}}-</span>
           <span [matTooltip]="'carte de départ'" *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.DISTRIB_DU">
@@ -39,7 +39,7 @@
           <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦for graph</span>
         </span>
         <span *ngSwitchCase="C.BIRTH">
-          <span [matTooltip]="'Naissance de '+getPlayerName(event.receiver)"> 👤👶 {{typeMoney == C.JUNE ? event.amount+"Ğ1":"0€"}}-</span>
+          <span [matTooltip]="'Naissance de '+getPlayerName(event.receiver)"> 👤👶 {{typeMoney === C.JUNE ? event.amount+"Ğ1":"0€"}}-</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">

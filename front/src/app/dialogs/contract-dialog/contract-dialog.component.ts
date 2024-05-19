@@ -4,7 +4,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {faFileSignature} from "@fortawesome/free-solid-svg-icons";
 // @ts-ignore
 import * as C from "../../../../../config/constantes";
-import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-contract-dialog',

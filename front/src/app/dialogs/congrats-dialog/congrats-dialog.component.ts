@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Inject, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Input, ViewChild} from '@angular/core';
 import {Card} from "../../models/game";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 

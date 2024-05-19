@@ -15,7 +15,7 @@
 						<div>Animateur: <span class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
 						<div>lieu: <span class="fw-bold">{{ game.location ? game.location : "-" }}</span></div>
 						<div class="d-flex flex-row">
-							<div>Jeu: {{ game.typeMoney == C.JUNE ? "monnaie libre" : "monnaie dette" }}
+							<div>Jeu: {{ game.typeMoney === C.JUNE ? "monnaie libre" : "monnaie dette" }}
 							</div>
 							<div class=""> 👥{{ game.playersCount }} Joueurs</div>
 						</div>
@@ -23,9 +23,9 @@
 				</div>
 				<button
 					class="ms-2" mat-raised-button
-					[routerLink]="game.status == C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
+					[routerLink]="game.status === C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
 					color="accent"
-				>{{ game.status == C.END_GAME ? "Voir les resultats" : "Voir" }}
+				>{{ game.status === C.END_GAME ? "Voir les resultats" : "Voir" }}
 				</button>
 			</div>
 		</div>

@@ -6,16 +6,12 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
   styleUrls: ['./btn-timer-auto-click.component.scss']
 })
 export class BtnTimerAutoClickComponent implements OnInit, OnDestroy {
-  @Input() label: string = "label";
-  @Input() secondsTimer: number = 5;
+  @Input() label = "label";
+  @Input() secondsTimer = 5;
   // timeLeft: number = 5;
-  progress: number = 0;
+  progress = 0;
   timer: any;
   @Output() timerEnd = new EventEmitter<any>();
-
-
-  constructor() {
-  }
 
   ngOnInit(){
       this.startTimer();

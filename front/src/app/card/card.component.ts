@@ -44,16 +44,16 @@ export class CardComponent implements AfterViewInit {
   @Input() idOwner: string | undefined;
   @Input() idGame: string | undefined;
   @Input() typeMoney: string | undefined;
-  @Input() currentDU: number = 1;
-  @Input() screenWidth: number = 1;
-  @Input() screenHeight: number = 1;
-  @Input() amountCardsForProd: number = 4;
-  @Input() width: any = 'calc(28vw)';
-  @Input() height: any = 'calc(28vw * 1.5)';
-  @Input() letterSize: any = 'calc(28vw * 0.33)';
-  @Input() priceSize: any = 'calc(18vw * 0.2)';
-  smallPriceSize: any = 'calc(11vw * 0.2)';
-  @Input() flippable: boolean = true;
+  @Input() currentDU = 1;
+  @Input() screenWidth = 1;
+  @Input() screenHeight = 1;
+  @Input() amountCardsForProd = 4;
+  @Input() width = 'calc(28vw)';
+  @Input() height = 'calc(28vw * 1.5)';
+  @Input() letterSize = 'calc(28vw * 0.33)';
+  @Input() priceSize = 'calc(18vw * 0.2)';
+  smallPriceSize = 'calc(11vw * 0.2)';
+  @Input() flippable = true;
   state = "default";
   translateX = 0;
   translateY = 0;
@@ -66,7 +66,7 @@ export class CardComponent implements AfterViewInit {
   @ViewChild('cardBack') cardBack!: ElementRef;
 
 
-  constructor(private animationBuilder: AnimationBuilder, private elementRef: ElementRef) {
+  constructor(private elementRef: ElementRef) {
     this.updateScreenSize();
   }
 
@@ -104,7 +104,6 @@ export class CardComponent implements AfterViewInit {
   calculatePosition() {
     // @ts-ignore
     const element = this.elementRef.nativeElement as HTMLElement;
-    // const element = this.cardElementRef.nativeElement as HTMLElement;
     const rect = element.getBoundingClientRect();
     this.qrWidthCard = (28 / 100 * this.screenWidth);
     this.qrWidthCard = this.qrWidthCard > 250 ? 250 : this.qrWidthCard;
@@ -126,13 +125,8 @@ export class CardComponent implements AfterViewInit {
     this.onBuildCardLvlUp.emit(this.card);
   }
 
-  ngOnInit() {
-  }
-
   ngAfterViewInit(): void {
     this.calculatePosition();
-    // setTimeout(() => {
-    // }, 0);
   }
 
   getBuildText(card: Card) {

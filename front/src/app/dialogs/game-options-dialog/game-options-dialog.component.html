@@ -22,7 +22,7 @@
 				</mat-checkbox>
 			</div>
 			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
-				Options avancé en monnaie {{ game.typeMoney == C.JUNE ? "libre" : "dette" }}
+				Options avancé en monnaie {{ game.typeMoney === C.JUNE ? "libre" : "dette" }}
 			</div>
 			<div class="m-auto fs-6 mt-2 mb-4">
 				⚠️ Attention ⚠️, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
@@ -74,37 +74,37 @@
 					<input type="number" min="0" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.JUNE">
+			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>taux de croissance Dividende Universel</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.JUNE">
+			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>bourse de départ (moyenne classe)</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT">
+			<div *ngIf="game.typeMoney===C.DEBT">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Crédit par défaut:</mat-label>
 					<input type="number" min="0" matInput placeholder="(3 par défaut)" [(ngModel)]="game.defaultCreditAmount">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT">
+			<div *ngIf="game.typeMoney===C.DEBT">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Intéret par défaut:</mat-label>
 					<input type="number" min="0" matInput placeholder="(1 par défaut)" [(ngModel)]="game.defaultInterestAmount">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT">
+			<div *ngIf="game.typeMoney===C.DEBT">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Paiement d'intérêts toutes les (en minutes) :</mat-label>
 					<input type="number" min="0" matInput placeholder="(5mn par défaut)" [(ngModel)]="game.timerCredit">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="w-100">
+			<div *ngIf="game.typeMoney===C.DEBT" class="w-100">
 				<mat-label>Défaut de paiement, saisir</mat-label>
 				<mat-radio-group class="w-100" [(ngModel)]="game.seizureType">
 					<mat-radio-button class="d-flex ms-3" [value]="'fixe'">
@@ -125,14 +125,14 @@
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT">
+			<div *ngIf="game.typeMoney===C.DEBT">
 				Si crédit non recouvré, mise en prison maximum
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>Durée de la prison max (en minutes):</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.timerPrison">
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney==C.DEBT" class="mb-4 d-flex flex-column">
+			<div *ngIf="game.typeMoney===C.DEBT" class="mb-4 d-flex flex-column">
 				<mat-checkbox class="m-auto" [disabled]="true">
 					Convertir un joueur en banquier d'affaire (comming soon)
 				</mat-checkbox>
@@ -142,7 +142,7 @@
 					</div>
 				</div>
 			</div>
-			<div *ngIf="game.typeMoney==C.JUNE" class="mb-4 d-flex flex-column">
+			<div *ngIf="game.typeMoney===C.JUNE" class="mb-4 d-flex flex-column">
 				<mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
 					Début inégale en monnaie libre
 				</mat-checkbox>
