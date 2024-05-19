@@ -30,7 +30,7 @@ Chart.register(zoomPlugin);
 })
 export class ResultsComponent implements OnInit, AfterViewInit {
 	private socket: any;
-	idGame: string = "";
+	idGame = "";
 	private subscription: Subscription | undefined;
 
 	game: Game | undefined;
@@ -54,7 +54,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	roundStarted = false;
 	pointsBefore1second = true;
 	C = C;
-	baseRadius: number = 2.1;
+	baseRadius = 2.1;
 	nbPlayer = 0;
 	bestPlayerOnMoney: Player | undefined;
 	bestPlayerOnMoneyId: string | undefined = "";
@@ -68,10 +68,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
 	durationGame() {
 		if (this.startGameDate && this.stopGameDate) {
-			let start = new Date(this.startGameDate);
-			let end = new Date(this.stopGameDate);
-			let durationInMilliseconds = end.getTime() - start.getTime();
-			let durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
+			const start = new Date(this.startGameDate);
+			const end = new Date(this.stopGameDate);
+			const durationInMilliseconds = end.getTime() - start.getTime();
+			const durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
 			return durationInMinutes + " minutes";
 		}
 		return "-";
@@ -457,7 +457,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
 		// @ts-ignore
 		this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
-			let data = _.map(feedback, (count, key) => {
+			const data = _.map(feedback, (count, key) => {
 				return {x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count}
 			});
 			return {
@@ -485,14 +485,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		// Iterate over each event
 		for (const event of events) {
 			let totalResourcesEvent = 0; //here only because of switch case don't want same name many places
-			let mmDataset = this.datasets.get("masseMoney");
+			const mmDataset = this.datasets.get("masseMoney");
 			// let mmDatasetRelatif = this.datasetsRelatif.get("masseMoney");
-			let emitterDataset = this.datasets.get(event.emitter);
-			let emitterDatasetRelatif = this.datasetsRelatif.get(event.emitter);
-			let emitterDatasetResources = this.datasetsResources.get(event.emitter);
-			let receiverDataset = this.datasets.get(event.receiver);
-			let receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
-			let receiverDatasetResources = this.datasetsResources.get(event.receiver);
+			const emitterDataset = this.datasets.get(event.emitter);
+			const emitterDatasetRelatif = this.datasetsRelatif.get(event.emitter);
+			const emitterDatasetResources = this.datasetsResources.get(event.emitter);
+			const receiverDataset = this.datasets.get(event.receiver);
+			const receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
+			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
 			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new", value: number, relatif: boolean, beforePoint: boolean) => {
 				if (dataset) {
@@ -650,9 +650,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			}
 		});
 
-		let transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
+		const transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
 		if (transactionEvents.length > 0) {
-			let transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
+			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
 			this.bestPlayerOnTransactionId = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
 		}
 		this.bestPlayerOnMoney = _.find(this.players, {_id: this.bestPlayerOnMoneyId});

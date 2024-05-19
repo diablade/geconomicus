@@ -30,9 +30,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 	private subscription: Subscription | undefined;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
-	idGame: string = "";
+	idGame = "";
 	public game: Game = new Game;
-	data: string = "";
+	data = "";
 	private socket: any;
 	deleteUser = false;
 	killUser = false;
@@ -48,19 +48,19 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 	faBuildingColumns = faBuildingColumns;
 
 	C = C;
-	timerProgress: number = 100;
+	timerProgress = 100;
 
 	options = [
 		{value: C.JUNE, label: 'Monnaie libre', isDisabled: false},
 		{value: C.DEBT, label: 'Monnaie dette', isDisabled: false},
 	];
-	minutes: string = "00";
-	seconds: string = "00";
+	minutes = "00";
+	seconds = "00";
 	timer = createCountdown({h: 0, m: 0, s: 0}, {
 		listen: ({hh, mm, ss, s, h, m}) => {
 			this.minutes = mm;
 			this.seconds = ss;
-			let secondsRemaining = s + (m * 60);
+			const secondsRemaining = s + (m * 60);
 			this.sessionStorageService.setItem(StorageKey.timerRemaining, secondsRemaining);
 			this.timerProgress = secondsRemaining / (this.game.roundMinutes * 60) * 100;
 		},
@@ -92,7 +92,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit {
 		this.backService.getGame(this.idGame).subscribe(game => {
 			this.game = game;
 			this.minutes = this.game.roundMinutes > 9 ? this.game.roundMinutes.toString() : "0" + this.game.roundMinutes.toString();
-			let timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
+			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
 			if (timerRemaining && game.status == C.PLAYING) {
 				this.timer.set({h: 0, m: 0, s: timerRemaining});

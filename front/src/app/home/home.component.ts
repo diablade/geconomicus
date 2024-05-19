@@ -98,9 +98,9 @@ export class HomeComponent implements OnInit {
 	templateUrl: './../dialogs/create-game-dialog.html',
 })
 export class CreateGameDialog {
-	name: String = "";
-	animator: String = "";
-	location: String = "";
+	name = "";
+	animator = "";
+	location = "";
 
 	constructor(public dialogRef: MatDialogRef<CreateGameDialog>) {
 	}

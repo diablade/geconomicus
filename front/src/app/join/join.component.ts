@@ -10,9 +10,9 @@ import {Subscription} from "rxjs";
   styleUrls: ['./join.component.scss']
 })
 export class JoinComponent {
-  idGame: string = "";
+  idGame = "";
   reincarnate: string | undefined;
-  name: string = "";
+  name = "";
   private subscription: Subscription | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {

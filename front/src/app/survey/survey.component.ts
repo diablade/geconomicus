@@ -14,15 +14,15 @@ export class SurveyComponent implements OnInit {
   idPlayer: string | undefined;
   private subscription: Subscription | undefined;
 
-  individualCollective: number = 0;
-  greedyGenerous: number = 0;
-  irritableTolerant: number = 0;
-  depressedHappy: number = 0;
-  competitiveCooperative: number = 0;
-  dependantAutonomous: number = 0;
-  anxiousConfident: number = 0;
-  agressiveAvenant: number = 0;
-  aloneIntegrated: number = 0;
+  individualCollective = 0;
+  greedyGenerous = 0;
+  irritableTolerant = 0;
+  depressedHappy = 0;
+  competitiveCooperative = 0;
+  dependantAutonomous = 0;
+  anxiousConfident = 0;
+  agressiveAvenant = 0;
+  aloneIntegrated = 0;
 
   constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
   }

@@ -14,8 +14,8 @@ import {id} from "date-fns/locale";
 })
 export class BackService {
 
-	REDIRECT_HOME: string = "redirectHome";
-	RELOAD: string = "reload";
+	REDIRECT_HOME = "redirectHome";
+	RELOAD = "reload";
 
 	httpOptions = {
 		headers: new HttpHeaders({
@@ -87,7 +87,7 @@ export class BackService {
 			);
 	}
 
-	getGame(idGame: String): Observable<Game> {
+	getGame(idGame: string): Observable<Game> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GET + idGame)
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))

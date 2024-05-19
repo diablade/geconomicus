@@ -15,7 +15,7 @@ import {SnackbarService} from "../services/snackbar.service";
 })
 export class HttpRequestInterceptor implements HttpInterceptor {
 
-  private queries: number = 0;
+  private queries = 0;
 
   constructor(private loadingService: LoadingService) {
   }
@@ -27,10 +27,6 @@ export class HttpRequestInterceptor implements HttpInterceptor {
 
     return next.handle(req)
       .pipe(
-        // catchError(err => {
-        //   this.loadingService.hide();
-        //   return err;
-        // }),
         finalize(() => {
             this.queries--;
             if (this.queries === 0) {

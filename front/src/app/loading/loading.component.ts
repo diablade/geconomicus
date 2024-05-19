@@ -8,7 +8,7 @@ import {delay} from "rxjs";
   styleUrls: ['./loading.component.scss']
 })
 export class LoadingComponent {
-  show: boolean = false;
+  show = false;
 
   constructor(private loadingService: LoadingService) {
   }

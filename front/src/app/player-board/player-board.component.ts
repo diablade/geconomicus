@@ -83,24 +83,24 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('audioCredit') audioCredit!: ElementRef;
 	ioURl: string = environment.API_HOST;
 	private socket: any;
-	screenWidth: number = 0;
-	screenHeight: number = 0;
+	screenWidth = 0;
+	screenHeight = 0;
 	idGame: string | undefined;
 	idPlayer: string | undefined;
 	player: Player = new Player();
 	private subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Options> = {};
-	statusGame: string = "waiting";
-	typeMoney: string = "june";
-	amountCardsForProd: number = 4;
-	currentDU: number = 0;
+	statusGame = "waiting";
+	typeMoney = "june";
+	amountCardsForProd = 4;
+	currentDU = 0;
 	cards: Card[] = [];
 	credits: Credit[] = [];
 	faCamera = faCamera;
 	faEye = faEye;
 	faEyeSlash = faEyeSlash;
 	scanV2 = false;
-	duVisible: boolean = false;
+	duVisible = false;
 	panelCreditOpenState = true;
 	C = C;
 	timerCredit = 5;
@@ -240,7 +240,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
 			this.player.coins = data.coins;
-			let cardSold = _.find(this.cards, {_id: data.idCardSold});
+			const cardSold = _.find(this.cards, {_id: data.idCardSold});
 			if (cardSold) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				_.remove(this.cards, {_id: data.idCardSold});
@@ -340,11 +340,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	countOccurrencesAndHideDuplicates() {
 		_.orderBy(this.cards, ["weight", "letter"]);
 		const countByResult = _.countBy(this.cards, (obj: any) => `${obj.weight}-${obj.letter}`);
-		let keyDuplicates: string[] = [];
+		const keyDuplicates: string[] = [];
 		for (const c of this.cards) {
 			const countKey = `${c.weight}-${c.letter}`;
 			c.count = countByResult[countKey] || 0;
-			let existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
+			const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
 			if (c.count > 1 && existCountKey) {
 				c.displayed = false;
 			}
@@ -393,7 +393,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	formatNewCards(newCards: Card[]) {
-		for (let c of newCards) {
+		for (const c of newCards) {
 			c.displayed = true;
 			c.count = 1;
 		}
@@ -424,8 +424,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buy(dataRaw: any) {
-		let data = JSON.parse(dataRaw);
-		let cost = this.typeMoney == C.JUNE ? data.p * this.currentDU : data.p;
+		const data = JSON.parse(dataRaw);
+		const cost = this.typeMoney == C.JUNE ? data.p * this.currentDU : data.p;
 		if (this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
 		} else if (this.player.coins >= cost) {

@@ -24,8 +24,8 @@ export class PlayerSettingsComponent implements OnInit {
 	faChevronRight = faChevronRight;
 	faWandMagicSparkles = faWandMagicSparkles;
 
-	skin: string = "#f2d3b1";
-	hairColor: string = "#ac6511";
+	skin = "#f2d3b1";
+	hairColor = "#ac6511";
 	properties: any = {
 		...schema.properties,
 		...adventurer.schema.properties,
