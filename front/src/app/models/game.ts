@@ -99,7 +99,7 @@ export class Game {
 	surveyEnabled = true;
 	round = 0;
 	roundMax = 10;
-	roundMinutes = 8;
+	roundMinutes = 40;
 
 	//option june
 	currentDU = 0;

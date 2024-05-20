@@ -3,10 +3,12 @@ import app from '../src/app';
 import db from '../__test__/config/database';
 import * as C from "../../config/constantes.js";
 import socket from '../config/socket.js';
-import GameModel from "../src/game/game.model.js";
+import {jest} from "@jest/globals";
 
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
+
+jest.mock('../config/socket.js');
 
 let idGame;
 let idPlayer;
@@ -31,7 +33,11 @@ let updatedPlayer = {
 
 beforeAll(async () => {
     await db.connect();
-    const res = await agent.post("/game/create").send({gameName: "test-game-for-player"});
+    const res = await agent.post("/game/create").send({
+        name: "test-player-controller",
+        animator: "player-controller",
+        location: "player-controller",
+    });
     expect(res.body).toBeTruthy();
     expect(res.body._id).toBeTruthy();
     currentGame = res.body;
@@ -49,7 +55,6 @@ afterAll(async () => {
 //     ioServer.on('connection', socket => {
 //         socket.emit(idGame, C.MASTER);
 //     });
-//
 // });
 
 describe("PLAYER controller tests", () => {
@@ -87,8 +92,7 @@ describe("PLAYER controller tests", () => {
                 done();
             });
 
-            const updatePlayer = updatedPlayer;
-            updatePlayer.idGame = idGame;
+            let updatePlayer = {...updatedPlayer, idGame:idGame, _id:idPlayer};
             const res = await agent.post("/player/update").send(updatePlayer);
             expect(res.statusCode).toEqual(200);
             expect(res.body).toStrictEqual({
@@ -115,8 +119,8 @@ describe("PLAYER controller tests", () => {
             expect(res.body.player.boardColor).toEqual(updatedPlayer.boardColor);
             expect(res.body.statusGame).toBeTruthy();
             expect(res.body.typeMoney).toBeTruthy();
-            expect(res.body.currentDU).toBeTruthy();
-            expect(res.body.amountCardsForProd).toBeTruthy();
+            expect(res.body.currentDU).toEqual(0);
+            expect(res.body.amountCardsForProd).toEqual(4);
         });
     });
 })

@@ -318,7 +318,7 @@ export default {
 								const creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
 								addDebtTimer(credit._id, true, updatedGame.timerCredit, creditUpdated);
 								io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-								io().to(credit.idGame).emit(C.PAYED_INTEREST, creditUpdated);
+								io().to(credit.idGame + C.BANK).emit(C.PAYED_INTEREST, creditUpdated);
 								res.status(200).json(creditUpdated);
 							}
 						}
@@ -430,7 +430,7 @@ export default {
 			}, {new: true}
 		).then(updatedGame => {
 			bankTimerManager.startAllIdGameDebtTimer(idGame);
-			io().to(idGame).emit(C.CREDITS_STARTED);
+			io().to(idGame + C.BANK).emit(C.CREDITS_STARTED);
 		}).catch((error) => {
 			log.error(error);
 		});
