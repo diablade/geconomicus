@@ -98,7 +98,7 @@ export class Game {
 	generatedIdenticalCards = 4;
 	surveyEnabled = true;
 	round = 0;
-	roundMax = 10;
+	roundMax = 1;
 	roundMinutes = 40;
 
 	//option june

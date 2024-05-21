@@ -9,7 +9,7 @@ router.post('/joinInGame', player.joinInGame);
 router.post('/joinReincarnate', player.joinReincarnate);
 router.post('/update', player.update);
 router.post('/transaction', player.transaction);
-router.post('/produceLevelUp', player.produceLevelUp);
+router.post('/produce', player.produce);
 router.post('/survey/:idGame/:idPlayer', player.addFeedback);
 
 export default router;

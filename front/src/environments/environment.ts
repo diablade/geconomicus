@@ -10,7 +10,7 @@ export const environment = {
 		JOIN_IN_GAME: 'player/joinInGame/',
 		UPDATE: 'player/update',
 		GET: 'player/',
-		PRODUCE: 'player/produceLevelUp',
+		PRODUCE: 'player/produce',
 		TRANSACTION: 'player/transaction',
 		SURVEY: 'player/survey/'
 	},

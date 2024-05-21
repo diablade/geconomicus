@@ -106,7 +106,7 @@ export class BackService {
 			);
 	}
 
-	produceLevelUp(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
+	produce(idGame: string | undefined, idPlayer: string | undefined, cards: Card[]) {
 		return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
 				idGame: idGame,
 				idPlayer: idPlayer,

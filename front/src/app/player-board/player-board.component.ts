@@ -409,7 +409,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	produceLevelUp($event: Card) {
 		const cardsToRemove = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
 		if (cardsToRemove.length === this.amountCardsForProd) {
-			this.backService.produceLevelUp(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
+			this.backService.produce(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
 				_.remove(this.cards, {letter: $event.letter, weight: $event.weight,});
 				const cardGift = _.find(newCards, {weight: $event.weight + 1});
 				if (cardGift) {
