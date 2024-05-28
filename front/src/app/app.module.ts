@@ -39,10 +39,7 @@ import {ZXingScannerModule} from "@zxing/ngx-scanner";
 import {NgxKjuaComponent} from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
-import {
-	AppInfoDialogComponent,
-	ScannerDialogV2Component
-} from './dialogs/scanner-dialog-v2/scanner-dialog-v2.component';
+import {ScannerDialogV3Component} from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {HistoryGamesComponent} from './history-games/history-games.component';
@@ -59,7 +56,8 @@ import {CdkMenuTrigger} from "@angular/cdk/menu";
 import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
 
 @NgModule({
 	declarations: [
@@ -82,8 +80,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 		GameOptionsDialogComponent,
 		InformationDialogComponent,
 		NgxKjuaComponent,
-		ScannerDialogV2Component,
-		AppInfoDialogComponent,
+		ScannerDialogV3Component,
 		HistoryGamesComponent,
 		SurveyComponent,
 		BankBoardComponent,
@@ -124,12 +121,13 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 		MatExpansionModule,
 		CdkMenuTrigger,
 		DragDropModule,
-  ServiceWorkerModule.register('ngsw-worker.js', {
-    enabled: !isDevMode(),
-    // Register the ServiceWorker as soon as the application is stable
-    // or after 30 seconds (whichever comes first).
-    registrationStrategy: 'registerWhenStable:30000'
-  }),
+		ServiceWorkerModule.register('ngsw-worker.js', {
+			enabled: !isDevMode(),
+			// Register the ServiceWorker as soon as the application is stable
+			// or after 30 seconds (whichever comes first).
+			registrationStrategy: 'registerWhenStable:30000'
+		}),
+		NgxScannerQrcodeModule,
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},

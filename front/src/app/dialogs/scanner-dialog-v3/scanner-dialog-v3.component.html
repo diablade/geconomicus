@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>Scan QR Code</h2>
+<mat-dialog-content>
+	<ngx-scanner-qrcode
+		#action="scanner"
+		[config]="config"
+		(event)="onEvent($event, action)">
+	</ngx-scanner-qrcode>
+</mat-dialog-content>
+<mat-dialog-actions [align]="'end'">
+	<button mat-button (click)="closeDialog()">Annuler</button>
+</mat-dialog-actions>

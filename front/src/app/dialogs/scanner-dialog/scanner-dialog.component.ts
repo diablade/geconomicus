@@ -5,15 +5,15 @@ import {Html5QrcodeScannerConfig} from "html5-qrcode/html5-qrcode-scanner";
 
 
 @Component({
-  selector: 'app-scanner-dialog',
-  templateUrl: './scanner-dialog.component.html',
-  styleUrls: ['./scanner-dialog.component.scss']
+	selector: 'app-scanner-dialog',
+	templateUrl: './scanner-dialog.component.html',
+	styleUrls: ['./scanner-dialog.component.scss']
 })
 export class ScannerDialogComponent implements OnInit, AfterViewInit {
   scannedCode = '';
   config: Html5QrcodeScannerConfig =
     {
-      fps: 10,
+      fps: 5,
       qrbox: 250,
       videoConstraints: {
         facingMode: {ideal: "environment"}

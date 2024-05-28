@@ -15,12 +15,12 @@ import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-// @ts-ignore
-import * as C from "../../../../config/constantes";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {ScannerDialogV2Component} from "../dialogs/scanner-dialog-v2/scanner-dialog-v2.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
+import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+// @ts-ignore
+import * as C from "../../../../config/constantes";
 
 
 @Component({
@@ -99,7 +99,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faCamera = faCamera;
 	faEye = faEye;
 	faEyeSlash = faEyeSlash;
-	scanV2 = false;
+	scanV3 = true;
 	duVisible = false;
 	panelCreditOpenState = true;
 	C = C;
@@ -110,6 +110,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	prisonProgress = 0;
 	minutesPrison = 0;
 	secondsPrison = 0;
+
 
 	constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
 	}
@@ -374,8 +375,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	scan() {
-		if (this.scanV2) {
-			const dialogRef = this.dialog.open(ScannerDialogV2Component, {});
+		if (this.scanV3) {
+			const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
 			dialogRef.afterClosed().subscribe(dataRaw => {
 				this.buy(dataRaw);
 			});
@@ -460,7 +461,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				labelBtn1: "Rembourser",
 				labelBtn2: "Prolonger",
 				autoClickBtn2: true,
-				timerBtn2: "7"//en secondes
+				timerBtn2: "14"//en secondes
 			}
 		});
 		dialogRef.afterClosed().subscribe(options => {

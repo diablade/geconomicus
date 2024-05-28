@@ -3,7 +3,7 @@
   "version": "0.9.22",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "build-qa": "ng build --progress=true --base-href / --configuration=qa",
@@ -43,6 +43,7 @@
     "lodash-es": "^4.17.21",
     "ng2-charts": "^4.1.1",
     "ngx-colors": "3.5.2",
+    "ngx-scanner-qrcode": "^1.6.6",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.7.5",
     "tslib": "^2.6.2",
