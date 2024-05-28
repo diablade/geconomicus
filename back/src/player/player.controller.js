@@ -206,23 +206,27 @@ export default {
 			try {
 				const game = await GameModel.findById(idGame);
 				const player = _.find(game.players, {id: idPlayer});
-				const cardsToExchange = _.filter(player.cards, {letter: cards[0].letter, weight: cards[0].weight});
+				// Extract the IDs from the cardsToFilter array
+				const idsToFilter = _.map(cards, c => c._id);
+				const ids = _.map(player.cards, c => c._id);
+				const cardsToExchange = _.filter(player.cards, card => _.includes(idsToFilter, card._id.toString()));
+
 				if (cardsToExchange.length === game.amountCardsForProd) {
 					let weight = cardsToExchange[0].weight;
 
-					// Remove cards from player's hand
-					await GameModel.updateOne(
-						{_id: idGame, 'players._id': idPlayer},
-						{$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c.id)}}}},
-					);
-					// Add cards back to the deck
-					GameModel.findByIdAndUpdate(
-						{_id: idGame},
-						{$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
-						{new: true})
-						.then(async updatedGame => {
-								// Draw a card from the next level
-								if (weight < 2) {
+					if (weight < 2) {
+						// Remove cards from player's hand
+						await GameModel.updateOne(
+							{_id: idGame, 'players._id': idPlayer},
+							{$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c._id)}}}},
+						);
+						// Add cards back to the deck
+						GameModel.findByIdAndUpdate(
+							{_id: idGame},
+							{$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
+							{new: true})
+							.then(async updatedGame => {
+									// Draw a card from the next level
 									// Shuffle the decks
 									const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
 									const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
@@ -259,20 +263,20 @@ export default {
 									io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
 									io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);
 									res.status(200).json(cardsDraw);
-								} else {
-									//TODO changement technologique
-									next({
-										status: 200,
-										message: "bravo !!! vous etes sur le point de faire un changement technologique"
-									});
 								}
-							}
-						)
-						.catch(error => {
-								log.error(error);
-								next({status: 400, message: "update game goes wrong (transform square)"});
-							}
-						);
+							)
+							.catch(error => {
+									log.error(error);
+									next({status: 400, message: "update game goes wrong (transform square)"});
+								}
+							);
+					} else {
+						//TODO changement technologique
+						next({
+							status: 200,
+							message: "BRAVO !!! vous etes sur le point de faire un changement technologique (fin de partie)"
+						});
+					}
 				} else {
 					next({status: 400, message: "not enough cards to produce level up"});
 				}
@@ -292,31 +296,42 @@ export default {
 				const seller = _.find(game.players, {id: idSeller});
 				const card = _.find(seller.cards, {id: idCard});
 				// Check if card seller buyer exist
-				if (!card || !seller || !buyer) {
-					log.error("card or buyer or seller doesn't exist");
+				if (!card) {
+					log.error("card  doesn't exist");
 					next({
 						status: 400,
-						message: "card or buyer or seller doesn't exist"
+						message: "card  doesn't exist"
 					});
-					throw new Error('card or buyer or seller doesn\'t exist');
+				}
+				if (!seller) {
+					log.error(" seller doesn't exist");
+					next({
+						status: 400,
+						message: "seller doesn't exist"
+					});
+				}
+				if (!buyer) {
+					log.error(" buyer doesn't exist");
+					next({
+						status: 400,
+						message: "buyer doesn't exist"
+					});
 				}
 				// Check if buyer is dead
 				if (buyer.status === C.DEAD) {
 					log.error("buyer should be dead");
 					next({
 						status: 400,
-						message: "you should be dead"
+						message: "you should be dead, fool ! oh no it's a zombie "
 					});
-					throw new Error('you should be dead fool !');
 				}
 				// Check if seller is dead
 				if (seller.status === C.DEAD) {
 					log.error("seller should be dead");
 					next({
 						status: 400,
-						message: "seller is dead"
+						message: "seller is dead, come on !"
 					});
-					throw new Error('seller is dead');
 				}
 				// Check if buyer has enough coins
 				const cost = game.typeMoney === C.JUNE ? _.round(_.multiply(card.price, game.currentDU), 2) : card.price;

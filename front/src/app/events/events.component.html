@@ -44,13 +44,14 @@
         </span>
         <span *ngSwitchCase="C.TRANSFORM_DISCARDS" class="">
           <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
-          <span [matTooltip]="'Défausse de cartes pour créer'">➡️🛠</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+          <span [matTooltip]="'Défausse de cartes pour créer'">➡️🛠</span>
         </span>
         <span *ngSwitchCase="C.TRANSFORM_NEWCARDS" class="">
           <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
-          <span [matTooltip]="'Carte superieur créée'">⬅️🎁</span>
+          <span [matTooltip]="'Carte superieur créée'">⬅️</span>
           <span *ngFor="let card of event.resources">{{getTextCard(card)}}</span>
+          <span [matTooltip]="'Carte superieur créée'">️🎁</span>
         </span>
         <span *ngSwitchCase="C.NEW_CREDIT" class="">
           <span [matTooltip]="'La banque crédite'">({{event.resources[0].amount}}€️, </span>

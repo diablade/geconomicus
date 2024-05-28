@@ -7,7 +7,6 @@ import _ from "lodash";
 import Timer from "../misc/Timer.js";
 import bankTimerManager from "./BankTimerManager.js";
 import {differenceInMilliseconds} from "date-fns";
-import BankTimerManager from "./BankTimerManager.js";
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -442,7 +441,7 @@ export default {
 			next({status: 400, message: "bad request"});
 		} else {
 			try {
-				let timer = await BankTimerManager.getTimer(idPlayerToFree);
+				let timer = await bankTimerManager.getTimer(idPlayerToFree);
 				if (timer) {
 					timeoutPrison(timer);
 				} else {
