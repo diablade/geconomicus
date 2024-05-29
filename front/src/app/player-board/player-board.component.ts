@@ -159,7 +159,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (d.status == C.DEFAULT_CREDIT) {
 						this.defaultCredit = true;
 					} else if (d.status == "requesting") {
-						this.player.status = "needAnswer";
 						this.requestingWhenCreditEnds(d, true);
 					}
 				})
@@ -264,7 +263,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.credits.push(data);
 		});
 		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
-			this.statusGame = "waiting";
 			_.forEach(this.credits, c => {
 				if (c._id == data._id) {
 					c.status = data.status;
@@ -455,6 +453,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	requestingWhenCreditEnds(credit: Credit, beep: boolean) {
+		this.player.status = "needAnswer";
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: "Le crédit est arrivé à expiration !",
@@ -532,6 +531,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							c.status = data.status;
 							c.endDate = data.endDate;
 							this.player.coins -= data.amount;
+							this.player.status = C.ALIVE;
 						}
 						return c;
 					});

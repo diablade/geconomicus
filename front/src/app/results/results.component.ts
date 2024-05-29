@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import io from "socket.io-client";
-import {EventGeco, Game, Player} from "../models/game";
+import {Card, EventGeco, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
 import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
@@ -129,7 +129,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			},
 			y: {
 				min: 0,
-				type: 'logarithmic',
+				// type: 'logarithmic',
 			},
 		},
 		plugins: {
@@ -473,8 +473,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		};
 	}
 
-	getValueCardsFromEvent(event: EventGeco) {
-		return _.reduce(event.resources, function (sum, card) {
+	getValueCardsFromEvent(cards: Card[]) {
+		return _.reduce(cards, function (sum, card) {
 			return sum + card.price;
 		}, 0);
 	}
@@ -543,7 +543,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					this.initialDU = event.amount;
 					continue;
 				case C.INIT_DISTRIB:
-					totalResourcesEvent = this.getValueCardsFromEvent(event);
+					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					this.initialMM += event.amount;
 					this.initialResources += totalResourcesEvent;
 					updateData(mmDataset, event.date, "add", event.amount, false, false);
@@ -560,7 +560,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
 					continue;
 				case C.TRANSACTION:
-					totalResourcesEvent = this.getValueCardsFromEvent(event);
+					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDatasetRelatif, event.date, "sub", event.amount, true, this.pointsBefore1second);
 					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, this.pointsBefore1second);
@@ -570,7 +570,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, this.pointsBefore1second);
 					continue;
 				case C.TRANSFORM_DISCARDS:
-					totalResourcesEvent = this.getValueCardsFromEvent(event);
+					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					if (emitterDatasetResources) {
 						// @ts-ignore
 						emitterDatasetResources.total -= totalResourcesEvent;
@@ -578,7 +578,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// no update data to avoid weird graph up and down too quickly
 					continue;
 				case C.TRANSFORM_NEWCARDS:
-					totalResourcesEvent = this.getValueCardsFromEvent(event);
+					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					// no before point , same reason as transform_discards
 					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 					continue;
@@ -605,12 +605,27 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					continue;
-				case C.PAY_INTEREST:
+				case C.PAYED_INTEREST:
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					continue;
+				case C.SEIZURE:
+					const seizureRessources = this.getValueCardsFromEvent(event.resources);
+					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, this.pointsBefore1second);
+					continue;
+				case C.PRISON_ENDED:
+					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
+					if (!outOfPrisonRessources){
+						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
+					}
+					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, this.pointsBefore1second);
+					continue;
 				default:
+					continue;
 			}
 		}
 

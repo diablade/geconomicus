@@ -128,7 +128,7 @@ async function getOut(idGame,idPlayer) {
 			}
 		);
 		// and Add new cards to player's hand and event
-		let newEvent = constructor.event(C.PRISON_ENDED, C.MASTER, idPlayer, 0, [newCards], Date.now());
+		let newEvent = constructor.event(C.PRISON_ENDED, C.MASTER, idPlayer, 0, newCards, Date.now());
 		await GameModel.updateOne(
 			{_id: idGame, 'players._id': idPlayer},
 			{
