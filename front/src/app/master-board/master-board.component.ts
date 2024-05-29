@@ -46,6 +46,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faInfo = faCircleInfo;
 	faWarning = faWarning;
 	faBuildingColumns = faBuildingColumns;
+	audioStart = new Audio();
 
 	C = C;
 	timerProgress = 100;
@@ -178,6 +179,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
 			this.timer.start();
 			this.game.status = C.PLAYING;
+			this.audioStart.src = "./../../assets/audios/start.mp3";
+			this.audioStart.load();
+			this.audioStart.play();
+
 			this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
 		});
 	}
