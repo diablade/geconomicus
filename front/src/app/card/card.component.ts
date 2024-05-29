@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +31,7 @@ import {faGift} from "@fortawesome/free-solid-svg-icons";
 		])
 	]
 })
-export class CardComponent implements AfterViewInit {
+export class CardComponent {
 	@Input() card: Card = {
 		_id: "",
 		count: 1,
@@ -52,12 +52,11 @@ export class CardComponent implements AfterViewInit {
 	@Input() height = 'calc(28vw * 1.5)';
 	@Input() letterSize = 'calc(28vw * 0.33)';
 	@Input() priceSize = 'calc(18vw * 0.2)';
-	smallPriceSize = 'calc(11vw * 0.2)';
 	@Input() flippable = true;
+	smallPriceSize = 'calc(11vw * 0.2)';
 	state = "default";
 	translateX = 0;
 	translateY = 0;
-	qrWidthCard = 0;
 	protected readonly faGift = faGift;
 	@Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
 	@ViewChild('cardFlip') cardFlip!: ElementRef;
@@ -65,7 +64,6 @@ export class CardComponent implements AfterViewInit {
 
 
 	constructor(private elementRef: ElementRef) {
-		this.updateScreenSize();
 	}
 
 	closeCard() {
@@ -94,18 +92,12 @@ export class CardComponent implements AfterViewInit {
 			+ '}';
 	}
 
-	updateScreenSize() {
-	}
-
 	calculatePosition() {
-		this.screenWidth = window.innerWidth;
-		this.screenHeight = window.innerHeight;
+		// this.screenWidth = window.innerWidth;
+		// this.screenHeight = window.innerHeight;
 		// @ts-ignore
 		const element = this.elementRef.nativeElement as HTMLElement;
 		const rect = element.getBoundingClientRect();
-		this.qrWidthCard = (28 / 100 * this.screenWidth);
-		this.qrWidthCard = this.qrWidthCard > 250 ? 250 : this.qrWidthCard;
-		this.qrWidthCard = this.qrWidthCard - 10;
 
 		const positionX = rect.left;
 		const positionY = rect.top;
@@ -118,12 +110,6 @@ export class CardComponent implements AfterViewInit {
 
 	buildCardLvlUp() {
 		this.onBuildCardLvlUp.emit(this.card);
-	}
-
-	ngAfterViewInit(): void {
-		// this.ngZone.runOutsideAngular(() => {
-		this.calculatePosition();
-		// });
 	}
 
 	getBuildText(card: Card) {

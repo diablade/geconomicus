@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {NgxScannerQrcodeComponent, ScannerQRCodeConfig, ScannerQRCodeResult} from "ngx-scanner-qrcode";
 import {MatDialogRef} from "@angular/material/dialog";
 
@@ -8,8 +8,8 @@ import {MatDialogRef} from "@angular/material/dialog";
 	templateUrl: './scanner-dialog-v3.component.html',
 	styleUrls: ['./scanner-dialog-v3.component.scss']
 })
-export class ScannerDialogV3Component implements AfterViewInit {
-	@ViewChild('action') action!: NgxScannerQrcodeComponent;
+export class ScannerDialogV3Component implements AfterViewInit, OnDestroy{
+	@ViewChild('action') scanner!: NgxScannerQrcodeComponent;
 
 	config: ScannerQRCodeConfig = {
 		fps: 4,
@@ -21,33 +21,36 @@ export class ScannerDialogV3Component implements AfterViewInit {
 
 
 	closeDialog(): void {
+		this.scanner.stop();
 		this.dialogRef.close();
 	}
 
-	onEvent($event: ScannerQRCodeResult[], action: NgxScannerQrcodeComponent) {
-		console.log($event);
-		action.stop();
+	onEvent($event: ScannerQRCodeResult[], scanner: NgxScannerQrcodeComponent) {
+		this.scanner.stop();
 		this.dialogRef.close($event[0].value);
 	}
 
-	public handle(action: any, fn: string): void {
+	public handle(scanner: any, fn: string): void {
 		const playDeviceFacingBack = (devices: any[]) => {
 			// front camera or back camera check here!
 			const device = devices.find(f => (/back|rear|environment/gi.test(f.label))); // Default Back Facing Camera
-			action.playDevice(device ? device.deviceId : devices[0].deviceId);
+			scanner.playDevice(device ? device.deviceId : devices[0].deviceId);
 		}
 
 		if (fn === 'start') {
-			action[fn](playDeviceFacingBack);
+			scanner[fn](playDeviceFacingBack);
 		} else {
-			action[fn]();
+			scanner[fn]();
 		}
 	}
 
 	ngAfterViewInit(): void {
-		this.action.isReady.subscribe((res: any) => {
-			this.handle(this.action, 'start');
+		this.scanner.isReady.subscribe((res: any) => {
+			this.handle(this.scanner, 'start');
 		});
 	}
 
+	ngOnDestroy(): void {
+		this.scanner.stop();
+	}
 }

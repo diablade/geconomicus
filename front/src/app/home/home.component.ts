@@ -2,10 +2,10 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
-import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
+import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 
 @Component({
 	selector: 'app-home',
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	join() {
-		const dialogRef = this.dialog.open(ScannerDialogComponent, {});
+		const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
 		dialogRef.afterClosed().subscribe(url => {
 			const u = new URL(url);
 			const paths = u.pathname.split('/').filter(Boolean);

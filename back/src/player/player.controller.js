@@ -341,7 +341,6 @@ export default {
 						status: 400,
 						message: "fond insuffisant"
 					});
-					throw new Error('Not enough coins');
 				}
 				let newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
 				// remove card and add coins to seller
@@ -377,7 +376,11 @@ export default {
 			})
 				.catch((error) => {
 					log.error('transaction error', error);
-					throw error;
+					next({
+						status: 400,
+						message: "transaction error",
+						error
+					});
 				});
 		} else {
 			next({

@@ -159,8 +159,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (d.status == C.DEFAULT_CREDIT) {
 						this.defaultCredit = true;
 					} else if (d.status == "requesting") {
-						this.statusGame = "waiting";
-						this.requestingWhenCreditEnds(d);
+						this.player.status = "needAnswer";
+						this.requestingWhenCreditEnds(d, true);
 					}
 				})
 			})
@@ -270,7 +270,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					c.status = data.status;
 				}
 			});
-			this.requestingWhenCreditEnds(data);
+			this.requestingWhenCreditEnds(data, true);
 		});
 		this.socket.on(C.CREDITS_STARTED, async () => {
 			_.forEach(this.credits, c => {
@@ -378,7 +378,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (this.scanV3) {
 			const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
 			dialogRef.afterClosed().subscribe(dataRaw => {
-				this.buy(dataRaw);
+				if (dataRaw) {
+					this.buy(dataRaw);
+				}
 			});
 		} else {
 			const dialogRef = this.dialog.open(ScannerDialogComponent, {});
@@ -452,7 +454,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	requestingWhenCreditEnds(credit: Credit) {
+	requestingWhenCreditEnds(credit: Credit, beep: boolean) {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: "Le crédit est arrivé à expiration !",
@@ -461,7 +463,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				labelBtn1: "Rembourser",
 				labelBtn2: "Prolonger",
 				autoClickBtn2: true,
-				timerBtn2: "14"//en secondes
+				timerBtn2: "14",//en secondes
+				beep,
 			}
 		});
 		dialogRef.afterClosed().subscribe(options => {
@@ -477,7 +480,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 								}
 							});
 							this.player.coins -= credit.interest;
-							this.statusGame = C.PLAYING;
+							this.player.status = C.ALIVE;
 						}
 					});
 				} else {
@@ -488,7 +491,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.settleCredit(credit);
 				} else {
 					this.snackbarService.showError("Fond insuffisant !");
-					this.requestingWhenCreditEnds(credit);
+					this.requestingWhenCreditEnds(credit, false);
 				}
 			}
 		});
@@ -544,7 +547,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if ($event == 'settle') {
 				this.settleDebt(credit);
 			} else if ($event == 'answer') {
-				this.requestingWhenCreditEnds(credit);
+				this.requestingWhenCreditEnds(credit, false);
 			}
 		}
 	}

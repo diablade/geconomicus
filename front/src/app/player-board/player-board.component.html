@@ -88,7 +88,7 @@
 			<div>
 				<mat-slide-toggle [(ngModel)]="scanV3" name="scanV3">scan v3</mat-slide-toggle>
 				<button class="buy" mat-raised-button color="accent"
-								[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD"
+								[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 								(click)="scan()">
 					<fa-icon [icon]="faCamera"></fa-icon>
 					ACHETER
