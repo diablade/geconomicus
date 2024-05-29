@@ -9,12 +9,12 @@
 		</div>
 	</div>
 	<div *ngIf="!small" class="fw-bold text-truncate">{{ contractor }}</div>
-	<div *ngIf="!small" class="fontName">créé : {{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
-	<div class="fontName">Crédit : {{ credit.amount }}</div>
-	<div class="fontName">Interet : {{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
-	<div *ngIf="credit.status===C.CREDIT_DONE" class="fontName">clos le : {{ credit.endDate | date:"YY-MM-dd HH:mm" }}
+	<div *ngIf="!small" class="fontName"><span class="fw-bold">Créé :</span>{{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
+	<div class="fontName"><span class="fw-bold">Crédit :</span>{{ credit.amount }}</div>
+	<div class="fontName"><span class="fw-bold">Interet :</span>{{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
+	<div *ngIf="credit.status===C.CREDIT_DONE" class="fontName"><span class="fw-bold">Clos le :</span>{{ credit.endDate | date:"YY-MM-dd HH:mm" }}
 	</div>
-	<div class="fontName">Prolongé : {{ credit.extended }}</div>
+	<div class="fontName"><span class="fw-bold">Prolongé :</span>{{ credit.extended }}</div>
 	<button *ngIf="!bankOption && credit.status===C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button
 					color="primary"
 					(click)="actionBtnClick('settle')">Rembourser la dette
