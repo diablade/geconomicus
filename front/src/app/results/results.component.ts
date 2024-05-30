@@ -129,7 +129,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			},
 			y: {
 				min: 0,
-				// type: 'logarithmic',
+				type: 'logarithmic',
 			},
 		},
 		plugins: {
@@ -315,6 +315,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				this.game = game;
 				this.events = game.events;
 				this.players = game.players;
+				if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
+					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
+				}
 				this.nbPlayer = _.partition(this.players, p => p.status === C.ALIVE).length;
 				await this.initDatasets();
 				if (this.game?.typeMoney == C.JUNE) {
@@ -619,7 +622,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					continue;
 				case C.PRISON_ENDED:
 					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
-					if (!outOfPrisonRessources){
+					if (!outOfPrisonRessources) {
 						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
 					}
 					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, this.pointsBefore1second);
