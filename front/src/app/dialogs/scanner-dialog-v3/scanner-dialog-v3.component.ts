@@ -37,14 +37,14 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
 
 	public handle(scanner: any, fn: string): void {
 		const playDeviceFacingBack = (devices: any[]) => {
+			if (this.cameraSelected) {
+				scanner.playDevice(this.cameraSelected);
+			} else {
 				this.cameras = devices;
 				const device = devices.find(c => (/environment|back|rear/gi.test(c.label)));
 				this.cameraSelected = device ? device.deviceId : devices[0].deviceId
 				scanner.playDevice(this.cameraSelected);
-			// if (this.cameraSelected) {
-			// 	scanner.playDevice(this.cameraSelected);
-			// } else {
-			// }
+			}
 		}
 
 		if (fn === 'start') {
@@ -65,7 +65,8 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
 	}
 
 	cameraChanged(cameraId: any) {
-		this.scanner.playDevice(this.cameraSelected);
-		this.localStorageService.setItem(this.itemCamera, this.cameraSelected);
+		this.scanner.playDevice(cameraId);
+		this.cameraSelected = cameraId;
+		this.localStorageService.setItem(this.itemCamera, cameraId);
 	}
 }
