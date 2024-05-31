@@ -200,7 +200,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	stopRoundForce() {
-		this.backService.stopRound(this.idGame, this.game.round);
+		this.backService.stopRound(this.idGame, this.game.round).subscribe();
 	}
 
 	doIntertour() {

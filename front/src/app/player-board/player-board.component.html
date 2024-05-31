@@ -26,11 +26,14 @@
 			<img *ngIf="typeMoney===C.JUNE" [src]="'/assets/images/g1coin.png'" class="free"/>
 			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt"/>
 		</div>
-		<div class="sold flex-grow-1 contour">
-			{{ player.coins| number : '1.2-2' }}
-			<span *ngIf="typeMoney===C.JUNE" class="enDU">{{ (player.coins / currentDU) | number : '1.2-2' }}DU</span>
-			<span *ngIf="typeMoney===C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }}</span>
+		<div *ngIf="typeMoney===C.JUNE" class="sold flex-grow-1 contour">
+			{{ (player.coins / currentDU) | number : '1.2-2' }} DU
+			<span class="enDU">{{ player.coins | number : '1.2-2' }}Ğ1</span>
 			<img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
+		</div>
+		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
+			{{ player.coins| number : '1.2-2' }} €
+			<span *ngIf="typeMoney===C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }} €</span>
 		</div>
 		<div class="user d-flex">
 			<div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
