@@ -11,6 +11,7 @@ import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import Timer from "../misc/Timer.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
+import BankService from "../bank/bank.service.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
@@ -212,6 +213,15 @@ async function killPlayer(idGame, idPlayer) {
 	const player = _.find(game.players, {id: idPlayer});
 	const groupedCards = _.groupBy(_.sortBy(player.cards, 'weight'), 'weight');
 
+	// if (game.typeMoney === C.DEBT) {
+	// 	const credits = await BankService.getCreditsOfPlayer(idGame, idPlayer);
+	// 	for (let credit of credits) {
+	// 		await BankController.settleCredit(credit)
+	// 	}
+	// }
+	// todo finish the story for dead , settle credit by bank
+	//  then from bank make return cards to deck
+
 	// make him dead, Remove cards from player's hand
 	await GameModel.updateOne(
 		{_id: idGame, 'players._id': idPlayer},
@@ -229,12 +239,7 @@ async function killPlayer(idGame, idPlayer) {
 		log.error('player escape dead, error', err);
 	});
 
-	if (game.typeMoney == C.DEBT) {
-		//TODO force settle credit
-		//then remove coins from player
-	}
-
-	let newEvent = constructor.event(C.DEAD, "master", idPlayer, 0, [], Date.now());
+	let newEvent = constructor.event(C.DEAD, "master", idPlayer, 0, player.cards, Date.now());
 	//PUT BACK CARDS IN THE DECKs
 	await GameModel.updateOne(
 		{_id: idGame, 'players._id': idPlayer},

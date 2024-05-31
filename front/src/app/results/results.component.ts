@@ -586,11 +586,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 					continue;
 				case C.DEAD:
-					if (receiverDatasetResources) {
-						// @ts-ignore
-						addPointBefore1second(receiverDatasetResourcesevent.date, receiverDatasetResources.total);
-						addPointAtEvent(receiverDatasetResources, event.date, 0);
-					}
+					const deadRessources = this.getValueCardsFromEvent(event.resources);
+					updateData(receiverDatasetResources, event.date, "sub", deadRessources, false, this.pointsBefore1second);
 					continue;
 				case C.REMIND_DEAD:
 					// @ts-ignore
@@ -604,9 +601,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					continue;
 				case C.SETTLE_CREDIT:
+					const interest = event.resources[0].interest;
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, "add", interest, false, this.pointsBefore1second);
 					continue;
 				case C.PAYED_INTEREST:
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);

@@ -49,7 +49,7 @@ async function checkAbilityPayment(idGame, idPlayer, checkAmountToPay) {
 		if (!player) {
 			throw new Error("Can't find player to check amount to pay");
 		}
-		return player.coins >= checkAmountToPay;
+		return {player: player, canPay: player.coins >= checkAmountToPay && player.status !== C.DEAD};
 	} catch (error) {
 		log.error('Get game error', error);
 		throw error;
@@ -66,8 +66,8 @@ function timeoutCredit(timer) {
 	if (timer) {
 		const credit = timer.data;
 		bankTimerManager.stopAndRemoveTimer(timer.id).then(async () => {
-				const canPay = await checkAbilityPayment(credit.idGame, credit.idPlayer, credit.interest);
-				if (canPay) {
+				const check = await checkAbilityPayment(credit.idGame, credit.idPlayer, credit.interest);
+				if (check && check.canPay) {
 					let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
 					GameModel.findOneAndUpdate(
 						{_id: credit.idGame, 'credits._id': credit._id},
@@ -94,8 +94,10 @@ function timeoutCredit(timer) {
 					).then(update => {
 						credit.status = C.DEFAULT_CREDIT;
 						io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-						io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
 						io().to(credit.idGame + C.BANK).emit(C.DEFAULT_CREDIT, credit);
+						if(check && check.player.status!== C.DEAD){
+							io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
+						}
 					}).catch((error) => {
 						log.error(error);
 					});
@@ -109,10 +111,11 @@ async function timeoutPrison(timer) {
 	if (timer) {
 		const data = timer.data;
 		await bankTimerManager.stopAndRemoveTimer(timer.id);
-		await getOut(data.idGame,data.idPlayer);
+		await getOut(data.idGame, data.idPlayer);
 	}
 }
-async function getOut(idGame,idPlayer) {
+
+async function getOut(idGame, idPlayer) {
 	try {
 		let game = await GameModel.findById(idGame);
 		const shuffledDeck = _.shuffle(game.decks[0]);
@@ -244,8 +247,8 @@ export default {
 			});
 		} else {
 			try {
-				const canPay = await checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));
-				if (canPay) {
+				const check = await checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));
+				if (check.canPay) {
 					const game = await GameModel.findOneAndUpdate(
 						{_id: credit.idGame, 'players._id': credit.idPlayer},
 						{
@@ -270,6 +273,11 @@ export default {
 					io().to(credit.idPlayer).emit(C.CREDIT_DONE, creditUpdated);
 					io().to(credit.idGame + C.BANK).emit(C.CREDIT_DONE, creditUpdated);
 					res.status(200).json(creditUpdated);
+				} else if(check.player.status === C.DEAD) {
+					next({
+						status: 404,
+						message: "Un mort qui veux rembourser son credit?!"
+					});
 				} else {
 					next({
 						status: 404,
@@ -445,7 +453,7 @@ export default {
 				if (timer) {
 					timeoutPrison(timer);
 				} else {
-					getOut(idGame,idPlayerToFree);
+					getOut(idGame, idPlayerToFree);
 				}
 				res.status(200).json({});
 			} catch (e) {

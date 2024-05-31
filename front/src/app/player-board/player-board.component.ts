@@ -532,7 +532,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						if (c._id == data._id) {
 							c.status = data.status;
 							c.endDate = data.endDate;
-							this.player.coins -= data.amount;
+							this.player.coins -= (data.amount+data.interest);
 							this.player.status = C.ALIVE;
 						}
 						return c;
