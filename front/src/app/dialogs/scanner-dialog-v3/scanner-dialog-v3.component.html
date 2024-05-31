@@ -6,6 +6,16 @@
 		(event)="onEvent($event, action)">
 	</ngx-scanner-qrcode>
 </mat-dialog-content>
-<mat-dialog-actions [align]="'end'">
+<mat-dialog-actions [align]="'center'">
+	<mat-form-field appearance="fill">
+		<mat-label>Camera</mat-label>
+<!--		<select [(ngModel)]="cameraSelected" (change)="cameraChanged($event)" matNativeControl required>-->
+<!--			<option *ngFor="let camera of cameras" [value]="camera.deviceId">{{camera.label}}</option>-->
+<!--		</select>-->
+		<select #select1 (change)="action.playDevice(select1.value)"  matNativeControl required>
+			<option [value]="null" selected>Select device</option>
+			<option *ngFor="let c of action.devices.value; let i = index" [value]="c.deviceId" [selected]="i == action.deviceIndexActive">{{c.label}}</option>
+		</select>
+	</mat-form-field>
 	<button mat-button (click)="closeDialog()">Annuler</button>
 </mat-dialog-actions>

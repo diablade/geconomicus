@@ -426,7 +426,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	buy(dataRaw: any) {
 		const data = JSON.parse(dataRaw);
 		const cost = this.typeMoney == C.JUNE ? data.p * this.currentDU : data.p;
-		if (this.idGame != data.g) {
+		if (this.idGame && data.g && this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
 		} else if (this.player.coins >= cost) {
 			this.backService.transaction(this.idGame, this.idPlayer, data.o, data.c).subscribe(async dataReceived => {
@@ -435,8 +435,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.player.coins = dataReceived.coins;
 				}
 			});
-		} else {
+		} else if(this.player.coins < cost){
 			this.snackbarService.showError("Fond insuffisant !");
+		} else {
+			this.snackbarService.showError("Erreur scan, réessaye !");
 		}
 	}
 

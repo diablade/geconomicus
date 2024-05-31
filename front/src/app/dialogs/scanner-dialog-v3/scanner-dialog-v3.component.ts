@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {NgxScannerQrcodeComponent, ScannerQRCodeConfig, ScannerQRCodeResult} from "ngx-scanner-qrcode";
 import {MatDialogRef} from "@angular/material/dialog";
+import {LocalStorageService} from "../../services/local-storage/local-storage.service";
 
 
 @Component({
@@ -8,15 +9,19 @@ import {MatDialogRef} from "@angular/material/dialog";
 	templateUrl: './scanner-dialog-v3.component.html',
 	styleUrls: ['./scanner-dialog-v3.component.scss']
 })
-export class ScannerDialogV3Component implements AfterViewInit, OnDestroy{
+export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
 	@ViewChild('action') scanner!: NgxScannerQrcodeComponent;
 
 	config: ScannerQRCodeConfig = {
 		fps: 4,
 		vibrate: 300, /** support mobile */
 	};
+	cameras: any[] = [];
+	cameraSelected: any | undefined;
+	itemCamera = "preferedCameraId";
 
-	constructor(public dialogRef: MatDialogRef<ScannerDialogV3Component>) {
+	constructor(public dialogRef: MatDialogRef<ScannerDialogV3Component>, private localStorageService: LocalStorageService,) {
+		this.cameraSelected = this.localStorageService.getItem(this.itemCamera);
 	}
 
 
@@ -32,9 +37,14 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy{
 
 	public handle(scanner: any, fn: string): void {
 		const playDeviceFacingBack = (devices: any[]) => {
-			// front camera or back camera check here!
-			const device = devices.find(f => (/back|rear|environment/gi.test(f.label))); // Default Back Facing Camera
-			scanner.playDevice(device ? device.deviceId : devices[0].deviceId);
+				this.cameras = devices;
+				const device = devices.find(c => (/environment|back|rear/gi.test(c.label)));
+				this.cameraSelected = device ? device.deviceId : devices[0].deviceId
+				scanner.playDevice(this.cameraSelected);
+			// if (this.cameraSelected) {
+			// 	scanner.playDevice(this.cameraSelected);
+			// } else {
+			// }
 		}
 
 		if (fn === 'start') {
@@ -52,5 +62,10 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy{
 
 	ngOnDestroy(): void {
 		this.scanner.stop();
+	}
+
+	cameraChanged(cameraId: any) {
+		this.scanner.playDevice(this.cameraSelected);
+		this.localStorageService.setItem(this.itemCamera, this.cameraSelected);
 	}
 }

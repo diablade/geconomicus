@@ -57,7 +57,9 @@ import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.co
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
-import {NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
+import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
+// Necessary to solve the problem of losing internet connection
+LOAD_WASM().subscribe();
 
 @NgModule({
 	declarations: [
