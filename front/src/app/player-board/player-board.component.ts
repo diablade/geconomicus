@@ -77,10 +77,6 @@ import * as C from "../../../../config/constantes";
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	@ViewChild('audioDu') audioDu!: ElementRef;
-	@ViewChild('audioCops') audioCops!: ElementRef;
-	@ViewChild('audioPrison') audioPrison!: ElementRef;
-	@ViewChild('audioCredit') audioCredit!: ElementRef;
 	ioURl: string = environment.API_HOST;
 	private socket: any;
 	screenWidth = 0;
@@ -111,8 +107,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	minutesPrison = 0;
 	secondsPrison = 0;
 
-
-	constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService, private _snackBar: MatSnackBar) {
+	constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private _snackBar: MatSnackBar) {
 	}
 
 	updateScreenSize() {
@@ -205,7 +200,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.DISTRIB_DU, (data: any) => {
 			this.duVisible = true;
-			this.audioDu.nativeElement.play();
+			let audioDu = new Audio("./assets/audios/audioDu.mp3");
+			audioDu.load();
+			audioDu.play();
 			this.player.coins += data.du;
 			this.currentDU = data.du;
 			setTimeout(() => {
@@ -256,10 +253,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "Crédit obtenu (+" + data.amount + "💰)"},
+				data: {
+					text: "Crédit obtenu (+" + data.amount + "💰)",
+					sound: "./assets/audios/coins.mp3"
+				},
 			});
 			this.player.coins += data.amount;
-			this.audioCredit.nativeElement.play();
 			this.credits.push(data);
 		});
 		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
@@ -293,7 +292,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.snackbarService.showError("DEFAULT DE PAIEMENT");
 			this.defaultCredit = true;
-			this.audioCops.nativeElement.play();
+			let audioCops = new Audio();
+			audioCops.src = "./assets/audios/police.mp3";
+			audioCops.load();
+			await audioCops.play();
 		});
 		this.socket.on(C.CREDIT_DONE, async (data: any) => {
 			_.forEach(this.credits, c => {
@@ -313,7 +315,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				await this.receiveCards(data.cards);
 			}
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ "},
+				data: {
+					text: "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ ",
+					sound: "./../../assets/audios/outPrison.mp3"
+				},
 			});
 		});
 		this.socket.on(C.SEIZURE, async (data: any) => {
@@ -330,7 +335,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.defaultCredit = false;
 			if (data.prisoner && data.prisoner._id == this.idPlayer) {
 				this.prison = true;
-				this.audioPrison.nativeElement.play();
+				let audioPrison = new Audio( "./assets/audios/prison.mp3");
+				audioPrison.load();
+				await audioPrison.play();
 			}
 		});
 	}
@@ -435,7 +442,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.player.coins = dataReceived.coins;
 				}
 			});
-		} else if(this.player.coins < cost){
+		} else if (this.player.coins < cost) {
 			this.snackbarService.showError("Fond insuffisant !");
 		} else {
 			this.snackbarService.showError("Erreur scan, réessaye !");
@@ -532,7 +539,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						if (c._id == data._id) {
 							c.status = data.status;
 							c.endDate = data.endDate;
-							this.player.coins -= (data.amount+data.interest);
+							this.player.coins -= (data.amount + data.interest);
 							this.player.status = C.ALIVE;
 						}
 						return c;

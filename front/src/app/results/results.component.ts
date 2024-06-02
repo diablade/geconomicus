@@ -497,7 +497,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
 			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
-			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new", value: number, relatif: boolean, beforePoint: boolean) => {
+			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new"|"prev", value: number, relatif: boolean, beforePoint: boolean) => {
 				if (dataset) {
 					const previousTotal = dataset.total;
 					let newTotal = 0;
@@ -505,7 +505,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 						newTotal = previousTotal + value;
 					} else if (operator == "sub") {
 						newTotal = previousTotal - value;
-					} else {
+					} else if( operator == "prev") {
+						newTotal = previousTotal;
+					}else{
 						newTotal = value;
 					}
 					if (beforePoint) {
@@ -588,10 +590,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				case C.DEAD:
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
 					updateData(receiverDatasetResources, event.date, "sub", deadRessources, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, "prev", 0, false, false);
+					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
 					continue;
 				case C.REMIND_DEAD:
 					// @ts-ignore
-					receiverDatasetResources.data.push({x: event.date, y: 0});
+					updateData(receiverDataset, event.date, "prev", 0, false, false);
+					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
+					updateData(receiverDatasetResources, event.date, "prev", 0, false, false);
 					continue;
 				case C.NEW_CREDIT:
 					if (!this.roundStarted) {

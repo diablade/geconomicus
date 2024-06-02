@@ -74,7 +74,7 @@ async function distribDU(idGame) {
 					newEvents.push(newEvent);
 				} else if (player.status === C.DEAD) {
 					//TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
-					let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, 0, [], Date.now());
+					let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, player.coins, [], Date.now());
 					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
 					newEvents.push(newEvent);
 				}

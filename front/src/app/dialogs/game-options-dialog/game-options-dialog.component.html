@@ -144,7 +144,7 @@
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE" class="mb-4 d-flex flex-column">
 				<mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
-					Début inégale en monnaie libre
+					Début inégal en monnaie libre
 				</mat-checkbox>
 				<div class="infoLabel">
 					<div>
@@ -171,7 +171,7 @@
 													[(ngModel)]="game.generateLettersInDeck">
 					</mat-radio-button>
 				</mat-radio-group>
-				<mat-label class="mt-2 fw-bold">Nombre de cartes identique généré dans le jeu et cartes de départs</mat-label>
+				<mat-label class="mt-2 fw-bold">Nombre identique de cartes générées dans le jeu et cartes de départ</mat-label>
 				<mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
 					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 (de 3 à 5 joueurs) ⚠️ EXPERIMENTAL
@@ -183,7 +183,7 @@
 						5 (16+ joueurs)
 					</mat-radio-button>
 				</mat-radio-group>
-				<mat-label class="mt-2 fw-bold">Nombre de cartes distribués au joueurs au début du jeu</mat-label>
+				<mat-label class="mt-2 fw-bold">Nombre de cartes distribuées aux joueurs au début du jeu</mat-label>
 				<mat-radio-group [(ngModel)]="game.distribInitCards">
 					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 (3 à 5 joueurs) ⚠️ EXPERIMENTAL
@@ -192,7 +192,7 @@
 						4 (6+ joueurs)
 					</mat-radio-button>
 				</mat-radio-group>
-				<mat-label class="mt-2fw-bold">Nombre de cartes identique pour bâtir une carte supérieur:</mat-label>
+				<mat-label class="mt-2fw-bold">Nombre identique de cartes pour bâtir une carte supérieur:</mat-label>
 				<mat-radio-group [(ngModel)]="game.amountCardsForProd">
 					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 (de 3 à 5 joueurs) ⚠️EXPERIMENTAL

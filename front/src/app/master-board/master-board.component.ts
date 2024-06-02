@@ -85,7 +85,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.idGame = params['idGame'];
 			this.socket = io(this.ioURl, {
 				query: {
-					idPlayer: 'master',
+					idPlayer: this.idGame + 'master',
 					idGame: this.idGame,
 				},
 			});
@@ -120,8 +120,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			this.game.players.push(player);
 		});
-		this.socket.on("connected", (players: any) => {
-			console.log("connected", players);
+		this.socket.on("connected", (player: any) => {
+			console.log("connected", player);
 		});
 		this.socket.on('disconnect', () => {
 			console.log('Socket has been disconnected');
