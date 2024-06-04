@@ -4,6 +4,8 @@ import _ from 'lodash';
 import mongoose from "mongoose";
 import {io} from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
+import GameController from "../game/game.controller.js";
+import gameService from "../game/game.service.js";
 
 export default {
 	join: async (req, res, next) => {
@@ -108,6 +110,7 @@ export default {
 						}
 					);
 					io().to(id + C.EVENT).emit(C.EVENT, birthEvent);
+					io().to(id + C.MASTER).emit(C.NEW_PLAYER, player);
 					res.status(200).json(player._id);
 				})
 				.catch(error => {
@@ -214,7 +217,7 @@ export default {
 				if (cardsToExchange.length === game.amountCardsForProd) {
 					let weight = cardsToExchange[0].weight;
 
-					if (weight < 2) {
+					if (weight < 3) {
 						// Remove cards from player's hand
 						await GameModel.updateOne(
 							{_id: idGame, 'players._id': idPlayer},
@@ -229,7 +232,7 @@ export default {
 									// Draw a card from the next level
 									// Shuffle the decks
 									const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
-									const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
+									const shuffledDeck2 = _.shuffle(updatedGame.decks[(weight + 1)]);
 									// Draw new cards for the player
 									const newCards = shuffledDeck.slice(0, game.amountCardsForProd);//same weight
 									const newCardSup = shuffledDeck2.slice(0, 1)[0]; // one superior produced
@@ -260,6 +263,9 @@ export default {
 											}
 										}
 									);
+									if (newCardSup.weight > 2) {
+										gameService.stopRound(idGame,updatedGame.round);
+									}
 									io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
 									io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);
 									res.status(200).json(cardsDraw);
@@ -267,18 +273,18 @@ export default {
 							)
 							.catch(error => {
 									log.error(error);
-									next({status: 400, message: "update game goes wrong (transform square)"});
+									next({status: 400, message: "update game goes wrong (produce)"});
 								}
 							);
 					} else {
 						//TODO changement technologique
 						next({
-							status: 200,
-							message: "BRAVO !!! vous etes sur le point de faire un changement technologique (fin de partie)"
+							status: 400,
+							message: "changement technologique...",
 						});
 					}
 				} else {
-					next({status: 400, message: "not enough cards to produce level up"});
+					next({status: 400, message: "not enough cards to produce"});
 				}
 			} catch (err) {
 				log.error('update game error', err);

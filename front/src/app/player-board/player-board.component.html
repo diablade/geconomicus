@@ -27,9 +27,9 @@
 			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt"/>
 		</div>
 		<div *ngIf="typeMoney===C.JUNE" class="sold flex-grow-1 contour">
-			{{ (player.coins / currentDU) | number : '1.2-2' }} DU
-			<span class="enDU">{{ player.coins | number : '1.2-2' }}Ğ1</span>
-			<img class="du" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
+			{{ (player.coins / currentDU) | number : '1.2-2' }}<span class="du">D.U </span>
+			<span class="g1">{{ player.coins | number : '1.2-2' }}Ğ1</span>
+			<img class="duIcon" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
 		</div>
 		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }} €
@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<div class="footer">
-		<div class="credits w-100 d-flex flex-row"
+		<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
 				 [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
 			<div class="d-inline-flex" *ngFor="let credit of credits">
 				<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
@@ -80,7 +80,7 @@
 			</div>
 		</div>
 		<div class="d-flex flex-row justify-content-between">
-			<div>
+			<div >
 				<button *ngIf="typeMoney===C.DEBT" class="buy" mat-raised-button color="primary"
 								(click)="panelCreditOpenState = !panelCreditOpenState">
 					CREDITS

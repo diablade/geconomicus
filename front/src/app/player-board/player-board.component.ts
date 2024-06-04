@@ -226,7 +226,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.player.status = C.DEAD;
 			this.dialog.closeAll();
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️"},
+				data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
+					sound:"./assets/audios/marioDeath.mp3"
+				},
 			});
 			this.cards = [];
 			if (this.typeMoney === C.DEBT) {
@@ -335,7 +337,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.defaultCredit = false;
 			if (data.prisoner && data.prisoner._id == this.idPlayer) {
 				this.prison = true;
-				let audioPrison = new Audio( "./assets/audios/prison.mp3");
+				let audioPrison = new Audio("./assets/audios/prison.mp3");
 				audioPrison.load();
 				await audioPrison.play();
 			}
@@ -362,7 +364,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showGift(card: Card) {
 		this.dialog.open(CongratsDialogComponent, {
-			data: {text: "Bravo ! vous obtenez une carte supérieur.", card: card},
+			data: {text: card.weight >2 ? "BRAVO !!! vous avez acquis la technologie (fin de partie)" : "Bravo ! vous obtenez une carte supérieur.", card: card},
 			width: '10px',
 			height: '10px'
 		});

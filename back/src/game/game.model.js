@@ -90,6 +90,8 @@ let Game = new Schema({
 	round: {type: Number, required: false},
 	roundMax: {type: Number, required: false},
 	roundMinutes: {type: Number, required: false},
+	autoDeath: {type: Boolean, required: true},
+	deathPassMinute: {type: Number, required: true},
 
 	//option june
 	currentDU: {type: Number, required: true},

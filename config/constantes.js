@@ -36,6 +36,7 @@ const TRANSACTION_DONE = 'transaction-done';
 const TRANSACTION = 'transaction';
 const TRANSFORM_DISCARDS = "transformDiscards";
 const TRANSFORM_NEWCARDS = "transformNewCards";
+const DEATH_IS_COMING = "death-is-coming";
 const DEAD = "dead";
 const NEED_ANSWER = "needAnswer";
 const REMIND_DEAD = "remind-dead";
@@ -58,6 +59,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		NEW_PLAYER: NEW_PLAYER,
 		UPDATED_PLAYER: UPDATED_PLAYER,
 		DEAD: DEAD,
+		DEATH_IS_COMING:DEATH_IS_COMING,
 		REMIND_DEAD: REMIND_DEAD,
 		ALIVE: ALIVE,
 		NEED_ANSWER: NEED_ANSWER,

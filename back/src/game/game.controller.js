@@ -10,8 +10,7 @@ import {differenceInMilliseconds} from "date-fns";
 import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import Timer from "../misc/Timer.js";
-import bankTimerManager from "../bank/BankTimerManager.js";
-import BankService from "../bank/bank.service.js";
+import gameService from "./game.service.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
@@ -90,8 +89,7 @@ async function distribDU(idGame) {
 					new: true
 				})
 				.then(updatedGame => {
-					log.info(updatedGame.currentDU);
-					log.info(updatedGame.currentMassMonetary);
+
 				})
 				.catch(err => {
 					log.error('update game error', err);
@@ -188,26 +186,6 @@ async function initGameJune(game) {
 	return game;
 }
 
-async function stopRound(idGame, gameRound) {
-	gameTimerManager.stopAndRemoveTimer(idGame);
-	let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
-	GameModel.updateOne({_id: idGame}, {
-		$set: {
-			status: C.STOP_ROUND,
-			modified: Date.now(),
-		},
-		$push: {events: stopRoundEvent}
-	})
-		.then(res => {
-			bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-			io().to(idGame).emit(C.STOP_ROUND);
-			io().to(idGame + C.EVENT).emit(C.EVENT, stopRoundEvent);
-		})
-		.catch(err => {
-			log.error('stop round game error', err);
-		})
-}
-
 async function killPlayer(idGame, idPlayer) {
 	const game = await GameModel.findById(idGame);
 	const player = _.find(game.players, {id: idPlayer});
@@ -266,16 +244,14 @@ async function deadPassingThrough(roundMinutes, minutesPassed) {
 	}
 }
 
-function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
-	let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound: gameRound},
+function startRoundMoneyLibre(idGame, gameRound, roundMinutes, deathPassMinute) {
+	let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound},
 		(timer) => {
-			log.info('DU distribution for idGame:', idGame);
 			distribDU(timer.id);
 			let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
 			let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
 			io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
 
-			// TODO: the automatic dead is coming ;
 		},
 		(timer) => {
 			distribDU(timer.id).then(r =>
@@ -283,8 +259,20 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes) {
 			)
 		});
 	timer.start();
+	// TODO: the automatic dead is coming ;
+	console.log("oulalalasetting ", roundMinutes, deathPassMinute, idGame);
+	let timerDeath = new Timer(idGame + "death", roundMinutes * minute, deathPassMinute * minute, {idGame},
+		(timer) => {
+			console.log("oulalala");
+			io().to(timer.data.idGame + C.MASTER).emit(C.DEATH_IS_COMING, {});
+		},
+		(timer) => {
+			console.log("oulalala EEEENNNND");
+		});
+	timerDeath.start();
 
 	gameTimerManager.addTimer(timer);
+	gameTimerManager.addTimer(timerDeath);
 }
 
 function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
@@ -338,6 +326,8 @@ export default {
 				round: 0,
 				roundMax: 1,
 				roundMinutes: 40,
+				autoDeath: false,
+				deathPassMinute: 4,
 
 				//option june
 				currentDU: 0,
@@ -403,6 +393,8 @@ export default {
 					generateLettersAuto: body.generateLettersAuto == undefined ? true : body.generateLettersAuto,
 					generateLettersInDeck: body.generateLettersInDeck ? body.generateLettersInDeck : 0,
 					generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
+					autoDeath: body.autoDeath == undefined ? true : body.autoDeath,
+					deathPassMinute: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
 
 					//option june
 					tauxCroissance: body.tauxCroissance ? body.tauxCroissance : 5,
@@ -516,7 +508,7 @@ export default {
 					io().to(id).emit(C.START_ROUND);
 					io().to(id + C.EVENT).emit(C.EVENT, startEvent);
 					if (updatedGame.typeMoney === C.JUNE) {
-						startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes);
+						startRoundMoneyLibre(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes, updatedGame.deathPassMinute);
 					} else {
 						startRoundMoneyDebt(updatedGame._id.toString(), updatedGame.round, updatedGame.roundMinutes);
 					}
@@ -569,7 +561,7 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			await stopRound(id, round);
+			await gameService.stopRound(id, round);
 			res.status(200).send({
 				status: C.STOP_ROUND,
 			});
@@ -743,6 +735,7 @@ export default {
 			});
 		} else {
 			gameTimerManager.stopAndRemoveTimer(idGame);
+			gameTimerManager.stopAndRemoveTimer(idGame + "death");
 			BankController.resetIdGameDebtTimers(idGame);
 			GameModel.findByIdAndUpdate(idGame, {
 					$set: {
@@ -768,6 +761,8 @@ export default {
 						round: 0,
 						roundMax: 1,
 						roundMinutes: 40,
+						autoDeath: false,
+						deathPassMinute: 4,
 
 						//option june
 						currentDU: 0,

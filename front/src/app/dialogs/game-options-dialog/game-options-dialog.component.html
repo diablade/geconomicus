@@ -74,6 +74,16 @@
 					<input type="number" min="0" matInput placeholder="(9 par défaut)" [(ngModel)]="game.priceWeight4">
 				</mat-form-field>
 			</div>
+			<div class="d-flex flex-column">
+				<mat-checkbox class="" value="false" [disabled]="true">
+					morts automatique (en development)
+				</mat-checkbox>
+				Passage de la mort toutes les
+				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
+					<mat-label>en minutes:</mat-label>
+					<input type="number" min="0" matInput placeholder="(4 par défaut)" [(ngModel)]="game.deathPassMinute">
+				</mat-form-field>
+			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>taux de croissance Dividende Universel</mat-label>

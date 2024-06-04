@@ -78,8 +78,8 @@ export class Game {
 	_id = "";
 	status = "";
 	name = "";
-	animator= "";
-	location= "";
+	animator = "";
+	location = "";
 	typeMoney = "june";
 	players: Player[] = [];
 	decks: Card[][] = [[]];
@@ -93,13 +93,15 @@ export class Game {
 	currentMassMonetary = 0;
 	amountCardsForProd = 4;
 	distribInitCards = 4;
-	generateLettersInDeck=0;
+	generateLettersInDeck = 0;
 	generateLettersAuto = true;
 	generatedIdenticalCards = 4;
 	surveyEnabled = true;
 	round = 0;
 	roundMax = 1;
 	roundMinutes = 40;
+	autoDeath = true;
+	deathPassMinute = 4;
 
 	//option june
 	currentDU = 0;
