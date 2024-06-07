@@ -66,7 +66,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerProgress = secondsRemaining / (this.game.roundMinutes * 60) * 100;
 		},
 		done: () => {
-			// this.stopRound();
 			this.snackbarService.showSuccess("Tour terminé");
 		}
 	});
@@ -200,7 +199,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.dialog.open(InformationDialogComponent, {
-			data: {text: "Tour terminé !"},
+			data: {text: "Tour terminé !",sound:"../assets/audios/end.mp3"},
 		});
 	}
 

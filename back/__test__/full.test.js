@@ -159,6 +159,7 @@ describe("FULL GAME simulation", () => {
 				generateLettersInDeck: 0,
 
 				surveyEnabled: true,
+				devMode: false,
 				priceWeight1: 3,
 				priceWeight2: 6,
 				priceWeight3: 9,

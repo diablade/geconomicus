@@ -86,6 +86,7 @@ export class Game {
 	events: EventGeco[] = [];
 
 	//option general
+	devMode = true;
 	priceWeight1 = 3;
 	priceWeight2 = 6;
 	priceWeight3 = 9;

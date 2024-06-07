@@ -83,6 +83,7 @@ let Game = new Schema({
 	generateLettersInDeck: {type: Number, required: false},
 	distribInitCards: {type: Number, required: false},
 	surveyEnabled: {type: Boolean, required: true},
+	devMode: {type: Boolean, required: true},
 	priceWeight1: {type: Number, required: true},
 	priceWeight2: {type: Number, required: true},
 	priceWeight3: {type: Number, required: true},

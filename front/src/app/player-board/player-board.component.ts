@@ -446,6 +446,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		} else if (this.player.coins < cost) {
 			this.snackbarService.showError("Fond insuffisant !");
+			let errorAudio = new Audio("../assets/audios/error.mp3");
+			errorAudio.load();
+			errorAudio.play();
 		} else {
 			this.snackbarService.showError("Erreur scan, réessaye !");
 		}
@@ -491,6 +494,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							});
 							this.player.coins -= credit.interest;
 							this.player.status = C.ALIVE;
+							let interestAudio = new Audio("../assets/audios/interest.mp3");
+							interestAudio.load();
+							interestAudio.play();
 						}
 					});
 				} else {
@@ -501,6 +507,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.settleCredit(credit);
 				} else {
 					this.snackbarService.showError("Fond insuffisant !");
+					let errorAudio = new Audio("../assets/audios/error.mp3");
+					errorAudio.load();
+					errorAudio.play();
 					this.requestingWhenCreditEnds(credit, false);
 				}
 			}
@@ -546,10 +555,16 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						}
 						return c;
 					});
+					let interestAudio = new Audio("../assets/audios/interest.mp3");
+					interestAudio.load();
+					interestAudio.play();
 				}
 			});
 		} else {
 			this.snackbarService.showError("Fond insuffisant...");
+			let errorAudio = new Audio("../assets/audios/error.mp3");
+			errorAudio.load();
+			errorAudio.play();
 		}
 	}
 

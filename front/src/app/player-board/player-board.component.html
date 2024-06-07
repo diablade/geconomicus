@@ -33,7 +33,7 @@
 		</div>
 		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }} €
-			<span *ngIf="typeMoney===C.DEBT" class="enDU">dettes: {{ getDebts() | number : '1.2-2' }} €</span>
+			<span *ngIf="typeMoney===C.DEBT" class="g1">dettes: {{ getDebts() | number : '1.2-2' }} €</span>
 		</div>
 		<div class="user d-flex">
 			<div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
