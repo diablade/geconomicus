@@ -21,6 +21,11 @@
 					Questionnaire de ressenti en fin de partie
 				</mat-checkbox>
 			</div>
+			<div>
+				<mat-checkbox class="m-auto" [(ngModel)]="game.devMode">
+					Dev mode
+				</mat-checkbox>
+			</div>
 			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
 				Options avancé en monnaie {{ game.typeMoney === C.JUNE ? "libre" : "dette" }}
 			</div>

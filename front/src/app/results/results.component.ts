@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
@@ -19,6 +19,7 @@ import {parseISO, subSeconds} from 'date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {BaseChartDirective} from "ng2-charts";
 
 Chart.register(zoomPlugin);
 
@@ -36,6 +37,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	game: Game | undefined;
 	events: EventGeco[] = [];
 	players: Player[] = [];
+	@ViewChildren(BaseChartDirective) charts: QueryList<BaseChartDirective> | undefined;
 	datasets: Map<string, ChartDataset> = new Map<string, ChartDataset>();
 	datasetsRelatif: Map<string, ChartDataset> = new Map<string, ChartDataset>();
 	datasetsResources: Map<string, ChartDataset> = new Map<string, ChartDataset>();
@@ -340,11 +342,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	ngAfterViewInit() {
-		this.socket.on(this.idGame + C.EVENT, async (data: any) => {
-			this.events.push(data.event);
+	updateCharts() {
+		this.charts?.forEach(chart => {
+			chart.update();
 		});
-		this.socket.on(this.idGame + C.NEW_FEEDBACK, async () => {
+	}
+
+	ngAfterViewInit() {
+		this.socket.on(C.EVENT, async (event: EventGeco) => {
+			this.events.push(event);
+			this.addEventsToDatasets([event]);
+			this.updateCharts();
+		});
+		this.socket.on(C.NEW_FEEDBACK, async () => {
 			window.location.reload();
 		});
 	}

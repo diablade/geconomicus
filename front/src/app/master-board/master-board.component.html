@@ -30,7 +30,7 @@
 		</div>
 		<!--  OPTIONS  -->
 		<div class="col-md-12 col-lg-4 text-center m-auto">
-			<div class="gecoFont shadowed">Animateur: {{game.animator}}</div>
+			<div class="gecoFont shadowed">Animateur: {{ game.animator }}</div>
 			<div class="">
 				<mat-form-field class="justify-content-center" appearance="fill">
 					<mat-label>Type de monnaie</mat-label>
@@ -81,13 +81,18 @@
 		</div>
 	</div>
 	<div class="container h-100" *ngIf="game && game.status!==C.OPEN">
-		<div class="fs-1 text-center pt-5 pb-5" *ngIf="game && game.roundMax>1">tour {{ game.round }}
+		<div class="fs-1 text-center pt-4 pb-4" *ngIf="game && game.roundMax>1">tour {{ game.round }}
 			/ {{ game.roundMax }}
 		</div>
-		<div class="mt-4 d-flex align-items-center justify-content-evenly flex-row">
-			<video class="videoCard" #videoPlayerL (click)="videoPlayerL.play()" playsinline autoplay muted>
-				<source src="assets/videos/bike.mp4" type="video/mp4">
-			</video>
+		<div class="d-flex align-items-center justify-content-evenly flex-row">
+			<div class="d-flex flex-column">
+				<video class="videoCard" #videoPlayerLT (click)="videoPlayerLT.play()" playsinline autoplay muted>
+					<source src="assets/videos/panier.mp4" type="video/mp4">
+				</video>
+				<video class="videoCard" #videoPlayerL (click)="videoPlayerL.play()" playsinline autoplay muted>
+					<source src="assets/videos/bike.mp4" type="video/mp4">
+				</video>
+			</div>
 			<div class="countDownContainer">
 				<div class="time">
 					<div class="minute shadowed">{{ minutes }}</div>
@@ -102,14 +107,18 @@
 					[value]="timerProgress">
 				</mat-progress-spinner>
 			</div>
-			<video class="videoCard" #videoPlayerR playsinline (click)="videoPlayerR.play()" autoplay muted>
-				<source src="assets/videos/sun.mp4" type="video/mp4">
-			</video>
+			<div class="d-flex flex-column">
+				<video class="videoCard" #videoPlayerRT playsinline (click)="videoPlayerRT.play()" autoplay muted>
+					<source src="assets/videos/owl.mp4" type="video/mp4">
+				</video>
+				<video class="videoCard" #videoPlayerR playsinline (click)="videoPlayerR.play()" autoplay muted>
+					<source src="assets/videos/sun.mp4" type="video/mp4">
+				</video>
+			</div>
 		</div>
 		<div class="d-flex mt-5 justify-content-center">
 			<button *ngIf="!((game.status===C.STOP_ROUND && game.round>=game.roundMax) || game.status==C.END_GAME)"
-							class="ms-2" mat-raised-button color="primary" (click)="showEvents()">events
-				<fa-icon [icon]="faPeopleArrows"></fa-icon>
+							class="ms-2" mat-raised-button color="primary" (click)="showEvents()">Voir les évènements live 🔴📈
 			</button>
 			<button *ngIf="game.devMode" class="ms-2" mat-raised-button (click)="resetGame()">
 				RESET GAME

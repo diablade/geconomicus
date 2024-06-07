@@ -6,7 +6,7 @@ import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
-	faFlagCheckered, faPeopleArrows, faQrcode, faCogs, faTrashCan,
+	faFlagCheckered, faQrcode, faCogs, faTrashCan,
 	faCircleInfo, faWarning, faBuildingColumns
 } from '@fortawesome/free-solid-svg-icons';
 import io from "socket.io-client";
@@ -29,7 +29,9 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscription: Subscription | undefined;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
+	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
+	@ViewChild('videoPlayerRT') videoPlayerRT!: ElementRef;
 	idGame = "";
 	public game: Game = new Game;
 	data = "";
@@ -40,7 +42,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ioURl: string = environment.API_HOST;
 	faTrashCan = faTrashCan;
 	faFlagCheckered = faFlagCheckered;
-	faPeopleArrows = faPeopleArrows;
 	faQrcode = faQrcode;
 	faCogs = faCogs;
 	faInfo = faCircleInfo;
@@ -147,7 +148,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	startVideos() {
 		this.videoPlayerL.nativeElement.play();
+		this.videoPlayerLT.nativeElement.play();
 		this.videoPlayerR.nativeElement.play();
+		this.videoPlayerRT.nativeElement.play();
 	}
 
 

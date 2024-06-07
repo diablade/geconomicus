@@ -260,14 +260,12 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes, deathPassMinute) 
 		});
 	timer.start();
 	// TODO: the automatic dead is coming ;
-	console.log("oulalalasetting ", roundMinutes, deathPassMinute, idGame);
 	let timerDeath = new Timer(idGame + "death", roundMinutes * minute, deathPassMinute * minute, {idGame},
 		(timer) => {
-			console.log("oulalala");
 			io().to(timer.data.idGame + C.MASTER).emit(C.DEATH_IS_COMING, {});
 		},
 		(timer) => {
-			console.log("oulalala EEEENNNND");
+			console.log("EEEENNNND");
 		});
 	timerDeath.start();
 

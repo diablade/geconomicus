@@ -424,7 +424,7 @@ export default {
 				arrayFilters: [{'elem._id': idPlayer}],
 				new: true
 			}).then((updatedGame) => {
-				io().to(idGame).emit(idGame + C.NEW_FEEDBACK);
+				io().to(idGame).emit(C.NEW_FEEDBACK);
 				res.status(200).json({"status": "feedback saved"});
 			}).catch((error) => {
 				log.error(error);
