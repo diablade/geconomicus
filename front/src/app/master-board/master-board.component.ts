@@ -20,6 +20,7 @@ import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-op
 import {SessionStorageService} from "../services/local-storage/session-storage.service";
 import {StorageKey} from "../services/local-storage/storage-key.const";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
+import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 
 @Component({
 	selector: 'app-master-board',
@@ -202,12 +203,23 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.dialog.open(InformationDialogComponent, {
-			data: {text: "Tour terminé !",sound:"../assets/audios/end.mp3"},
+			data: {text: "Tour terminé !", sound: "../assets/audios/end.mp3"},
 		});
 	}
 
 	stopRoundForce() {
-		this.backService.stopRound(this.idGame, this.game.round).subscribe();
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				message: "Le tour n'est pas terminé, es-tu certain de mettre fin au tour?",
+				labelBtn1: "Annuler",
+				labelBtn2: "OUI",
+			}
+		});
+		confDialogRef.afterClosed().subscribe(result => {
+			if (result && result == "btn2") {
+				this.backService.stopRound(this.idGame, this.game.round).subscribe();
+			}
+		});
 	}
 
 	doIntertour() {
