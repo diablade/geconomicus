@@ -20,4 +20,8 @@ export class CongratsDialogComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.audioPlayerRef.nativeElement.play();
   }
+
+	close(){
+		this.dialogRef.close();
+	}
 }
