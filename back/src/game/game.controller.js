@@ -11,42 +11,9 @@ import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import Timer from "../misc/Timer.js";
 import gameService from "./game.service.js";
-
-const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-const colors = ["red", "yellow", "green", "blue"];
+import decksService from "../misc/decks.service.js";
 
 const minute = 60 * 1000;
-
-
-async function generateOneCard(letter, color, weight, price) {
-	const comId = new mongoose.Types.ObjectId();
-	let card = constructor.card(letter, color, weight, price);
-	card._id = comId;
-	return card;
-}
-
-async function generateDecks(game) {
-	const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
-
-	let tableDecks = [[], [], [], []];
-	let lettersInGame = game.players.length;
-	if (!game.generateLettersAuto) {
-		lettersInGame = game.generateLettersInDeck;
-	}
-	// genere cartes pour les 4 lots
-	for (let weight = 0; weight <= 3; weight++) {
-		let deck = [];
-		for (let letter = 0; letter <= lettersInGame; letter++) {
-			// genere 3, 4 ou 5 cartes identiques
-			for (let j = 1; j <= game.generatedIdenticalCards; j++) {
-				const card = await generateOneCard(letters[letter], colors[weight], weight, prices[weight]);
-				deck.push(card);
-			}
-		}
-		tableDecks[weight] = _.shuffle(deck);
-	}
-	return tableDecks;
-}
 
 async function generateDU(game) {
 	const nbPlayer = _.partition(game.players, p => p.status === C.ALIVE).length;
@@ -101,7 +68,7 @@ async function distribDU(idGame) {
 }
 
 async function initGameDebt(game) {
-	let decks = await generateDecks(game);
+	let decks = await decksService.generateDecks(game);
 
 	for await (let player of game.players) {
 		// pull cards from the deck and distribute to the player
@@ -138,7 +105,7 @@ async function generateInequality(nbPlayer, pctRich, pctPoor) {
 }
 
 async function initGameJune(game) {
-	let decks = await generateDecks(game);
+	let decks = await decksService.generateDecks(game);
 
 	const classes = game.inequalityStart ? await generateInequality(game.players.length, game.pctRich, game.pctPoor) : [];
 
@@ -237,13 +204,6 @@ async function killPlayer(idGame, idPlayer) {
 	io().to(idPlayer).emit(C.DEAD);
 }
 
-async function deadPassingThrough(roundMinutes, minutesPassed) {
-	const modulo3 = roundMinutes / 3;
-	if (minutesPassed > modulo3) {
-		// killPlayer(idGame,idPlayer)
-	}
-}
-
 function startRoundMoneyLibre(idGame, gameRound, roundMinutes, deathPassMinute) {
 	let timer = new Timer(idGame, roundMinutes * minute, minute, {gameRound},
 		(timer) => {
@@ -251,11 +211,10 @@ function startRoundMoneyLibre(idGame, gameRound, roundMinutes, deathPassMinute) 
 			let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
 			let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
 			io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
-
 		},
 		(timer) => {
 			distribDU(timer.id).then(r =>
-				stopRound(timer.id, timer.data.gameRound)
+				gameService.stopRound(timer.id, timer.data.gameRound)
 			)
 		});
 	timer.start();
@@ -283,7 +242,7 @@ function startRoundMoneyDebt(idGame, gameRound, roundMinutes) {
 			// TODO: the automatic dead is coming ;
 		},
 		(timer) => {
-			stopRound(timer.id, timer.data.gameRound);
+			gameService.stopRound(timer.id, timer.data.gameRound);
 		});
 	timer.start();
 	gameTimerManager.addTimer(timer);

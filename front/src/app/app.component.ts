@@ -14,6 +14,7 @@ export class AppComponent implements OnInit{
 	}
 
 	public ngOnInit(): void {
+		this.lockScreenOrientation();
 		if (this.swUpdate.isEnabled) {
 			this.swUpdate.versionUpdates.pipe(
 				filter((evt: any): evt is VersionReadyEvent => evt.type === 'VERSION_READY'),
@@ -23,6 +24,14 @@ export class AppComponent implements OnInit{
 					window.location.reload();
 				}),
 			);
+		}
+	}
+
+	lockScreenOrientation() {
+		if (screen.orientation && screen.orientation.lock) {
+			screen.orientation.lock('portrait');
+		} else {
+			console.warn('Screen Orientation API not supported');
 		}
 	}
 }

@@ -45,12 +45,12 @@
 		</div>
 		<div class="w-50">
 			<div class="d-flex flex-row justify-content-between align-items-center">
-      <h2 class="fs-4 shadowed gecoFont">Prison</h2>
-			<mat-slide-toggle
-				[color]="'warn'"
-				[(ngModel)]="iWantToBreakFree">
-				libérer un joueur ?
-			</mat-slide-toggle>
+				<h2 class="fs-4 shadowed gecoFont">Prison</h2>
+				<mat-slide-toggle
+					[color]="'warn'"
+					[(ngModel)]="iWantToBreakFree">
+					libérer un joueur ?
+				</mat-slide-toggle>
 			</div>
 			<div class="prison">
 				<div *ngFor="let prisoner of prisoners">
@@ -79,6 +79,9 @@
 						(click)="showContract()"> Octroyer un crédit
 			<fa-icon [icon]="faSackDollar"></fa-icon>
 		</button>
+		<div class="ms-2">
+			(Si le joueur ne voit pas son crédit, rafraîchi sa page ! 😉 )
+		</div>
 	</div>
 	<div class="d-inline-flex" *ngFor="let credit of game.credits">
 		<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true

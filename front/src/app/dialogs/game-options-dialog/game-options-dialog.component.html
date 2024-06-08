@@ -33,13 +33,13 @@
 				⚠️ Attention ⚠️, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
 				sinon cliquez sur <span class="red"> "valeur par defaut"</span> en cas d'erreur !
 			</div>
+<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
+<!--				<mat-label>nombre de tours</mat-label>-->
+<!--				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">-->
+<!--			</mat-form-field>-->
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>nombre de tours</mat-label>
-				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">
-			</mat-form-field>
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>minutes par tour</mat-label>
-				<input type="number" min="1" matInput placeholder="(8mn par défaut)" [(ngModel)]="game.roundMinutes">
+				<mat-label>Durée du tour</mat-label>
+				<input type="number" min="1" matInput placeholder="(30mn par défaut)" [(ngModel)]="game.roundMinutes">
 			</mat-form-field>
 			<div class="d-inline-flex">
 				<div class="imgText">

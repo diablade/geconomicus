@@ -149,7 +149,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 
 			this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-				this.credits = data;
+				this.credits = data; //_.filter(data, c => c.status != C.CREDIT_DONE);
 				_.forEach(data, d => {
 					if (d.status == C.DEFAULT_CREDIT) {
 						this.defaultCredit = true;
@@ -226,8 +226,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.player.status = C.DEAD;
 			this.dialog.closeAll();
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
-					sound:"./assets/audios/marioDeath.mp3"
+				data: {
+					text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
+					sound: "./assets/audios/marioDeath.mp3"
 				},
 			});
 			this.cards = [];
@@ -364,7 +365,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showGift(card: Card) {
 		this.dialog.open(CongratsDialogComponent, {
-			data: {text: card.weight >2 ? "BRAVO !!! vous avez acquis la technologie (fin de partie)" : "Bravo ! vous obtenez une carte supérieur.", card: card},
+			data: {
+				text: card.weight > 2 ? "BRAVO !!! vous avez acquis la technologie (fin de partie)" : "Bravo ! vous obtenez une carte supérieur.",
+				card: card
+			},
 			width: '10px',
 			height: '10px'
 		});
