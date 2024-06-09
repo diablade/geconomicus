@@ -24,6 +24,11 @@ import {pl} from "date-fns/locale";
 
 Chart.register(zoomPlugin);
 
+interface LastPointValue {
+	key: string;
+	value: number;
+	label: string | undefined;
+};
 
 @Component({
 	selector: 'app-results',
@@ -323,7 +328,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				this.game = game;
 				this.events = game.events;
 				this.players = game.players;
-				this.podiumMoney= [];
+				this.podiumMoney = [];
 				if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
 					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
 				}
@@ -666,7 +671,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	}
 
 	getBestPlayers() {
-		let allLastPoints: { key: string, value: number, label: string | undefined }[] = [];
+		this.getBestPlayersMoney();
+		this.getBestPlayersRessources();
+		this.getBestPlayersTransactions();
+	}
+
+	getBestPlayersMoney() {
+		let allLastPoints: LastPointValue[] = [];
 		this.datasets.forEach((dataset, key) => {
 			if (dataset.label != this.massMonetaryName && dataset.label != this.bankName) {
 				const lastPointValue = dataset.data[dataset.data.length - 1];
@@ -677,11 +688,56 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				}
 			}
 		});
-		let mergedDeadPlayers: {
-			key: string,
-			value: number,
-			label: string | undefined
-		}[] = _.reduce(allLastPoints, (cumul: { key: string, value: number, label: string | undefined }[], current) => {
+		const merged = this.mergedReincarnatePlayers(allLastPoints)
+		const podiumMo = _.orderBy(merged, 'value', 'desc');
+
+		this.podiumMoney = _.map(podiumMo, p => {
+			let playerFound = _.find(this.players, {_id: p.key});
+			if (playerFound) {
+				return playerFound;
+			}
+			return new Player();
+		});
+	}
+
+	getBestPlayersRessources() {
+		let allLastPoints: LastPointValue[] = [];
+		this.datasetsResources.forEach((dataset, key) => {
+			if (dataset.label != this.massMonetaryName && dataset.label != this.bankName) {
+				const lastPointValue = dataset.data[dataset.data.length - 1];
+				// @ts-ignore
+				if (lastPointValue && lastPointValue.y) {
+					// @ts-ignore
+					this.finalResources += lastPointValue.y;
+					// @ts-ignore
+					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
+				}
+			}
+		});
+
+		const merged = this.mergedReincarnatePlayers(allLastPoints);
+		const podiumR = _.orderBy(merged, 'value', 'desc');
+
+		this.podiumRes = _.map(podiumR, p => {
+			let playerFound = _.find(this.players, {_id: p.key});
+			if (playerFound) {
+				return playerFound;
+			}
+			return new Player();
+		});
+	}
+
+	getBestPlayersTransactions() {
+		const transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
+		if (transactionEvents.length > 0) {
+			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
+			this.bestPlayerOnTransactionId = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+		}
+		this.bestPlayerOnTransaction = _.find(this.players, {_id: this.bestPlayerOnTransactionId});
+	}
+
+	mergedReincarnatePlayers(allLastPoints: LastPointValue[]): LastPointValue[] {
+		return _.reduce(allLastPoints, (cumul: LastPointValue[], current) => {
 			const currentPlayer = _.find(this.players, p => p._id === current.key);
 			if (currentPlayer && currentPlayer.reincarnateFromId) {
 				const cumulPlayer = _.find(cumul, p => p.key === currentPlayer.reincarnateFromId);
@@ -702,38 +758,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			}
 			return cumul;
 		}, []);
-
-		const podiumMo = _.orderBy(mergedDeadPlayers, 'value', 'desc');
-
-		this.podiumMoney = _.map(podiumMo, p => {
-			let playerFound = _.find(this.players, {_id: p.key});
-			if(playerFound){
-				return playerFound;
-			}
-			return new Player();
-		});
-
-
-		this.datasetsResources.forEach((dataset, key) => {
-			const lastPointValue = dataset.data[dataset.data.length - 1];
-			// @ts-ignore
-			if (lastPointValue && lastPointValue.y > this.maxLastPointRes) {
-				// @ts-ignore
-				this.finalResources += lastPointValue.y;
-				// @ts-ignore
-				this.maxLastPointRes = lastPointValue.y;
-				this.bestPlayerOnResId = key;
-			}
-		});
-
-		const transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
-		if (transactionEvents.length > 0) {
-			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
-			this.bestPlayerOnTransactionId = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-		}
-		// this.bestPlayerOnMoney = _.find(this.players, {_id: this.bestPlayerOnMoneyId});
-		this.bestPlayerOnRes = _.find(this.players, {_id: this.bestPlayerOnResId});
-		this.bestPlayerOnTransaction = _.find(this.players, {_id: this.bestPlayerOnTransactionId});
 	}
 
 	getSanitizedSvgFromString(svgString: string | undefined): SafeHtml {
