@@ -2,7 +2,7 @@
 	<div class="text-center">
 		<mat-form-field appearance="fill">
 			<mat-label>Prénom ou Pseudo</mat-label>
-			<input matInput [(ngModel)]="player.name">
+			<input matInput [disabled]="!!player.reincarnateFromId" [(ngModel)]="player.name">
 		</mat-form-field>
 	</div>
 	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>

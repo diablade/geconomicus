@@ -20,6 +20,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
+import {pl} from "date-fns/locale";
 
 Chart.register(zoomPlugin);
 
@@ -58,8 +59,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	C = C;
 	baseRadius = 2.1;
 	nbPlayer = 0;
-	bestPlayerOnMoney: Player | undefined;
-	bestPlayerOnMoneyId: string | undefined = "";
+
+	podiumMoney: Player[] = [];
+	podiumRes: Player[] = [];
+	podiumTransac: Player[] = [];
+
+	// bestPlayerOnMoney: Player | undefined;
+	// bestPlayerOnMoneyId: string | undefined = "";
 	bestPlayerOnRes: Player | undefined;
 	bestPlayerOnResId: string | undefined = "";
 	bestPlayerOnTransaction: Player | undefined;
@@ -317,6 +323,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				this.game = game;
 				this.events = game.events;
 				this.players = game.players;
+				this.podiumMoney= [];
 				if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
 					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
 				}
@@ -507,7 +514,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
 			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
-			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new"|"prev", value: number, relatif: boolean, beforePoint: boolean) => {
+			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
 				if (dataset) {
 					const previousTotal = dataset.total;
 					let newTotal = 0;
@@ -515,9 +522,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 						newTotal = previousTotal + value;
 					} else if (operator == "sub") {
 						newTotal = previousTotal - value;
-					} else if( operator == "prev") {
+					} else if (operator == "prev") {
 						newTotal = previousTotal;
-					}else{
+					} else {
 						newTotal = value;
 					}
 					if (beforePoint) {
@@ -599,7 +606,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					continue;
 				case C.DEAD:
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(receiverDatasetResources, event.date, "sub", deadRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "prev", 0, false, false);
 					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
 					continue;
@@ -659,23 +666,60 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	}
 
 	getBestPlayers() {
+		let allLastPoints: { key: string, value: number, label: string | undefined }[] = [];
 		this.datasets.forEach((dataset, key) => {
 			if (dataset.label != this.massMonetaryName && dataset.label != this.bankName) {
 				const lastPointValue = dataset.data[dataset.data.length - 1];
 				// @ts-ignore
-				if (lastPointValue && lastPointValue.y > this.maxLastPointMoney) {
+				if (lastPointValue && lastPointValue.y) {
 					// @ts-ignore
-					this.maxLastPointMoney = lastPointValue.y;
-					this.bestPlayerOnMoneyId = key;
+					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
 				}
 			}
 		});
+		let mergedDeadPlayers: {
+			key: string,
+			value: number,
+			label: string | undefined
+		}[] = _.reduce(allLastPoints, (cumul: { key: string, value: number, label: string | undefined }[], current) => {
+			const currentPlayer = _.find(this.players, p => p._id === current.key);
+			if (currentPlayer && currentPlayer.reincarnateFromId) {
+				const cumulPlayer = _.find(cumul, p => p.key === currentPlayer.reincarnateFromId);
+				if (cumulPlayer) {
+					cumulPlayer.value += current.value;
+				} else {
+					cumul.push({key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name});
+				}
+			} else if (currentPlayer && !currentPlayer.reincarnateFromId) {
+				// If current player is not reincarnate,
+				const cumulPlayer = _.find(cumul, p => p.key === currentPlayer._id);
+				if (cumulPlayer) {
+					// if value already exist update it
+					cumulPlayer.value += current.value;
+				} else {
+					cumul.push({...current});
+				}
+			}
+			return cumul;
+		}, []);
+
+		const podiumMo = _.orderBy(mergedDeadPlayers, 'value', 'desc');
+
+		this.podiumMoney = _.map(podiumMo, p => {
+			let playerFound = _.find(this.players, {_id: p.key});
+			if(playerFound){
+				return playerFound;
+			}
+			return new Player();
+		});
+
+
 		this.datasetsResources.forEach((dataset, key) => {
 			const lastPointValue = dataset.data[dataset.data.length - 1];
 			// @ts-ignore
-			this.finalResources += lastPointValue.y;
-			// @ts-ignore
 			if (lastPointValue && lastPointValue.y > this.maxLastPointRes) {
+				// @ts-ignore
+				this.finalResources += lastPointValue.y;
 				// @ts-ignore
 				this.maxLastPointRes = lastPointValue.y;
 				this.bestPlayerOnResId = key;
@@ -687,7 +731,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
 			this.bestPlayerOnTransactionId = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
 		}
-		this.bestPlayerOnMoney = _.find(this.players, {_id: this.bestPlayerOnMoneyId});
+		// this.bestPlayerOnMoney = _.find(this.players, {_id: this.bestPlayerOnMoneyId});
 		this.bestPlayerOnRes = _.find(this.players, {_id: this.bestPlayerOnResId});
 		this.bestPlayerOnTransaction = _.find(this.players, {_id: this.bestPlayerOnTransactionId});
 	}

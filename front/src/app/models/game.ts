@@ -72,6 +72,7 @@ export class Player {
 	boardColor = "";
 	status = "alive";
 	progressPrison = 0;
+	reincarnateFromId: string | undefined;
 }
 
 export class Game {

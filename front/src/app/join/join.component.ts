@@ -10,7 +10,7 @@ import {Subscription} from "rxjs";
 })
 export class JoinComponent implements OnInit, OnDestroy {
 	idGame = "";
-	reincarnate: string | undefined;
+	fromId: string | undefined;
 	name = "";
 	private subscription: Subscription | undefined;
 
@@ -20,8 +20,9 @@ export class JoinComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
-			this.reincarnate = params['reincarnate'];
-			if (this.reincarnate) {
+			this.fromId = params['fromId'];
+			if (this.fromId) {
+				this.name = params['name'];
 				let audioAngel = new Audio("./assets/audios/angel.mp3");
 				audioAngel.load();
 				audioAngel.play();
@@ -36,20 +37,20 @@ export class JoinComponent implements OnInit, OnDestroy {
 	}
 
 	join() {
-		this.backService.join(this.idGame, this.name, this.reincarnate).subscribe(idPlayer => {
+		this.backService.join(this.idGame, this.name).subscribe(idPlayer => {
 			this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
 		});
 	}
 
 	joinReincarnate() {
-		this.backService.joinReincarnate(this.idGame, this.name).subscribe(idPlayer => {
+		this.backService.joinReincarnate(this.idGame, this.name, this.fromId).subscribe(idPlayer => {
 			this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
 		});
 	}
-
-	joinInGame() {
-		this.backService.joinInGame(this.idGame, this.name).subscribe(idPlayer => {
-			this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
-		});
-	}
+	//
+	// joinInGame() {
+	// 	this.backService.joinInGame(this.idGame, this.name).subscribe(idPlayer => {
+	// 		this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
+	// 	});
+	// }
 }

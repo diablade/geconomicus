@@ -1,37 +1,41 @@
 .results {
-  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 }
 
 .geco {
-  width: 200px;
+	width: 200px;
 }
 
 .gunyResults {
-  height: 100px;
+	height: 100px;
 }
 
 .events {
-  min-width: 250px;
-  height: 100%;
-  overflow: auto;
-  padding: 10px;
+	min-width: 250px;
+	height: 100%;
+	overflow: auto;
+	padding: 10px;
 
 }
 
 .eventsSmall {
-  width: 100%;
-  min-height: 600px;
-  overflow: auto;
+	width: 100%;
+	min-height: 600px;
+	overflow: auto;
 }
 
 .graph {
-  height: 500px;
-  border-radius: 15px;
-  padding: 0.5rem !important
+	height: 500px;
+	border-radius: 15px;
+	padding: 0.5rem !important
 }
 
-.player-frame{
+.player-frame {
 	width: 100px;
+
+	&-second-third {
+		width: 50px;
+	}
 }

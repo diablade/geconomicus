@@ -13,7 +13,6 @@ import * as _ from 'lodash-es';
 import {faCamera, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
-import {LoadingService} from "../services/loading.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
@@ -402,7 +401,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	resurrection() {
-		this.router.navigate(['game', this.idGame, 'join', 'true']);
+		this.router.navigate(['game', this.idGame, 'join', this.player._id,this.player.name]);
 	}
 
 	formatNewCards(newCards: Card[]) {

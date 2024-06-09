@@ -43,11 +43,10 @@ export class BackService {
 	/**
 	 * join party
 	 */
-	public join(idGame: string, name: string, reincarnate: string | undefined): Observable<any> {
+	public join(idGame: string, name: string): Observable<any> {
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN, {
 				idGame: idGame,
 				name: name,
-				reincarnate: reincarnate
 			})
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, ''))
@@ -57,8 +56,8 @@ export class BackService {
 	/**
 	 * join reincarnate party
 	 */
-	public joinReincarnate(idGame: string, name: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame: idGame, name: name})
+	public joinReincarnate(idGame: string, name: string, fromId: string | undefined): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame, name, fromId})
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à rejoindre"))
 			);

@@ -6,6 +6,7 @@ import {io} from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 import GameController from "../game/game.controller.js";
 import gameService from "../game/game.service.js";
+import {body} from "express-validator";
 
 export default {
 	join: async (req, res, next) => {
@@ -63,6 +64,7 @@ export default {
 	joinReincarnate: async (req, res, next) => {
 		const id = req.body.idGame;
 		const name = req.body.name;
+		const from = req.body.fromId;
 		if (!id && !name) {
 			next({
 				status: 400,
@@ -80,7 +82,8 @@ export default {
 				status: C.ALIVE,
 				earringsProbability: 100,
 				glassesProbability: 100,
-				featuresProbability: 100
+				featuresProbability: 100,
+				reincarnateFromId: from,
 			};
 			GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}}, {new: true})
 				.then(async updatedGame => {
