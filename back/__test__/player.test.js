@@ -18,7 +18,7 @@ let updatedPlayer = {
     idGame: "",
     name: "player-name-updated",
     image: "",
-    eye: 0,
+    eyes: 0,
     eyebrows: 1,
     earrings: 2,
     features: 3,
@@ -106,7 +106,7 @@ describe("PLAYER controller tests", () => {
             expect(res.body.player).toBeTruthy();
             expect(res.body.player.name).toEqual(updatedPlayer.name);
             expect(res.body.player.image).toEqual(updatedPlayer.image);
-            expect(res.body.player.eye).toEqual(updatedPlayer.eye);
+            expect(res.body.player.eyes).toEqual(updatedPlayer.eyes);
             expect(res.body.player.eyebrows).toEqual(updatedPlayer.eyebrows);
             expect(res.body.player.earrings).toEqual(updatedPlayer.earrings);
             expect(res.body.player.features).toEqual(updatedPlayer.features);

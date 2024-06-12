@@ -139,7 +139,7 @@ export default {
 					$set: {
 						'players.$.name': player.name,
 						'players.$.image': player.image,
-						'players.$.eye': player.eye,
+						'players.$.eyes': player.eyes,
 						'players.$.eyebrows': player.eyebrows,
 						'players.$.earrings': player.earrings,
 						'players.$.features': player.features,

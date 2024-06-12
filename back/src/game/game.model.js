@@ -49,7 +49,7 @@ let Player = {
 	coins: Number,
 	cards: [Card],
 	survey: Feedback,
-	eye: Number,
+	eyes: Number,
 	earrings: Number,
 	eyebrows: Number,
 	features: Number,

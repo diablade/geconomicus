@@ -56,7 +56,7 @@ export class Player {
 	coins = 0;
 	cards: Card[] = [];
 	survey: Feedback | undefined;
-	eye = 3;
+	eyes = 3;
 	earrings = 0;
 	eyebrows = 0;
 	features = 0;

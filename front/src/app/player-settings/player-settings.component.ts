@@ -12,7 +12,7 @@ import {faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/f
 	templateUrl: './player-settings.component.html',
 	styleUrls: ['./player-settings.component.scss']
 })
-export class PlayerSettingsComponent implements OnInit , OnDestroy{
+export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	idGame: string | undefined;
 	idPlayer: string | undefined;
@@ -67,10 +67,14 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 	}
 
 	changeEyes(increment: boolean) {
-		if (increment && this.player.eye < this.properties.eyes.default.length - 1) {
-			this.player.eye++;
-		} else if (!increment && this.player.eye > 0) {
-			this.player.eye--;
+		if (increment && this.player.eyes < this.properties.eyes.default.length - 1) {
+			this.player.eyes++;
+		} else if (!increment && this.player.eyes > 0) {
+			this.player.eyes--;
+		} else if (increment && this.player.eyes == this.properties.eyes.default.length - 1) {
+			this.player.eyes = 0;
+		} else if (!increment && this.player.eyes == 0) {
+			this.player.eyes = this.properties.eyes.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -80,6 +84,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.earrings++;
 		} else if (!increment && this.player.earrings > -1) {
 			this.player.earrings--;
+		} else if (increment && this.player.earrings == this.properties.earrings.default.length - 1) {
+			this.player.earrings = -1;
+		} else if (!increment && this.player.earrings == -1) {
+			this.player.earrings = this.properties.earrings.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -89,6 +97,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.eyebrows++;
 		} else if (!increment && this.player.eyebrows > 0) {
 			this.player.eyebrows--;
+		} else if (increment && this.player.eyebrows == this.properties.eyebrows.default.length - 1) {
+			this.player.eyebrows = 0;
+		} else if (!increment && this.player.eyebrows == 0) {
+			this.player.eyebrows = this.properties.eyebrows.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -98,6 +110,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.features++;
 		} else if (!increment && this.player.features > -1) {
 			this.player.features--;
+		} else if (increment && this.player.features == this.properties.features.default.length - 1) {
+			this.player.features = -1;
+		} else if (!increment && this.player.features == -1) {
+			this.player.features = this.properties.features.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -107,6 +123,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.hair++;
 		} else if (!increment && this.player.hair > 0) {
 			this.player.hair--;
+		} else if (increment && this.player.hair == this.properties.hair.default.length - 1) {
+			this.player.hair = 0;
+		} else if (!increment && this.player.hair == 0) {
+			this.player.hair = this.properties.hair.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -116,6 +136,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.glasses++;
 		} else if (!increment && this.player.glasses > -1) {
 			this.player.glasses--;
+		} else if (increment && this.player.glasses == this.properties.glasses.default.length - 1) {
+			this.player.glasses = -1;
+		} else if (!increment && this.player.glasses == -1) {
+			this.player.glasses = this.properties.glasses.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -125,6 +149,10 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 			this.player.mouth++;
 		} else if (!increment && this.player.mouth > 0) {
 			this.player.mouth--;
+		} else if (increment && this.player.mouth == this.properties.mouth.default.length - 1) {
+			this.player.mouth = 0;
+		} else if (!increment && this.player.mouth == 0) {
+			this.player.mouth = this.properties.mouth.default.length - 1;
 		}
 		this.updateSvg();
 	}
@@ -145,7 +173,7 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 		this.options.mouth = [this.properties.mouth.default[this.player.mouth]];
 		this.options.hair = [this.properties.hair.default[this.player.hair]];
 		this.options.eyebrows = [this.properties.eyebrows.default[this.player.eyebrows]];
-		this.options.eyes = [this.properties.eyes.default[this.player.eye]];
+		this.options.eyes = [this.properties.eyes.default[this.player.eyes]];
 		this.options.earrings = [this.properties.earrings.default[this.player.earrings]];
 		this.options.glasses = [this.properties.glasses.default[this.player.glasses]];
 		this.options.features = [this.properties.features.default[this.player.features]];
@@ -178,13 +206,13 @@ export class PlayerSettingsComponent implements OnInit , OnDestroy{
 	}
 
 	randomize() {
-		this.player.eye = this.getRandomInt(1, this.properties.eyes.default.length);
-		this.player.earrings = this.getRandomInt(0, this.properties.earrings.default.length);
-		this.player.eyebrows = this.getRandomInt(1, this.properties.eyebrows.default.length);
-		this.player.features = this.getRandomInt(1, this.properties.features.default.length);
-		this.player.hair = this.getRandomInt(1, this.properties.hair.default.length);
-		this.player.glasses = this.getRandomInt(1, this.properties.glasses.default.length);
-		this.player.mouth = this.getRandomInt(1, this.properties.mouth.default.length);
+		this.player.earrings = this.getRandomInt(-1, this.properties.earrings.default.length-1);
+		this.player.glasses = this.getRandomInt(-1, this.properties.glasses.default.length-1);
+		this.player.features = this.getRandomInt(-1, this.properties.features.default.length-1);
+		this.player.eyes = this.getRandomInt(0, this.properties.eyes.default.length-1);
+		this.player.eyebrows = this.getRandomInt(0, this.properties.eyebrows.default.length-1);
+		this.player.hair = this.getRandomInt(0, this.properties.hair.default.length-1);
+		this.player.mouth = this.getRandomInt(0, this.properties.mouth.default.length-1);
 		this.hairColor = this.hairPalette[this.getRandomInt(0, 13)];
 		this.skin = this.skinPalette[this.getRandomInt(0, 3)];
 		this.player.skinColor = this.skin.replace("#", "");
