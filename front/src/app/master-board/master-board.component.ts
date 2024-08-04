@@ -84,6 +84,9 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
+			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
+				this.resetGame();
+			}
 			this.socket = io(this.ioURl, {
 				query: {
 					idPlayer: this.idGame + 'master',
@@ -236,7 +239,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	resetGame() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess("RESET GAME");
-			location.reload();
+			this.router.navigate(['game', this.idGame, 'master']);
 		});
 	}
 

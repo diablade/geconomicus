@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import {constructor} from "../game/game.model.js";
+import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
+import log from "../../config/log.js";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];
@@ -35,5 +36,21 @@ export default {
 			tableDecks[weight] = _.shuffle(deck);
 		}
 		return tableDecks;
+	},
+	async pushCardsInDecks(idGame, cards){
+		const groupedCards = _.groupBy(_.sortBy(cards, 'weight'), 'weight');
+		await GameModel.updateOne(
+			{_id: idGame},
+			{
+				$push: {
+					[`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
+					[`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
+					[`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
+					[`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
+				},
+			}
+		).catch(err => {
+			log.error('cards are not back in decks, error', err);
+		});
 	}
 }

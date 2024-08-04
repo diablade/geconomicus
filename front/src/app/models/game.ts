@@ -87,7 +87,7 @@ export class Game {
 	events: EventGeco[] = [];
 
 	//option general
-	devMode = true;
+	devMode = false;
 	priceWeight1 = 3;
 	priceWeight2 = 6;
 	priceWeight3 = 9;
@@ -103,7 +103,7 @@ export class Game {
 	roundMax = 1;
 	roundMinutes = 40;
 	autoDeath = true;
-	deathPassMinute = 4;
+	deathPassTimer = 4;
 
 	//option june
 	currentDU = 0;

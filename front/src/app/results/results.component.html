@@ -35,9 +35,9 @@
 				<div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
 				<div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
 				</div>
-				<div><span class="fw-bold">Ressources initial : </span> {{ getInitialResourcesInDU(initialResources) }} (D.U eq)
+				<div><span class="fw-bold">Ressources initial : </span> {{ getResourcesInDU(initialResources) }} (D.U eq)
 				</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ getInitialResourcesInDU(finalResources) }} (D.U eq)
+				<div><span class="fw-bold">Ressources final : </span>{{ getResourcesInDU(finalResources) }} (D.U eq) (initial x{{finalResources/initialResources| number:'1.2-2' }})
 				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
@@ -47,7 +47,7 @@
 				<div><span class="fw-bold">Dettes initial : </span> {{ initialDebts }} €</div>
 				<div><span class="fw-bold">Dettes final : </span>{{ getDebts() }} €</div>
 				<div><span class="fw-bold">Ressources initial : </span> {{ initialResources }} (€)</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€)</div>
+				<div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€) (initial x{{finalResources/initialResources| number:'1.2-2' }})</div>
 				<div><span class="fw-bold">Interets récupéré par la banque : </span>{{ game?.bankInterestEarned }} €</div>
 			</div>
 			<div class="col-sm-12 col-md-4">

@@ -15,6 +15,7 @@ const routes: Routes = [
     {path: 'results/:idGame', component: ResultsComponent},
     {path: 'games', component: HistoryGamesComponent},
     {path: 'game/:idGame/master', component: MasterBoardComponent},
+    {path: 'game/:idGame/reset', component: MasterBoardComponent},
     {path: 'game/:idGame/bank', component: BankBoardComponent},
     {path: 'game/:idGame/join/:fromId/:name', component: JoinComponent},
     {path: 'game/:idGame/join', component: JoinComponent},

@@ -62,8 +62,8 @@ describe("GAME controller test", () => {
 
 					surveyEnabled: true,
 					devMode: false,
-					autoDeath: false,
-					deathPassMinute: 4,
+					autoDeath: true,
+					deathPassTimer: 4,
 					priceWeight1: 3,
 					priceWeight2: 6,
 					priceWeight3: 9,

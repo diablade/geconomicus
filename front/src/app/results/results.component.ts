@@ -764,7 +764,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		return svgString ? this.sanitizer.bypassSecurityTrustHtml(svgString) : "";
 	}
 
-	getInitialResourcesInDU(resources: number) {
+	getResourcesInDU(resources: number) {
 		if ((this.game?.priceWeight1)) {
 			return resources / this.game.priceWeight1;
 		} else {

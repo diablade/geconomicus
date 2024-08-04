@@ -33,10 +33,10 @@
 				⚠️ Attention ⚠️, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
 				sinon cliquez sur <span class="red"> "valeur par defaut"</span> en cas d'erreur !
 			</div>
-<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
-<!--				<mat-label>nombre de tours</mat-label>-->
-<!--				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">-->
-<!--			</mat-form-field>-->
+			<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
+			<!--				<mat-label>nombre de tours</mat-label>-->
+			<!--				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">-->
+			<!--			</mat-form-field>-->
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 				<mat-label>Durée du tour</mat-label>
 				<input type="number" min="1" matInput placeholder="(30mn par défaut)" [(ngModel)]="game.roundMinutes">
@@ -80,13 +80,14 @@
 				</mat-form-field>
 			</div>
 			<div class="d-flex flex-column">
-				<mat-checkbox class="" value="false" [disabled]="true">
-					morts automatique (en development)
+				<mat-checkbox class="" [(ngModel)]="game.autoDeath">
+					morts automatique
 				</mat-checkbox>
-				Passage de la mort toutes les
+			</div>
+			<div>
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>en minutes:</mat-label>
-					<input type="number" min="0" matInput placeholder="(4 par défaut)" [(ngModel)]="game.deathPassMinute">
+					<mat-label>Passage de la mort toutes les, en minutes:</mat-label>
+					<input type="number" min="0" matInput placeholder="(4 par défaut)" [(ngModel)]="game.deathPassTimer">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">

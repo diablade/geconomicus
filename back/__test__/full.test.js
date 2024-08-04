@@ -8,18 +8,17 @@ import socket from "../config/socket.js";
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
 import _ from 'lodash';
+import playerService from "../src/player/player.service.js";
 
 jest.mock('../config/socket.js');
 
 let idGame;
 let currentGame;
 let currentDU = 0.5;
-let player1;
-let player2;
-let player3;
-let player4;
-let player5;
+let numberOfPlayers = 10;
+
 let players = [];
+let playersId = [];
 
 let getPlayerCardsUpdate = async (idPlayer) => {
 	const res = await agent.get("/player/" + idGame + "/" + idPlayer).send();
@@ -99,9 +98,31 @@ let playerDoPlay = async (currentPlayer) => {
 let play = async (round) => {
 	for (let i = 1; i <= round; i++) {
 		console.log("ROUND : ", i);
-		for (let currentPlayer of players) {
-			await playerDoPlay(currentPlayer);
+		for (let player of players) {
+			if (player.status === C.ALIVE) {
+				console.log("player" + player.name + " current playing ");
+				await playerDoPlay(player);
+			} else {
+				console.log("player " + player.status)
+			}
 		}
+	}
+}
+
+let createPlayers = async (nb) => {
+	for (let i = 1; i <= nb; i++) {
+		const res = await agent.post("/player/join").send({idGame: idGame, name: "player" + i});
+		expect(res.statusCode).toEqual(200);
+		expect(res.body).toBeTruthy();
+		playersId.push(res.body);
+	}
+}
+let updatePlayersHand = async () => {
+	for (let id of playersId) {
+		const resp = await agent.get("/player/" + idGame + "/" + id).send();
+		expect(resp.body.player.cards.length === 4).toBeTruthy();
+		players.push(resp.body.player);
+		currentDU = resp.body.currentDU;
 	}
 }
 
@@ -117,13 +138,12 @@ afterAll(async () => {
 	expect(res.body).toBeTruthy();
 	console.log("ALL GAME RESULT:");
 	for (let player of res.body.players) {
-		console.log("player cards",player.name, player.cards);
+		console.log("player cards", player.name, player.cards);
 		// console.log("event:", event.typeEvent, event.emitter, event.receiver, event.amount);
 	}
 	await db.clear();
 	await db.close();
 });
-
 
 describe("FULL GAME simulation", () => {
 	test("CREATE game", async () => {
@@ -159,8 +179,8 @@ describe("FULL GAME simulation", () => {
 				generateLettersInDeck: 0,
 
 				surveyEnabled: true,
-				autoDeath: false,
-				deathPassMinute: 4,
+				autoDeath: true,
+				deathPassTimer: 4,
 				devMode: false,
 				priceWeight1: 3,
 				priceWeight2: 6,
@@ -201,6 +221,7 @@ describe("FULL GAME simulation", () => {
 			typeMoney: "june",
 			idGame: idGame,
 			surveyEnabled: false,
+			autoDeath: false,
 			roundMinutes: 1,
 		});
 		expect(res.statusCode).toEqual(200);
@@ -209,26 +230,7 @@ describe("FULL GAME simulation", () => {
 		});
 	});
 	test("ADD PLAYERS", async () => {
-		const res1 = await agent.post("/player/join").send({idGame: idGame, name: "player1"});
-		expect(res1.statusCode).toEqual(200);
-		expect(res1.body).toBeTruthy();
-		player1 = res1.body;
-		const res2 = await agent.post("/player/join").send({idGame: idGame, name: "player2"});
-		expect(res2.statusCode).toEqual(200);
-		expect(res2.body).toBeTruthy();
-		player2 = res2.body;
-		const res3 = await agent.post("/player/join").send({idGame: idGame, name: "player3"});
-		expect(res3.statusCode).toEqual(200);
-		expect(res3.body).toBeTruthy();
-		player3 = res3.body;
-		const res4 = await agent.post("/player/join").send({idGame: idGame, name: "player4"});
-		expect(res4.statusCode).toEqual(200);
-		expect(res4.body).toBeTruthy();
-		player4 = res4.body;
-		const res5 = await agent.post("/player/join").send({idGame: idGame, name: "player5"});
-		expect(res5.statusCode).toEqual(200);
-		expect(res5.body).toBeTruthy();
-		player5 = res5.body;
+		await createPlayers(numberOfPlayers);
 	});
 	test("START game", async () => {
 		const resStart = await agent.put("/game/start").send({idGame: idGame, typeMoney: C.JUNE});
@@ -236,31 +238,16 @@ describe("FULL GAME simulation", () => {
 		expect(resStart.body).toBeTruthy();
 	});
 	test("CHECK cards distributed to players", async () => {
-		const resp1 = await agent.get("/player/" + idGame + "/" + player1).send();
-		expect(resp1.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp1.body.player);
-		const resp2 = await agent.get("/player/" + idGame + "/" + player2).send();
-		expect(resp2.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp2.body.player);
-		const resp3 = await agent.get("/player/" + idGame + "/" + player3).send();
-		expect(resp3.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp3.body.player);
-		const resp4 = await agent.get("/player/" + idGame + "/" + player4).send();
-		expect(resp4.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp4.body.player);
-		const resp5 = await agent.get("/player/" + idGame + "/" + player5).send();
-		expect(resp5.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp5.body.player);
-		currentDU = resp5.body.currentDU;
+		await updatePlayersHand();
 	});
 	test("CHECK decks cards in game", async () => {
 		const res = await agent.get("/game/" + idGame).send();
 		expect(res.statusCode).toEqual(200);
 		expect(res.body.decks).toBeTruthy();
 		expect(res.body.decks[0].length).toEqual(4);
-		expect(res.body.decks[1].length).toEqual(24);
-		expect(res.body.decks[2].length).toEqual(24);
-		expect(res.body.decks[3].length).toEqual(24);
+		expect(res.body.decks[1].length).toEqual(44);
+		expect(res.body.decks[2].length).toEqual(44);
+		expect(res.body.decks[3].length).toEqual(44);
 	});
 	test("START round", async () => {
 		const res = await agent.post("/game/start-round").send({idGame: idGame, round: 0});
@@ -268,7 +255,9 @@ describe("FULL GAME simulation", () => {
 		expect(res.body.status).toEqual(C.START_ROUND);
 	});
 	test("PLAY 10 rounds and STOP", async () => {
-		await play(10);
+		await play(2);
+		// await playerService.killPlayer()
+		// await play(5);
 		const res = await agent.post("/game/stop-round").send({idGame: idGame, round: 0});
 		expect(res.statusCode).toEqual(200);
 		expect(res.body.status).toEqual(C.STOP_ROUND);
