@@ -61,6 +61,32 @@ export default {
 	},
 	joinInGame: async (req, res, next) => {
 	},
+	isReincarnated: async (req, res, next) => {
+		const idGame = req.body.idGame;
+		const from = req.body.fromId;
+		if (!idGame && !from) {
+			next({
+				status: 400,
+				message: "bad request"
+			});
+		} else {
+			GameModel.findById(idGame)
+				.then(game => {
+					let players = game.players;
+					let player = _.find(players, p => p.reincarnateFromId == from);
+					if (player) {
+						res.status(200).json({playerReIncarnated: player._id});
+					} else {
+						res.status(200).json({playerReIncarnated: null});
+					}
+				})
+				.catch(error => {
+						log.error(error);
+						next({status: 404, message: "game Not found"});
+					}
+				);
+		}
+	},
 	joinReincarnate: async (req, res, next) => {
 		const id = req.body.idGame;
 		const name = req.body.name;
@@ -133,6 +159,26 @@ export default {
 				message: "bad request"
 			});
 		} else {
+			// Step 1: Find the document containing the player
+			const game = await GameModel.findOne({_id: idGame, 'players._id': idPlayer});
+			const existingPlayer = game.players.find(p => p._id.toString() === idPlayer);
+
+			if (!game || !existingPlayer) {
+				next({
+					status: 404,
+					message: "Player not found"
+				});
+				return;
+			}
+
+			// Step 2: Check the player's status or any other property
+			if (existingPlayer.status === C.DEAD) { // Adjust this check as needed
+				next({
+					status: 400,
+					message: "Player is DEAD and cannot be updated"
+				});
+				return;
+			}
 			await GameModel.findOneAndUpdate(
 				{_id: idGame, 'players._id': idPlayer},
 				{
@@ -163,7 +209,6 @@ export default {
 						status: 404,
 						message: "Not found"
 					});
-
 				});
 		}
 	},
@@ -267,7 +312,7 @@ export default {
 										}
 									);
 									if (newCardSup.weight > 2) {
-										gameService.stopRound(idGame,updatedGame.round);
+										gameService.stopRound(idGame, updatedGame.round);
 									}
 									io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
 									io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);

@@ -19,6 +19,15 @@
 		</div>
 	</div>
 </div>
+<div class="blocked" *ngIf="player.status === C.DEAD">
+	<div class="default-credit d-flex flex-column">
+		<div class="shadowed gecoFont fs-3">Cette vie est passé 🪦</div>
+		<button (click)="tryReincarnate()" mat-raised-button
+						color="accent">
+			Allez vers votre seconde vie !
+		</button>
+	</div>
+</div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
 		<div class="symbol">
@@ -38,9 +47,6 @@
 		<div class="user d-flex">
 			<div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
 		</div>
-	</div>
-	<div class="d-flex flex-row w-100" *ngIf="typeMoney===C.DEBT">
-
 	</div>
 	<div class="" *ngIf="statusGame!==C.PLAYING">
 		<div

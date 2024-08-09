@@ -64,6 +64,16 @@ export class BackService {
 	}
 
 	/**
+	 * is already reincarnated ?
+	 */
+	public isReincarnated(idGame: string | undefined, fromId: string | undefined): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.IS_REINCARNATED, {idGame, fromId})
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "impossible à réincarner"))
+			);
+	}
+
+	/**
 	 * join in game party
 	 */
 	public joinInGame(idGame: string, name: string): Observable<any> {

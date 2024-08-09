@@ -7,6 +7,7 @@ router.get('/:idGame/:idPlayer', player.getById);
 router.post('/join', player.join);
 router.post('/joinInGame', player.joinInGame);
 router.post('/joinReincarnate', player.joinReincarnate);
+router.post('/isReincarnated', player.isReincarnated);
 router.post('/update', player.update);
 router.post('/transaction', player.transaction);
 router.post('/produce', player.produce);

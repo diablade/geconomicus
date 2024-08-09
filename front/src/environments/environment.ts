@@ -6,13 +6,14 @@ export const environment = {
 
 	PLAYER: {
 		JOIN: 'player/join/',
+		IS_REINCARNATED: 'player/isReincarnated/',
 		JOIN_REINCARNATE: 'player/joinReincarnate/',
 		JOIN_IN_GAME: 'player/joinInGame/',
 		UPDATE: 'player/update',
 		GET: 'player/',
 		PRODUCE: 'player/produce',
 		TRANSACTION: 'player/transaction',
-		SURVEY: 'player/survey/'
+		SURVEY: 'player/survey/',
 	},
 	BANK: {
 		GET_CREDITS: "bank/get-credits/",
@@ -22,7 +23,6 @@ export const environment = {
 		PAY_INTEREST: 'bank/pay-interest',
 		SEIZURE: 'bank/seizure',
 		BREAK_FREE: "bank/prison-break"
-
 	},
 	GAME: {
 		GET: 'game/',

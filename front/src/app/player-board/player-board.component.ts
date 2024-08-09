@@ -401,7 +401,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	resurrection() {
-		this.router.navigate(['game', this.idGame, 'join', this.player._id,this.player.name]);
+		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
 	}
 
 	formatNewCards(newCards: Card[]) {
@@ -579,5 +579,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.requestingWhenCreditEnds(credit, false);
 			}
 		}
+	}
+
+	tryReincarnate() {
+		this.backService.isReincarnated(this.idGame, this.idPlayer).subscribe(data => {
+			if (data?.playerReIncarnated) {
+				this.router.navigate(['game', this.idGame, 'player', data.playerReIncarnated]);
+			} else {
+				this.resurrection();
+			}
+		})
 	}
 }

@@ -6,6 +6,7 @@ export const environment = {
 
 	PLAYER: {
 		JOIN: 'player/join/',
+		IS_REINCARNATED: 'player/isReincarnated/',
 		JOIN_REINCARNATE: 'player/joinReincarnate/',
 		JOIN_IN_GAME: 'player/joinInGame/',
 		UPDATE: 'player/update',
