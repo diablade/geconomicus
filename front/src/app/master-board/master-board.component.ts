@@ -85,7 +85,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
-				this.resetGame();
+				this.resetGameFromUrl();
 			}
 			this.socket = io(this.ioURl, {
 				query: {
@@ -236,7 +236,13 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	resetGame() {
+	resetGameFromBtn() {
+		this.backService.resetGame(this.idGame).subscribe(() => {
+			this.snackbarService.showSuccess("RESET GAME");
+			window.location.reload();
+		});
+	}
+	resetGameFromUrl() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess("RESET GAME");
 			this.router.navigate(['game', this.idGame, 'master']);
@@ -280,7 +286,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe(results => {
 			if (results === "reset") {
-				this.resetGame();
+				this.resetGameFromBtn();
 			} else {
 				this.backService.updateGame(this.idGame, results).subscribe(() => {
 					this.snackbarService.showSuccess("Option sauvegardé !");

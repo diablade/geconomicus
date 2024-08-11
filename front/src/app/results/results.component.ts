@@ -56,7 +56,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	initialDebts = 0;
 	initialResources = 0;
 	finalResources = 0;
-	reincarnates = 0;
 	startGameDate: Date | undefined;
 	stopGameDate: Date | undefined;
 	roundStarted = false;
@@ -64,19 +63,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	C = C;
 	baseRadius = 2.1;
 	nbPlayer = 0;
+	playersAtStart = 0;
+	deads = 0;
 
 	podiumMoney: Player[] = [];
 	podiumRes: Player[] = [];
 	podiumTransac: Player[] = [];
 
-	// bestPlayerOnMoney: Player | undefined;
-	// bestPlayerOnMoneyId: string | undefined = "";
-	bestPlayerOnRes: Player | undefined;
-	bestPlayerOnResId: string | undefined = "";
 	bestPlayerOnTransaction: Player | undefined;
 	bestPlayerOnTransactionId: string | undefined = "";
-	maxLastPointMoney = 0;
-	maxLastPointRes = 0;
 
 
 	durationGame() {
@@ -554,6 +549,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			}
 
 			switch (event.typeEvent) {
+				case C.NEW_PLAYER:
+					this.playersAtStart++;
+					continue;
 				case C.START_GAME:
 					this.startGameDate = event.date;
 					continue;
@@ -610,6 +608,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 					continue;
 				case C.DEAD:
+					this.deads++;
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
 					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "prev", 0, false, false);

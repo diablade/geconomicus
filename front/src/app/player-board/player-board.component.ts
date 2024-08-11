@@ -20,6 +20,7 @@ import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialo
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
+import {ShortCode} from "../models/shortCode";
 
 
 @Component({
@@ -105,6 +106,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	prisonProgress = 0;
 	minutesPrison = 0;
 	secondsPrison = 0;
+	shortCodes: ShortCode[] = [];
 
 	constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private _snackBar: MatSnackBar) {
 	}
@@ -590,4 +592,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		})
 	}
+
+	// createShortCode(idCard) {
+	// this.shortCodes.push(generateUniqueShortCode(this.shortCodes),);
+	// }
 }

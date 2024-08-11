@@ -6,6 +6,7 @@ const EVENT = 'event';
 const MASTER = 'master';
 const BANK = 'bank';
 
+const CREATE_GAME = "create-game";
 const NEW_PLAYER = "new-player";
 const UPDATED_PLAYER = "updated-player";
 const NEW_CREDIT = "new-credit";
@@ -56,6 +57,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		MASTER: MASTER,
 		BANK: BANK,
 
+		CREATE_GAME: CREATE_GAME,
 		NEW_PLAYER: NEW_PLAYER,
 		UPDATED_PLAYER: UPDATED_PLAYER,
 		DEAD: DEAD,

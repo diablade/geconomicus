@@ -10,7 +10,6 @@ import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
-import decksService from "../misc/decks.service.js";
 
 export default {
 	create: async (req, res, next) => {
@@ -21,13 +20,15 @@ export default {
 			});
 		} else {
 			let body = req.body;
+			let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
+
 			const newGame = new GameModel({
 				name: req.body.name ? req.body.name : "sans nom",
 				animator: req.body.animator ? req.body.animator : "sans animateur",
 				location: req.body.location ? req.body.location : "sans lieu",
 				status: C.OPEN,
 				typeMoney: "june",
-				events: [],
+				events: [createEvent],
 				decks: [],
 				players: [],
 				amountCardsForProd: 4,
@@ -430,16 +431,22 @@ export default {
 			gameTimerManager.stopAndRemoveTimer(idGame);
 			gameTimerManager.stopAndRemoveTimer(idGame + "death");
 			BankController.resetIdGameDebtTimers(idGame);
+			const game = await GameModel.findById(idGame);
+			const events = _.filter(game.events, e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
+			const players = _.filter(game.players, e => e.reincarnateFromId == null);
+			_.forEach(players, p =>{
+				p.cards = [];
+				p.coins = 0;
+				p.status = C.ALIVE;
+			});
 			GameModel.findByIdAndUpdate(idGame, {
 					$set: {
 						status: C.OPEN,
 						typeMoney: C.JUNE,
-						'players.$[].cards': [],
-						'players.$[].coins': 0,
-						'players.$[].status': C.ALIVE,
 						decks: [],
+						players: players,
 						credits: [],
-						events: [],
+						events: events,
 						priceWeight1: 3,
 						priceWeight2: 6,
 						priceWeight3: 9,

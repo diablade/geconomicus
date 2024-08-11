@@ -17,8 +17,8 @@
 				<div><span class="fw-bold">Animateur: </span>{{ game?.animator }}</div>
 				<div><span class="fw-bold">Lieu: </span>{{ game?.location }}</div>
 				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
-				<div><span class="fw-bold">Joueurs: </span>{{ game?.players?.length }}</div>
-				<div><span class="fw-bold">Morts et reincarnés: </span>{{ reincarnates }}</div>
+				<div><span class="fw-bold">Joueurs: </span>{{ playersAtStart }}</div>
+				<div><span class="fw-bold">Morts et reincarnés: </span>{{ deads }}</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>

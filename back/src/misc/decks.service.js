@@ -37,7 +37,7 @@ export default {
 		}
 		return tableDecks;
 	},
-	async pushCardsInDecks(idGame, cards){
+	async pushCardsInDecks(idGame, cards) {
 		const groupedCards = _.groupBy(_.sortBy(cards, 'weight'), 'weight');
 		await GameModel.updateOne(
 			{_id: idGame},

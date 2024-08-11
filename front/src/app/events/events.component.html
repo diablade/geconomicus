@@ -3,6 +3,12 @@
   <div class="" *ngFor="let event of events">
     {{event.date | date:"HH:mm:ss"}}:
     <span [ngSwitch]="event.typeEvent">
+        <span *ngSwitchCase="C.CREATE_GAME">
+          <span>📯Création de la partie</span>
+        </span>
+        <span *ngSwitchCase="C.NEW_PLAYER">
+          <span [matTooltip]="'Nouveau joueur'">🪪👤  {{getPlayerName(event.emitter)}}</span>
+        </span>
         <span *ngSwitchCase="C.TRANSACTION">
           <span [matTooltip]="getPlayerName(event.emitter)">👤 </span>
           <span [matTooltip]="'Transaction'">{{event.amount}}{{typeMoney === C.JUNE ? "Ğ1":"€"}} 🤝 {{getTextCard(event.resources[0])}}</span>

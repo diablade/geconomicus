@@ -120,7 +120,7 @@
 			<button *ngIf="!((game.status===C.STOP_ROUND && game.round>=game.roundMax) || game.status==C.END_GAME)"
 							class="ms-2" mat-raised-button color="primary" (click)="showEvents()">Voir les évènements live 🔴📈
 			</button>
-			<button *ngIf="game.devMode" class="ms-2" mat-raised-button (click)="resetGame()">
+			<button *ngIf="game.devMode" class="ms-2" mat-raised-button (click)="resetGameFromBtn()">
 				RESET GAME
 				<fa-icon [icon]="faWarning"></fa-icon>
 			</button>

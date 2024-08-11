@@ -23,7 +23,7 @@ export default {
 					next({status: 400, message: "la partie est terminé mon poto, faut rentrer maintenant..."})
 				} else if (game.status != C.OPEN) {
 					next({status: 400, message: "la partie est déjà commencé... sorry mon poto"})
-				} else if (game.players.length > 25) {
+				} else if (game.players.length >= 25) {
 					next({status: 400, message: "25 joueurs max sorry..."});
 				} else {
 					const idPlayer = new mongoose.Types.ObjectId();
@@ -39,7 +39,10 @@ export default {
 						glassesProbability: 100,
 						featuresProbability: 100
 					};
-					GameModel.findByIdAndUpdate({_id: id}, {$push: {players: player}}, {new: true})
+					let joinEvent = constructor.event(C.NEW_PLAYER, idPlayer.toString(), C.MASTER, 0, [], Date.now());
+					GameModel.findByIdAndUpdate({_id: id},
+						{$push: {players: player, events: joinEvent}},
+						{new: true})
 						.then(updatedGame => {
 								const newPlayer = _.find(updatedGame.players, p => p._id == idPlayer.toString());
 								io().to(id + C.MASTER).emit(C.NEW_PLAYER, newPlayer);
@@ -123,12 +126,8 @@ export default {
 					await GameModel.updateOne(
 						{_id: id},
 						{
-							$pull: {
-								[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},
-							},
-							$push: {
-								'events': {$each: [birthEvent]}
-							}
+							$pull: {[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},},
+							$push: {'events': birthEvent}
 						}
 					);
 					// and Add new cards to player's hand
