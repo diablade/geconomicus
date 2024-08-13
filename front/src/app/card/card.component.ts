@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@an
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
+import {ShortCode} from "../models/shortCode";
 
 @Component({
 	selector: 'app-card',
@@ -44,6 +45,7 @@ export class CardComponent {
 	@Input() idOwner: string | undefined;
 	@Input() idGame: string | undefined;
 	@Input() typeMoney: string | undefined;
+	@Input() suffixShortCode: string | undefined;
 	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
@@ -57,11 +59,12 @@ export class CardComponent {
 	state = "default";
 	translateX = 0;
 	translateY = 0;
-	protected readonly faGift = faGift;
+	shortCode: ShortCode | undefined;
+	faGift = faGift;
 	@Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
+	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 	@ViewChild('cardFlip') cardFlip!: ElementRef;
 	@ViewChild('cardBack') cardBack!: ElementRef;
-
 
 	constructor(private elementRef: ElementRef) {
 	}
@@ -76,10 +79,12 @@ export class CardComponent {
 			this.calculatePosition();
 			if (this.state === "default") {
 				this.state = "flipped";
+				this.createShortCode();
 				this.cardFlip.nativeElement.play();
 			} else {
 				this.cardBack.nativeElement.play();
 				this.state = "default";
+				this.deleteShortCode();
 			}
 		}
 	}
@@ -110,6 +115,15 @@ export class CardComponent {
 
 	buildCardLvlUp() {
 		this.onBuildCardLvlUp.emit(this.card);
+	}
+
+	createShortCode() {
+		this.shortCode = new ShortCode(this.getData(), this.suffixShortCode);
+		this.onCreateShortCode.emit(this.shortCode);
+	}
+	deleteShortCode() {
+		this.shortCode = undefined;
+		this.onCreateShortCode.emit(this.shortCode);
 	}
 
 	getBuildText(card: Card) {

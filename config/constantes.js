@@ -46,6 +46,8 @@ const PRISON = "prison"
 const PRISON_ENDED = "prison-ended"
 const PROGRESS_PRISON = "progress-prison"
 const BIRTH = "birth";
+const SHORT_CODE_EMIT = "short-code-emit";
+const SHORT_CODE_CONFIRMED = "short-code-confirmed";
 
 if (typeof module !== 'undefined' && module.exports) {
 // Export the constants for use in other scripts if needed (for ES6 and later).
@@ -61,7 +63,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		NEW_PLAYER: NEW_PLAYER,
 		UPDATED_PLAYER: UPDATED_PLAYER,
 		DEAD: DEAD,
-		DEATH_IS_COMING:DEATH_IS_COMING,
+		DEATH_IS_COMING: DEATH_IS_COMING,
 		REMIND_DEAD: REMIND_DEAD,
 		ALIVE: ALIVE,
 		NEED_ANSWER: NEED_ANSWER,
@@ -98,6 +100,8 @@ if (typeof module !== 'undefined' && module.exports) {
 		TRANSACTION_DONE: TRANSACTION_DONE,
 		TRANSFORM_DISCARDS: TRANSFORM_DISCARDS,
 		TRANSFORM_NEWCARDS: TRANSFORM_NEWCARDS,
+		SHORT_CODE_CONFIRMED: SHORT_CODE_CONFIRMED,
+		SHORT_CODE_EMIT: SHORT_CODE_EMIT,
 	};
 }
 

@@ -45,6 +45,7 @@ let Feedback = {
 
 let Player = {
 	name: String,
+	idx: String,
 	image: String,
 	coins: Number,
 	cards: [Card],

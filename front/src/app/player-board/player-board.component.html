@@ -66,9 +66,11 @@
 						[typeMoney]="typeMoney"
 						[idOwner]="idPlayer"
 						[idGame]="idGame"
+						[suffixShortCode]="player.idx"
 						[currentDU]="currentDU"
 						[amountCardsForProd]="amountCardsForProd"
 						(onBuildCardLvlUp)="produceLevelUp($event)"
+						(onCreateShortCode)="onCreateShortCode($event)"
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"
 					></app-card>
@@ -95,12 +97,20 @@
 				</button>
 			</div>
 			<div>
-				<mat-slide-toggle [(ngModel)]="scanV3" name="scanV3">scan v3</mat-slide-toggle>
-				<button class="buy" mat-raised-button color="accent"
+				<mat-slide-toggle [(ngModel)]="scanV3">
+					<fa-icon [icon]="faCamera"></fa-icon>
+				</mat-slide-toggle>
+				<button *ngIf="scanV3" class="buy" mat-raised-button color="accent"
 								[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 								(click)="scan()">
-					<fa-icon [icon]="faCamera"></fa-icon>
 					ACHETER
+					<fa-icon [icon]="faQrcode"></fa-icon>
+				</button>
+				<button *ngIf="!scanV3" class="buy" mat-raised-button color="accent"
+								[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+								(click)="openDialogShorCode()">
+					ACHETER
+					<fa-icon [icon]="faKeyboard"></fa-icon>
 				</button>
 			</div>
 		</div>

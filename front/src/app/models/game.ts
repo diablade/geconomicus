@@ -52,6 +52,7 @@ export class EventGeco {
 export class Player {
 	name = "";
 	_id = "";
+	idx = "";
 	image = "";
 	coins = 0;
 	cards: Card[] = [];

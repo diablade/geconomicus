@@ -13,7 +13,6 @@ import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
-import {ScannerDialogComponent} from './dialogs/scanner-dialog/scanner-dialog.component';
 import {JoinComponent} from './join/join.component';
 import {MatIconModule} from "@angular/material/icon";
 import {PlayerSettingsComponent} from './player-settings/player-settings.component';
@@ -58,6 +57,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
+import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
 
@@ -76,7 +76,6 @@ LOAD_WASM().subscribe();
 		EventsComponent,
 		CreateGameDialog,
 		InstallAppDialog,
-		ScannerDialogComponent,
 		JoinQrDialog,
 		GameInfosDialog,
 		GameOptionsDialogComponent,
@@ -92,6 +91,7 @@ LOAD_WASM().subscribe();
 		BtnTimerAutoClickComponent,
 		SeizureDialogComponent,
 		CongratsDialogComponent,
+		ShortcodeDialogComponent,
 	],
 	imports: [
 		HttpClientModule,

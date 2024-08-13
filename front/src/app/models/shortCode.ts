@@ -1,16 +1,11 @@
 import * as _ from 'lodash-es';
 
 export class ShortCode {
-	idCard: string = "";
+	payload: string = "";
 	code: string = "";
+
+	constructor(payload: string, suffix: string | undefined) {
+		this.payload = payload;
+		this.code = suffix?suffix+_.random(0, 9): _.random(0, 999).toString();
+	}
 }
-
-// export function generateUniqueShortCode = (existingCodes: ShortCode[]) => {
-// 	let newCode;
-	// Loop until a unique code is generated
-	// do {
-	// 	newCode = _.times(3, () => _.random(0, 9)).join(''); // Generate a 3-digit random code
-	// } while (_.includes(existingCodes, newCode)); // Check if the code already exists
-
-	// return newCode;
-// }

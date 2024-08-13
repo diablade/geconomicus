@@ -2,25 +2,24 @@ import {createAvatar, Options} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
-import io from 'socket.io-client';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Credit, Player} from "../models/game";
 import {BackService} from "../services/back.service";
-import {ScannerDialogComponent} from "../dialogs/scanner-dialog/scanner-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
-import {faCamera, faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-import {MatSnackBar} from "@angular/material/snack-bar";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import {ShortCode} from "../models/shortCode";
+import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
+import {WebSocketService} from "../services/web-socket.service";
 
 
 @Component({
@@ -95,6 +94,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faCamera = faCamera;
 	faEye = faEye;
 	faEyeSlash = faEyeSlash;
+	faQrcode = faQrcode;
+	faKeyboard = faKeyboard;
 	scanV3 = true;
 	duVisible = false;
 	panelCreditOpenState = true;
@@ -106,9 +107,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	prisonProgress = 0;
 	minutesPrison = 0;
 	secondsPrison = 0;
-	shortCodes: ShortCode[] = [];
+	shortCode: ShortCode | undefined;
 
-	constructor(private route: ActivatedRoute, public dialog: MatDialog, private router: Router, private backService: BackService, private snackbarService: SnackbarService, private _snackBar: MatSnackBar) {
+	constructor(private route: ActivatedRoute,
+							public dialog: MatDialog,
+							private router: Router,
+							private backService: BackService,
+							private wsService: WebSocketService,
+							private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -123,13 +129,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
-			this.socket = io(this.ioURl, {
-				query: {
-					idPlayer: this.idPlayer,
-					idGame: this.idGame,
-				},
-			});
-
+			this.socket = this.wsService.getSocket(this.idGame,this.idPlayer);
 			this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
 				this.player = data.player;
 				this.typeMoney = data.typeMoney;
@@ -148,17 +148,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.prison = true;
 				}
 			});
-
-			this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-				this.credits = data; //_.filter(data, c => c.status != C.CREDIT_DONE);
-				_.forEach(data, d => {
-					if (d.status == C.DEFAULT_CREDIT) {
-						this.defaultCredit = true;
-					} else if (d.status == "requesting") {
-						this.requestingWhenCreditEnds(d, true);
-					}
-				})
-			})
+			if (this.typeMoney === C.DEBT) {
+				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
+					this.credits = data;
+					_.forEach(data, d => {
+						if (d.status == C.DEFAULT_CREDIT) {
+							this.defaultCredit = true;
+						} else if (d.status == "requesting") {
+							this.requestingWhenCreditEnds(d, true);
+						}
+					});
+				});
+			}
 		});
 	}
 
@@ -238,6 +239,16 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			await new Promise(resolve => setTimeout(resolve, 4000));
 			this.resurrection();
+		});
+		this.socket.on(C.SHORT_CODE_EMIT, async (data: any) => {
+			if (this.shortCode && this.shortCode.code === data.code) {
+				this.socket.emit(C.SHORT_CODE_CONFIRMED, { payload: this.shortCode.payload, idBuyer:data.idBuyer});
+			}
+		});
+		this.socket.on(C.SHORT_CODE_CONFIRMED, async (data: any) => {
+			if (data && data.payload) {
+				this.buy(data.payload);
+			}
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
 			this.player.coins = data.coins;
@@ -377,29 +388,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	//To prevent memory leak
 	ngOnDestroy(): void {
-		if (this.subscription) this.subscription.unsubscribe()
-		// Remember to disconnect the socket when the component is destroyed.
-		this.socket.disconnect();
+		if (this.subscription) this.subscription.unsubscribe();
 	}
 
 	updatePlayer() {
 		this.router.navigate(["game", this.idGame, "player", this.idPlayer, "settings"]);
-	}
-
-	scan() {
-		if (this.scanV3) {
-			const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
-			dialogRef.afterClosed().subscribe(dataRaw => {
-				if (dataRaw) {
-					this.buy(dataRaw);
-				}
-			});
-		} else {
-			const dialogRef = this.dialog.open(ScannerDialogComponent, {});
-			dialogRef.afterClosed().subscribe(dataRaw => {
-				this.buy(dataRaw);
-			});
-		}
 	}
 
 	resurrection() {
@@ -437,9 +430,22 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	scan() {
+		const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
+		dialogRef.afterClosed().subscribe(dataRaw => {
+			if (dataRaw) {
+				this.buy(dataRaw);
+			}
+		});
+	}
+	buyWithCode(code: string) {
+		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer});
+		this.snackbarService.showSuccess("Code envoyé");
+	}
+
 	buy(dataRaw: any) {
 		const data = JSON.parse(dataRaw);
-		const cost = this.typeMoney == C.JUNE ? data.p * this.currentDU : data.p;
+		const cost = this.typeMoney == C.JUNE ? (data.p * this.currentDU).toFixed(2) : data.p;
 		if (this.idGame && data.g && this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
 		} else if (this.player.coins >= cost) {
@@ -450,6 +456,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			});
 		} else if (this.player.coins < cost) {
+			console.log(this.player.coins, cost);
 			this.snackbarService.showError("Fond insuffisant !");
 			let errorAudio = new Audio("../assets/audios/error.mp3");
 			errorAudio.load();
@@ -593,7 +600,16 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		})
 	}
 
-	// createShortCode(idCard) {
-	// this.shortCodes.push(generateUniqueShortCode(this.shortCodes),);
-	// }
+	onCreateShortCode($event: ShortCode) {
+		this.shortCode = $event;
+	}
+
+	openDialogShorCode() {
+		const shortCodeDialogRef = this.dialog.open(ShortcodeDialogComponent);
+		shortCodeDialogRef.afterClosed().subscribe(code => {
+			if (code) {
+				this.buyWithCode(code);
+			}
+		});
+	}
 }

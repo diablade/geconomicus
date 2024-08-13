@@ -29,6 +29,7 @@ export default {
 					const idPlayer = new mongoose.Types.ObjectId();
 					let player = {
 						_id: idPlayer,
+						idx: game.players.length.toString().padStart(2, '0'),
 						name: name,
 						image: "",
 						coins: 0,
@@ -100,52 +101,55 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			const idPlayer = new mongoose.Types.ObjectId();
-			let player = {
-				_id: idPlayer,
-				name: name,
-				image: "",
-				coins: 0,
-				credits: [],
-				cards: [],
-				status: C.ALIVE,
-				earringsProbability: 100,
-				glassesProbability: 100,
-				featuresProbability: 100,
-				reincarnateFromId: from,
-			};
-			GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}}, {new: true})
-				.then(async updatedGame => {
-					const shuffledDeck = _.shuffle(updatedGame.decks[0]);
-					// Draw new cards for the player
-					const newCards = shuffledDeck.slice(0, 4);//same weight
-					//create events
-					let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
+			try {
+				let game = await GameModel.findById(id);
+				const idPlayer = new mongoose.Types.ObjectId();
+				let player = {
+					_id: idPlayer,
+					name: name,
+					idx: game.players.length.toString().padStart(2, '0'),
+					image: "",
+					coins: 0,
+					credits: [],
+					cards: [],
+					status: C.ALIVE,
+					earringsProbability: 100,
+					glassesProbability: 100,
+					featuresProbability: 100,
+					reincarnateFromId: from,
+				};
+				const updatedGame = await GameModel.findOneAndUpdate({_id: id}, {$push: {players: player}}, {new: true});
 
-					// remove cards given to player from the deck, add events
-					await GameModel.updateOne(
-						{_id: id},
-						{
-							$pull: {[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},},
-							$push: {'events': birthEvent}
-						}
-					);
-					// and Add new cards to player's hand
-					await GameModel.updateOne(
-						{_id: id, 'players._id': idPlayer},
-						{
-							$push: {'players.$.cards': {$each: newCards}}
-						}
-					);
-					io().to(id + C.EVENT).emit(C.EVENT, birthEvent);
-					io().to(id + C.MASTER).emit(C.NEW_PLAYER, player);
-					res.status(200).json(player._id);
-				})
-				.catch(error => {
-						log.error(error);
-						next({status: 404, message: "Not found"});
+				const shuffledDeck = _.shuffle(updatedGame.decks[0]);
+				// Draw new cards for the player
+				const newCards = shuffledDeck.slice(0, 4);//same weight
+
+				// remove cards from the deck
+				await GameModel.updateOne(
+					{_id: id},
+					{
+						$pull: {[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},},
 					}
 				);
+				//create events
+				let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
+				// and Add new cards to player's hand & event
+				await GameModel.updateOne(
+					{_id: id, 'players._id': idPlayer},
+					{
+						$push: {
+							'players.$.cards': {$each: newCards},
+							'events': birthEvent,
+						}
+					}
+				);
+				io().to(id + C.EVENT).emit(C.EVENT, birthEvent);
+				io().to(id + C.MASTER).emit(C.NEW_PLAYER, player);
+				res.status(200).json(player._id);
+			} catch (error) {
+				log.error(error);
+				next({status: 404, message: "Not found"});
+			}
 		}
 	},
 	update: async (req, res, next) => {

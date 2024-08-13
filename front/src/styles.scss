@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import 'simple-keyboard/build/css/index.css';
 
 html, body {
   height: 100%;
@@ -110,4 +111,23 @@ body {
   bottom: -30px;
   background: #ffffff69;
   clip-path: polygon(38% 0, 100% 100%, 100% 0);
+}
+
+.hg-button{
+	font-weight: bold;
+}
+
+.hg-button-buy {
+	background-color: green !important;
+	color: white; /* Optional: Change text color for contrast */
+}
+
+.hg-button-cancel {
+	background-color: red !important;
+	color: white; /* Optional: Change text color for contrast */
+}
+
+.hg-button-bksp {
+	background-color: orange !important;
+	color: white; /* Optional: Change text color for contrast */
 }

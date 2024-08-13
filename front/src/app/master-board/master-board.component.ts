@@ -9,7 +9,6 @@ import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
 	faCircleInfo, faWarning, faBuildingColumns
 } from '@fortawesome/free-solid-svg-icons';
-import io from "socket.io-client";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
 import createCountdown from "../services/countDown";
@@ -21,6 +20,7 @@ import {SessionStorageService} from "../services/local-storage/session-storage.s
 import {StorageKey} from "../services/local-storage/storage-key.const";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
+import {WebSocketService} from "../services/web-socket.service";
 
 @Component({
 	selector: 'app-master-board',
@@ -40,7 +40,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	deleteUser = false;
 	killUser = false;
 	protected readonly environment = environment;
-	ioURl: string = environment.API_HOST;
 	faTrashCan = faTrashCan;
 	faFlagCheckered = faFlagCheckered;
 	faQrcode = faQrcode;
@@ -78,6 +77,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							private snackbarService: SnackbarService,
 							private router: Router,
 							private sanitizer: DomSanitizer,
+							private wsService: WebSocketService,
 							public dialog: MatDialog) {
 	}
 
@@ -87,12 +87,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
 				this.resetGameFromUrl();
 			}
-			this.socket = io(this.ioURl, {
-				query: {
-					idPlayer: this.idGame + 'master',
-					idGame: this.idGame,
-				},
-			});
+			this.socket = this.socket = this.wsService.getSocket(this.idGame,this.idGame+"master");
 		});
 		this.backService.getGame(this.idGame).subscribe(game => {
 			this.game = game;
@@ -143,7 +138,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.DEATH_IS_COMING, async () => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: "La mort doit passer, choisissez une victime 😈",
+					text: "La mort est passé 😈",
 					sound: "./assets/audios/iamdeath.mp3"
 				},
 			});
