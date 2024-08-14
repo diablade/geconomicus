@@ -45,7 +45,7 @@ export default {
 				priceWeight4: 12,
 				round: 0,
 				roundMax: 1,
-				roundMinutes: 40,
+				roundMinutes: 25,
 				autoDeath: true,
 				deathPassTimer: 4,
 
@@ -106,7 +106,7 @@ export default {
 					priceWeight3: body.priceWeight3 ? body.priceWeight3 : 9,
 					priceWeight4: body.priceWeight4 ? body.priceWeight4 : 12,
 					roundMax: body.roundMax ? body.roundMax : 1,
-					roundMinutes: body.roundMinutes ? body.roundMinutes : 40,
+					roundMinutes: body.roundMinutes ? body.roundMinutes : 25,
 					devMode: body.devMode === undefined ? true : body.devMode,
 					surveyEnabled: body.surveyEnabled === undefined ? true : body.surveyEnabled,
 					amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
@@ -461,7 +461,7 @@ export default {
 						amountCardsForProd: 4,
 						round: 0,
 						roundMax: 1,
-						roundMinutes: 40,
+						roundMinutes: 25,
 						autoDeath: true,
 						deathPassTimer: 4,
 

@@ -72,9 +72,15 @@
 				<button class="ms-2" mat-raised-button (click)="showRules()">Regles de Jeu
 					<fa-icon [icon]="faInfo"></fa-icon>
 				</button>
-				<button class="ms-2" mat-raised-button color="warn"
+				<button class="ms-2" mat-raised-button color="warn" *ngIf="game.devMode"
 								(click)="startGame()">
 					Démarrer
+					<fa-icon [icon]="faFlagCheckered"></fa-icon>
+				</button>
+				<button class="ms-2" mat-raised-button color="warn" *ngIf="!game.devMode"
+								[disabled]="game.players.length < 6"
+								(click)="startGame()">
+				{{game.players.length < 6 ? "Encore "+(6-game.players.length)+" joueur(s) avant de démarrer":"Démarrer"}}
 					<fa-icon [icon]="faFlagCheckered"></fa-icon>
 				</button>
 			</div>

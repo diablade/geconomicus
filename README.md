@@ -5,7 +5,7 @@ play game geconomicus
 
 to launch it (in dev env)
 start your mongodb service first
-- cd ~
+- cd /to/your/db/folder
 - mongod --dbpath .
 - mongod
 

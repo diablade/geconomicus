@@ -56,9 +56,11 @@
 				<div><span class="fw-bold">Durée total du jeu : </span>{{ durationGame() }}</div>
 				<div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
 				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
+				<div><span class="fw-bold">Nb de transactions total: </span>{{ getTransactionsTotal() }}</div>
+<!--				<div><span class="fw-bold">Vélocité de la monnaie: (V=PxT/M) </span>{{ getTransactionsTotal() }}</div>-->
 			</div>
 		</div>
-		<h1 class="m-2 mt-4 contour">Meilleurs joueurs</h1>
+		<h1 class="m-2 mt-4 contour">Podium</h1>
 		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap">
 				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">

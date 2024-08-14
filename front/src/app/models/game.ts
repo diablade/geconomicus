@@ -102,7 +102,7 @@ export class Game {
 	surveyEnabled = true;
 	round = 0;
 	roundMax = 1;
-	roundMinutes = 40;
+	roundMinutes = 25;
 	autoDeath = true;
 	deathPassTimer = 4;
 

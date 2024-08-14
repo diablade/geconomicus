@@ -770,4 +770,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			return "-";
 		}
 	}
+
+	getTransactionsTotal() {
+		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
+	}
 }
