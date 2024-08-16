@@ -40,5 +40,6 @@ export const environment = {
 		STOP_ROUND: 'game/stop-round',
 		INTER_ROUND: 'game/inter-round',
 		END: 'game/end',
+		DELETE_GAME: "game/delete",
 	},
 };

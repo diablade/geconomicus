@@ -8,6 +8,7 @@ router.get('/events/:idGame', game.getEvents);
 router.get('/:idGame', game.getGameById);
 router.post('/create', game.create);
 router.post('/end', game.end);
+router.post('/delete', game.delete);
 router.post('/start-round', game.startRound);
 router.post('/stop-round', game.stopRound);
 router.post('/inter-round', game.interRound);

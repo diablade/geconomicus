@@ -1,7 +1,7 @@
 import {body, validationResult} from 'express-validator';
 import GameModel, {constructor} from './game.model.js';
 import * as C from '../../../config/constantes.js';
-
+import bcrypt from 'bcrypt';
 import log from '../../config/log.js';
 import _ from "lodash";
 import mongoose from "mongoose";
@@ -213,7 +213,7 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			await gameService.startRound(idGame,round,next);
+			await gameService.startRound(idGame, round, next);
 			res.status(200).send({
 				status: C.START_ROUND,
 			});
@@ -420,6 +420,33 @@ export default {
 				});
 			});
 	},
+	delete: async (req, res, next) => {
+		const idGame = req.body.idGame;
+		const password = req.body.password;
+		if (!idGame && !password) {
+			next({
+				status: 400,
+				message: "bad request"
+			});
+		} else {
+			try {
+				if (bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
+					await GameModel.findByIdAndDelete(idGame);
+					res.status(200).json({"status": "delete done"});
+				} else {
+					next({
+						status: 500,
+						message: "error"
+					});
+				}
+			} catch (e) {
+				next({
+					status: 400,
+					message: e
+				});
+			}
+		}
+	},
 	reset: async (req, res, next) => {
 		const idGame = req.body.idGame;
 		if (!idGame) {
@@ -434,7 +461,7 @@ export default {
 			const game = await GameModel.findById(idGame);
 			const events = _.filter(game.events, e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
 			const players = _.filter(game.players, e => e.reincarnateFromId == null);
-			_.forEach(players, p =>{
+			_.forEach(players, p => {
 				p.cards = [];
 				p.coins = 0;
 				p.status = C.ALIVE;

@@ -3,7 +3,11 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {PlayerBoardComponent} from './player-board/player-board.component';
-import {GameInfosDialog, JoinQrDialog, MasterBoardComponent} from './master-board/master-board.component';
+import {
+	GameInfosDialog,
+	JoinQrDialog,
+	MasterBoardComponent
+} from './master-board/master-board.component';
 import {CreateGameDialog, HomeComponent, InstallAppDialog} from './home/home.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {MatRadioModule} from "@angular/material/radio";
@@ -41,7 +45,7 @@ import 'chartjs-plugin-zoom';
 import {ScannerDialogV3Component} from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
-import {HistoryGamesComponent} from './history-games/history-games.component';
+import {GameDeleteDialog, HistoryGamesComponent} from './history-games/history-games.component';
 import {SurveyComponent} from "./survey/survey.component";
 import {MatSliderModule} from "@angular/material/slider";
 import {BankBoardComponent} from './bank-board/bank-board.component';
@@ -92,6 +96,7 @@ LOAD_WASM().subscribe();
 		SeizureDialogComponent,
 		CongratsDialogComponent,
 		ShortcodeDialogComponent,
+		GameDeleteDialog,
 	],
 	imports: [
 		HttpClientModule,

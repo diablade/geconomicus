@@ -21,14 +21,25 @@
 						</div>
 					</div>
 				</div>
-				<button
-					class="ms-2" mat-raised-button
-					[routerLink]="game.status === C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
-					color="accent"
-				>{{ game.status === C.END_GAME ? "Voir les resultats" : "Voir" }}
+				<button class="ms-2" mat-raised-button
+								[routerLink]="game.status === C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
+								color="accent">
+					{{ game.status === C.END_GAME ? "Voir les resultats" : "Voir" }}
+				</button>
+				<button *ngIf="deleteGames" class="ms-2" mat-raised-button color="warn">
+					<fa-icon class="delete" (click)="onDeleteGame(game)"
+									 [icon]="faTrashCan"></fa-icon>
 				</button>
 			</div>
 		</div>
+	</div>
+	<div class="text-center">
+		<mat-slide-toggle
+			class=""
+			[color]="'warn'"
+			[(ngModel)]="deleteGames">
+			Supprimer une partie ?
+		</mat-slide-toggle>
 	</div>
 	<div>
 		Les parties de plus de 2 mois seront bientot automatiquement supprimées.

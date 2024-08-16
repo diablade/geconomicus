@@ -284,4 +284,12 @@ export class BackService {
 			catchError(err => this.handleError(err, "", " I can't break prison :/ "))
 		)
 	}
+
+	deleteGame(idGame: string, password: string) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.DELETE_GAME, {
+			idGame, password
+		}).pipe(
+			catchError(err => this.handleError(err, "", " I can't delete"))
+		)
+	}
 }
