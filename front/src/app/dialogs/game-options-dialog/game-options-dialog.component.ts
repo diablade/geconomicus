@@ -18,7 +18,7 @@ export class GameOptionsDialogComponent {
   }
 
   onNoClick() {
-    this.dialogRef.close();
+    this.dialogRef.close("cancel");
   }
 
   onReset() {

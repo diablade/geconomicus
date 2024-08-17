@@ -87,7 +87,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
 				this.resetGameFromUrl();
 			}
-			this.socket = this.socket = this.wsService.getSocket(this.idGame,this.idGame+"master");
+			this.socket = this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
 		});
 		this.backService.getGame(this.idGame).subscribe(game => {
 			this.game = game;
@@ -237,6 +237,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			window.location.reload();
 		});
 	}
+
 	resetGameFromUrl() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess("RESET GAME");
@@ -282,6 +283,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		dialogRef.afterClosed().subscribe(results => {
 			if (results === "reset") {
 				this.resetGameFromBtn();
+			} else if (results === "cancel") {
 			} else {
 				this.backService.updateGame(this.idGame, results).subscribe(() => {
 					this.snackbarService.showSuccess("Option sauvegardé !");
