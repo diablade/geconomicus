@@ -65,6 +65,24 @@ async function distribDU(idGame) {
 		})
 }
 
+async function stopRound(idGame, gameRound) {
+	gameTimerManager.stopAndRemoveTimer(idGame);
+	gameTimerManager.stopAndRemoveTimer(idGame + "death");
+
+	let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
+	GameModel.updateOne({_id: idGame}, {
+		$set: {
+			status: C.STOP_ROUND,
+			modified: Date.now(),
+		},
+		$push: {events: stopRoundEvent}
+	}).then(res => {
+		bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
+		io().to(idGame).emit(C.STOP_ROUND);
+		io().to(idGame + C.EVENT).emit(C.EVENT, stopRoundEvent);
+	});
+}
+
 async function startRoundTimers(idGame, game, playersIdToKill) {
 	let timer = new Timer(idGame, game.roundMinutes * minute, minute, {round: game.round, typeMoney: game.typeMoney},
 		async (timer) => {
@@ -79,7 +97,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
 			if (timer.data.typeMoney === C.JUNE) {
 				await distribDU(timer.id);
 			}
-			this.stopRound(timer.id, timer.data.round);
+			stopRound(timer.id, timer.data.round);
 		});
 	timer.start();
 
@@ -200,23 +218,7 @@ async function initGameJune(game) {
 }
 
 export default {
-	async stopRound(idGame, gameRound) {
-		gameTimerManager.stopAndRemoveTimer(idGame);
-		gameTimerManager.stopAndRemoveTimer(idGame + "death");
-
-		let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
-		GameModel.updateOne({_id: idGame}, {
-			$set: {
-				status: C.STOP_ROUND,
-				modified: Date.now(),
-			},
-			$push: {events: stopRoundEvent}
-		}).then(res => {
-			bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-			io().to(idGame).emit(C.STOP_ROUND);
-			io().to(idGame + C.EVENT).emit(C.EVENT, stopRoundEvent);
-		});
-	},
+	stopRound: stopRound,
 	async startRound(idGame, round, next) {
 		let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
 		await GameModel.findByIdAndUpdate(idGame, {
