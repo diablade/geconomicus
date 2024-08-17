@@ -612,4 +612,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 	}
+
+	refresh() {
+		window.location.reload();
+	}
 }
