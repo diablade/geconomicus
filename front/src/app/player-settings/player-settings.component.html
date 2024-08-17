@@ -81,6 +81,16 @@
 				</button>
 			</div>
 			<div class="item">
+				<div class="optionsLabel img-thumbnail">Lunettes</div>
+				<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
+					<fa-icon [icon]="faChevronLeft"></fa-icon>
+				</button>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
+				<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
+					<fa-icon [icon]="faChevronRight"></fa-icon>
+				</button>
+			</div>
+			<div class="item">
 				<div class="optionsLabel img-thumbnail">Oreilles</div>
 				<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
@@ -97,16 +107,6 @@
 				</button>
 				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.features + 1 }}/{{ properties.features.default.length }}</div>
 				<button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">Lunettes</div>
-				<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
-				<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
