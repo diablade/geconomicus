@@ -38,6 +38,7 @@
   display: flex;
   justify-content: center;
   padding: 5%;
+	font-variant-ligatures: none;
 }
 
 .topLeft {
@@ -140,6 +141,7 @@
 .letter {
   font-family: serif;
   z-index: 10;
+	font-variant-ligatures: none;
 }
 
 .price {
