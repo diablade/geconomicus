@@ -3,7 +3,7 @@ import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
-import {JoinQrDialog} from "../master-board/master-board.component";
+import {GameInfosDialog, JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 
@@ -88,6 +88,10 @@ export class HomeComponent implements OnInit {
 		if (this.platform.IOS) {
 			this.dialog.open(InstallAppDialog);
 		}
+	}
+
+	showRules() {
+		this.dialog.open(GameInfosDialog, {});
 	}
 }
 

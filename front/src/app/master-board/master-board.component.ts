@@ -7,7 +7,7 @@ import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
-	faCircleInfo, faWarning, faBuildingColumns
+	faCircleInfo, faWarning, faBuildingColumns, faKeyboard
 } from '@fortawesome/free-solid-svg-icons';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -342,4 +342,6 @@ export class JoinQrDialog {
 export class GameInfosDialog {
 	constructor(public dialogRef: MatDialogRef<GameInfosDialog>) {
 	}
+	faQrcode = faQrcode;
+	faKeyboard = faKeyboard;
 }

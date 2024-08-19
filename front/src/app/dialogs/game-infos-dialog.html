@@ -1,20 +1,134 @@
-<h1 class="gecoFont shadowed m-2">regles du jeu</h1>
-- TODO aidez moi à écrire les règles please 🙏
-<h2 class="gecoFont shadowed m-2">But du jeu</h2>
-on peux copier coller du site version papier...
+<div class="notice overflow-auto">
+	<h1 class="gecoFont shadowed m-2">Notice d'utilisation</h1>
+	<div class="paragraph">
+		<p>
+			Plongez dans une expérience ludique et immersive où vous explorez la création monétaire,
+			l'économie et leurs impacts en fonction des types de monnaies que vous choisissez.
+		</p>
+		<p>
+			Comparez les effets de vos décisions et découvrez les rouages complexes du système économique de manière
+			captivante et interactive.
+		</p>
+		<p>
+			Chaque partie vous permet d'expérimenter des scénarios uniques,
+			tout en apprenant à maîtriser les dynamiques monétaires de façon engageante et amusante.
+		</p>
+		<p>
+			Un jeu conçu pour éveiller votre curiosité et stimuler votre réflexion sur l'économie, tout en vous divertissant.
+		</p>
+	</div>
+	<h2 class="gecoFont shadowed m-2">But du jeu</h2>
+	<div class="paragraph">
+		<p>
+			Chaque joueur doit maximiser ses valeurs économiques dans un temps limité.
+		</p>
+		<p>
+			Pour y parvenir, chaque joueur dispose d'une monnaie et de cartes ressources qu'il peut acheter ou vendre aux
+			autres
+			participants.
+		</p>
+		<p>
+			Le défi consiste à assembler des carrés de 4 cartes identiques, puis les transformer en cartes de valeur
+			supérieure
+			pour augmenter ses ressources.
+		</p>
+		<p>
+			Selon le type de monnaie utilisé, les dynamiques économiques et les opportunités d'échanges évolueront, ajoutant
+			une
+			dimension stratégique unique à chaque partie.
+		</p>
+	</div>
+	<h2 class="gecoFont shadowed m-2">Mise en place</h2>
+	<ul>
+		<li>Chaque joueur, reçoit de 4 cartes ressources de faible valeur économique.</li>
+		<li>En monnaie libre, la première dividende universel (D.U) sera versé au tout début et reversé toutes les minutes.
+		</li>
+		<li>En Monnaie dette, aucune monnaie n'est versé, il faut contracter un crédit au pres de la banque pour avoir de la
+			monnaie,
+			avant le debut du tour ou pendant le jeu
+			Le credit est à rembourser intégralement toutes les 5 minutes à partir de la contraction du crédit (ou début de
+			partie), ou prolongé par seulement le paiement d'un intérêt.
+		</li>
+	</ul>
+	<h2 class="gecoFont shadowed m-2">Vendre une carte</h2>
+	<div class="d-flex flex-row">
+		<ul class="paragraph">
+			<li>
+				Cliquez sur la carte que vous souhaitez vendre, elle se retourne,
+				Un QRCode s'affiche, ainsi qu'un petit "ShortCode" au milieu est généré (code valable uniquement lorsque
+				visible).
+			</li>
+			<li>
+				Monter ce QR code ou les 3 chiffres à votre acheteur.
+			</li>
+		</ul>
+		<video class="video text-center" #tc (click)="tc.play()" playsinline autoplay muted>
+			<source src="assets/videos/turnCard.mp4" type="video/mp4">
+		</video>
+	</div>
+	<h2 class="gecoFont shadowed m-2">Acheter une carte</h2>
+	<div class="paragraph">
+		<p>Cliquez sur "Acheter" en bas à droite de votre écran.</p>
+		<div class="text-center">
+			<img class="" style="width: 100px" src="/assets/images/disableCam.png" alt="">
+		</div>
 
-<h2 class="gecoFont shadowed m-2">Mise en place</h2>
-<ul>
-	<li>bla bla bla</li>
-	<li>ceci</li>
-	<li>cela</li>
-</ul>
-<h2 class="gecoFont shadowed m-2">d'autre titres...</h2>
+		<p>(si le bouton est désactivé c'est que la partie n'as pas encore commencé, ou est terminée)</p>
+		<p>Deux possibilités pour acheter une carte:</p>
+		<ul>
+			<li>
+				<p class="text-decoration-underline">Par QRcode (mode par défaut)
+					<fa-icon [icon]="faQrcode"></fa-icon>
+					:
+				</p>
+				<p>En cliquant sur acheter la camera s'active et vous pouvez scanner le QRCode de la carte souhaité sur l'écran
+					du vendeur.
+			</li>
+			<li>
+				<p class="text-decoration-underline">Par Shortcode
+					<fa-icon [icon]="faKeyboard"></fa-icon>
+					:
+				</p>
+				<p>Désactivez la camera à coté du bouton acheter</p>
+				<p>En cliquant sur acheter, un clavier s'affichera et vous pourrez saisir le code qui est écrit au milieu du
+					QRcode de la carte de votre vendeur.</p>
+			</li>
+		</ul>
+	</div>
+	<h2 class="gecoFont shadowed m-2">Créer une carte supérieur</h2>
+	<div class="d-flex flex-row">
+		<div class="paragraph">
+			<ul>
+				<li>
+					Au coins de la carte s'affiche le nombre de cartes identique, et empilé que vous avez en votre possession.
+					<img class="" style="width: 30px" src="/assets/images/stack.png" alt="">
+				</li>
+				<li>
+					Ces cartes peuvent etre vendu, tout comme les autres, mais une par une.
+				</li>
+				<li>
+					Une fois le compte obtenu (4), un bouton s'affiche pour construire et obtenir votre carte de
+					valeur supérieur comme suit:
+				</li>
+			</ul>
+		</div>
+		<video class="video" #bc (click)="bc.play()" playsinline autoplay muted>
+			<source src="assets/videos/build.mp4" type="video/mp4">
+		</video>
+	</div>
 
-<h2 class="gecoFont shadowed m-2">note:</h2>
-<ul>
-	<li>Si la mort passe 😈, vous serrez inviter à créer un nouveau personnage dans la foulé
-		l'ancien personnage ne sera plus jouable. et servira pour les statistiques en fin de partie.
-	</li>
-</ul>
-
+	<h2 class="gecoFont shadowed m-2">Note de bas de page</h2>
+	<ul>
+		<li>
+			<p>Si la mort passe, (elle fait aussi partie de la simulation 😈)</p>
+			<p>Vous serez invités à créer un nouveau personnage dans la foulée</p>
+			<p>Votre ancien personnage ne sera plus jouable. </p>
+			<p>Et vos résultats seront bien cumulés avec votre deuxième vie pour les statistiques en fin de partie. :)</p>
+		</li>
+		<li>
+			<p>Si une carte manque ou si un bug 🐞 apparaît, signalez-le à l'animateur</p>
+			<p>Cliquez sur le jeton de monnaie 🪙 en haut à gauche pour rafraîchir la page.</p>
+			Généralement, cela devrait "nettoyer" le bug 🐞.
+		</li>
+	</ul>
+</div>

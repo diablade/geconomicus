@@ -8,7 +8,7 @@ import {BackService} from "../services/back.service";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import * as _ from 'lodash-es';
-import {faCamera, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
@@ -20,6 +20,7 @@ import * as C from "../../../../config/constantes";
 import {ShortCode} from "../models/shortCode";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
+import {GameInfosDialog} from "../master-board/master-board.component";
 
 
 @Component({
@@ -615,5 +616,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	refresh() {
 		window.location.reload();
+	}
+
+	protected readonly faInfo = faCircleInfo;
+
+	showRules() {
+		this.dialog.open(GameInfosDialog, {});
 	}
 }
