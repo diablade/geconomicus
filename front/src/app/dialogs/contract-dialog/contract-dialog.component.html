@@ -23,7 +23,7 @@
       <mat-label>passer le contract avec</mat-label>
       <mat-select [(value)]="idPlayer">
         <mat-option [value]="player._id" [disabled]='player.status===C.DEAD || player.status === C.PRISON'
-                    *ngFor="let player of game.players">{{ player.name }}</mat-option>
+                    *ngFor="let player of game.players">{{ player.name }}{{player.status===C.DEAD ? "🪦":""}}</mat-option>
       </mat-select>
     </mat-form-field>
     <div>

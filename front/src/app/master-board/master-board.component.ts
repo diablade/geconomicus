@@ -136,12 +136,21 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.stopRound();
 		});
 		this.socket.on(C.DEATH_IS_COMING, async () => {
+			if(this.game.autoDeath){
+				this.snackbarService.showSuccess("La mort viens de passer 😈")
+			}else {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: "La mort est passé 😈",
+					text: "La mort dois passé 😈! (à vous de jouer)",
 					sound: "./assets/audios/iamdeath.mp3"
 				},
 			});
+			}
+		});
+		this.socket.on(C.DEAD, async (event:any) => {
+			_.forEach(this.game.players, p => {if(p._id==event.receiver){
+				p.status = C.DEAD;
+			}});
 		});
 	}
 

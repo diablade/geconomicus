@@ -145,6 +145,7 @@ export default {
 				);
 				io().to(id + C.EVENT).emit(C.EVENT, birthEvent);
 				io().to(id + C.MASTER).emit(C.NEW_PLAYER, player);
+				io().to(id + C.BANK).emit(C.NEW_PLAYER, player);
 				res.status(200).json(player._id);
 			} catch (error) {
 				log.error(error);

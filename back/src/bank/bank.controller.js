@@ -49,46 +49,47 @@ function checkSolvability(idGame, idPlayer, amountToCheck) {
 	// check capabilty with amount and ressources
 }
 
-function timeoutCredit(timer) {
+async function timeoutCredit(timer) {
 	if (timer) {
 		const credit = timer.data;
-		bankTimerManager.stopAndRemoveTimer(timer.id).then(async () => {
-				const check = await bankService.checkAbilityPayment(credit.idGame, credit.idPlayer, credit.interest);
-				if (check && check.canPay) {
-					let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
-					GameModel.findOneAndUpdate(
-						{_id: credit.idGame, 'credits._id': credit._id},
-						{
-							$set: {'credits.$.status': C.REQUEST_CREDIT},
-							$push: {'events': newEvent},
-						},
-					).then(result => {
-						credit.status = C.REQUEST_CREDIT;
-						io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-						io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
-						io().to(credit.idGame + C.BANK).emit(C.TIMEOUT_CREDIT, credit);
-					}).catch((error) => {
-						log.error(error);
-					});
-				} else {
-					let newEvent = constructor.event(C.DEFAULT_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
-					GameModel.findOneAndUpdate(
-						{_id: credit.idGame, 'credits._id': credit._id},
-						{
-							$set: {'credits.$.status': C.DEFAULT_CREDIT},
-							$push: {'events': newEvent},
-						}
-					).then(update => {
-						credit.status = C.DEFAULT_CREDIT;
-						io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-						io().to(credit.idGame + C.BANK).emit(C.DEFAULT_CREDIT, credit);
-						if (check && check.player.status !== C.DEAD) {
-							io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
-						}
-					}).catch((error) => {
-						log.error(error);
-					});
-				}
+		await bankTimerManager.stopAndRemoveTimer(timer.id).then(async () => {
+				bankService.checkAbilityPayment(credit.idGame, credit.idPlayer, credit.interest).then(check => {
+					if (check && check.canPay) {
+						let newEvent = constructor.event(C.REQUEST_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
+						GameModel.findOneAndUpdate(
+							{_id: credit.idGame, 'credits._id': credit._id},
+							{
+								$set: {'credits.$.status': C.REQUEST_CREDIT},
+								$push: {'events': newEvent},
+							},
+						).then(result => {
+							credit.status = C.REQUEST_CREDIT;
+							io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
+							io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
+							io().to(credit.idGame + C.BANK).emit(C.TIMEOUT_CREDIT, credit);
+						}).catch((error) => {
+							log.error(error);
+						});
+					} else {
+						let newEvent = constructor.event(C.DEFAULT_CREDIT, C.MASTER, credit.idPlayer, credit.amount, [credit], Date.now());
+						GameModel.findOneAndUpdate(
+							{_id: credit.idGame, 'credits._id': credit._id},
+							{
+								$set: {'credits.$.status': C.DEFAULT_CREDIT},
+								$push: {'events': newEvent},
+							}
+						).then(update => {
+							credit.status = C.DEFAULT_CREDIT;
+							io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
+							io().to(credit.idGame + C.BANK).emit(C.DEFAULT_CREDIT, credit);
+							if (check && check.player.status !== C.DEAD) {
+								io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
+							}
+						}).catch((error) => {
+							log.error(error);
+						});
+					}
+				});
 			}
 		);
 	}

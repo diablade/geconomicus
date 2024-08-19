@@ -130,7 +130,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
-			this.socket = this.wsService.getSocket(this.idGame,this.idPlayer);
+			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
 			this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
 				this.player = data.player;
 				this.typeMoney = data.typeMoney;
@@ -148,19 +148,19 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (data.player.status == "prison") {
 					this.prison = true;
 				}
-			});
-			if (this.typeMoney === C.DEBT) {
-				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-					this.credits = data;
-					_.forEach(data, d => {
-						if (d.status == C.DEFAULT_CREDIT) {
-							this.defaultCredit = true;
-						} else if (d.status == "requesting") {
-							this.requestingWhenCreditEnds(d, true);
-						}
+				if (this.typeMoney === C.DEBT) {
+					this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
+						this.credits = data;
+						_.forEach(data, d => {
+							if (d.status == C.DEFAULT_CREDIT) {
+								this.defaultCredit = true;
+							} else if (d.status == "requesting") {
+								this.requestingWhenCreditEnds(d, true);
+							}
+						});
 					});
-				});
-			}
+				}
+			});
 		});
 	}
 
@@ -213,14 +213,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}, 4000);
 		});
 		this.socket.on(C.RESET_GAME, async (data: any) => {
-			await new Promise(resolve => setTimeout(resolve, 1000));
 			this.dialog.closeAll();
-			this.cards = [];
-			this.credits = [];
-			this.statusGame = C.OPEN;
-			this.player.coins = 0;
-			this.defaultCredit = false;
-			this.prison = false;
+			await new Promise(resolve => setTimeout(resolve, 2000));
+			this.refresh();
 		});
 		this.socket.on(C.FIRST_DU, async (data: any) => {
 			this.currentDU = data.du;
@@ -243,7 +238,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.SHORT_CODE_EMIT, async (data: any) => {
 			if (this.shortCode && this.shortCode.code === data.code) {
-				this.socket.emit(C.SHORT_CODE_CONFIRMED, { payload: this.shortCode.payload, idBuyer:data.idBuyer});
+				this.socket.emit(C.SHORT_CODE_CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
 			}
 		});
 		this.socket.on(C.SHORT_CODE_CONFIRMED, async (data: any) => {
@@ -439,6 +434,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 	}
+
 	buyWithCode(code: string) {
 		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer});
 		this.snackbarService.showSuccess("Code envoyé");

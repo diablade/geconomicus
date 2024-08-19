@@ -31,9 +31,7 @@ export default {
 			return [];
 		}
 	},
-	checkAbilityPayment: async (idGame, idPlayer, checkAmountToPay) => {
-		await checkAbilityPayment(idGame,idPlayer,checkAmountToPay);
-	},
+	checkAbilityPayment: checkAbilityPayment,
 	seizureOnDead: async (credit)=> {
 		try {
 			const check = await checkAbilityPayment(credit.idGame, credit.idPlayer, (credit.amount + credit.interest));

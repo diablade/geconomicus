@@ -124,6 +124,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
+		this.socket.on(C.DEAD, async (event:any) => {
+			_.forEach(this.game.players, p => {if(p._id==event.receiver){
+				p.status = C.DEAD;
+			}});
+		});
+		this.socket.on(C.NEW_PLAYER, (player: Player) => {
+			this.game.players.push(player);
+		});
 	}
 
 	getAverageCurrency() {

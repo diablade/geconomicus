@@ -32,7 +32,6 @@ async function distribDU(idGame) {
 					player.coins += du;
 					newMassMoney += du;
 					io().to(player.id).emit(C.DISTRIB_DU, {du: du});
-
 					let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
 					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
 					newEvents.push(newEvent);

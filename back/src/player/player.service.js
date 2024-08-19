@@ -22,7 +22,7 @@ export default {
 
 		// Remove cards from player's hand & status dead & event
 		await decksService.pushCardsInDecks(idGame, player.cards);
-		let event = constructor.event(C.DEAD, "master", idPlayer, 0, player.cards, Date.now());
+		let event = constructor.event(C.DEAD, "master", idPlayer, player.coins, player.cards, Date.now());
 		GameModel.updateOne(
 			{_id: idGame, 'players._id': idPlayer},
 			{
@@ -35,6 +35,7 @@ export default {
 		});
 		io().to(idPlayer).emit(C.DEAD);
 		io().to(idGame + C.EVENT).emit(C.EVENT, event);
-
+		io().to(idGame + C.BANK).emit(C.DEAD, event);
+		io().to(idGame + C.MASTER).emit(C.DEAD, event);
 	}
 }

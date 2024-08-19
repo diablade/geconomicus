@@ -28,7 +28,7 @@
 			participants.
 		</p>
 		<p>
-			Le défi consiste à assembler des carrés de 4 cartes identiques, puis les transformer en cartes de valeur
+			Le défi consiste à assembler des carrés de 4 cartes identiques, puis à les transformer en cartes de valeur
 			supérieure
 			pour augmenter ses ressources.
 		</p>
@@ -40,29 +40,32 @@
 	</div>
 	<h2 class="gecoFont shadowed m-2">Mise en place</h2>
 	<ul>
-		<li>Chaque joueur, reçoit de 4 cartes ressources de faible valeur économique.</li>
-		<li>En monnaie libre, la première dividende universel (D.U) sera versé au tout début et reversé toutes les minutes.
+		<li>Chaque joueur, reçoit 4 cartes ressources de faible valeur économique.</li>
+		<li>En monnaie libre, le première dividende universel (D.U) sera versé au tout début et reversé toutes les minutes.
 		</li>
-		<li>En Monnaie dette, aucune monnaie n'est versé, il faut contracter un crédit au pres de la banque pour avoir de la
+		<li>En Monnaie dette, aucune monnaie n'est versée, il faut contracter un crédit auprès de la banque pour avoir de la
 			monnaie,
-			avant le debut du tour ou pendant le jeu
-			Le credit est à rembourser intégralement toutes les 5 minutes à partir de la contraction du crédit (ou début de
-			partie), ou prolongé par seulement le paiement d'un intérêt.
+			avant le début du tour ou pendant le jeu.
+			Le crédit est à rembourser intégralement toutes les 5 minutes à partir de la contraction de celui ci (ou au début
+			de
+			partie), ou à prolonger par paiement d'un intérêt.
 		</li>
 	</ul>
 	<h2 class="gecoFont shadowed m-2">Vendre une carte</h2>
 	<div class="d-flex flex-row">
 		<ul class="paragraph">
 			<li>
-				Cliquez sur la carte que vous souhaitez vendre, elle se retourne,
-				Un QRCode s'affiche, ainsi qu'un petit "ShortCode" au milieu est généré (code valable uniquement lorsque
-				visible).
+				<p>Cliquez sur la carte que vous souhaitez vendre.</p>
+				<p>Elle se retourne, Un QRCode s'affiche.</p>
+				<p>Un petit "ShortCode" au milieu est généré (code valable uniquement lorsque
+					visible).
+				</p>
 			</li>
 			<li>
-				Monter ce QR code ou les 3 chiffres à votre acheteur.
+				Montrer ce QR code ou les 3 chiffres à votre acheteur.
 			</li>
 		</ul>
-		<video class="video text-center" #tc (click)="tc.play()" playsinline autoplay muted>
+		<video class="video text-center" loop #tc (click)="tc.play()" playsinline autoplay muted>
 			<source src="assets/videos/turnCard.mp4" type="video/mp4">
 		</video>
 	</div>
@@ -73,7 +76,7 @@
 			<img class="" style="width: 100px" src="/assets/images/disableCam.png" alt="">
 		</div>
 
-		<p>(si le bouton est désactivé c'est que la partie n'as pas encore commencé, ou est terminée)</p>
+		<p>(Si le bouton est désactivé, c'est que la partie n'a pas encore commencé ou est déjà terminée)</p>
 		<p>Deux possibilités pour acheter une carte:</p>
 		<ul>
 			<li>
@@ -81,7 +84,7 @@
 					<fa-icon [icon]="faQrcode"></fa-icon>
 					:
 				</p>
-				<p>En cliquant sur acheter la camera s'active et vous pouvez scanner le QRCode de la carte souhaité sur l'écran
+				<p>En cliquant sur acheter, la caméra s'active et vous pouvez scanner le QRCode de la carte souhaitée sur l'écran
 					du vendeur.
 			</li>
 			<li>
@@ -89,30 +92,30 @@
 					<fa-icon [icon]="faKeyboard"></fa-icon>
 					:
 				</p>
-				<p>Désactivez la camera à coté du bouton acheter</p>
-				<p>En cliquant sur acheter, un clavier s'affichera et vous pourrez saisir le code qui est écrit au milieu du
+				<p>Désactivez la caméra à coté du bouton acheter.</p>
+				<p>En cliquant sur acheter, un clavier s'affiche et vous pouvez saisir le code qui est écrit au milieu du
 					QRcode de la carte de votre vendeur.</p>
 			</li>
 		</ul>
 	</div>
-	<h2 class="gecoFont shadowed m-2">Créer une carte supérieur</h2>
+	<h2 class="gecoFont shadowed m-2">Créer une carte supérieure</h2>
 	<div class="d-flex flex-row">
 		<div class="paragraph">
 			<ul>
 				<li>
-					Au coins de la carte s'affiche le nombre de cartes identique, et empilé que vous avez en votre possession.
+					Au coin de la carte s'affiche le nombre de cartes identiques et empilées que vous avez en votre possession.
 					<img class="" style="width: 30px" src="/assets/images/stack.png" alt="">
 				</li>
 				<li>
-					Ces cartes peuvent etre vendu, tout comme les autres, mais une par une.
+					Ces cartes peuvent être vendues, comme toutes les autres, mais une par une.
 				</li>
 				<li>
 					Une fois le compte obtenu (4), un bouton s'affiche pour construire et obtenir votre carte de
-					valeur supérieur comme suit:
+					valeur supérieure comme suit :
 				</li>
 			</ul>
 		</div>
-		<video class="video" #bc (click)="bc.play()" playsinline autoplay muted>
+		<video class="video" #bc (click)="bc.play()" loop playsinline autoplay muted>
 			<source src="assets/videos/build.mp4" type="video/mp4">
 		</video>
 	</div>
@@ -120,13 +123,13 @@
 	<h2 class="gecoFont shadowed m-2">Note de bas de page</h2>
 	<ul>
 		<li>
-			<p>Si la mort passe, (elle fait aussi partie de la simulation 😈)</p>
-			<p>Vous serez invités à créer un nouveau personnage dans la foulée</p>
-			<p>Votre ancien personnage ne sera plus jouable. </p>
-			<p>Et vos résultats seront bien cumulés avec votre deuxième vie pour les statistiques en fin de partie. :)</p>
+			<p>Si la mort passe (elle fait aussi partie de la simulation 😈):</p>
+			<p>Vous serez invité à créer un nouveau personnage dans la foulée;</p>
+			<p>Votre ancien personnage ne sera plus jouable;</p>
+			<p>Vos résultats seront bien cumulés, avec votre deuxième vie pour les statistiques en fin de partie. :)</p>
 		</li>
 		<li>
-			<p>Si une carte manque ou si un bug 🐞 apparaît, signalez-le à l'animateur</p>
+			<p>Si une carte manque ou si un bug 🐞 apparaît, signalez-le à l'animateur.</p>
 			<p>Cliquez sur le jeton de monnaie 🪙 en haut à gauche pour rafraîchir la page.</p>
 			Généralement, cela devrait "nettoyer" le bug 🐞.
 		</li>
