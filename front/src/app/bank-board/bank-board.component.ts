@@ -9,11 +9,12 @@ import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
-import {faCircleInfo, faSackDollar, faLandmark} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faSackDollar, faLandmark, faInfo} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
 import {environment} from "../../environments/environment";
 import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {GameInfosDialog} from "../master-board/master-board.component";
 
 @Component({
 	selector: 'app-bank-board',
@@ -31,6 +32,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	data = "";
 	socket: any;
 	C = C;
+	faInfo = faInfo;
 	prisoners: Player[] = [];
 	iWantToBreakFree = false;
 
@@ -124,10 +126,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(C.DEAD, async (event:any) => {
-			_.forEach(this.game.players, p => {if(p._id==event.receiver){
-				p.status = C.DEAD;
-			}});
+		this.socket.on(C.DEAD, async (event: any) => {
+			_.forEach(this.game.players, p => {
+				if (p._id == event.receiver) {
+					p.status = C.DEAD;
+				}
+			});
 		});
 		this.socket.on(C.NEW_PLAYER, (player: Player) => {
 			this.game.players.push(player);
@@ -215,5 +219,9 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		this.backService.breakFree(this.idGame, idPlayerToFree).subscribe(() => {
 			this.snackbarService.showSuccess("I want to break FREEEEEE !");
 		});
+	}
+
+	showRules() {
+		this.dialog.open(GameInfosDialog, {});
 	}
 }

@@ -41,14 +41,19 @@
 	<h2 class="gecoFont shadowed m-2">Mise en place</h2>
 	<ul>
 		<li>Chaque joueur, reçoit 4 cartes ressources de faible valeur économique.</li>
-		<li>En monnaie libre, le première dividende universel (D.U) sera versé au tout début et reversé toutes les minutes.
+		<li>En monnaie libre, le première dividende universel (D.U) sera versé au tout début du jeu et reversé toutes les
+			minutes automatiquement.
 		</li>
-		<li>En Monnaie dette, aucune monnaie n'est versée, il faut contracter un crédit auprès de la banque pour avoir de la
-			monnaie,
-			avant le début du tour ou pendant le jeu.
-			Le crédit est à rembourser intégralement toutes les 5 minutes à partir de la contraction de celui ci (ou au début
-			de
-			partie), ou à prolonger par paiement d'un intérêt.
+		<li>
+			<p>
+				En Monnaie dette, aucune monnaie n'est versée, il faut contracter un crédit auprès de la banque pour avoir de
+				la monnaie, avant le début du tour ou pendant le jeu.
+			</p>
+			<p>
+				Le crédit est à rembourser intégralement toutes les 5 minutes à partir de la contraction de celui ci (ou au
+				début de partie), ou à prolonger par paiement d'un intérêt.
+			</p>
+			<p>pour plus de details, voir en paragraphe: Gestion banque et crédits</p>
 		</li>
 	</ul>
 	<h2 class="gecoFont shadowed m-2">Vendre une carte</h2>
@@ -84,7 +89,8 @@
 					<fa-icon [icon]="faQrcode"></fa-icon>
 					:
 				</p>
-				<p>En cliquant sur acheter, la caméra s'active et vous pouvez scanner le QRCode de la carte souhaitée sur l'écran
+				<p>En cliquant sur acheter, la caméra s'active et vous pouvez scanner le QRCode de la carte souhaitée sur
+					l'écran
 					du vendeur.
 			</li>
 			<li>
@@ -119,17 +125,72 @@
 			<source src="assets/videos/build.mp4" type="video/mp4">
 		</video>
 	</div>
-
+	<h2 class="gecoFont shadowed m-2">La banque et le rôle du banquier</h2>
+	<div>
+		<p>
+			Pour accéder aux fonctionnalités de la Banque (uniquement en monnaie dette), il suffit de cliquer sur le bouton "Banque" depuis la vue principale pour démarrer ou stopper une partie de jeu.
+		</p>
+		<p>La Banque nécessite une personne "à temps plein" (souvent l'animateur) pour actroyer et gérer les credits des
+			joueurs, connaitre la monnaie en circulation, adapter les taux d'intérêts en fonction et les saisies en cas défaut
+			de paiements.</p>
+		<p>La banque dispose d'indicateurs économiques pour faciliter le role du banquier</p>
+		<ul>
+			<li>
+				<p class="text-decoration-underline">Monnaie en circulation:</p>
+				<p>Pour un bon fonctionnement de la partie il est intéressant de maintenir au moins une moyenne de 2€ par
+					joueur</p>
+				<p>En cas de recession, il est tout à fait possible de faire un appel et proposer aux joueurs des taux bas, voir
+					à 0% d'intérêt
+					exceptionnellement, afin de faire remonter la moyenne par joueur</p>
+			</li>
+			<li>
+				<p class="text-decoration-underline">Contracter un Crédit:</p>
+				<p>Depuis la vue "Banque" cliquer sur le bouton "Octroyer un crédit", une dialogue
+					s'affiche pour saisir les paramètres de credit (crédit et intérêt) et la personne demandeuse.</p>
+				<p>Un crédit à une échéance de 5mn à partir de la contractualisation</p>
+				<p>Lorsque cette échéance est échu, il sera demandé au joueur de remboursé ou de prolonger le crédit</p>
+			</li>
+			<li>
+				<p class="text-decoration-underline">Prolongement d'un crédit:</p>
+				<p>Si le joueur le souhaite ou si il n'as pas le choix, il peux prolonger de 5 minutes par le paiement de
+					l'intérêt tel que contracté</p>
+				<p>une nouvelle échéance à 5 minutes sera appliqué</p>
+			</li>
+			<li>
+				<p class="text-decoration-underline">Défaut de paiement:</p>
+				<p>A échéance du temps imparti, si le joueur ne peut plus payer l'intérêt, il lui est demandé d'aller voir la
+					banque</p>
+				<p>Le banquier vera le crédit concernant le joueur en défaut de paiement</p>
+				<p>Une saisie devra etre effectué sur les biens (cartes et monnaies) pour remboursé le crédit, une décotte est
+					appliqué sur la saisie</p>
+				<p>A défaut d'avoir pu remboursé intégralement avec les cartes le banquier se vera dans l'obligation de définir
+					une durée de prison</p>
+				<p>Cette durée est comprise de 1 à 5 minutes maximum, selon la gravité</p>
+				<p>Pour l'immersion du jeu, le joueur devra être exclue dans un coin de la pièce</p>
+			</li>
+		</ul>
+		exemple de saisie:
+		<video class="video" style="width: 100%" #bc (click)="bc.play()" loop playsinline autoplay muted>
+			<source src="assets/videos/saisie.mp4" type="video/mp4">
+		</video>
+	</div>
+	<h2 class="gecoFont shadowed m-2">La mort dans le jeu</h2>
+	<p>La mort fait aussi partie de la simulation 😈</p>
+	<ul>
+		<li>
+			<p>Toutes les 4 minutes une victime est choisie au hasard, si c'est vous, vous serez invité à créer un nouveau
+				personnage dans la foulée;</p>
+		</li>
+		<li>
+			<p>Vos résultats seront bien cumulés, avec votre deuxième vie pour les statistiques en fin de partie. :)</p>
+		</li>
+	</ul>
 	<h2 class="gecoFont shadowed m-2">Note de bas de page</h2>
 	<ul>
 		<li>
-			<p>Si la mort passe (elle fait aussi partie de la simulation 😈):</p>
-			<p>Vous serez invité à créer un nouveau personnage dans la foulée;</p>
-			<p>Votre ancien personnage ne sera plus jouable;</p>
-			<p>Vos résultats seront bien cumulés, avec votre deuxième vie pour les statistiques en fin de partie. :)</p>
+			<p>Si une carte manque ou si un bug 🐞 apparaît, signalez-le à l'animateur.</p>
 		</li>
 		<li>
-			<p>Si une carte manque ou si un bug 🐞 apparaît, signalez-le à l'animateur.</p>
 			<p>Cliquez sur le jeton de monnaie 🪙 en haut à gauche pour rafraîchir la page.</p>
 			Généralement, cela devrait "nettoyer" le bug 🐞.
 		</li>
