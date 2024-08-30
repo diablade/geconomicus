@@ -9,15 +9,20 @@
 						<div class="status" [ngClass]="getStatusClass(game.status)">{{ getStatus(game.status) }}</div>
 					</div>
 					<div class="ms-2">
+						<div>Créé le {{ game.created | date: "dd-MM-YYYY à HH:mm" }}</div>
 						<div>
-							{{ game.created | date: "dd/MMM/YYYY HH:mm" }}
+						<span class="fw-bold">👥 {{ game.playersCount }}</span> joueurs
+							, type:
+							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? "monnaie libre " : "monnaie dette " }}
+								<img *ngIf="game.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
+								<img *ngIf="game.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
+							</span>
 						</div>
-						<div>Animateur: <span class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
-						<div>lieu: <span class="fw-bold">{{ game.location ? game.location : "-" }}</span></div>
+						<div class="">
+						</div>
+						<div>Lieu: <span class="fw-bold">{{ game.location ? game.location : "-" }}</span>, Animateur: <span
+							class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
 						<div class="d-flex flex-row">
-							<div>Jeu: {{ game.typeMoney === C.JUNE ? "monnaie libre" : "monnaie dette" }}
-							</div>
-							<div class=""> 👥{{ game.playersCount }} Joueurs</div>
 						</div>
 					</div>
 				</div>

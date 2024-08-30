@@ -9,7 +9,7 @@ import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
-import {faCircleInfo, faSackDollar, faLandmark, faInfo} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
 import {environment} from "../../environments/environment";
 import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
@@ -32,7 +32,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	data = "";
 	socket: any;
 	C = C;
-	faInfo = faInfo;
+	faInfoCircle = faInfoCircle;
 	prisoners: Player[] = [];
 	iWantToBreakFree = false;
 
