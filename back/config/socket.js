@@ -12,7 +12,13 @@ function initIo(server) {
 	});
 	// Handle Socket.IO events
 	ioInstance.on('connection', (socket) => {
-		const {idPlayer, idGame} = socket.handshake.query; // Assuming you have a unique identifier for each user
+		const {idPlayer, idGame} = socket.handshake.query;
+		// Assuming you have a unique identifier for each user
+		if (!idPlayer || !idGame) {
+			console.error('idPlayer or idGame is missing in the query parameters.');
+			socket.disconnect();
+			return;
+		}
 		console.log('A player connected : ', idPlayer, ' on game :', idGame);
 		socket.join(idGame);
 		socket.join(idPlayer);
@@ -24,11 +30,15 @@ function initIo(server) {
 		socket.on('disconnect', () => {
 			console.log('A user disconnected');
 		});
+		// Listen for ping
+		socket.on('ping_geco', () => {
+			socket.emit('pong_geco');
+		});
 
 		socket.on(C.SHORT_CODE_EMIT, (data) => {
 			console.log('ShortCodeEmitted', data.code);
 			// Broadcast to all other clients except the sender
-			socket.broadcast.emit(C.SHORT_CODE_EMIT, data);
+			socket.broadcast.to(idGame).emit(C.SHORT_CODE_EMIT, data);
 		});
 		socket.on(C.SHORT_CODE_CONFIRMED, (data) => {
 			console.log('ShortCodeConfirmed');

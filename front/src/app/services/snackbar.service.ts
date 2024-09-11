@@ -21,6 +21,17 @@ export class SnackbarService {
     this.snackBar.open(message, undefined, config);
   }
 
+  showNotif(message: string) {
+    const config = new MatSnackBarConfig();
+    config.panelClass = ['snackbar-success'];
+    config.politeness = 'assertive';
+    config.verticalPosition = 'top';
+    config.horizontalPosition = 'center';
+    config.duration = this.durationInSeconds;
+    this.snackBar.open(message, "Ok", config);
+  }
+
+
   showError(message: string) {
     const config = new MatSnackBarConfig();
     config.panelClass = ['snackbar-error'];

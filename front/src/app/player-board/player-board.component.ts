@@ -130,37 +130,47 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
-			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
-			this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-				this.player = data.player;
-				this.typeMoney = data.typeMoney;
-				this.currentDU = data.currentDU;
-				this.statusGame = data.statusGame;
-				this.amountCardsForProd = data.amountCardsForProd;
-				if (this.player.image === "") {
-					this.options.seed = data.player.name.toString();
-					const avatar = createAvatar(adventurer, this.options);
-					this.player.image = avatar.toString();
-				}
-				// @ts-ignore
-				this.svgContainer.nativeElement.innerHTML = this.player.image;
-				await this.receiveCards(this.player.cards);
-				if (data.player.status == "prison") {
-					this.prison = true;
-				}
-				if (this.typeMoney === C.DEBT) {
-					this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-						this.credits = data;
-						_.forEach(data, d => {
-							if (d.status == C.DEFAULT_CREDIT) {
-								this.defaultCredit = true;
-							} else if (d.status == "requesting") {
-								this.requestingWhenCreditEnds(d, true);
-							}
-						});
-					});
+			this.wsService.getReConnectionStatus().subscribe((status) => {
+				if (status) {
+					this.getPlayerInfos();
 				}
 			});
+			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
+			this.getPlayerInfos();
+		});
+	}
+
+	getPlayerInfos() {
+		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
+			this.cards = [];
+			this.player = data.player;
+			this.typeMoney = data.typeMoney;
+			this.currentDU = data.currentDU;
+			this.statusGame = data.statusGame;
+			this.amountCardsForProd = data.amountCardsForProd;
+			if (this.player.image === "") {
+				this.options.seed = data.player.name.toString();
+				const avatar = createAvatar(adventurer, this.options);
+				this.player.image = avatar.toString();
+			}
+			// @ts-ignore
+			this.svgContainer.nativeElement.innerHTML = this.player.image;
+			await this.receiveCards(this.player.cards);
+			if (data.player.status == "prison") {
+				this.prison = true;
+			}
+			if (this.typeMoney === C.DEBT) {
+				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
+					this.credits = data;
+					_.forEach(data, d => {
+						if (d.status == C.DEFAULT_CREDIT) {
+							this.defaultCredit = true;
+						} else if (d.status == "requesting") {
+							this.requestingWhenCreditEnds(d, true);
+						}
+					});
+				});
+			}
 		});
 	}
 
@@ -176,21 +186,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.statusGame = C.PLAYING;
-			this.dialog.open(InformationDialogComponent, {
-				data: {text: "Le tour démarre ! "},
-			});
+			this.snackbarService.showNotif("Le tour démarre !");
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
+			this.dialog.closeAll();
 			this.statusGame = "waiting";
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: "Tour terminé !"},
 			});
-		});
-		this.socket.on("connected", (data: any) => {
-			console.log("connected", data);
-		});
-		this.socket.on('disconnect', () => {
-			console.log('Socket has been disconnected');
 		});
 		this.socket.on(C.END_GAME, (data: any) => {
 			this.snackbarService.showSuccess("Jeu terminé !");

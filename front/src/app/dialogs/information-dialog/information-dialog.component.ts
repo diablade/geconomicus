@@ -9,9 +9,13 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 export class InformationDialogComponent {
 	text = "";
+	title = "";
+	disableClose = false;
 
 	constructor(public dialogRef: MatDialogRef<InformationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.text = data.text;
+		this.title = data.title ? data.title : "Information !";
+		this.disableClose = data.disableClose == undefined ? false : data.disableClose;
 		if (data.sound) {
 			let audio = new Audio();
 			audio.src = data.sound;
@@ -21,6 +25,8 @@ export class InformationDialogComponent {
 	}
 
 	back(): void {
-		this.dialogRef.close();
+		if (!this.disableClose) {
+			this.dialogRef.close();
+		}
 	}
 }

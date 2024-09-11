@@ -14,6 +14,7 @@ export class ConfirmDialogComponent {
 	autoClickBtn2 = false;
 	timerBtn2 = 5;
 	audio = new Audio();
+	btn1Enable= true;
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.title = data.title ? data.title : this.title;
@@ -22,6 +23,7 @@ export class ConfirmDialogComponent {
 		this.labelBtn2 = data.labelBtn2;
 		this.autoClickBtn2 = data.autoClickBtn2;
 		this.timerBtn2 = data.timerBtn2;
+		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;
 		if (data.beep) {
 			this.audio.src = "./../../../assets/audios/request.mp3";
 			this.audio.load();

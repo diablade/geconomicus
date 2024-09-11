@@ -119,9 +119,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on("connected", (player: any) => {
 			console.log("connected", player);
 		});
-		this.socket.on('disconnect', () => {
-			console.log('Socket has been disconnected');
-		});
 		this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
 			this.startVideos();
 			this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
@@ -209,6 +206,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.game.status = C.STOP_ROUND;
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
+		this.snackbarService.showNotif("Tour terminé !");
 		this.dialog.open(InformationDialogComponent, {
 			data: {text: "Tour terminé !", sound: "../assets/audios/end.mp3"},
 		});
