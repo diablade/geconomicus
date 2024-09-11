@@ -50,7 +50,14 @@ describe("GAME controller test", () => {
 					_id: idGame,
 					status: C.OPEN,
 					typeMoney: "june",
-					events: [],
+					events: [{
+						"_id": expect.any(String),
+						"amount": 0,
+						"date": expect.any(String),
+						"emitter": "master", "receiver": "master",
+						"resources": [],
+						"typeEvent": "create-game",
+					}],
 					decks: [],
 					players: [],
 					amountCardsForProd: 4,
@@ -70,7 +77,7 @@ describe("GAME controller test", () => {
 					priceWeight4: 12,
 					round: 0,
 					roundMax: 1,
-					roundMinutes: 40,
+					roundMinutes: 25,
 
 					//option june
 					currentDU: 0,
