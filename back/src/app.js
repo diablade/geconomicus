@@ -23,10 +23,16 @@ const app = express();
 app.use(cors())
 
 // USE MIDDLEWARE
+// Ensure all requests and responses use UTF-8 encoding
+app.use((req, res, next) => {
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
+	req.headers['accept-charset'] = 'utf-8';
+	next();
+});
+// res.setHeader('Content-Type', 'application/json; charset=utf-8');
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(morgan(":remote-addr | :remote-user |[:date[clf]] " + "| :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms"));
-
 
 // MAIN ROUTES middleware
 app.use('/bank', bankRoutes);
