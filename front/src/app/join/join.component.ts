@@ -44,7 +44,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 
 	joinReincarnate() {
 		this.backService.joinReincarnate(this.idGame, this.name, this.fromId).subscribe(idPlayer => {
-			this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
+			this.router.navigate(['game', this.idGame, 'player', idPlayer]);
 		});
 	}
 	//
