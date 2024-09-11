@@ -1,6 +1,6 @@
 {
   "name": "Geconomicus",
-  "version": "0.9.55",
+  "version": "0.9.60",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
