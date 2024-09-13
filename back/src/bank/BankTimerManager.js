@@ -31,17 +31,25 @@ class BankTimerManager {
 
     startAllIdGameDebtTimer(idGame) {
         _.forEach(this.timers, (timer) => {
-            if (timer && timer.data && timer.data.idGame == idGame) {
+            if (timer && timer.data && timer.data.idGame === idGame) {
                 timer.start();
                 timer.data.status = "running";
             }
         });
     }
 
+    stopAllPlayerDebtsTimer(idGame,idPlayer) {
+        _.forEach(this.timers, (timer) => {
+            if (timer && timer.data && timer.data.idGame === idGame && timer.data.idPlayer===idPlayer) {
+                this.stopAndRemoveTimer(timer.id);
+            }
+        });
+    }
+
     stopAndRemoveAllIdGameDebtTimer(idGame) {
         _.forEach(this.timers, (timer) => {
-            if (timer && timer.data && timer.data.idGame == idGame) {
-                this.stopAndRemoveTimer(timer.id)
+            if (timer && timer.data && timer.data.idGame === idGame) {
+                this.stopAndRemoveTimer(timer.id);
             }
         });
     }
