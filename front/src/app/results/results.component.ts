@@ -20,7 +20,6 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
-import {pl} from "date-fns/locale";
 
 Chart.register(zoomPlugin);
 
@@ -54,6 +53,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	initialDU = 0;
 	initialMM = 0;
 	initialDebts = 0;
+	moneyDestroyed = 0;
 	initialResources = 0;
 	finalResources = 0;
 	startGameDate: Date | undefined;
@@ -347,6 +347,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
 	updateCharts() {
 		this.charts?.forEach(chart => {
+			chart.render();
 			chart.update();
 		});
 	}
@@ -619,12 +620,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				case C.NEW_CREDIT:
 					if (!this.roundStarted) {
 						this.initialMM += event.amount;
+						this.initialDebts += (event.amount + event.resources[0].interest);
 					}
 					updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					continue;
 				case C.SETTLE_CREDIT:
 					const interest = event.resources[0].interest;
+					this.moneyDestroyed += event.amount;
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", interest, false, this.pointsBefore1second);

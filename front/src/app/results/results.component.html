@@ -37,7 +37,8 @@
 				</div>
 				<div><span class="fw-bold">Ressources initial : </span> {{ getResourcesInDU(initialResources) }} (D.U eq)
 				</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ getResourcesInDU(finalResources) }} (D.U eq) (initial x{{finalResources/initialResources| number:'1.2-2' }})
+				<div><span class="fw-bold">Ressources final : </span>{{ getResourcesInDU(finalResources) }} (D.U eq) (initial
+					x{{ finalResources / initialResources| number:'1.2-2' }})
 				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
@@ -46,9 +47,12 @@
 				</div>
 				<div><span class="fw-bold">Dettes initial : </span> {{ initialDebts }} €</div>
 				<div><span class="fw-bold">Dettes final : </span>{{ getDebts() }} €</div>
+				<div><span class="fw-bold">Intérêts récupérés par la banque : </span>{{ game?.bankInterestEarned }} €</div>
+				<div><span class="fw-bold">Monnaie détruite (crédits remboursés) : </span>{{ moneyDestroyed }} €</div>
 				<div><span class="fw-bold">Ressources initial : </span> {{ initialResources }} (€)</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€) (initial x{{finalResources/initialResources| number:'1.2-2' }})</div>
-				<div><span class="fw-bold">Interets récupéré par la banque : </span>{{ game?.bankInterestEarned }} €</div>
+				<div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€) (initial
+					x{{ finalResources / initialResources| number:'1.2-2' }})
+				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Début: </span>{{ startGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
@@ -57,7 +61,7 @@
 				<div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
 				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
 				<div><span class="fw-bold">Nb de transactions total: </span>{{ getTransactionsTotal() }}</div>
-<!--				<div><span class="fw-bold">Vélocité de la monnaie: (V=PxT/M) </span>{{ getTransactionsTotal() }}</div>-->
+				<!--				<div><span class="fw-bold">Vélocité de la monnaie: (V=PxT/M) </span>{{ getTransactionsTotal() }}</div>-->
 			</div>
 		</div>
 		<h1 class="m-2 mt-4 contour">Podium</h1>
