@@ -430,8 +430,7 @@ export default {
 				});
 			});
 	},
-	delete:
-		async (req, res, next) => {
+	delete: async (req, res, next) => {
 			const idGame = req.body.idGame;
 			const password = req.body.password;
 			if (!idGame && !password) {
@@ -458,8 +457,7 @@ export default {
 				}
 			}
 		},
-	reset:
-		async (req, res, next) => {
+	reset: async (req, res, next) => {
 			const idGame = req.body.idGame;
 			if (!idGame) {
 				next({

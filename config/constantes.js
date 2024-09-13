@@ -11,15 +11,18 @@ const NEW_PLAYER = "new-player";
 const UPDATED_PLAYER = "updated-player";
 const NEW_CREDIT = "new-credit";
 const CREDITS_STARTED = "credits-started";
-const RUNNING_CREDIT = "running";
-const PAUSED_CREDIT = "paused";
 const SETTLE_CREDIT = "settle-credit";
-const PAYED_INTEREST = "payed-interest";
-const CREDIT_DONE = "credit-done";
-const TIMEOUT_CREDIT = "timeout-credit";
-const DEFAULT_CREDIT = "default-credit";
-const REQUEST_CREDIT = "requesting";
 const PROGRESS_CREDIT = "credit-progress";
+const TIMEOUT_CREDIT = "timeout-credit";
+const PAYED_INTEREST = "payed-interest";
+
+//STATUS CREDIT
+const PAUSED_CREDIT = "paused";
+const RUNNING_CREDIT = "running";
+const REQUEST_CREDIT = "requesting";
+const DEFAULT_CREDIT = "default-credit";
+const CREDIT_DONE = "credit-done";
+
 const SEIZURE = "seizure";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';

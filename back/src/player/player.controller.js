@@ -5,39 +5,19 @@ import mongoose from "mongoose";
 import {io} from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 import gameService from "../game/game.service.js";
+import decksService from "../misc/decks.service.js";
+import playerService from "./player.service.js";
 
 const getById = async (req, res, next) => {
 	const {idGame, idPlayer} = req.params;
 
-	if (!idPlayer || !idGame) {
-		return next({
-			status: 400,
-			message: "Bad request: missing game ID or player ID"
-		});
-	}
-
 	try {
-		const game = await GameModel.findById(idGame);
-		if (!game) {
-			throw new Error("Game not found");
-		}
-
-		const player = _.find(game.players, {id: idPlayer});
-		if (!player) {
-			throw new Error("Player not found");
-		}
-		res.status(200).json({
-			player: player,
-			statusGame: game.status,
-			typeMoney: game.typeMoney,
-			currentDU: game.currentDU,
-			amountCardsForProd: game.amountCardsForProd
-		});
-	} catch (error) {
-		console.error('Get player by ID error:', error);
+		const player = await playerService.getPlayer(idGame, idPlayer);
+		res.status(200).json(player);
+	} catch (e) {
 		next({
-			status: error.message === "Game not found" ? 404 : 400,
-			message: error.message
+			status: 400,
+			message: e.message
 		});
 	}
 };
@@ -96,36 +76,23 @@ const join = async (req, res, next) => {
 	}
 };
 const update = async (req, res, next) => {
-	const idGame = req.body.idGame;
 	const player = req.body;
+	const idGame = req.body.idGame;
 	const idPlayer = player._id
-	if (!idGame && !idPlayer) {
-		next({
-			status: 400,
-			message: "bad request"
-		});
-	} else {
-		// Step 1: Find the document containing the player
-		const game = await GameModel.findOne({_id: idGame, 'players._id': idPlayer});
-		const existingPlayer = game.players.find(p => p._id.toString() === idPlayer);
 
-		if (!game || !existingPlayer) {
-			next({
-				status: 404,
-				message: "Player not found"
-			});
-			return;
+	try {
+		if (!idGame && !idPlayer) {
+			throw new Error("Bad request");
 		}
+
+		// Step 1: Find the document containing the player
+		const existingPlayer = await playerService.getPlayer(idGame, idPlayer);
 
 		// Step 2: Check the player's status or any other property
 		if (existingPlayer.status === C.DEAD) { // Adjust this check as needed
-			next({
-				status: 400,
-				message: "Player is DEAD and cannot be updated"
-			});
-			return;
+			throw new Error("Player is DEAD and cannot be updated");
 		}
-		await GameModel.findOneAndUpdate(
+		const game = await GameModel.findOneAndUpdate(
 			{_id: idGame, 'players._id': idPlayer},
 			{
 				$set: {
@@ -144,26 +111,18 @@ const update = async (req, res, next) => {
 					'players.$.boardColor': player.boardColor,
 				}
 			},
-			{new: true, returnOriginal: false})
-			.then((doc) => {
-				const updatedPlayer = _.find(doc.players, p => p._id == idPlayer);
-				io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
-				res.status(200).json({"status": "updated"});
-			}).catch((err) => {
-				log.error(err);
-				next({
-					status: 404,
-					message: "Not found"
-				});
-			});
+			{new: true, returnOriginal: false});
+		const updatedPlayer = _.find(game.players, p => p._id === idPlayer);
+		io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
+		res.status(200).json({"status": "updated"});
+	} catch (e) {
+		log.error(e);
+		next({
+			status: 400,
+			message: e
+		});
 	}
 };
-
-function areCardIdsUnique(cardIds, authorizedLength) {
-	const uniqueIds = new Set(cardIds);  // Convert array to a Set to eliminate duplicates
-	return uniqueIds.size === authorizedLength;  // Compare the size of the Set array length authorized
-}
-
 const produce = async (req, res, next) => {
 	const {idGame, idPlayer, cards} = req.body;
 
@@ -188,7 +147,7 @@ const produce = async (req, res, next) => {
 		}
 
 		const idsToFilter = cards.map(c => c._id);
-		if (!areCardIdsUnique(idsToFilter, game.amountCardsForProd)) {
+		if (!decksService.areCardIdsUnique(idsToFilter, game.amountCardsForProd)) {
 			throw new Error("Incorrect cards for production");
 		}
 		const cardsToExchange = _.filter(player.cards, card => _.includes(idsToFilter, card._id.toString()));
@@ -223,6 +182,10 @@ const produce = async (req, res, next) => {
 				const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
 
 				const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
+				const newCardsIds = newCards.map(c => c._id);
+				if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
+					throw new Error("Incorrect new cards for production");
+				}
 				const newCardSup = shuffledDeck2[0];
 				const cardsDraw = [...newCards, newCardSup];
 
@@ -265,7 +228,7 @@ const produce = async (req, res, next) => {
 		log.error('Production error:', error);
 		next({
 			status: 400,
-			message: error.message || "Production error"
+			message: "Production cards error"
 		});
 	}
 };
@@ -420,41 +383,50 @@ const joinReincarnate = async (req, res, next) => {
 			boardColor: playerFromId.boardColor,
 		};
 
-		const updatedGame = await GameModel.findOneAndUpdate({_id: idGame}, {$push: {players: player}}, {new: true});
-
-		const shuffledDeck = _.shuffle(updatedGame.decks[0]);
-		// Draw new cards for the player
-		const newCards = shuffledDeck.slice(0, 4);//same weight
-
-		// remove cards from the deck
-		await GameModel.updateOne(
-			{_id: idGame},
-			{
-				$pull: {[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},},
+		const session = await GameModel.startSession();
+		await session.withTransaction(async () => {
+			const updatedGame = await GameModel.findOneAndUpdate({_id: idGame}, {$push: {players: player}}, {new: true});
+			const shuffledDeck = _.shuffle(updatedGame.decks[0]);
+			// Draw new cards for the player
+			const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
+			const newCardsIds = newCards.map(c => c._id);
+			if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
+				throw new Error("duplicate new cards for reincarnate");
 			}
-		);
-		//create events
-		let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
-		// and Add new cards to player's hand & event
-		await GameModel.updateOne(
-			{_id: idGame, 'players._id': idPlayer},
-			{
-				$push: {
-					'players.$.cards': {$each: newCards},
-					'events': birthEvent,
+			// remove cards from the deck
+			await GameModel.updateOne(
+				{_id: idGame},
+				{
+					$pull: {
+						[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},
+					},
 				}
-			}
-		);
+			);
+			//create events
+			let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
+			// and Add new cards to player's hand & event
+			await GameModel.updateOne(
+				{_id: idGame, 'players._id': idPlayer},
+				{
+					$push: {
+						'players.$.cards': {$each: newCards},
+						'events': birthEvent,
+					}
+				}
+			);
+		});
+		session.endSession();
+
 		io().to(idGame + C.EVENT).emit(C.EVENT, birthEvent);
 		io().to(idGame + C.MASTER).emit(C.NEW_PLAYER, player);
 		io().to(idGame + C.BANK).emit(C.NEW_PLAYER, player);
 		res.status(200).json(player._id);
 
 	} catch (error) {
-		log.error('Join/Reincarnate error:', error);
+		log.error('JoinReincarnate error:', error);
 		next({
 			status: 404,
-			message: error.message || "Join/Reincarnate operation failed"
+			message: "Reincarnate failed"
 		});
 	}
 };
@@ -500,14 +472,15 @@ const addFeedback = async (req, res, next) => {
 };
 
 export default {
-	join: join,
+	join,
 	joinInGame: async (req, res, next) => {
+		//maybe one day...
 	},
-	isReincarnated: isReincarnated,
-	joinReincarnate: joinReincarnate,
-	update: update,
-	getById: getById,
-	produce: produce,
-	transaction: transaction,
-	addFeedback: addFeedback,
+	isReincarnated,
+	joinReincarnate,
+	update,
+	getById,
+	produce,
+	transaction,
+	addFeedback,
 };
