@@ -24,8 +24,11 @@ export class BackService {
 	}
 
 	private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
-		if (whatToSay) this.snackbarService.showError(whatToSay);
-		else this.snackbarService.showError(error.error.message);
+		if (whatToSay) {
+			this.snackbarService.showError(whatToSay);
+		} else {
+			this.snackbarService.showError(error.error.message);
+		}
 		if (error.status === 0) {
 			console.error('An error occurred:', error.error);
 		} else {
@@ -165,7 +168,7 @@ export class BackService {
 				idCard
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "", err))
+				catchError(err => this.handleError(err, "", ""))
 			);
 	}
 
