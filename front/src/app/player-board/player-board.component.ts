@@ -21,7 +21,7 @@ import {ShortCode} from "../models/shortCode";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../master-board/master-board.component";
-
+import createCountdown from "../services/countDown";
 
 @Component({
 	selector: 'app-player-board',
@@ -106,9 +106,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	prison = false;
 	defaultCredit = false;
 	prisonProgress = 0;
-	minutesPrison = 0;
+	minutesPrison = 5;
 	secondsPrison = 0;
 	shortCode: ShortCode | undefined;
+	prisonTimer = createCountdown({h: 0, m: 0, s: 0}, {
+		listen: ({hh, mm, ss, s, h, m}) => {
+			this.minutesPrison = m;
+			this.secondsPrison = s;
+		},
+		done: () => {
+			this.snackbarService.showSuccess("Sortie de prison");
+		}
+	});
 
 	constructor(private route: ActivatedRoute,
 							public dialog: MatDialog,
@@ -320,8 +329,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
 			this.prisonProgress = data.progress;
-			this.minutesPrison = Math.floor((data.remainingTime / (1000 * 60)) % 60);
-			this.secondsPrison = Math.floor((data.remainingTime / 1000) % 60);
+			let minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
+			let seconds = Math.floor((data.remainingTime / 1000) % 60);
+			this.prisonTimer.stop();
+			this.prisonTimer.reset();
+			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
+			this.prisonTimer.start();
 		});
 		this.socket.on(C.PRISON_ENDED, async (data: any) => {
 			this.prison = false;
@@ -567,6 +580,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						}
 						return c;
 					});
+					this.snackbarService.showSuccess("Crédit soldé");
 					let interestAudio = new Audio("../assets/audios/interest.mp3");
 					interestAudio.load();
 					interestAudio.play();
