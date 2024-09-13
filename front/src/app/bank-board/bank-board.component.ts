@@ -132,6 +132,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 					p.status = C.DEAD;
 				}
 			});
+			_.forEach(this.game.credits, c => {
+				if (c.idPlayer === event.receiver && c.status === C.DEFAULT_CREDIT ) {
+					this.dialog.closeAll();
+				}
+			});
+
 		});
 		this.socket.on(C.NEW_PLAYER, (player: Player) => {
 			this.game.players.push(player);
