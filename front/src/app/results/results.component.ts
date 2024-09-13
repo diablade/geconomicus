@@ -70,10 +70,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	podiumRes: Player[] = [];
 	podiumTransac: Player[] = [];
 
-	bestPlayerOnTransaction: Player | undefined;
-	bestPlayerOnTransactionId: string | undefined = "";
-
-
 	durationGame() {
 		if (this.startGameDate && this.stopGameDate) {
 			const start = new Date(this.startGameDate);
@@ -730,9 +726,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		const transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
 		if (transactionEvents.length > 0) {
 			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
-			this.bestPlayerOnTransactionId = Object.entries(transactionPlayers).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+
+			const transactionPlayersArray = _.toPairs(transactionPlayers);
+			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
+
+			this.podiumTransac = _.map(sortedPlayers, ([playerId]) => {
+				let playerFound = _.find(this.players, {_id: playerId});
+				return playerFound || new Player();  // Return player object or a default Player if not found
+			});
 		}
-		this.bestPlayerOnTransaction = _.find(this.players, {_id: this.bestPlayerOnTransactionId});
 	}
 
 	mergedReincarnatePlayers(allLastPoints: LastPointValue[]): LastPointValue[] {

@@ -104,23 +104,27 @@
 							</div>
 						</div>
 					</ng-container>
-<!--					<div *ngIf="bestPlayerOnRes" class="player-frame player-svg"-->
-<!--							 [ngStyle]="{'border-color':'#'+bestPlayerOnRes.hairColor}"-->
-<!--							 [innerHTML]="getSanitizedSvgFromString(bestPlayerOnRes.image)">-->
-<!--					</div>-->
-<!--					<div *ngIf="!bestPlayerOnRes">aucun...</div>-->
-<!--					<div *ngIf="bestPlayerOnRes" class="gecoFont shadowed"> {{ bestPlayerOnRes.name }}<span class="fs-3"> 🥇</span>-->
-<!--					</div>-->
 				</div>
 				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif</div>
-					<div *ngIf="!bestPlayerOnTransaction">aucun...</div>
-					<div *ngIf="bestPlayerOnTransaction" class="player-frame player-svg"
-							 [ngStyle]="{'border-color':'#'+bestPlayerOnTransaction.hairColor}"
-							 [innerHTML]="getSanitizedSvgFromString(bestPlayerOnTransaction.image)">
-					</div>
-					<div *ngIf="bestPlayerOnTransaction" class="gecoFont shadowed"> {{ bestPlayerOnTransaction.name }}<span
-						class="fs-3"> 🥇</span></div>
+					<div *ngIf="podiumTransac.length ==0">aucun...</div>
+					<ng-container *ngFor="let player of podiumTransac, let i=index">
+						<div class="mb-4 d-flex align-items-center flex-column" *ngIf="i===0">
+							<div class="player-frame player-svg"
+									 [ngStyle]="{'border-color':'#'+player.hairColor}"
+									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							</div>
+							<div class="text-center gecoFont shadowed"> {{ player.name }}<span class="fs-3"> 🥇</span></div>
+						</div>
+						<div *ngIf="i ===1 || i=== 2" class="d-flex align-items-center">
+							<div class="player-frame-second-third player-svg"
+									 [ngStyle]="{'border-color':'#'+player.hairColor}"
+									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							</div>
+							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }} </span>
+							</div>
+						</div>
+					</ng-container>
 				</div>
 			</div>
 		</div>
