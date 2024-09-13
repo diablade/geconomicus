@@ -53,13 +53,13 @@ const pushCardsInDecks = async (idGame, cards) => {
 			}
 		);
 	} catch (err) {
-		log.error("Cards are not back in decks");
-		return (err);
+		log.error(err);
+		throw new Error("Cards are not back in decks");
 	}
 }
 
 export default {
-	generateDecks: generateDecks,
-	pushCardsInDecks: pushCardsInDecks,
-	areCardIdsUnique: areCardIdsUnique,
+	generateDecks,
+	pushCardsInDecks,
+	areCardIdsUnique,
 }
