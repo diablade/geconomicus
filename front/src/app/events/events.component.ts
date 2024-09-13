@@ -33,7 +33,7 @@ export class EventsComponent {
       case "blue":
         return "🟦";
       default:
-        return "🟥";
+        return "⁉️";
     }
   }
 
