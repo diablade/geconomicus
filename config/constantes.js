@@ -15,6 +15,8 @@ const SETTLE_CREDIT = "settle-credit";
 const PROGRESS_CREDIT = "credit-progress";
 const TIMEOUT_CREDIT = "timeout-credit";
 const PAYED_INTEREST = "payed-interest";
+const SEIZED_DEAD = "seized-dead";
+const SEIZURE = "seizure";
 
 //STATUS CREDIT
 const PAUSED_CREDIT = "paused";
@@ -23,7 +25,6 @@ const REQUEST_CREDIT = "requesting";
 const DEFAULT_CREDIT = "default-credit";
 const CREDIT_DONE = "credit-done";
 
-const SEIZURE = "seizure";
 const START_GAME = 'start-game';
 const END_GAME = 'end-game';
 const START_ROUND = 'start-round';

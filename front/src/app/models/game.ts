@@ -118,6 +118,7 @@ export class Game {
 	credits: Credit[] = [];
 	bankInterestEarned = 0;
 	bankGoodsEarned = 0;
+	bankMoneyLost = 0;
 	defaultCreditAmount = 3;
 	defaultInterestAmount = 1;
 	timerCredit = 5;

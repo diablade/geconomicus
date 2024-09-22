@@ -8,7 +8,6 @@ import socket from "../config/socket.js";
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
 import _ from 'lodash';
-import playerService from "../src/player/player.service.js";
 
 jest.mock('../config/socket.js');
 

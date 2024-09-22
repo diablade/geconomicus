@@ -234,13 +234,13 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			const creditUpdated = await bankService.settleCredit(credit);
-			if (creditUpdated) {
+			try {
+				const creditUpdated = await bankService.settleCredit(credit);
 				res.status(200).json(creditUpdated);
-			} else {
+			} catch (e) {
 				next({
-					status: 404,
-					message: "erreur remboursement credit"
+					status: 400,
+					message: "can't settle credit"
 				});
 			}
 		}

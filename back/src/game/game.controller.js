@@ -389,8 +389,15 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			await playerService.killPlayer(idGame, idPlayer);
-			res.status(200).json({status: "done"});
+			try {
+				await playerService.killPlayer(idGame, idPlayer);
+				res.status(200).json({status: "done"});
+			} catch (e) {
+				next({
+					status: 400,
+					message: e
+				});
+			}
 		}
 	},
 	all: async (req, res, next) => {
@@ -410,7 +417,7 @@ export default {
 								input: "$players",
 								as: "player",
 								cond: {
-									$eq: [{ $ifNull: ["$$player.reincarnateFromId", null] }, null]
+									$eq: [{$ifNull: ["$$player.reincarnateFromId", null]}, null]
 								}
 							}
 						},
@@ -431,110 +438,110 @@ export default {
 			});
 	},
 	delete: async (req, res, next) => {
-			const idGame = req.body.idGame;
-			const password = req.body.password;
-			if (!idGame && !password) {
-				next({
-					status: 400,
-					message: "bad request"
-				});
-			} else {
-				try {
-					if (bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
-						await GameModel.findByIdAndDelete(idGame);
-						res.status(200).json({"status": "delete done"});
-					} else {
-						next({
-							status: 500,
-							message: "error"
-						});
-					}
-				} catch (e) {
+		const idGame = req.body.idGame;
+		const password = req.body.password;
+		if (!idGame && !password) {
+			next({
+				status: 400,
+				message: "bad request"
+			});
+		} else {
+			try {
+				if (bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
+					await GameModel.findByIdAndDelete(idGame);
+					res.status(200).json({"status": "delete done"});
+				} else {
 					next({
-						status: 400,
-						message: e
+						status: 500,
+						message: "error"
 					});
 				}
-			}
-		},
-	reset: async (req, res, next) => {
-			const idGame = req.body.idGame;
-			if (!idGame) {
+			} catch (e) {
 				next({
 					status: 400,
-					message: "bad request"
+					message: e
 				});
-			} else {
-				gameTimerManager.stopAndRemoveTimer(idGame);
-				gameTimerManager.stopAndRemoveTimer(idGame + "death");
-				BankController.resetIdGameDebtTimers(idGame);
-				const game = await GameModel.findById(idGame);
-				const events = _.filter(game.events, e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
-				const players = _.filter(game.players, e => e.reincarnateFromId == null);
-				_.forEach(players, p => {
-					p.cards = [];
-					p.coins = 0;
-					p.status = C.ALIVE;
-				});
-				GameModel.findByIdAndUpdate(idGame, {
-						$set: {
-							status: C.OPEN,
-							typeMoney: C.JUNE,
-							decks: [],
-							players: players,
-							credits: [],
-							events: events,
-							priceWeight1: 3,
-							priceWeight2: 6,
-							priceWeight3: 9,
-							priceWeight4: 12,
-							currentMassMonetary: 0,
-							surveyEnabled: true,
-							devMode: true,
-							generatedIdenticalCards: 4,
-							distribInitCards: 4,
-							generateLettersAuto: true,
-							generateLettersInDeck: 0,
-							amountCardsForProd: 4,
-							round: 0,
-							roundMax: 1,
-							roundMinutes: 25,
-							autoDeath: true,
-							deathPassTimer: 4,
-
-							//option june
-							currentDU: 0,
-							tauxCroissance: 5,
-							inequalityStart: false,
-							startAmountCoins: 5,
-							pctPoor: 10,
-							pctRich: 10,
-
-							//option debt
-							defaultCreditAmount: 3,
-							defaultInterestAmount: 1,
-							bankInterestEarned: 0,
-							bankGoodsEarned: 0,
-							timerCredit: 5,
-							timerPrison: 5,
-							manualBank: false,
-							seizureType: "decote",
-							seizureCosts: 2,
-							seizureDecote: 33,
-						}
-					},
-					{new: true})
-					.then((updatedGame) => {
-						io().to(idGame).emit(C.RESET_GAME);
-						res.status(200).json({"status": "reset done"});
-					})
-					.catch((error) => {
-						log.error(error);
-						next({
-							status: 404,
-							message: "Not found"
-						});
-					});
 			}
 		}
+	},
+	reset: async (req, res, next) => {
+		const idGame = req.body.idGame;
+		if (!idGame) {
+			next({
+				status: 400,
+				message: "bad request"
+			});
+		} else {
+			gameTimerManager.stopAndRemoveTimer(idGame);
+			gameTimerManager.stopAndRemoveTimer(idGame + "death");
+			BankController.resetIdGameDebtTimers(idGame);
+			const game = await GameModel.findById(idGame);
+			const events = _.filter(game.events, e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
+			const players = _.filter(game.players, e => e.reincarnateFromId == null);
+			_.forEach(players, p => {
+				p.cards = [];
+				p.coins = 0;
+				p.status = C.ALIVE;
+			});
+			GameModel.findByIdAndUpdate(idGame, {
+					$set: {
+						status: C.OPEN,
+						typeMoney: C.JUNE,
+						decks: [],
+						players: players,
+						credits: [],
+						events: events,
+						priceWeight1: 3,
+						priceWeight2: 6,
+						priceWeight3: 9,
+						priceWeight4: 12,
+						currentMassMonetary: 0,
+						surveyEnabled: true,
+						devMode: true,
+						generatedIdenticalCards: 4,
+						distribInitCards: 4,
+						generateLettersAuto: true,
+						generateLettersInDeck: 0,
+						amountCardsForProd: 4,
+						round: 0,
+						roundMax: 1,
+						roundMinutes: 25,
+						autoDeath: true,
+						deathPassTimer: 4,
+
+						//option june
+						currentDU: 0,
+						tauxCroissance: 5,
+						inequalityStart: false,
+						startAmountCoins: 5,
+						pctPoor: 10,
+						pctRich: 10,
+
+						//option debt
+						defaultCreditAmount: 3,
+						defaultInterestAmount: 1,
+						bankInterestEarned: 0,
+						bankGoodsEarned: 0,
+						timerCredit: 5,
+						timerPrison: 5,
+						manualBank: false,
+						seizureType: "decote",
+						seizureCosts: 2,
+						seizureDecote: 33,
+					}
+				},
+				{new: true})
+				.then((updatedGame) => {
+					io().to(idGame).emit(C.RESET_GAME);
+					res.status(200).json({"status": "reset done"});
+				})
+				.catch((error) => {
+					log.error(error);
+					next({
+						status: 404,
+						message: "Not found"
+					});
+				});
+		}
+	}
 };

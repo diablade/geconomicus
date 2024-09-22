@@ -110,6 +110,8 @@ let Game = new Schema({
 	defaultInterestAmount: {type: Number, required: true},
 	bankInterestEarned: {type: Number, required: true},
 	bankGoodsEarned: {type: Number, required: true},
+	// money lost that was not payed or seized
+	bankMoneyLost: {type: Number, required: true},
 	timerCredit: {type: Number, required: true},
 	timerPrison: {type: Number, required: true},
 	manualBank: {type: Boolean, required: true},
