@@ -16,13 +16,13 @@ export const environment = {
 		SURVEY: 'player/survey/'
 	},
 	BANK: {
-		GET_CREDITS: "bank/get-credits/",
+		GET_CREDITS: 'bank/get-credits/',
 		CREATE_CREDIT: 'bank/create-credit',
 		DELETE_CREDIT: 'bank/delete-credit',
 		SETTLE_CREDIT: 'bank/settle-credit',
 		PAY_INTEREST: 'bank/pay-interest',
 		SEIZURE: 'bank/seizure',
-		BREAK_FREE: "bank/prison-break",
+		BREAK_FREE: 'bank/prison-break',
 	},
 	GAME: {
 		GET: 'game/',
@@ -33,6 +33,7 @@ export const environment = {
 		IMPORT: 'game/import',
 		START: 'game/start',
 		EVENTS: 'game/events/',
+		GET_FEEDBACKS: 'game/feedbacks/',
 		DELETE_PLAYER: 'game/delete-player',
 		KILL_PLAYER: "game/kill-player",
 		RESET: 'game/reset',
@@ -40,6 +41,6 @@ export const environment = {
 		STOP_ROUND: 'game/stop-round',
 		INTER_ROUND: 'game/inter-round',
 		END: 'game/end',
-		DELETE_GAME: "game/delete",
+		DELETE_GAME: 'game/delete',
 	},
 };

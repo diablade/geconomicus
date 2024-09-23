@@ -2,3 +2,4 @@
 *.iml
 /logs/all.log
 /logs/error.log
+/assets offline/*
