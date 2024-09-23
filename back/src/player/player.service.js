@@ -14,19 +14,20 @@ const killPlayer = async (idGame, idPlayer) => {
 			//stop timer of player's credits
 			await bankTimerManager.stopAllPlayerDebtsTimer(idGame, idPlayer);
 			//start seizure for any debt
-			await bankService.seizureOnDead(idGame, idPlayer);
+			let event = await bankService.seizureOnDead(idGame, idPlayer);
+			io().to(idGame + C.EVENT).emit(C.EVENT, event);
+			io().to(idGame + C.BANK).emit(C.SEIZED_DEAD, event);
 		}
 		// get updated player
 		let player = await getPlayer(idGame, idPlayer);
 		// push the rest of cards in decks
 		await decksService.pushCardsInDecks(idGame, player.cards);
 
-		// remove all cards from player's hand , give status dead & create event
+		// create event & give status dead
 		let event = constructor.event(C.DEAD, "master", idPlayer, player.coins, player.cards, Date.now());
-		GameModel.updateOne(
+		await GameModel.updateOne(
 			{_id: idGame, 'players._id': idPlayer},
 			{
-				$pull: {'players.$.cards': {_id: {$in: player.cards.map(c => c.id)}}},
 				$set: {'players.$.status': C.DEAD},
 				$push: {'events': event},
 			},
@@ -40,7 +41,7 @@ const killPlayer = async (idGame, idPlayer) => {
 		throw new Error("kill player failed");
 	}
 }
-const getPlayer = async (idGame, idPlayer) => {
+const getPlayer = async (idGame, idPlayer, statusGames = false) => {
 	try {
 		if (!idPlayer || !idGame) {
 			throw new Error("Bad request: missing game ID or player ID");
@@ -55,13 +56,17 @@ const getPlayer = async (idGame, idPlayer) => {
 		if (!player) {
 			throw new Error("Player not found");
 		}
-		return ({
-			player: player,
-			statusGame: game.status,
-			typeMoney: game.typeMoney,
-			currentDU: game.currentDU,
-			amountCardsForProd: game.amountCardsForProd
-		});
+		if (statusGames) {
+			return ({
+				player: player,
+				statusGame: game.status,
+				typeMoney: game.typeMoney,
+				currentDU: game.currentDU,
+				amountCardsForProd: game.amountCardsForProd
+			});
+		} else {
+			return player;
+		}
 	} catch (error) {
 		log.error("GetPlayer: " + error);
 		throw error;

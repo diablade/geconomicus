@@ -43,12 +43,6 @@ function addPrisonTimer(id, duration, data) {
 		}), true);
 }
 
-function checkSolvability(idGame, idPlayer, amountToCheck) {
-	//get game credits
-	//get player coins and ressources
-	// check capabilty with amount and ressources
-}
-
 async function timeoutCredit(timer) {
 	if (timer) {
 		const credit = timer.data;
@@ -308,6 +302,9 @@ export default {
 		} else {
 			try {
 				let newEvent = constructor.event(C.SEIZURE, credit.idPlayer, C.BANK, seizure.coins, seizure.cards, Date.now());
+				let interestSeized = credit.interest >= seizure.coins ? credit.interest : 0;
+				let cardsValue = _.reduce(seizure.cards, (acc, c) => c.price + acc, 0);
+
 				// remove card and coins of player
 				await GameModel.updateOne(
 					{_id: credit.idGame, 'players._id': credit.idPlayer},
@@ -324,7 +321,11 @@ export default {
 				await GameModel.updateOne(
 					{_id: credit.idGame, 'credits._id': credit._id},
 					{
-						$inc: {'currentMassMonetary': -seizure.coins},
+						$inc: {
+							'currentMassMonetary': -seizure.coins,
+							'bankInterestEarned': +interestSeized,
+							'bankGoodsEarned': cardsValue,
+						},
 						$set: {
 							'credits.$.status': C.CREDIT_DONE,
 							'credits.$.endDate': Date.now(),

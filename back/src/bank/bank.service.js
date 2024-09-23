@@ -90,6 +90,10 @@ const seizureOnDead = async (idGame, idPlayer) => {
 				payedAmount += credit.amount;
 				credit.amount = 0;
 			} else {
+				// seize the rest coins
+				credit.amount -= player.coins;
+				payedAmount += player.coins;
+				player.coins = 0;
 				//seizure on cards
 				if (cardsValue >= credit.amount) {
 					cardsValue -= credit.amount;
@@ -127,8 +131,14 @@ const seizureOnDead = async (idGame, idPlayer) => {
 		await decksService.pushCardsInDecks(idGame, totalSeizedCards);
 		// remove seized cards from player's hand
 		// user update, bank update, and MMonetary update
-		let event = constructor.event(C.SEIZED_DEAD, "master", idPlayer, totalPayedInCoins, totalSeizedCards, Date.now());
-		GameModel.updateOne(
+		let event = constructor.event(C.SEIZED_DEAD, idPlayer, C.BANK, totalPayedInCoins, [{
+			interest: totalPayedInterest,
+			amount: totalPayedAmount,
+			cards: totalSeizedCards,
+			bankMoneyLost: totalNotPayed,
+			bankGoodsEarned: totalSeizedCardsValue
+		}], Date.now());
+		await GameModel.updateOne(
 			{_id: idGame, 'players._id': idPlayer},
 			{
 				$inc: {
@@ -142,6 +152,7 @@ const seizureOnDead = async (idGame, idPlayer) => {
 				$push: {'events': event},
 			},
 		);
+		return event;
 	} catch (err) {
 		log.error(err);
 		throw new Error("seizure on dead failed");

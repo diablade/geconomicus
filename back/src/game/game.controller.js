@@ -19,7 +19,6 @@ export default {
 				message: "bad request"
 			});
 		} else {
-			let body = req.body;
 			let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
 
 			const newGame = new GameModel({
@@ -63,6 +62,7 @@ export default {
 				defaultInterestAmount: 1,
 				bankInterestEarned: 0,
 				bankGoodsEarned: 0,
+				bankMoneyLost: 0,
 				timerCredit: 5,
 				timerPrison: 5,
 				manualBank: true,
@@ -522,6 +522,7 @@ export default {
 						defaultInterestAmount: 1,
 						bankInterestEarned: 0,
 						bankGoodsEarned: 0,
+						bankMoneyLost: 0,
 						timerCredit: 5,
 						timerPrison: 5,
 						manualBank: false,

@@ -18,9 +18,9 @@
 				<mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
 					<b>{{ getAverageCurrency() | number : '1.2-2' }} </b>
 					<fa-icon mat-raised-button [icon]="faCircleInfo"
-									 matTooltip="Un ratio de minimum 2 est conseillé à maintenir,
-                 vous pouvez peut etre faire des offres unique de baisse des taux,
-                 0% par exemple.">
+									 matTooltip="Un ratio de minimum 2 est conseillé à maintenir, en dessous une crise de ressession se produit.
+                 Pour en sortir, vous pouvez peut etre faire des offres temporaire de baisse des taux,
+                 voir quand la crise est trop sévère, faire des taux 0% par exemple.">
 					</fa-icon>
 				</mat-chip>
 			</div>
@@ -31,15 +31,15 @@
 				</mat-chip>
 			</div>
 			<div>
-				interet récuperé :
+				Intérêts récupérés :
 				<mat-chip>
 					{{ game.bankInterestEarned }}
 				</mat-chip>
 			</div>
 			<div>
-				credit remboursé :
+				Valeur total des ressources saisies :
 				<mat-chip>
-					{{ "-" }}
+					{{ game.bankGoodsEarned }}
 				</mat-chip>
 			</div>
 		</div>

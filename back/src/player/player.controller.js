@@ -12,7 +12,7 @@ const getById = async (req, res, next) => {
 	const {idGame, idPlayer} = req.params;
 
 	try {
-		const player = await playerService.getPlayer(idGame, idPlayer);
+		const player = await playerService.getPlayer(idGame, idPlayer,true);
 		res.status(200).json(player);
 	} catch (e) {
 		next({
@@ -383,6 +383,7 @@ const joinReincarnate = async (req, res, next) => {
 			boardColor: playerFromId.boardColor,
 		};
 
+		let birthEvent;
 		const session = await GameModel.startSession();
 		await session.withTransaction(async () => {
 			const updatedGame = await GameModel.findOneAndUpdate({_id: idGame}, {$push: {players: player}}, {new: true});
@@ -403,7 +404,7 @@ const joinReincarnate = async (req, res, next) => {
 				}
 			);
 			//create events
-			let birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
+			birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
 			// and Add new cards to player's hand & event
 			await GameModel.updateOne(
 				{_id: idGame, 'players._id': idPlayer},

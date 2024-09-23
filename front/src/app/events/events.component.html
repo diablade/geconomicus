@@ -44,6 +44,12 @@
         <span *ngSwitchCase="C.DEAD">
           <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦</span>
         </span>
+        <span *ngSwitchCase="C.SEIZED_DEAD">
+          <span [matTooltip]="'Cloture crédits et saisie sur '+getPlayerName(event.emitter)">️ 🏦🫳👤🪦{{ event.amount }}€ </span>
+          <span *ngFor="let card of event.resources[0].cards">
+						<span [matTooltip]="card._id">{{ getTextCard(card) }}</span>
+					</span>
+        </span>
         <span *ngSwitchCase="C.REMIND_DEAD">
           <span [matTooltip]="'Mort de '+getPlayerName(event.receiver)"> 👤🪦for graph</span>
         </span>

@@ -85,16 +85,13 @@ describe('seizureOnDead', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
-
 		// Set up the mocks for each test
+		jest.clearAllMocks();
 		GameModel.findById = jest.fn().mockResolvedValue(mockGame);
 		playerService.getPlayer = jest.fn();
 		bankService.getRunningCreditsOfPlayer = jest.fn();
 		GameModel.updateOne = jest.fn();
 		decksService.pushCardsInDecks = jest.fn();
-		// constructor.event = jest.fn();
-
 	});
 
 	it('should handle a player with sufficient coins to pay all debts', async () => {
@@ -123,11 +120,17 @@ describe('seizureOnDead', () => {
 				$pull: {'players.$.cards': {_id: {$in: []}}},
 				$push: {
 					'events': {
-						typeEvent: C.SEIZE_DEAD,
-						emitter: "master",
-						receiver: mockIdPlayer,
+						typeEvent: C.SEIZED_DEAD,
+						emitter: mockIdPlayer,
+						receiver: C.BANK,
 						amount: 8,
-						resources: [],
+						resources: [{
+							'bankGoodsEarned': 0,
+							'bankMoneyLost': 0,
+							"amount": 6,
+							"cards": [],
+							"interest": 2
+						}],
 						date: expect.anything()
 					}
 				}
@@ -161,12 +164,18 @@ describe('seizureOnDead', () => {
 				$pull: {'players.$.cards': {_id: {$in: [undefined, undefined, undefined]}}},
 				$push: {
 					'events': {
-						typeEvent: C.SEIZE_DEAD,
-						emitter: "master",
-						receiver: mockIdPlayer2,
+						typeEvent: C.SEIZED_DEAD,
+						emitter: mockIdPlayer2,
+						receiver: C.BANK,
 						amount: 5,
-						resources: [{_id: card4, weight: 2, price: 2},
-							{_id: card3, weight: 1, price: 1},],
+						resources: [{
+							'bankGoodsEarned': 3,
+							'bankMoneyLost': 0,
+							"amount": 3,
+							"cards": [{_id: card4, weight: 2, price: 2},
+								{_id: card3, weight: 1, price: 1},],
+							"interest": 2
+						}],
 						date: expect.anything()
 					}
 				}
@@ -205,11 +214,17 @@ describe('seizureOnDead', () => {
 				$pull: {'players.$.cards': {_id: {$in: [undefined, undefined, undefined, undefined]}}},
 				$push: {
 					'events': {
-						typeEvent: C.SEIZE_DEAD,
-						emitter: "master",
-						receiver: mockIdPlayer3,
+						typeEvent: C.SEIZED_DEAD,
+						emitter: mockIdPlayer3,
+						receiver: C.BANK,
 						amount: 0,
-						resources: expect.arrayContaining(cards),
+						resources: [{
+							'bankGoodsEarned': 6,
+							'bankMoneyLost': 2,
+							"amount": 0,
+							"interest": 0,
+							"cards": expect.arrayContaining(cards),
+						}],
 						date: expect.anything()
 					}
 				}
@@ -245,12 +260,19 @@ describe('seizureOnDead', () => {
 				$pull: {'players.$.cards': {_id: {$in: [undefined, undefined]}}},
 				$push: {
 					'events': {
-						typeEvent: C.SEIZE_DEAD,
-						emitter: "master",
-						receiver: mockIdPlayer4,
+						typeEvent: C.SEIZED_DEAD,
+						emitter: mockIdPlayer4,
+						receiver: C.BANK,
 						amount: 0,
-						resources: expect.arrayContaining([{_id: card1, weight: 1, price: 1},
-							{_id: card2, weight: 2, price: 2},]),
+						resources: [{
+							'bankGoodsEarned': 3,
+							'bankMoneyLost': 5,
+							"amount": 0,
+							"cards":
+								expect.arrayContaining([{_id: card1, weight: 1, price: 1},
+									{_id: card2, weight: 2, price: 2},]),
+							"interest": 0
+						}],
 						date: expect.anything()
 					}
 				}

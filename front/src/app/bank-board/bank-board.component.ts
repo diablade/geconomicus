@@ -133,11 +133,21 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 			_.forEach(this.game.credits, c => {
-				if (c.idPlayer === event.receiver && c.status === C.DEFAULT_CREDIT ) {
+				if (c.idPlayer === event.receiver && c.status === C.DEFAULT_CREDIT) {
 					this.dialog.closeAll();
 				}
 			});
-
+		});
+		this.socket.on(C.SEIZED_DEAD, async (event: any) => {
+			_.forEach(this.game.credits, c => {
+				if (c.idPlayer === event.emitter) {
+					c.status = C.CREDIT_DONE;
+				}
+			});
+			this.game.currentMassMonetary -= event.amount;
+			this.game.bankInterestEarned += event.resources[0].interest;
+			this.game.bankMoneyLost += event.resources[0].bankMoneyLost;
+			this.game.bankGoodsEarned += event.resources[0].bankGoodsEarned;
 		});
 		this.socket.on(C.NEW_PLAYER, (player: Player) => {
 			this.game.players.push(player);

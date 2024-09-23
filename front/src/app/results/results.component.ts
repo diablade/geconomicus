@@ -426,6 +426,20 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// @ts-ignore
 					total: 0,
 				});
+			this.datasetsResources.set(
+				C.BANK,
+				{
+					data: [],
+					label: this.bankName,
+					backgroundColor: hexToRgb("#000000"),
+					borderColor: hexToRgb("#000000"),
+					pointBackgroundColor: hexToRgb("#000000"),
+					pointBorderColor: hexToRgb("#000000"),
+					borderWidth: 2, // Line thickness
+					pointRadius: 0.8, // Point thickness
+					// @ts-ignore
+					total: 0,
+				});
 		}
 		this.datasets.set(
 			"masseMoney",
@@ -441,20 +455,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				// @ts-ignore
 				total: 0,
 			});
-		// this.datasetsRelatif.set(
-		//   "masseMoney",
-		//   {
-		//     data: [],
-		//     label: this.MassMonetaryName,
-		//     backgroundColor: hexToRgb("#000000"),
-		//     borderColor: hexToRgb("#000000"),
-		//     pointBackgroundColor: hexToRgb("#000000"),
-		//     pointBorderColor:hexToRgb("#000000"),
-		//     borderWidth: 2, // Line thickness
-		//     pointRadius: 0.8, // Point thickness
-		//     @ts-ignore
-		// total: 0,
-		// });
 		this.initFeedbacks();
 	}
 
@@ -643,6 +643,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, this.pointsBefore1second);
+					continue;
+				case C.SEIZED_DEAD:
+					const seizedItems = event.resources[0];
+					const seizedRessources = this.getValueCardsFromEvent(seizedItems.cards);
+					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateData(emitterDataset, event.date, "sub", seizedItems.interest, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, this.pointsBefore1second);
 					continue;
 				case C.PRISON_ENDED:
 					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
