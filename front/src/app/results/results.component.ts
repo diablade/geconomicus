@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import io from "socket.io-client";
-import {Card, EventGeco, Game, Player} from "../models/game";
+import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
 import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
@@ -14,7 +14,6 @@ import * as C from "../../../../config/constantes";
 
 import {ChartConfiguration, ChartDataset} from 'chart.js';
 import 'chartjs-adapter-date-fns';
-// import {fr} from 'date-fns/locale';
 import {parseISO, subSeconds} from 'date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
@@ -359,7 +358,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			this.updateCharts();
 		});
 		this.socket.on(C.NEW_FEEDBACK, async () => {
-			window.location.reload();
+			this.getFeedbacks();
+		});
+	}
+
+	getFeedbacks() {
+		this.backService.getFeedbacks(this.idGame).subscribe(data => {
+			this.initFeedbacks(data.feedbacks);
 		});
 	}
 
@@ -455,12 +460,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				// @ts-ignore
 				total: 0,
 			});
-		this.initFeedbacks();
-	}
 
-	initFeedbacks() {
 		const playersWithFeedbacks = _.filter(this.players, p => p.survey != undefined);
 		const feedbacks = _.map(playersWithFeedbacks, p => p.survey);
+		this.initFeedbacks(feedbacks);
+	}
+
+	initFeedbacks(feedbacks: (Feedback | undefined)[]) {
 		const feedbacksCounts1 = _.countBy(feedbacks, "depressedHappy");
 		const feedbacksCounts2 = _.countBy(feedbacks, "individualCollective");
 		const feedbacksCounts3 = _.countBy(feedbacks, "aloneIntegrated");

@@ -33,6 +33,7 @@ export const environment = {
 		IMPORT: 'game/import',
 		START: 'game/start',
 		EVENTS: 'game/events/',
+		GET_FEEDBACKS: "game/feedbacks/",
 		DELETE_PLAYER: 'game/delete-player',
 		KILL_PLAYER: "game/kill-player",
 		RESET: 'game/reset',

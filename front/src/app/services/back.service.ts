@@ -227,6 +227,13 @@ export class BackService {
 			);
 	}
 
+	getFeedbacks(idGame: any): Observable<any> {
+		return this.http.get<any>(environment.API_HOST + environment.GAME.GET_FEEDBACKS + idGame)
+			.pipe(
+				catchError(err => this.handleError(err, this.REDIRECT_HOME, "feedbacks indisponible"))
+			);
+	}
+
 	sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY + idGame + '/' + idPlayer, {
 			idGame,

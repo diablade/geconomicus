@@ -294,6 +294,28 @@ export default {
 			});
 		}
 	}],
+	getFeedbacks: async (req, res, next) => {
+		const id = req.params.idGame;
+		if (!id) {
+			next({
+				status: 400,
+				message: "bad request"
+			});
+		} else {
+			try {
+				const game = await GameModel.findById(id);
+				const playersWithFeedbacks = _.filter(game.players, p => p.survey !== undefined);
+				const feedbacks = _.map(playersWithFeedbacks, p => p.survey);
+				res.status(200).json({feedbacks});
+			} catch (e) {
+				log.error('get feedbacks error', error);
+				next({
+					status: 404,
+					message: "feedbacks not found"
+				});
+			}
+		}
+	},
 	getGameById: async (req, res, next) => {
 		const id = req.params.idGame;
 		if (!id) {
