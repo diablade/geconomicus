@@ -276,13 +276,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		"Irritable",
 		"Dépendant"];
 	public leftLabels = [
-		"Trés",
+		"(Positif)  Trés",
 		"Assez",
 		"Un peu",
 		"neutre",
 		"Un peu",
 		"Assez",
-		"Trés"];
+		"(Négatif)  Trés"];
 	public feedbacksOptions: ChartConfiguration['options'] = {
 		responsive: true,
 		maintainAspectRatio: false,
