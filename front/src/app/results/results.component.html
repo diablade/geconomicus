@@ -3,13 +3,35 @@
 		<app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
 	</div>
 	<div class="flex-grow-1 d-flex flex-column overflow-auto h-100 p-4">
-		<div class="d-flex flex-row">
-			<div class="flex-grow-1 d-flex flex-column">
+		<div class="resultsHeader flex-row d-none d-md-flex justify-content-between align-items-center">
+			<div class="d-flex flex-column">
 				<img class="geco" src="./assets/images/geconomicus.png" alt="">
-				<h1 class="m-2 mt-4 contour">Résumé du jeu : {{ game?.name }}</h1>
 			</div>
-			<img class="gunyResults" src="./assets/images/guny.png">
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">nouvelle partie</button>
+			<div class="d-flex flex-row align-items-center">
+				<div class="text-center bulleResult gecoFont bienvenue">
+					En savoir plus sur la monnaie libre ?
+					<br>
+					<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
+				</div>
+				<img class="gunyResults" src="./assets/images/guny.png">
+			</div>
 		</div>
+		<div class="d-flex flex-column d-md-none">
+			<div class="d-flex flex-row mb-2 justify-content-center">
+				<div class="d-flex flex-column">
+					<img class="geco" src="./assets/images/geconomicus.png" alt="">
+					<div class="mt-2 text-center bulleResult gecoFont bienvenue">
+						En savoir plus <br> sur la monnaie libre ?
+						<br>
+						<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
+					</div>
+				</div>
+				<img class="gunyResults" src="./assets/images/guny.png">
+			</div>
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">nouvelle partie</button>
+		</div>
+		<h1 class="m-2 mt-4 contour">Résumé du jeu : {{ game?.name }}</h1>
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
@@ -67,7 +89,7 @@
 		<h1 class="m-2 mt-4 contour">Podium</h1>
 		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap">
-				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
+				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold">Meilleur joueur monnaies</div>
 					<div *ngIf="podiumMoney.length ==0">aucun...</div>
 					<ng-container *ngFor="let player of podiumMoney, let i=index">
@@ -88,7 +110,7 @@
 						</div>
 					</ng-container>
 				</div>
-				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
+				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold">Meilleur joueur ressources</div>
 					<div *ngIf="podiumRes.length ==0">aucun...</div>
 					<ng-container *ngFor="let player of podiumRes, let i=index">
@@ -109,7 +131,7 @@
 						</div>
 					</ng-container>
 				</div>
-				<div class="p-2 bg-white rounded shadow d-flex flex-column align-items-center">
+				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif</div>
 					<div *ngIf="podiumTransac.length ==0">aucun...</div>
 					<ng-container *ngFor="let player of podiumTransac, let i=index">

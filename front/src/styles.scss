@@ -100,6 +100,16 @@ body {
   border-radius: 200px;
   position: relative;
   width: fit-content;
+  height: fit-content;
+}
+
+.bulleResult {
+  background: #ffffff69;
+  padding: 12px;
+  border-radius: 200px;
+  position: relative;
+  width: fit-content;
+  height: fit-content;
 }
 
 .bulle::after {
@@ -111,6 +121,17 @@ body {
   bottom: -30px;
   background: #ffffff69;
   clip-path: polygon(38% 0, 100% 100%, 100% 0);
+}
+
+.bulleResult::after{
+	content: "";
+	position: absolute;
+	width: 17px;
+	height: 17px;
+	right: -16px;
+	bottom: 37%;
+	background: rgba(255, 255, 255, 0.4117647059);
+	clip-path: polygon(100% 0%, 0 0, 0 100%);
 }
 
 .hg-button{

@@ -795,4 +795,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	getTransactionsTotal() {
 		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
 	}
+
+	newGame() {
+		window.open(environment.WEB_HOST, '_blank');
+	}
 }
