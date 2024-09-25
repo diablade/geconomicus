@@ -2,11 +2,9 @@ import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angula
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
-import {SnackbarService} from "../services/snackbar.service";
 import io from "socket.io-client";
 import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
-import {LoadingService} from "../services/loading.service";
 import {environment} from "../../environments/environment";
 import {getRandomColor, hexToRgb} from "../services/tools";
 // @ts-ignore
@@ -19,6 +17,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
+import {Platform} from "@angular/cdk/platform";
 
 Chart.register(zoomPlugin);
 
@@ -276,13 +275,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		"Irritable",
 		"Dépendant"];
 	public leftLabels = [
-		"(Positif)  Trés",
+		"(Positif 😊)  Trés",
 		"Assez",
 		"Un peu",
 		"neutre",
 		"Un peu",
 		"Assez",
-		"(Négatif)  Trés"];
+		"(Négatif 😒)  Trés"];
 	public feedbacksOptions: ChartConfiguration['options'] = {
 		responsive: true,
 		maintainAspectRatio: false,
@@ -306,9 +305,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		},
 	};
 
-	constructor(private route: ActivatedRoute, private router: Router,
+	constructor(private route: ActivatedRoute,
+							private platform: Platform,
+							private router: Router,
 							private sanitizer: DomSanitizer,
-							private backService: BackService, private snackbarService: SnackbarService, private loadingService: LoadingService) {
+							private backService: BackService) {
 	}
 
 	ngOnInit(): void {
@@ -797,6 +798,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	}
 
 	newGame() {
-		window.open(environment.WEB_HOST, '_blank');
+		if (this.platform.ANDROID || this.platform.IOS) {
+			this.router.navigate(['/']);
+		} else {
+			window.open(environment.WEB_HOST, '_blank');
+		}
 	}
 }
