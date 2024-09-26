@@ -112,7 +112,7 @@ const update = async (req, res, next) => {
 				}
 			},
 			{new: true, returnOriginal: false});
-		const updatedPlayer = _.find(game.players, p => p._id === idPlayer);
+		const updatedPlayer = _.find(game.players, p => p._id.toString() === idPlayer);
 		io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
 		res.status(200).json({"status": "updated"});
 	} catch (e) {
