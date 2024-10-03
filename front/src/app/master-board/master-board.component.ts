@@ -275,6 +275,14 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
+	qrCodeBank(): void {
+		const dialogRef = this.dialog.open(JoinQrDialog, {
+			data: {url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'},
+		});
+		dialogRef.afterClosed().subscribe(() => {
+		});
+	}
+
 	showEvents() {
 		window.open('game/' + this.idGame + '/results', '_blank');
 	}
