@@ -26,7 +26,7 @@ export class SnackbarService {
     config.panelClass = ['snackbar-success'];
     config.politeness = 'assertive';
     config.verticalPosition = 'top';
-    config.horizontalPosition = 'center';
+    config.horizontalPosition = 'left';
     config.duration = this.durationInSeconds;
     this.snackBar.open(message, "Ok", config);
   }

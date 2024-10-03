@@ -8,7 +8,9 @@ function initIo(server) {
 		cors: {
 			origin: "*",
 			credentials: false
-		}
+		},
+		pingInterval: 20000,  // Server-side ping interval
+		pingTimeout: 5000,    // Server-side ping timeout
 	});
 	// Handle Socket.IO events
 	ioInstance.on('connection', (socket) => {
