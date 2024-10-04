@@ -9,7 +9,7 @@ function initIo(server) {
 			origin: "*",
 			credentials: false
 		},
-		pingInterval: 20000,  // Server-side ping interval
+		pingInterval: 10000,  // Server-side ping interval
 		pingTimeout: 5000,    // Server-side ping timeout
 	});
 	// Handle Socket.IO events

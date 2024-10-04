@@ -294,7 +294,7 @@ const transaction = async (req, res, next) => {
 				{$push: {'events': newEvent}}
 			);
 		});
-		session.endSession();
+		await session.endSession();
 
 		buyer.coins = _.round(buyer.coins - cost, 2);
 		seller.coins = _.round(seller.coins + cost, 2);
@@ -304,7 +304,7 @@ const transaction = async (req, res, next) => {
 
 		res.status(200).json({buyedCard: card, coins: buyer.coins});
 	} catch (error) {
-		console.error('Transaction error:', error);
+		log.error('Transaction error:', error);
 		next({
 			status: 400,
 			message: error.message || "Transaction error"
