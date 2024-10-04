@@ -52,10 +52,10 @@ export class CardComponent {
 	@Input() amountCardsForProd = 4;
 	@Input() width = 'calc(28vw)';
 	@Input() height = 'calc(28vw * 1.5)';
-	@Input() letterSize = 'calc(28vw * 0.33)';
-	@Input() priceSize = 'calc(18vw * 0.2)';
+	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
+	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
 	@Input() flippable = true;
-	smallPriceSize = 'calc(11vw * 0.2)';
+	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(11vw * 0.2)' : 'calc(11vh * 0.2)';
 	state = "default";
 	translateX = 0;
 	translateY = 0;
@@ -121,6 +121,7 @@ export class CardComponent {
 		this.shortCode = new ShortCode(this.getData(), this.suffixShortCode);
 		this.onCreateShortCode.emit(this.shortCode);
 	}
+
 	deleteShortCode() {
 		this.shortCode = undefined;
 		this.onCreateShortCode.emit(this.shortCode);

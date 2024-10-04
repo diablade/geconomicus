@@ -60,10 +60,10 @@
 			Répondre au questionnaire
 		</button>
 	</div>
-	<div class="container">
-		<div @list class="row">
+	<div class="">
+		<div @list class="d-flex flex-row flex-wrap">
 			<ng-container *ngFor="let card of cards">
-				<div @items class="col-4 mt-2" *ngIf="card.displayed">
+				<div @items class="" *ngIf="card.displayed">
 					<app-card
 						[card]="card"
 						[typeMoney]="typeMoney"
@@ -76,6 +76,11 @@
 						(onCreateShortCode)="onCreateShortCode($event)"
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"
+						[width]="screenWidth < screenHeight ? 'calc(28vw)':'calc(28vh)'"
+						[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
+						[letterSize] = "screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
+					  [priceSize] = "screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
+
 					></app-card>
 				</div>
 			</ng-container>

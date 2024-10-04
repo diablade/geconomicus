@@ -1,16 +1,13 @@
 .card {
   box-shadow: 10px 10px 43px -18px rgba(0, 0, 0, 0.75);
   border-radius: 5px;
-  //height: calc(28vw * 1.5);
-  //width: calc(28vw);
-  //width: calc(100% * 1.5);
-  //height: calc(100% * 1.5);
   max-width: 250px;
   max-height: 375px;
   cursor: pointer;
   position: relative;
   transform-style: preserve-3d;
   z-index: 1;
+	margin: 0.4rem;
 }
 
 .whenFlipped {
