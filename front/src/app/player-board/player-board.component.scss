@@ -55,13 +55,19 @@
 	object-fit: cover;
 }
 
-.footer {
+.btnCredits {
 	position: fixed;
 	bottom: 0;
-	z-index: 3;
 	padding: 15px;
 	left: 0;
-	width: 100%;
+	z-index: 2;
+}
+.btnBuy {
+	position: fixed;
+	bottom: 0;
+	padding: 15px;
+	right: 0;
+	z-index: 2;
 }
 
 .buy {
@@ -69,8 +75,11 @@
 }
 
 .credits {
+	position: fixed;
+	bottom: 80px;
+	left: 0;
+	z-index: 2;
 	visibility: hidden;
-	//height: 150px;
 	overflow: auto;
 }
 
