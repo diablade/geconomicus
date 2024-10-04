@@ -165,3 +165,13 @@ body {
 	background-size: cover;
 	cursor: pointer;
 }
+
+/* Target landscape mode */
+@media only screen and (orientation: landscape) {
+	.keyboard-dialog  {
+		transform: scale(0.85) !important;
+	}
+	.keyboard-dialog input {
+		height: 57px !important;
+	}
+}
