@@ -12,7 +12,7 @@ const getById = async (req, res, next) => {
 	const {idGame, idPlayer} = req.params;
 
 	try {
-		const player = await playerService.getPlayer(idGame, idPlayer,true);
+		const player = await playerService.getPlayer(idGame, idPlayer, true);
 		res.status(200).json(player);
 	} catch (e) {
 		next({
@@ -241,7 +241,11 @@ const transaction = async (req, res, next) => {
 		});
 	}
 
+	let session;
 	try {
+		session = await GameModel.startSession(); // Start a session for the transaction
+		session.startTransaction();
+
 		const game = await GameModel.findById(idGame);
 		if (!game) {
 			throw new Error("Game not found");
@@ -271,29 +275,31 @@ const transaction = async (req, res, next) => {
 
 		const newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
 
-		const session = await GameModel.startSession();
-		await session.withTransaction(async () => {
-			await GameModel.updateOne(
-				{_id: idGame, 'players._id': idSeller},
-				{
-					$pull: {'players.$.cards': {_id: idCard}},
-					$inc: {'players.$.coins': cost}
-				}
-			);
+		// const session = await GameModel.startSession();
+		// await session.withTransaction(async () => {
+		await GameModel.updateOne(
+			{_id: idGame, 'players._id': idSeller},
+			{
+				$pull: {'players.$.cards': {_id: idCard}},
+				$inc: {'players.$.coins': cost}
+			}
+		);
 
-			await GameModel.updateOne(
-				{_id: idGame, 'players._id': idBuyer},
-				{
-					$push: {'players.$.cards': card},
-					$inc: {'players.$.coins': -cost}
-				}
-			);
+		await GameModel.updateOne(
+			{_id: idGame, 'players._id': idBuyer},
+			{
+				$push: {'players.$.cards': card},
+				$inc: {'players.$.coins': -cost}
+			}
+		);
 
-			await GameModel.updateOne(
-				{_id: idGame},
-				{$push: {'events': newEvent}}
-			);
-		});
+		await GameModel.updateOne(
+			{_id: idGame},
+			{$push: {'events': newEvent}}
+		);
+		// });
+		// await session.endSession();
+		await session.commitTransaction(); // Commit the transaction
 		await session.endSession();
 
 		buyer.coins = _.round(buyer.coins - cost, 2);
@@ -304,6 +310,10 @@ const transaction = async (req, res, next) => {
 
 		res.status(200).json({buyedCard: card, coins: buyer.coins});
 	} catch (error) {
+		if (session && session.inTransaction()) {
+			await session.abortTransaction(); // Roll back transaction in case of error
+		}
+		session.endSession(); // End session
 		log.error('Transaction error:', error);
 		next({
 			status: 400,
