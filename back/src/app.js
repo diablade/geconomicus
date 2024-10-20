@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-// import {mongoose} from '../config/database.js';
 import morgan from 'morgan';
 import cors from 'cors';
 import socket from '../config/socket.js';
@@ -11,11 +10,14 @@ import log from '../config/log.js';
 import bankRoutes from "./bank/bank.routes.js";
 import gameRoutes from './game/game.routes.js';
 import playerRoutes from './player/player.routes.js';
+
 import * as db from "../config/database.js";
+// import {connect} from "../config/database2.js";
 
 dotenv.config();
 if (process.env.GECO_NODE_ENV !== "test") {
 	db.connect();
+	// connect();
 }
 
 const app = express();

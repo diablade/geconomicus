@@ -9,6 +9,7 @@
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "lodash": "^4.17.21",
+    "mongodb": "^6.9.0",
     "mongoose": "^6.12.8",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",

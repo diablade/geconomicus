@@ -93,7 +93,6 @@ let playerDoPlay = async (currentPlayer) => {
 		}
 	}
 }
-
 let play = async (round) => {
 	for (let i = 1; i <= round; i++) {
 		console.log("ROUND : ", i);
@@ -211,6 +210,7 @@ describe("FULL GAME simulation", () => {
 				defaultInterestAmount: 1,
 				bankInterestEarned: 0,
 				bankGoodsEarned: 0,
+				bankMoneyLost: 0,
 				timerCredit: 5,
 				timerPrison: 5,
 				manualBank: true,
@@ -260,6 +260,40 @@ describe("FULL GAME simulation", () => {
 		const res = await agent.post("/game/start-round").send({idGame: idGame, round: 0});
 		expect(res.statusCode).toEqual(200);
 		expect(res.body.status).toEqual(C.START_ROUND);
+	});
+	test("TEST concurrent TRANSACTION", async () => {
+		const seller = players[0];
+		const buyer1 = players[1];
+		const buyer2 = players[2];
+
+		const cardToSell = seller.cards[0];
+
+		agent.post("/player/transaction").send({
+			idGame: idGame,
+			idBuyer: buyer1._id,
+			idSeller: seller._id,
+			idCard: cardToSell._id
+		}).then(res =>
+			expect(res.statusCode).toEqual(200)
+		);
+		agent.post("/player/transaction").send({
+			idGame: idGame,
+			idBuyer: buyer2._id,
+			idSeller: seller._id,
+			idCard: cardToSell._id
+		}).then(res =>
+			expect(res.statusCode).toEqual(409)
+		);
+
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		agent.post("/player/transaction").send({
+			idGame: idGame,
+			idBuyer: seller._id,
+			idSeller: buyer1._id,
+			idCard: cardToSell._id
+		}).then(res =>
+			expect(res.statusCode).toEqual(200)
+		);
 	});
 	test("PLAY 10 rounds and STOP", async () => {
 		await play(2);

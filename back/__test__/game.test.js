@@ -93,6 +93,7 @@ describe("GAME controller test", () => {
 					defaultInterestAmount: 1,
 					bankInterestEarned: 0,
 					bankGoodsEarned: 0,
+					bankMoneyLost:0,
 					timerCredit: 5,
 					timerPrison: 5,
 					manualBank: true,

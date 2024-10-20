@@ -114,7 +114,7 @@ export class BackService {
 		const newPlayer = {...player, idGame: idGame};
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.UPDATE, newPlayer)
 			.pipe(
-				catchError(err => this.handleError(err, "", "modification impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "modification impossible"))
 			);
 	}
 
@@ -125,7 +125,7 @@ export class BackService {
 				cards: cards
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "RELOAD", "échange impossible")
+				catchError(err => this.handleError(err, this.RELOAD, "échange impossible")
 				)
 			);
 	}
@@ -138,7 +138,7 @@ export class BackService {
 				}
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "RELOAD", "suppression impossible")
+				catchError(err => this.handleError(err, this.RELOAD, "suppression impossible")
 				)
 			);
 	}
@@ -149,14 +149,14 @@ export class BackService {
 				typeMoney: game.typeMoney,
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "", "start game impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "start game impossible"))
 			);
 	}
 
 	resetGame(idGame: string) {
 		return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, "", "reset game impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "reset game impossible"))
 			);
 	}
 
@@ -175,28 +175,28 @@ export class BackService {
 	startRound(idGame: string, round: number) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
 			.pipe(
-				catchError(err => this.handleError(err, "", "demarrer tour impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "demarrer tour impossible"))
 			);
 	}
 
 	stopRound(idGame: string, round: number) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
 			.pipe(
-				catchError(err => this.handleError(err, "", "stop tour impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "stop tour impossible"))
 			);
 	}
 
 	interRound(idGame: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, "", "inter tour impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "inter tour impossible"))
 			);
 	}
 
 	endGame(idGame: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, "", "stop jeu impossible"))
+				catchError(err => this.handleError(err, this.RELOAD, "stop jeu impossible"))
 			);
 	}
 
@@ -206,7 +206,7 @@ export class BackService {
 				idPlayer: idPlayer
 			})
 			.pipe(
-				catchError(err => this.handleError(err, "RELOAD", "kill impossible")
+				catchError(err => this.handleError(err, this.RELOAD, "kill impossible")
 				)
 			);
 	}
@@ -216,21 +216,21 @@ export class BackService {
 		return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE,
 			results
 		).pipe(
-			catchError(err => this.handleError(err, "", "Sauvegarde des options impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "Sauvegarde des options impossible"))
 		);
 	}
 
 	getGames(): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
 			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "partie indisponible"))
+				catchError(err => this.handleError(err, this.RELOAD, "partie indisponible"))
 			);
 	}
 
 	getFeedbacks(idGame: any): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GET_FEEDBACKS + idGame)
 			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "feedbacks indisponible"))
+				catchError(err => this.handleError(err, this.RELOAD, "feedbacks indisponible"))
 			);
 	}
 
@@ -248,19 +248,19 @@ export class BackService {
 			aloneIntegrated,
 			agressiveAvenant
 		}).pipe(
-			catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "Envoie du sondage impossible"))
 		);
 	}
 
 	createCredit(data: any) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
-			catchError(err => this.handleError(err, "", "creation du credit impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "creation du credit impossible"))
 		);
 	}
 
 	getPlayerCredits(idGame: any, idPlayer: any) {
 		return this.http.get<any>(environment.API_HOST + environment.BANK.GET_CREDITS + idGame + '/' + idPlayer).pipe(
-			catchError(err => this.handleError(err, "", "recuperation des credits impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "recuperation des credits impossible"))
 		)
 	}
 
@@ -268,13 +268,13 @@ export class BackService {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
 			credit: credit
 		}).pipe(
-			catchError(err => this.handleError(err, "", "remboursement du credit impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "remboursement du credit impossible"))
 		)
 	}
 
 	payInterest(credit: Credit) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
-			catchError(err => this.handleError(err, "", "paiement de l'interet impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "paiement de l'interet impossible"))
 		)
 	}
 
@@ -283,7 +283,7 @@ export class BackService {
 			credit: credit,
 			seizure: seizure
 		}).pipe(
-			catchError(err => this.handleError(err, "", "Saisie de biens impossible"))
+			catchError(err => this.handleError(err, this.RELOAD, "Saisie de biens impossible"))
 		)
 	}
 
@@ -291,7 +291,7 @@ export class BackService {
 		return this.http.post<any>(environment.API_HOST + environment.BANK.BREAK_FREE, {
 			idPlayerToFree, idGame
 		}).pipe(
-			catchError(err => this.handleError(err, "", " I can't break prison :/ "))
+			catchError(err => this.handleError(err, this.RELOAD, " I can't break prison :/ "))
 		)
 	}
 

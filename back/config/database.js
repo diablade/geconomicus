@@ -16,10 +16,8 @@ const uri = "mongodb://" + env + hostname + ":" + port + "/" + collection + (use
 
 
 const options = {
-    useNewUrlParser:    true,
-    useUnifiedTopology: true,
     family:             4, // Use IPv4, skip trying IPv6
-    maxPoolSize:        20
+    maxPoolSize:        10
 }
 
 

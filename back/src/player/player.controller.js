@@ -7,6 +7,12 @@ import * as C from '../../../config/constantes.js';
 import gameService from "../game/game.service.js";
 import decksService from "../misc/decks.service.js";
 import playerService from "./player.service.js";
+import activeTransactions from './../misc/activeTransactions.js';
+
+// import {connect, getDatabase} from './../../config/database2.js';
+// await connect();
+// const db = await getDatabase();
+// const gameCollection = db.collection('games');
 
 const getById = async (req, res, next) => {
 	const {idGame, idPlayer} = req.params;
@@ -232,6 +238,18 @@ const produce = async (req, res, next) => {
 		});
 	}
 };
+
+// 	let session;
+// 	try {
+// 		session = await GameModel.startSession(); // Start a session for the transaction
+// 		session.startTransaction();
+//
+// 		// const session = await GameModel.startSession();
+// 		// await session.withTransaction(async () => {
+// 		await session.commitTransaction(); // Commit the transaction
+// 		await session.endSession();
+//
+
 const transaction = async (req, res, next) => {
 	const {idGame, idBuyer, idSeller, idCard} = req.body;
 	if (!idGame || !idBuyer || !idSeller || !idCard) {
@@ -240,12 +258,13 @@ const transaction = async (req, res, next) => {
 			message: "Bad request: missing required fields"
 		});
 	}
+	// Check if the transaction is already in progress
+	if (activeTransactions.has(idSeller)) {
+		return res.status(409).json({ message: 'Transaction already in progress' });
+	}
+	activeTransactions.add(idSeller); // Mark the transaction as active
 
-	let session;
 	try {
-		session = await GameModel.startSession(); // Start a session for the transaction
-		session.startTransaction();
-
 		const game = await GameModel.findById(idGame);
 		if (!game) {
 			throw new Error("Game not found");
@@ -256,14 +275,13 @@ const transaction = async (req, res, next) => {
 		if (!buyer || !seller) {
 			throw new Error("Buyer or seller not found");
 		}
+		if (buyer.status === C.DEAD || seller.status === C.DEAD) {
+			throw new Error("Transaction cannot involves a dead player, fool");
+		}
 
 		const card = _.find(seller.cards, {id: idCard});
 		if (!card) {
 			throw new Error("Card not found");
-		}
-
-		if (buyer.status === C.DEAD || seller.status === C.DEAD) {
-			throw new Error("Transaction involves a dead player");
 		}
 
 		const cost = game.typeMoney === C.JUNE
@@ -273,54 +291,61 @@ const transaction = async (req, res, next) => {
 			throw new Error("Insufficient funds");
 		}
 
-		const newEvent = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
+		const eventTransaction = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
 
-		// const session = await GameModel.startSession();
-		// await session.withTransaction(async () => {
-		await GameModel.updateOne(
-			{_id: idGame, 'players._id': idSeller},
+		const updatedGame = await GameModel.findByIdAndUpdate(
 			{
-				$pull: {'players.$.cards': {_id: idCard}},
-				$inc: {'players.$.coins': cost}
+				_id: idGame,
+				players: {
+					$and: [
+						{$elemMatch: {_id: idSeller, 'cards._id': idCard, status: {$ne: C.DEAD}}},
+						{$elemMatch: {_id: idBuyer, coins: {$gte: cost}, status: {$ne: C.DEAD}}}]
+				}
+			},
+			{
+				$pull: {'players.$[seller].cards': {_id: idCard}},
+				$inc: {
+					'players.$[seller].coins': cost,
+					'players.$[buyer].coins': -cost
+				},
+				$push: {
+					'players.$[buyer].cards': card,
+					events: eventTransaction
+				}
+			},
+			{
+				arrayFilters: [
+					{'seller._id': idSeller},
+					{'buyer._id': idBuyer}
+				],
+				new: true,
 			}
 		);
 
-		await GameModel.updateOne(
-			{_id: idGame, 'players._id': idBuyer},
-			{
-				$push: {'players.$.cards': card},
-				$inc: {'players.$.coins': -cost}
-			}
-		);
-
-		await GameModel.updateOne(
-			{_id: idGame},
-			{$push: {'events': newEvent}}
-		);
-		// });
-		// await session.endSession();
-		await session.commitTransaction(); // Commit the transaction
-		await session.endSession();
+		if (!updatedGame) {
+			throw new Error("Transaction failed: conditions not met");
+		}
 
 		buyer.coins = _.round(buyer.coins - cost, 2);
 		seller.coins = _.round(seller.coins + cost, 2);
 
-		io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
+		io().to(idGame + C.EVENT).emit(C.EVENT, eventTransaction);
 		io().to(idSeller).emit(C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
 
 		res.status(200).json({buyedCard: card, coins: buyer.coins});
 	} catch (error) {
-		if (session && session.inTransaction()) {
-			await session.abortTransaction(); // Roll back transaction in case of error
-		}
-		session.endSession(); // End session
 		log.error('Transaction error:', error);
+		activeTransactions.delete(idSeller);
 		next({
 			status: 400,
 			message: error.message || "Transaction error"
 		});
+	} finally {
+		// Remove the transaction ID from the active set
+		activeTransactions.delete(idSeller);
 	}
 };
+
 const isReincarnated = async (req, res, next) => {
 	const idGame = req.body.idGame;
 	const from = req.body.fromId;
