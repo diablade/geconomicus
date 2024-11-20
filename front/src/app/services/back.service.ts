@@ -37,6 +37,9 @@ export class BackService {
 		if (whatToDo == this.REDIRECT_HOME) {
 			this.router.navigate([""]);
 		} else if (whatToDo == this.RELOAD) {
+			if (whatToSay) {
+				setTimeout(() => {}, 3000);
+			}
 			window.location.reload();
 		}
 		// Return an observable with a user-facing error message.

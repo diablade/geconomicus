@@ -469,7 +469,10 @@ export default {
 			});
 		} else {
 			try {
-				if (bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
+				if (process.env.GECO_NODE_ENV === "production" && bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
+					await GameModel.findByIdAndDelete(idGame);
+					res.status(200).json({"status": "delete done"});
+				} else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password, "$2b$04$/uSG6WTkDm94r6fot9lHNes.8MdMkRKTosxjCevTRAHtQXSvWJed6")) {
 					await GameModel.findByIdAndDelete(idGame);
 					res.status(200).json({"status": "delete done"});
 				} else {
