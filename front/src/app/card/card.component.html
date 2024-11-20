@@ -13,7 +13,7 @@
 		</div>
 		<div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
 				 [ngClass]="card.color+'Color'"></div>
-		<button *ngIf="card.count===amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
+		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
 						class="transform">
 			{{ getBuildText(card) }}
 			<fa-icon [icon]="faGift"></fa-icon>
