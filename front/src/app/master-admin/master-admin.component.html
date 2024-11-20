@@ -1,0 +1,87 @@
+<p>master-admin works!</p>
+
+<div class="admin">
+	<h1>
+		{{ game.name }}
+	</h1>
+	<div class="infos">
+		<ul>
+			<li>
+				{{ game.animator }}
+			</li>
+			<li>
+				{{ game.location }}
+			</li>
+			<li>
+				{{ game.typeMoney }}
+			</li>
+		</ul>
+	</div>
+	<h2>Decks</h2>
+	<div class="decks d-flex flex-row">
+		<div class="deck w-25">
+			<h3>niveau 1</h3>
+			<div class="d-flex flex-wrap">
+				<app-card *ngFor="let card of game.decks[0]"
+									[card]="card"
+									[typeMoney]="'debt'"
+									[idOwner]=""
+									[idGame]=""
+									[height]="'70px'"
+									[width]="'35px'"
+									[priceSize]="'5px'"
+									[letterSize]="'14px'"
+									[flippable]="false"
+				></app-card>
+			</div>
+		</div>
+		<div class="deck w-25">
+			<h3>niveau 2</h3>
+			<div class="d-flex flex-wrap">
+				<app-card *ngFor="let card of game.decks[1]"
+									[card]="card"
+									[typeMoney]="'debt'"
+									[idOwner]=""
+									[idGame]=""
+									[height]="'70px'"
+									[width]="'35px'"
+									[priceSize]="'5px'"
+									[letterSize]="'14px'"
+									[flippable]="false"
+				></app-card>
+			</div>
+		</div>
+		<div class="deck w-25">
+			<h3>niveau 3</h3>
+			<div class="d-flex flex-wrap">
+				<app-card *ngFor="let card of game.decks[2]"
+									[card]="card"
+									[typeMoney]="'debt'"
+									[idOwner]=""
+									[idGame]=""
+									[height]="'70px'"
+									[width]="'35px'"
+									[priceSize]="'5px'"
+									[letterSize]="'14px'"
+									[flippable]="false"
+				></app-card>
+			</div>
+		</div>
+		<div class="deck w-25">
+			<h3>niveau 4</h3>
+			<div class="d-flex flex-wrap">
+				<app-card *ngFor="let card of game.decks[3]"
+									[card]="card"
+									[typeMoney]="'debt'"
+									[idOwner]=""
+									[idGame]=""
+									[height]="'70px'"
+									[width]="'35px'"
+									[priceSize]="'5px'"
+									[letterSize]="'14px'"
+									[flippable]="false"
+				></app-card>
+			</div>
+		</div>
+	</div>
+</div>

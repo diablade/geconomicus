@@ -9,11 +9,13 @@ import {ResultsComponent} from "./results/results.component";
 import {HistoryGamesComponent} from "./history-games/history-games.component";
 import {SurveyComponent} from "./survey/survey.component";
 import {BankBoardComponent} from "./bank-board/bank-board.component";
+import {MasterAdminComponent} from "./master-admin/master-admin.component";
 
 const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'results/:idGame', component: ResultsComponent},
     {path: 'games', component: HistoryGamesComponent},
+    {path: 'game/:idGame/admin', component: MasterAdminComponent},
     {path: 'game/:idGame/master', component: MasterBoardComponent},
     {path: 'game/:idGame/reset', component: MasterBoardComponent},
     {path: 'game/:idGame/bank', component: BankBoardComponent},

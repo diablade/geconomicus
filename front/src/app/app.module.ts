@@ -62,6 +62,7 @@ import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
 import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
+import { MasterAdminComponent } from './master-admin/master-admin.component';
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
 
@@ -97,6 +98,7 @@ LOAD_WASM().subscribe();
 		CongratsDialogComponent,
 		ShortcodeDialogComponent,
 		GameDeleteDialog,
+  MasterAdminComponent,
 	],
 	imports: [
 		HttpClientModule,
