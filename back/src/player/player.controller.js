@@ -14,16 +14,33 @@ import activeTransactions from './../misc/activeTransactions.js';
 // const db = await getDatabase();
 // const gameCollection = db.collection('games');
 
+function waitForProductionToClear(activeTransactions, idGame, maxChecks = 5) {
+	return new Promise((resolve, reject) => {
+		let checks = 0;
+		const intervalId = setInterval(() => {
+			checks++;
+			log.info("wait for prod "+checks+"...on game:",idGame);
+			if (!activeTransactions.has(idGame)) {
+				clearInterval(intervalId);
+				resolve('cleared');
+			} else if (checks >= maxChecks) {
+				clearInterval(intervalId);
+				resolve('timeout');
+			}
+		}, 1000);
+	});
+}
+
 const getById = async (req, res, next) => {
 	const {idGame, idPlayer} = req.params;
 
 	try {
 		const player = await playerService.getPlayer(idGame, idPlayer, true);
-		res.status(200).json(player);
+		return res.status(200).json(player);
 	} catch (e) {
 		next({
-			status: 400,
-			message: e.message
+			status: 404,
+			message: "Player not found"
 		});
 	}
 };
@@ -33,16 +50,16 @@ const join = async (req, res, next) => {
 	if (!id && !name) {
 		next({
 			status: 400,
-			message: "bad request"
+			message: "Bad request"
 		});
 	} else {
 		GameModel.findById(id).then(async game => {
 			if (game.status === C.END_GAME) {
-				next({status: 400, message: "la partie est terminé mon poto, faut rentrer maintenant..."})
+				return res.status(403).json({message: "la partie est terminé mon poto, faut rentrer maintenant..."});
 			} else if (game.status !== C.OPEN) {
-				next({status: 400, message: "la partie est déjà commencé... sorry mon poto"})
+				return res.status(403).json({message: "la partie est déjà commencé... sorry mon poto"});
 			} else if (game.players.length >= 25) {
-				next({status: 400, message: "25 joueurs max sorry..."});
+				return res.status(403).json({message: "25 joueurs max sorry..."});
 			} else {
 				const idPlayer = new mongoose.Types.ObjectId();
 				let player = {
@@ -65,18 +82,18 @@ const join = async (req, res, next) => {
 					.then(updatedGame => {
 							const newPlayer = _.find(updatedGame.players, p => p._id == idPlayer.toString());
 							io().to(id + C.MASTER).emit(C.NEW_PLAYER, newPlayer);
-							res.status(200).json(player._id);
+							return res.status(200).json(player._id);
 						}
 					)
 					.catch(error => {
 							log.error(error);
-							next({status: 404, message: "can't add player, game Not found"});
+							return res.status(404).json({message: "Can't Join, game not found"});
 						}
 					);
 			}
 		}).catch(error => {
 				log.error(error);
-				next({status: 404, message: "Game Not found"});
+				return res.status(404).json({message: "Game not found"});
 			}
 		);
 	}
@@ -120,7 +137,7 @@ const update = async (req, res, next) => {
 			{new: true, returnOriginal: false});
 		const updatedPlayer = _.find(game.players, p => p._id.toString() === idPlayer);
 		io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
-		res.status(200).json({"status": "updated"});
+		return res.status(200).json({"status": "updated"});
 	} catch (e) {
 		log.error(e);
 		next({
@@ -139,101 +156,102 @@ const produce = async (req, res, next) => {
 			message: "Bad request: invalid input"
 		});
 	}
-	try {
 
+	// Check if the player is already in progress
+	if (activeTransactions.has(idGame)) {
+		const resultWaitingQueue = await waitForProductionToClear(activeTransactions, idGame);
+		if (resultWaitingQueue === 'timeout') {
+			return res.status(409).json({message: 'Producing already in progress'});
+		}
+	}
+	try {
+		activeTransactions.add(idGame); // Mark the production as active for this game
 		const game = await GameModel.findById(idGame);
 		if (!game) {
-			throw new Error("Game not found");
+			return res.status(404).json({message: "Can't produce, game not found"});
 		}
-
 
 		const player = _.find(game.players, {id: idPlayer});
 		if (!player) {
-			throw new Error("Player not found");
+			return res.status(404).json({message: "Can't produce, Player not found"});
 		}
 
 		const idsToFilter = cards.map(c => c._id);
 		if (!decksService.areCardIdsUnique(idsToFilter, game.amountCardsForProd)) {
-			throw new Error("Incorrect cards for production");
+			return res.status(400).json({message: "Can't produce, cards are not unique"});
 		}
 		const cardsToExchange = _.filter(player.cards, card => _.includes(idsToFilter, card._id.toString()));
 
 		if (cardsToExchange.length !== game.amountCardsForProd) {
-			throw new Error("Incorrect number of cards for production");
+			return res.status(400).json({message: "Can't produce, not enough cards"});
 		}
 
 		const weight = cardsToExchange[0].weight;
 
 		if (weight >= 3) {
-			throw new Error("Technological change not yet implemented");
+			return res.status(400).json({message: "Technological change not yet implemented"});
 		}
 
-		const session = await GameModel.startSession();
-		try {
-			await session.withTransaction(async () => {
-				// Remove cards from player's hand
-				await GameModel.updateOne(
-					{_id: idGame, 'players._id': idPlayer},
-					{$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c._id)}}}}
-				);
+		// Remove cards from player's hand
+		await GameModel.updateOne(
+			{_id: idGame, 'players._id': idPlayer},
+			{$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c._id)}}}}
+		);
 
-				// Add cards back to the deck and shuffle
-				const updatedGame = await GameModel.findByIdAndUpdate(
-					idGame,
-					{$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
-					{new: true}
-				);
+		// Add cards back to the deck and shuffle
+		const updatedGame = await GameModel.findByIdAndUpdate(
+			idGame,
+			{$push: {[`decks.${weight}`]: {$each: cardsToExchange}}},
+			{new: true}
+		);
 
-				const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
-				const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
+		const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
+		const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
 
-				const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
-				const newCardsIds = newCards.map(c => c._id);
-				if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
-					throw new Error("Incorrect new cards for production");
-				}
-				const newCardSup = shuffledDeck2[0];
-				const cardsDraw = [...newCards, newCardSup];
-
-				const discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
-				const newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
-
-				// Remove drawn cards from decks, add events
-				await GameModel.updateOne(
-					{_id: idGame},
-					{
-						$pull: {
-							[`decks.${weight}`]: {_id: {$in: newCards.map(c => c._id)}},
-							[`decks.${weight + 1}`]: {_id: newCardSup._id}
-						},
-						$push: {
-							'events': {$each: [discardEvent, newCardsEvent]}
-						}
-					}
-				);
-
-				// Add new cards to player's hand
-				await GameModel.updateOne(
-					{_id: idGame, 'players._id': idPlayer},
-					{$push: {'players.$.cards': {$each: cardsDraw}}}
-				);
-
-				if (newCardSup.weight > 2) {
-					await gameService.stopRound(idGame, updatedGame.round);
-				}
-
-				io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
-				io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);
-
-				res.status(200).json(cardsDraw);
-			});
-		} finally {
-			session.endSession();
+		const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
+		const newCardsIds = newCards.map(c => c._id);
+		if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
+			return res.status(400).json({message: "Can't produce, cards are not unique"});
 		}
+		const newCardSup = shuffledDeck2[0];
+		const cardsDraw = [...newCards, newCardSup];
+
+		const discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
+		const newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
+
+		// Remove drawn cards from decks, add events
+		await GameModel.updateOne(
+			{_id: idGame},
+			{
+				$pull: {
+					[`decks.${weight}`]: {_id: {$in: newCards.map(c => c._id)}},
+					[`decks.${weight + 1}`]: {_id: newCardSup._id}
+				},
+				$push: {
+					'events': {$each: [discardEvent, newCardsEvent]}
+				}
+			}
+		);
+
+		// Add new cards to player's hand
+		await GameModel.updateOne(
+			{_id: idGame, 'players._id': idPlayer},
+			{$push: {'players.$.cards': {$each: cardsDraw}}}
+		);
+
+		if (newCardSup.weight > 2) {
+			await gameService.stopRound(idGame, updatedGame.round);
+		}
+
+		io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
+		io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);
+
+		activeTransactions.delete(idGame);
+		return res.status(200).json(cardsDraw);
 	} catch (error) {
 		log.error('Production error:', error);
-		next({
-			status: 400,
+		return next({
+			status: 500,
 			message: "Production cards error"
 		});
 	}
@@ -260,35 +278,35 @@ const transaction = async (req, res, next) => {
 	}
 	// Check if the transaction is already in progress
 	if (activeTransactions.has(idSeller)) {
-		return res.status(409).json({ message: 'Transaction already in progress' });
+		return res.status(409).json({message: 'Transaction already in progress'});
 	}
 	activeTransactions.add(idSeller); // Mark the transaction as active
 
 	try {
 		const game = await GameModel.findById(idGame);
 		if (!game) {
-			throw new Error("Game not found");
+			return res.status(404).json({message: 'Transaction error, game not found'});
 		}
 
 		const buyer = _.find(game.players, {id: idBuyer});
 		const seller = _.find(game.players, {id: idSeller});
 		if (!buyer || !seller) {
-			throw new Error("Buyer or seller not found");
+			return res.status(404).json({message: "Transaction error, Buyer or seller not found"});
 		}
 		if (buyer.status === C.DEAD || seller.status === C.DEAD) {
-			throw new Error("Transaction cannot involves a dead player, fool");
+			return res.status(404).json({message: "Transaction cannot involves a dead player, fool !"});
 		}
 
 		const card = _.find(seller.cards, {id: idCard});
 		if (!card) {
-			throw new Error("Card not found");
+			return res.status(404).json({message: "Transaction error, card not found"});
 		}
 
 		const cost = game.typeMoney === C.JUNE
 			? _.round(_.multiply(card.price, game.currentDU), 2)
 			: card.price;
 		if (buyer.coins < cost) {
-			throw new Error("Insufficient funds");
+			return res.status(404).json({message: "Transaction error, Insufficient funds"});
 		}
 
 		const eventTransaction = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
@@ -323,7 +341,7 @@ const transaction = async (req, res, next) => {
 		);
 
 		if (!updatedGame) {
-			throw new Error("Transaction failed: conditions not met");
+			return res.status(400).json({message: "Transaction failed: conditions not met"});
 		}
 
 		buyer.coins = _.round(buyer.coins - cost, 2);
@@ -332,16 +350,12 @@ const transaction = async (req, res, next) => {
 		io().to(idGame + C.EVENT).emit(C.EVENT, eventTransaction);
 		io().to(idSeller).emit(C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
 
-		res.status(200).json({buyedCard: card, coins: buyer.coins});
+		return res.status(200).json({buyedCard: card, coins: buyer.coins});
 	} catch (error) {
 		log.error('Transaction error:', error);
 		activeTransactions.delete(idSeller);
-		next({
-			status: 400,
-			message: error.message || "Transaction error"
-		});
+		return res.status(500).json({message: 'Transaction error'});
 	} finally {
-		// Remove the transaction ID from the active set
 		activeTransactions.delete(idSeller);
 	}
 };
@@ -360,9 +374,9 @@ const isReincarnated = async (req, res, next) => {
 				let players = game.players;
 				let player = _.find(players, p => p.reincarnateFromId == from);
 				if (player) {
-					res.status(200).json({playerReIncarnated: player._id});
+					return res.status(200).json({playerReIncarnated: player._id});
 				} else {
-					res.status(200).json({playerReIncarnated: null});
+					return res.status(200).json({playerReIncarnated: null});
 				}
 			})
 			.catch(error => {
@@ -456,14 +470,11 @@ const joinReincarnate = async (req, res, next) => {
 		io().to(idGame + C.EVENT).emit(C.EVENT, birthEvent);
 		io().to(idGame + C.MASTER).emit(C.NEW_PLAYER, player);
 		io().to(idGame + C.BANK).emit(C.NEW_PLAYER, player);
-		res.status(200).json(player._id);
+		return res.status(200).json(player._id);
 
 	} catch (error) {
 		log.error('JoinReincarnate error:', error);
-		next({
-			status: 404,
-			message: "Reincarnate failed"
-		});
+		return res.status(404).json({message: "Reincarnate failed"});
 	}
 };
 const addFeedback = async (req, res, next) => {
@@ -496,13 +507,10 @@ const addFeedback = async (req, res, next) => {
 			new: true
 		}).then((updatedGame) => {
 			io().to(idGame).emit(C.NEW_FEEDBACK);
-			res.status(200).json({"status": "feedback saved"});
+			return res.status(200).json({"status": "feedback saved"});
 		}).catch((error) => {
 			log.error(error);
-			next({
-				status: 404,
-				message: "Not found"
-			});
+			return res.status(500).json({message: "Feedback not saved"});
 		});
 	}
 };

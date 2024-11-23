@@ -76,13 +76,10 @@ export default {
 
 			try {
 				const savedGame = await newGame.save();
-				res.status(200).send(savedGame);
+				return res.status(200).send(savedGame);
 			} catch (err) {
-				log.error('status: 500', 'message:', err);
-				next({
-					status: 500,
-					message: "game creation error"
-				});
+				log.error('Game creation error', 'err:', err);
+				return res.status(500).json({message: "Game creation error"});
 			}
 		}
 	},
@@ -138,16 +135,13 @@ export default {
 				}
 			})
 				.then(updatedGame => {
-					res.status(200).send({
+					return res.status(200).send({
 						status: "updated",
 					});
 				})
 				.catch(err => {
-					log.error('get game error', err);
-					next({
-						status: 404,
-						message: "not found"
-					});
+					log.error('update game error', err);
+					return res.status(500).json({message: "Update game error"});
 				})
 		}
 	},
@@ -181,26 +175,20 @@ export default {
 						},
 					})
 						.then(updatedGame => {
-							res.status(200).send({
+							return res.status(200).send({
 								status: C.START_GAME,
 								timerCredit: gameUpdated.timerCredit,
 								typeMoney: gameUpdated.typeMoney
 							});
 						})
 						.catch(err => {
-							log.error('get game error', err);
-							next({
-								status: 404,
-								message: "not found"
-							});
+							log.error('Start game error', err);
+							return res.status(500).json({message: "Start game error"});
 						})
 				})
 				.catch(err => {
-					log.error('get game error', err);
-					next({
-						status: 404,
-						message: "game not found"
-					});
+					log.error('Cannot start Game, not found', err);
+					return res.status(404).json({message: "Cannot start Game, not found"});
 				})
 		}
 	},
@@ -214,7 +202,7 @@ export default {
 			});
 		} else {
 			await gameService.startRound(idGame, round, next);
-			res.status(200).send({
+			return res.status(200).send({
 				status: C.START_ROUND,
 			});
 		}
@@ -234,7 +222,7 @@ export default {
 					modified: Date.now(),
 				},
 			}).then(updatedGame => {
-				res.status(200).send({
+				return res.status(200).send({
 					status: C.INTER_ROUND,
 				});
 			}).catch(err => {
@@ -256,7 +244,7 @@ export default {
 			});
 		} else {
 			await gameService.stopRound(id, round);
-			res.status(200).send({
+			return res.status(200).send({
 				status: C.STOP_ROUND,
 			});
 		}
@@ -281,16 +269,12 @@ export default {
 			).then(game => {
 				io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'redirect': 'survey'} : {});
 				io().to(id + C.EVENT).emit(C.EVENT, stopGameEvent);
-				res.status(200).send({
+				return res.status(200).send({
 					status: C.END_GAME,
 				});
 			}).catch(err => {
-				log.error('get game error', err);
-				next({
-					status: 404,
-					message: "not found"
-				});
-
+				log.error('End game error', err);
+				return res.status(404).json({message: "End Game error"});
 			});
 		}
 	}],
@@ -306,13 +290,11 @@ export default {
 				const game = await GameModel.findById(id);
 				const playersWithFeedbacks = _.filter(game.players, p => p.survey !== undefined);
 				const feedbacks = _.map(playersWithFeedbacks, p => p.survey);
-				res.status(200).json({feedbacks});
+				return res.status(200).json({feedbacks});
 			} catch (e) {
-				log.error('get feedbacks error', error);
-				next({
-					status: 404,
-					message: "feedbacks not found"
-				});
+				log.error('Get feedbacks error', e);
+				return res.status(404).json({message: "Feedbacks not found"});
+
 			}
 		}
 	},
@@ -327,20 +309,14 @@ export default {
 			GameModel.findById(id)
 				.then(game => {
 					if (game) {
-						res.status(200).json(game);
+						return res.status(200).json(game);
 					} else {
-						next({
-							status: 404,
-							message: "Not found"
-						});
+						return res.status(404).json({message: "Game not found"});
 					}
 				})
 				.catch(error => {
 					log.error('get game error', error);
-					next({
-						status: 404,
-						message: "not found"
-					});
+					return res.status(404).json({message: "Game not found"});
 				});
 		}
 	},
@@ -355,20 +331,14 @@ export default {
 			GameModel.findById(id)
 				.then(game => {
 					if (game) {
-						res.status(200).json(game.events);
+						return res.status(200).json(game.events);
 					} else {
-						next({
-							status: 404,
-							message: "Not found"
-						});
+						return res.status(404).json({message: "Events of game not found"});
 					}
 				})
 				.catch(error => {
-					log.error('get game error', error);
-					next({
-						status: 404,
-						message: "not found"
-					});
+					log.error('events,get game error', error);
+					return res.status(404).json({message: "Events of game not found"});
 				});
 		}
 	},
@@ -390,14 +360,14 @@ export default {
 						return p._id === idPlayer
 					})
 					if (!player) {
-						res.status(200).json(newGame);
+						return res.status(200).json(newGame);
 					} else {
 						next({status: 404, message: "player Not deleted"});
 					}
 				})
 				.catch(error => {
-						log(error);
-						next({status: 404, message: "game Not found"});
+						log.error("delete player error", error);
+						return res.status(404).json({message: "can't delete player not found"});
 					}
 				);
 		}
@@ -413,7 +383,7 @@ export default {
 		} else {
 			try {
 				await playerService.killPlayer(idGame, idPlayer);
-				res.status(200).json({status: "done"});
+				return res.status(200).json({status: "done"});
 			} catch (e) {
 				next({
 					status: 400,
@@ -449,14 +419,11 @@ export default {
 		])
 			.exec()
 			.then(games => {
-				res.status(200).json({"games": games});
+				return res.status(200).json({"games": games});
 			})
 			.catch(err => {
-				log.error(err);
-				next({
-					status: 500,
-					message: "error server " + err
-				});
+				log.error("all games error", err);
+				return res.status(500).json({message: "Get Games error"});
 			});
 	},
 	delete: async (req, res, next) => {
@@ -471,10 +438,10 @@ export default {
 			try {
 				if (process.env.GECO_NODE_ENV === "production" && bcrypt.compareSync(password, process.env.GECO_ADMIN_PASSWORD)) {
 					await GameModel.findByIdAndDelete(idGame);
-					res.status(200).json({"status": "delete done"});
+					return res.status(200).json({"status": "delete done"});
 				} else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password, "$2b$04$/uSG6WTkDm94r6fot9lHNes.8MdMkRKTosxjCevTRAHtQXSvWJed6")) {
 					await GameModel.findByIdAndDelete(idGame);
-					res.status(200).json({"status": "delete done"});
+					return res.status(200).json({"status": "delete done"});
 				} else {
 					next({
 						status: 500,
@@ -559,14 +526,11 @@ export default {
 				{new: true})
 				.then((updatedGame) => {
 					io().to(idGame).emit(C.RESET_GAME);
-					res.status(200).json({"status": "reset done"});
+					return res.status(200).json({"status": "reset done"});
 				})
 				.catch((error) => {
-					log.error(error);
-					next({
-						status: 404,
-						message: "Not found"
-					});
+					log.error("reset game error", error);
+					return res.status(500).json({message: "Reset Game error"});
 				});
 		}
 	}

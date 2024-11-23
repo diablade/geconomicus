@@ -5,8 +5,8 @@ import game from './game.controller.js';
 
 router.get('/all', game.all);
 router.get('/events/:idGame', game.getEvents);
-router.get('/:idGame', game.getGameById);
 router.get('/feedbacks/:idGame', game.getFeedbacks);
+router.get('/:idGame', game.getGameById);
 router.post('/create', game.create);
 router.post('/end', game.end);
 router.post('/delete', game.delete);

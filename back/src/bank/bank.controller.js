@@ -173,20 +173,14 @@ export default {
 					addDebtTimer(id.toString(), startNow, newUpdatedGame.timerCredit, credit);
 					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
 					io().to(idPlayer).emit(C.NEW_CREDIT, credit);
-					res.status(200).json(credit);
+					return res.status(200).json(credit);
 				}).catch((error) => {
 					log.error(error);
-					next({
-						status: 404,
-						message: "Not found"
-					});
+					return res.status(404).json({message: "Cannot create credit"});
 				});
 			}).catch((error) => {
 				log.error(error);
-				next({
-					status: 404,
-					message: "Not found"
-				});
+				return res.status(404).json({message: "Cannot create credit"});
 			});
 		}
 	},
@@ -203,20 +197,14 @@ export default {
 				.then(game => {
 					if (game) {
 						let credits = _.filter(game.credits, {idPlayer: idPlayer});
-						res.status(200).json(credits);
+						return res.status(200).json(credits);
 					} else {
-						next({
-							status: 404,
-							message: "Not found"
-						});
+					return res.status(404).json({message: "Cannot get credits, Game not found"});
 					}
 				})
 				.catch(error => {
 					log.error('get game error', error);
-					next({
-						status: 404,
-						message: "not found"
-					});
+					return res.status(404).json({message: "Cannot get credits, Game not found"});
 				});
 		}
 	},
@@ -230,7 +218,7 @@ export default {
 		} else {
 			try {
 				const creditUpdated = await bankService.settleCredit(credit);
-				res.status(200).json(creditUpdated);
+				return res.status(200).json(creditUpdated);
 			} catch (e) {
 				next({
 					status: 400,
@@ -272,25 +260,19 @@ export default {
 								addDebtTimer(credit._id.toString(), true, updatedGame.timerCredit, creditUpdated);
 								io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
 								io().to(credit.idGame + C.BANK).emit(C.PAYED_INTEREST, creditUpdated);
-								res.status(200).json(creditUpdated);
+								return res.status(200).json(creditUpdated);
 							}
 						}
 					).catch((error) => {
 						log.error(error);
-						next({
-							status: 404,
-							message: "coins updated but credit not found ??"
-						});
+						return res.status(500).json({message: "coins updated but credit not found ??"});
 					});
 				} else {
 					log.error('Not enough coins to remove or player not found.');
 				}
 			}).catch((error) => {
 				log.error(error);
-				next({
-					status: 404,
-					message: "Not found"
-				});
+				return res.status(404).json({message: "Cannot pay interest, Game not found"});
 			});
 		}
 	},
@@ -356,11 +338,11 @@ export default {
 							seizure: seizure,
 							prisoner: prisoner
 						});
-						res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
+						return res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
 					});
 				} else {
 					io().to(credit.idPlayer).emit(C.SEIZURE, {credit: credit, seizure: seizure});
-					res.status(200).json({credit: credit, seizure: seizure});
+					return res.status(200).json({credit: credit, seizure: seizure});
 				}
 			} catch (e) {
 				log.error(e);
@@ -397,7 +379,7 @@ export default {
 				} else {
 					getOut(idGame, idPlayerToFree);
 				}
-				res.status(200).json({});
+				return res.status(200).json({});
 			} catch (e) {
 				log.error(e);
 				next({status: 500, message: e});

@@ -21,49 +21,77 @@ if (process.env.GECO_NODE_ENV !== "test") {
 }
 
 const app = express();
+// Enable trust proxy for correct client IP detection
+app.set('trust proxy', true);
 // CORS POLICY
 app.use(cors())
 
 // USE MIDDLEWARE
+
+// // Middleware to block bots
+// app.use((req, res, next) => {
+// 	// Regex to match bot user-agents
+// 	const botPattern = /bot|crawler|spider|crawling/i;
+// 	if (botPattern.test(req.headers['user-agent'])) {
+// 		// End the connection without responding
+// 		req.destroy();
+// 		return;
+// 	}
+// 	next();
+// });
+const botPattern = /bot|crawler|spider|crawling/i;
+const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
+// Middleware to block bots
+app.use((req, res, next) => {
+	if (botPattern.test(req.headers['user-agent'])) {
+		// Respond with 403 Forbidden for bots
+		return res.status(403).json({message: 'Forbidden'});
+	}
+	next();
+});
+
+
 // Ensure all requests and responses use UTF-8 encoding
 app.use((req, res, next) => {
 	res.setHeader('Content-Type', 'application/json; charset=utf-8');
 	req.headers['accept-charset'] = 'utf-8';
 	next();
 });
-// res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(morgan(":remote-addr | :remote-user |[:date[clf]] " + "| :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms"));
+// Morgan logger setup: Log only defined routes
+app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
+	skip: (req, res) =>{
+		return !acceptedPathToBeLogged.test(req.originalUrl);
+	}
+}));
 
 // MAIN ROUTES middleware
 app.use('/bank', bankRoutes);
 app.use('/game', gameRoutes);
 app.use('/player', playerRoutes);
+
 //api health routes
 app.get('/status', (req, res) => {
-	res.status(200).json({
+	return res.status(200).json({
 		status: 'running',
 		version: process.env.GECO_VERSION
 	})
 });
 
-// for all other routes go with 404 error
-app.use(function (req, res, next) {
-	let error = new Error('Not Found');
-	error.status = 404;
-	next(error);
+// Catch-all for non-matching routes (404 handler)
+app.use((req, res, next) => {
+	return res.status(404).json({"not": "Found"});
 });
+
 // handle errors
-app.use(function (err, req, res, next) {
-	if (err.status === 500) {
-		log.error(err);
-	}
-	res.status(err.status || 500);
-	const message = err.message || "something looks wrong :(";
-	res.json({
-		status: "error",
-		message: message
+app.use(function (err, req, res) {
+	log.error('error', err);
+
+	// Set error response
+	return res.status(err.status || 500).json({
+		message: err.message || "Something looks wrong :(",
 	});
 });
 if (process.env.GECO_NODE_ENV !== "test") {

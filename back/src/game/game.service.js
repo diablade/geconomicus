@@ -234,10 +234,10 @@ export default {
 				io().to(idGame + C.EVENT).emit(C.EVENT, startEvent);
 			})
 			.catch(err => {
-				log.error('get game error', err);
+				log.error('Start round game error', err);
 				next({
 					status: 404,
-					message: "not found"
+					message: "Start round game error"
 				});
 			})
 	},
