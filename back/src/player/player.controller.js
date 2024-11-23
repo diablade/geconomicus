@@ -271,10 +271,7 @@ const produce = async (req, res, next) => {
 const transaction = async (req, res, next) => {
 	const {idGame, idBuyer, idSeller, idCard} = req.body;
 	if (!idGame || !idBuyer || !idSeller || !idCard) {
-		return next({
-			status: 400,
-			message: "Bad request: missing required fields"
-		});
+		return res.status(400).json({message: "Bad request: missing required fields"});
 	}
 	// Check if the transaction is already in progress
 	if (activeTransactions.has(idSeller)) {
@@ -294,7 +291,7 @@ const transaction = async (req, res, next) => {
 			return res.status(404).json({message: "Transaction error, Buyer or seller not found"});
 		}
 		if (buyer.status === C.DEAD || seller.status === C.DEAD) {
-			return res.status(404).json({message: "Transaction cannot involves a dead player, fool !"});
+			return res.status(400).json({message: "Transaction cannot involves a dead player, fool !"});
 		}
 
 		const card = _.find(seller.cards, {id: idCard});
@@ -306,7 +303,7 @@ const transaction = async (req, res, next) => {
 			? _.round(_.multiply(card.price, game.currentDU), 2)
 			: card.price;
 		if (buyer.coins < cost) {
-			return res.status(404).json({message: "Transaction error, Insufficient funds"});
+			return res.status(400).json({message: "Transaction error, Insufficient funds"});
 		}
 
 		const eventTransaction = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
