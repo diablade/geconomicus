@@ -1,5 +1,3 @@
-<p>master-admin works!</p>
-
 <div class="admin">
 	<h1>
 		{{ game.name }}
@@ -18,69 +16,131 @@
 		</ul>
 	</div>
 	<h2>Decks</h2>
-	<div class="decks d-flex flex-row">
-		<div class="deck w-25">
+	<div class="d-flex flex-row">
+		<div class="w-25">
 			<h3>niveau 1</h3>
 			<div class="d-flex flex-wrap">
-				<app-card *ngFor="let card of game.decks[0]"
-									[card]="card"
-									[typeMoney]="'debt'"
-									[idOwner]=""
-									[idGame]=""
-									[height]="'70px'"
-									[width]="'35px'"
-									[priceSize]="'5px'"
-									[letterSize]="'14px'"
-									[flippable]="false"
-				></app-card>
+				<div *ngFor="let card of game.decks[0]">
+					<app-card *ngIf="card.displayed"
+										[card]="card"
+										[typeMoney]="''"
+										[idOwner]=""
+										[idGame]=""
+										[height]="'60px'"
+										[width]="'35px'"
+										[priceSize]="'5px'"
+										[letterSize]="'15px'"
+										[amountCardsForProd]="100"
+										[flippable]="false"
+					></app-card>
+				</div>
 			</div>
 		</div>
-		<div class="deck w-25">
+		<div class="w-25">
 			<h3>niveau 2</h3>
 			<div class="d-flex flex-wrap">
-				<app-card *ngFor="let card of game.decks[1]"
-									[card]="card"
-									[typeMoney]="'debt'"
-									[idOwner]=""
-									[idGame]=""
-									[height]="'70px'"
-									[width]="'35px'"
-									[priceSize]="'5px'"
-									[letterSize]="'14px'"
-									[flippable]="false"
-				></app-card>
+				<div *ngFor="let card of game.decks[1]">
+					<app-card *ngIf="card.displayed"
+										[card]="card"
+										[typeMoney]="''"
+										[idOwner]=""
+										[idGame]=""
+										[height]="'60px'"
+										[width]="'35px'"
+										[priceSize]="'5px'"
+										[letterSize]="'15px'"
+										[amountCardsForProd]="100"
+										[flippable]="false"
+					></app-card>
+				</div>
 			</div>
 		</div>
-		<div class="deck w-25">
+		<div class="w-25">
 			<h3>niveau 3</h3>
 			<div class="d-flex flex-wrap">
-				<app-card *ngFor="let card of game.decks[2]"
-									[card]="card"
-									[typeMoney]="'debt'"
-									[idOwner]=""
-									[idGame]=""
-									[height]="'70px'"
-									[width]="'35px'"
-									[priceSize]="'5px'"
-									[letterSize]="'14px'"
-									[flippable]="false"
-				></app-card>
+				<div *ngFor="let card of game.decks[2]">
+					<app-card *ngIf="card.displayed"
+										[card]="card"
+										[typeMoney]="''"
+										[idOwner]=""
+										[idGame]=""
+										[height]="'60px'"
+										[width]="'35px'"
+										[priceSize]="'5px'"
+										[letterSize]="'15px'"
+										[amountCardsForProd]="100"
+										[flippable]="false"
+					></app-card>
+				</div>
 			</div>
 		</div>
-		<div class="deck w-25">
+		<div class="w-25">
 			<h3>niveau 4</h3>
 			<div class="d-flex flex-wrap">
-				<app-card *ngFor="let card of game.decks[3]"
-									[card]="card"
-									[typeMoney]="'debt'"
-									[idOwner]=""
-									[idGame]=""
-									[height]="'70px'"
-									[width]="'35px'"
-									[priceSize]="'5px'"
-									[letterSize]="'14px'"
-									[flippable]="false"
-				></app-card>
+				<div *ngFor="let card of game.decks[3]">
+					<app-card *ngIf="card.displayed"
+										[card]="card"
+										[typeMoney]="''"
+										[idOwner]=""
+										[idGame]=""
+										[height]="'60px'"
+										[width]="'35px'"
+										[priceSize]="'5px'"
+										[letterSize]="'15px'"
+										[amountCardsForProd]="100"
+										[flippable]="false"
+					></app-card>
+				</div>
+			</div>
+		</div>
+	</div>
+	<h2>Players</h2>
+	<div class="d-flex flex-row flex-wrap">
+		<div *ngFor="let player of game.players" class="w-25">
+			<div class="d-flex flex-column player-board m-2"
+					 [ngStyle]="getBackgroundStyle(player)">
+				<div class="header-board d-flex flex-row p-2">
+					<div class="user d-flex">
+						<div class="player-frame" [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
+								 [ngStyle]="{'border-color':'#'+player.hairColor}"
+								 [innerHTML]="getSanitizedSvgFromString(player.image)">
+						</div>
+					</div>
+					<div class="d-flex flex-column align-items-center flex-grow-1">
+						<div class="fs-6 gecoFont shadowed"> {{ player.name }}</div>
+						<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
+					</div>
+				</div>
+				<div class="">
+					<div class="d-flex flex-row flex-wrap">
+						<div *ngFor="let card of player.cards">
+							<app-card *ngIf="card.displayed"
+												[card]="card"
+												[typeMoney]="''"
+												[idOwner]=""
+												[idGame]=""
+												[height]="'60px'"
+												[width]="'35px'"
+												[priceSize]="'5px'"
+												[letterSize]="'15px'"
+												[amountCardsForProd]="100"
+												[flippable]="false"
+							></app-card>
+						</div>
+<!--						<app-card-->
+<!--							*ngFor="let card of player.cards"-->
+<!--							[card]="card"-->
+<!--							[typeMoney]="''"-->
+<!--							[idOwner]="player._id"-->
+<!--							[idGame]="idGame"-->
+<!--							[height]="'60px'"-->
+<!--							[width]="'35px'"-->
+<!--							[priceSize]="'5px'"-->
+<!--							[letterSize]="'15px'"-->
+<!--							[flippable]="false"-->
+<!--						></app-card>-->
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

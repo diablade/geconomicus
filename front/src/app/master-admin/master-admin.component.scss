@@ -1,0 +1,46 @@
+
+.header-board {
+	height: 100px;
+}
+
+
+.player-board {
+	//width: 200px;
+	max-height: 300px;
+	overflow: auto;
+}
+
+.svg {
+	width: 60px;
+	height: 60px;
+	border: solid #5398ca 2px;
+	border-radius: 40px;
+	background: rgba(255, 255, 255, 0.65);
+}
+
+
+.player {
+	margin: 5px;
+	justify-content: space-between;
+
+	&-frame {
+		background: white;
+	}
+
+	&-svg {
+		width: 60px;
+		height: 60px;
+		border-radius: 80px;
+		border: solid black 2px;
+		box-shadow: 2px 2px 4px -2px black;
+	}
+
+	&-svgSmall {
+		width: 70px;
+		height: 70px;
+		border-radius: 80px;
+		border: solid black 2px;
+		box-shadow: 2px 2px 4px -2px black;
+	}
+}
+

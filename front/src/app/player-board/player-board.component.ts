@@ -380,7 +380,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (c.count > 1 && existCountKey) {
 				c.displayed = false;
 			}
-			if (c.count > 1 && !existCountKey) {
+			if (c.count >= 1 && !existCountKey) {
 				keyDuplicates.push(countKey);
 				c.displayed = true;
 			}
@@ -408,7 +408,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	resurrection() {
-		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
+		// this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
 	}
 
 	formatNewCards(newCards: Card[]) {
@@ -427,10 +427,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	produceLevelUp($event: Card) {
-		const cardsToRemove = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
-		if (cardsToRemove.length === this.amountCardsForProd) {
-			this.backService.produce(this.idGame, this.idPlayer, cardsToRemove).subscribe(async newCards => {
-				_.remove(this.cards, {letter: $event.letter, weight: $event.weight,});
+		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
+		if (identicalCards.length >= this.amountCardsForProd) {
+			const cardsForProd = identicalCards.slice(0, this.amountCardsForProd);
+			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
+				_.remove(this.cards, c => _.some(cardsForProd,c));
 				const cardGift = _.find(newCards, {weight: $event.weight + 1});
 				if (cardGift) {
 					this.showGift(cardGift);

@@ -1,10 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {Game} from "../models/game";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MatDialog} from "@angular/material/dialog";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Card, Game, Player} from "../models/game";
+import {ActivatedRoute} from "@angular/router";
 import {BackService} from "../services/back.service";
-import {WebSocketService} from "../services/web-socket.service";
-import {SnackbarService} from "../services/snackbar.service";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import * as _ from "lodash-es";
 
 @Component({
 	selector: 'app-master-admin',
@@ -12,14 +11,13 @@ import {SnackbarService} from "../services/snackbar.service";
 	styleUrls: ['./master-admin.component.scss']
 })
 export class MasterAdminComponent implements OnInit {
+	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	idGame = "";
 	game: any;
 
 	constructor(private route: ActivatedRoute,
-							private router: Router,
 							private backService: BackService,
-							private wsService: WebSocketService,
-							private snackbarService: SnackbarService) {
+							private sanitizer: DomSanitizer,) {
 	}
 
 	ngOnInit(): void {
@@ -28,10 +26,48 @@ export class MasterAdminComponent implements OnInit {
 			// this.socket = this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
+				for(let deck of game.decks){
+					this.countOccurrencesAndHideDuplicates(deck);
+				}
+				for(let player of game.players){
+					this.countOccurrencesAndHideDuplicates(player.cards);
+				}
 			});
-
-			// this.data = environment.WEB_HOST + environment.GAME.GET + this.idGame + '/join';
 		});
 	}
 
+	getBackgroundStyle(player: Player) {
+		switch (player.boardConf) {
+			case "green":
+				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
+			case "custom":
+				return {"background-color": "" + player.boardColor};
+			case "wood":
+			default:
+				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
+		}
+	}
+
+	getSanitizedSvgFromString(svgString: string): SafeHtml {
+		return this.sanitizer.bypassSecurityTrustHtml(svgString);
+	}
+
+
+	countOccurrencesAndHideDuplicates(cards:Card[]) {
+		_.orderBy(cards, ["weight", "letter"]);
+		const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
+		const keyDuplicates: string[] = [];
+		for (const c of cards) {
+			const countKey = `${c.weight}-${c.letter}`;
+			c.count = countByResult[countKey] || 0;
+			const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
+			if (c.count > 1 && existCountKey) {
+				c.displayed = false;
+			}
+			if (c.count >= 1 && !existCountKey) {
+				keyDuplicates.push(countKey);
+				c.displayed = true;
+			}
+		}
+	}
 }
