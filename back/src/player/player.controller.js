@@ -398,11 +398,15 @@ const joinReincarnate = async (req, res, next) => {
 	try {
 		const game = await GameModel.findById(idGame);
 		if (!game) {
-			throw new Error("Game not found");
+			return res.status(404).json({message:"Reincarnate error, Game not found"});
 		}
 		const playerFromId = _.find(game.players, p => p._id.toString() === fromId);
 		if (!playerFromId) {
-			throw new Error("PlayerReincarnated from not found");
+			return res.status(404).json({message: "Player to reincarnate from, not found"});
+		}
+		let playerAlreadyReincarnated = _.find(game.players, p => p.reincarnateFromId === fromId);
+		if (playerAlreadyReincarnated) {
+			return res.status(200).json(playerAlreadyReincarnated._id);
 		}
 
 		const idPlayer = new mongoose.Types.ObjectId();
@@ -438,30 +442,25 @@ const joinReincarnate = async (req, res, next) => {
 			const updatedGame = await GameModel.findOneAndUpdate({_id: idGame}, {$push: {players: player}}, {new: true});
 			const shuffledDeck = _.shuffle(updatedGame.decks[0]);
 			// Draw new cards for the player
-			const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
+			const newCards = shuffledDeck.slice(0, game.distribInitCards);
 			const newCardsIds = newCards.map(c => c._id);
-			if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
-				throw new Error("duplicate new cards for reincarnate");
+			if (!decksService.areCardIdsUnique(newCardsIds, game.distribInitCards)) {
+				return res.status(500).json({message:"duplicate new cards for reincarnate"});
 			}
-			// remove cards from the deck
-			await GameModel.updateOne(
-				{_id: idGame},
-				{
-					$pull: {
-						[`decks.${0}`]: {_id: {$in: newCards.map(c => c._id)}},
-					},
-				}
-			);
 			//create events
 			birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
+			// remove cards from the deck
 			// and Add new cards to player's hand & event
 			await GameModel.updateOne(
-				{_id: idGame, 'players._id': idPlayer},
+				{ _id: idGame, 'players._id': idPlayer },
 				{
+					$pull: {
+						[`decks.${0}`]: { _id: { $in: newCards.map(c => c._id) } },
+					},
 					$push: {
-						'players.$.cards': {$each: newCards},
+						'players.$.cards': { $each: newCards },
 						'events': birthEvent,
-					}
+					},
 				}
 			);
 		});

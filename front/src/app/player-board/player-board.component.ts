@@ -408,7 +408,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	resurrection() {
-		// this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
+		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
 	}
 
 	formatNewCards(newCards: Card[]) {
