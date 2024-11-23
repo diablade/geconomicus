@@ -178,7 +178,7 @@
 	</div>
 	<div class="text-center" *ngIf="game && game.status!==C.OPEN">
 		<h2 class="fs-3 gecoFont shadowed">Joueurs</h2>
-		<mat-slide-toggle
+		<mat-slide-toggle *ngIf="!game.autoDeath"
 			class=""
 			[color]="'warn'"
 			[(ngModel)]="killUser">
