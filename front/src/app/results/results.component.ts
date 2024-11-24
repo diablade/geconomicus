@@ -53,7 +53,10 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	initialDebts = 0;
 	moneyDestroyed = 0;
 	initialResources = 0;
+	initialCards = 0;
+	finalCards = 0;
 	finalResources = 0;
+	productionTotal = 0;
 	startGameDate: Date | undefined;
 	stopGameDate: Date | undefined;
 	roundStarted = false;
@@ -500,7 +503,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
 	getValueCardsFromEvent(cards: Card[]) {
 		return _.reduce(cards, function (sum, card) {
-			return sum + card.price;
+			return sum + card.price; // € or DU
 		}, 0);
 	}
 
@@ -565,6 +568,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					continue;
 				case C.START_ROUND:
 					this.roundStarted = true;
+					this.finalCards+=this.initialCards;
 					continue;
 				case C.STOP_ROUND:
 					continue;
@@ -576,6 +580,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					this.initialMM += event.amount;
 					this.initialResources += totalResourcesEvent;
+					this.initialCards += event.resources.length;
 					updateData(mmDataset, event.date, "add", event.amount, false, false);
 					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
@@ -605,12 +610,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 						// @ts-ignore
 						emitterDatasetResources.total -= totalResourcesEvent;
 					}
+					this.finalCards -= event.resources.length;
 					// no update data to avoid weird graph up and down too quickly
 					continue;
 				case C.TRANSFORM_NEWCARDS:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					// no before point , same reason as transform_discards
 					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
+					this.finalCards += event.resources.length;
+					this.productionTotal += 1;
 					continue;
 				case C.DEAD:
 					this.deads++;
@@ -784,14 +792,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 
 	getSanitizedSvgFromString(svgString: string | undefined): SafeHtml {
 		return svgString ? this.sanitizer.bypassSecurityTrustHtml(svgString) : "";
-	}
-
-	getResourcesInDU(resources: number) {
-		if ((this.game?.priceWeight1)) {
-			return resources / this.game.priceWeight1;
-		} else {
-			return "-";
-		}
 	}
 
 	getTransactionsTotal() {

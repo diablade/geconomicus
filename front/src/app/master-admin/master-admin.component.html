@@ -105,6 +105,9 @@
 								 [ngStyle]="{'border-color':'#'+player.hairColor}"
 								 [innerHTML]="getSanitizedSvgFromString(player.image)">
 						</div>
+						<div class="fs-1" *ngIf="player.status==='dead'">
+							🪦
+						</div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
 						<div class="fs-6 gecoFont shadowed"> {{ player.name }}</div>

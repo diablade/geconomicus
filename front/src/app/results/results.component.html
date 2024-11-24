@@ -39,27 +39,30 @@
 				<div><span class="fw-bold">Animateur: </span>{{ game?.animator }}</div>
 				<div><span class="fw-bold">Lieu: </span>{{ game?.location }}</div>
 				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
-				<div><span class="fw-bold">Joueurs: </span>{{ playersAtStart }}</div>
+				<div><span class="fw-bold">Joueurs: </span>{{ playersAtStart > 0 ? playersAtStart : "-" }}</div>
 				<div><span class="fw-bold">Morts et reincarnés: </span>{{ deads }}</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
-				<div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)*Taux
+				<div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)xTaux
 				</div>
-				<div><span class="fw-bold">D.U initial : </span>({{ initialMM }} / {{ game?.players?.length }}
-					* {{ game?.tauxCroissance | number:'1.2-2' }})
+				<div><span class="fw-bold">D.U initial : </span>({{ initialMM }}
+					/ {{ playersAtStart > 0 ? playersAtStart : "joueurs" }}
+					x {{ game?.tauxCroissance | number:'1.2-2' }})
 					= {{ initialDU }} Ğ1
 				</div>
 				<div><span class="fw-bold">D.U final : </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
-					/ {{ game?.players?.length }}
-					* {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} Ğ1
+					/ {{ playersAtStart > 0 ? playersAtStart : "joueurs" }}
+					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} Ğ1
 				</div>
 				<div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
 				<div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
 				</div>
-				<div><span class="fw-bold">Ressources initial : </span> {{ getResourcesInDU(initialResources) }} (D.U eq)
+				<div><span class="fw-bold">Ressources initial : </span> {{ initialCards }} Cartes ({{ initialResources }} D.U
+					eq)
 				</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ getResourcesInDU(finalResources) }} (D.U eq) (initial
+				<div><span class="fw-bold">Ressources final : </span>{{ finalCards }} Cartes ({{ finalResources }} D.U eq)
+					(initial
 					x{{ finalResources / initialResources| number:'1.2-2' }})
 				</div>
 			</div>
@@ -71,8 +74,9 @@
 				<div><span class="fw-bold">Dettes final : </span>{{ getDebts() }} €</div>
 				<div><span class="fw-bold">Intérêts récupérés par la banque : </span>{{ game?.bankInterestEarned }} €</div>
 				<div><span class="fw-bold">Monnaie détruite (crédits remboursés) : </span>{{ moneyDestroyed }} €</div>
-				<div><span class="fw-bold">Ressources initial : </span> {{ initialResources }} (€)</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ finalResources }} (€) (initial
+				<div><span class="fw-bold">Ressources initial : </span> {{ initialCards }} Cartes ({{ initialResources }} €)
+				</div>
+				<div><span class="fw-bold">Ressources final : </span>{{ finalCards }} Cartes ({{ finalResources }} €) (initial
 					x{{ finalResources / initialResources| number:'1.2-2' }})
 				</div>
 			</div>
@@ -83,6 +87,7 @@
 				<div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
 				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
 				<div><span class="fw-bold">Nb de transactions total: </span>{{ getTransactionsTotal() }}</div>
+				<div><span class="fw-bold">Nb de productions total: </span>{{ productionTotal }}</div>
 				<!--				<div><span class="fw-bold">Vélocité de la monnaie: (V=PxT/M) </span>{{ getTransactionsTotal() }}</div>-->
 			</div>
 		</div>
