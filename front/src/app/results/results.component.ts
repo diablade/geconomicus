@@ -423,12 +423,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				{
 					data: [],
 					label: this.bankName,
-					backgroundColor: hexToRgb("#000000"),
+					backgroundColor: hexToRgb("#ffffff"),
 					borderColor: hexToRgb("#000000"),
-					pointBackgroundColor: hexToRgb("#000000"),
+					pointBackgroundColor: hexToRgb("#ffffff"),
 					pointBorderColor: hexToRgb("#000000"),
-					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
+					borderWidth: 4, // Line thickness
+					pointRadius: 1, // Point thickness
 					// @ts-ignore
 					total: 0,
 				});
@@ -437,12 +437,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				{
 					data: [],
 					label: this.bankName,
-					backgroundColor: hexToRgb("#000000"),
+					backgroundColor: hexToRgb("#ffffff"),
 					borderColor: hexToRgb("#000000"),
-					pointBackgroundColor: hexToRgb("#000000"),
+					pointBackgroundColor: hexToRgb("#ffffff"),
 					pointBorderColor: hexToRgb("#000000"),
-					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
+					borderWidth: 4, // Line thickness
+					pointRadius: 1, // Point thickness
 					// @ts-ignore
 					total: 0,
 				});
@@ -454,6 +454,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				label: this.massMonetaryName,
 				backgroundColor: hexToRgb("#000000"),
 				borderColor: hexToRgb("#000000"),
+				borderDash: [1, 0, 1],
 				pointBackgroundColor: hexToRgb("#000000"),
 				pointBorderColor: hexToRgb("#000000"),
 				borderWidth: 2, // Line thickness
