@@ -1,0 +1,16 @@
+{
+	"HOME": {
+		"HELLO": "Bonjour!",
+		"WELCOME": "Découvrez la monnaie libre par le jeu !",
+		"INSTALL": "Install l'application",
+		"CREATE_GAME": "Créer une partie",
+		"JOIN_GAME": "Rejoindre une partie",
+		"HOW_TO_PLAY": "Comment çà marche ?",
+		"FUND_RAISE": "Une cagnotte pour me soutenir, ",
+		"IN": "en",
+		"OR_IN": " ou en",
+		"SAY_HI": "Besoin d'aide, t'as une idée, t'as un bug, ou simplement faire coucou ?",
+		"LINK_SAY_HI": "c'est par ici",
+		"LOOKING_FOR_PAPER_GAME": "Le jeu original en version papier ?"
+	}
+}
