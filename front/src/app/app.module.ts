@@ -15,7 +15,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
-import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpClient} from "@angular/common/http";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {JoinComponent} from './join/join.component';
 import {MatIconModule} from "@angular/material/icon";
@@ -63,8 +63,15 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
 import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
 import { MasterAdminComponent } from './master-admin/master-admin.component';
+import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
+// required for AOT compilation
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+	return new TranslateHttpLoader(http);
+}
 
 @NgModule({
 	declarations: [
@@ -98,7 +105,8 @@ LOAD_WASM().subscribe();
 		CongratsDialogComponent,
 		ShortcodeDialogComponent,
 		GameDeleteDialog,
-  MasterAdminComponent,
+		MasterAdminComponent,
+  	LanguageBtnComponent,
 	],
 	imports: [
 		HttpClientModule,
@@ -130,13 +138,20 @@ LOAD_WASM().subscribe();
 		MatExpansionModule,
 		CdkMenuTrigger,
 		DragDropModule,
+		NgxScannerQrcodeModule,
+		TranslateModule.forRoot({
+			loader: {
+				provide: TranslateLoader,
+				useFactory: HttpLoaderFactory,
+				deps: [HttpClient]
+			}
+		}),
 		ServiceWorkerModule.register('ngsw-worker.js', {
 			enabled: !isDevMode(),
 			// Register the ServiceWorker as soon as the application is stable
 			// or after 30 seconds (whichever comes first).
 			registrationStrategy: 'registerWhenStable:30000'
 		}),
-		NgxScannerQrcodeModule,
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
@@ -145,4 +160,7 @@ LOAD_WASM().subscribe();
 })
 
 export class AppModule {
+	constructor(translate: TranslateService) {
+		translate.setDefaultLang('fr'); // Global fallback
+	}
 }

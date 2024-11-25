@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {filter, map} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
 	selector: 'app-root',
@@ -10,7 +11,11 @@ import {filter, map} from "rxjs";
 export class AppComponent implements OnInit{
 	title = 'Ğeconomicus';
 
-	constructor(private swUpdate: SwUpdate) {
+	constructor(private swUpdate: SwUpdate, private translate: TranslateService) {
+		this.translate.setDefaultLang('fr'); // Default language
+		// Load preference on app start
+		let savedLanguage = localStorage.getItem('language') || 'fr';
+		translate.use(savedLanguage);
 	}
 
 	public ngOnInit(): void {
