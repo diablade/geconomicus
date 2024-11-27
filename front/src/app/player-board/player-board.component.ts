@@ -631,10 +631,4 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	refresh() {
 		window.location.reload();
 	}
-
-	protected readonly faInfo = faCircleInfo;
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
-	}
 }

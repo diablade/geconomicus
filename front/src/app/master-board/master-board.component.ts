@@ -53,8 +53,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	timerProgress = 100;
 
 	options = [
-		{value: C.JUNE, label: 'Monnaie libre', isDisabled: false},
-		{value: C.DEBT, label: 'Monnaie dette', isDisabled: false},
+		{value: C.JUNE, label: "MONEY_FREE", isDisabled: false},
+		{value: C.DEBT, label: "MONEY_DEBT", isDisabled: false},
 	];
 	minutes = "00";
 	seconds = "00";
@@ -307,10 +307,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.game = {...results};
 			}
 		});
-	}
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
 	}
 
 	onKillUser(player: Player) {

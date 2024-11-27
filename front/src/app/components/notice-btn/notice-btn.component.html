@@ -1,0 +1,6 @@
+<button class="ms-2" *ngIf="stroked" mat-stroked-button (click)="showRules()">{{ labelBtn|translate }}
+	<fa-icon *ngIf="icon" [icon]="faInfo"></fa-icon>
+</button>
+<button class="ms-2" *ngIf="!stroked" mat-raised-button (click)="showRules()">{{ labelBtn|translate }}
+	<fa-icon *ngIf="icon" [icon]="faInfo"></fa-icon>
+</button>

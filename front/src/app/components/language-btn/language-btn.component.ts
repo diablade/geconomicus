@@ -11,8 +11,12 @@ export class LanguageBtnComponent {
 		{flag: "🇫🇷", language: "Français", lang: "fr"},
 		{flag: "🇪🇸", language: "Spanish", lang: "es"},
 		{flag: "🇮🇹", language: "Italiano", lang: "it"},
-		{flag: "🇬🇧", language: "English", lang: "en"}
+		{flag: "🇬🇧", language: "English", lang: "en"},
+		{flag: "🇷🇸", language: "Srpski", lang: "sr"},
+		{flag: "🇯🇵", language: "日本語", lang: "ja"}
 	];
+		// {flag: "", language: "Roumanian", lang: "ro"}
+
 	selectedLanguage: any;
 	@Input() short: boolean = false;
 

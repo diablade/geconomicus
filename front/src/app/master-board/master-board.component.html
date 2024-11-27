@@ -1,12 +1,13 @@
 <div class="d-flex flex-column h-100">
-	<div class="">
+	<div class="d-flex flex-row justify-content-between">
 		<img class="geco" src="./assets/images/geconomicus.png" alt="">
+		<app-language-btn [short]="true"></app-language-btn>
 	</div>
 	<div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
-		Rejoins la partie {{ game.name }}
+		{{ "MASTER.JOIN"| translate: {name: game.name} }}
 	</div>
 	<div class="text text-center" *ngIf="game && game.status==='open'">
-		Scanne le QrCode via {{ environment.WEB_HOST }}, puis clique sur "rejoindre" !
+		{{ "MASTER.SCAN_QR" | translate: {webHost: environment.WEB_HOST} }}
 	</div>
 	<div class="fs-1 text-center pt-4 pb-4 text-capitalize gecoFont shadowed"
 			 *ngIf="game && game.status!=='open'">{{ game.name }}
@@ -25,69 +26,72 @@
 		</div>
 		<!--  GUNY  -->
 		<div class="col-md-12 col-lg-4 text-center m-auto">
-			<div class="mt-4 text-center bulle gecoFont bienvenue">Bienvenue !</div>
+			<div class="mt-4 text-center bulle gecoFont bienvenue">{{ "MASTER.GUNY_WELCOME"| translate }}</div>
 			<img class="guny" src="./assets/images/guny.png" alt="">
 		</div>
 		<!--  OPTIONS  -->
 		<div class="col-md-12 col-lg-4 text-center m-auto">
-			<div class="gecoFont shadowed">Animateur: {{ game.animator }}</div>
+			<div class="gecoFont shadowed">{{ "ANIMATOR"| translate }}: {{ game.animator }}</div>
 			<div class="">
 				<mat-form-field class="justify-content-center" appearance="fill">
-					<mat-label>Type de monnaie</mat-label>
+					<mat-label>{{ "MASTER.TYPE_OF_MONEY"| translate }}</mat-label>
 					<mat-select (selectionChange)="onMoneyChange($event)" [(value)]="game.typeMoney">
 						<mat-option [value]="option.value" [disabled]="option.isDisabled"
-												*ngFor="let option of options">{{ option.label }}
+												*ngFor="let option of options">{{ option.label | translate }}
 						</mat-option>
 					</mat-select>
 				</mat-form-field>
 			</div>
 			<div class="d-flex flex-row justify-content-center align-items-center">
 				<img class="imgCardValeur" src="assets/images/level1.png">
-				<div class="imgText d-flex justify-content-between ps-1">Alimentation:
+				<div class="imgText d-flex justify-content-between ps-1">{{ "MASTER.CARD_LV1"|translate }}:
 					<div class="fw-bold">{{ game.priceWeight1 }}{{ game.typeMoney === C.JUNE ? " DU" : "" }}</div>
 				</div>
 			</div>
 			<div class=" d-flex flex-row justify-content-center align-items-center">
 				<img class="imgCardValeur" src="assets/images/level2.png">
-				<div class="imgText d-flex justify-content-between ps-1">Culture et savoir:
+				<div class="imgText d-flex justify-content-between ps-1">{{ "MASTER.CARD_LV2"|translate }}:
 					<div class="fw-bold">{{ game.priceWeight2 }}{{ game.typeMoney === C.JUNE ? " DU" : "" }}</div>
 				</div>
 			</div>
 			<div class="d-flex flex-row justify-content-center align-items-center">
 				<img class="imgCardValeur" src="assets/images/level3.png">
-				<div class="imgText d-flex justify-content-between ps-1">Energie:
+				<div class="imgText d-flex justify-content-between ps-1">{{ "MASTER.CARD_LV3"|translate }}:
 					<div class="fw-bold">{{ game.priceWeight3 }}{{ game.typeMoney === C.JUNE ? " DU" : "" }}</div>
 				</div>
 			</div>
 			<div class="d-flex flex-row justify-content-center align-items-center">
 				<img class="imgCardValeur" src="assets/images/level4.png">
-				<div class="imgText d-flex justify-content-between ps-1">Technologie:
+				<div class="imgText d-flex justify-content-between ps-1">{{ "MASTER.CARD_LV4"|translate }}:
 					<div class="fw-bold">{{ game.priceWeight4 }}{{ game.typeMoney === C.JUNE ? " DU" : "" }}</div>
 				</div>
 			</div>
-			<button class="text-center mb-4 mt-4 ms-4" mat-raised-button (click)="showOptions()">Options de Jeu
-				<fa-icon [icon]="faCogs"></fa-icon>
-			</button>
-			<div class="d-flex flex-row justify-content-center">
-				<button class="ms-2" mat-raised-button (click)="showRules()">Notice de Jeu
-					<fa-icon [icon]="faInfo"></fa-icon>
+			<div class="d-flex flex-row justify-content-center align-items-center m-4">
+				<button class="ms-2" mat-raised-button (click)="showOptions()">{{ "MASTER.GAME_OPTION"|translate }}
+					<fa-icon [icon]="faCogs"></fa-icon>
 				</button>
+			</div>
+			<div class="d-flex flex-row justify-content-center">
+				<app-notice-btn></app-notice-btn>
 				<button class="ms-2" mat-raised-button color="warn" *ngIf="game.devMode"
 								(click)="startGame()">
-					Démarrer
+					{{ "MASTER.START" | translate }}
 					<fa-icon [icon]="faFlagCheckered"></fa-icon>
 				</button>
 				<button class="ms-2" mat-raised-button color="warn" *ngIf="!game.devMode"
 								[disabled]="game.players.length < 6"
 								(click)="startGame()">
-				{{game.players.length < 6 ? "Encore "+(6-game.players.length)+" joueur(s) avant de démarrer":"Démarrer"}}
+					{{ game.players.length < 6
+					? ("MASTER.WAITING" | translate: { count: 6 - game.players.length })
+					: ("MASTER.START" | translate) }}
 					<fa-icon [icon]="faFlagCheckered"></fa-icon>
 				</button>
 			</div>
 		</div>
 	</div>
 	<div class="container h-100" *ngIf="game && game.status!==C.OPEN">
-		<div class="fs-1 text-center pt-4 pb-4" *ngIf="game && game.roundMax>1">tour {{ game.round }}
+		<div class="fs-1 text-center pt-4 pb-4"
+				 *ngIf="game && game.roundMax>1">{{ "MASTER.ROUND"|translate }} {{ game.round }}
 			/ {{ game.roundMax }}
 		</div>
 		<div class="d-flex align-items-center justify-content-evenly flex-row">
@@ -123,66 +127,65 @@
 			</div>
 		</div>
 		<div class="d-flex mt-5 justify-content-center">
-			<button class="ms-2" mat-raised-button (click)="showRules()">Notice de Jeu
-				<fa-icon [icon]="faInfo"></fa-icon>
-			</button>
 			<button *ngIf="!((game.status===C.STOP_ROUND && game.round>=game.roundMax) || game.status==C.END_GAME)"
-							class="ms-2" mat-raised-button color="primary" (click)="showEvents()">Voir les évènements live 🔴📈
+							class="ms-2" mat-stroked-button color="primary"
+							(click)="showEvents()">{{ "MASTER.LIVE_EVENT_BTN"|translate }} 🔴📈
 			</button>
-			<button *ngIf="game.devMode" class="ms-2" mat-raised-button (click)="resetGameFromBtn()">
-				RESET GAME
+			<button *ngIf="game.devMode" class="ms-2" mat-stroked-button (click)="resetGameFromBtn()">
+				{{ "MASTER.RESET"|translate }}
 				<fa-icon [icon]="faWarning"></fa-icon>
 			</button>
 			<button *ngIf="game.status===C.START_GAME || game.status==C.INTER_ROUND"
 							class="ms-2" mat-raised-button
 							color="warn"
-							(click)="startRound()">Commencer le tour
+							(click)="startRound()">{{ "MASTER.START_ROUND"|translate }}
 			</button>
 			<button *ngIf="game.status===C.STOP_ROUND && game.round<game.roundMax" class="ms-2" mat-raised-button
 							color="accent"
-							(click)="doIntertour()">Tour suivant
-			</button>
-			<button *ngIf="game.status===C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
-							color="accent"
-							(click)="finishGame()">Lancer le questionnaire et afficher les resultats
+							(click)="doIntertour()">{{ "MASTER.NEXT_ROUND"|translate }}
 			</button>
 			<button *ngIf="game.status===C.PLAYING" mat-raised-button color="warn" class="ms-2"
 							(click)="stopRoundForce()">
-				Stop
+				{{ "MASTER.STOP"|translate }}
+			</button>
+			<button *ngIf="game.status===C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
+							color="accent"
+							(click)="finishGame()">{{ "MASTER.SEND_SURVEY"|translate }}
 			</button>
 			<button *ngIf="game.status===C.END_GAME && game.round>=game.roundMax" class="ms-2" mat-raised-button
 							color="accent"
-							(click)="goToResults()">Jeu terminé, afficher les resultats
+							(click)="goToResults()">{{ "MASTER.SHOW_RESULTS"|translate }}
 			</button>
 		</div>
 		<div class="d-flex mt-4 align-items-center flex-column" *ngIf="game.typeMoney===C.DEBT">
-			<h2 class="fs-4 shadowed gecoFont">Voir la banque</h2>
 			<div class="d-flex flex-row align-items-center">
-			<button class="m-2" mat-raised-button
-							color="accent"
-							(click)="showBank()">Banque
-				<fa-icon [icon]="faBuildingColumns"></fa-icon>
-			</button>
-			<fa-icon class="joinQr" (click)="qrCodeBank()" [icon]="faQrcode"></fa-icon>
+				<app-language-btn [short]="true"></app-language-btn>
+				<app-notice-btn [stroked]="true"></app-notice-btn>
+				<button class="m-2" mat-raised-button
+								color="accent"
+								(click)="showBank()">{{ "MASTER.BANK_BTN"|translate }}
+					<fa-icon [icon]="faBuildingColumns"></fa-icon>
+				</button>
+				<fa-icon class="joinQr" (click)="qrCodeBank()" [icon]="faQrcode"></fa-icon>
 			</div>
 		</div>
 	</div>
 	<div class="text-center" *ngIf="game && game.status===C.OPEN">
-		<h2 class="fs-3 shadowed gecoFont">Joueurs connectés</h2>
+		<h2 class="fs-3 shadowed gecoFont">{{ "MASTER.USERS_CONNECTED"|translate }}</h2>
 		<mat-slide-toggle
 			class=""
 			[color]="'warn'"
 			[(ngModel)]="deleteUser">
-			Supprimer un joueur ?
+			{{ "MASTER.DELETE_USER" |translate }}
 		</mat-slide-toggle>
 	</div>
 	<div class="text-center" *ngIf="game && game.status!==C.OPEN">
-		<h2 class="fs-3 gecoFont shadowed">Joueurs</h2>
-		<mat-slide-toggle *ngIf="!game.autoDeath"
-			class=""
-			[color]="'warn'"
-			[(ngModel)]="killUser">
-			faire passer la mort ? ☠️
+		<h2 class="fs-3 gecoFont shadowed">{{ "MASTER.PLAYERS"|translate }}</h2>
+		<mat-slide-toggle *ngIf="!game.autoDeath || game.devMode"
+											class=""
+											[color]="'warn'"
+											[(ngModel)]="killUser">
+			{{ "MASTER.KILL_USERS"|translate }} ☠️
 		</mat-slide-toggle>
 	</div>
 	<div class="p-3 sunyBg" [ngClass]="game.status === C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">

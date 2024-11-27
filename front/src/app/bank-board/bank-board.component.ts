@@ -236,8 +236,4 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			this.snackbarService.showSuccess("I want to break FREEEEEE !");
 		});
 	}
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
-	}
 }
