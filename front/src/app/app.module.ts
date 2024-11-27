@@ -66,6 +66,7 @@ import { MasterAdminComponent } from './master-admin/master-admin.component';
 import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
+import { NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
 // required for AOT compilation
@@ -107,6 +108,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		GameDeleteDialog,
 		MasterAdminComponent,
   	LanguageBtnComponent,
+   NoticeBtnComponent,
 	],
 	imports: [
 		HttpClientModule,

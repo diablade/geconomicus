@@ -1,16 +1,8 @@
-<div class="langBtnShort" *ngIf="short">
-	<button mat-icon-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
+<div>
+	<button *ngIf="short" mat-icon-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
 		{{ selectedLanguage.flag }}
 	</button>
-	<mat-menu #menuLanguages="matMenu">
-		<button *ngFor="let lang of languages" mat-menu-item>
-			{{ lang.flag }}
-			<span>{{ lang.lang }}</span>
-		</button>
-	</mat-menu>
-</div>
-<div class="" *ngIf="!short">
-	<button mat-stroked-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
+	<button *ngIf="!short" mat-stroked-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
 		{{ selectedLanguage.flag }} {{selectedLanguage.language}}
 	</button>
 	<mat-menu #menuLanguages="matMenu">

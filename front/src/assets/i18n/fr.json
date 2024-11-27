@@ -1,6 +1,11 @@
 {
+	"HELLO": "Bonjour!",
+	"WELCOME": "Bienvenue !",
+	"ANIMATOR": "Animateur",
+	"MONEY_FREE": "Monnaie libre",
+	"MONEY_DEBT": "Monnaie dette",
+	"GAME_NOTICE": "Notice de Jeu",
 	"HOME": {
-		"HELLO": "Bonjour!",
 		"WELCOME": "Découvrez la monnaie libre par le jeu !",
 		"INSTALL": "Install l'application",
 		"CREATE_GAME": "Créer une partie",
@@ -12,5 +17,32 @@
 		"SAY_HI": "Besoin d'aide, t'as une idée, t'as un bug, ou simplement faire coucou ?",
 		"LINK_SAY_HI": "c'est par ici",
 		"LOOKING_FOR_PAPER_GAME": "Le jeu original en version papier ?"
+	},
+	"MASTER": {
+		"SCAN_QR": "va sur {{webHost}}, puis clique sur 'rejoindre' !",
+		"JOIN": "Rejoins la partie {{name}}",
+		"GUNY_WELCOME": "Hey ! Scan mon QR Code pour rejoindre.",
+		"TYPE_OF_MONEY": "Type de monnaie",
+		"CARD_LV1": "Alimentation",
+		"CARD_LV2": "Culture et savoir",
+		"CARD_LV3": "Energie",
+		"CARD_LV4": "Technologie",
+		"GAME_OPTION": "Options de Jeu",
+		"START": "Démarrer",
+		"ROUND": "tour",
+		"LIVE_EVENT_BTN": "Résultats live",
+		"RESET": "RESET",
+		"START": "Démarrer",
+		"WAITING": "Encore {{count}} joueur(s) avant de démarrer",
+		"START_ROUND": "Commencer le tour",
+		"STOP_ROUND": "Stop",
+		"NEXT_ROUND": "Tour suivant",
+		"SEND_SURVEY": "Lancer le questionnaire et afficher les resultats",
+		"SHOW_RESULTS": "Jeu terminé, afficher les resultats",
+		"BANK_BTN": "Voir la banque",
+		"DELETE_USER": "Supprimer un joueur ?",
+		"USERS_CONNECTED": "Joueurs connectés",
+		"PLAYERS" : "Joueurs",
+		"KILL_USERS": "faire passer la mort ?"
 	}
 }

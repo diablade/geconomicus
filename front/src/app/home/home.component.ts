@@ -89,10 +89,6 @@ export class HomeComponent implements OnInit {
 			this.dialog.open(InstallAppDialog);
 		}
 	}
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
-	}
 }
 
 @Component({

@@ -52,9 +52,7 @@
 		<div
 			class="text-center gecoFont shadowed fs-1 m-4">{{ statusGame !== C.END_GAME ? "En attente..." : "Partie terminée..." }}
 		</div>
-		<button class="ms-2" *ngIf="statusGame !== C.END_GAME" mat-raised-button (click)="showRules()">Notice de Jeu
-			<fa-icon [icon]="faInfo"></fa-icon>
-		</button>
+		<app-notice-btn *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
 		<button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
 						color="accent">
 			Répondre au questionnaire
