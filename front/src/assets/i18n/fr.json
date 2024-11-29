@@ -118,6 +118,12 @@
 		"DEATH_3": "Vos résultats seront bien cumulés, avec votre deuxième vie pour les statistiques en fin de partie. Normalement tout le monde y passe ;)",
 		"TITLE_FOOTER": "Note de bas de page",
 		"FOOTER_1": "Si une carte manque ou si un bug apparaît, signalez-le à l'animateur.",
-		"FOOTER_2": "Cliquez sur le jeton de monnaie \uD83E\uDE99 en haut à gauche pour rafraîchir la page. Généralement, cela devrait \"nettoyer\" le bug \uD83D\uDC1E."
+		"FOOTER_2": "Cliquez sur le jeton de monnaie \uD83E\uDE99 en haut à gauche pour rafraîchir la page. Généralement, cela devrait \"nettoyer\" le bug \uD83D\uDC1E.",
+	},
+	"CARD": {
+		"BUILD_UP_0": "Créer une carte savoir",
+		"BUILD_UP_1": "Créer une carte Energie",
+		"BUILD_UP_2": "Créer une carte Technologie",
+		"BUILD_UP": "Créer une carte supérieur",
 	}
 }

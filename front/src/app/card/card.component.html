@@ -15,7 +15,7 @@
 				 [ngClass]="card.color+'Color'"></div>
 		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
 						class="transform">
-			{{ getBuildText(card) }}
+			{{ getBuildText(card) | translate }}
 			<fa-icon [icon]="faGift"></fa-icon>
 		</button>
 	</div>
