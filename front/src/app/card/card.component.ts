@@ -130,12 +130,12 @@ export class CardComponent {
 	getBuildText(card: Card) {
 		switch (card.weight) {
 			case 0:
-				return "Créer une carte savoir";
+				return "BUILD_UP_0";
 			case 1:
-				return "Créer une carte Energie";
+				return "BUILD_UP_1";
 			case 2:
-				return "Créer une carte Technologie";
+				return "BUILD_UP_2";
 		}
-		return "Créer une carte supérieur";
+		return "BUILD_UP";
 	}
 }
