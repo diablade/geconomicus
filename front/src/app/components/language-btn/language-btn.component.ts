@@ -19,6 +19,7 @@ export class LanguageBtnComponent {
 
 	selectedLanguage: any;
 	@Input() short: boolean = false;
+	@Input() cornerScreen: boolean = false;
 
 	constructor(private translate: TranslateService) {
 		this.selectedLanguage = this.languages.find(l => l.lang === this.translate.currentLang);

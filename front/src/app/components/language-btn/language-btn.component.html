@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="cornerScreen ? 'topRight':''">
 	<button *ngIf="short" mat-icon-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
 		{{ selectedLanguage.flag }}
 	</button>
