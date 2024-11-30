@@ -168,11 +168,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			data: {game: _.clone(this.game)},
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
-			this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
-				this.snackbarService.showSuccess("Credit octroyer à " + this.getPlayerName(credit.idPlayer));
-				this.game.credits.push(credit);
-				this.game.currentMassMonetary += credit.amount;
-			});
+			if (contrat) {
+				this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
+					this.snackbarService.showSuccess("Credit octroyer à " + this.getPlayerName(credit.idPlayer));
+					this.game.credits.push(credit);
+					this.game.currentMassMonetary += credit.amount;
+				});
+			}
 		});
 	}
 
