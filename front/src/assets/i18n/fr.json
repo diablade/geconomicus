@@ -162,6 +162,10 @@
 		"SEIZE": "Saisir",
 		"ANSWER": "Répondre",
 		"SETTLE": "Rembourser",
-
+		"DEBT": "Dette",
+		"CREATED": "Créé",
+		"NOTICE_INTEREST": "Intéret, payable pour prolonger de {{ interestMinutes }} minutes",
+		"DONE_AT": "Clos le",
+		"PROLONGATED": "Prolongé"
 	}
 }
