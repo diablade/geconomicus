@@ -5,27 +5,40 @@
 					 role="progressbar"
 					 [style.width.%]="credit.progress">
 			</div>
-			<div class="statusLabel">{{ getStatus(credit.status) }}</div>
+			<div class="statusLabel">{{ getStatus(credit.status) | translate }}</div>
 		</div>
 	</div>
 	<div *ngIf="!small" class="fw-bold text-truncate">{{ contractor }}</div>
-	<div *ngIf="!small" class="fontName"><span class="fw-bold">Créé :</span>{{ credit.createDate| date: "YY-MM-dd HH:mm" }}</div>
-	<div class="fontName"><span class="fw-bold">Crédit :</span>{{ credit.amount }}</div>
-	<div class="fontName"><span class="fw-bold">Interet :</span>{{ credit.interest }} payable toutes les {{ interestMinutes }} minutes</div>
-	<div *ngIf="credit.status===C.CREDIT_DONE" class="fontName"><span class="fw-bold">Clos le :</span>{{ credit.endDate | date:"YY-MM-dd HH:mm" }}
+	<div *ngIf="!small" class="fontName"><span
+		class="fw-bold">{{ "CREDIT.CREATED"|translate }} :</span>{{ credit.createDate| date: "YY-MM-dd HH:mm" }}
 	</div>
-	<div class="fontName"><span class="fw-bold">Prolongé :</span>{{ credit.extended }}</div>
+	<div class="fontName m-1"><span class="fw-bold">{{ "CREDIT.DEBT"|translate }} :</span>
+		<mat-chip>
+			{{ credit.amount }}
+		</mat-chip>
+		+
+		<mat-chip>
+			{{ credit.interest }}
+			<fa-icon mat-raised-button [icon]="faCircleInfo"
+							 [matTooltip]="'CREDIT.NOTICE_INTEREST' | translate :{interestMinutes}">
+			</fa-icon>
+		</mat-chip>
+	</div>
+	<div *ngIf="credit.status===C.CREDIT_DONE" class="fontName m-1"><span
+		class="fw-bold">{{ "CREDIT.DONE_AT"|translate }} :</span>{{ credit.endDate | date:"YY-MM-dd HH:mm" }}
+	</div>
+	<div class="fontName m-1"><span class="fw-bold">{{"CREDIT.PROLONGATED"|translate}} :</span>{{ credit.extended }}</div>
 	<button *ngIf="!bankOption && credit.status===C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button
 					color="primary"
-					(click)="actionBtnClick('settle')">Rembourser la dette
+					(click)="actionBtnClick('settle')">{{ "CREDIT.SETTLE"|translate }}
 		<fa-icon [icon]="faSackDollar"></fa-icon>
 	</button>
 	<button *ngIf="!bankOption && credit.status===C.REQUEST_CREDIT" class="buttonContrat" mat-raised-button color="accent"
-					(click)="actionBtnClick('answer')">Répondre
+					(click)="actionBtnClick('answer')">{{ "CREDIT.ANSWER"|translate }}
 		<fa-icon [icon]="faCommentsDollar"></fa-icon>
 	</button>
 	<button *ngIf="bankOption && credit.status===C.DEFAULT_CREDIT" class="buttonContrat" mat-raised-button color="warn"
-					(click)="actionBtnClick('seizure')">Saisir
+					(click)="actionBtnClick('seizure')">{{ "CREDIT.SEIZE"|translate }}
 		<fa-icon [icon]="faSackDollar"></fa-icon>
 	</button>
 </div>
