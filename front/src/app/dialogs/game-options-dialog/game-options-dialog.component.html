@@ -1,50 +1,48 @@
 <div class="option">
 	<div class="w-100 d-flex flex-column overflow-auto">
 		<div class="text-center fs-4 m-4 gecoFont shadowed">
-			Options générales
+			{{ "OPTION.TITLE"|translate }}
 		</div>
 		<div class="text-center">
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>nom de la partie</mat-label>
+				<mat-label>{{ "OPTION.PARTY_NAME"|translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="game.name">
 			</mat-form-field>
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>nom de l'animateur</mat-label>
+				<mat-label>{{ "OPTION.PARTY_ANIM"|translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="game.animator">
 			</mat-form-field>
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>Lieu</mat-label>
+				<mat-label>{{ "OPTION.LOCALIZATION"|translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="game.location">
 			</mat-form-field>
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
-					Questionnaire de ressenti en fin de partie
+					{{ "OPTION.SURVEY_Q"|translate }}
 				</mat-checkbox>
 			</div>
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.devMode">
-					Dev mode & experimental
+					{{ "OPTION.DEVMODE"|translate }}
 				</mat-checkbox>
 			</div>
 			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
-				Options avancé en monnaie {{ game.typeMoney === C.JUNE ? "libre" : "dette" }}
+				{{ "OPTION.MONEY"|translate: {money: game.typeMoney === C.JUNE ? "libre" : "dette"} }}
 			</div>
-			<div class="m-auto fs-6 mt-2 mb-4">
-				⚠️ Attention ⚠️, ne modifiez que si vous êtes sûr de ce que vous faites !!!!
-				sinon cliquez sur <span class="red"> "valeur par defaut"</span> en cas d'erreur !
+			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]='"OPTION.WARNING"|translate'>
 			</div>
 			<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
 			<!--				<mat-label>nombre de tours</mat-label>-->
 			<!--				<input type="number" min="1" matInput placeholder="(10 par défaut)" [(ngModel)]="game.roundMax">-->
 			<!--			</mat-form-field>-->
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>Durée du tour</mat-label>
+				<mat-label>{{ "OPTION.DURATION"|translate }}</mat-label>
 				<input type="number" min="1" matInput placeholder="(30mn par défaut)" [(ngModel)]="game.roundMinutes">
 			</mat-form-field>
 			<div class="d-inline-flex">
 				<div class="imgText">
 					<img class="imgCardValeur" src="assets/images/level1.png">
-					Alimentation
+					{{ "CARD.LV1"|translate }}
 				</div>
 				<mat-form-field *ngIf="game" class="input" appearance="fill">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
@@ -54,7 +52,7 @@
 			<div class="d-inline-flex">
 				<div class="imgText">
 					<img class="imgCardValeur" src="assets/images/level2.png">
-					Culture savoir
+					{{ "CARD.LV2"|translate }}
 				</div>
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
@@ -63,7 +61,7 @@
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText"><img class="imgCardValeur" src="assets/images/level3.png">
-					Energie
+					{{ "CARD.LV3"|translate }}
 				</div>
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
@@ -72,7 +70,7 @@
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText"><img class="imgCardValeur" src="assets/images/level4.png">
-					Technologie
+					{{ "CARD.LV4"|translate }}
 				</div>
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
@@ -81,30 +79,30 @@
 			</div>
 			<div class="d-flex flex-column">
 				<mat-checkbox class="" [(ngModel)]="game.autoDeath">
-					morts automatique
+					{{ "OPTION.DEATH"|translate }}
 				</mat-checkbox>
 			</div>
 			<div>
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>Passage de la mort toutes les, en minutes:</mat-label>
+					<mat-label>{{ "OPTION.DEATH_MINUTES"|translate }}:</mat-label>
 					<input type="number" min="0" matInput placeholder="(4 par défaut)" [(ngModel)]="game.deathPassTimer">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>taux de croissance Dividende Universel</mat-label>
+					<mat-label>{{ "OPTION.DU_RATES"|translate }}</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.tauxCroissance">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>bourse de départ (moyenne classe)</mat-label>
+					<mat-label>{{ "OPTION.START_MONEY_AMOUNT"|translate }}</mat-label>
 					<input type="number" min="0" matInput placeholder="(5 par défaut)" [(ngModel)]="game.startAmountCoins">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE" class="mb-4 d-flex flex-column">
 				<mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
-					Début inégal en monnaie libre
+					{{ "OPTION.START_MONEY_INEQUALITY"|translate }}
 				</mat-checkbox>
 				<div class="infoLabel">
 					<div>
