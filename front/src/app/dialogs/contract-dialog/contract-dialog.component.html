@@ -1,35 +1,39 @@
 <div class="contract">
-  <div class="d-flex align-items-center flex-column">
-    <h2 class="fs-4 shadowed gecoFont">{{"CONTRACT.TITLE"|translate}}</h2>
-    <mat-form-field class="input">
-      <mat-label>{{"CONTRACT.CREDIT"|translate}}</mat-label>
-      <input type="number" min="0" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
-    </mat-form-field>
-    <mat-form-field class="input">
-      <mat-label>{{"CONTRACT.INTEREST"|translate}}</mat-label>
-      <input type="number" min="0" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
-    </mat-form-field>
-    <div>
-      - {{"CONTRACT.RATE_INTEREST"|translate}} : <b>{{game.defaultInterestAmount / game.defaultCreditAmount * 100 | number:'1.2-2'}} % </b>
-      <br>
-      - {{"CONTRACT.CAN_CANCEL_CREDIT"|translate}}: <b>{{game.defaultInterestAmount + game.defaultCreditAmount}} </b> <br>
-      - <span [innerHTML]="'CONTRACT.DETAILS' | translate: { amount: game.defaultInterestAmount, timer: game.timerCredit }"></span>
-    </div>
-    <mat-form-field class="mt-2" appearance="fill">
-      <mat-label>{{"CONTRACT.WITH_PLAYER"|translate}}</mat-label>
-      <mat-select [(value)]="idPlayer">
-        <mat-option [value]="player._id" [disabled]='player.status===C.DEAD || player.status === C.PRISON'
-                    *ngFor="let player of game.players">{{ player.name }}{{player.status===C.DEAD ? "🪦":""}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div>
-      <button class="m-2" mat-raised-button
-              (click)="cancel()">{{"CANCEL"|translate}}
-      </button>
-      <button class="m-2" mat-raised-button color="accent"
-              (click)="saveUserCredit()">{{"CONTRACT.SIGN"|translate}}
-        <fa-icon [icon]="faFileSignature"></fa-icon>
-      </button>
-    </div>
-  </div>
+	<div class="d-flex align-items-center flex-column">
+		<h2 class="fs-4 shadowed gecoFont">{{ "CONTRACT.TITLE"|translate }}</h2>
+		<mat-form-field class="input">
+			<mat-label>{{ "CONTRACT.CREDIT"|translate }}</mat-label>
+			<input type="number" min="0" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
+		</mat-form-field>
+		<mat-form-field class="input">
+			<mat-label>{{ "CONTRACT.INTEREST"|translate }}</mat-label>
+			<input type="number" min="0" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
+		</mat-form-field>
+		<div>
+			- {{ "CONTRACT.RATE_INTEREST"|translate }} :
+			<b>{{ game.defaultInterestAmount / game.defaultCreditAmount * 100 | number:'1.2-2' }} % </b>
+			<br>
+			- {{ "CONTRACT.CAN_CANCEL_CREDIT"|translate }}:
+			<b>{{ game.defaultInterestAmount + game.defaultCreditAmount }} </b> <br>
+			- <span
+			[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: game.defaultInterestAmount, timer: game.timerCredit }"></span>
+		</div>
+		<mat-form-field class="mt-2" appearance="fill">
+			<mat-label>{{ "CONTRACT.WITH_PLAYER"|translate }}</mat-label>
+			<mat-select [(value)]="idPlayer">
+				<mat-option [value]="player._id"
+										*ngFor="let player of getAlivePlayer()">{{ player.name }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<div>
+			<button class="m-2" mat-raised-button
+							(click)="cancel()">{{ "CANCEL"|translate }}
+			</button>
+			<button class="m-2" mat-raised-button color="accent"
+							(click)="saveUserCredit()">{{ "CONTRACT.SIGN"|translate }}
+				<fa-icon [icon]="faFileSignature"></fa-icon>
+			</button>
+		</div>
+	</div>
 </div>
