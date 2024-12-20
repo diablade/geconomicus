@@ -97,6 +97,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faEyeSlash = faEyeSlash;
 	faQrcode = faQrcode;
 	faKeyboard = faKeyboard;
+	faInfo = faCircleInfo;
 	scanV3 = true;
 	duVisible = false;
 	panelCreditOpenState = true;
@@ -389,6 +390,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showGift(card: Card) {
 		this.dialog.open(CongratsDialogComponent, {
+			hasBackdrop: true,
+			backdropClass:'bgBlur',
 			data: {
 				text: card.weight > 2 ? "BRAVO !!! vous avez acquis la technologie (fin de partie)" : "Bravo ! vous obtenez une carte supérieur.",
 				card: card
@@ -431,7 +434,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (identicalCards.length >= this.amountCardsForProd) {
 			const cardsForProd = identicalCards.slice(0, this.amountCardsForProd);
 			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
-				_.remove(this.cards, c => _.some(cardsForProd,c));
+				_.remove(this.cards, c => _.some(cardsForProd, c));
 				const cardGift = _.find(newCards, {weight: $event.weight + 1});
 				if (cardGift) {
 					this.showGift(cardGift);
@@ -631,8 +634,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	refresh() {
 		window.location.reload();
 	}
-
-	protected readonly faInfo = faCircleInfo;
 
 	showRules() {
 		this.dialog.open(GameInfosDialog, {});

@@ -1,18 +1,19 @@
-<div (click)="close()" class="w-100 h-100 d-flex align-items-center align-content-center justify-content-center">
-  <div class="wheel-container">
-    <div class="wheel"></div>
-  </div>
-  <div class="card">
-    <app-card
-      [card]="card"
-      [typeMoney]="'debt'"
-      [idOwner]="''"
-      [idGame]="''"
-      [flippable]="false"
-    ></app-card>
-  </div>
-  <div (click)="close()" class="gecoFont shadowed fs-4 congrats-message">{{ text }}</div>
-  <audio #giftAudio>
-    <source src='./assets/audios/gotitem.mp3' type="audio/mp3">
-  </audio>
+<div (click)="close()"
+		 class="w-100 h-100 d-flex align-items-center align-content-center justify-content-center">
+	<div class="wheel-container">
+		<div class="wheel"></div>
+	</div>
+	<div class="card">
+		<app-card
+			[card]="card"
+			[typeMoney]="'debt'"
+			[idOwner]="''"
+			[idGame]="''"
+			[flippable]="false"
+		></app-card>
+	</div>
+	<div (click)="close()" class="gecoFont shadowed fs-4 congrats-message">{{ text }}</div>
+	<audio #giftAudio>
+		<source src='./assets/audios/gotitem.mp3' type="audio/mp3">
+	</audio>
 </div>

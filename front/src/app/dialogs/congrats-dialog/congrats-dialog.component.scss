@@ -9,10 +9,8 @@
 
 .wheel-container {
   position: fixed;
-  width: 300px;
-  height: 300px;
-  //left: 13vw;
-  //top: 30vh;
+  width: 120vh;
+  height: 120vh;
 }
 
 .wheel {
@@ -42,5 +40,5 @@
   border: white solid 2px;
   border-radius: 10px;
   padding: 20px;
-  margin-top: 33vh;
+  margin: 36vh 10px 0px 10px;
 }
