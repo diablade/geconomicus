@@ -3,7 +3,7 @@ import * as C from "../../../config/constantes.js";
 import log from "../../config/log.js";
 import _ from "lodash";
 import decksService from "../misc/decks.service.js";
-import {io} from "../../config/socket.js";
+import socket from "../../config/socket.js";
 import bankService from "../bank/bank.service.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
 
@@ -15,8 +15,8 @@ const killPlayer = async (idGame, idPlayer) => {
 			await bankTimerManager.stopAllPlayerDebtsTimer(idGame, idPlayer);
 			//start seizure for any debt
 			let event = await bankService.seizureOnDead(idGame, idPlayer);
-			io().to(idGame + C.EVENT).emit(C.EVENT, event);
-			io().to(idGame + C.BANK).emit(C.SEIZED_DEAD, event);
+			socket.emitTo(idGame + C.EVENT, C.EVENT, event);
+			socket.emitTo(idGame + C.BANK, C.SEIZED_DEAD, event);
 		}
 		// get updated player
 		let player = await getPlayer(idGame, idPlayer);
@@ -32,10 +32,10 @@ const killPlayer = async (idGame, idPlayer) => {
 				$push: {'events': event},
 			},
 		);
-		io().to(idPlayer).emit(C.DEAD);
-		io().to(idGame + C.EVENT).emit(C.EVENT, event);
-		io().to(idGame + C.BANK).emit(C.DEAD, event);
-		io().to(idGame + C.MASTER).emit(C.DEAD, event);
+		socket.emitTo(idPlayer, C.DEAD);
+		socket.emitTo(idGame + C.EVENT, C.EVENT, event);
+		socket.emitTo(idGame + C.BANK, C.DEAD, event);
+		socket.emitTo(idGame + C.MASTER, C.DEAD, event);
 	} catch (e) {
 		log.error('kill player error:', e);
 		throw new Error("kill player failed");

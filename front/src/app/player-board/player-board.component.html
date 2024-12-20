@@ -103,7 +103,7 @@
 		</button>
 	</div>
 	<div class="btnBuy">
-		<mat-slide-toggle [(ngModel)]="scanV3">
+		<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3">
 			<fa-icon [icon]="faCamera"></fa-icon>
 		</mat-slide-toggle>
 		<button *ngIf="scanV3" class="buy" mat-raised-button color="accent"

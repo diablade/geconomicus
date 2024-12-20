@@ -2,7 +2,7 @@ import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
 import * as C from "../../../config/constantes.js";
 import bankTimerManager from "./BankTimerManager.js";
-import {io} from "../../config/socket.js";
+import socket from "../../config/socket.js";
 import log from "../../config/log.js";
 import decksService from "../misc/decks.service.js";
 import playerService from "../player/player.service.js";
@@ -183,9 +183,9 @@ const settleCredit = async (credit) => {
 
 			let creditUpdated = _.find(updatedGame.credits, c => c._id.toString() === credit._id);
 			await bankTimerManager.stopAndRemoveTimer(credit._id);
-			io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-			io().to(credit.idPlayer).emit(C.CREDIT_DONE, creditUpdated);
-			io().to(credit.idGame + C.BANK).emit(C.CREDIT_DONE, creditUpdated);
+			socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
+			socket.emitTo(credit.idPlayer, C.CREDIT_DONE, creditUpdated);
+			socket.emitTo(credit.idGame + C.BANK, C.CREDIT_DONE, creditUpdated);
 			return creditUpdated;
 		} else {
 			return undefined;

@@ -46,7 +46,7 @@
     "ngx-scanner-qrcode": "^1.6.6",
     "rxjs": "~7.8.0",
     "simple-keyboard": "^3.7.101",
-    "socket.io-client": "^4.7.5",
+    "socket.io-client": "^4.8.1",
     "tslib": "^2.6.2",
     "zone.js": "^0.12.0"
   },

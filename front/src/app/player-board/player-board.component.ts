@@ -22,6 +22,7 @@ import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-di
 import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../master-board/master-board.component";
 import createCountdown from "../services/countDown";
+import {LocalStorageService} from "../services/local-storage/local-storage.service";
 
 @Component({
 	selector: 'app-player-board',
@@ -123,6 +124,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	constructor(private route: ActivatedRoute,
 							public dialog: MatDialog,
 							private router: Router,
+							private localStorageService: LocalStorageService,
 							private backService: BackService,
 							private wsService: WebSocketService,
 							private snackbarService: SnackbarService) {
@@ -137,6 +139,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.updateScreenSize();
+		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
@@ -185,7 +188,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		this.socket.on(C.START_GAME, async (data: any) => {
+		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
 			this.statusGame = "waiting";
 			this.player.coins = data.coins;
 			this.typeMoney = data.typeMoney;
@@ -193,6 +196,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerPrison = data.timerPrison;
 			this.amountCardsForProd = data.amountCardsForProd;
 			await this.receiveCards(data.cards);
+			if (cb) {
+				cb({status:"ok"});
+			}
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.statusGame = C.PLAYING;
@@ -249,7 +255,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			await new Promise(resolve => setTimeout(resolve, 4000));
 			this.resurrection();
 		});
-		this.socket.on(C.SHORT_CODE_EMIT, async (data: any) => {
+		this.socket.on(C.SHORT_CODE_BROADCAST, async (data: any) => {
 			if (this.shortCode && this.shortCode.code === data.code) {
 				this.socket.emit(C.SHORT_CODE_CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
 			}
@@ -263,7 +269,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.player.coins = data.coins;
 			const cardSold = _.find(this.cards, {_id: data.idCardSold});
 			if (cardSold) {
-				await new Promise(resolve => setTimeout(resolve, 1000));
 				_.remove(this.cards, {_id: data.idCardSold});
 				//display the card that was bellow (if stacked)
 				_.forEach(this.cards, c => {
@@ -272,6 +277,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						c.displayed = true;
 					}
 				});
+				// await new Promise(resolve => setTimeout(resolve, 1000));
 				this.countOccurrencesAndHideDuplicates();
 			}
 		});
@@ -456,7 +462,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buyWithCode(code: string) {
-		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer});
+		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer},(ack: any)=>{console.log(ack)});
 		this.snackbarService.showSuccess("Code envoyé");
 	}
 
@@ -637,5 +643,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showRules() {
 		this.dialog.open(GameInfosDialog, {});
+	}
+
+	onChangeSysScan() {
+		this.localStorageService.setItem('scanV3',this.scanV3);
 	}
 }

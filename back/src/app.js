@@ -62,7 +62,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // Morgan logger setup: Log only defined routes
 app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
-	skip: (req, res) =>{
+	skip: (req, res) => {
 		return !acceptedPathToBeLogged.test(req.originalUrl);
 	}
 }));
@@ -97,6 +97,11 @@ app.use(function (err, req, res) {
 if (process.env.GECO_NODE_ENV !== "test") {
 	const server = http.createServer(app);
 	let io = socket.initIo(server);
+	// Verify initialization
+	if (!io) {
+		log.error('Socket.IO failed to initialize');
+	}
+
 	server.listen(process.env.GECO_PORT_NODE, () => console.log(
 		"\n" +
 		"   ____                                      _                \n" +
@@ -106,5 +111,11 @@ if (process.env.GECO_NODE_ENV !== "test") {
 		"  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" +
 		"                                                              \n"
 		+ process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
+	try {
+		socket.getIo(); // This should not throw an error if initialized correctly
+		log.info('Socket.IO successfully initialized');
+	} catch (error) {
+		log.error('Socket.IO initialization failed:'+ error);
+	}
 }
 export default app;

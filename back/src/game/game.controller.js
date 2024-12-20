@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import log from '../../config/log.js';
 import _ from "lodash";
 import mongoose from "mongoose";
-import {io} from "../../config/socket.js";
+import socket from "../../config/socket.js";
 import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
 import gameService from "./game.service.js";
@@ -267,8 +267,8 @@ export default {
 				},
 				{new: true}
 			).then(game => {
-				io().to(id).emit(C.END_GAME, game.surveyEnabled ? {'redirect': 'survey'} : {});
-				io().to(id + C.EVENT).emit(C.EVENT, stopGameEvent);
+				socket.emitTo(id, C.END_GAME, game.surveyEnabled ? {'redirect': 'survey'} : {});
+				socket.emitTo(id + C.EVENT, C.EVENT, stopGameEvent);
 				return res.status(200).send({
 					status: C.END_GAME,
 				});
@@ -525,7 +525,7 @@ export default {
 				},
 				{new: true})
 				.then((updatedGame) => {
-					io().to(idGame).emit(C.RESET_GAME);
+					socket.emitTo(idGame, C.RESET_GAME);
 					return res.status(200).json({"status": "reset done"});
 				})
 				.catch((error) => {

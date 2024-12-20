@@ -1,7 +1,7 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import * as C from "../../../config/constantes.js";
 import mongoose from "mongoose";
-import {io} from "../../config/socket.js";
+import socket from "../../config/socket.js";
 import log from "../../config/log.js";
 import _ from "lodash";
 import Timer from "../misc/Timer.js";
@@ -20,8 +20,8 @@ function addDebtTimer(id, startTickNow, duration, data) {
 			let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
 
 			const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-			io().to(timer.data.idGame + C.BANK).emit(C.PROGRESS_CREDIT, {id, progress});
-			io().to(timer.data.idPlayer).emit(C.PROGRESS_CREDIT, {id, progress});
+			socket.emitTo(timer.data.idGame + C.BANK, C.PROGRESS_CREDIT, {id, progress});
+			socket.emitTo(timer.data.idPlayer, C.PROGRESS_CREDIT, {id, progress});
 		},
 		(timer) => {
 			timeoutCredit(timer);
@@ -35,8 +35,8 @@ function addPrisonTimer(id, duration, data) {
 			let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
 
 			const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-			io().to(timer.data.idGame + C.BANK).emit(C.PROGRESS_PRISON, {id, progress, remainingTime});
-			io().to(timer.data.idPlayer).emit(C.PROGRESS_PRISON, {id, progress, remainingTime});
+			socket.emitTo(timer.data.idGame + C.BANK, C.PROGRESS_PRISON, {id, progress, remainingTime});
+			socket.emitTo(timer.data.idPlayer, C.PROGRESS_PRISON, {id, progress, remainingTime});
 		},
 		(timer) => {
 			timeoutPrison(timer);
@@ -58,9 +58,9 @@ async function timeoutCredit(timer) {
 							},
 						).then(result => {
 							credit.status = C.REQUEST_CREDIT;
-							io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-							io().to(credit.idPlayer).emit(C.TIMEOUT_CREDIT, credit);
-							io().to(credit.idGame + C.BANK).emit(C.TIMEOUT_CREDIT, credit);
+							socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
+							socket.emitTo(credit.idPlayer, C.TIMEOUT_CREDIT, credit);
+							socket.emitTo(credit.idGame + C.BANK, C.TIMEOUT_CREDIT, credit);
 						}).catch((error) => {
 							log.error(error);
 						});
@@ -74,10 +74,10 @@ async function timeoutCredit(timer) {
 							}
 						).then(update => {
 							credit.status = C.DEFAULT_CREDIT;
-							io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-							io().to(credit.idGame + C.BANK).emit(C.DEFAULT_CREDIT, credit);
+							socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
+							socket.emitTo(credit.idGame + C.BANK, C.DEFAULT_CREDIT, credit);
 							if (check && check.player.status !== C.DEAD) {
-								io().to(credit.idPlayer).emit(C.DEFAULT_CREDIT, credit);
+								socket.emitTo(credit.idPlayer, C.DEFAULT_CREDIT, credit);
 							}
 						}).catch((error) => {
 							log.error(error);
@@ -124,9 +124,9 @@ async function getOut(idGame, idPlayer) {
 				},
 			}
 		);
-		io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
-		io().to(idPlayer).emit(C.PRISON_ENDED, {cards: newCards});
-		io().to(idGame + C.BANK).emit(C.PRISON_ENDED, {idPlayer: idPlayer, cards: newCards});
+		socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
+		socket.emitTo(idPlayer, C.PRISON_ENDED, {cards: newCards});
+		socket.emitTo(idGame + C.BANK, C.PRISON_ENDED, {idPlayer: idPlayer, cards: newCards});
 	} catch (error) {
 		log.error(error);
 	}
@@ -171,8 +171,8 @@ export default {
 					new: true
 				}).then((newUpdatedGame) => {
 					addDebtTimer(id.toString(), startNow, newUpdatedGame.timerCredit, credit);
-					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
-					io().to(idPlayer).emit(C.NEW_CREDIT, credit);
+					socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
+					socket.emitTo(idPlayer, C.NEW_CREDIT, credit);
 					return res.status(200).json(credit);
 				}).catch((error) => {
 					log.error(error);
@@ -258,8 +258,8 @@ export default {
 							if (updatedGame) {
 								const creditUpdated = _.find(updatedGame.credits, c => c._id == credit._id);
 								addDebtTimer(credit._id.toString(), true, updatedGame.timerCredit, creditUpdated);
-								io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
-								io().to(credit.idGame + C.BANK).emit(C.PAYED_INTEREST, creditUpdated);
+								socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
+								socket.emitTo(credit.idGame + C.BANK, C.PAYED_INTEREST, creditUpdated);
 								return res.status(200).json(creditUpdated);
 							}
 						}
@@ -316,7 +316,7 @@ export default {
 				);
 				credit.status = C.CREDIT_DONE;
 				credit.endDate = Date.now();
-				io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent);
+				socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
 				// PRISON OU PAS ...
 				if (seizure.prisonTime && seizure.prisonTime > 0) {
 					let newEvent2 = constructor.event(C.PRISON, C.BANK, credit.idPlayer, seizure.prisonTime, [], Date.now());
@@ -332,8 +332,8 @@ export default {
 							idPlayer: credit.idPlayer,
 							idGame: credit.idGame
 						})
-						io().to(credit.idGame + C.EVENT).emit(C.EVENT, newEvent2);
-						io().to(credit.idPlayer).emit(C.SEIZURE, {
+						socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent2);
+						socket.emitTo(credit.idPlayer, C.SEIZURE, {
 							credit: credit,
 							seizure: seizure,
 							prisoner: prisoner
@@ -341,7 +341,7 @@ export default {
 						return res.status(200).json({credit: credit, prisoner: prisoner, seizure: seizure});
 					});
 				} else {
-					io().to(credit.idPlayer).emit(C.SEIZURE, {credit: credit, seizure: seizure});
+					socket.emitTo(credit.idPlayer, C.SEIZURE, {credit: credit, seizure: seizure});
 					return res.status(200).json({credit: credit, seizure: seizure});
 				}
 			} catch (e) {
@@ -361,7 +361,7 @@ export default {
 			}, {new: true}
 		).then(updatedGame => {
 			bankTimerManager.startAllIdGameDebtTimer(idGame);
-			io().to(idGame + C.BANK).emit(C.CREDITS_STARTED);
+			socket.emitTo(idGame + C.BANK, C.CREDITS_STARTED);
 		}).catch((error) => {
 			log.error(error);
 		});

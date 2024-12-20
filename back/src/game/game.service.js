@@ -3,7 +3,7 @@ import _ from "lodash";
 import gameTimerManager from "./GameTimerManager.js";
 import * as C from "../../../config/constantes.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
-import {io} from "../../config/socket.js";
+import socket from "../../config/socket.js";
 import log from "../../config/log.js";
 import Timer from "../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
@@ -31,14 +31,14 @@ async function distribDU(idGame) {
 				if (player.status === C.ALIVE) {
 					player.coins += du;
 					newMassMoney += du;
-					io().to(player.id).emit(C.DISTRIB_DU, {du: du});
+					socket.emitTo(player.id, C.DISTRIB_DU, {du: du});
 					let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
-					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
+					socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
 					newEvents.push(newEvent);
 				} else if (player.status === C.DEAD) {
 					//TO PRODUCE POINTS IN GRAPH (to see dead account devaluate)
 					let newEvent = constructor.event(C.REMIND_DEAD, C.MASTER, player.id, player.coins, [], Date.now());
-					io().to(idGame + C.EVENT).emit(C.EVENT, newEvent);
+					socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
 					newEvents.push(newEvent);
 				}
 			}
@@ -77,8 +77,8 @@ async function stopRound(idGame, gameRound) {
 		$push: {events: stopRoundEvent}
 	}).then(res => {
 		bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-		io().to(idGame).emit(C.STOP_ROUND);
-		io().to(idGame + C.EVENT).emit(C.EVENT, stopRoundEvent);
+		socket.emitTo(idGame, C.STOP_ROUND);
+		socket.emitTo(idGame + C.EVENT, C.EVENT, stopRoundEvent);
 	});
 }
 
@@ -90,7 +90,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
 			}
 			let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
 			let remainingMinutes = Math.round(remainingTime / 60000); // Convert milliseconds to minutes
-			io().to(timer.id).emit(C.TIMER_LEFT, remainingMinutes);
+			socket.emitTo(timer.id, C.TIMER_LEFT, remainingMinutes);
 		},
 		async (timer) => {
 			if (timer.data.typeMoney === C.JUNE) {
@@ -115,10 +115,10 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
 					//todo get new ids of players reincarnated players
 				}
 			}
-			io().to(timer.data.idGame + C.MASTER).emit(C.DEATH_IS_COMING, {});
+			socket.emitTo(timer.data.idGame + C.MASTER, C.DEATH_IS_COMING, {});
 		},
 		(timer) => {
-			console.log("EEEENNNND");
+			log.info("EEEENNNND GAME", idGame);
 		});
 	timerDeath.start();
 
@@ -140,7 +140,7 @@ async function initGameDebt(game) {
 		player.status = C.ALIVE;
 		player.coins = 0;
 
-		io().to(player.id).emit(C.START_GAME, {
+		socket.emitTo(player.id, C.START_GAME, {
 			cards: cards, coins: 0,
 			typeMoney: C.DEBT,
 			statusGame: C.START_GAME,
@@ -149,7 +149,7 @@ async function initGameDebt(game) {
 			timerPrison: game.timerPrison
 		});
 		let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-		io().to(game._id.toString() + C.EVENT).emit(C.EVENT, newEvent);
+		socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
 		game.events.push(newEvent);
 	}
 	game.decks = decks;
@@ -196,7 +196,7 @@ async function initGameJune(game) {
 		}
 		game.currentMassMonetary += player.coins;
 
-		io().to(player.id).emit(C.START_GAME, {
+		socket.emitAckTo(player.id, C.START_GAME, {
 			cards: cards,
 			coins: player.coins,
 			typeMoney: C.JUNE,
@@ -204,11 +204,11 @@ async function initGameJune(game) {
 			amountCardsForProd: game.amountCardsForProd,
 		});
 		let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
-		io().to(game._id.toString() + C.EVENT).emit(C.EVENT, newEvent);
+		socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
 		game.events.push(newEvent);
 	}
 	game.currentDU = await generateDU(game);
-	io().to(game._id.toString()).emit(C.FIRST_DU, {du: game.currentDU});
+	socket.emitTo(game._id.toString(), C.FIRST_DU, {du: game.currentDU});
 
 	let firstDUevent = constructor.event(C.FIRST_DU, C.MASTER, C.MASTER, game.currentDU, [], Date.now());
 	game.events.push(firstDUevent);
@@ -230,8 +230,8 @@ export default {
 			.then(updatedGame => {
 				let idPlayers = _.shuffle(_.map(updatedGame.players, p => p._id.toString()));
 				startRoundTimers(updatedGame._id.toString(), updatedGame, idPlayers);
-				io().to(idGame).emit(C.START_ROUND);
-				io().to(idGame + C.EVENT).emit(C.EVENT, startEvent);
+				socket.emitTo(idGame, C.START_ROUND);
+				socket.emitTo(idGame + C.EVENT, C.EVENT, startEvent);
 			})
 			.catch(err => {
 				log.error('Start round game error', err);

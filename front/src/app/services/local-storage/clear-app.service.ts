@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {LocalStorageService} from './local-storage/local-storage.service';
-import {SessionStorageService} from './local-storage/session-storage.service';
+import {LocalStorageService} from './local-storage.service';
+import {SessionStorageService} from './session-storage.service';
 
 @Injectable({
 	providedIn: 'root'

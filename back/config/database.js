@@ -1,7 +1,7 @@
 //Set up mongoose connection
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import log from "../config/log.js";
+import log from "./log.js";
 
 dotenv.config({path:'./../config/.env'});
 
@@ -14,12 +14,10 @@ const collection = process.env.GECO_DB_CONFIG_COLLECTION;
 const env = user ? user + ":" + pass + "@" : "";
 const uri = "mongodb://" + env + hostname + ":" + port + "/" + collection + (user ? "?authSource=admin" : "");
 
-
 const options = {
     family:             4, // Use IPv4, skip trying IPv6
     maxPoolSize:        10
 }
-
 
 const connect = () => {
     mongoose.connect(uri, options, (err, db) => {
@@ -27,19 +25,18 @@ const connect = () => {
             log.error(err);
         }
         else {
-            // console.log("Database connected!");
+            log.info("Database connected!");
         }
     });
     mongoose.connection.on("error", function(err) {
         log.error("Mongoose connection error: " + err);
     });
     mongoose.connection.on("connected", function() {
-        // log.info("Mongoose connected to " + collection);
+        log.info("Mongoose connected");
     });
     mongoose.connection.on("disconnected", function() {
         log.info("Mongoose disconnected");
     });
-
     mongoose.Promise = global.Promise;
 }
 

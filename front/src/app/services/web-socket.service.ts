@@ -51,6 +51,9 @@ export class WebSocketService {
 					idPlayer: this.idPlayer,
 					idGame: this.idGame,
 				},
+				ackTimeout: 3000,
+				// allowEIO3: true,
+				autoConnect: true,
 				reconnection: true,           // Enable automatic reconnection
 				reconnectionAttempts: 5,      // Number of reconnection attempts
 				reconnectionDelay: 1000,      // Delay between reconnections
@@ -66,7 +69,6 @@ export class WebSocketService {
 
 	private setupConnectionListeners(): void {
 		if (!this.socket) return;
-
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');
 			if (this.disconnected) {
@@ -128,6 +130,13 @@ export class WebSocketService {
 			console.log('Reconnected after', attemptNumber, 'attempts');
 		});
 
+		this.socket.on('reconnect_error', () => {
+			console.log('Reconnection error');
+		});
+		this.socket.on('error', () => {
+			this.snackbarService.showError("connection ioSocket error...");
+			console.log('error');
+		});
 		this.socket.on('reconnect_failed', () => {
 			console.log('Reconnection failed');
 		});

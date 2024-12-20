@@ -2,7 +2,7 @@ import GameModel, {constructor} from '../game/game.model.js';
 import log from '../../config/log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
-import {io} from '../../config/socket.js';
+import socket from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 import gameService from "../game/game.service.js";
 import decksService from "../misc/decks.service.js";
@@ -81,7 +81,7 @@ const join = async (req, res, next) => {
 					{new: true})
 					.then(updatedGame => {
 							const newPlayer = _.find(updatedGame.players, p => p._id == idPlayer.toString());
-							io().to(id + C.MASTER).emit(C.NEW_PLAYER, newPlayer);
+							socket.emitTo(id + C.MASTER, C.NEW_PLAYER, newPlayer);
 							return res.status(200).json(player._id);
 						}
 					)
@@ -136,7 +136,7 @@ const update = async (req, res, next) => {
 			},
 			{new: true, returnOriginal: false});
 		const updatedPlayer = _.find(game.players, p => p._id.toString() === idPlayer);
-		io().to(idGame).emit(C.UPDATED_PLAYER, updatedPlayer);
+		socket.emitTo(idGame, C.UPDATED_PLAYER, updatedPlayer);
 		return res.status(200).json({"status": "updated"});
 	} catch (e) {
 		log.error(e);
@@ -243,8 +243,8 @@ const produce = async (req, res, next) => {
 			await gameService.stopRound(idGame, updatedGame.round);
 		}
 
-		io().to(idGame + C.EVENT).emit(C.EVENT, discardEvent);
-		io().to(idGame + C.EVENT).emit(C.EVENT, newCardsEvent);
+		socket.emitTo(idGame + C.EVENT, C.EVENT, discardEvent);
+		socket.emitTo(idGame + C.EVENT, C.EVENT, newCardsEvent);
 
 		activeTransactions.delete(idGame);
 		return res.status(200).json(cardsDraw);
@@ -344,8 +344,8 @@ const transaction = async (req, res, next) => {
 		buyer.coins = _.round(buyer.coins - cost, 2);
 		seller.coins = _.round(seller.coins + cost, 2);
 
-		io().to(idGame + C.EVENT).emit(C.EVENT, eventTransaction);
-		io().to(idSeller).emit(C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
+		socket.emitTo(idGame + C.EVENT, C.EVENT, eventTransaction);
+		socket.emitTo(idSeller, C.TRANSACTION_DONE, {idCardSold: idCard, coins: seller.coins});
 
 		return res.status(200).json({buyedCard: card, coins: buyer.coins});
 	} catch (error) {
@@ -395,10 +395,12 @@ const joinReincarnate = async (req, res, next) => {
 	try {
 		const game = await GameModel.findById(idGame);
 		if (!game) {
+			log.error('JoinReincarnate error:', "game not found");
 			return res.status(404).json({message:"Reincarnate error, Game not found"});
 		}
 		const playerFromId = _.find(game.players, p => p._id.toString() === fromId);
 		if (!playerFromId) {
+			log.error('JoinReincarnate error:', "Player to reincarnate from, not found");
 			return res.status(404).json({message: "Player to reincarnate from, not found"});
 		}
 		let playerAlreadyReincarnated = _.find(game.players, p => p.reincarnateFromId === fromId);
@@ -442,6 +444,7 @@ const joinReincarnate = async (req, res, next) => {
 			const newCards = shuffledDeck.slice(0, game.distribInitCards);
 			const newCardsIds = newCards.map(c => c._id);
 			if (!decksService.areCardIdsUnique(newCardsIds, game.distribInitCards)) {
+				log.error('JoinReincarnate error:', "duplicate new cards");
 				return res.status(500).json({message:"duplicate new cards for reincarnate"});
 			}
 			//create events
@@ -463,14 +466,14 @@ const joinReincarnate = async (req, res, next) => {
 		});
 		session.endSession();
 
-		io().to(idGame + C.EVENT).emit(C.EVENT, birthEvent);
-		io().to(idGame + C.MASTER).emit(C.NEW_PLAYER, player);
-		io().to(idGame + C.BANK).emit(C.NEW_PLAYER, player);
+		socket.emitTo(idGame + C.EVENT, C.EVENT, birthEvent);
+		socket.emitTo(idGame + C.MASTER, C.NEW_PLAYER, player);
+		socket.emitTo(idGame + C.BANK, C.NEW_PLAYER, player);
 		return res.status(200).json(player._id);
 
 	} catch (error) {
 		log.error('JoinReincarnate error:', error);
-		return res.status(404).json({message: "Reincarnate failed"});
+		return res.status(500).json({message: "Reincarnate failed"});
 	}
 };
 const addFeedback = async (req, res, next) => {
@@ -502,7 +505,7 @@ const addFeedback = async (req, res, next) => {
 			arrayFilters: [{'elem._id': idPlayer}],
 			new: true
 		}).then((updatedGame) => {
-			io().to(idGame).emit(C.NEW_FEEDBACK);
+			socket.emitTo(idGame, C.NEW_FEEDBACK);
 			return res.status(200).json({"status": "feedback saved"});
 		}).catch((error) => {
 			log.error(error);
