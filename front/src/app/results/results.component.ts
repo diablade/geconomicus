@@ -1,5 +1,4 @@
-import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {Subscription} from "rxjs";
+import {AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import io from "socket.io-client";
@@ -25,7 +24,127 @@ interface LastPointValue {
 	key: string;
 	value: number;
 	label: string | undefined;
-};
+}
+
+function externalTooltip(context: any) {
+	// Tooltip Element
+	let tooltipEl = document.getElementById('chartjs-tooltip');
+
+	// <h6 class="m-1 contour ">Répartition monnaie</h6>
+
+	let {chart, tooltip} = context;
+	// console.log(tooltip);
+	// console.log("value: " + tooltip.dataPoints[0].raw);
+	// console.log("label: " + tooltip.dataPoints[0].dataset.label);
+	// console.log("color: " + tooltip.dataPoints[0].dataset.backgroundColor);
+	if (tooltip) {
+
+		let totalMM = 0;//100% MassMonetary
+		let totalUM = 0;//100% MassMonetary
+		let totalPCT = 0;//100% MassMonetary
+		let data = tooltip.dataPoints
+			.map((point: any) => {
+				if (point.dataset.label === "Masse monétaire") {
+					totalMM = point.raw.y;
+				} else {
+					totalUM += point.raw.y;
+				}
+
+				const t = {
+					color: point.dataset.backgroundColor,
+					value: point.raw.y,
+					label: point.dataset.label,
+				};
+				// console.log(t.label, t.value, t.color);
+				return t;
+			})
+			.filter((p: any) => p.label !== "Masse monétaire")
+			.map((p: any) => {
+				const pct = _.round(((p.value / totalMM) * 100), 2);
+				totalPCT += pct
+				const t = {
+					...p,
+					value: pct,
+				};
+				console.log(t.label, t.value, t.color);
+				return t;
+			});
+
+		console.log("total pct", totalPCT);
+		console.log("MM", totalMM);
+		console.log("UM", totalUM);
+		let display = false;
+		if (_.round(totalMM, 1) === _.round(totalUM, 1)) {
+			display = true;
+		}
+
+		function generatePieChart(data: any) {
+			let start = 0;
+			const gradientValues = data.map((slice: any, index: any) => {
+				const end = start + slice.value;
+				const value = `${slice.color} ${start}% ${end}%`;
+				start = end;
+				return value;
+			}).join(', ');
+			const sliceElements = data.map((slice: any, index: any) => {
+				const angle = (start + slice.value / 2) * 3.6; // convert percentage to degrees
+				const labelX = 50 + 45 * Math.cos(Math.PI * angle / 180); // X coordinate
+				const labelY = 50 + 45 * Math.sin(Math.PI * angle / 180); // Y coordinate
+				start += slice.value;
+				return ` <div class="slice" style="left: ${labelX}%; top: ${labelY}%; transform: translate(-50%, -50%);"><span>${slice.label} (${slice.value}%)</span> </div> `;
+			}).join('');
+			return ` <div class="pie-chart" style="background: conic-gradient(${gradientValues});"> ${sliceElements} </div> `;
+		}
+
+		const pieChartHTML = ` <style>
+ .pie-chart { width: 200px; height: 200px; border-radius: 50%; position: relative; }
+ .slice { position: absolute; font-size: 8px; font-weight: bold; color: black; text-align: center; }
+ .slice span { display: inline-block; } </style>
+${generatePieChart(data)} `;
+
+		// Create element on first render
+		if (!tooltipEl) {
+			tooltipEl = document.createElement('div');
+			tooltipEl.id = 'chartjs-tooltip';
+
+			tooltipEl.innerHTML = pieChartHTML
+			document.body.appendChild(tooltipEl);
+		} else {
+			tooltipEl.innerHTML = pieChartHTML
+		}
+
+		// Hide if no tooltip
+		if (tooltip.opacity === 0 || !display) {
+			// @ts-ignore
+			tooltipEl.style.opacity = 0;
+			return;
+		} else {
+			// @ts-ignore
+			tooltipEl.style.opacity = 1;
+		}
+
+		// Set caret Position
+		tooltipEl.classList.remove('above', 'left', 'no-transform');
+		if (tooltip.yAlign) {
+			tooltipEl.classList.add(tooltip.yAlign);
+		} else {
+			tooltipEl.classList.add('no-transform');
+		}
+
+		// Set Text
+		const position = context.chart.canvas.getBoundingClientRect();
+
+		// Display, position, and set styles for font
+		tooltipEl.style.opacity = String(1);
+		tooltipEl.style.position = 'absolute';
+		tooltipEl.style.width = '200px';
+		tooltipEl.style.height = '200px';
+		tooltipEl.style.background = 'white';
+		tooltipEl.style.left = position.left + window.pageXOffset + tooltip.caretX + 'px';
+		tooltipEl.style.top = position.top + window.pageYOffset + tooltip.caretY + 'px';
+		tooltipEl.style.pointerEvents = 'none';
+	}
+}
 
 @Component({
 	selector: 'app-results',
@@ -35,7 +154,6 @@ interface LastPointValue {
 export class ResultsComponent implements OnInit, AfterViewInit {
 	private socket: any;
 	idGame = "";
-	private subscription: Subscription | undefined;
 
 	game: Game | undefined;
 	events: EventGeco[] = [];
@@ -116,7 +234,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptions: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
 		},
 		responsive: true,
@@ -137,7 +255,21 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				type: 'logarithmic',
 			},
 		},
+		interaction: {
+			mode: 'x',
+			// mode: 'index',
+			// axis:'x',
+			// intersect: false,
+		},
 		plugins: {
+			tooltip: {
+				enabled: true,	// Disable the on-canvas tooltip
+				external: externalTooltip,
+				// mode: 'x',
+				// mode: 'index',
+				// axis:'x',
+				// intersect: false,
+			},
 			zoom: {
 				limits: {
 					y: {min: 0},
@@ -165,8 +297,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptionsRelatif: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
+		},
+		interaction: {
+			mode: 'x',
+			// mode: 'nearest',
+			// axis:'x',
+			intersect: true,
 		},
 		responsive: true,
 		maintainAspectRatio: false,
@@ -212,7 +350,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptionsResources: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
 		},
 		responsive: true,
@@ -256,7 +394,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	};
 
 	public feedbacksData: ChartConfiguration['data'] | undefined;
-
 	public feedbacksLabelsTop = [
 		"Joyeux",
 		"Collectif",
@@ -312,11 +449,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 							private platform: Platform,
 							private router: Router,
 							private sanitizer: DomSanitizer,
+							private cdr: ChangeDetectorRef,
 							private backService: BackService) {
 	}
 
 	ngOnInit(): void {
-		this.subscription = this.route.params.subscribe(params => {
+		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
 				this.game = game;
@@ -348,12 +486,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	updateCharts() {
-		this.charts?.forEach(chart => {
-			chart.render();
-			chart.update();
-		});
-	}
+	//
+	// onMouseMove(event: MouseEvent): void {
+	// 	const canvas = event.target as HTMLCanvasElement;
+	// 	const context = canvas.getContext('2d');
+	// 	if (context) {
+	// 		const points = (context.chart as any).getElementsAtEventForMode(event, 'index', {intersect: false}, true);
+	// 		if (points.length) {
+	// 			const firstPoint = points[0];
+	// 			const x = firstPoint.element.x;
+	// 			this.drawVerticalLine(context, x);
+	// 		}
+	// 	}
+	// }
 
 	ngAfterViewInit() {
 		this.socket.on(C.EVENT, async (event: EventGeco) => {
@@ -363,6 +508,45 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.NEW_FEEDBACK, async () => {
 			this.getFeedbacks();
+		});
+		this.addEventListenerToCanvas('chartQuant');
+	}
+
+	addEventListenerToCanvas(canvasId: string): void {
+		const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+		const context = canvas.getContext('2d');
+		const chart = Chart.getChart(canvas);
+
+		if (canvas && chart && context) {
+			canvas.addEventListener('mousemove', (event) => {
+				const points = chart.getElementsAtEventForMode(event, 'index', {intersect: false}, true);
+				if (points.length) {
+					const firstPoint = points[0];
+					const x = firstPoint.element.x;
+					this.drawVerticalLine(chart, context, x);
+				}
+			});
+		}
+	}
+
+	drawVerticalLine(chart: Chart, ctx: CanvasRenderingContext2D, x: number): void {
+		const chartArea = chart.chartArea;
+		ctx.save();
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear previous drawings
+		ctx.beginPath();
+		ctx.moveTo(x, chartArea.top);
+		ctx.lineTo(x, chartArea.bottom);
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = '#000000';
+		ctx.stroke();
+		ctx.restore();
+		chart.update('none');
+	}
+
+	updateCharts() {
+		this.charts?.forEach(chart => {
+			chart.render();
+			chart.update();
 		});
 	}
 
@@ -383,10 +567,14 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					label: player.name,
 					backgroundColor: hexToRgb(player.hairColor),
 					borderColor: hexToRgb(player.hairColor),
-					pointBackgroundColor: hexToRgb(player.hairColor),
+					// pointBackgroundColor: hexToRgb(player.hairColor),
+					pointBackgroundColor: hexToRgb("#ffffff"),
 					pointBorderColor: hexToRgb(player.hairColor),
+					pointStyle: "circle",
+					hoverBorderWidth: 4,
 					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
+					pointRadius: 1, // Point thickness
+					// pointRadius: 0.8, // Point thickness
 					// @ts-ignore
 					total: 0,
 				});
@@ -400,6 +588,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					borderColor: hexToRgb(player.hairColor),
 					pointBackgroundColor: hexToRgb(player.hairColor),
 					pointBorderColor: hexToRgb(player.hairColor),
+					pointStyle: "circle",
+					hoverBorderWidth: 4,
 					borderWidth: 2, // Line thickness
 					pointRadius: 0.8, // Point thickness
 					// @ts-ignore
@@ -416,6 +606,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					pointBorderColor: hexToRgb(player.hairColor),
 					borderWidth: 2, // Line thickness
 					pointRadius: 0.8, // Point thickness
+					stepped: "before",
 					// @ts-ignore
 					total: 0,
 				});
@@ -446,6 +637,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					pointBorderColor: hexToRgb("#000000"),
 					borderWidth: 4, // Line thickness
 					pointRadius: 1, // Point thickness
+					stepped: "before",
 					// @ts-ignore
 					total: 0,
 				});
@@ -522,6 +714,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
 			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
+			// update all data in dataset quantitatif
+			const updateAllDatas = (exceptKeyDataset: string[], date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
+				for (const [key, dataset] of this.datasets) {
+					if (!exceptKeyDataset.some(k => k === key)) {
+						updateData(dataset, date, operator, value, relatif, beforePoint);
+					}
+				}
+			}
+
 			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
 				if (dataset) {
 					const previousTotal = dataset.total;
@@ -568,7 +769,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					continue;
 				case C.START_ROUND:
 					this.roundStarted = true;
-					this.finalCards+=this.initialCards;
+					this.finalCards += this.initialCards;
 					continue;
 				case C.STOP_ROUND:
 					continue;
@@ -598,11 +799,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDatasetRelatif, event.date, "sub", event.amount, true, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.TRANSFORM_DISCARDS:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
@@ -623,15 +825,17 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				case C.DEAD:
 					this.deads++;
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, false);
 					updateData(receiverDataset, event.date, "prev", 0, false, false);
 					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.REMIND_DEAD:
 					// @ts-ignore
 					updateData(receiverDataset, event.date, "prev", 0, false, false);
 					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
 					updateData(receiverDatasetResources, event.date, "prev", 0, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.NEW_CREDIT:
 					if (!this.roundStarted) {
@@ -640,6 +844,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					}
 					updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SETTLE_CREDIT:
 					const interest = event.resources[0].interest;
@@ -647,19 +852,22 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", interest, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.PAYED_INTEREST:
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SEIZURE:
 					const seizureRessources = this.getValueCardsFromEvent(event.resources);
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, false);
+					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SEIZED_DEAD:
 					const seizedItems = event.resources[0];
@@ -667,15 +875,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", seizedItems.interest, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, false);
+					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.PRISON_ENDED:
 					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
 					if (!outOfPrisonRessources) {
 						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
 					}
-					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, false);
 					continue;
 				default:
 					continue;
