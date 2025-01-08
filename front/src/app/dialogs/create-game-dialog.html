@@ -1,19 +1,19 @@
-<h1 mat-dialog-title>Créer une partie</h1>
+<h1 mat-dialog-title>{{ "DIALOG.CREATE_GAME.TITLE" | translate }}</h1>
 <div mat-dialog-content>
-	<p>Nommer la partie</p>
-	<mat-form-field appearance="fill">
-		<input matInput [(ngModel)]="name" required>
-	</mat-form-field>
-	<p>Nom de l'animateur</p>
-	<mat-form-field appearance="fill">
-		<input matInput [(ngModel)]="animator">
-	</mat-form-field>
-	<p>Lieu</p>
-	<mat-form-field appearance="fill">
-		<input matInput [(ngModel)]="location">
-	</mat-form-field>
+    <p>{{ "DIALOG.CREATE_GAME.FIELD1"|translate }}</p>
+    <mat-form-field appearance="fill">
+        <input matInput [(ngModel)]="name" required>
+    </mat-form-field>
+    <p>{{ "DIALOG.CREATE_GAME.FIELD2"|translate }}</p>
+    <mat-form-field appearance="fill">
+        <input matInput [(ngModel)]="animator">
+    </mat-form-field>
+    <p>{{ "DIALOG.CREATE_GAME.FIELD3"|translate }}</p>
+    <mat-form-field appearance="fill">
+        <input matInput [(ngModel)]="location">
+    </mat-form-field>
 </div>
-<div mat-dialog-actions>
-	<button mat-button (click)="onNoClick()">Annuler</button>
-	<button mat-button [mat-dialog-close]="{ name, location, animator }" cdkFocusInitial>Créer</button>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick()">{{ "DIALOG.CREATE_GAME.BTN2"|translate }}</button>
+    <button mat-button [mat-dialog-close]="{ name, location, animator }" cdkFocusInitial>{{ "DIALOG.CREATE_GAME.BTN1"|translate }}</button>
 </div>

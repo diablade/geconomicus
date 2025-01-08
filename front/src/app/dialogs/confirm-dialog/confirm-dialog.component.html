@@ -1,16 +1,16 @@
 <div class="confirmDialog m-2">
-  <h1 mat-dialog-title>{{ title }}</h1>
+  <h1 mat-dialog-title>{{ title | translate }}</h1>
   <div mat-dialog-content>
-    {{ message }}
+    {{ message | translate }}
   </div>
   <div *ngIf="btn1Enable" class="d-flex justify-content-between">
-    <button mat-button [mat-dialog-close]="'btn1'">{{ labelBtn1 }}</button>
-    <button *ngIf="!autoClickBtn2" mat-button [mat-dialog-close]="'btn2'">{{ labelBtn2 }}</button>
+    <button mat-button [mat-dialog-close]="'btn1'">{{ labelBtn1 | translate }}</button>
+    <button *ngIf="!autoClickBtn2" mat-button [mat-dialog-close]="'btn2'">{{ labelBtn2 | translate }}</button>
     <app-btn-timer-auto-click *ngIf="autoClickBtn2" [secondsTimer]="timerBtn2" [label]="labelBtn2"
                               (timerEnd)="timerEnd()"></app-btn-timer-auto-click>
   </div>
   <div *ngIf="!btn1Enable" class="d-flex justify-content-end">
-    <button *ngIf="!autoClickBtn2" mat-button [mat-dialog-close]="'btn2'">{{ labelBtn2 }}</button>
+    <button *ngIf="!autoClickBtn2" mat-button [mat-dialog-close]="'btn2'">{{ labelBtn2 | translate }}</button>
     <app-btn-timer-auto-click *ngIf="autoClickBtn2" [secondsTimer]="timerBtn2" [label]="labelBtn2"
                               (timerEnd)="timerEnd()"></app-btn-timer-auto-click>
   </div>
