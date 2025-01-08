@@ -196,7 +196,7 @@
 					 class="player d-flex flex-column">
 				<div class="d-flex flex-row justify-content-center player-action">
 					<a href="{{getUserUrl(player._id)}}" target="_blank">{{ player.name }} </a>
-					<fa-icon class="joinQr" (click)="reJoin(player._id)" [icon]="faQrcode"></fa-icon>
+					<fa-icon class="joinQr" (click)="reJoin(player._id, player.name)" [icon]="faQrcode"></fa-icon>
 					<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
 									 [icon]="faTrashCan"></fa-icon>
 				</div>
