@@ -1,17 +1,24 @@
 import {AfterViewInit, Component} from '@angular/core';
 import Keyboard from "simple-keyboard";
 import {MatDialogRef} from "@angular/material/dialog";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
 	selector: 'app-shortcode-dialog',
 	templateUrl: './shortcode-dialog.component.html',
 	styleUrls: ['./shortcode-dialog.component.scss']
 })
-export class ShortcodeDialogComponent implements AfterViewInit{
+export class ShortcodeDialogComponent implements AfterViewInit {
 	value = "";
+	buy = "";
 	keyboard!: Keyboard;
 
-	constructor(public dialogRef: MatDialogRef<ShortcodeDialogComponent>) {
+	constructor(
+		private translate: TranslateService,
+		public dialogRef: MatDialogRef<ShortcodeDialogComponent>) {
+		this.translate.get("DIALOG.SHORT_CODE.BUY").subscribe((text) => {
+			this.buy = text
+		});
 	}
 
 	ngAfterViewInit() {
@@ -28,7 +35,7 @@ export class ShortcodeDialogComponent implements AfterViewInit{
 			},
 			display: {
 				'{bksp}': '⌫',
-				'{buy}': 'Acheter',
+				'{buy}': this.buy,
 				'{cancel}': 'X',
 			},
 			theme: "hg-theme-default hg-layout-numeric numeric-theme"

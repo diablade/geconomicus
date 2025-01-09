@@ -29,7 +29,6 @@
         "ROUND": "tour",
         "LIVE_EVENT_BTN": "Résultats live",
         "RESET": "RESET",
-        "START": "Démarrer",
         "WAITING": "Encore {{count}} joueur(s) avant de démarrer",
         "START_ROUND": "Commencer le tour",
         "STOP_ROUND": "Stop",
@@ -202,6 +201,16 @@
         "INSTALL": {
             "MESSAGE1": "Utilisez Safari, Ouvrez le menu de partage de safari avec le bouton",
             "MESSAGE2": "puis choisissez \"sur l'écran d'accueil\""
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "Entrez le code...",
+            "BUY": "Acheter"
+        },
+        "QR_SCAN": {
+            "TITLE": "Scanner le QR Code",
+             "CAMERA": "Camera",
+            "CANCEL": "Annuler",
+            "SELECT_DEVICE": "Selectionner la caméra"
         }
     }
 }
