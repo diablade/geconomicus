@@ -1,18 +1,18 @@
-<h2 mat-dialog-title>Scan QR Code</h2>
+<h2 mat-dialog-title>{{ "DIALOG.QR_SCAN.TITLE"|translate }}</h2>
 <mat-dialog-content>
 	<ngx-scanner-qrcode
-		#action="scanner"
+        #action="scanner"
 		[config]="config"
 		(event)="onEvent($event, action)">
 	</ngx-scanner-qrcode>
 </mat-dialog-content>
 <mat-dialog-actions [align]="'center'">
 	<mat-form-field appearance="fill">
-		<mat-label>Camera</mat-label>
-		<select #select1 (change)="cameraChanged(select1.value)"  matNativeControl required>
-			<option [value]="null" selected>Select device</option>
-			<option *ngFor="let c of action.devices.value; let i = index" [value]="c.deviceId" [selected]="i == action.deviceIndexActive">{{c.label}}</option>
+		<mat-label>{{ "DIALOG.QR_SCAN.CAMERA"|translate }}</mat-label>
+		<select #select1 (change)="cameraChanged(select1.value)" matNativeControl required>
+			<option [value]="null" selected>{{ "DIALOG.QR_SCAN.SELECT_DEVICE"|translate }}</option>
+			<option *ngFor="let c of action.devices.value; let i = index" [value]="c.deviceId" [selected]="i == action.deviceIndexActive">{{ c.label }}</option>
 		</select>
 	</mat-form-field>
-	<button mat-button (click)="closeDialog()">Annuler</button>
+	<button mat-button (click)="closeDialog()">{{ "DIALOG.QR_SCAN.CANCEL"|translate }}</button>
 </mat-dialog-actions>
