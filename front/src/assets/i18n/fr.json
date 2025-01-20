@@ -174,7 +174,7 @@
         "LOCALIZATION": "Lieu",
         "SURVEY_Q": "Questionnaire de ressenti en fin de partie",
         "DEVMODE": "Dev mode & experimental",
-        "MONEY": "Options avancé en monnaie {money}",
+        "MONEY": "Options avancé en monnaie {{money}}",
         "WARNING": "⚠\uFE0F Attention ⚠\uFE0F, ne modifiez que si vous êtes sûr de ce que vous faites !!!!\nsinon cliquez sur <span class=\"red\"> \"valeur par defaut\"</span> en cas d'erreur !",
         "DURATION": "Durée du tour",
         "DEATH": "Morts automatique",
@@ -208,9 +208,23 @@
         },
         "QR_SCAN": {
             "TITLE": "Scanner le QR Code",
-             "CAMERA": "Camera",
+            "CAMERA": "Camera",
             "CANCEL": "Annuler",
             "SELECT_DEVICE": "Selectionner la caméra"
+        },
+        "SEIZURE": {
+            "TITLE": "Défaut de paiement - saisir des biens",
+            "SOLD": "Solde: {{amount}}",
+            "CANCEL": "Annuler",
+            "SEIZE": "Saisir",
+            "TO_SEIZE": "A saisir: {{seized}} / {{objective}}",
+            "FEES": "Frais en sus {{num}}",
+            "DECOTE": "Décote de {{num}}% sur les cartes",
+            "DROP": "Déplacer les cartes \n à saisir ici",
+            "TOOLTIP_PRISON_INFO": "Si l'objectif est remplis, 0 minute, la prison est uniquement si le joueur n'as plus de cartes, (min 1mn), Si le manque à gagner est important, la sanction doit etre grande (max {{max}} mn).",
+            "PRISON_DECISION": "Durée pour la prison:",
+            "MINUTES" : "minute(s)",
+            "VALIDATE": "Valider la saisie"
         }
     }
 }
