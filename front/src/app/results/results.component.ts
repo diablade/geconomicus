@@ -26,124 +26,105 @@ interface LastPointValue {
 	label: string | undefined;
 }
 
+// Variable pour garder une trace du dernier point tooltip
+// let lastTooltipTime: number = 0;
+
 function externalTooltip(context: any) {
-	// Tooltip Element
-	let tooltipEl = document.getElementById('chartjs-tooltip');
+	let tooltipEl = document.getElementById('custom-tooltip');
 
-	// <h6 class="m-1 contour ">Répartition monnaie</h6>
-
-	let {chart, tooltip} = context;
-	// console.log(tooltip);
-	// console.log("value: " + tooltip.dataPoints[0].raw);
-	// console.log("label: " + tooltip.dataPoints[0].dataset.label);
-	// console.log("color: " + tooltip.dataPoints[0].dataset.backgroundColor);
-	if (tooltip) {
-
-		let totalMM = 0;//100% MassMonetary
-		let totalUM = 0;//100% MassMonetary
-		let totalPCT = 0;//100% MassMonetary
-		let data = tooltip.dataPoints
-			.map((point: any) => {
-				if (point.dataset.label === "Masse monétaire") {
-					totalMM = point.raw.y;
-				} else {
-					totalUM += point.raw.y;
-				}
-
-				const t = {
-					color: point.dataset.backgroundColor,
-					value: point.raw.y,
-					label: point.dataset.label,
-				};
-				// console.log(t.label, t.value, t.color);
-				return t;
-			})
-			.filter((p: any) => p.label !== "Masse monétaire")
-			.map((p: any) => {
-				const pct = _.round(((p.value / totalMM) * 100), 2);
-				totalPCT += pct
-				const t = {
-					...p,
-					value: pct,
-				};
-				console.log(t.label, t.value, t.color);
-				return t;
-			});
-
-		console.log("total pct", totalPCT);
-		console.log("MM", totalMM);
-		console.log("UM", totalUM);
-		let display = false;
-		if (_.round(totalMM, 1) === _.round(totalUM, 1)) {
-			display = true;
-		}
-
-		function generatePieChart(data: any) {
-			let start = 0;
-			const gradientValues = data.map((slice: any, index: any) => {
-				const end = start + slice.value;
-				const value = `${slice.color} ${start}% ${end}%`;
-				start = end;
-				return value;
-			}).join(', ');
-			const sliceElements = data.map((slice: any, index: any) => {
-				const angle = (start + slice.value / 2) * 3.6; // convert percentage to degrees
-				const labelX = 50 + 45 * Math.cos(Math.PI * angle / 180); // X coordinate
-				const labelY = 50 + 45 * Math.sin(Math.PI * angle / 180); // Y coordinate
-				start += slice.value;
-				return ` <div class="slice" style="left: ${labelX}%; top: ${labelY}%; transform: translate(-50%, -50%);"><span>${slice.label} (${slice.value}%)</span> </div> `;
-			}).join('');
-			return ` <div class="pie-chart" style="background: conic-gradient(${gradientValues});"> ${sliceElements} </div> `;
-		}
-
-		const pieChartHTML = ` <style>
- .pie-chart { width: 200px; height: 200px; border-radius: 50%; position: relative; }
- .slice { position: absolute; font-size: 8px; font-weight: bold; color: black; text-align: center; }
- .slice span { display: inline-block; } </style>
-${generatePieChart(data)} `;
-
-		// Create element on first render
-		if (!tooltipEl) {
-			tooltipEl = document.createElement('div');
-			tooltipEl.id = 'chartjs-tooltip';
-
-			tooltipEl.innerHTML = pieChartHTML
-			document.body.appendChild(tooltipEl);
-		} else {
-			tooltipEl.innerHTML = pieChartHTML
-		}
-
-		// Hide if no tooltip
-		if (tooltip.opacity === 0 || !display) {
-			// @ts-ignore
-			tooltipEl.style.opacity = 0;
-			return;
-		} else {
-			// @ts-ignore
-			tooltipEl.style.opacity = 1;
-		}
-
-		// Set caret Position
-		tooltipEl.classList.remove('above', 'left', 'no-transform');
-		if (tooltip.yAlign) {
-			tooltipEl.classList.add(tooltip.yAlign);
-		} else {
-			tooltipEl.classList.add('no-transform');
-		}
-
-		// Set Text
-		const position = context.chart.canvas.getBoundingClientRect();
-
-		// Display, position, and set styles for font
-		tooltipEl.style.opacity = String(1);
+	// Si le tooltip n'existe pas, on le crée
+	if (!tooltipEl) {
+		tooltipEl = document.createElement('div');
+		tooltipEl.id = 'custom-tooltip';
 		tooltipEl.style.position = 'absolute';
-		tooltipEl.style.width = '200px';
-		tooltipEl.style.height = '200px';
 		tooltipEl.style.background = 'white';
-		tooltipEl.style.left = position.left + window.pageXOffset + tooltip.caretX + 'px';
-		tooltipEl.style.top = position.top + window.pageYOffset + tooltip.caretY + 'px';
+		tooltipEl.style.width = '120px';
+		tooltipEl.style.height = '120px';
+		tooltipEl.style.border = '2px solid black';
 		tooltipEl.style.pointerEvents = 'none';
+		tooltipEl.style.borderRadius = '10px';
+		tooltipEl.style.padding = '5px';
+		tooltipEl.style.boxShadow = '2px 2px 10px rgba(0,0,0,0.2)';
+		tooltipEl.style.display = 'flex';
+		tooltipEl.style.justifyContent = 'center';
+		tooltipEl.style.alignItems = 'center';
+
+		// Ajout du canvas pour le pie chart
+		const canvas = document.createElement('canvas');
+		canvas.id = 'tooltip-chart';
+		canvas.width = 100;
+		canvas.height = 100;
+		tooltipEl.appendChild(canvas);
+
+		document.body.appendChild(tooltipEl);
 	}
+
+	const tooltipModel = context.tooltip;
+	if (!tooltipModel || tooltipModel.opacity === 0) {
+		tooltipEl.style.opacity = '0';
+		return;
+	}
+
+	// Position du tooltip
+	const position = context.chart.canvas.getBoundingClientRect();
+	tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+	tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+	tooltipEl.style.opacity = '1';
+
+	// Récupération des valeurs du dataset
+	if (tooltipModel.dataPoints) {
+		const valuesFiltered = tooltipModel.dataPoints.filter((p: any) => {
+			if (p.raw.toIgnore === true || p.dataset.label == "Masse monétaire") {
+				return false;
+			}
+			return true;
+		});
+		// @ts-ignore
+		const values = valuesFiltered.map(item => item.raw.y);
+		// @ts-ignore
+		const dates = valuesFiltered.map(item => item.raw.x);
+		// @ts-ignore
+		const colors = valuesFiltered.map(item => item.dataset.backgroundColor);
+
+		console.log("values and colors", values, colors, dates);
+		// Dessiner le pie chart
+		drawPieChart(values, colors);
+	}
+}
+
+// Fonction pour dessiner le pie chart dans le tooltip
+function drawPieChart(values: number[], colors: any[]) {
+	const canvas = document.getElementById('tooltip-chart') as HTMLCanvasElement;
+	if (!canvas) return;
+
+	const ctx = canvas.getContext('2d');
+	if (!ctx) return;
+
+	// Vérification et suppression de l'ancien graphique
+	const existingChart = Chart.getChart(canvas);
+	if (existingChart) {
+		existingChart.destroy();
+	}
+
+	// Création du pie chart
+	new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: values.map((_, i) => `Valeur ${i + 1}`),
+			datasets: [{
+				data: values,
+				backgroundColor: colors,
+			}]
+		},
+		options: {
+			responsive: false,
+			animation: false,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {display: false}
+			}
+		}
+	});
 }
 
 @Component({
@@ -238,6 +219,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			},
 		},
 		responsive: true,
+		animation: false,
 		maintainAspectRatio: false,
 		scales: {
 			x: {
@@ -263,12 +245,32 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		},
 		plugins: {
 			tooltip: {
-				enabled: true,	// Disable the on-canvas tooltip
+				enabled: true,
+				animation: false,
 				external: externalTooltip,
-				// mode: 'x',
-				// mode: 'index',
-				// axis:'x',
-				// intersect: false,
+				// callbacks: {
+				// 	label: function (tooltipItem: TooltipItem<'line'>) {
+				// 		// Récupérer la valeur de X (la date)
+				// 		// @ts-ignore
+				// 		const currentTimeString = tooltipItem.raw.x; // Peut être une chaîne ISO 8601
+				//
+				// 		// Conversion en timestamp
+				// 		const currentTime = new Date(currentTimeString).getTime(); // Conversion en millisecondes
+				//
+				//
+				// 		// Vérification des doublons : on garde seulement la première entrée pour chaque timestamp
+				// 		if (Math.abs(currentTime - lastTooltipTime) > 1000) { // 1000 ms = 1 seconde
+				// 			return ''; // Si le temps est trop proche, on ne montre rien
+				// 		}
+				//
+				// 		// Met à jour le dernier temps
+				// 		lastTooltipTime = currentTime;
+				//
+				// 		// Formate les données comme tu le souhaites
+				// 		// @ts-ignore
+				// 		return `${tooltipItem.dataset.label}: ${tooltipItem.raw.y}`;
+				// 	}
+				// }
 			},
 			zoom: {
 				limits: {
@@ -302,8 +304,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		},
 		interaction: {
 			mode: 'x',
-			// mode: 'nearest',
-			// axis:'x',
 			intersect: true,
 		},
 		responsive: true,
@@ -486,20 +486,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	//
-	// onMouseMove(event: MouseEvent): void {
-	// 	const canvas = event.target as HTMLCanvasElement;
-	// 	const context = canvas.getContext('2d');
-	// 	if (context) {
-	// 		const points = (context.chart as any).getElementsAtEventForMode(event, 'index', {intersect: false}, true);
-	// 		if (points.length) {
-	// 			const firstPoint = points[0];
-	// 			const x = firstPoint.element.x;
-	// 			this.drawVerticalLine(context, x);
-	// 		}
-	// 	}
-	// }
-
 	ngAfterViewInit() {
 		this.socket.on(C.EVENT, async (event: EventGeco) => {
 			this.events.push(event);
@@ -509,38 +495,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		this.socket.on(C.NEW_FEEDBACK, async () => {
 			this.getFeedbacks();
 		});
-		this.addEventListenerToCanvas('chartQuant');
-	}
-
-	addEventListenerToCanvas(canvasId: string): void {
-		const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-		const context = canvas.getContext('2d');
-		const chart = Chart.getChart(canvas);
-
-		if (canvas && chart && context) {
-			canvas.addEventListener('mousemove', (event) => {
-				const points = chart.getElementsAtEventForMode(event, 'index', {intersect: false}, true);
-				if (points.length) {
-					const firstPoint = points[0];
-					const x = firstPoint.element.x;
-					this.drawVerticalLine(chart, context, x);
-				}
-			});
-		}
-	}
-
-	drawVerticalLine(chart: Chart, ctx: CanvasRenderingContext2D, x: number): void {
-		const chartArea = chart.chartArea;
-		ctx.save();
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear previous drawings
-		ctx.beginPath();
-		ctx.moveTo(x, chartArea.top);
-		ctx.lineTo(x, chartArea.bottom);
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = '#000000';
-		ctx.stroke();
-		ctx.restore();
-		chart.update('none');
 	}
 
 	updateCharts() {
@@ -567,8 +521,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					label: player.name,
 					backgroundColor: hexToRgb(player.hairColor),
 					borderColor: hexToRgb(player.hairColor),
-					// pointBackgroundColor: hexToRgb(player.hairColor),
-					pointBackgroundColor: hexToRgb("#ffffff"),
+					pointBackgroundColor: hexToRgb(player.hairColor),
+					// pointBackgroundColor: hexToRgb("#ffffff"),
 					pointBorderColor: hexToRgb(player.hairColor),
 					pointStyle: "circle",
 					hoverBorderWidth: 4,
@@ -749,7 +703,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// @ts-ignore
 					x: subSeconds(parseISO(date), 1),
 					// @ts-ignore
-					y: value
+					y: value,
+					toIgnore: true,
 				});
 			}
 			const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
