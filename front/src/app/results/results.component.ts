@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import io from "socket.io-client";
@@ -25,7 +24,178 @@ interface LastPointValue {
 	key: string;
 	value: number;
 	label: string | undefined;
-};
+}
+
+interface TooltipPoint {
+	label: string
+	date: Date;
+	value: number;
+	color: string;
+}
+
+function filterMostRecent(data: any[]): TooltipPoint[] {
+	const map = new Map<string, TooltipPoint>();
+
+	data.forEach(item => {
+		const existing = map.get(item.label);
+		if (!existing || new Date(item.date) > new Date(existing.date)) {
+			map.set(item.label, item);
+		}
+	});
+
+	return Array.from(map.values());
+}
+
+// Position du tooltip
+function positionTooltip(context: any, tooltipEl: HTMLElement, tooltipModel: any) {
+	const position = context.chart.canvas.getBoundingClientRect();
+	let left = position.left + window.scrollX + tooltipModel.caretX;
+	let top = position.top + window.scrollY + tooltipModel.caretY;
+
+	const tooltipWidth = tooltipEl.offsetWidth;
+	const tooltipHeight = tooltipEl.offsetHeight;
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
+
+	// Vérifie si le tooltip dépasse à droite et ajuste
+	if ((left + tooltipWidth) > windowWidth) {
+		left -= tooltipWidth;
+	}
+	// Vérifie si le tooltip dépasse en bas et ajuste
+	if ((top + tooltipHeight) > windowHeight) {
+		top -= tooltipHeight;
+	}
+
+	tooltipEl.style.left = `${left}px`;
+	tooltipEl.style.top = `${top}px`;
+	tooltipEl.style.opacity = '1';
+}
+
+function externalTooltip(context: any) {
+	let tooltipEl = document.getElementById('custom-tooltip');
+
+	// Si le tooltip n'existe pas, on le crée
+	if (!tooltipEl) {
+		tooltipEl = document.createElement('div');
+		tooltipEl.id = 'custom-tooltip';
+		tooltipEl.style.position = 'absolute';
+		tooltipEl.style.background = 'white';
+		tooltipEl.style.width = '190px';
+		tooltipEl.style.border = '2px solid black';
+		tooltipEl.style.pointerEvents = 'none';
+		tooltipEl.style.borderRadius = '10px';
+		tooltipEl.style.padding = '5px';
+		tooltipEl.style.boxShadow = '2px 2px 10px rgba(0,0,0,0.2)';
+		tooltipEl.style.display = 'flex';
+		tooltipEl.style.flexDirection = 'column';
+		tooltipEl.style.justifyContent = 'center';
+		tooltipEl.style.alignItems = 'center';
+
+		// Ajout du canvas pour le pie chart
+		const canvas = document.createElement('canvas');
+		canvas.id = 'tooltip-chart';
+		canvas.width = 100;
+		tooltipEl.appendChild(canvas);
+
+		// Ajout des values
+		const values = document.createElement('div');
+		values.id = 'tooltip-values';
+		tooltipEl.appendChild(values);
+
+		document.body.appendChild(tooltipEl);
+	}
+
+	const tooltipModel = context.tooltip;
+	if (!tooltipModel || tooltipModel.opacity === 0) {
+		tooltipEl.style.opacity = '0';
+		return;
+	}
+
+	// Position du tooltip
+	positionTooltip(context,tooltipEl,tooltipModel);
+
+	// Récupération des valeurs du dataset
+	if (tooltipModel.dataPoints) {
+		const dataRaw = tooltipModel.dataPoints.filter((p: any) => {
+			return !(p.raw.toIgnore);
+		});
+		const points = _.map(dataRaw, (item: any): TooltipPoint => ({
+			value: item.raw.y,
+			label: item.dataset.label,
+			color: item.dataset.backgroundColor,
+			date: item.raw.x,
+		}));
+		const pointsMostRecent = filterMostRecent(points);
+		const pointsNoMM = pointsMostRecent.filter((p: any) => {
+			return !(p.label == "Masse monétaire");
+		});
+
+		// @ts-ignore
+		const values = pointsNoMM.map(item => item.value);
+		// @ts-ignore
+		const colors = pointsNoMM.map(item => item.color);
+		drawPieChart(values, colors);
+		addValues(pointsMostRecent);
+	}
+}
+
+// Fonction pour dessiner le pie chart dans le tooltip
+function drawPieChart(values: number[], colors: any[]) {
+	const canvas = document.getElementById('tooltip-chart') as HTMLCanvasElement;
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	if (!ctx) return;
+	// Vérification et suppression de l'ancien graphique
+	const existingChart = Chart.getChart(canvas);
+	if (existingChart) {
+		existingChart.destroy();
+	}
+	// Création du pie chart
+	new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: values.map((_, i) => `Valeur ${i + 1}`),
+			datasets: [{
+				data: values,
+				backgroundColor: colors,
+			}]
+		},
+		options: {
+			responsive: false,
+			animation: false,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {display: false}
+			}
+		}
+	});
+}
+// Fonction pour ajouter les values dans le tooltip
+function addValues(points: TooltipPoint[]) {
+	const div = document.getElementById('tooltip-values');
+	if (!div) return;
+
+	div.innerHTML = '';
+	points.forEach(point => {
+		const entry = document.createElement('div');
+		entry.style.display = 'flex';
+		entry.style.alignItems = 'center';
+
+		const colorBox = document.createElement('span');
+		colorBox.style.width = '10px';
+		colorBox.style.height = '10px';
+		colorBox.style.backgroundColor = point.color;
+		colorBox.style.marginRight = '5px';
+		document.createElement('span');
+
+		const text = document.createElement('span');
+		text.innerText = `${point.label}: ${Math.round(point.value)}`;
+
+		entry.appendChild(colorBox);
+		entry.appendChild(text);
+		div.appendChild(entry);
+	});
+}
 
 @Component({
 	selector: 'app-results',
@@ -35,7 +205,6 @@ interface LastPointValue {
 export class ResultsComponent implements OnInit, AfterViewInit {
 	private socket: any;
 	idGame = "";
-	private subscription: Subscription | undefined;
 
 	game: Game | undefined;
 	events: EventGeco[] = [];
@@ -116,10 +285,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptions: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
 		},
 		responsive: true,
+		animation: false,
 		maintainAspectRatio: false,
 		scales: {
 			x: {
@@ -137,7 +307,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				type: 'logarithmic',
 			},
 		},
+		interaction: {
+			mode: 'x',
+		},
 		plugins: {
+			tooltip: {
+				enabled: false,
+				animation: false,
+				external: externalTooltip,
+			},
 			zoom: {
 				limits: {
 					y: {min: 0},
@@ -165,8 +343,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptionsRelatif: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
+		},
+		interaction: {
+			mode: 'x',
+			intersect: true,
 		},
 		responsive: true,
 		maintainAspectRatio: false,
@@ -212,7 +394,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public lineChartOptionsResources: ChartConfiguration['options'] = {
 		elements: {
 			line: {
-				tension: 0.1,
+				tension: 0,
 			},
 		},
 		responsive: true,
@@ -256,7 +438,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	};
 
 	public feedbacksData: ChartConfiguration['data'] | undefined;
-
 	public feedbacksLabelsTop = [
 		"Joyeux",
 		"Collectif",
@@ -316,7 +497,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit(): void {
-		this.subscription = this.route.params.subscribe(params => {
+		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
 				this.game = game;
@@ -348,13 +529,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	updateCharts() {
-		this.charts?.forEach(chart => {
-			chart.render();
-			chart.update();
-		});
-	}
-
 	ngAfterViewInit() {
 		this.socket.on(C.EVENT, async (event: EventGeco) => {
 			this.events.push(event);
@@ -363,6 +537,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.NEW_FEEDBACK, async () => {
 			this.getFeedbacks();
+		});
+	}
+
+	updateCharts() {
+		this.charts?.forEach(chart => {
+			chart.render();
+			chart.update();
 		});
 	}
 
@@ -384,9 +565,13 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					backgroundColor: hexToRgb(player.hairColor),
 					borderColor: hexToRgb(player.hairColor),
 					pointBackgroundColor: hexToRgb(player.hairColor),
+					// pointBackgroundColor: hexToRgb("#ffffff"),
 					pointBorderColor: hexToRgb(player.hairColor),
+					pointStyle: "circle",
+					hoverBorderWidth: 4,
 					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
+					pointRadius: 1, // Point thickness
+					// pointRadius: 0.8, // Point thickness
 					// @ts-ignore
 					total: 0,
 				});
@@ -400,6 +585,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					borderColor: hexToRgb(player.hairColor),
 					pointBackgroundColor: hexToRgb(player.hairColor),
 					pointBorderColor: hexToRgb(player.hairColor),
+					pointStyle: "circle",
+					hoverBorderWidth: 4,
 					borderWidth: 2, // Line thickness
 					pointRadius: 0.8, // Point thickness
 					// @ts-ignore
@@ -416,6 +603,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					pointBorderColor: hexToRgb(player.hairColor),
 					borderWidth: 2, // Line thickness
 					pointRadius: 0.8, // Point thickness
+					stepped: "before",
 					// @ts-ignore
 					total: 0,
 				});
@@ -446,6 +634,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					pointBorderColor: hexToRgb("#000000"),
 					borderWidth: 4, // Line thickness
 					pointRadius: 1, // Point thickness
+					stepped: "before",
 					// @ts-ignore
 					total: 0,
 				});
@@ -522,6 +711,15 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const receiverDatasetRelatif = this.datasetsRelatif.get(event.receiver);
 			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
+			// update all data in dataset quantitatif
+			const updateAllDatas = (exceptKeyDataset: string[], date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
+				for (const [key, dataset] of this.datasets) {
+					if (!exceptKeyDataset.some(k => k === key)) {
+						updateData(dataset, date, operator, value, relatif, beforePoint);
+					}
+				}
+			}
+
 			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
 				if (dataset) {
 					const previousTotal = dataset.total;
@@ -548,7 +746,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// @ts-ignore
 					x: subSeconds(parseISO(date), 1),
 					// @ts-ignore
-					y: value
+					y: value,
+					toIgnore: true,
 				});
 			}
 			const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
@@ -568,7 +767,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					continue;
 				case C.START_ROUND:
 					this.roundStarted = true;
-					this.finalCards+=this.initialCards;
+					this.finalCards += this.initialCards;
 					continue;
 				case C.STOP_ROUND:
 					continue;
@@ -598,11 +797,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDatasetRelatif, event.date, "sub", event.amount, true, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, false);
 
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.TRANSFORM_DISCARDS:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
@@ -623,15 +823,17 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				case C.DEAD:
 					this.deads++;
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, false);
 					updateData(receiverDataset, event.date, "prev", 0, false, false);
 					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.REMIND_DEAD:
 					// @ts-ignore
 					updateData(receiverDataset, event.date, "prev", 0, false, false);
 					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
 					updateData(receiverDatasetResources, event.date, "prev", 0, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.NEW_CREDIT:
 					if (!this.roundStarted) {
@@ -640,6 +842,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					}
 					updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SETTLE_CREDIT:
 					const interest = event.resources[0].interest;
@@ -647,19 +850,22 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", interest, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.PAYED_INTEREST:
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SEIZURE:
 					const seizureRessources = this.getValueCardsFromEvent(event.resources);
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, false);
+					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.SEIZED_DEAD:
 					const seizedItems = event.resources[0];
@@ -667,15 +873,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
 					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
 					updateData(emitterDataset, event.date, "sub", seizedItems.interest, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, false);
+					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
 					continue;
 				case C.PRISON_ENDED:
 					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
 					if (!outOfPrisonRessources) {
 						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
 					}
-					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, false);
 					continue;
 				default:
 					continue;

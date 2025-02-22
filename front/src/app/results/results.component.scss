@@ -29,6 +29,21 @@
 	overflow: auto;
 }
 
+#pie-chart-tooltip{
+	display: none;
+}
+.mini-graph {
+	height: 150px;
+ 	width: 150px;
+	padding: 0.2rem !important;
+	position: relative;
+}
+.wrapPie{
+	margin: auto;
+	position: relative;
+	height: 80px;
+	width: 80px;
+}
 .graph {
 	height: 500px;
 	border-radius: 15px;
