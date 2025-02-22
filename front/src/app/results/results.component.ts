@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import io from "socket.io-client";
@@ -26,8 +26,50 @@ interface LastPointValue {
 	label: string | undefined;
 }
 
-// Variable pour garder une trace du dernier point tooltip
-// let lastTooltipTime: number = 0;
+interface TooltipPoint {
+	label: string
+	date: Date;
+	value: number;
+	color: string;
+}
+
+function filterMostRecent(data: any[]): TooltipPoint[] {
+	const map = new Map<string, TooltipPoint>();
+
+	data.forEach(item => {
+		const existing = map.get(item.label);
+		if (!existing || new Date(item.date) > new Date(existing.date)) {
+			map.set(item.label, item);
+		}
+	});
+
+	return Array.from(map.values());
+}
+
+// Position du tooltip
+function positionTooltip(context: any, tooltipEl: HTMLElement, tooltipModel: any) {
+	const position = context.chart.canvas.getBoundingClientRect();
+	let left = position.left + window.scrollX + tooltipModel.caretX;
+	let top = position.top + window.scrollY + tooltipModel.caretY;
+
+	const tooltipWidth = tooltipEl.offsetWidth;
+	const tooltipHeight = tooltipEl.offsetHeight;
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
+
+	// Vérifie si le tooltip dépasse à droite et ajuste
+	if ((left + tooltipWidth) > windowWidth) {
+		left -= tooltipWidth;
+	}
+	// Vérifie si le tooltip dépasse en bas et ajuste
+	if ((top + tooltipHeight) > windowHeight) {
+		top -= tooltipHeight;
+	}
+
+	tooltipEl.style.left = `${left}px`;
+	tooltipEl.style.top = `${top}px`;
+	tooltipEl.style.opacity = '1';
+}
 
 function externalTooltip(context: any) {
 	let tooltipEl = document.getElementById('custom-tooltip');
@@ -38,14 +80,14 @@ function externalTooltip(context: any) {
 		tooltipEl.id = 'custom-tooltip';
 		tooltipEl.style.position = 'absolute';
 		tooltipEl.style.background = 'white';
-		tooltipEl.style.width = '120px';
-		tooltipEl.style.height = '120px';
+		tooltipEl.style.width = '190px';
 		tooltipEl.style.border = '2px solid black';
 		tooltipEl.style.pointerEvents = 'none';
 		tooltipEl.style.borderRadius = '10px';
 		tooltipEl.style.padding = '5px';
 		tooltipEl.style.boxShadow = '2px 2px 10px rgba(0,0,0,0.2)';
 		tooltipEl.style.display = 'flex';
+		tooltipEl.style.flexDirection = 'column';
 		tooltipEl.style.justifyContent = 'center';
 		tooltipEl.style.alignItems = 'center';
 
@@ -53,8 +95,12 @@ function externalTooltip(context: any) {
 		const canvas = document.createElement('canvas');
 		canvas.id = 'tooltip-chart';
 		canvas.width = 100;
-		canvas.height = 100;
 		tooltipEl.appendChild(canvas);
+
+		// Ajout des values
+		const values = document.createElement('div');
+		values.id = 'tooltip-values';
+		tooltipEl.appendChild(values);
 
 		document.body.appendChild(tooltipEl);
 	}
@@ -66,29 +112,30 @@ function externalTooltip(context: any) {
 	}
 
 	// Position du tooltip
-	const position = context.chart.canvas.getBoundingClientRect();
-	tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
-	tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
-	tooltipEl.style.opacity = '1';
+	positionTooltip(context,tooltipEl,tooltipModel);
 
 	// Récupération des valeurs du dataset
 	if (tooltipModel.dataPoints) {
-		const valuesFiltered = tooltipModel.dataPoints.filter((p: any) => {
-			if (p.raw.toIgnore === true || p.dataset.label == "Masse monétaire") {
-				return false;
-			}
-			return true;
+		const dataRaw = tooltipModel.dataPoints.filter((p: any) => {
+			return !(p.raw.toIgnore);
 		});
-		// @ts-ignore
-		const values = valuesFiltered.map(item => item.raw.y);
-		// @ts-ignore
-		const dates = valuesFiltered.map(item => item.raw.x);
-		// @ts-ignore
-		const colors = valuesFiltered.map(item => item.dataset.backgroundColor);
+		const points = _.map(dataRaw, (item: any): TooltipPoint => ({
+			value: item.raw.y,
+			label: item.dataset.label,
+			color: item.dataset.backgroundColor,
+			date: item.raw.x,
+		}));
+		const pointsMostRecent = filterMostRecent(points);
+		const pointsNoMM = pointsMostRecent.filter((p: any) => {
+			return !(p.label == "Masse monétaire");
+		});
 
-		console.log("values and colors", values, colors, dates);
-		// Dessiner le pie chart
+		// @ts-ignore
+		const values = pointsNoMM.map(item => item.value);
+		// @ts-ignore
+		const colors = pointsNoMM.map(item => item.color);
 		drawPieChart(values, colors);
+		addValues(pointsMostRecent);
 	}
 }
 
@@ -96,16 +143,13 @@ function externalTooltip(context: any) {
 function drawPieChart(values: number[], colors: any[]) {
 	const canvas = document.getElementById('tooltip-chart') as HTMLCanvasElement;
 	if (!canvas) return;
-
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return;
-
 	// Vérification et suppression de l'ancien graphique
 	const existingChart = Chart.getChart(canvas);
 	if (existingChart) {
 		existingChart.destroy();
 	}
-
 	// Création du pie chart
 	new Chart(ctx, {
 		type: 'pie',
@@ -124,6 +168,32 @@ function drawPieChart(values: number[], colors: any[]) {
 				legend: {display: false}
 			}
 		}
+	});
+}
+// Fonction pour ajouter les values dans le tooltip
+function addValues(points: TooltipPoint[]) {
+	const div = document.getElementById('tooltip-values');
+	if (!div) return;
+
+	div.innerHTML = '';
+	points.forEach(point => {
+		const entry = document.createElement('div');
+		entry.style.display = 'flex';
+		entry.style.alignItems = 'center';
+
+		const colorBox = document.createElement('span');
+		colorBox.style.width = '10px';
+		colorBox.style.height = '10px';
+		colorBox.style.backgroundColor = point.color;
+		colorBox.style.marginRight = '5px';
+		document.createElement('span');
+
+		const text = document.createElement('span');
+		text.innerText = `${point.label}: ${Math.round(point.value)}`;
+
+		entry.appendChild(colorBox);
+		entry.appendChild(text);
+		div.appendChild(entry);
 	});
 }
 
@@ -239,38 +309,12 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		},
 		interaction: {
 			mode: 'x',
-			// mode: 'index',
-			// axis:'x',
-			// intersect: false,
 		},
 		plugins: {
 			tooltip: {
-				enabled: true,
+				enabled: false,
 				animation: false,
 				external: externalTooltip,
-				// callbacks: {
-				// 	label: function (tooltipItem: TooltipItem<'line'>) {
-				// 		// Récupérer la valeur de X (la date)
-				// 		// @ts-ignore
-				// 		const currentTimeString = tooltipItem.raw.x; // Peut être une chaîne ISO 8601
-				//
-				// 		// Conversion en timestamp
-				// 		const currentTime = new Date(currentTimeString).getTime(); // Conversion en millisecondes
-				//
-				//
-				// 		// Vérification des doublons : on garde seulement la première entrée pour chaque timestamp
-				// 		if (Math.abs(currentTime - lastTooltipTime) > 1000) { // 1000 ms = 1 seconde
-				// 			return ''; // Si le temps est trop proche, on ne montre rien
-				// 		}
-				//
-				// 		// Met à jour le dernier temps
-				// 		lastTooltipTime = currentTime;
-				//
-				// 		// Formate les données comme tu le souhaites
-				// 		// @ts-ignore
-				// 		return `${tooltipItem.dataset.label}: ${tooltipItem.raw.y}`;
-				// 	}
-				// }
 			},
 			zoom: {
 				limits: {
@@ -449,7 +493,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 							private platform: Platform,
 							private router: Router,
 							private sanitizer: DomSanitizer,
-							private cdr: ChangeDetectorRef,
 							private backService: BackService) {
 	}
 
