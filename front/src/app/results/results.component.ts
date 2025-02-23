@@ -18,6 +18,8 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
 
+// import ChartDataLabels from "chartjs-plugin-datalabels";
+// Chart.register(ChartDataLabels);
 Chart.register(zoomPlugin);
 
 interface LastPointValue {
@@ -112,7 +114,7 @@ function externalTooltip(context: any) {
 	}
 
 	// Position du tooltip
-	positionTooltip(context,tooltipEl,tooltipModel);
+	positionTooltip(context, tooltipEl, tooltipModel);
 
 	// Récupération des valeurs du dataset
 	if (tooltipModel.dataPoints) {
@@ -165,11 +167,26 @@ function drawPieChart(values: number[], colors: any[]) {
 			animation: false,
 			maintainAspectRatio: false,
 			plugins: {
-				legend: {display: false}
+				legend: {display: false},
+				// datalabels: {
+				// 	formatter: (value, context) => {
+				// 		const dataset = context.chart.data.datasets[0];
+				// 		// @ts-ignore
+				// 		const total = dataset.data.reduce((acc, val) => acc + val, 0);
+				// 		// @ts-ignore
+				// 		const percentage = ((value / total) * 100).toFixed(0);
+				// 		return `${percentage}%`;
+				// 	},
+				// 	color: '#fff',
+				// 	font: {
+				// 		weight: 'bold'
+				// 	}
+				// }
 			}
 		}
 	});
 }
+
 // Fonction pour ajouter les values dans le tooltip
 function addValues(points: TooltipPoint[]) {
 	const div = document.getElementById('tooltip-values');
@@ -311,6 +328,9 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			mode: 'x',
 		},
 		plugins: {
+			// datalabels: {
+			// 	display: false,
+			// },
 			tooltip: {
 				enabled: false,
 				animation: false,
