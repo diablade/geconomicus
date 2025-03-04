@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Game} from "../../models/game";
 // @ts-ignore
 import * as C from "../../../../../config/constantes";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-game-options-dialog',
@@ -13,7 +14,7 @@ export class GameOptionsDialogComponent {
   game: Game;
   C = C;
 
-  constructor(public dialogRef: MatDialogRef<GameOptionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(private translate: TranslateService,public dialogRef: MatDialogRef<GameOptionsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.game = data.game;
   }
 
@@ -24,4 +25,8 @@ export class GameOptionsDialogComponent {
   onReset() {
     this.dialogRef.close("reset");
   }
+
+	getTranslate(key: string):string {
+		 return this.translate.instant(key);
+	}
 }
