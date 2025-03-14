@@ -296,7 +296,7 @@ describe("FULL GAME simulation", () => {
 		);
 	});
 	test("PLAY 10 rounds and STOP", async () => {
-		await play(2);
+		await play(2);	
 		// await playerService.killPlayer()
 		// await play(5);
 		const res = await agent.post("/game/stop-round").send({idGame: idGame, round: 0});
