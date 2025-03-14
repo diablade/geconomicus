@@ -114,10 +114,26 @@ export class BackService {
 	}
 
 	updatePlayer(idGame: string | undefined, player: Player) {
-		const newPlayer = {...player, idGame: idGame};
+		const newPlayer = {
+			_id: player._id,
+			idGame: idGame,
+			name: player.name,
+			image: player.image || '',
+			eyes: player.eyes || '',
+			eyebrows: player.eyebrows || '',
+			earrings: player.earrings || '',
+			features: player.features || '',
+			hair: player.hair || '',
+			glasses: player.glasses || '',
+			mouth: player.mouth || '',
+			skinColor: player.skinColor || '',
+			hairColor: player.hairColor || '',
+			boardConf: player.boardConf || '',
+			boardColor: player.boardColor || ''
+		};
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.UPDATE, newPlayer)
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "modification impossible"))
+				catchError(err => this.handleError(err, "", "modification impossible"))
 			);
 	}
 

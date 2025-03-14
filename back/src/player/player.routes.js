@@ -1,16 +1,18 @@
 import express from 'express';
+import player from './player.controller.js';
+import { validate, schemas } from './player.validation.js';
 
 const router = express.Router();
-import player from './player.controller.js';
 
 router.get('/:idGame/:idPlayer', player.getById);
-router.post('/join', player.join);
+router.post('/join', validate(schemas.join), player.join);
 router.post('/joinInGame', player.joinInGame);
-router.post('/joinReincarnate', player.joinReincarnate);
-router.post('/isReincarnated', player.isReincarnated);
-router.post('/update', player.update);
-router.post('/transaction', player.transaction);
-router.post('/produce', player.produce);
-router.post('/survey/:idGame/:idPlayer', player.addFeedback);
+router.post('/joinReincarnate', validate(schemas.joinReincarnate), player.joinReincarnate);
+router.post('/isReincarnated', validate(schemas.isReincarnated), player.isReincarnated);
+router.post('/update', validate(schemas.update), player.update);
+//router.post('/update', player.update);
+router.post('/transaction', validate(schemas.transaction), player.transaction);
+router.post('/produce', validate(schemas.produce), player.produce);
+router.post('/feedback', validate(schemas.addFeedback), player.addFeedback);
 
 export default router;

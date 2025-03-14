@@ -7,14 +7,14 @@
     "date-fns": "^2.30.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "express-validator": "^7.0.1",
     "lodash": "^4.17.21",
     "mongodb": "^6.9.0",
     "mongoose": "^6.12.8",
     "morgan": "^1.10.0",
     "socket.io": "^4.8.1",
     "uuid": "^9.0.0",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "joi": "^17.12.2"
   },
   "type": "module",
   "main": "./src/app.js",
