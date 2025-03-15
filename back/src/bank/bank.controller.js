@@ -262,7 +262,7 @@ export default {
 		GameModel.findById(idGame)
 			.then((game) => {
 				if (game) {
-					let credits = _.filter(game.credits, { idPlayer: idPlayer });
+					let credits = game.credits.filter(c => c.idPlayer === idPlayer);
 					return res.status(200).json(credits);
 				}
 				return res
@@ -328,10 +328,7 @@ export default {
 						)
 							.then((updatedGame) => {
 								if (updatedGame) {
-									const creditUpdated = _.find(
-										updatedGame.credits,
-										(c) => c._id == credit._id
-									);
+									const creditUpdated = updatedGame.credits.find(c => c._id === credit._id);
 									addDebtTimer(
 										credit._id.toString(),
 										true,
@@ -378,7 +375,7 @@ export default {
 			);
 			let interestSeized =
 				credit.interest >= seizure.coins ? credit.interest : 0;
-			let cardsValue = _.reduce(seizure.cards, (acc, c) => c.price + acc, 0);
+			let cardsValue = seizure.cards.reduce((acc, c) => c.price + acc, 0);
 
 			// remove card and coins of player
 			await GameModel.updateOne(
@@ -432,10 +429,7 @@ export default {
 					},
 					{ new: true }
 				).then((updatedGame) => {
-					let prisoner = _.find(
-						updatedGame.players,
-						(p) => p._id == credit.idPlayer
-					);
+					let prisoner = updatedGame.players.find(p => p._id === credit.idPlayer);
 					addPrisonTimer(credit.idPlayer, seizure.prisonTime, {
 						idPlayer: credit.idPlayer,
 						idGame: credit.idGame,

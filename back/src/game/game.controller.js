@@ -2,7 +2,6 @@ import GameModel, { constructor } from "./game.model.js";
 import * as C from "../../../config/constantes.js";
 import bcrypt from "bcrypt";
 import log from "../../config/log.js";
-import _ from "lodash";
 import socket from "../../config/socket.js";
 import BankController from "../bank/bank.controller.js";
 import gameTimerManager from "./GameTimerManager.js";
@@ -315,11 +314,8 @@ export default {
         const id = req.params.idGame;
         try {
             const game = await GameModel.findById(id);
-            const playersWithFeedbacks = _.filter(
-                game.players,
-                (p) => p.survey !== undefined
-            );
-            const feedbacks = _.map(playersWithFeedbacks, (p) => p.survey);
+            const playersWithFeedbacks = game.players.filter(p => p.survey !== undefined);
+            const feedbacks = playersWithFeedbacks.map(p => p.survey);
             return res.status(200).json({
                 feedbacks,
             });
@@ -390,9 +386,7 @@ export default {
         )
             .then((newGame) => {
                 let players = newGame.players;
-                let player = _.find(players, function (p) {
-                    return p._id === idPlayer;
-                });
+                let player = players.find(p => p._id === idPlayer);
                 if (!player) {
                     return res.status(200).json(newGame);
                 } else {
@@ -508,15 +502,9 @@ export default {
         gameTimerManager.stopAndRemoveTimer(idGame + "death");
         BankController.resetIdGameDebtTimers(idGame);
         const game = await GameModel.findById(idGame);
-        const events = _.filter(
-            game.events,
-            (e) => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME
-        );
-        const players = _.filter(
-            game.players,
-            (e) => e.reincarnateFromId == null
-        );
-        _.forEach(players, (p) => {
+        const events = game.events.filter(e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
+        const players = game.players.filter(e => e.reincarnateFromId == null);
+        players.forEach(p => {
             p.cards = [];
             p.coins = 0;
             p.status = C.ALIVE;

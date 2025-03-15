@@ -126,10 +126,16 @@ export class BackService {
 		return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
 			idGame: idGame,
 			idPlayer: idPlayer,
-			cards: cards
+			cards: cards.map(card => ({
+				_id: card._id,
+				letter: card.letter,
+				color: card.color,
+				weight: card.weight,
+				price: card.price
+			}))
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "échange impossible")
+				catchError(err => this.handleError(err, "", "échange impossible")
 				)
 			);
 	}
@@ -283,7 +289,7 @@ export class BackService {
 	}
 
 	sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY + idGame + '/' + idPlayer, {
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY, {
 			idGame,
 			idPlayer,
 			individualCollective,
@@ -296,7 +302,7 @@ export class BackService {
 			aloneIntegrated,
 			agressiveAvenant
 		}).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "Envoie du sondage impossible"))
+			catchError(err => this.handleError(err, "", "Envoie du sondage impossible"))
 		);
 	}
 

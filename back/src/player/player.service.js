@@ -1,7 +1,6 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import * as C from "../../../config/constantes.js";
 import log from "../../config/log.js";
-import _ from "lodash";
 import decksService from "../misc/decks.service.js";
 import socket from "../../config/socket.js";
 import bankService from "../bank/bank.service.js";
@@ -52,7 +51,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
 			throw new Error("Game not found");
 		}
 
-		const player = _.find(game.players, {id: idPlayer});
+		const player = game.players.find(p => p.id === idPlayer);
 		if (!player) {
 			throw new Error("Player not found");
 		}

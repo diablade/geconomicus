@@ -31,7 +31,7 @@ async function distribDU(idGame) {
 				if (player.status === C.ALIVE) {
 					player.coins += du;
 					newMassMoney += du;
-					socket.emitTo(player.id, C.DISTRIB_DU, {du: du});
+					socket.emitTo(player.id, C.DISTRIB_DU, { du: du });
 					let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
 					socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
 					newEvents.push(newEvent);
@@ -44,12 +44,12 @@ async function distribDU(idGame) {
 			}
 			GameModel.findByIdAndUpdate(idGame,
 				{
-					$inc: {"players.$[elem].coins": du},
-					$push: {events: {$each: newEvents}},
-					$set: {currentMassMonetary: newMassMoney, currentDU: du}
+					$inc: { "players.$[elem].coins": du },
+					$push: { events: { $each: newEvents } },
+					$set: { currentMassMonetary: newMassMoney, currentDU: du }
 				},
 				{
-					arrayFilters: [{"elem.status": C.ALIVE}],
+					arrayFilters: [{ "elem.status": C.ALIVE }],
 					new: true
 				})
 				.then(updatedGame => {
@@ -69,12 +69,12 @@ async function stopRound(idGame, gameRound) {
 	gameTimerManager.stopAndRemoveTimer(idGame + "death");
 
 	let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
-	GameModel.updateOne({_id: idGame}, {
+	GameModel.updateOne({ _id: idGame }, {
 		$set: {
 			status: C.STOP_ROUND,
 			modified: Date.now(),
 		},
-		$push: {events: stopRoundEvent}
+		$push: { events: stopRoundEvent }
 	}).then(res => {
 		bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
 		socket.emitTo(idGame, C.STOP_ROUND);
@@ -83,7 +83,7 @@ async function stopRound(idGame, gameRound) {
 }
 
 async function startRoundTimers(idGame, game, playersIdToKill) {
-	let timer = new Timer(idGame, game.roundMinutes * minute, minute, {round: game.round, typeMoney: game.typeMoney},
+	let timer = new Timer(idGame, game.roundMinutes * minute, minute, { round: game.round, typeMoney: game.typeMoney },
 		async (timer) => {
 			if (timer.data.typeMoney === C.JUNE) {
 				await distribDU(timer.id);
@@ -208,7 +208,7 @@ async function initGameJune(game) {
 		game.events.push(newEvent);
 	}
 	game.currentDU = await generateDU(game);
-	socket.emitTo(game._id.toString(), C.FIRST_DU, {du: game.currentDU});
+	socket.emitTo(game._id.toString(), C.FIRST_DU, { du: game.currentDU });
 
 	let firstDUevent = constructor.event(C.FIRST_DU, C.MASTER, C.MASTER, game.currentDU, [], Date.now());
 	game.events.push(firstDUevent);
@@ -225,8 +225,8 @@ export default {
 				status: C.PLAYING,
 				modified: Date.now(),
 			},
-			$push: {events: startEvent}
-		}, {new: true})
+			$push: { events: startEvent }
+		}, { new: true })
 			.then(updatedGame => {
 				let idPlayers = _.shuffle(_.map(updatedGame.players, p => p._id.toString()));
 				startRoundTimers(updatedGame._id.toString(), updatedGame, idPlayers);
