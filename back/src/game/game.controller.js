@@ -378,6 +378,10 @@ export default {
                     players: {
                         _id: idPlayer,
                     },
+                    events: {
+                        typeEvent: C.NEW_PLAYER,
+                        emitter: idPlayer
+                    }
                 },
             },
             {
