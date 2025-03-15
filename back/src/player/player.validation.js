@@ -111,15 +111,15 @@ export const schemas = {
     addFeedback: Joi.object({
         idGame: Joi.string().custom(isValidObjectId).required(),
         idPlayer: Joi.string().custom(isValidObjectId).required(),
-        depressedHappy: Joi.number().min(-5).max(5).required(),
-        individualCollective: Joi.number().min(-5).max(5).required(),
-        aloneIntegrated: Joi.number().min(-5).max(5).required(),
-        greedyGenerous: Joi.number().min(-5).max(5).required(),
-        competitiveCooperative: Joi.number().min(-5).max(5).required(),
-        anxiousConfident: Joi.number().min(-5).max(5).required(),
-        agressiveAvenant: Joi.number().min(-5).max(5).required(),
-        irritableTolerant: Joi.number().min(-5).max(5).required(),
-        dependantAutonomous: Joi.number().min(-5).max(5).required()
+        depressedHappy: Joi.number().min(-3).max(3).required(),
+        individualCollective: Joi.number().min(-3).max(3).required(),
+        aloneIntegrated: Joi.number().min(-3).max(3).required(),
+        greedyGenerous: Joi.number().min(-3).max(3).required(),
+        competitiveCooperative: Joi.number().min(-3).max(3).required(),
+        anxiousConfident: Joi.number().min(-3).max(3).required(),
+        agressiveAvenant: Joi.number().min(-3).max(3).required(),
+        irritableTolerant: Joi.number().min(-3).max(3).required(),
+        dependantAutonomous: Joi.number().min(-3).max(3).required()
     })
 };
 

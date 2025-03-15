@@ -12,6 +12,6 @@ router.post('/isReincarnated', validate(schemas.isReincarnated), player.isReinca
 router.post('/update', validate(schemas.update), player.update);
 router.post('/transaction', validate(schemas.transaction), player.transaction);
 router.post('/produce', validate(schemas.produce), player.produce);
-router.post('/feedback', validate(schemas.addFeedback), player.addFeedback);
+router.post('/survey',validate(schemas.addFeedback), player.addFeedback);
 
 export default router;
