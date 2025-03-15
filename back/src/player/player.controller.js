@@ -9,11 +9,6 @@ import decksService from "../misc/decks.service.js";
 import playerService from "./player.service.js";
 import activeTransactions from './../misc/activeTransactions.js';
 
-// import {connect, getDatabase} from './../../config/database2.js';
-// await connect();
-// const db = await getDatabase();
-// const gameCollection = db.collection('games');
-
 function waitForProductionToClear(activeTransactions, idGame, maxChecks = 5) {
 	return new Promise((resolve, reject) => {
 		let checks = 0;
@@ -256,18 +251,6 @@ const produce = async (req, res, next) => {
 		});
 	}
 };
-
-// 	let session;
-// 	try {
-// 		session = await GameModel.startSession(); // Start a session for the transaction
-// 		session.startTransaction();
-//
-// 		// const session = await GameModel.startSession();
-// 		// await session.withTransaction(async () => {
-// 		await session.commitTransaction(); // Commit the transaction
-// 		await session.endSession();
-//
-
 const transaction = async (req, res, next) => {
 	const {idGame, idBuyer, idSeller, idCard} = req.body;
 	if (!idGame || !idBuyer || !idSeller || !idCard) {
@@ -356,7 +339,6 @@ const transaction = async (req, res, next) => {
 		activeTransactions.delete(idSeller);
 	}
 };
-
 const isReincarnated = async (req, res, next) => {
 	const idGame = req.body.idGame;
 	const from = req.body.fromId;

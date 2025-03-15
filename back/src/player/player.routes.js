@@ -5,8 +5,8 @@ import { validate, schemas } from './player.validation.js';
 const router = express.Router();
 
 router.get('/:idGame/:idPlayer', player.getById);
-router.post('/join', validate(schemas.join), player.join);
 router.post('/joinInGame', player.joinInGame);
+router.post('/join', validate(schemas.join), player.join);
 router.post('/joinReincarnate', validate(schemas.joinReincarnate), player.joinReincarnate);
 router.post('/isReincarnated', validate(schemas.isReincarnated), player.isReincarnated);
 router.post('/update', validate(schemas.update), player.update);

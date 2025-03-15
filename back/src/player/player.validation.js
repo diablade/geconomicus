@@ -46,7 +46,7 @@ export const schemas = {
         cards: Joi.array().min(3).items(
             Joi.object({
                 _id: Joi.string().custom(isValidObjectId).required(),
-                weight: Joi.number().min(0).max(3).required(),
+                weight: Joi.number().min(0).max(4).required(),
                 letter: Joi.string().required()
             })
         ).required()
