@@ -47,7 +47,9 @@ export const schemas = {
             Joi.object({
                 _id: Joi.string().custom(isValidObjectId).required(),
                 weight: Joi.number().min(0).max(4).required(),
-                letter: Joi.string().required()
+                letter: Joi.string().required(),
+                color: Joi.string().required(),
+                price: Joi.number().min(0).required(),
             })
         ).required()
             .custom((value, helpers) => {
