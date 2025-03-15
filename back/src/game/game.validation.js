@@ -38,7 +38,11 @@ export const schemas = {
                 'any.invalid': 'Invalid game ID format',
                 'any.required': 'Game ID is required'
             }),
-        name: Joi.string().min(2).max(50),
+        name: Joi.string().min(1).max(50).required()
+            .messages({
+                'any.invalid': 'Invalid game name',
+                'any.required': 'Game name is required'
+            }),
         animator: Joi.string(),
         location: Joi.string(),
         typeMoney: Joi.string(),
@@ -58,15 +62,14 @@ export const schemas = {
         generateLettersAuto: Joi.boolean(),
         generateLettersInDeck: Joi.number().integer().min(0),
         distribInitCards: Joi.number().integer().min(0),
-        
+
         // June options
-        currentDU: Joi.number().min(0),
         tauxCroissance: Joi.number().min(0),
         inequalityStart: Joi.boolean(),
         startAmountCoins: Joi.number().integer().min(0),
         pctPoor: Joi.number().min(0).max(100),
         pctRich: Joi.number().min(0).max(100),
-        
+
         // Debt options
         defaultCreditAmount: Joi.number().integer().min(0),
         defaultInterestAmount: Joi.number().integer().min(0),
@@ -170,19 +173,19 @@ export const schemas = {
 export const validate = (schema) => {
     return (req, res, next) => {
         const { error } = schema.validate(req.body, { abortEarly: false });
-        
+
         if (error) {
             const errors = error.details.map(detail => ({
                 field: detail.path.join('.'),
                 message: detail.message
             }));
-            
+
             return res.status(400).json({
                 status: 'validation_error',
                 errors
             });
         }
-        
+
         next();
     };
 }; 

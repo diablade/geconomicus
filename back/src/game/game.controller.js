@@ -97,7 +97,7 @@ export default {
             {
                 $set: {
                     typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
-                    name: body.name ? body.name : "partie sans nom",
+                    name: body.name ? body.name : "sans nom",
                     animator: body.animator ? body.animator : "sans animateur",
                     location: body.location ? body.location : "sans lieu",
                     priceWeight1: body.priceWeight1 ? body.priceWeight1 : defaultPriceWeight1,
