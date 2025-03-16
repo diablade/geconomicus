@@ -1,12 +1,12 @@
-import GameModel, {constructor} from "../game/game.model.js";
-import _ from "lodash";
-import gameTimerManager from "./GameTimerManager.js";
-import * as C from "../../../config/constantes.js";
-import bankTimerManager from "../bank/BankTimerManager.js";
+import GameModel, { constructor } from "../game/game.model.js";
 import socket from "../../config/socket.js";
 import log from "../../config/log.js";
+import _ from "lodash";
+import { differenceInMilliseconds } from "date-fns";
+import * as C from "../../../config/constantes.js";
 import Timer from "../misc/Timer.js";
-import {differenceInMilliseconds} from "date-fns";
+import gameTimerManager from "./GameTimerManager.js";
+import bankTimerManager from "../bank/BankTimerManager.js";
 import BankController from "../bank/bank.controller.js";
 import playerService from "../player/player.service.js";
 import decksService from "../misc/decks.service.js";
@@ -14,10 +14,13 @@ import decksService from "../misc/decks.service.js";
 const minute = 60 * 1000;
 
 async function generateDU(game) {
-	const nbPlayer = _.partition(game.players, p => p.status === C.ALIVE).length;
+	const nbPlayer = game.players.filter(p => p.status === C.ALIVE).length;
 	const moyenne = game.currentMassMonetary / nbPlayer;
 	const du = moyenne * game.tauxCroissance / 100;
-	const duRounded = _.round(du, 2);
+	const duRounded = Number(du.toFixed(2));
+	console.log("generateDU");
+	console.log("MM:", game.currentMassMonetary);
+	console.log("nbPlayer:" + nbPlayer, "moyenne:" + moyenne, "DU:" + duRounded);
 	return duRounded;
 }
 
@@ -170,6 +173,11 @@ async function generateInequality(nbPlayer, pctRich, pctPoor) {
 async function initGameJune(game) {
 	let decks = await decksService.generateDecks(game);
 
+	game.currentMassMonetary = game.startAmountCoins * game.players.length;
+	let massDistrib=0;
+	const du = await generateDU(game);
+	game.currentDU = du;
+
 	const classes = game.inequalityStart ? await generateInequality(game.players.length, game.pctRich, game.pctPoor) : [];
 
 	for await (let player of game.players) {
@@ -178,23 +186,26 @@ async function initGameJune(game) {
 		player.cards = cards;
 		player.status = C.ALIVE;
 
+		const distribDU = game.currentDU * 3;
+
 		if (game.inequalityStart) {
+			const moyenne = game.currentMassMonetary/game.players.length;
 			if (classes[0] >= 1) {
 				//classe basses
-				player.coins = Math.floor(game.startAmountCoins / 2);
+				player.coins = Math.floor(distribDU / 2);
 				classes[0]--;
 			} else if (classes[2] >= 1) {
 				// classe haute
-				player.coins = Math.floor(game.startAmountCoins * 2);
+				player.coins = Math.floor(distribDU * 2);
 				classes[2]--;
 			} else {
 				//classe moyenne
-				player.coins = game.startAmountCoins;
+				player.coins = distribDU;
 			}
 		} else {
-			player.coins = game.startAmountCoins;
+			player.coins = distribDU;
 		}
-		game.currentMassMonetary += player.coins;
+		massDistrib += player.coins;
 
 		socket.emitAckTo(player.id, C.START_GAME, {
 			cards: cards,
@@ -207,7 +218,14 @@ async function initGameJune(game) {
 		socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
 		game.events.push(newEvent);
 	}
-	game.currentDU = await generateDU(game);
+
+	if(massDistrib > game.currentMassMonetary) {
+		log.error("massDistrib > game.currentMassMonetary, " + massDistrib+ ", " + game.currentMassMonetary);
+		throw new Error("massDistrib > game.currentMassMonetary");
+	}else {
+		log.info("massDistrib < game.currentMassMonetary, " + massDistrib+ ", " + game.currentMassMonetary);
+	}
+
 	socket.emitTo(game._id.toString(), C.FIRST_DU, { du: game.currentDU });
 
 	let firstDUevent = constructor.event(C.FIRST_DU, C.MASTER, C.MASTER, game.currentDU, [], Date.now());
