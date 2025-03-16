@@ -165,6 +165,7 @@
 		"ANSWER": "Répondre",
 		"SETTLE": "Rembourser",
 		"DEBT": "Dette",
+		"INTEREST": "Intérêt",
 		"CREATED": "Créé",
 		"NOTICE_INTEREST": "Intéret, payable pour prolonger de {{ interestMinutes }} minutes",
 		"DONE_AT": "Clos le",
@@ -210,6 +211,36 @@
 		"START_DISTRIB_CARDS": "Nombre de cartes distribuées aux joueurs au début du jeu",
 		"BUILD_AMOUNT": "Nombre identique de cartes pour bâtir une carte supérieur:"
 	},
+	"HISTORY": {
+		"TITLE": "Historique des parties crées",
+		"DELETE_CONFIRM": "Supprimer une partie ?",
+		"AUTO_DELETE": "Les parties de plus de 2 mois seront bientot automatiquement supprimées.",
+		"IMPORT_EXPORT": "(L'importation et l'exportation de parties seront aussi bientôt possibles).",
+		"CREATED_ON": "Créé le",
+		"PLAYERS": "joueurs",
+		"TYPE": "type:",
+		"FREE_MONEY": "monnaie libre",
+		"DEBT_MONEY": "monnaie dette",
+		"LOCATION": "Lieu:",
+		"ANIMATOR": "Animateur:",
+		"VIEW_RESULTS": "Voir les resultats",
+		"VIEW": "Voir",
+		"STATUS": {
+			"ENDED": "Terminé",
+			"OPEN": "Ouvert",
+			"IN_PROGRESS": "En cours"
+		}
+	},
+	"EVENTS": {
+		"SUPERIOR_CARD_CREATED": "Carte superieur créée",
+		"BANK_CREDITS": "La banque crédite",
+		"INTEREST": "interet",
+		"CONTRACT": "contrat",
+		"CREDIT_TIMEOUT": "Timeout credit",
+		"INTEREST_PAID": "Interet payé",
+		"CREDIT_DEFAULT": "Défaut de credit",
+		"CREDIT_REPAID": "Crédit remboursé"
+	},
 	"DIALOG": {
 		"CONFIRM": {
 			"TITLE": "Confirmer ?",
@@ -247,7 +278,8 @@
 			"TO_SEIZE": "A saisir: {{seized}} / {{objective}}",
 			"FEES": "Frais en sus {{num}}",
 			"DECOTE": "Décote de {{num}}% sur les cartes",
-			"DROP": "Déplacer les cartes \n à saisir ici",
+			"DROP_ZONE": "Déplacer les cartes \n à saisir ici",
+			"PROGRESS": "Progression",
 			"TOOLTIP_PRISON_INFO": "Si l'objectif est remplis, 0 minute, la prison est uniquement si le joueur n'as plus de cartes, (min 1mn), Si le manque à gagner est important, la sanction doit etre grande (max {{max}} mn).",
 			"PRISON_DECISION": "Durée pour la prison:",
 			"MINUTES": "minute(s)",
