@@ -40,8 +40,8 @@ const getById = async (req, res, next) => {
 	}
 };
 const join = async (req, res, next) => {
-	const { id, name } = req.body;
-	GameModel.findById(id).then(async game => {
+	const { idGame, name } = req.body;
+	GameModel.findById(idGame).then(async game => {
 		if (game.status === C.END_GAME) {
 			return res.status(403).json({ message: "la partie est terminé mon poto, faut rentrer maintenant..." });
 		} else if (game.status !== C.OPEN) {
@@ -64,12 +64,12 @@ const join = async (req, res, next) => {
 				featuresProbability: 100
 			};
 			let joinEvent = constructor.event(C.NEW_PLAYER, idPlayer.toString(), C.MASTER, 0, [], Date.now());
-			GameModel.findByIdAndUpdate({ _id: id },
+			GameModel.findByIdAndUpdate({ _id: idGame },
 				{ $push: { players: player, events: joinEvent } },
 				{ new: true })
 				.then(updatedGame => {
 					const newPlayer = updatedGame.players.find(p => p._id == idPlayer.toString());
-					socket.emitTo(id + C.MASTER, C.NEW_PLAYER, newPlayer);
+					socket.emitTo(idGame + C.MASTER, C.NEW_PLAYER, newPlayer);
 					return res.status(200).json(player._id);
 				}
 				)

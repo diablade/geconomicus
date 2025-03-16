@@ -226,6 +226,7 @@ describe("FULL GAME simulation", () => {
 	test("UPDATE game", async () => {
 		const res = await agent.put("/game/update").send({
 			typeMoney: "june",
+			name: "test-full-simu",
 			idGame: idGame,
 			surveyEnabled: false,
 			autoDeath: false,
