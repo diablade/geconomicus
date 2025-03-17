@@ -17,6 +17,7 @@ import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
+import {TranslateService} from "@ngx-translate/core";
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -513,7 +514,8 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 							private platform: Platform,
 							private router: Router,
 							private sanitizer: DomSanitizer,
-							private backService: BackService) {
+							private backService: BackService,
+							private translateService: TranslateService) {
 	}
 
 	ngOnInit(): void {
@@ -1031,5 +1033,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		} else {
 			window.open(environment.WEB_HOST, '_blank');
 		}
+	}
+
+	getMoneyType(): string {
+		return this.game?.typeMoney === C.JUNE ?
+			this.translateService.instant('MONEY_FREE') :
+			this.translateService.instant('MONEY_DEBT');
 	}
 }

@@ -7,10 +7,11 @@
 			<div class="d-flex flex-column">
 				<img class="geco" src="./assets/images/geconomicus.png" alt="">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">nouvelle partie</button>
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "RESULTS.NEW_GAME" | translate
+				}}</button>
 			<div class="d-flex flex-row align-items-center">
 				<div class="text-center bulleResult gecoFont bienvenue">
-					En savoir plus sur la monnaie libre ?
+					{{ "RESULTS.LEARN_MORE" | translate }}
 					<br>
 					<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
 				</div>
@@ -22,137 +23,146 @@
 				<div class="d-flex flex-column">
 					<img class="geco" src="./assets/images/geconomicus.png" alt="">
 					<div class="mt-2 text-center bulleResult gecoFont bienvenue">
-						En savoir plus <br> sur la monnaie libre ?
+						{{ "RESULTS.LEARN_MORE_MOBILE" | translate }}
 						<br>
 						<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
 					</div>
 				</div>
 				<img class="gunyResults" src="./assets/images/guny.png">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">nouvelle partie</button>
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "RESULTS.NEW_GAME" | translate
+				}}</button>
 		</div>
-		<h1 class="m-2 mt-4 contour">Résumé du jeu : {{ game?.name }}</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: { name: game?.name } }}</h1>
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">Status: </span>{{ getStatus() }}</div>
-				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
-				<div><span class="fw-bold">Animateur: </span>{{ game?.animator }}</div>
-				<div><span class="fw-bold">Lieu: </span>{{ game?.location }}</div>
-				<div><span class="fw-bold">Monnaie: </span>{{ game?.typeMoney === C.JUNE ? "libre" : "dette" }}</div>
-				<div><span class="fw-bold">Joueurs: </span>{{ playersAtStart > 0 ? playersAtStart : "-" }}</div>
-				<div><span class="fw-bold">Morts et reincarnés: </span>{{ deads }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.STATUS" | translate }}: </span>{{ getStatus() }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.MONEY_TYPE" | translate }}: </span>{{ getMoneyType() }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.ANIMATOR" | translate }}: </span>{{ game?.animator }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.LOCATION" | translate }}: </span>{{ game?.location }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.PLAYERS" | translate }}: </span>{{ playersAtStart > 0 ? playersAtStart :
+					"-" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.DEAD_REINCARNATED" | translate }}: </span>{{ deads }}</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">Taux de croissance : </span>{{ game?.tauxCroissance }}%</div>
-				<div><span class="fw-bold" [matTooltip]="'Recalculer toutes les minutes'">Formule du D.U: </span>(MasseM/Joueurs)xTaux
+				<div><span class="fw-bold">{{ "RESULTS.GROWTH_RATE" | translate }}: </span>{{ game?.tauxCroissance }}%</div>
+				<div><span class="fw-bold" [matTooltip]="'RESULTS.DU_FORMULA_TOOLTIP' | translate">
+					{{"RESULTS.DU_FORMULA" | translate }}:
+					</span>{{ "RESULTS.DU_FORMULA_TEXT" | translate }}
 				</div>
-				<div><span class="fw-bold">D.U initial : </span>({{ initialMM }}
-					/ {{ playersAtStart > 0 ? playersAtStart : "joueurs" }}
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DU" | translate }}: </span>({{ initialMM }}
+					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
 					x {{ game?.tauxCroissance | number:'1.2-2' }})
-					= {{ initialDU }} Ğ1
+					= {{ initialDU }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">D.U final : </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
-					/ {{ playersAtStart > 0 ? playersAtStart : "joueurs" }}
-					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} Ğ1
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{ game?.currentMassMonetary|
+					number:'1.2-2' }}
+					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
+					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} Ğ1</div>
-				<div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }}Ğ1
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">Ressources initial : </span> {{ initialCards }} Cartes ({{ initialResources }} D.U
-					eq)
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
+					number:'1.2-2' }}{{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ finalCards }} Cartes ({{ finalResources }} D.U eq)
-					(initial
-					x{{ finalResources / initialResources| number:'1.2-2' }})
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }} </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }} </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
 				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">Mass monétaire initial : </span>{{ initialMM | number:'1.2-2' }} €</div>
-				<div><span class="fw-bold">Mass monétaire final : </span>{{ game?.currentMassMonetary | number:'1.2-2' }} €
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{
+					"CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
+					number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}
 				</div>
-				<div><span class="fw-bold">Dettes initial : </span> {{ initialDebts }} €</div>
-				<div><span class="fw-bold">Dettes final : </span>{{ getDebts() }} €</div>
-				<div><span class="fw-bold">Intérêts récupérés par la banque : </span>{{ game?.bankInterestEarned }} €</div>
-				<div><span class="fw-bold">Monnaie détruite (crédits remboursés) : </span>{{ moneyDestroyed }} €</div>
-				<div><span class="fw-bold">Ressources initial : </span> {{ initialCards }} Cartes ({{ initialResources }} €)
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DEBTS" | translate }}: </span> {{ initialDebts }} {{
+					"CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_DEBTS" | translate }}: </span>{{ getDebts() }} {{ "CURRENCY.EURO" |
+					translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{ game?.bankInterestEarned }} {{
+					"CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{
+					"CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }} </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
 				</div>
-				<div><span class="fw-bold">Ressources final : </span>{{ finalCards }} Cartes ({{ finalResources }} €) (initial
-					x{{ finalResources / initialResources| number:'1.2-2' }})
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }} </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
 				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">Début: </span>{{ startGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
-				<div><span class="fw-bold">Fin : </span>{{ stopGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
-				<div><span class="fw-bold">Durée total du jeu : </span>{{ durationGame() }}</div>
-				<div><span class="fw-bold">Durée d'un tour : </span>{{ game?.roundMinutes }} minutes</div>
-				<div><span class="fw-bold">Nombre de tours joué : </span>{{ game?.round }}</div>
-				<div><span class="fw-bold">Nb de transactions total: </span>{{ getTransactionsTotal() }}</div>
-				<div><span class="fw-bold">Nb de productions total: </span>{{ productionTotal }}</div>
-				<!--				<div><span class="fw-bold">Vélocité de la monnaie: (V=PxT/M) </span>{{ getTransactionsTotal() }}</div>-->
+				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{ startGameDate| date:"YYYY-MMM-dd
+					HH:mm" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{ stopGameDate| date:"YYYY-MMM-dd
+					HH:mm" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.TOTAL_DURATION" | translate }}: </span>{{ durationGame() }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.ROUND_DURATION" | translate }}: </span>{{ game?.roundMinutes }} {{
+					"RESULTS.MINUTES" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.ROUNDS_PLAYED" | translate }}: </span>{{ game?.round }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.TOTAL_TRANSACTIONS" | translate }}: </span>{{ getTransactionsTotal() }}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.TOTAL_PRODUCTIONS" | translate }}: </span>{{ productionTotal }}</div>
 			</div>
 		</div>
-		<h1 class="m-2 mt-4 contour">Podium</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.PODIUM" | translate }}</h1>
 		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap">
 				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
-					<div class="fw-bold">Meilleur joueur monnaies</div>
-					<div *ngIf="podiumMoney.length ==0">aucun...</div>
+					<div class="fw-bold">{{ "RESULTS.BEST_MONEY" | translate }}</div>
+					<div *ngIf="podiumMoney.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
 					<ng-container *ngFor="let player of podiumMoney, let i=index">
 						<div class="mb-4 d-flex align-items-center flex-column" *ngIf="i===0">
-							<div class="player-frame player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
 							<div class="text-center gecoFont shadowed"> {{ player.name }}<span class="fs-3"> 🥇</span></div>
 						</div>
 						<div *ngIf="i ===1 || i=== 2" class="d-flex align-items-center">
-							<div class="player-frame-second-third player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame-second-third player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }} </span>
+							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }}
+								</span>
 							</div>
 						</div>
 					</ng-container>
 				</div>
 				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
-					<div class="fw-bold">Meilleur joueur ressources</div>
-					<div *ngIf="podiumRes.length ==0">aucun...</div>
+					<div class="fw-bold">{{ "RESULTS.BEST_RESOURCES" | translate }}</div>
+					<div *ngIf="podiumRes.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
 					<ng-container *ngFor="let player of podiumRes, let i=index">
 						<div class="mb-4 d-flex align-items-center flex-column" *ngIf="i===0">
-							<div class="player-frame player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
 							<div class="text-center gecoFont shadowed"> {{ player.name }}<span class="fs-3"> 🥇</span></div>
 						</div>
 						<div *ngIf="i ===1 || i=== 2" class="d-flex align-items-center">
-							<div class="player-frame-second-third player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame-second-third player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }} </span>
+							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }}
+								</span>
 							</div>
 						</div>
 					</ng-container>
 				</div>
 				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
-					<div class="fw-bold" [matTooltip]="'Qui a fait le plus de transactions'">Le joueur le plus actif</div>
-					<div *ngIf="podiumTransac.length ==0">aucun...</div>
+					<div class="fw-bold" [matTooltip]="'RESULTS.MOST_ACTIVE_TOOLTIP' | translate">{{
+						"RESULTS.MOST_ACTIVE" | translate }}</div>
+					<div *ngIf="podiumTransac.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
 					<ng-container *ngFor="let player of podiumTransac, let i=index">
 						<div class="mb-4 d-flex align-items-center flex-column" *ngIf="i===0">
-							<div class="player-frame player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
 							<div class="text-center gecoFont shadowed"> {{ player.name }}<span class="fs-3"> 🥇</span></div>
 						</div>
 						<div *ngIf="i ===1 || i=== 2" class="d-flex align-items-center">
-							<div class="player-frame-second-third player-svg"
-									 [ngStyle]="{'border-color':'#'+player.hairColor}"
-									 [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div class="player-frame-second-third player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
+								[innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }} </span>
+							<div class="gecoFont shadowed"> {{ player.name }}<span class="fs-3">{{ i === 1 ? " 🥈 " : " 🥉 " }}
+								</span>
 							</div>
 						</div>
 					</ng-container>
@@ -160,7 +170,7 @@
 			</div>
 		</div>
 
-		<h1 class="m-2 mt-4 contour">Comptes en quantitatif</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.QUANTITATIVE_ACCOUNTS" | translate }}</h1>
 		<div class="graph bg-white rounded shadow">
 			<canvas baseChart id="chartQuant"
 							class="chart"
@@ -170,36 +180,22 @@
 							[type]="'line'">
 			</canvas>
 		</div>
-		<h1 *ngIf="game?.typeMoney===C.JUNE" class="m-2 mt-4 contour">Comptes en relatif (Ğ1 rapporté au DU de
-			l'instant)</h1>
+		<h1 *ngIf="game?.typeMoney===C.JUNE" class="m-2 mt-4 contour">{{ "RESULTS.RELATIVE_ACCOUNTS" | translate }}</h1>
 		<div *ngIf="game?.typeMoney===C.JUNE" class="graph bg-white rounded shadow">
-			<canvas baseChart
-							class="chart"
-							height="500"
-							[data]="lineChartDataRelatif"
-							[options]="lineChartOptionsRelatif"
-							[type]="'line'">
+			<canvas baseChart class="chart" height="500" [data]="lineChartDataRelatif" [options]="lineChartOptionsRelatif"
+				[type]="'line'">
 			</canvas>
 		</div>
-		<h1 class="m-2 mt-4 contour">Ressources</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.RESOURCES" | translate }}</h1>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart
-							class="chart"
-							height="500"
-							[data]="lineChartDataResources"
-							[options]="lineChartOptionsResources"
-							[type]="'line'">
+			<canvas baseChart class="chart" height="500" [data]="lineChartDataResources" [options]="lineChartOptionsResources"
+				[type]="'line'">
 			</canvas>
 		</div>
-		<h1 class="m-2 mt-4 contour">Résultat du sondage sur vos ressentis</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SURVEY_RESULTS" | translate }}</h1>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart
-							class="chart"
-							height="300"
-							[data]="feedbacksData"
-							[options]="feedbacksOptions"
-							[legend]="false"
-							[type]="'bubble'">
+			<canvas baseChart class="chart" height="300" [data]="feedbacksData" [options]="feedbacksOptions" [legend]="false"
+				[type]="'bubble'">
 			</canvas>
 		</div>
 		<div class="d-block d-md-none eventsSmall">

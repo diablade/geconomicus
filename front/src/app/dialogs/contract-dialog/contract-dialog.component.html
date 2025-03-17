@@ -3,11 +3,11 @@
 		<h2 class="fs-4 shadowed gecoFont">{{ "CONTRACT.TITLE"|translate }}</h2>
 		<mat-form-field class="input">
 			<mat-label>{{ "CONTRACT.CREDIT"|translate }}</mat-label>
-			<input type="number" min="0" matInput placeholder="3 par defaut" [(ngModel)]="game.defaultCreditAmount">
+			<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_CREDIT_AMOUNT'|translate" [(ngModel)]="game.defaultCreditAmount">
 		</mat-form-field>
 		<mat-form-field class="input">
 			<mat-label>{{ "CONTRACT.INTEREST"|translate }}</mat-label>
-			<input type="number" min="0" matInput placeholder="1 par defaut" [(ngModel)]="game.defaultInterestAmount">
+			<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_INTEREST_AMOUNT'|translate" [(ngModel)]="game.defaultInterestAmount">
 		</mat-form-field>
 		<div>
 			- {{ "CONTRACT.RATE_INTEREST"|translate }} :

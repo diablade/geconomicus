@@ -1,19 +1,19 @@
 <div class="join sunyBg h-100">
-  <h1 mat-dialog-title class="shadowed gecoFont">Rejoindre la partie !</h1>
+  <h1 mat-dialog-title class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
   <div mat-dialog-content>
-    <p>Votre petit nom ?</p>
+    <p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
     <mat-form-field appearance="fill">
       <input matInput [disabled]="!!fromId" [(ngModel)]="name">
     </mat-form-field>
   </div>
   <div mat-dialog-actions>
-    <button *ngIf="fromId" mat-raised-button color="primary" (click)="joinReincarnate()">Ğo pour ma nouvelle vie!</button>
-<!--    <button *ngIf="fromId==='false'" mat-raised-button color="primary" (click)="joinInGame()">Ğo !</button>-->
-    <button *ngIf="fromId===undefined" mat-raised-button color="primary" (click)="join()">Ğo !</button>
+    <button *ngIf="fromId" mat-raised-button color="primary" (click)="joinReincarnate()">{{ "JOIN.GO_NEW_LIFE" | translate }}</button>
+<!--    <button *ngIf="fromId==='false'" mat-raised-button color="primary" (click)="joinInGame()">{{ "JOIN.GO_BUTTON" | translate }}</button>-->
+    <button *ngIf="fromId===undefined" mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
   </div>
-  <div *ngIf="fromId" class="mt-4 text-center gecoFont bulle">Hey ! Tu as été réincarné ! </div>
-<!--  <div *ngIf="fromId==='false'" class="mt-4 text-center bulle gecoFont ">Hey ! La parti à déjà commencé. Bon courage.</div>-->
-  <div *ngIf="fromId===undefined" class="mt-4 text-center bulle gecoFont">Hey ! J'm’appelle Ğuny.</div>
+  <div *ngIf="fromId" class="mt-4 text-center gecoFont bulle">{{ "JOIN.REINCARNATED" | translate }}</div>
+<!--  <div *ngIf="fromId==='false'" class="mt-4 text-center bulle gecoFont">{{ "JOIN.GAME_STARTED" | translate }}</div>-->
+  <div *ngIf="fromId===undefined" class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }}</div>
   <!--  GUNY  -->
   <div class="mt-1 col-md-12 text-center m-auto">
     <img class="guny" src="./assets/images/guny.png" alt="">

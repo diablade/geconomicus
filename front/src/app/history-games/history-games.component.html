@@ -9,7 +9,7 @@
 						<div class="status" [ngClass]="getStatusClass(game.status)">{{ getStatus(game.status) }}</div>
 					</div>
 					<div class="ms-2">
-						<div>{{ "HISTORY.CREATED_ON" | translate }} {{ game.created | date: "dd-MM-YYYY à HH:mm" }}</div>
+						<div>{{ "HISTORY.CREATED_ON" | translate }} {{ game.created | date: ("DATE_FORMAT.DATETIME" | translate) }}</div>
 						<div>
 						<span class="fw-bold">👥 {{ game.playersCount }}</span> {{ "HISTORY.PLAYERS" | translate }}
 							, {{ "HISTORY.TYPE" | translate }}
