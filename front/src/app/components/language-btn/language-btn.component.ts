@@ -1,13 +1,19 @@
-import {Component, Input} from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
+import { Component, Input, OnInit } from '@angular/core';
+import { I18nService } from '../../services/i18n.service';
+
+interface Language {
+	flag: string;
+	language: string;
+	lang: string;
+}
 
 @Component({
 	selector: 'app-language-btn',
 	templateUrl: './language-btn.component.html',
 	styleUrls: ['./language-btn.component.scss']
 })
-export class LanguageBtnComponent {
-	languages = [
+export class LanguageBtnComponent implements OnInit {
+	languages: Language[] = [
 		{flag: "🇫🇷", language: "Français", lang: "fr"},
 		{flag: "🇪🇸", language: "Spanish", lang: "es"},
 		{flag: "🇮🇹", language: "Italiano", lang: "it"},
@@ -17,17 +23,28 @@ export class LanguageBtnComponent {
 	];
 		// {flag: "", language: "Roumanian", lang: "ro"}
 
-	selectedLanguage: any;
-	@Input() short: boolean = false;
-	@Input() cornerScreen: boolean = false;
+	selectedLanguage: Language = this.languages[0];
+	@Input() short = false;
+	@Input() cornerScreen = false;
 
-	constructor(private translate: TranslateService) {
-		this.selectedLanguage = this.languages.find(l => l.lang === this.translate.currentLang);
+	constructor(private i18nService: I18nService) {}
+
+	ngOnInit() {
+		const currentLang = this.i18nService.getCurrentLang();
+		this.selectedLanguage = this.languages.find(l => l.lang === currentLang) || this.languages[0];
 	}
 
-	switchLanguage(language: any) {
+	switchLanguage(language: Language): void {
 		this.selectedLanguage = language;
-		this.translate.use(language.lang);
-		localStorage.setItem('language', language.lang); // Save preference
+		this.i18nService.use(language.lang);
+	}
+
+	getCurrentLang(): string {
+		const currentLang = this.i18nService.getCurrentLang();
+		return currentLang;
+	}
+
+	changeLang(language: any) {
+		this.i18nService.use(language.lang);
 	}
 }

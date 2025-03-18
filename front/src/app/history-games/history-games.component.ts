@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
-import {TranslateService} from "@ngx-translate/core";
+import { I18nService } from '../services/i18n.service';
 
 @Component({
 	selector: 'app-history-games',
@@ -19,7 +19,7 @@ export class HistoryGamesComponent implements OnInit {
 	games: any;
 	C = C;
 
-	constructor(private backService: BackService, public dialog: MatDialog, private snackbarService: SnackbarService, private translate: TranslateService) {
+	constructor(private backService: BackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -31,11 +31,11 @@ export class HistoryGamesComponent implements OnInit {
 	getStatus(status: string): string {
 		switch (status) {
 			case C.END_GAME:
-				return this.translate.instant("HISTORY.STATUS.ENDED");
+				return this.i18nService.instant("HISTORY.STATUS.ENDED");
 			case C.OPEN:
-				return this.translate.instant("HISTORY.STATUS.OPEN");
+				return this.i18nService.instant("HISTORY.STATUS.OPEN");
 			default:
-				return this.translate.instant("HISTORY.STATUS.IN_PROGRESS");
+				return this.i18nService.instant("HISTORY.STATUS.IN_PROGRESS");
 		}
 	}
 

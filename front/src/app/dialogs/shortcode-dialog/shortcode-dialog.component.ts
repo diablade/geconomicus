@@ -1,7 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import Keyboard from "simple-keyboard";
 import {MatDialogRef} from "@angular/material/dialog";
-import {TranslateService} from "@ngx-translate/core";
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
 	selector: 'app-shortcode-dialog',
@@ -14,10 +14,10 @@ export class ShortcodeDialogComponent implements AfterViewInit {
 	keyboard!: Keyboard;
 
 	constructor(
-		private translate: TranslateService,
+		private i18nService: I18nService,
 		public dialogRef: MatDialogRef<ShortcodeDialogComponent>) {
-		this.translate.get("DIALOG.SHORT_CODE.BUY").subscribe((text) => {
-			this.buy = text
+		this.i18nService.get("DIALOG.SHORT_CODE.BUY").subscribe((text) => {
+			this.buy = text;
 		});
 	}
 

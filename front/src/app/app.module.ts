@@ -63,10 +63,11 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
 import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
 import { MasterAdminComponent } from './master-admin/master-admin.component';
-import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
+import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
 import { NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
+import { I18nService } from './services/i18n.service';
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
 // required for AOT compilation
@@ -157,12 +158,13 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
+		I18nService
 	],
 	bootstrap: [AppComponent]
 })
 
 export class AppModule {
-	constructor(translate: TranslateService) {
-		translate.setDefaultLang('fr'); // Global fallback
+	constructor(private i18nService: I18nService) {
+		this.i18nService.setDefaultLang('fr');
 	}
 }

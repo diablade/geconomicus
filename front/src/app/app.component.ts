@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {filter, map} from "rxjs";
-import {TranslateService} from "@ngx-translate/core";
+import { I18nService } from './services/i18n.service';
 
 @Component({
 	selector: 'app-root',
@@ -11,11 +11,12 @@ import {TranslateService} from "@ngx-translate/core";
 export class AppComponent implements OnInit{
 	title = 'Ğeconomicus';
 
-	constructor(private swUpdate: SwUpdate, private translate: TranslateService) {
-		this.translate.setDefaultLang('fr'); // Default language
-		// Load preference on app start
-		let savedLanguage = localStorage.getItem('language') || 'fr';
-		translate.use(savedLanguage);
+	constructor(private swUpdate: SwUpdate, private i18nService: I18nService) {
+		this.i18nService.setDefaultLang('fr'); // Default language
+		const savedLanguage = localStorage.getItem('language');
+		if (savedLanguage) {
+			this.i18nService.use(savedLanguage);
+		}
 	}
 
 	public ngOnInit(): void {

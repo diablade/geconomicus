@@ -1,4 +1,5 @@
 <div class="w-100 h-100 d-flex flex-row results">
+	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
 	<div class="d-none d-md-block events">
 		<app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
 	</div>
@@ -7,8 +8,8 @@
 			<div class="d-flex flex-column">
 				<img class="geco" src="./assets/images/geconomicus.png" alt="">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "RESULTS.NEW_GAME" | translate
-				}}</button>
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "RESULTS.NEW_GAME" | translate	}}
+			</button>
 			<div class="d-flex flex-row align-items-center">
 				<div class="text-center bulleResult gecoFont bienvenue">
 					{{ "RESULTS.LEARN_MORE" | translate }}
@@ -37,7 +38,12 @@
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">{{ "RESULTS.STATUS" | translate }}: </span>{{ getStatus() }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.MONEY_TYPE" | translate }}: </span>{{ getMoneyType() }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.MONEY_TYPE" | translate }}: </span>
+					<span class="fw-bold">{{ game?.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" | translate) }}
+						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
+						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
+					</span>
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.ANIMATOR" | translate }}: </span>{{ game?.animator }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.LOCATION" | translate }}: </span>{{ game?.location }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.PLAYERS" | translate }}: </span>{{ playersAtStart > 0 ? playersAtStart :
@@ -65,9 +71,9 @@
 				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
 					number:'1.2-2' }}{{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }} </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }} </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
 				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
@@ -84,9 +90,9 @@
 					"CURRENCY.EURO" | translate }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{
 					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }} </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }} </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
 				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">

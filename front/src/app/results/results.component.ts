@@ -17,7 +17,7 @@ import Chart from 'chart.js/auto';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
-import {TranslateService} from "@ngx-translate/core";
+import {I18nService} from '../services/i18n.service';
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -282,20 +282,19 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	getStatus() {
 		switch (this.game?.status) {
 			case C.OPEN:
-				return "Ouvert à rejoindre";
+				return this.i18nService.instant("GAME.OPEN");
 			case C.PLAYING:
-				return "En cours";
+				return this.i18nService.instant("GAME.PLAYING");
 			case C.END_GAME:
-				return "Jeu Terminé";
+				return this.i18nService.instant("GAME.END_GAME");
 			case C.STOP_ROUND:
-				return "Tour terminé";
+				return this.i18nService.instant("GAME.STOP_ROUND");
 			case C.INTER_ROUND :
-				return 'Inter tour';
+				return this.i18nService.instant("GAME.INTER_ROUND");
 			case C.START_GAME :
-				return 'Jeu démarré';
+				return this.i18nService.instant("GAME.START_GAME");
 			default:
 				return "-";
-
 		}
 	}
 
@@ -515,7 +514,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 							private router: Router,
 							private sanitizer: DomSanitizer,
 							private backService: BackService,
-							private translateService: TranslateService) {
+							private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -1033,11 +1032,5 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		} else {
 			window.open(environment.WEB_HOST, '_blank');
 		}
-	}
-
-	getMoneyType(): string {
-		return this.game?.typeMoney === C.JUNE ?
-			this.translateService.instant('MONEY_FREE') :
-			this.translateService.instant('MONEY_DEBT');
 	}
 }

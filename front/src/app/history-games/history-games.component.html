@@ -13,7 +13,7 @@
 						<div>
 						<span class="fw-bold">👥 {{ game.playersCount }}</span> {{ "HISTORY.PLAYERS" | translate }}
 							, {{ "HISTORY.TYPE" | translate }}
-							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? ("HISTORY.FREE_MONEY" | translate) : ("HISTORY.DEBT_MONEY" | translate) }}
+							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" | translate) }}
 								<img *ngIf="game.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
 								<img *ngIf="game.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
 							</span>

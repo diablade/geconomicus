@@ -5,7 +5,7 @@ import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
-import {TranslateService} from "@ngx-translate/core";
+import { I18nService } from "./i18n.service";
 
 @Injectable({
 	providedIn: 'root'
@@ -21,12 +21,12 @@ export class BackService {
 		})
 	};
 
-	constructor(public http: HttpClient, private router: Router, private snackbarService: SnackbarService, private translate: TranslateService) {
+	constructor(public http: HttpClient, private router: Router, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
 	private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
 		if (whatToSay) {
-			this.snackbarService.showError(this.translate.instant(whatToSay));
+			this.snackbarService.showError(this.i18nService.instant(whatToSay));
 		} else {
 			this.snackbarService.showError(error.error.message);
 		}
@@ -44,7 +44,7 @@ export class BackService {
 			window.location.reload();
 		}
 		// Return an observable with a user-facing error message.
-		return throwError(() => new Error(this.translate.instant("ERROR.GENERIC")));
+		return throwError(() => new Error(this.i18nService.instant("ERROR.GENERIC")));
 	}
 
 	/**

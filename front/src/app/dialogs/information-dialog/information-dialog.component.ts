@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-
+import { I18nService } from '../../services/i18n.service';
 @Component({
 	selector: 'app-information-dialog',
 	templateUrl: './information-dialog.component.html',
@@ -12,9 +12,9 @@ export class InformationDialogComponent {
 	title = "";
 	disableClose = false;
 
-	constructor(public dialogRef: MatDialogRef<InformationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(public dialogRef: MatDialogRef<InformationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private i18nService: I18nService) {
 		this.text = data.text;
-		this.title = data.title ? data.title : "Information !";
+		this.title = data.title ? data.title : this.i18nService.instant("DIALOG.INFORMATION.TITLE");
 		this.disableClose = data.disableClose == undefined ? false : data.disableClose;
 		if (data.sound) {
 			let audio = new Audio();
