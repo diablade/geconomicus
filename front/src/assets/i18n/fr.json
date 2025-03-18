@@ -308,13 +308,11 @@
 		"QR_SCAN": {
 			"TITLE": "Scanner le QR Code",
 			"CAMERA": "Camera",
-			"CANCEL": "Annuler",
 			"SELECT_DEVICE": "Selectionner la caméra"
 		},
 		"SEIZURE": {
 			"TITLE": "Défaut de paiement - saisir des biens",
 			"SOLD": "Solde: {{amount}}",
-			"CANCEL": "Annuler",
 			"SEIZE": "Saisir",
 			"TO_SEIZE": "A saisir: {{seized}} / {{objective}}",
 			"FEES": "Frais en sus {{num}}",
@@ -325,7 +323,7 @@
 			"PRISON_DECISION": "Durée pour la prison:",
 			"MINUTES": "minute(s)",
 			"VALIDATE": "Valider la saisie",
-			"SUCCESS" : "Saisie effectué !"
+			"SUCCESS": "Saisie effectué !"
 		},
 		"DELETE_GAME": {
 			"TITLE": "T'es sûr ?",
@@ -483,7 +481,8 @@
 	"COMMON": {
 		"CANCEL": "Annuler",
 		"SAVE": "Sauvegarder",
-		"DELETE": "Supprimer"
+		"DELETE": "Supprimer",
+		"OK": "OK"
 	},
 	"JOIN": {
 		"TITLE": "Rejoindre la partie !",
