@@ -35,7 +35,7 @@
 		"JOIN": "Join game {{name}}",
 		"GUNY_WELCOME": "Hey! Scan my QR Code to join.",
 		"TYPE_OF_MONEY": "Type of money",
-		"CARD_LV1": "Alimentation",
+		"CARD_LV1": "Food",
 		"CARD_LV2": "Culture & knowledge",
 		"CARD_LV3": "Energy",
 		"CARD_LV4": "Technology",
@@ -256,6 +256,7 @@
 		"STARTING_CARD": "Starting card",
 		"UNIVERSAL_DIVIDEND": "Universal dividend",
 		"FIRST_DU_CALCULATION": "First UD calculation",
+		"FIRST_DU": "First UD",
 		"GAME_START": "Game started",
 		"GAME_END": "Game ended",
 		"ROUND_START": "Round started",
@@ -278,17 +279,13 @@
 		"DISTRIBUTION_TO": "Distribution to"
 	},
 	"DIALOG": {
+		"INFORMATION": {
+			"TITLE": "Information!",
+			"BTN1": "Ok"
+		},
 		"CONFIRM": {
 			"TITLE": "Confirm?",
 			"MESSAGE": "Are you sure?",
-			"BTN1": "Yes",
-			"BTN2": "Cancel"
-		},
-		"CREATE_GAME": {
-			"TITLE": "Create a game",
-			"FIELD1": "Name the game",
-			"FIELD2": "Animator name",
-			"FIELD3": "Location",
 			"BTN1": "Yes",
 			"BTN2": "Cancel"
 		},
@@ -297,6 +294,14 @@
 			"MESSAGE": "Repay the entire ({{amount}}) or extend by 5 minutes by paying the interest of {{interest}}",
 			"BTN1": "Repay",
 			"BTN2": "Extend"
+		},
+		"CREATE_GAME": {
+			"TITLE": "Create a game",
+			"FIELD1": "Name the game",
+			"FIELD2": "Animator name",
+			"FIELD3": "Location",
+			"BTN1": "Yes",
+			"BTN2": "Cancel"
 		},
 		"INSTALL": {
 			"MESSAGE1": "Use Safari, Open Safari's share menu with the button",
@@ -309,13 +314,11 @@
 		"QR_SCAN": {
 			"TITLE": "Scan QR Code",
 			"CAMERA": "Camera",
-			"CANCEL": "Cancel",
 			"SELECT_DEVICE": "Select camera"
 		},
 		"SEIZURE": {
 			"TITLE": "Payment default - seize assets",
 			"SOLD": "Balance: {{amount}}",
-			"CANCEL": "Cancel",
 			"SEIZE": "Seize",
 			"TO_SEIZE": "To seize: {{seized}} / {{objective}}",
 			"FEES": "Additional fees {{num}}",
@@ -325,7 +328,8 @@
 			"TOOLTIP_PRISON_INFO": "If objective is met, 0 minutes, prison is only if player has no more cards, (min 1min), If the shortfall is significant, the sanction must be great (max {{max}} min).",
 			"PRISON_DECISION": "Duration for prison:",
 			"MINUTES": "minute(s)",
-			"VALIDATE": "Validate seizure"
+			"VALIDATE": "Validate seizure",
+			"SUCCESS": "Seizure completed!"
 		},
 		"DELETE_GAME": {
 			"TITLE": "Are you sure?",
@@ -455,20 +459,19 @@
 		"JUNE": "Ğ1",
 		"DU": "U.D"
 	},
-	"MONEY_TYPE": {
-		"FREE": "free",
-		"DEBT": "debt"
-	},
 	"PLAYER": {
 		"GO_TO_BANK": "GO TO THE BANK!!!",
-		"THIS_LIFE_IS_GONE": "This life is gone ��",
+		"THIS_LIFE_IS_GONE": "This life is gone 🪦",
 		"GO_TO_SECOND_LIFE": "Go to your second life!",
 		"BALANCE": "Balance:",
 		"WAITING": "Waiting...",
 		"GAME_OVER": "Game Over...",
 		"ANSWER_SURVEY": "Answer the Survey",
 		"NAME": "First Name or Nickname",
-		"YOUR_AVATAR": "Your Avatar"
+		"YOUR_AVATAR": "Your Avatar",
+		"DEBT": "Debts",
+		"BUY": "BUY",
+		"CREDITS": "CREDITS"
 	},
 	"PLAYER_SETTINGS": {
 		"EYES": "Eyes",
@@ -481,9 +484,6 @@
 		"SKIN": "Skin",
 		"HAIR": "Hair"
 	},
-	"COMMON": {
-		"SAVE": "Save"
-	},
 	"JOIN": {
 		"TITLE": "Join the game!",
 		"NAME_PROMPT": "Your nickname?",
@@ -492,5 +492,8 @@
 		"REINCARNATED": "Hey! You have been reincarnated!",
 		"GAME_STARTED": "Hey! The game has already started. Good luck.",
 		"GUNY_INTRO": "Hey! I'm Ğuny."
+	},
+	"DATE_FORMAT": {
+		"DATETIME": "dd-MM-YYYY at HH:mm"
 	}
 }
