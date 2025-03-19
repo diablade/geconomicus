@@ -188,10 +188,10 @@ describe("FULL GAME simulation", () => {
 				autoDeath: true,
 				deathPassTimer: 4,
 				devMode: false,
-				priceWeight1: 3,
-				priceWeight2: 6,
-				priceWeight3: 9,
-				priceWeight4: 12,
+				priceWeight1: 1,
+				priceWeight2: 2,
+				priceWeight3: 4,
+				priceWeight4: 8,
 				round: 0,
 				roundMax: 1,
 				roundMinutes: 25,
@@ -226,6 +226,7 @@ describe("FULL GAME simulation", () => {
 	test("UPDATE game", async () => {
 		const res = await agent.put("/game/update").send({
 			typeMoney: "june",
+			name: "test-full-simu",
 			idGame: idGame,
 			surveyEnabled: false,
 			autoDeath: false,
@@ -296,7 +297,7 @@ describe("FULL GAME simulation", () => {
 		);
 	});
 	test("PLAY 10 rounds and STOP", async () => {
-		await play(2);
+		await play(2);	
 		// await playerService.killPlayer()
 		// await play(5);
 		const res = await agent.post("/game/stop-round").send({idGame: idGame, round: 0});

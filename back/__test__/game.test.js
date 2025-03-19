@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../src/app';
 import db from '../__test__/config/database';
 import * as C from "../../config/constantes.js";
-import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import socket from "../config/socket.js";
 
 const agent = request.agent(app);
@@ -71,10 +71,10 @@ describe("GAME controller test", () => {
 					devMode: false,
 					autoDeath: true,
 					deathPassTimer: 4,
-					priceWeight1: 3,
-					priceWeight2: 6,
-					priceWeight3: 9,
-					priceWeight4: 12,
+					priceWeight1: 1,
+					priceWeight2: 2,
+					priceWeight3: 4,
+					priceWeight4: 8,
 					round: 0,
 					roundMax: 1,
 					roundMinutes: 25,
@@ -93,7 +93,7 @@ describe("GAME controller test", () => {
 					defaultInterestAmount: 1,
 					bankInterestEarned: 0,
 					bankGoodsEarned: 0,
-					bankMoneyLost:0,
+					bankMoneyLost: 0,
 					timerCredit: 5,
 					timerPrison: 5,
 					manualBank: true,
@@ -140,6 +140,28 @@ describe("GAME controller test", () => {
 			expect(res.body.typeMoney).toBe("june");
 			expect(res.body.surveyEnabled).toBeFalsy();
 			expect(res.body.inequalityStart).toBeTruthy();
+		});
+	});
+	describe('POST /game/start', () => {
+		test("START game", async () => {
+			const resStart = await agent.put("/game/start").send({ idGame: idGame, typeMoney: C.JUNE });
+			expect(resStart.statusCode).toEqual(200);
+			expect(resStart.body).toBeTruthy();
+		});
+		test("START round", async () => {
+			const res = await agent.post("/game/start-round").send({ idGame: idGame, round: 0 });
+			expect(res.statusCode).toEqual(200);
+			expect(res.body.status).toEqual(C.START_ROUND);
+		});
+		test("STOP round", async () => {
+			const res = await agent.post("/game/stop-round").send({ idGame: idGame, round: 0 });
+			expect(res.statusCode).toEqual(200);
+			expect(res.body.status).toEqual(C.STOP_ROUND);
+		});
+		test("END GAME", async () => {
+			const res = await agent.post("/game/end").send({ idGame: idGame });
+			expect(res.statusCode).toEqual(200);
+			expect(res.body.status).toEqual(C.END_GAME);
 		});
 	});
 });
