@@ -1,49 +1,51 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 import {Credit} from "../models/game";
 
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
 @Component({
-  selector: 'app-credit',
-  templateUrl: './credit.component.html',
-  styleUrls: ['./credit.component.scss']
+	selector: 'app-credit',
+	templateUrl: './credit.component.html',
+	styleUrls: ['./credit.component.scss']
 })
 export class CreditComponent {
-  faSackDollar = faSackDollar;
-  faCommentsDollar = faCommentsDollar;
+	faSackDollar = faSackDollar;
+	faCommentsDollar = faCommentsDollar;
+	faCircleInfo = faCircleInfo;
 
-  @Input() credit!: Credit;
-  @Input() contractor!: string | undefined;
-  @Input() interestMinutes = 5;
-  @Input() bankOption = false;
-  @Output() actionBtn = new EventEmitter<string>();
-  @Input() small= false;
 
-  C = C;
+	@Input() credit!: Credit;
+	@Input() contractor!: string | undefined;
+	@Input() interestMinutes = 5;
+	@Input() bankOption = false;
+	@Output() actionBtn = new EventEmitter<string>();
+	@Input() small = false;
 
-  constructor() {
-  }
+	C = C;
 
-  actionBtnClick(action:string) {
-    this.actionBtn.emit(action);
-  }
+	constructor() {
+	}
 
-  getStatus(status: string) {
-    switch (status) {
-      case C.PAUSED_CREDIT :
-        return "Jeu en pause...";
-      case C.RUNNING_CREDIT :
-        return "En cours...";
-      case C.REQUEST_CREDIT :
-        return "Prolonger ?";
-      case C.DEFAULT_CREDIT :
-        return "Défaut de paiement";
-      case C.CREDIT_DONE :
-        return "Terminé";
-      default :
-        return "error";
-    }
-  }
+	actionBtnClick(action: string) {
+		this.actionBtn.emit(action);
+	}
+
+	getStatus(status: string) {
+		switch (status) {
+			case C.PAUSED_CREDIT :
+				return "CREDIT.PAUSED_CREDIT";
+			case C.RUNNING_CREDIT:
+				return "CREDIT.RUNNING_CREDIT";
+			case C.REQUEST_CREDIT:
+				return "CREDIT.REQUEST_CREDIT";
+			case C.DEFAULT_CREDIT:
+				return "CREDIT.DEFAULT_CREDIT";
+			case C.CREDIT_DONE:
+				return "CREDIT.CREDIT_DONE";
+			default :
+				return "error";
+		}
+	}
 }

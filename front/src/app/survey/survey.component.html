@@ -1,7 +1,7 @@
 <div class="survey">
 
-  <h1>Quels ont été vos ressentis durant cette partie ?</h1>
-  <h3>Soyez le plus honnête possible 🙏</h3>
+  <h1>{{ "SURVEY.TITLE" | translate }}</h1>
+  <h3>{{ "SURVEY.SUBTITLE" | translate }}</h3>
 
 
 	<div class="question">
@@ -13,10 +13,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Déprimé
+        {{ "SURVEY.DEPRESSED" | translate }}
       </div>
       <div class="float-end">
-        Joyeux
+        {{ "SURVEY.HAPPY" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="depressedHappy">
@@ -31,10 +31,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Individuel
+        {{ "SURVEY.INDIVIDUAL" | translate }}
       </div>
       <div class="float-end">
-        Collectif
+        {{ "SURVEY.COLLECTIVE" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="individualCollective">
@@ -49,10 +49,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Seul(e)
+        {{ "SURVEY.ALONE" | translate }}
       </div>
       <div class="float-end">
-        En communauté
+        {{ "SURVEY.INTEGRATED" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="aloneIntegrated">
@@ -67,10 +67,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Avare
+        {{ "SURVEY.GREEDY" | translate }}
       </div>
       <div class="float-end">
-        Généreux
+        {{ "SURVEY.GENEROUS" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="greedyGenerous">
@@ -85,10 +85,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Compétitif
+        {{ "SURVEY.COMPETITIVE" | translate }}
       </div>
       <div class="float-end">
-        Coopératif
+        {{ "SURVEY.COOPERATIVE" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="competitiveCooperative">
@@ -103,10 +103,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Anxieux
+        {{ "SURVEY.ANXIOUS" | translate }}
       </div>
       <div class="float-end">
-        Confiant
+        {{ "SURVEY.CONFIDENT" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="anxiousConfident">
@@ -121,10 +121,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Agressif
+        {{ "SURVEY.AGGRESSIVE" | translate }}
       </div>
       <div class="float-end">
-        Avenant
+        {{ "SURVEY.PLEASANT" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="agressiveAvenant">
@@ -139,10 +139,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Irritable
+        {{ "SURVEY.IRRITABLE" | translate }}
       </div>
       <div class="float-end">
-        Tolérant
+        {{ "SURVEY.TOLERANT" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="irritableTolerant">
@@ -157,10 +157,10 @@
   <div class="question">
     <div class="label">
       <div class="float-start">
-        Dépendant
+        {{ "SURVEY.DEPENDENT" | translate }}
       </div>
       <div class="float-end">
-        Autonome
+        {{ "SURVEY.AUTONOMOUS" | translate }}
       </div>
     </div>
     <mat-radio-group class="group" [(ngModel)]="dependantAutonomous">
@@ -174,7 +174,7 @@
   </div>
   <div class="question">
     <button mat-raised-button color="warn" class="ms-2" (click)="sendFeedback()">
-      Envoyer
+      {{ "SURVEY.SEND" | translate }}
     </button>
   </div>
 </div>

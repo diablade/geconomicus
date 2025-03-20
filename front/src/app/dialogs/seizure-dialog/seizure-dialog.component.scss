@@ -1,11 +1,17 @@
 .seizure {
-	overflow: auto;
-	max-height: 100vh;
+  overflow: auto;
+  max-height: 100vh;
 }
 
 .player-board {
   width: 200px;
   height: 300px;
+}
+
+.sold{
+  color: black;
+  background: wheat;
+  border: solid black 1px;
 }
 
 .bank-board {
@@ -15,6 +21,11 @@
 
 .header-board {
   height: 100px;
+}
+
+.proBar {
+  text-align: center;
+  color: black;
 }
 
 .dropZone {
@@ -42,6 +53,10 @@
 .dropText {
   position: absolute;
   color: gray;
+  white-space: normal;
+  width: 100px;
+  word-wrap: break-word; /* For legacy browsers */
+  word-break: break-word; /* Ensures long words break properly */
 }
 
 .smallInput {

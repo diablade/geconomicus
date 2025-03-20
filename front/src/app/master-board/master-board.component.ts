@@ -21,6 +21,7 @@ import {StorageKey} from "../services/local-storage/storage-key.const";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
 	selector: 'app-master-board',
@@ -53,8 +54,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	timerProgress = 100;
 
 	options = [
-		{value: C.JUNE, label: 'Monnaie libre', isDisabled: false},
-		{value: C.DEBT, label: 'Monnaie dette', isDisabled: false},
+		{value: C.JUNE, label: "MONEY_FREE", isDisabled: false},
+		{value: C.DEBT, label: "MONEY_DEBT", isDisabled: false},
 	];
 	minutes = "00";
 	seconds = "00";
@@ -72,13 +73,14 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-							private sessionStorageService: SessionStorageService,
-							private backService: BackService,
-							private snackbarService: SnackbarService,
-							private router: Router,
-							private sanitizer: DomSanitizer,
-							private wsService: WebSocketService,
-							public dialog: MatDialog) {
+	            private sessionStorageService: SessionStorageService,
+	            private backService: BackService,
+	            private snackbarService: SnackbarService,
+	            private translate: TranslateService,
+	            private router: Router,
+	            private sanitizer: DomSanitizer,
+	            private wsService: WebSocketService,
+	            public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -133,21 +135,23 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.stopRound();
 		});
 		this.socket.on(C.DEATH_IS_COMING, async () => {
-			if(this.game.autoDeath){
+			if (this.game.autoDeath) {
 				this.snackbarService.showSuccess("La mort viens de passer 😈")
-			}else {
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: "La mort dois passé 😈! (à vous de jouer)",
-					sound: "./assets/audios/iamdeath.mp3"
-				},
-			});
+			} else {
+				this.dialog.open(InformationDialogComponent, {
+					data: {
+						text: "La mort dois passé 😈! (à vous de jouer)",
+						sound: "./assets/audios/iamdeath.mp3"
+					},
+				});
 			}
 		});
-		this.socket.on(C.DEAD, async (event:any) => {
-			_.forEach(this.game.players, p => {if(p._id==event.receiver){
-				p.status = C.DEAD;
-			}});
+		this.socket.on(C.DEAD, async (event: any) => {
+			_.forEach(this.game.players, p => {
+				if (p._id == event.receiver) {
+					p.status = C.DEAD;
+				}
+			});
 		});
 	}
 
@@ -267,17 +271,28 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		return environment.WEB_HOST + environment.GAME.GET + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
 	}
 
-	reJoin(idPlayer: string): void {
+	reJoin(idPlayer: string, username: string): void {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
-			data: {url: this.getUserUrl(idPlayer)},
+			data: {
+				username,
+				url: this.getUserUrl(idPlayer)
+			},
 		});
 		dialogRef.afterClosed().subscribe(() => {
 		});
 	}
 
 	qrCodeBank(): void {
+		let username = "";
+		this.translate.get("BANK.TITLE").subscribe((text) => {
+			username = text
+		});
+
 		const dialogRef = this.dialog.open(JoinQrDialog, {
-			data: {url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'},
+			data: {
+				username,
+				url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'
+			},
 		});
 		dialogRef.afterClosed().subscribe(() => {
 		});
@@ -307,10 +322,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.game = {...results};
 			}
 		});
-	}
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
 	}
 
 	onKillUser(player: Player) {
@@ -346,6 +357,7 @@ export class JoinQrDialog {
 export class GameInfosDialog {
 	constructor(public dialogRef: MatDialogRef<GameInfosDialog>) {
 	}
+
 	faQrcode = faQrcode;
 	faKeyboard = faKeyboard;
 }

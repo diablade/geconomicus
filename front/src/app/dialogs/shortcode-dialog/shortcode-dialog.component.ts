@@ -1,17 +1,24 @@
 import {AfterViewInit, Component} from '@angular/core';
 import Keyboard from "simple-keyboard";
 import {MatDialogRef} from "@angular/material/dialog";
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
 	selector: 'app-shortcode-dialog',
 	templateUrl: './shortcode-dialog.component.html',
 	styleUrls: ['./shortcode-dialog.component.scss']
 })
-export class ShortcodeDialogComponent implements AfterViewInit{
+export class ShortcodeDialogComponent implements AfterViewInit {
 	value = "";
+	buy = "";
 	keyboard!: Keyboard;
 
-	constructor(public dialogRef: MatDialogRef<ShortcodeDialogComponent>) {
+	constructor(
+		private i18nService: I18nService,
+		public dialogRef: MatDialogRef<ShortcodeDialogComponent>) {
+		this.i18nService.get("DIALOG.SHORT_CODE.BUY").subscribe((text) => {
+			this.buy = text;
+		});
 	}
 
 	ngAfterViewInit() {
@@ -28,7 +35,7 @@ export class ShortcodeDialogComponent implements AfterViewInit{
 			},
 			display: {
 				'{bksp}': '⌫',
-				'{buy}': 'Acheter',
+				'{buy}': this.buy,
 				'{cancel}': 'X',
 			},
 			theme: "hg-theme-default hg-layout-numeric numeric-theme"

@@ -15,7 +15,7 @@ import {environment} from "../../environments/environment";
 import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {GameInfosDialog} from "../master-board/master-board.component";
-
+import { I18nService } from '../services/i18n.service';
 @Component({
 	selector: 'app-bank-board',
 	templateUrl: './bank-board.component.html',
@@ -40,7 +40,8 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 							private backService: BackService,
 							private snackbarService: SnackbarService,
 							private sanitizer: DomSanitizer,
-							public dialog: MatDialog) {
+							public dialog: MatDialog,
+							private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -168,11 +169,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			data: {game: _.clone(this.game)},
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
-			this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
-				this.snackbarService.showSuccess("Credit octroyer à " + this.getPlayerName(credit.idPlayer));
-				this.game.credits.push(credit);
-				this.game.currentMassMonetary += credit.amount;
-			});
+			if (contrat) {
+				this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
+					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
+					this.game.credits.push(credit);
+					this.game.currentMassMonetary += credit.amount;
+				});
+			}
 		});
 	}
 
@@ -198,7 +201,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		confDialogRef.afterClosed().subscribe(seizure => {
 			if (seizure) {
 				this.backService.seizure(seizure, credit).subscribe((data: any) => {
-					this.snackbarService.showSuccess("Saisie effectué !");
+					this.snackbarService.showSuccess(this.i18nService.instant("DIALOG.SEIZURE.SUCCESS"));
 					if (data) {
 						this.game.credits = _.map(this.game.credits, c => {
 							if (c._id == data.credit._id) {
@@ -235,9 +238,5 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		this.backService.breakFree(this.idGame, idPlayerToFree).subscribe(() => {
 			this.snackbarService.showSuccess("I want to break FREEEEEE !");
 		});
-	}
-
-	showRules() {
-		this.dialog.open(GameInfosDialog, {});
 	}
 }

@@ -7,6 +7,7 @@ import {Card, Credit, Player} from "../models/game";
 import {BackService} from "../services/back.service";
 import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
+import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
 import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
@@ -127,6 +128,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							private localStorageService: LocalStorageService,
 							private backService: BackService,
 							private wsService: WebSocketService,
+							private i18nService: I18nService,
 							private snackbarService: SnackbarService) {
 	}
 
@@ -284,7 +286,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: "Crédit obtenu (+" + data.amount + "💰)",
+					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.amount}),
 					sound: "./assets/audios/coins.mp3"
 				},
 			});
@@ -505,11 +507,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.player.status = "needAnswer";
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
-				title: "Le crédit est arrivé à expiration !",
-				message:
-					"Rembourser l'intégralité (" + (credit.amount + credit.interest) + "\nou prolongé de 5 mn en payant l'intéret de " + credit.interest,
-				labelBtn1: "Rembourser",
-				labelBtn2: "Prolonger",
+				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
+				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {amount: credit.amount, interest: credit.interest}),
+				labelBtn1: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN1"),
+				labelBtn2: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN2"),
 				autoClickBtn2: true,
 				timerBtn2: "14",//en secondes
 				beep,

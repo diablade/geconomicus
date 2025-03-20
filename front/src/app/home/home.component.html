@@ -5,20 +5,22 @@
 		</div>
 		<!--  GUNY  -->
 		<div class="mt-4 d-flex flex-column align-items-center">
-			<div class="text-center bulle gecoFont bienvenue">Découvrez la monnaie libre par le jeu !</div>
+			<div class="text-center bulle gecoFont bienvenue">{{ "HOME.WELCOME" | translate }}</div>
 			<img class="guny" src="./assets/images/guny.png" alt="" (click)="beep()">
 		</div>
 		<div *ngIf="modalPwaPlatform === 'ANDROID' || modalPwaPlatform === 'IOS'" class="mt-4 d-flex flex-row">
-			<button class="m-2" mat-raised-button (click)="installApp()">Install l'application</button>
+			<button class="m-2" mat-raised-button (click)="installApp()">{{ "HOME.INSTALL" | translate }}</button>
 		</div>
 		<div class="d-flex flex-row">
-			<button class="ms-2" mat-raised-button color="accent" (click)="create()">Créer une partie</button>
-			<button class="ms-2" mat-raised-button color="primary" (click)="join()">Rejoindre une partie
+			<button class="ms-2" mat-raised-button color="accent" (click)="create()">{{ "HOME.CREATE_GAME"|translate }}
+			</button>
+			<button class="ms-2" mat-raised-button color="primary" (click)="join()">{{ "HOME.JOIN_GAME"| translate }}
 				<fa-icon [icon]="faCamera"></fa-icon>
 			</button>
 		</div>
 		<div class="d-flex flex-row mt-2">
-			<button class="ms-2" mat-raised-button (click)="showRules()">Comment çà marche ?</button>
+			<app-notice-btn [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>
+			<app-language-btn class="ms-2"></app-language-btn>
 		</div>
 		<div class="mt-4">
 			<img class="img-bottom" src="./assets/images/cards.png" alt="">
@@ -27,17 +29,18 @@
 			<div class="m-2">
 				Made with <span [routerLink]="['games']">❤️</span> by Nicolas Markovic.
 			</div>
-			<span class="m-2">Une cagnotte pour m'aider en <a
+			<span class="m-2">{{ "HOME.FUND_RAISE"|translate }}{{ "HOME.IN"|translate }} <a
 				href="https://www.leetchi.com/fr/c/aide-au-developpement-de-geconomicusfr-5541237?utm_source=copylink&utm_medium=social_sharing"
-				target="_blank"><img [src]="'/assets/images/eurocoin.png'" class="icon"/></a> ou en <img class="icon"
-																																																 [src]="'/assets/images/g1coin.png'"
-																																																 (click)="openKeyPub()"/>
+				target="_blank"><img [src]="'/assets/images/eurocoin.png'" class="icon"/></a>{{ "HOME.OR_IN"|translate }} <img
+				class="icon"
+				[src]="'/assets/images/g1coin.png'"
+				(click)="openKeyPub()"/>
 			</span>
 		</div>
 		<div class="m-2">
-			Besoin d'aide, t'as une idée, t'as un bug, ou simplement faire coucou ?
+			{{ "HOME.SAY_HI"|translate }}
 			<a href="https://t.me/geconomicus" target="_blank">
-				c'est par ici
+				{{ "HOME.LINK_SAY_HI"|translate }}
 				<svg xmlns="http://www.w3.org/2000/svg" height="25" width="25" viewBox="0 0 496 512">
 					<!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
 					<path fill="#74C0FC"
@@ -46,7 +49,7 @@
 			</a>
 		</div>
 		<div class="m-2">
-			<a href="https://geconomicus.glibre.org/" target="_blank">Le jeu original en version papier ?</a>
+			<a href="https://geconomicus.glibre.org/" target="_blank">{{ "HOME.LOOKING_FOR_PAPER_GAME"|translate }}</a>
 		</div>
 		<audio #coins>
 			<source src="assets/audios/coins.mp3" type="audio/mp3">

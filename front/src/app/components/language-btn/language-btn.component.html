@@ -1,0 +1,14 @@
+<div [ngClass]="cornerScreen ? 'topRight':''">
+	<button *ngIf="short" mat-icon-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
+		{{ selectedLanguage.flag }}
+	</button>
+	<button *ngIf="!short" mat-stroked-button [matMenuTriggerFor]="menuLanguages" aria-label="menu languages">
+		{{ selectedLanguage.flag }} {{selectedLanguage.language}}
+	</button>
+	<mat-menu #menuLanguages="matMenu">
+		<button *ngFor="let lang of languages" mat-menu-item (click)="switchLanguage(lang)">
+			{{ lang.flag }}
+			<span>{{ lang.language }}</span>
+		</button>
+	</mat-menu>
+</div>

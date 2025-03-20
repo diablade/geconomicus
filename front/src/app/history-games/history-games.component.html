@@ -1,5 +1,5 @@
 <div class="d-flex flex-column align-items-center">
-	<h1 mat-dialog-title>Historique des parties crées</h1>
+	<h1 mat-dialog-title>{{ "HISTORY.TITLE" | translate }}</h1>
 	<div class="items">
 		<div class="item" *ngFor="let game of games">
 			<div class="d-flex flex-row">
@@ -9,18 +9,18 @@
 						<div class="status" [ngClass]="getStatusClass(game.status)">{{ getStatus(game.status) }}</div>
 					</div>
 					<div class="ms-2">
-						<div>Créé le {{ game.created | date: "dd-MM-YYYY à HH:mm" }}</div>
+						<div>{{ "HISTORY.CREATED_ON" | translate }} {{ game.created | date: ("DATE_FORMAT.DATETIME" | translate) }}</div>
 						<div>
-						<span class="fw-bold">👥 {{ game.playersCount }}</span> joueurs
-							, type:
-							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? "monnaie libre " : "monnaie dette " }}
+						<span class="fw-bold">👥 {{ game.playersCount }}</span> {{ "HISTORY.PLAYERS" | translate }}
+							, {{ "HISTORY.TYPE" | translate }}
+							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" | translate) }}
 								<img *ngIf="game.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
 								<img *ngIf="game.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
 							</span>
 						</div>
 						<div class="">
 						</div>
-						<div>Lieu: <span class="fw-bold">{{ game.location ? game.location : "-" }}</span>, Animateur: <span
+						<div>{{ "HISTORY.LOCATION" | translate }} <span class="fw-bold">{{ game.location ? game.location : "-" }}</span>, {{ "HISTORY.ANIMATOR" | translate }} <span
 							class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
 						<div class="d-flex flex-row">
 						</div>
@@ -29,7 +29,7 @@
 				<button class="ms-2" mat-raised-button
 								[routerLink]="game.status === C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
 								color="accent">
-					{{ game.status === C.END_GAME ? "Voir les resultats" : "Voir" }}
+					{{ game.status === C.END_GAME ? ("HISTORY.VIEW_RESULTS" | translate) : ("HISTORY.VIEW" | translate) }}
 				</button>
 				<button *ngIf="deleteGames" class="ms-2" mat-raised-button color="warn">
 					<fa-icon class="delete" (click)="onDeleteGame(game)"
@@ -43,14 +43,14 @@
 			class=""
 			[color]="'warn'"
 			[(ngModel)]="deleteGames">
-			Supprimer une partie ?
+			{{ "HISTORY.DELETE_CONFIRM" | translate }}
 		</mat-slide-toggle>
 	</div>
 	<div>
-		Les parties de plus de 2 mois seront bientot automatiquement supprimées.
+		{{ "HISTORY.AUTO_DELETE" | translate }}
 	</div>
 	<div>
-		(L'importation et l'exportation de parties seront aussi bientôt possibles).
+		{{ "HISTORY.IMPORT_EXPORT" | translate }}
 	</div>
 
 	<!--  GUNY  -->

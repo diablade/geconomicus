@@ -84,6 +84,9 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "ssl": false
+          },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
@@ -136,6 +139,7 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": false
   }
 }

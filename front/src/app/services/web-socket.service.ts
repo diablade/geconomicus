@@ -6,6 +6,8 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 import {MatDialog} from "@angular/material/dialog";
 import {BehaviorSubject} from "rxjs";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
+import {I18nService} from "./i18n.service";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
 	providedIn: 'root'
@@ -18,8 +20,12 @@ export class WebSocketService {
 	private disconnected = false;
 	private isReConnected = new BehaviorSubject<boolean>(false);
 
-
-	constructor(private snackbarService: SnackbarService, public dialog: MatDialog,) {
+	constructor(
+		private snackbarService: SnackbarService,
+		public dialog: MatDialog,
+		private i18nService: I18nService,
+		private http: HttpClient
+	) {
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
 			this.dialog.closeAll();
@@ -28,9 +34,9 @@ export class WebSocketService {
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
-					title: "Hors ligne ⚠️",
+					title: this.i18nService.instant("SOCKET.OFFLINE.TITLE"),
 					disableClose: true,
-					text: "☎️ En Attente de reconnexion..."
+					text: this.i18nService.instant("SOCKET.OFFLINE.TEXT")
 				},
 			});
 		});
@@ -74,44 +80,20 @@ export class WebSocketService {
 			if (this.disconnected) {
 				this.disconnected = false;
 				this.dialog.closeAll();
-				this.snackbarService.showNotif("✅ Vous êtes connectés.");
+				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
 				this.isReConnected.next(true);
 			}
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
 			this.dialog.closeAll();
-			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-				disableClose: true,
-				data: {
-					title: "Déconnecté ⚠️",
-					message:
-						"Echec tentatives de reconnexion",
-					labelBtn1: "",
-					btn1Enable: false,
-					labelBtn2: "Rafraichir",
-					autoClickBtn2: true,
-					timerBtn2: "8",//en secondes
-				}
-			});
-			confDialogRef.afterClosed().subscribe(result => {
-				if (result && result == "btn2") {
-					this.socket?.connect();
-				}
-			});
+			this.showDisconnectedDialog();
 		});
 
 		this.socket.on("disconnect", (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
-			this.dialog.open(InformationDialogComponent, {
-				disableClose: true,
-				data: {
-					disableClose: true,
-					title: "Hors ligne ⚠️",
-					text: "☎️ Reconnection en cours..."
-				},
-			});
+			this.showReconnectingDialog();
 		});
 		this.socket.on("reconnecting", (data: any) => {
 			console.log('reconnecting...');
@@ -119,7 +101,7 @@ export class WebSocketService {
 
 		this.socket.on("connect_timeout", (data: any) => {
 			console.log('time out');
-			this.snackbarService.showError("connection timeout...");
+			this.handleTimeout();
 		});
 
 		this.socket.on('reconnect_attempt', (attempt) => {
@@ -152,5 +134,33 @@ export class WebSocketService {
 
 	getReConnectionStatus() {
 		return this.isReConnected.asObservable();
+	}
+
+	private showDisconnectedDialog() {
+		this.dialog.open(ConfirmDialogComponent, {
+			disableClose: true,
+			data: {
+				title: this.i18nService.instant("SOCKET.DISCONNECTED.TITLE"),
+				message: this.i18nService.instant("SOCKET.DISCONNECTED.MESSAGE"),
+				btn1Enable: false,
+				labelBtn2: this.i18nService.instant("SOCKET.DISCONNECTED.REFRESH"),
+				autoClickBtn2: true,
+				timerBtn2: this.i18nService.instant("SOCKET.DISCONNECTED.TIMER"),
+			}
+		});
+	}
+
+	private showReconnectingDialog() {
+		this.dialog.open(InformationDialogComponent, {
+			data: {
+				disableClose: true,
+				title: this.i18nService.instant("SOCKET.RECONNECTING.TITLE"),
+				text: this.i18nService.instant("SOCKET.RECONNECTING.TEXT")
+			},
+		});
+	}
+
+	private handleTimeout() {
+		this.snackbarService.showError(this.i18nService.instant("SOCKET.TIMEOUT"));
 	}
 }

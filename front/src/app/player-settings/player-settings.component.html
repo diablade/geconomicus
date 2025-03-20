@@ -1,23 +1,24 @@
 <div class="settings w-100 h-100 p-4" [ngStyle]="getBackgroundStyle()">
+	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
 	<div class="text-center">
 		<mat-form-field appearance="fill">
-			<mat-label>Prénom ou Pseudo</mat-label>
+			<mat-label>{{ "PLAYER.NAME" | translate }}</mat-label>
 			<input matInput [disabled]="!!player.reincarnateFromId" [(ngModel)]="player.name">
 		</mat-form-field>
 	</div>
 	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
-	<p class="text-center">Votre Avatar</p>
+	<p class="text-center">{{ "PLAYER.YOUR_AVATAR" | translate }}</p>
 	<div class="d-flex mt-2 justify-content-evenly">
-		<button (click)="close()" mat-raised-button color="accent">Annuler</button>
+		<button (click)="close()" mat-raised-button color="accent">{{ "COMMON.CANCEL" | translate }}</button>
 		<button (click)="randomize()" mat-raised-button color="warn">
 			<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
 		</button>
-		<button (click)="saveAndClose()" mat-raised-button color="primary">Sauvegarder</button>
+		<button (click)="saveAndClose()" mat-raised-button color="primary">{{ "COMMON.SAVE" | translate }}</button>
 	</div>
 	<div class="items-wrap">
 		<div class="items">
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Table de jeu</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.GAME_TABLE" | translate }}</div>
 				<div class="d-flex flex-row">
 					<mat-radio-group class="" [(ngModel)]="player.boardConf">
 						<mat-radio-button value="wood">
@@ -34,12 +35,12 @@
 				</div>
 			</div>
 			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">Peau</div>
+				<div class="optionsLabel-withColor img-thumbnail">{{ "PLAYER_SETTINGS.SKIN" | translate }}</div>
 				<ngx-colors class="" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
 										[(ngModel)]="skin"></ngx-colors>
 			</div>
 			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">Cheveux</div>
+				<div class="optionsLabel-withColor img-thumbnail">{{ "PLAYER_SETTINGS.HAIR" | translate }}</div>
 				<ngx-colors [palette]="hairPalette" class="" ngx-colors-trigger (change)="changeHairColor()"
 										[(ngModel)]="hairColor"></ngx-colors>
 				<button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
@@ -51,7 +52,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Yeux</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EYES" | translate }}</div>
 				<button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
@@ -61,7 +62,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Sourcils</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EYEBROWS" | translate }}</div>
 				<button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
@@ -71,7 +72,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Bouche</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.MOUTH" | translate }}</div>
 				<button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
@@ -81,7 +82,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Lunettes</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.GLASSES" | translate }}</div>
 				<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
@@ -91,7 +92,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Oreilles</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EARRINGS" | translate }}</div>
 				<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
@@ -101,7 +102,7 @@
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">Divers</div>
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.FEATURES" | translate }}</div>
 				<button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>

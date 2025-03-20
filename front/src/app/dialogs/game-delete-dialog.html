@@ -1,9 +1,12 @@
-<h1 mat-dialog-title>T'es Sûr ?</h1>
+<h1 mat-dialog-title>{{ "DIALOG.DELETE_GAME.TITLE" | translate }}</h1>
 <div mat-dialog-content>
+	<p>{{ "DIALOG.DELETE_GAME.MESSAGE" | translate }}</p>
 	<mat-form-field appearance="fill">
 		<input matInput [(ngModel)]="value">
 	</mat-form-field>
+
 </div>
 <div mat-dialog-actions>
-	<button mat-button color="warn" [mat-dialog-close]="value" cdkFocusInitial>DELETE</button>
+	<button mat-button [mat-dialog-close]="false">{{ "COMMON.CANCEL" | translate }}</button>
+	<button mat-button [mat-dialog-close]="true" cdkFocusInitial>{{ "COMMON.DELETE" | translate }}</button>
 </div>

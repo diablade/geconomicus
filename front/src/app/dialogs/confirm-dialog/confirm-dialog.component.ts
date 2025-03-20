@@ -7,10 +7,10 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 	styleUrls: ['./confirm-dialog.component.scss']
 })
 export class ConfirmDialogComponent {
-	title = "Confirmer ?";
-	message = "Etes vous sur ?";
-	labelBtn1 = "Oui";
-	labelBtn2 = "Annuler";
+	title = "DIALOG.CONFIRM.TITLE" ;
+	message = "DIALOG.CONFIRM.MESSAGE";
+	labelBtn1 = "DIALOG.CONFIRM.BTN1";
+	labelBtn2 = "DIALOG.CONFIRM.BTN2";
 	autoClickBtn2 = false;
 	timerBtn2 = 5;
 	audio = new Audio();

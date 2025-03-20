@@ -1,22 +1,22 @@
 <div class="seizure p-4 d-flex flex-column">
-	<div class="fs-3 gecoFont mb-3">Défaut de paiement - saisir des biens</div>
+	<div class="fs-3 gecoFont mb-3">{{ "DIALOG.SEIZURE.TITLE"|translate }}</div>
 	<div class="flex-grow-1">
 		<div class="d-flex flex-row flex-wrap justify-content-between" cdkDropListGroup>
 			<div cdkDropList
-					 id="player-cards"
-					 (cdkDropListDropped)="onDrop($event)"
-					 [cdkDropListData]="playerCards"
-					 [ngStyle]="getBackgroundStyle('')"
-					 class="d-flex flex-column player-board m-2">
+			     id="player-cards"
+			     (cdkDropListDropped)="onDrop($event)"
+			     [cdkDropListData]="playerCards"
+			     [ngStyle]="getBackgroundStyle('')"
+			     class="d-flex flex-column player-board m-2">
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">
 						<div class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
-								 #svgContainer></div>
+                             #svgContainer></div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
 						<div class="fs-6 gecoFont shadowed"> {{ player.name }}</div>
-						<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
-						<button *ngIf="player.coins>0" mat-raised-button color="primary" (click)="seizeCoins()">saisir
+						<div class="sold">{{ "DIALOG.SEIZURE.SOLD"|translate: {amount: player.coins| number : '1.2-2'} }}</div>
+						<button *ngIf="player.coins>0" mat-raised-button color="primary" (click)="seizeCoins()">{{ "DIALOG.SEIZURE.SEIZE"|translate }}
 							<fa-icon [icon]="faSackDollar"></fa-icon>
 						</button>
 					</div>
@@ -24,57 +24,60 @@
 				<div class="dropZone">
 					<div cdkDrag *ngFor="let card of playerCards">
 						<app-card
-							[card]="card"
-							[typeMoney]="'debt'"
-							[idOwner]="player._id"
-							[idGame]="credit?.idGame"
-							[height]="'75px'"
-							[width]="'50px'"
-							[priceSize]="'10px'"
-							[letterSize]="'20px'"
-							[flippable]="false"
+								[card]="card"
+								[typeMoney]="'debt'"
+								[idOwner]="player._id"
+								[idGame]="credit?.idGame"
+								[height]="'75px'"
+								[width]="'50px'"
+								[priceSize]="'10px'"
+								[letterSize]="'20px'"
+								[flippable]="false"
 						></app-card>
 					</div>
 				</div>
 			</div>
 			<div cdkDropList
-					 id="bank-cards"
-					 [ngStyle]="getBackgroundStyle('bank')"
-					 (cdkDropListDropped)="onDrop($event)"
-					 [cdkDropListData]="seizureCards" class="bank-board m-2">
+			     id="bank-cards"
+			     [ngStyle]="getBackgroundStyle('bank')"
+			     (cdkDropListDropped)="onDrop($event)"
+			     [cdkDropListData]="seizureCards" class="bank-board m-2">
 				<div class="header-board d-flex flex-column">
 					<div class="ms-2 fs-5 justify-content-between d-flex gecoFont shadowed m-2">
 						<fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>
-						Banque
+						{{ "BANK.TITLE"|translate }}
 						<fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>
 					</div>
 					<div class="ms-2 flex-grow-1">
-						{{ seizureType === "decote" ? "Décote de " + seizureDecote + "% sur les cartes" : "frais en sus " + seizureCost }}
+						{{
+                            seizureType === "decote" ? ("DIALOG.SEIZURE.DECOTE"| translate: {num: seizureDecote}) :
+                            ("DIALOG.SEIZURE.FEES"|translate: {num: seizureCost})
+						}}
 					</div>
 					<div class="progress m-2" role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0"
-							 aria-valuemax="100">
-						<div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
-								 [style.width.%]="getProgressSeizure()">A saisir : {{ getSeizure() | number : '1.2-2' }}
-							/{{ getSeizureObjective() }}
+					     aria-valuemax="100">
+						<div class="progress-bar proBar overflow-visible progress-bar-striped progress-bar-animated"
+						     [style.width.%]="getProgressSeizure()">
+							{{ "DIALOG.SEIZURE.TO_SEIZE" | translate:{seized: getSeizure() | number : '1.2-2', objective: getSeizureObjective()} }}
 						</div>
 					</div>
 				</div>
 
 				<div class="dropZone">
-					<div class="dropText">drop here
+					<div class="dropText">{{ "DIALOG.SEIZURE.DROP_ZONE"|translate }}
 						<fa-icon class="ms-2 icon" [icon]="faArrowTurnDown"></fa-icon>
 					</div>
 					<div cdkDrag *ngFor="let card of seizureCards">
 						<app-card
-							[card]="card"
-							[typeMoney]="'debt'"
-							[idOwner]="player._id"
-							[idGame]="credit?.idGame"
-							[height]="'75px'"
-							[width]="'50px'"
-							[priceSize]="'10px'"
-							[letterSize]="'20px'"
-							[flippable]="false"
+								[card]="card"
+								[typeMoney]="'debt'"
+								[idOwner]="player._id"
+								[idGame]="credit?.idGame"
+								[height]="'75px'"
+								[width]="'50px'"
+								[priceSize]="'10px'"
+								[letterSize]="'20px'"
+								[flippable]="false"
 						></app-card>
 					</div>
 				</div>
@@ -84,19 +87,20 @@
 	<div class="m-2 d-flex flex-row justify-content-center">
 		<div>
 			<fa-icon class="ms-2 icon"
-							 [matTooltip]="'Si l\'objectif est remplis, 0 minute, la prison est uniquement si le joueur n\'as plus de cartes, (min 1mn), Si le manque à gagner est important, la sanction doit etre grande (max 5 mn)'"
-							 [icon]="faInfoCircle"></fa-icon>
-			Décision pour la prison : durée de
+			         [matTooltip]="'DIALOG.SEIZURE.TOOLTIP_PRISON_INFO' | translate : {max:timerPrisonMax}"
+			         [icon]="faInfoCircle"></fa-icon>
+			{{ "DIALOG.SEIZURE.PRISON_DECISION" | translate }}
 			<input class="smallInput" type="number"
-						 [disabled]="playerCards.length>0"
-						 [min]="getMinTimerPrison()"
-						 [max]="timerPrisonMax"
-						 [(ngModel)]="prisonTime"
-			> minutes
+			       [disabled]="playerCards.length>0"
+			       [min]="getMinTimerPrison()"
+			       [max]="timerPrisonMax"
+			       [(ngModel)]="prisonTime"
+			>
+			{{ "DIALOG.SEIZURE.MINUTES"|translate }}
 		</div>
 	</div>
 	<div class="d-flex flex-row justify-content-end">
-		<button mat-raised-button (click)="cancel()">annuler</button>
-		<button mat-raised-button (click)="validate()" color="accent" class="ms-2">Valider la saisie</button>
+		<button mat-raised-button (click)="cancel()">{{ "COMMON.CANCEL"|translate }}</button>
+		<button mat-raised-button (click)="validate()" color="accent" class="ms-2">{{ "DIALOG.SEIZURE.VALIDATE"|translate }}</button>
 	</div>
 </div>

@@ -15,7 +15,7 @@
 				 [ngClass]="card.color+'Color'"></div>
 		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
 						class="transform">
-			{{ getBuildText(card) }}
+			{{ getBuildText(card) | translate }}
 			<fa-icon [icon]="faGift"></fa-icon>
 		</button>
 	</div>
@@ -24,10 +24,10 @@
 			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">{{ card.letter }}</div>
 			<div class="prices d-flex flex-column">
 				<div [style.font-size]="priceSize" [style.line-height]="priceSize"
-						 class="price">{{ card.price }} {{ typeMoney === "june" ? "DU" : "€" }}
+						 class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 				</div>
 				<div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price"
-						 *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} Ğ1)
+						 *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
 				</div>
 			</div>
 		</div>

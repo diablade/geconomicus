@@ -1,43 +1,42 @@
 <div class="p-3 bank" *ngIf="game.typeMoney===C.DEBT">
-	<h1 class="d-flex justify-content-center fs-4 shadowed gecoFont">
-		<fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
-		Banque
-		<fa-icon class="ms-2 icon" [icon]="faLandMark"></fa-icon>
+	<h1 class="d-flex justify-content-center">
+		<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
+		<div class="m-2 fs-4 shadowed gecoFont">{{ "BANK.TITLE"|translate }}</div>
+		<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
 	</h1>
+	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
 	<div class="d-flex flex-row">
 		<div class="w-50">
-			<h2 class="fs-4 shadowed gecoFont">Indicateurs économique courant</h2>
+			<h2 class="fs-4 shadowed gecoFont">{{ "BANK.SUB_TITLE_IND" | translate }}</h2>
 			<div>
-				Masse Monétaire en circulation :
+				{{ "BANK.MASS_MONEY"| translate }} :
 				<mat-chip>
 					{{ game.currentMassMonetary }}
 				</mat-chip>
 			</div>
 			<div>
-				Moyenne par joueur :
+				{{ "BANK.AVG_PLAYERS" | translate }} :
 				<mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
 					<b>{{ getAverageCurrency() | number : '1.2-2' }} </b>
 					<fa-icon mat-raised-button [icon]="faCircleInfo"
-									 matTooltip="Un ratio de minimum 2 est conseillé à maintenir, en dessous une crise de ressession se produit.
-                 Pour en sortir, vous pouvez peut etre faire des offres temporaire de baisse des taux,
-                 voir quand la crise est trop sévère, faire des taux 0% par exemple.">
+									 [matTooltip]="'BANK.AVG_NOTICE' | translate">
 					</fa-icon>
 				</mat-chip>
 			</div>
 			<div>
-				Dettes courantes :
+				{{ "BANK.CURRENT_DEBT" | translate }} :
 				<mat-chip>
 					{{ getDebts() }}
 				</mat-chip>
 			</div>
 			<div>
-				Intérêts récupérés :
+				{{ "BANK.INTEREST_GAIN" | translate }} :
 				<mat-chip>
 					{{ game.bankInterestEarned }}
 				</mat-chip>
 			</div>
 			<div>
-				Valeur total des ressources saisies :
+				{{ "BANK.RESSOURCES_GAIN" | translate }} :
 				<mat-chip>
 					{{ game.bankGoodsEarned }}
 				</mat-chip>
@@ -49,7 +48,7 @@
 				<mat-slide-toggle
 					[color]="'warn'"
 					[(ngModel)]="iWantToBreakFree">
-					libérer un joueur ?
+					{{ "BANK.ASK_FREE"|translate }}
 				</mat-slide-toggle>
 			</div>
 			<div class="prison">
@@ -74,16 +73,14 @@
 		</div>
 	</div>
 	<div class="mt-5 d-flex align-items-baseline flex-wrap">
-		<h2 class="fs-4 shadowed gecoFont">Détails des crédits</h2>
-		<button class="ms-4" mat-raised-button (click)="showRules()">Notice de Jeu
-			<fa-icon [icon]="faInfoCircle"></fa-icon>
-		</button>
-		<button class="ms-4" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
-						(click)="showContract()"> Octroyer un crédit
+		<h2 class="fs-4 shadowed gecoFont">{{ "BANK.SUB_TITLE_CREDITS"|translate }}</h2>
+		<app-notice-btn class="ms-2" [stroked]="true"></app-notice-btn>
+		<button class="ms-2" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
+						(click)="showContract()"> {{ "BANK.GIVE_CREDIT"|translate }}
 			<fa-icon [icon]="faSackDollar"></fa-icon>
 		</button>
 		<div class="ms-2">
-			(Si le joueur ne voit pas son crédit, rafraîchi sa page ! 😉 )
+			{{ "BANK.SOLUTION"|translate }}
 		</div>
 	</div>
 	<div class="d-inline-flex" *ngFor="let credit of game.credits">
@@ -92,4 +89,4 @@
 								(actionBtn)="actionBtn($event,credit)"></app-credit>
 	</div>
 </div>
-<div *ngIf="game.typeMoney===C.JUNE">Pas de banque en monnaie libre ;)</div>
+<div *ngIf="game.typeMoney===C.JUNE">{{ "BANK.NO_BANK_FREE_MONEY"|translate }}</div>
