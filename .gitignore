@@ -3,3 +3,5 @@
 /logs/all.log
 /logs/error.log
 /assets offline/*
+/.qodo/history.sqlite
+/.qodo/indexes.sqlite

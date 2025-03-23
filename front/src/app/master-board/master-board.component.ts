@@ -54,8 +54,8 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	timerProgress = 100;
 
 	options = [
-		{value: C.JUNE, label: "MONEY_FREE", isDisabled: false},
-		{value: C.DEBT, label: "MONEY_DEBT", isDisabled: false},
+		{value: C.JUNE, label: "FREE_MONEY", isDisabled: false},
+		{value: C.DEBT, label: "DEBT_MONEY", isDisabled: false},
 	];
 	minutes = "00";
 	seconds = "00";
