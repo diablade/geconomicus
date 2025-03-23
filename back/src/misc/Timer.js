@@ -1,6 +1,15 @@
 import {addMilliseconds} from 'date-fns';
 
 export default class Timer {
+    /**
+     *
+     * @param uniqueId of timer
+     * @param duration in milliseconds
+     * @param interval in millisecinds
+     * @param data (payload)
+     * @param callbackAtInterval
+     * @param callbackAtEnd
+     */
     constructor(uniqueId, duration, interval, data, callbackAtInterval, callbackAtEnd) {
         this.id = uniqueId;
         this.duration = duration; // in milliseconds

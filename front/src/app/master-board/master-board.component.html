@@ -152,7 +152,7 @@
 			</button>
 			<button *ngIf="game.status===C.PLAYING" mat-raised-button color="warn" class="ms-2"
 							(click)="stopRoundForce()">
-				{{ "MASTER.STOP"|translate }}
+				{{ "MASTER.STOP_ROUND"|translate }}
 			</button>
 			<button *ngIf="game.status===C.STOP_ROUND && game.round>=game.roundMax" class="ms-2" mat-raised-button
 							color="accent"

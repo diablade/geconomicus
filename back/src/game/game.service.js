@@ -83,7 +83,9 @@ async function stopRound(idGame, gameRound) {
 }
 
 async function startRoundTimers(idGame, game, playersIdToKill) {
-	let timer = new Timer(idGame, game.roundMinutes * minute, minute, { round: game.round, typeMoney: game.typeMoney },
+	const totalTimeRound = game.roundMinutes * minute;
+	const intervalDeath = totalTimeRound/playersIdToKill.length;
+	let timer = new Timer(idGame, totalTimeRound, minute, { round: game.round, typeMoney: game.typeMoney },
 		async (timer) => {
 			if (timer.data.typeMoney === C.JUNE) {
 				await distribDU(timer.id);
@@ -100,7 +102,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
 		});
 	timer.start();
 
-	let timerDeath = new Timer(idGame + "death", game.roundMinutes * minute, game.deathPassTimer * minute,
+	let timerDeath = new Timer(idGame + "death", totalTimeRound, intervalDeath,
 		{
 			idGame,
 			autoDeath: game.autoDeath,
@@ -112,7 +114,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
 					let idPlayer = timer.data.playersIdToKill.splice(0, 1)[0];
 					await playerService.killPlayer(timer.data.idGame, idPlayer);
 				} else {
-					//todo get new ids of players reincarnated players
+					//no more players in array...
 				}
 			}
 			socket.emitTo(timer.data.idGame + C.MASTER, C.DEATH_IS_COMING, {});
@@ -228,7 +230,7 @@ export default {
 			$push: { events: startEvent }
 		}, { new: true })
 			.then(updatedGame => {
-				let idPlayers = _.shuffle(_.map(updatedGame.players, p => p._id.toString()));
+				let idPlayers = _.shuffle(updatedGame.players.map(p => p._id.toString()));
 				startRoundTimers(updatedGame._id.toString(), updatedGame, idPlayers);
 				socket.emitTo(idGame, C.START_ROUND);
 				socket.emitTo(idGame + C.EVENT, C.EVENT, startEvent);
