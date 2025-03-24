@@ -1,10 +1,11 @@
 import {Component, Inject} from '@angular/core';
-import {Game, Player} from "../../models/game";
+import {Credit, Game, Player} from "../../models/game";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {faFileSignature} from "@fortawesome/free-solid-svg-icons";
 // @ts-ignore
 import * as C from "../../../../../config/constantes";
 import * as _ from 'lodash-es';
+import {MatRadioChange} from "@angular/material/radio";
 
 
 @Component({
@@ -18,6 +19,9 @@ export class ContractDialogComponent {
 	game: Game = new Game();
 	C = C;
 	idPlayer: Player | undefined;
+	selectedCreditOption: any;
+	amount = 3;
+	interest = 1;
 
 	constructor(public dialogRef: MatDialogRef<ContractDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.game = data.game;
@@ -34,8 +38,23 @@ export class ContractDialogComponent {
 	saveUserCredit() {
 		this.dialogRef.close({
 			idPlayer: this.idPlayer,
-			amount: this.game.defaultCreditAmount,
-			interest: this.game.defaultInterestAmount
+			amount: this.amount,
+			interest: this.interest
 		});
+	}
+
+	onCreditOptionChange($event: MatRadioChange) {
+		switch($event.value){
+			case 'basic':
+				this.amount = 3;
+				this.interest = 1;
+				break;
+			case 'double':
+				this.amount = 6;
+				this.interest = 2;
+				break;
+			default:
+				break;
+		}
 	}
 }

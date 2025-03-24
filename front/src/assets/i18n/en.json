@@ -158,13 +158,15 @@
 		"CREDIT": "Credit",
 		"INTEREST": "Interest",
 		"RATE_INTEREST": "Interest rate",
-		"CAN_CANCEL_CREDIT": "Can cancel credit",
-		"DETAILS": "Details: {{amount}}€ interest, {{timer}} minutes to pay",
+		"CAN_CANCEL_CREDIT": "Settle credit for",
+		"DETAILS": "{{timer}} minutes to pay",
 		"WITH_PLAYER": "With player",
 		"SIGN": "Sign",
 		"DEFAULT_CREDIT_AMOUNT": "3 by default",
 		"DEFAULT_INTEREST_AMOUNT": "1 by default",
-		"CREDIT_SUCCESS": "Credit granted to {{player}}"
+		"CREDIT_SUCCESS": "Credit granted to {{player}}",
+		"QUICK_CREDIT": "Credit of {{amount}}, interest of {{interest}}",
+		"MANUAL_CREDIT": "Credit manually"
 	},
 	"CREDIT": {
 		"PAUSED_CREDIT": "Game paused...",

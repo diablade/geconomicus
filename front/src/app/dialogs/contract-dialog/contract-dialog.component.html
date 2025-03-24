@@ -1,23 +1,6 @@
 <div class="contract">
 	<div class="d-flex align-items-center flex-column">
 		<h2 class="fs-4 shadowed gecoFont">{{ "CONTRACT.TITLE"|translate }}</h2>
-		<mat-form-field class="input">
-			<mat-label>{{ "CONTRACT.CREDIT"|translate }}</mat-label>
-			<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_CREDIT_AMOUNT'|translate" [(ngModel)]="game.defaultCreditAmount">
-		</mat-form-field>
-		<mat-form-field class="input">
-			<mat-label>{{ "CONTRACT.INTEREST"|translate }}</mat-label>
-			<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_INTEREST_AMOUNT'|translate" [(ngModel)]="game.defaultInterestAmount">
-		</mat-form-field>
-		<div>
-			- {{ "CONTRACT.RATE_INTEREST"|translate }} :
-			<b>{{ game.defaultInterestAmount / game.defaultCreditAmount * 100 | number:'1.2-2' }} % </b>
-			<br>
-			- {{ "CONTRACT.CAN_CANCEL_CREDIT"|translate }}:
-			<b>{{ game.defaultInterestAmount + game.defaultCreditAmount }} </b> <br>
-			- <span
-			[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: game.defaultInterestAmount, timer: game.timerCredit }"></span>
-		</div>
 		<mat-form-field class="mt-2" appearance="fill">
 			<mat-label>{{ "CONTRACT.WITH_PLAYER"|translate }}</mat-label>
 			<mat-select [(value)]="idPlayer">
@@ -26,6 +9,32 @@
 				</mat-option>
 			</mat-select>
 		</mat-form-field>
+		<mat-radio-group [(ngModel)]="selectedCreditOption" (change)="onCreditOptionChange($event)">
+			<mat-radio-button value="basic">{{ "CONTRACT.QUICK_CREDIT"|translate : {amount:game.defaultCreditAmount, interest:game.defaultInterestAmount} }}</mat-radio-button>
+			<mat-radio-button value="double">{{ "CONTRACT.QUICK_CREDIT"|translate : {amount:game.defaultCreditAmount * 2, interest:game.defaultInterestAmount * 2} }}</mat-radio-button>
+			<mat-radio-button value="manual">{{ "CONTRACT.MANUAL_CREDIT"|translate }}</mat-radio-button>
+		</mat-radio-group>
+		<div *ngIf="selectedCreditOption === 'manual'">
+			<mat-form-field class="input">
+				<mat-label>{{ "CONTRACT.CREDIT"|translate }}</mat-label>
+				<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_CREDIT_AMOUNT'|translate"
+							 [(ngModel)]="amount">
+			</mat-form-field>
+			<mat-form-field class="input">
+				<mat-label>{{ "CONTRACT.INTEREST"|translate }}</mat-label>
+				<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_INTEREST_AMOUNT'|translate"
+							 [(ngModel)]="interest">
+			</mat-form-field>
+		</div>
+		<div>
+			- {{ "CONTRACT.RATE_INTEREST"|translate }} :
+			<b>{{ interest / amount * 100 | number:'1.2-2' }} % </b>
+			<br>
+			- {{ "CONTRACT.CAN_CANCEL_CREDIT"|translate }}:
+			<b>{{ interest + amount }} </b> <br>
+			- <span
+			[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: game.timerCredit }"></span>
+		</div>
 		<div>
 			<button class="m-2" mat-raised-button
 							(click)="cancel()">{{ "COMMON.CANCEL"|translate }}
