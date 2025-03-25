@@ -22,12 +22,14 @@
 	width: 160px;
 	text-align: center;
 	margin-right: 10px;
-		&-withColor{
-			width: 130px;
-			text-align: center;
-			margin-right: 10px;
-		}
-	&Number{
+
+	&-withColor {
+		width: 130px;
+		text-align: center;
+		margin-right: 10px;
+	}
+
+	&Number {
 		width: 70px;
 		text-align: center;
 	}
@@ -42,7 +44,8 @@
 	align-items: flex-start;
 	flex-wrap: nowrap;
 	width: 400px;
-	&-wrap{
+
+	&-wrap {
 		display: flex;
 		justify-content: center;
 	}
@@ -54,4 +57,8 @@
 	align-items: center;
 	//margin-bottom: 6px;
 	flex-wrap: nowrap;
+}
+
+:host ::ng-deep .mdc-radio {
+	display: none !important;
 }
