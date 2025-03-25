@@ -1,10 +1,10 @@
 {
   "name": "Geconomicus",
-  "version": "1.0.2",
+  "version": "1.3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-		"start-ext": "ng serve --host 0.0.0.0 --disable-host-check",
+    "start-ext": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "build-qa": "ng build --progress=true --base-href / --configuration=qa",
