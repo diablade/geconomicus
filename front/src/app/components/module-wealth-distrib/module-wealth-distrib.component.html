@@ -1,0 +1,68 @@
+<div class="container overflow-auto">
+	<h1>Visualisation de Distribution de Richesse</h1>
+
+	<div class="controls">
+		<div class="control-group">
+			<label for="paramP">Paramètre P (inégalité):</label>
+			<input type="range" id="paramP" [value]="paramP" min="0" max="3" step="0.1" (input)="onParamPChange($event)">
+			<div class="value-display">
+				<span>0</span>
+				<span>{{ paramP.toFixed(1) }}</span>
+				<span>3</span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label for="total">Montant Total:</label>
+			<input type="range" id="total" [value]="total" min="100" max="10000" step="100" (input)="onTotalChange($event)">
+			<div class="value-display">
+				<span>100</span>
+				<span>{{ total }}</span>
+				<span>10000</span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label for="numPlayers">Nombre de Joueurs:</label>
+			<input type="range" id="numPlayers" [value]="numPlayers" min="2" max="50" step="1" (input)="onNumPlayersChange($event)">
+			<div class="value-display">
+				<span>2</span>
+				<span>{{ numPlayers }}</span>
+				<span>50</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="toggle-view">
+		<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">Graphique en Barres</button>
+		<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">Courbe</button>
+		<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">Camembert</button>
+	</div>
+
+	<div class="chart-container">
+		<canvas #distributionCanvas></canvas>
+	</div>
+
+	<div class="results">
+		<h2>Résultats de la Distribution</h2>
+		<div id="stats">
+			<p>Indice de Gini: <span>{{ giniIndex.toFixed(4) }}</span></p>
+			<p>Ratio haut/bas: <span>{{ ratioTopBottom.toFixed(2) }}</span></p>
+		</div>
+		<table>
+			<thead>
+			<tr>
+				<th>Joueur</th>
+				<th>Montant</th>
+				<th>% du Total</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor="let row of tableData">
+				<td>{{ row.player }}</td>
+				<td>{{ row.amount.toFixed(2) }}</td>
+				<td>{{ row.percentage.toFixed(2) }}%</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

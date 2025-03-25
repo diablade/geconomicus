@@ -61,15 +61,21 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
-import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
-import { MasterAdminComponent } from './master-admin/master-admin.component';
+import {ShortcodeDialogComponent} from './dialogs/shortcode-dialog/shortcode-dialog.component';
+import {MasterAdminComponent} from './master-admin/master-admin.component';
 import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
-import { NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
-import { I18nService } from './services/i18n.service';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {LanguageBtnComponent} from './components/language-btn/language-btn.component';
+import {NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
+import {I18nService} from './services/i18n.service';
+import {ModuleWealthDistribComponent} from './components/module-wealth-distrib/module-wealth-distrib.component';
+import {ModuleGalileComponent} from './components/module-galile/module-galile.component';
+import {PedagoDialogComponent} from './dialogs/pedago-dialog/pedago-dialog.component';
+import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
+import {MatCardModule} from "@angular/material/card";
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
+
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	return new TranslateHttpLoader(http);
@@ -108,8 +114,12 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		ShortcodeDialogComponent,
 		GameDeleteDialog,
 		MasterAdminComponent,
-  	LanguageBtnComponent,
-   NoticeBtnComponent,
+		LanguageBtnComponent,
+		NoticeBtnComponent,
+		ModuleWealthDistribComponent,
+		ModuleGalileComponent,
+		PedagoDialogComponent,
+		PedagoBtnComponent,
 	],
 	imports: [
 		HttpClientModule,
@@ -155,6 +165,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 			// or after 30 seconds (whichever comes first).
 			registrationStrategy: 'registerWhenStable:30000'
 		}),
+		MatCardModule,
 	],
 	providers: [
 		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
