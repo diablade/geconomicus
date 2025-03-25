@@ -6,6 +6,7 @@ import {faCamera} from "@fortawesome/free-solid-svg-icons";
 import {GameInfosDialog, JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+import {I18nService} from "../services/i18n.service";
 
 @Component({
 	selector: 'app-home',
@@ -23,7 +24,7 @@ export class HomeComponent implements OnInit {
 		audio.play();
 	}
 
-	constructor(private router: Router, private platform: Platform, private backService: BackService, public dialog: MatDialog) {
+	constructor(private router: Router, private i18nService: I18nService, private platform: Platform, private backService: BackService, public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -56,10 +57,12 @@ export class HomeComponent implements OnInit {
 	}
 
 	openKeyPub() {
+		const gunyKeyPub = "4JfewkSqRFpzdJsKnxrSBLgQcjBaopVs9ct4Qc32B8kf:jrw"
+		const keyText = this.i18nService.instant("PUBLIC_KEY");
 		this.dialog.open(JoinQrDialog, {
 			data: {
-				url: "1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
-				text: "Clef public: 1RcFajMmNL5m4Gfx2ketJwsssuvYUfFSkRwXu6qoNnf:8Eo",
+				url: gunyKeyPub,
+				text: keyText + gunyKeyPub,
 				textSize: "10px"
 			},
 		});

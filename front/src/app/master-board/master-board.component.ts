@@ -274,7 +274,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	reJoin(idPlayer: string, username: string): void {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
-				username,
+				text:username,
 				url: this.getUserUrl(idPlayer)
 			},
 		});
@@ -290,7 +290,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
-				username,
+				text:username,
 				url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'
 			},
 		});

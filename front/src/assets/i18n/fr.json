@@ -6,6 +6,7 @@
     "DEBT_MONEY": "Monnaie dette",
     "GAME_NOTICE": "Notice de Jeu",
     "BY_DEFAULT": "par défaut",
+		"PUBLIC_KEY": "Clef public: ",
     "VALUES_BY_DEFAULT": "Valeurs par défaut",
     "CANCEL": "Annuler",
     "OK": "OK",

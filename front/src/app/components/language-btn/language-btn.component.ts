@@ -19,9 +19,12 @@ export class LanguageBtnComponent implements OnInit {
 		{flag: "🇮🇹", language: "Italiano", lang: "it"},
 		{flag: "🇬🇧", language: "English", lang: "en"},
 		{flag: "🇷🇸", language: "Srpski", lang: "sr"},
-		{flag: "🇯🇵", language: "日本語", lang: "ja"}
+		{flag: "🇯🇵", language: "日本語", lang: "ja"},
+		{flag: "🇩🇪", language: "Deutsch", lang: "de"},
+		{flag: "🇷🇴", language: "Romanian", lang: "ro"}
 	];
-		// {flag: "", language: "Roumanian", lang: "ro"}
+
+	supportedLanguages: Language[]=[];
 
 	selectedLanguage: Language = this.languages[0];
 	@Input() short = false;
@@ -31,6 +34,8 @@ export class LanguageBtnComponent implements OnInit {
 
 	ngOnInit() {
 		const currentLang = this.i18nService.getCurrentLang();
+		const allowedLangs = this.i18nService.getSupportedLanguages();
+		this.supportedLanguages = this.languages.filter(lang => allowedLangs.some(l=>lang.lang === l));
 		this.selectedLanguage = this.languages.find(l => l.lang === currentLang) || this.languages[0];
 	}
 
@@ -39,12 +44,4 @@ export class LanguageBtnComponent implements OnInit {
 		this.i18nService.use(language.lang);
 	}
 
-	getCurrentLang(): string {
-		const currentLang = this.i18nService.getCurrentLang();
-		return currentLang;
-	}
-
-	changeLang(language: any) {
-		this.i18nService.use(language.lang);
-	}
 }

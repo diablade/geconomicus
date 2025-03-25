@@ -6,7 +6,7 @@
 		{{ selectedLanguage.flag }} {{selectedLanguage.language}}
 	</button>
 	<mat-menu #menuLanguages="matMenu">
-		<button *ngFor="let lang of languages" mat-menu-item (click)="switchLanguage(lang)">
+		<button *ngFor="let lang of supportedLanguages" mat-menu-item (click)="switchLanguage(lang)">
 			{{ lang.flag }}
 			<span>{{ lang.language }}</span>
 		</button>
