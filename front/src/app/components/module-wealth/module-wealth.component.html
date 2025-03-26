@@ -1,0 +1,90 @@
+<div class="geco-simulation-container">
+  <div class="container">
+    <h1>Distribution de Richesse</h1>
+
+    <div class="description">
+      <p>Ce module permet de visualiser comment la richesse peut être distribuée parmi différents joueurs. Ajustez le paramètre P pour modifier le niveau d'inégalité, le montant total et le nombre de joueurs pour observer les différents scénarios possibles.</p>
+      <p>Plus le paramètre P est élevé, plus la distribution de richesse est inégale. C'est comme distribuer des bonbons entre amis, mais de façon inégale.</p>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <h3>Paramètres de distribution</h3>
+
+        <div class="slider-container">
+          <label for="paramP">Paramètre P (inégalité):</label>
+          <input type="range" id="paramP" min="0" max="3" step="0.1" [(ngModel)]="paramP" (input)="updateChart()">
+          <div class="value-display">
+            <span>0</span>
+            <span class="slider-value">{{paramP.toFixed(1)}}</span>
+            <span>3</span>
+          </div>
+        </div>
+
+        <div class="slider-container">
+          <label for="total">Montant Total:</label>
+          <input type="range" id="total" min="100" max="10000" step="100" [(ngModel)]="total" (input)="updateChart()">
+          <div class="value-display">
+            <span>100</span>
+            <span class="slider-value">{{total}}</span>
+            <span>10000</span>
+          </div>
+        </div>
+
+        <div class="slider-container">
+          <label for="numPlayers">Nombre de Joueurs:</label>
+          <input type="range" id="numPlayers" min="2" max="50" step="1" [(ngModel)]="numPlayers" (input)="updateChart()">
+          <div class="value-display">
+            <span>2</span>
+            <span class="slider-value">{{numPlayers}}</span>
+            <span>50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toggle-view">
+      <button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">Graphique en Barres</button>
+      <button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">Courbe</button>
+      <button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">Camembert</button>
+    </div>
+
+    <div class="chart-container">
+      <canvas #distributionChart></canvas>
+    </div>
+
+    <div class="description">
+      <p>Ce graphique montre comment l'argent est réparti entre les joueurs. Chaque joueur reçoit un montant différent selon sa position. Comme au jeu de la chaise musicale, le premier a plus que le dernier!</p>
+    </div>
+
+    <div>
+      <h3>Statistiques</h3>
+      <p><strong>Indice de Gini:</strong> {{giniIndex.toFixed(4)}} (mesure de l'inégalité, 0 = parfaite égalité, 1 = inégalité maximale)</p>
+      <p><strong>Ratio entre le plus riche et le plus pauvre:</strong> {{ratioTopBottom.toFixed(2)}}</p>
+    </div>
+
+    <div>
+      <h3>Résultats de la Distribution</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Joueur</th>
+            <th>Montant</th>
+            <th>% du Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of tableData">
+            <td>{{row.player}}</td>
+            <td>{{row.amount}}</td>
+            <td>{{row.percentage}}%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer-link">
+      <p>Pour en savoir plus, visitez <a href="https://geconomicus.fr" target="_blank">GEconomicus.fr</a></p>
+    </div>
+  </div>
+</div>

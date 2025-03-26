@@ -1,0 +1,153 @@
+<div class="geco-simulation-container">
+  <div class="container">
+    <h1>Simulation du Module Galilé (Monnaie Libre)</h1>
+
+    <div class="description">
+      <p>Cette simulation montre comment la "Monnaie Libre" fonctionne sur plusieurs années. Chaque joueur reçoit le même "Dividende Universel" régulièrement, peu importe combien d'argent ils ont déjà.</p>
+      <p>C'est comme si chaque jour tous les enfants recevaient le même nombre de bonbons, ce qui permet à ceux qui en ont moins de rattraper petit à petit ceux qui en ont beaucoup.</p>
+    </div>
+
+    <div class="settings-container">
+      <div class="control-section">
+        <h3>Paramètres de simulation</h3>
+        <div class="parameter">
+          <label for="growthRate">Croissance monétaire : {{ growthRate }}%</label>
+          <input type="range" id="growthRate" min="1" max="20" [(ngModel)]="growthRate" (change)="runSimulation()">
+        </div>
+        <div class="parameter">
+          <label for="years">Années à simuler : {{ years }}</label>
+          <input type="range" id="years" min="10" max="100" [(ngModel)]="years" (change)="runSimulation()">
+        </div>
+        <div class="parameter">
+          <label for="numPlayers">Nombre de joueurs initial : {{ numPlayers }}</label>
+          <input type="range" id="numPlayers" min="2" max="20" [(ngModel)]="numPlayers" (change)="updateBaseParameters()">
+        </div>
+        <div class="parameter">
+          <label for="baseAmount">Montant de base (plus petit) : {{ baseAmount }}</label>
+          <input type="range" id="baseAmount" min="1" max="1000" [(ngModel)]="baseAmount" (change)="updateBaseParameters()">
+        </div>
+        <div class="parameter">
+          <label for="increment">
+            <span *ngIf="gapType === 'linear'">Incrément entre joueurs : {{ increment }}</span>
+            <span *ngIf="gapType === 'exponential'">Ratio d'augmentation : {{ increment }}%</span>
+          </label>
+          <input type="range" id="increment"
+                 [min]="gapType === 'linear' ? 1 : 1"
+                 [max]="gapType === 'linear' ? 5000 : 100"
+                 [(ngModel)]="increment"
+                 (change)="updateBaseParameters()">
+        </div>
+        <div class="radio-group">
+          <div>Type d'écart initial :</div>
+          <div>
+            <input type="radio" id="linearGap" name="gapType" value="linear" [(ngModel)]="gapType" (change)="updateBaseParameters()">
+            <label for="linearGap">Linéaire</label>
+          </div>
+          <div>
+            <input type="radio" id="exponentialGap" name="gapType" value="exponential" [(ngModel)]="gapType" (change)="updateBaseParameters()">
+            <label for="exponentialGap">Exponentiel</label>
+          </div>
+        </div>
+        <button class="reset-button" (click)="resetSimulation()">Réinitialiser</button>
+      </div>
+
+      <div class="player-management">
+        <h3>Gestion des joueurs</h3>
+
+        <!-- Add new player section -->
+        <div class="control-section">
+          <h4>Ajouter un nouveau joueur</h4>
+          <div class="parameter">
+            <label for="newPlayerYear">Année d'entrée : {{ newPlayerYear }}</label>
+            <input type="range" id="newPlayerYear" min="0" [max]="years" [(ngModel)]="newPlayerYear">
+          </div>
+          <div class="parameter">
+            <label for="newPlayerAmount">Montant initial : {{ newPlayerAmount }}</label>
+            <input type="range" id="newPlayerAmount" min="1" max="10000" [(ngModel)]="newPlayerAmount">
+          </div>
+          <button class="add-button" (click)="addNewPlayer()">Ajouter joueur</button>
+        </div>
+
+        <!-- Manage existing players section -->
+        <div class="control-section">
+          <h4>Gérer les joueurs existants</h4>
+          <div class="select-container">
+            <label for="playerSelect">Sélectionner un joueur:</label>
+            <select id="playerSelect" [(ngModel)]="selectedPlayerId" (change)="selectPlayer(selectedPlayerId!)">
+              <option [ngValue]="null">Sélectionner...</option>
+              <option *ngFor="let player of players" [ngValue]="player.id">
+                {{ player.name }} {{ player.stopYear === null ? '(DU actif)' : '(DU arrêté)' }}
+              </option>
+            </select>
+          </div>
+
+          <div *ngIf="selectedPlayerId !== null">
+            <div class="du-status" *ngIf="getSelectedPlayer() && getSelectedPlayer()!.stopYear === null">
+              <span class="status-active">✓ Ce joueur reçoit actuellement le D.U.</span>
+            </div>
+            <div class="du-status" *ngIf="getSelectedPlayer() && getSelectedPlayer()!.stopYear !== null">
+              <span class="status-inactive">✗ Ce joueur ne reçoit plus le D.U. depuis l'année {{ getSelectedPlayer()!.stopYear }}</span>
+            </div>
+
+            <div class="du-controls">
+              <!-- Only show Stop DU when player is receiving DU -->
+              <div *ngIf="getSelectedPlayer() && getSelectedPlayer()!.stopYear === null" class="parameter">
+                <label for="stopYear">Année d'arrêt du D.U. : {{ stopYear }}</label>
+                <input type="range" id="stopYear" min="0" [max]="years" [(ngModel)]="stopYear">
+                <button class="stop-button" (click)="stopPlayerDU()">Arrêter le D.U.</button>
+              </div>
+
+              <!-- Only show Resume DU when player has stopped receiving DU -->
+              <div *ngIf="getSelectedPlayer() && getSelectedPlayer()!.stopYear !== null" class="button-group">
+                <button class="resume-button" (click)="resumePlayerDU()">Réactiver le D.U.</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulation displays -->
+    <div class="chart-container">
+      <canvas #quantitativeChart></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas #relativeChart></canvas>
+    </div>
+
+    <!-- Player table -->
+    <div class="table-container">
+      <h3>Résultats de la simulation</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Joueur</th>
+            <th>Montant initial</th>
+            <th>Montant final</th>
+            <th>% initial</th>
+            <th>% final</th>
+            <th>Année d'entrée</th>
+            <th>Année d'arrêt du D.U.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of tableData"
+              [class.selected]="isPlayerSelected(data.id)"
+              (click)="selectPlayer(data.id)">
+            <td>{{ data.player }}</td>
+            <td>{{ data.initialAmount }}</td>
+            <td>{{ data.finalAmount }}</td>
+            <td>{{ data.initialPercentage }}%</td>
+            <td>{{ data.finalPercentage }}%</td>
+            <td>{{ data.startYear }}</td>
+            <td>{{ data.stopYear }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer-link">
+      <p>Pour en savoir plus, visitez <a href="https://geconomicus.fr" target="_blank">GEconomicus.fr</a></p>
+    </div>
+  </div>
+</div>

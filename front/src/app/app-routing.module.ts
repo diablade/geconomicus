@@ -10,6 +10,8 @@ import {HistoryGamesComponent} from "./history-games/history-games.component";
 import {SurveyComponent} from "./survey/survey.component";
 import {BankBoardComponent} from "./bank-board/bank-board.component";
 import {MasterAdminComponent} from "./master-admin/master-admin.component";
+import {ModuleWealthComponent} from "./components/module-wealth/module-wealth.component";
+import {ModuleGalileComponent} from "./components/module-galile/module-galile.component";
 
 const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -25,6 +27,8 @@ const routes: Routes = [
     {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},
     {path: 'game/:idGame/player/:idPlayer/survey', component: SurveyComponent},
     {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
+    {path: 'module-wealth', component: ModuleWealthComponent},
+    {path: 'module-galile', component: ModuleGalileComponent},
     {path: '**', redirectTo: '/'},
 ];
 

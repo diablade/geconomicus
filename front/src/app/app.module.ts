@@ -68,6 +68,9 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
 import { NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
 import { I18nService } from './services/i18n.service';
+import { ModuleWealthComponent } from './components/module-wealth/module-wealth.component';
+import { ModuleGalileComponent } from './components/module-galile/module-galile.component';
+
 // Necessary to solve the problem of losing internet connection
 LOAD_WASM().subscribe();
 // required for AOT compilation
@@ -108,8 +111,10 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		ShortcodeDialogComponent,
 		GameDeleteDialog,
 		MasterAdminComponent,
-  	LanguageBtnComponent,
-   NoticeBtnComponent,
+		LanguageBtnComponent,
+		NoticeBtnComponent,
+		ModuleWealthComponent,
+		ModuleGalileComponent,
 	],
 	imports: [
 		HttpClientModule,

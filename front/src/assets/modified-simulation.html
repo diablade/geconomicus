@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation du Module Galilé (Monnaie Libre)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+        .control-group h3 {
+            margin-top: 0;
+            color: #3498db;
+        }
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .slider-value {
+            display: inline-block;
+            width: 70px;
+            text-align: right;
+            font-weight: bold;
+            color: #3498db;
+        }
+        button {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .charts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .chart-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            height: 400px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .info-panel {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .radio-container {
+            margin-top: 15px;
+        }
+        .radio-option {
+            margin-right: 15px;
+            display: inline-block;
+        }
+        .radio-option input {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulation du Module Galilé (Monnaie Libre)</h1>
+        
+        <div class="info-panel">
+            <p>Cette simulation s'actualise automatiquement à chaque changement de paramètre. Les graphiques s'ajustent dynamiquement aux résultats.</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h3>Paramètres de base</h3>
+                
+                <div class="slider-container">
+                    <label for="growthRate">Taux de croissance annuel: <span id="growthRateValue" class="slider-value">10.0</span>%</label>
+                    <input type="range" id="growthRate" min="1" max="50" step="0.1" value="10">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="numPlayers">Nombre de joueurs: <span id="numPlayersValue" class="slider-value">5</span></label>
+                    <input type="range" id="numPlayers" min="2" max="100" step="1" value="5">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="baseAmount">Montant de base du joueur 1: <span id="baseAmountValue" class="slider-value">100</span></label>
+                    <input type="range" id="baseAmount" min="1" max="1000" step="1" value="100">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="increment">Incrément entre joueurs: <span id="incrementValue" class="slider-value">10</span></label>
+                    <input type="range" id="increment" min="1" max="10000" step="1" value="10">
+                </div>
+                
+                <div class="radio-container">
+                    <label>Type d'écart entre joueurs:</label>
+                    <div class="radio-option">
+                        <input type="radio" id="linearGap" name="gapType" value="linear" checked>
+                        <label for="linearGap">Linéaire</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="logGap" name="gapType" value="logarithmic">
+                        <label for="logGap">Logarithmique</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Contrôles de simulation</h3>
+                
+                <div class="slider-container">
+                    <label for="years">Période de simulation: <span id="yearsValue" class="slider-value">80</span> ans</label>
+                    <input type="range" id="years" min="1" max="100" step="1" value="80">
+                </div>
+                
+                <button id="resetBtn">Réinitialiser</button>
+            </div>
+        </div>
+        
+        <div class="charts">
+            <div class="chart-container">
+                <canvas id="quantitativeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="relativeChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <h3>Données des joueurs</h3>
+            <table id="playerTable">
+                <thead>
+                    <tr>
+                        <th>Joueur</th>
+                        <th>Montant initial</th>
+                        <th>Montant final</th>
+                        <th>Proportion initiale (%)</th>
+                        <th>Proportion finale (%)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Déclaration des variables globales
+        let quantitativeChart, relativeChart;
+        let simulationData = [];
+        let simulationRunning = false;
+        let simulationTimeout = null;
+        
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configurer les sliders pour mettre à jour leurs valeurs affichées
+            setupSliders();
+            
+            // Attacher l'événement au bouton de réinitialisation
+            document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+            
+            // Initialiser les graphiques vides
+            initCharts();
+            
+            // Configurer les boutons radio
+            setupRadioButtons();
+            
+            // Lancer la simulation initiale
+            runSimulation();
+        });
+        
+        // Configurer les boutons radio
+        function setupRadioButtons() {
+            const radioButtons = document.querySelectorAll('input[name="gapType"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    runSimulation();
+                });
+            });
+        }
+        
+        // Configurer les sliders pour mettre à jour leurs valeurs affichées
+        function setupSliders() {
+            const sliders = ['growthRate', 'numPlayers', 'baseAmount', 'increment', 'years'];
+            
+            sliders.forEach(slider => {
+                const sliderElement = document.getElementById(slider);
+                const valueElement = document.getElementById(`${slider}Value`);
+                
+                // Afficher la valeur initiale
+                updateSliderValue(slider);
+                
+                // Mettre à jour la valeur affichée et lancer la simulation lorsque le slider est déplacé
+                sliderElement.addEventListener('input', () => {
+                    updateSliderValue(slider);
+                    
+                    // Planifier une simulation différée pour éviter des calculs trop fréquents
+                    if (simulationTimeout) {
+                        clearTimeout(simulationTimeout);
+                    }
+                    simulationTimeout = setTimeout(() => {
+                        runSimulation();
+                    }, 100);
+                });
+            });
+        }
+        
+        // Mettre à jour la valeur affichée d'un slider
+        function updateSliderValue(sliderId) {
+            const sliderElement = document.getElementById(sliderId);
+            const valueElement = document.getElementById(`${sliderId}Value`);
+            
+            if (sliderId === 'growthRate') {
+                valueElement.textContent = parseFloat(sliderElement.value).toFixed(1);
+            } else {
+                valueElement.textContent = sliderElement.value;
+            }
+        }
+        
+        // Initialisation des graphiques
+        function initCharts() {
+            const quantitativeCtx = document.getElementById('quantitativeChart').getContext('2d');
+            const relativeCtx = document.getElementById('relativeChart').getContext('2d');
+            
+            // Configuration du graphique quantitatif (logarithmique)
+            quantitativeChart = new Chart(quantitativeCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Évolution quantitative de la monnaie par joueur (échelle logarithmique)',
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Années'
+                            }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Montant de monnaie (log)'
+                            },
+                            min: 1
+                        }
+                    }
+                }
+            });
+            
+            // Configuration du graphique relatif (en pourcentage)
+            relativeChart = new Chart(relativeCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Évolution de la proportion relative de monnaie par joueur',
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Années'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Pourcentage (%)'
+                            },
+                            beginAtZero: true,
+                            min: 0,
+                            // Nous n'utilisons plus max: 100 fixe pour permettre l'ajustement automatique
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Fonction principale de simulation
+        function runSimulation() {
+            // Éviter de lancer plusieurs simulations en même temps
+            if (simulationRunning) return;
+            simulationRunning = true;
+            
+            try {
+                // Récupération des paramètres
+                const growthRate = parseFloat(document.getElementById('growthRate').value) / 100;
+                const numPlayers = parseInt(document.getElementById('numPlayers').value);
+                const baseAmount = parseFloat(document.getElementById('baseAmount').value);
+                const increment = parseFloat(document.getElementById('increment').value);
+                const years = parseInt(document.getElementById('years').value);
+                const gapType = document.querySelector('input[name="gapType"]:checked').value;
+                
+                // Initialisation des montants pour chaque joueur (distribution selon le type d'écart)
+                let playerAmounts = [];
+                for (let i = 0; i < numPlayers; i++) {
+                    if (gapType === 'linear') {
+                        // Écart linéaire (comme avant)
+                        playerAmounts.push(baseAmount + i * increment);
+                    } else {
+                        // Écart logarithmique
+                        const factor = Math.pow(1 + increment/100, i);
+                        playerAmounts.push(baseAmount * factor);
+                    }
+                }
+                
+                // Réinitialiser les données de simulation
+                simulationData = [];
+                
+                // Effectuer la simulation sur la période spécifiée
+                for (let year = 0; year <= years; year++) {
+                    // Calculer la somme totale pour cette année
+                    const totalAmount = playerAmounts.reduce((sum, amount) => sum + amount, 0);
+                    
+                    // Calculer les pourcentages pour chaque joueur
+                    const percentages = playerAmounts.map(amount => (amount / totalAmount) * 100);
+                    
+                    // Stocker les données pour cette année
+                    simulationData.push({
+                        year,
+                        amounts: [...playerAmounts],
+                        percentages: [...percentages],
+                        totalAmount
+                    });
+                    
+                    // Appliquer le Dividende Universel (DU) pour l'année suivante
+                    if (year < years) {
+                        const growthAmount = totalAmount * growthRate;
+                        // Distribution égale du DU à tous les joueurs
+                        const duPerPlayer = growthAmount / numPlayers;
+                        
+                        // Mettre à jour les montants de chaque joueur
+                        playerAmounts = playerAmounts.map(amount => amount + duPerPlayer);
+                    }
+                }
+                
+                // Mettre à jour les graphiques avec les nouvelles données
+                updateCharts();
+                
+                // Mettre à jour le tableau des joueurs
+                updatePlayerTable();
+            } finally {
+                simulationRunning = false;
+            }
+        }
+        
+        // Mettre à jour les graphiques avec les données de la simulation
+        function updateCharts() {
+            // Préparer les données pour les graphiques
+            const years = simulationData.map(data => data.year);
+            
+            // Réinitialiser les graphiques
+            quantitativeChart.data.labels = years;
+            relativeChart.data.labels = years;
+            
+            quantitativeChart.data.datasets = [];
+            relativeChart.data.datasets = [];
+            
+            // Nombre de joueurs
+            const numPlayers = simulationData[0].amounts.length;
+            
+            // Couleurs pour les joueurs
+            const colors = generateColors(numPlayers);
+            
+            // Ajouter des données pour chaque joueur
+            for (let i = 0; i < numPlayers; i++) {
+                // Données quantitatives
+                quantitativeChart.data.datasets.push({
+                    label: `Joueur ${i + 1}`,
+                    data: simulationData.map(data => data.amounts[i]),
+                    borderColor: colors[i],
+                    backgroundColor: colors[i] + '33',
+                    tension: 0.3,
+                    pointRadius: 1
+                });
+                
+                // Données relatives (pourcentages)
+                relativeChart.data.datasets.push({
+                    label: `Joueur ${i + 1}`,
+                    data: simulationData.map(data => data.percentages[i]),
+                    borderColor: colors[i],
+                    backgroundColor: colors[i] + '33',
+                    tension: 0.3,
+                    pointRadius: 1
+                });
+            }
+            
+            // Ajouter le total au graphique quantitatif
+            quantitativeChart.data.datasets.push({
+                label: 'Total',
+                data: simulationData.map(data => data.totalAmount),
+                borderColor: '#000000',
+                backgroundColor: '#00000033',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                tension: 0.3,
+                pointRadius: 0
+            });
+            
+            // Ajuster l'échelle des graphiques automatiquement
+            updateScales();
+            
+            // Mettre à jour les graphiques
+            quantitativeChart.update();
+            relativeChart.update();
+        }
+        
+        // Ajuster les échelles des graphiques en fonction des données
+        function updateScales() {
+            if (simulationData.length === 0) return;
+            
+            // Trouver les valeurs min et max pour le graphique quantitatif
+            let minAmount = Infinity;
+            let maxAmount = -Infinity;
+            
+            simulationData.forEach(data => {
+                data.amounts.forEach(amount => {
+                    if (amount > 0 && amount < minAmount) minAmount = amount;
+                    if (amount > maxAmount) maxAmount = amount;
+                });
+                if (data.totalAmount > maxAmount) maxAmount = data.totalAmount;
+            });
+            
+            // Ajuster l'échelle logarithmique
+            if (minAmount !== Infinity && maxAmount !== -Infinity) {
+                // Arrondir le min à la dizaine inférieure pour éviter les valeurs trop proches de 0
+                minAmount = Math.max(1, Math.floor(minAmount / 10) * 10);
+                // Arrondir le max à la centaine supérieure pour avoir une marge
+                maxAmount = Math.ceil(maxAmount / 100) * 100;
+                
+                // Mettre à jour l'échelle logarithmique
+                quantitativeChart.options.scales.y.min = minAmount;
+                
+                // Pas besoin de définir un max pour l'échelle logarithmique, 
+                // elle s'ajustera automatiquement
+            }
+            
+            // Trouver les valeurs min et max pour les pourcentages (graphique relatif)
+            let minPercentage = Infinity;
+            let maxPercentage = -Infinity;
+            
+            simulationData.forEach(data => {
+                data.percentages.forEach(percentage => {
+                    if (percentage < minPercentage) minPercentage = percentage;
+                    if (percentage > maxPercentage) maxPercentage = percentage;
+                });
+            });
+            
+            // Ajuster l'échelle du graphique relatif
+            if (minPercentage !== Infinity && maxPercentage !== -Infinity) {
+                // Arrondir le min à 0 (pour commencer à 0)
+                relativeChart.options.scales.y.min = 0;
+                
+                // Arrondir le max au 5% supérieur pour avoir une marge
+                const adjustedMax = Math.ceil(maxPercentage / 5) * 5;
+                relativeChart.options.scales.y.max = adjustedMax;
+                
+                // Si le maximum dépasse 100%, ajuster en conséquence
+                if (adjustedMax > 100) {
+                    relativeChart.options.scales.y.max = adjustedMax;
+                }
+            }
+        }
+        
+        // Mettre à jour le tableau des joueurs
+        function updatePlayerTable() {
+            if (simulationData.length === 0) return;
+            
+            const tableBody = document.querySelector('#playerTable tbody');
+            tableBody.innerHTML = '';
+            
+            const initialData = simulationData[0];
+            const finalData = simulationData[simulationData.length - 1];
+            const numPlayers = initialData.amounts.length;
+            
+            // Limiter l'affichage à un maximum de 20 joueurs dans le tableau pour la performance
+            const displayLimit = Math.min(numPlayers, 20);
+            
+            for (let i = 0; i < displayLimit; i++) {
+                const row = document.createElement('tr');
+                
+                const initialAmount = initialData.amounts[i];
+                const finalAmount = finalData.amounts[i];
+                const initialPercentage = initialData.percentages[i];
+                const finalPercentage = finalData.percentages[i];
+                
+                row.innerHTML = `
+                    <td>Joueur ${i + 1}</td>
+                    <td>${initialAmount.toFixed(2)}</td>
+                    <td>${finalAmount.toFixed(2)}</td>
+                    <td>${initialPercentage.toFixed(2)}%</td>
+                    <td>${finalPercentage.toFixed(2)}%</td>
+                `;
+                
+                tableBody.appendChild(row);
+            }
+            
+            // Ajouter une indication si tous les joueurs ne sont pas affichés
+            if (numPlayers > displayLimit) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" style="text-align: center; font-style: italic;">
+                        ... ${numPlayers - displayLimit} joueurs supplémentaires non affichés ...
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+        
+        // Réinitialiser la simulation
+        function resetSimulation() {
+            // Réinitialiser les sliders à leurs valeurs par défaut
+            document.getElementById('growthRate').value = 10;
+            document.getElementById('numPlayers').value = 5;
+            document.getElementById('baseAmount').value = 100;
+            document.getElementById('increment').value = 10;
+            document.getElementById('years').value = 80;
+            
+            // Réinitialiser le bouton radio sur linéaire
+            document.getElementById('linearGap').checked = true;
+            
+            // Mettre à jour les valeurs affichées
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                updateSliderValue(slider.id);
+            });
+            
+            // Lancer une nouvelle simulation avec les valeurs par défaut
+            runSimulation();
+        }
+        
+        // Générer des couleurs distinctes pour les joueurs
+        function generateColors(count) {
+            const colors = [];
+            const hueStep = 360 / count;
+            
+            for (let i = 0; i < count; i++) {
+                const hue = i * hueStep;
+                colors.push(`hsl(${hue}, 70%, 50%)`);
+            }
+            
+            return colors;
+        }
+    </script>
+</body>
+</html>
