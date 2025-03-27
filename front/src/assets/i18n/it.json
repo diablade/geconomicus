@@ -4,39 +4,39 @@
     "ANIMATOR": "Animatore",
     "FREE_MONEY": "Moneta libera",
     "DEBT_MONEY": "Moneta debito",
-    "GAME_NOTICE": "Avviso di gioco",
+    "GAME_NOTICE": "Istruzioni di gioco",
     "BY_DEFAULT": "per impostazione predefinita",
     "VALUES_BY_DEFAULT": "Valori predefiniti",
     "CANCEL": "Annulla",
     "OK": "OK",
     "HOME": {
-        "WELCOME": "Scopri la moneta libera attraverso il gioco!",
+        "WELCOME": "Scopri la Moneta Libera attraverso il gioco!",
         "INSTALL": "Installa l'applicazione",
-        "CREATE_GAME": "Crea un gioco",
-        "JOIN_GAME": "Unisciti a un gioco",
+        "CREATE_GAME": "Crea una partita",
+        "JOIN_GAME": "Unisciti ad una partita",
         "HOW_TO_PLAY": "Come funziona?",
-        "FUND_RAISE": "Una donazione per supportarmi, ",
+        "FUND_RAISE": "Una donazione per sostenermi, ",
         "IN": "in",
         "OR_IN": " o in",
-        "SAY_HI": "Hai bisogno di aiuto, hai un'idea, hai trovato un bug, o vuoi semplicemente dire ciao?",
-        "LINK_SAY_HI": "qui",
+        "SAY_HI": "Hai bisogno di aiuto, hai un'idea, hai trovato un bug, o vuoi semplicemente dirmi ciao?",
+        "LINK_SAY_HI": "Clicca qui",
         "LOOKING_FOR_PAPER_GAME": "Cerchi il gioco originale in versione cartacea?"
     },
     "GAME": {
-        "OPEN": "Aperto per unirsi",
+        "OPEN": "Aperto per partecipare",
         "PLAYING": "In corso",
         "END_GAME": "Gioco terminato",
-        "STOP_ROUND": "Turno terminato",
+        "STOP_ROUND": "Giro terminato",
         "INTER_ROUND": "Inter turno",
         "START_GAME": "Gioco avviato"
     },
     "MASTER": {
         "SCAN_QR": "vai su {{webHost}}, poi clicca su 'unisciti'!",
         "JOIN": "Unisciti al gioco {{name}}",
-        "GUNY_WELCOME": "Ehi! Scansiona il mio codice QR per unirti.",
+        "GUNY_WELCOME": "Ehi! Scansiona il mio codice QR per partecipare.",
         "TYPE_OF_MONEY": "Tipo di moneta",
         "GAME_OPTION": "Opzioni di gioco",
-        "START": "Inizia",
+        "START": "Iniziare",
         "ROUND": "turno",
         "LIVE_EVENT_BTN": "Risultati dal vivo",
         "RESET": "RESET",
@@ -495,5 +495,6 @@
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY alle HH:mm"
-    }
+    },
+    "PUBLIC_KEY": "chiavetta pubblica "
 }
