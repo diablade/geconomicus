@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import Chart from 'chart.js/auto';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
 @Component({
   selector: 'app-module-wealth',
@@ -25,7 +26,15 @@ export class ModuleWealthComponent implements AfterViewInit {
   // Table data
   tableData: any[] = [];
 
+  // Reference values for scaling
+  minTotal = 100;
+  maxTotal = 10000;
+  minPieSize = 60;  // Pourcentage de la hauteur du conteneur
+  maxPieSize = 90;  // Pourcentage de la hauteur du conteneur
+
   ngAfterViewInit(): void {
+    // Enregistrer le plugin de zoom
+    Chart.register(zoomPlugin);
     this.initChart();
     this.updateChart();
   }
@@ -62,6 +71,25 @@ export class ModuleWealthComponent implements AfterViewInit {
               title: {
                 display: true,
                 text: 'Joueur'
+              }
+            }
+          },
+          plugins: {
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true,
+                  modifierKey: 'ctrl',
+                  speed: 1
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'x'
+              },
+              pan: {
+                enabled: true,
+                mode: 'x'
               }
             }
           }
@@ -104,6 +132,16 @@ export class ModuleWealthComponent implements AfterViewInit {
     return sumOfAbsoluteDifferences / (2 * n * n * (sum / n));
   }
 
+  // Calculate pie chart size percentage based on total amount
+  calculatePieSize(): number {
+    // Linear scaling between minPieSize and maxPieSize based on total
+    const ratio = (this.total - this.minTotal) / (this.maxTotal - this.minTotal);
+    const sizePercentage = this.minPieSize + ratio * (this.maxPieSize - this.minPieSize);
+
+    // Ensure size is within bounds
+    return Math.max(this.minPieSize, Math.min(sizePercentage, this.maxPieSize));
+  }
+
   // Update the chart when sliders change
   updateChart(): void {
     // Calculate the distribution
@@ -128,10 +166,35 @@ export class ModuleWealthComponent implements AfterViewInit {
     if (this.currentChartType === 'line') {
       this.distributionChart.data.datasets[0].fill = false;
       this.distributionChart.data.datasets[0].tension = 0.1;
+      this.distributionChart.options.scales = {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Montant' }
+        },
+        x: {
+          title: { display: true, text: 'Joueur' }
+        }
+      };
     } else if (this.currentChartType === 'pie') {
       this.distributionChart.options.scales = {
         y: { display: false },
         x: { display: false }
+      };
+      this.distributionChart.options.plugins.legend = {
+        display: false
+      };
+      this.distributionChart.options.plugins.zoom = {
+        zoom: {
+          wheel: {
+            enabled: false
+          },
+          pinch: {
+            enabled: false
+          }
+        },
+        pan: {
+          enabled: false
+        }
       };
     } else {
       this.distributionChart.options.scales = {
@@ -194,7 +257,43 @@ export class ModuleWealthComponent implements AfterViewInit {
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: type !== 'pie'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context: any) {
+                  const value = context.parsed;
+                  const label = context.label || '';
+                  if (type === 'pie') {
+                    const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                    const percentage = (value / total * 100).toFixed(1);
+                    return `${label}: ${value.toFixed(2)} (${percentage}%)`;
+                  }
+                  return `${label}: ${value.toFixed(2)}`;
+                }
+              }
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: type !== 'pie',
+                  modifierKey: 'ctrl',
+                  speed: 1
+                },
+                pinch: {
+                  enabled: type !== 'pie'
+                },
+                mode: 'x'
+              },
+              pan: {
+                enabled: type !== 'pie',
+                mode: 'x'
+              }
+            }
+          }
         }
       });
 
