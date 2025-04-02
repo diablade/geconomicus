@@ -496,5 +496,5 @@
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY alle HH:mm"
     },
-    "PUBLIC_KEY": "chiavetta pubblica "
+    "PUBLIC_KEY": "chiavetta pubblica:"
 }
