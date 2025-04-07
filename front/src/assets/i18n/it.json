@@ -164,7 +164,9 @@
         "SIGN": "Firmare",
         "DEFAULT_CREDIT_AMOUNT": "3 per impostazione predefinita",
         "DEFAULT_INTEREST_AMOUNT": "1 per impostazione predefinita",
-        "CREDIT_SUCCESS": "Credito concesso a {{player}}"
+        "CREDIT_SUCCESS": "Credito concesso a {{player}}",
+        "QUICK_CREDIT": "",
+        "MANUAL_CREDIT": ""
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Gioco in pausa...",
@@ -221,7 +223,8 @@
         "PLAYERS_16+": "(16+ giocatori)",
         "PLAYERS_6+": "(6+ giocatori)",
         "START_DISTRIB_CARDS": "Numero di carte distribuite ai giocatori all'inizio del gioco",
-        "BUILD_AMOUNT": "Numero identico di carte per costruire una carta superiore:"
+        "BUILD_AMOUNT": "Numero identico di carte per costruire una carta superiore:",
+        "DEATH_MINUTES_FORMULA": ""
     },
     "HISTORY": {
         "TITLE": "Storia dei giochi creati",
