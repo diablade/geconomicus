@@ -164,7 +164,9 @@
         "SIGN": "Potpisati",
         "DEFAULT_CREDIT_AMOUNT": "3 po defaultu",
         "DEFAULT_INTEREST_AMOUNT": "1 po defaultu",
-        "CREDIT_SUCCESS": "Kredit dodeljen {{player}}"
+        "CREDIT_SUCCESS": "Kredit dodeljen {{player}}",
+        "QUICK_CREDIT": "",
+        "MANUAL_CREDIT": ""
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Igra na pauzi...",
@@ -221,7 +223,8 @@
         "PLAYERS_16+": "(16+ igrača)",
         "PLAYERS_6+": "(6+ igrača)",
         "START_DISTRIB_CARDS": "Broj karata podeljenih igračima na početku igre",
-        "BUILD_AMOUNT": "Identičan broj karata za izgradnju superiorne karte:"
+        "BUILD_AMOUNT": "Identičan broj karata za izgradnju superiorne karte:",
+        "DEATH_MINUTES_FORMULA": ""
     },
     "HISTORY": {
         "TITLE": "Istorija kreiranih igara",
@@ -495,5 +498,6 @@
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY u HH:mm"
-    }
+    },
+    "PUBLIC_KEY": ""
 }
