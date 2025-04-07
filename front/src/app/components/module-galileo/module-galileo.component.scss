@@ -1,0 +1,62 @@
+.container {
+	max-width: 1200px;
+	margin: auto;
+	padding: 1rem;
+}
+
+.controls {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.or{
+	font-size: 20px;
+	align-items: center;
+	border: gray 1px solid;
+}
+.control-init {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	min-width: 300px;
+}
+.control-action {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+.yearInput{
+	width: 100px;
+}
+
+.card {
+	background: #f9f9f9;
+	padding: 1rem;
+	border-radius: 8px;
+}
+
+.transaction {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.charts {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.chart-container canvas {
+	width: 100% !important;
+	height: auto !important;
+}
+
+@media (min-width: 768px) {
+	.charts {
+		grid-template-columns: 1fr 1fr;
+	}
+}

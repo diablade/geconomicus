@@ -14,14 +14,11 @@ import { HttpClient } from '@angular/common/http';
 export class I18nService {
   private readonly STORAGE_KEY = 'language';
   private readonly DEFAULT_LANG = 'fr';
-  private readonly SUPPORTED_LANGS = ['fr', 'en','it','ja','sr'];
+  private readonly SUPPORTED_LANGS = ['fr', 'en'];
   private translationCache = new Map<string, string>();
   private missingTranslations = new Set<string>();
 
-  constructor(
-    private translate: TranslateService,
-    private http: HttpClient
-  ) {
+  constructor(private translate: TranslateService) {
     this.initializeLanguage();
   }
 
@@ -88,7 +85,8 @@ export class I18nService {
    */
   use(lang: string): void {
     if (!this.SUPPORTED_LANGS.includes(lang)) {
-      throw new Error(`Unsupported language: ${lang}`);
+			console.error(`Unsupported language: ${lang}`);
+			lang='fr';
     }
 
     this.translate.use(lang);

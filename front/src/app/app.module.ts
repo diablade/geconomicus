@@ -69,7 +69,7 @@ import {LanguageBtnComponent} from './components/language-btn/language-btn.compo
 import {NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
 import {I18nService} from './services/i18n.service';
 import {ModuleWealthDistribComponent} from './components/module-wealth-distrib/module-wealth-distrib.component';
-import {ModuleGalileComponent} from './components/module-galile/module-galile.component';
+import {ModuleGalileoComponent} from './components/module-galileo/module-galileo.component';
 import {PedagoDialogComponent} from './dialogs/pedago-dialog/pedago-dialog.component';
 import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
 import {MatCardModule} from "@angular/material/card";
@@ -117,7 +117,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		LanguageBtnComponent,
 		NoticeBtnComponent,
 		ModuleWealthDistribComponent,
-		ModuleGalileComponent,
+		ModuleGalileoComponent,
 		PedagoDialogComponent,
 		PedagoBtnComponent,
 	],

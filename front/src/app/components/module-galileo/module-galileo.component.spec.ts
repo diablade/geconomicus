@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModuleGalileComponent } from './module-galile.component';
+import { ModuleGalileoComponent } from './module-galileo.component';
 
 describe('ModuleGalileComponent', () => {
-  let component: ModuleGalileComponent;
-  let fixture: ComponentFixture<ModuleGalileComponent>;
+  let component: ModuleGalileoComponent;
+  let fixture: ComponentFixture<ModuleGalileoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModuleGalileComponent ]
+      declarations: [ ModuleGalileoComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ModuleGalileComponent);
+    fixture = TestBed.createComponent(ModuleGalileoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

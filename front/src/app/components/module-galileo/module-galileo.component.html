@@ -1,0 +1,100 @@
+<div class="container">
+	<h1>Simulateur Monnaie Libre (Module Galilée)</h1>
+	<p>Visualisez l'évolution de la masse monétaire avec le DU.</p>
+
+	<div class="controls">
+		<div class="controls d-flex flex-row">
+			<mat-card class="control-init card">
+				<h2>Paramètres initiales</h2>
+				<label>{{ "MODULE.GALILEO.DURATION"| translate }}: {{ duration }}</label>
+				<input type="range" [min]="1" [max]="150" [step]="1" [(ngModel)]="duration"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.GROWTH_RATE"| translate }}: {{ growthRate }}</label>
+				<input type="range" [min]="0" [max]="40" [step]="0.1" [(ngModel)]="growthRate"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_MEMBERS"| translate }}: {{ initialMembers }}</label>
+				<input type="range" [min]="2" [max]="100" [step]="1" [(ngModel)]="initialMembers"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_MASS"| translate }}: {{ initialMass }}</label>
+				<input type="range" [min]="100" [max]="10000000" [step]="100" [(ngModel)]="initialMass"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_DISTRIB_MODE"| translate }}:</label>
+				<select [(ngModel)]="distributionMode" (change)="executeSimulationFromStart()">
+					<option value="equal">Égale</option>
+					<option value="linear">Écart linéaire</option>
+					<option value="gini">Coéfficient de Gini</option>
+				</select>
+				<div *ngIf="distributionMode==='gini'">
+					<input type="range" [min]="0" [max]="1" [step]="0.1" [(ngModel)]="gini"
+								 (change)="executeSimulationFromStart()">{{ gini }}
+				</div>
+			</mat-card>
+			<mat-card class="control-action card">
+				<h2>Ajouter un évènement temporelles</h2>
+				<div class="d-flex flex-column ">
+					<h3>A l'année : {{ actionYear }}</h3>
+					<input type="range" [min]="1" [max]="150" [step]="1" [(ngModel)]="actionYear" step="1">
+					<div class="d-flex flex-row mt-2 align-items-end">
+						<div class="d-flex flex-column p-3 col-4">
+							<div>Démarre à 0 l'année {{ actionYear }} puis reçoit le D.U chaque années</div>
+							<button mat-raised-button [color]="'accent'" (click)="addMember()">Ajouter un membre</button>
+						</div>
+						<div class="d-flex flex-column p-3 col-4">
+							<div>le membre:
+								<select [(ngModel)]="removeMemberId">
+									<option *ngIf="removeMemberId" value="">Choisir...</option>
+									<option *ngFor="let m of members" [value]="m.id">{{ m.id }}</option>
+								</select>
+							</div>
+							<small>Ne reçoit plus le DU à partir de l'année {{ actionYear }}</small>
+							<button mat-raised-button [color]="'accent'" (click)="removeMember()">Rendre Inactif</button>
+						</div>
+						<div class="d-flex flex-column p-3 col-4">
+							<label>Transaction de:</label>
+							<select [(ngModel)]="txFrom">
+								<option *ngIf="!txFrom" value="">Choisir...</option>
+								<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
+							</select>
+							<label>vers:</label>
+							<select [(ngModel)]="txTo">
+								<option *ngIf="!txTo" value="">Choisir...</option>
+								<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
+							</select>
+							<label>Montant: {{ txAmount }}</label>
+							<input type="range" min="0" max="1000000" step="100" [(ngModel)]="txAmount">
+							<button mat-raised-button [color]="'accent'" (click)="addTransaction()">Ajouter transaction</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="eventsLog">
+					<h4>Événements :</h4>
+					<div class="d-flex flex-row overflow-auto">
+						<div class="itemEvent" *ngFor="let e of events; let i=index">
+							<mat-chip>
+								An {{ e.at }}:
+							<ng-container [ngSwitch]="e.type">
+								<span *ngSwitchCase="'add'">Ajout Membre</span>
+								<span *ngSwitchCase="'sup'">Inactivation Membre {{ e.to }}</span>
+								<span *ngSwitchCase="'tra'">Transaction {{ e.amount }} de {{ e.from }} vers {{ e.to }}</span>
+							</ng-container>
+							</mat-chip>
+						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+		<div class="charts">
+			<mat-card class="chart-container card">
+				<h2>Montants absolus des comptes (Quantitatif)</h2>
+				<canvas #quantitativeCanvas></canvas>
+				Échelle verticale logarithmique.
+			</mat-card>
+			<mat-card class="chart-container card">
+				<h2>Parts de la Masse Monétaire (Relatif)</h2>
+				<canvas #relativeCanvas></canvas>
+			</mat-card>
+		</div>
+		<button mat-raised-button [color]="'warn'" (click)="resetSimulation()">RESET</button>
+	</div>
+</div>

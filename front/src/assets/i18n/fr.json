@@ -277,6 +277,7 @@
         "DISTRIBUTION_TO": "Distribution à"
     },
     "DIALOG": {
+				"CLOSE": "Fermer",
         "INFORMATION": {
             "TITLE": "Information !",
             "BTN1": "Ok"
@@ -332,6 +333,10 @@
         "DELETE_GAME": {
             "TITLE": "T'es sûr ?",
             "MESSAGE": "Cette action est irréversible."
+        },
+        "PEDAGO": {
+            "TITLE": "Modules pédagogiques",
+						"SELECT": "Changer de module"
         }
     },
     "SURVEY": {
@@ -499,5 +504,23 @@
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY à HH:mm"
-    }
+    },
+		"MODULE": {
+				"GALILEO": {
+					"TITLE": "Module Galilée",
+					"SUB_TITLE": "Simulation pédagogique de la monnaie libre",
+					"SUMMARY": "Ce module permet de visualiser l’évolution d’une monnaie libre basée sur le Dividende Universel (DU). \nIl simule la création monétaire dans le temps, la répartition entre membres, et l’impact d’actions comme l’ajout ou le retrait de membres, ou des transactions. Grâce à des graphiques dynamiques, il aide à comprendre l'effet du DU sur la masse monétaire et les parts relatives individuelles.",
+					"DURATION": "Durée (années)",
+					"GROWTH_RATE": "Taux de croissance (%)",
+					"INIT_MASS": "Masse monétaire initiale",
+					"INIT_MEMBERS": "Nombre initial de membres",
+					"INIT_DISTRIB_MODE": "Choix de la répartition initiale"
+				},
+				"WEALTH": {
+					"TITLE": "Module répartition",
+					"SUB_TITLE": "Camembert des inégalités de la monnaie",
+					"SUMMARY": "Ce module permet de visualiser l’évolution d’une monnaie repartie entre les"
+				}
+		}
 }
+
