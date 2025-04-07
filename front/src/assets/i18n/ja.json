@@ -164,7 +164,9 @@
         "SIGN": "署名",
         "DEFAULT_CREDIT_AMOUNT": "デフォルトで3",
         "DEFAULT_INTEREST_AMOUNT": "デフォルトで1",
-        "CREDIT_SUCCESS": "{{player}}にクレジットが付与されました"
+        "CREDIT_SUCCESS": "{{player}}にクレジットが付与されました",
+        "QUICK_CREDIT": "",
+        "MANUAL_CREDIT": ""
     },
     "CREDIT": {
         "PAUSED_CREDIT": "ゲームが一時停止中...",
@@ -221,7 +223,8 @@
         "PLAYERS_16+": "(16人以上のプレイヤー)",
         "PLAYERS_6+": "(6人以上のプレイヤー)",
         "START_DISTRIB_CARDS": "ゲーム開始時にプレイヤーに配布されるカードの数",
-        "BUILD_AMOUNT": "上位カードを構築するための同じ数のカード："
+        "BUILD_AMOUNT": "上位カードを構築するための同じ数のカード：",
+        "DEATH_MINUTES_FORMULA": ""
     },
     "HISTORY": {
         "TITLE": "作成されたゲームの履歴",
@@ -495,5 +498,6 @@
     },
     "DATE_FORMAT": {
         "DATETIME": "YYYY-MM-DD HH:mm"
-    }
+    },
+    "PUBLIC_KEY": ""
 }
