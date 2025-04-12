@@ -1,12 +1,6 @@
-/* distribution.component.css */
-.container {
-	font-family: Arial, sans-serif;
-	max-width: 900px;
-	margin: 0 auto;
-	padding: 20px;
-	background-color: white;
-	border-radius: 8px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.module {
+	padding: 1rem;
+	background: white;
 }
 
 .controls {
@@ -14,6 +8,15 @@
 	flex-wrap: wrap;
 	gap: 20px;
 	margin-bottom: 20px;
+}
+.cardParam{
+	padding: 1rem;
+	min-width: 300px;
+}
+.card {
+	background: #f9f9f9;
+	padding: 1rem;
+	border-radius: 8px;
 }
 
 .control-group {
@@ -63,12 +66,6 @@ th, td {
 
 th {
 	background-color: #f2f2f2;
-}
-
-.toggle-view {
-	margin-top: 20px;
-	display: flex;
-	gap: 10px;
 }
 
 .toggle-view button {

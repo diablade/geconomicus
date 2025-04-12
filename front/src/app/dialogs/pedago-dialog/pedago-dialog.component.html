@@ -1,48 +1,39 @@
 <div class="pedago-dialog">
 	<h1 mat-dialog-title>{{ "DIALOG.PEDAGO.TITLE" | translate }}</h1>
 	<div mat-dialog-content>
-		<div *ngIf="selection==='none'" class="">
-			<mat-card class="card" (click)="selection='Galileo'">
-				<mat-card-header>
-					<mat-card-title-group>
-						<mat-card-title>{{ "MODULE.GALILEO.TITLE"|translate }}</mat-card-title>
-						<mat-card-subtitle>{{ "MODULE.GALILEO.SUB_TITLE"| translate }}</mat-card-subtitle>
-						<img mat-card-md-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-								 alt="">
-					</mat-card-title-group>
-				</mat-card-header>
-				<mat-card-content>
-					<div class="summary">
-						{{ "MODULE.GALILEO.SUMMARY"|translate }}
-					</div>
-				</mat-card-content>
-			</mat-card>
-			<mat-card class="card" (click)="selection='wealth'">
-				<mat-card-header>
-					<mat-card-title-group>
-						<mat-card-title>{{ "MODULE.WEALTH.TITLE"|translate }}</mat-card-title>
-						<mat-card-subtitle>{{ "MODULE.WEALTH.SUB_TITLE"|translate }}</mat-card-subtitle>
-						<img mat-card-md-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-								 alt="Image of a Shiba Inu">
-					</mat-card-title-group>
-				</mat-card-header>
-				<mat-card-content>
-					<div class="summary">
-						{{ "MODULE.WEALTH.SUMMARY"|translate }}
-					</div>
-				</mat-card-content>
-			</mat-card>
-		</div>
-		<div *ngIf="selection==='Galileo'" class="">
-			<app-module-galileo></app-module-galileo>
-		</div>
-		<div *ngIf="selection==='wealth'" class="">
-			<app-module-wealth-distrib></app-module-wealth-distrib>
-		</div>
+		<mat-card class="card" (click)="openGalileo()">
+			<mat-card-header>
+				<mat-card-title-group>
+					<mat-card-title>{{ "MODULE.GALILEO.TITLE"|translate }}</mat-card-title>
+					<fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+					<mat-card-subtitle>{{ "MODULE.GALILEO.SUB_TITLE"| translate }}</mat-card-subtitle>
+				</mat-card-title-group>
+			</mat-card-header>
+			<mat-card-content>
+				<div class="summary">
+					{{ "MODULE.GALILEO.SUMMARY"|translate }}
+				</div>
+			</mat-card-content>
+			<img class="p-3" mat-card-image src="/assets/images/galileo.png" alt="">
+		</mat-card>
+		<mat-card class="card" (click)="openWealth()">
+			<mat-card-header>
+				<mat-card-title-group>
+					<mat-card-title>{{ "MODULE.WEALTH.TITLE"|translate }}</mat-card-title>
+					<fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+					<mat-card-subtitle>{{ "MODULE.WEALTH.SUB_TITLE"|translate }}</mat-card-subtitle>
+				</mat-card-title-group>
+			</mat-card-header>
+			<mat-card-content>
+				<div class="summary">
+					{{ "MODULE.WEALTH.SUMMARY"|translate }}
+					{{ "MODULE.WEALTH.SUMMARY2"|translate }}
+				</div>
+			</mat-card-content>
+			<img class="p-3" mat-card-image src="/assets/images/wealth.png" alt="">
+		</mat-card>
 	</div>
 	<div mat-dialog-actions align="end">
-		<button *ngIf="selection!=='none'" mat-button (click)="selection='none'">{{ "DIALOG.PEDAGO.SELECT"|translate }}
-		</button>
 		<button mat-button [mat-dialog-close]="">{{ "DIALOG.CLOSE"|translate }}</button>
 	</div>
 </div>

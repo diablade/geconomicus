@@ -1,6 +1,7 @@
 import {Component, OnInit, AfterViewInit, ElementRef, ViewChild} from '@angular/core';
 import {Chart, Point} from 'chart.js';
 import * as _ from 'lodash-es';
+import {Router} from "@angular/router";
 
 
 class Year {
@@ -65,6 +66,9 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	@ViewChild('relativeCanvas') relativeCanvas!: ElementRef<HTMLCanvasElement>;
 	quantitativeChart!: Chart<"line", (number | Point | null)[], number>;
 	relativeChart!: Chart<"line", (number | Point | null)[], number>;
+
+	constructor(private router: Router) {
+	}
 
 	ngOnInit() {
 		this.initYearsAndInitMembers();
@@ -213,7 +217,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				maintainAspectRatio: true,
 				plugins: {
 					legend: {display: false},
-				}, scales: {
+				},
+				scales: {
 					y: {
 						type: 'logarithmic',
 						// beginAtZero: false, // let Chart.js auto-fit the min
@@ -262,7 +267,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 			}
 			//DO transactions if available
 			this.years[y].events.forEach(e => {
-				if (e.type === 'tra' && (e.at-1) === (y) && e.from && e.to && e.amount) {
+				if (e.type === 'tra' && (e.at - 1) === (y) && e.from && e.to && e.amount) {
 					_.update(this.years[y], 'members[' + (e.from - 1) + '].amount', (prevAmount) => prevAmount - e.amount);
 					_.update(this.years[y], 'members[' + (e.to - 1) + '].amount', (prevAmount) => prevAmount + e.amount);
 				}
@@ -330,6 +335,10 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 			this.quantitativeChart.update();
 			this.relativeChart.update();
 		}
+	}
+
+	home() {
+		this.router.navigate(['home']);
 	}
 }
 

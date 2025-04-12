@@ -1,53 +1,76 @@
-<div class="container overflow-auto">
+<div class="module overflow-auto">
+	<button mat-raised-button [color]="" (click)="home()">Revenir à l'accueil</button>
 	<h1>Visualisation de Distribution de Richesse</h1>
+	<div class="d-flex flex-row justify-content-center gap-4">
+		<div>
+			<div class="game-explanation">
+				<h3>Comment fonctionne la Répartition ?</h3>
+				<p>
+					1. Le montant total est réparti différemment selon le paramètre P. 💸<br>
+					2. Un P bas signifie une répartition plus égale. 🤝<br>
+					3. Un P élevé crée plus de différences entre les joueurs. 📊
+				</p>
+			</div>
+			<div class="stats">
+				<p>L’indice de Gini mesure les inégalités de distribution  dans une population.</p>
+				<p>(souvent de revenus ou richesses)</p>
+				<p>- 0 = égalité parfaite (tout le monde a la même chose)</p>
+				<p>- 1 = inégalité totale (une seule personne a tout).</p>
+				<p>Plus l’indice est proche de 1, plus la répartition est inégalitaire.</p>
 
-	<div class="controls">
-		<div class="control-group">
-			<label for="paramP">Paramètre P (inégalité):</label>
-			<input type="range" id="paramP" [value]="paramP" min="0" max="3" step="0.1" (input)="onParamPChange($event)">
-			<div class="value-display">
-				<span>0</span>
-				<span>{{ paramP.toFixed(1) }}</span>
-				<span>3</span>
+				<p>Indice de Gini: {{ giniIndex.toFixed(4) }}</p>
+				<p>Ratio Haut/Bas: {{ ratioTopBottom.toFixed(2) }}</p>
 			</div>
 		</div>
-		<div class="control-group">
-			<label for="total">Montant Total:</label>
-			<input type="range" id="total" [value]="total" min="100" max="10000" step="100" (input)="onTotalChange($event)">
-			<div class="value-display">
-				<span>100</span>
-				<span>{{ total }}</span>
-				<span>10000</span>
+
+		<mat-card class="cardParam card">
+			<div class="controls d-flex flex-column">
+				<div class="control-group">
+					<label for="total">Montant Total:</label>
+					<input type="range" id="total" [value]="total" min="100" max="1000000000" step="100"
+								 (input)="onTotalChange($event)">
+					<div class="value-display">
+						<span>100</span>
+						<span>{{ total }}</span>
+						<span>1 000 000 000</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="numPlayers">Nombre de Joueurs:</label>
+					<input type="range" id="numPlayers" [value]="numPlayers" min="2" max="1000" step="1"
+								 (input)="onNumPlayersChange($event)">
+					<div class="value-display">
+						<span>2</span>
+						<span>{{ numPlayers }}</span>
+						<span>1000</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="paramP">Paramètre P (inégalité):</label>
+					<input type="range" id="paramP" [value]="paramP" min="0" max="3" step="0.1" (input)="onParamPChange($event)">
+					<div class="value-display">
+						<span>0</span>
+						<span>{{ paramP.toFixed(1) }}</span>
+						<span>3</span>
+					</div>
+				</div>
 			</div>
-		</div>
-
-		<div class="control-group">
-			<label for="numPlayers">Nombre de Joueurs:</label>
-			<input type="range" id="numPlayers" [value]="numPlayers" min="2" max="50" step="1" (input)="onNumPlayersChange($event)">
-			<div class="value-display">
-				<span>2</span>
-				<span>{{ numPlayers }}</span>
-				<span>50</span>
+		</mat-card>
+		<mat-card class="flex-grow-1 card">
+			<div class="toggle-view">
+				<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">Graphique en Barres
+				</button>
+				<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">Courbe</button>
+				<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">Camembert</button>
 			</div>
-		</div>
-	</div>
 
-	<div class="toggle-view">
-		<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">Graphique en Barres</button>
-		<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">Courbe</button>
-		<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">Camembert</button>
+			<div class="chart-container">
+				<canvas #distributionCanvas></canvas>
+			</div>
+		</mat-card>
 	</div>
-
-	<div class="chart-container">
-		<canvas #distributionCanvas></canvas>
-	</div>
-
 	<div class="results">
 		<h2>Résultats de la Distribution</h2>
-		<div id="stats">
-			<p>Indice de Gini: <span>{{ giniIndex.toFixed(4) }}</span></p>
-			<p>Ratio haut/bas: <span>{{ ratioTopBottom.toFixed(2) }}</span></p>
-		</div>
 		<table>
 			<thead>
 			<tr>
