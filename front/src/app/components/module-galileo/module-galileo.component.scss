@@ -1,30 +1,21 @@
-.container {
-	max-width: 1200px;
-	margin: auto;
+.module {
 	padding: 1rem;
+	background: white;
 }
 
 .controls {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
 	gap: 0.5rem;
+	justify-content: center;
 }
 
-.or{
-	font-size: 20px;
-	align-items: center;
-	border: gray 1px solid;
-}
-.control-init {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-	min-width: 300px;
-}
 .control-action {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
+	width: 286px;
 }
 .yearInput{
 	width: 100px;
@@ -34,6 +25,12 @@
 	background: #f9f9f9;
 	padding: 1rem;
 	border-radius: 8px;
+	max-height: 370px;
+	&-chart {
+		background: #f9f9f9;
+		padding: 1rem;
+		border-radius: 8px;
+	}
 }
 
 .transaction {
