@@ -44,7 +44,7 @@ class Event {
 })
 export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	duration = 80;
-	growthRate = 5;
+	growthRate = 10;
 	initialFirstMember = 100;
 	initialMass = 1000000;
 	initialMembers = 10;

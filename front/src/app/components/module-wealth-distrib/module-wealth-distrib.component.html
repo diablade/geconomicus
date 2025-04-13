@@ -1,14 +1,14 @@
 <div class="module overflow-auto">
 	<button mat-raised-button [color]="" (click)="home()">Revenir à l'accueil</button>
 	<h1>Visualisation de Distribution de Richesse</h1>
-	<div class="d-flex flex-row justify-content-center gap-4">
+	<div class="d-flex flex-row flex-wrap justify-content-center gap-4">
 		<div>
 			<div class="game-explanation">
 				<h3>Comment fonctionne la Répartition ?</h3>
 				<p>
 					1. Le montant total est réparti différemment selon le paramètre P. 💸<br>
 					2. Un P bas signifie une répartition plus égale. 🤝<br>
-					3. Un P élevé crée plus de différences entre les joueurs. 📊
+					3. Un P élevé crée plus de différences entre les personnes. 📊
 				</p>
 			</div>
 			<div class="stats">
@@ -17,9 +17,6 @@
 				<p>- 0 = égalité parfaite (tout le monde a la même chose)</p>
 				<p>- 1 = inégalité totale (une seule personne a tout).</p>
 				<p>Plus l’indice est proche de 1, plus la répartition est inégalitaire.</p>
-
-				<p>Indice de Gini: {{ giniIndex.toFixed(4) }}</p>
-				<p>Ratio Haut/Bas: {{ ratioTopBottom.toFixed(2) }}</p>
 			</div>
 		</div>
 
@@ -36,7 +33,7 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label for="numPlayers">Nombre de Joueurs:</label>
+					<label for="numPlayers">Nombre de personnes:</label>
 					<input type="range" id="numPlayers" [value]="numPlayers" min="2" max="1000" step="1"
 								 (input)="onNumPlayersChange($event)">
 					<div class="value-display">
@@ -53,6 +50,8 @@
 						<span>{{ paramP.toFixed(1) }}</span>
 						<span>3</span>
 					</div>
+					<p>Indice de Gini: {{ giniIndex.toFixed(4) }}</p>
+					<p>Ratio Haut/Bas: {{ ratioTopBottom.toFixed(2) }}</p>
 				</div>
 			</div>
 		</mat-card>
@@ -74,7 +73,7 @@
 		<table>
 			<thead>
 			<tr>
-				<th>Joueur</th>
+				<th>Personne</th>
 				<th>Montant</th>
 				<th>% du Total</th>
 			</tr>

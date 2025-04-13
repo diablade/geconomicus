@@ -103,7 +103,7 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 					x: {
 						title: {
 							display: true,
-							text: 'Joueur'
+							text: 'Personne'
 						}
 					}
 				}
@@ -117,7 +117,7 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 		this.distribution = this.distributeInitialWealth(this.total, this.numPlayers, this.paramP);
 
 		// Préparer les données pour le graphique
-		const labels = Array.from({length: this.numPlayers}, (_, i) => `Joueur ${i+1}`);
+		const labels = Array.from({length: this.numPlayers}, (_, i) => `Personne ${i+1}`);
 		const colors = [];
 
 		// Générer des couleurs en fonction de la richesse (plus riche = plus foncé)
@@ -156,7 +156,7 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 				x: {
 					title: {
 						display: true,
-						text: 'Joueur'
+						text: 'Personne'
 					}
 				}
 			};
@@ -179,7 +179,7 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 		this.distribution.forEach((amount, index) => {
 			const percentage = (amount / this.total) * 100;
 			this.tableData.push({
-				player: `Joueur ${index + 1}`,
+				player: `Personne ${index + 1}`,
 				amount: amount,
 				percentage: percentage
 			});

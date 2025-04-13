@@ -34,14 +34,14 @@
 				</div>
 			</mat-card>
 			<mat-card class="control-action card">
-				<div>Ajouter un membre</div>
+				<h2>Ajouter un membre</h2>
 				<div>A l'année : {{ actionYear }}</div>
 				<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
 				<div>Démarre à 0. A partir l'année {{ actionYear }} il reçoit le D.U chaque années</div>
 				<button mat-raised-button [color]="'accent'" (click)="addMember()">Ajouter un membre</button>
 			</mat-card>
 			<mat-card class="control-action card">
-				<div>Retirer un membre</div>
+				<h2>Retirer un membre</h2>
 				<div>A l'année : {{ actionYear }}</div>
 				<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
 				<div>le membre:
