@@ -3,6 +3,7 @@ import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
+import {I18nService} from "../services/i18n.service";
 
 @Component({
   selector: 'app-survey',
@@ -24,7 +25,7 @@ export class SurveyComponent implements OnInit {
   agressiveAvenant = 0;
   aloneIntegrated = 0;
 
-  constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
+  constructor(private route: ActivatedRoute, private i18nService: I18nService, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
   }
 
   ngOnInit(): void {
@@ -45,7 +46,7 @@ export class SurveyComponent implements OnInit {
       +this.anxiousConfident,
       +this.aloneIntegrated,
       +this.agressiveAvenant).subscribe(async () => {
-      this.snackbarService.showSuccess("Merci ! Redirection vers les resultats...");
+      this.snackbarService.showSuccess(this.i18nService.instant("SURVEY.THANK_YOU"));
 
       await new Promise(resolve => setTimeout(resolve, 4000));
       this.router.navigate(['game', this.idGame, 'results']);
