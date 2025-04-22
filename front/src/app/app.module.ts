@@ -68,6 +68,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {LanguageBtnComponent} from './components/language-btn/language-btn.component';
 import {NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
 import {I18nService} from './services/i18n.service';
+import { ContributionsComponent } from './components/contributions/contributions.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -112,6 +113,7 @@ LOAD_WASM().subscribe();
 		MasterAdminComponent,
 		LanguageBtnComponent,
 		NoticeBtnComponent,
+  ContributionsComponent,
 	],
 	imports: [
 		HttpClientModule,

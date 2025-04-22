@@ -11,6 +11,7 @@
 	"CANCEL": "Annuler",
 	"OK": "OK",
 	"HOME": {
+		"CONTRIBUTION": "Contributions",
 		"WELCOME": "Découvrez la monnaie libre par le jeu !",
 		"INSTALL": "Installer l'app (optionnel)",
 		"CREATE_GAME": "Créer une partie",
@@ -505,5 +506,9 @@
 	},
 	"DATE_FORMAT": {
 		"DATETIME": "dd-MM-YYYY à HH:mm"
+	},
+	"CONTRIBUTION": {
+		"TITLE": "Contributions",
+		"SUBTITLE": "Un grand MERCI  ❤\uFE0F aux personnes suivante pour leurs contributions, soutiens, conseils, idées, corrections d'orthographe, traductions,etc.."
 	}
 }

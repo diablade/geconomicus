@@ -60,7 +60,7 @@
     "@angular-eslint/eslint-plugin-template": "15.2.1",
     "@angular-eslint/schematics": "15.2.1",
     "@angular-eslint/template-parser": "15.2.1",
-    "@angular/cli": "~15.2.7",
+    "@angular/cli": "^15.2.11",
     "@angular/compiler-cli": "^15.2.10",
     "@types/jasmine": "~4.3.5",
     "@types/lodash": "^4.17.1",

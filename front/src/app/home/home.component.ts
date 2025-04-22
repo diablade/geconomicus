@@ -3,10 +3,11 @@ import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
 import {faCamera} from "@fortawesome/free-solid-svg-icons";
-import {GameInfosDialog, JoinQrDialog} from "../master-board/master-board.component";
+import {JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 import {I18nService} from "../services/i18n.service";
+import {ContributionsComponent} from "../components/contributions/contributions.component";
 
 @Component({
 	selector: 'app-home',
@@ -45,6 +46,11 @@ export class HomeComponent implements OnInit {
 					);
 			}
 		});
+	}
+
+	contribution() {
+		const dialogRef = this.dialog.open(ContributionsComponent, {});
+		dialogRef.afterClosed().subscribe();
 	}
 
 	join() {
@@ -92,6 +98,7 @@ export class HomeComponent implements OnInit {
 			this.dialog.open(InstallAppDialog);
 		}
 	}
+
 }
 
 @Component({
