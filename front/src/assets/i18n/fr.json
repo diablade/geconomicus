@@ -27,7 +27,7 @@
         "OPEN": "Partie ouverte, à rejoindre",
         "PLAYING": "En cours",
         "END_GAME": "Manche terminée",
-        "STOP_ROUND": "Tour terminé",
+        "STOP_ROUND": "Manche terminée",
         "INTER_ROUND": "Inter tour",
         "START_GAME": "Partie démarrée"
     },
@@ -64,7 +64,7 @@
         "GOAL_1": "Le but est de simuler deux systèmes monétaires, avec une manche en monnaie dette et une autre en monnaie libre.",
         "GOAL_2": "Selon le type de monnaie utilisé, les dynamiques économiques et les opportunités d'échange seront différentes, ce qui donne une dimension stratégique unique à chaque partie.",
         "GOAL_3": "Le jeu consacre une manche de 20 à 25 min à chaque monnaie.",
-        "GOAL_4": "La partie dure donc 40 à 50 min, plus un temps de discussion.",
+        "GOAL_4": "En comptant le temps de discussion, la partie dure entre une et deux heures.",
         "GOAL_5": "Les deux manches sont nécessaires pour permettre la comparaison des résultats, la mise en lumière de leurs différences et de ce qu'elles ont permis de faire collectivement.",
         "GOAL_6": "Chaque joueur doit maximiser ses valeurs économiques (ressources et monnaie) dans le temps imparti.",
         "GOAL_7": "Pour y parvenir, chaque joueur dispose de cartes ressources qu'il peut acheter ou vendre aux autres participants au moyen d'une monnaie.",
