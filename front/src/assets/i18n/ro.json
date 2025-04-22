@@ -164,7 +164,9 @@
         "SIGN": "Semnează",
         "DEFAULT_CREDIT_AMOUNT": "3 implicit",
         "DEFAULT_INTEREST_AMOUNT": "1 implicit",
-        "CREDIT_SUCCESS": "Credit acordat lui {{player}}"
+        "CREDIT_SUCCESS": "Credit acordat lui {{player}}",
+        "QUICK_CREDIT": "",
+        "MANUAL_CREDIT": ""
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Jocul este în pauză...",
@@ -221,7 +223,8 @@
         "PLAYERS_16+": "(16+ jucători)",
         "PLAYERS_6+": "(6+ jucători)",
         "START_DISTRIB_CARDS": "Numărul de cărți distribuite jucătorilor la începutul jocului",
-        "BUILD_AMOUNT": "Numărul identic de cărți pentru a construi o carte superioară:"
+        "BUILD_AMOUNT": "Numărul identic de cărți pentru a construi o carte superioară:",
+        "DEATH_MINUTES_FORMULA": ""
     },
     "HISTORY": {
         "TITLE": "Istoricul jocurilor create",
@@ -495,5 +498,6 @@
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY HH:mm"
-    }
+    },
+    "PUBLIC_KEY": ""
 }
