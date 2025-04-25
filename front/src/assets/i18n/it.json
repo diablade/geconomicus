@@ -499,5 +499,28 @@
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY alle HH:mm"
     },
-    "PUBLIC_KEY": "chiavetta pubblica:"
+    "PUBLIC_KEY": "chiavetta pubblica:",
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Allez plus loin avec les",
+        "TITLE": "Modules pédagogiques",
+        "BUTTON": "Modules pédagogiques"
+    },
+    "MODULE": {
+        "GALILEO": {
+            "TITLE": "Modulo Galilei",
+            "SUB_TITLE": "Simulazione pédagogica de la monnaie libre",
+            "SUMMARY": "Questo modulo permette di visualizzare l'evoluzione di una moneta libera basata sul Dividend Universale (DU). \nSimulazione moneta in tempo, distribuzione tra membri, e impatto azioni come aggiunta o rimozione membri, o transazioni. Grazie ai grafici dinamici, aiuto a comprendere l'effetto del DU sulla massa monetaria e le parti relative individuali.",
+            "DURATION": "Durata (anni)",
+            "GROWTH_RATE": "Tasso di crescita (%)",
+            "INIT_MASS": "Masse monetarie iniziali",
+            "INIT_MEMBERS": "Numero di membri iniziali",
+            "INIT_DISTRIB_MODE": "Modalità di distribuzione iniziale"
+        },
+        "WEALTH": {
+            "TITLE": "Modulo di distribuzione",
+            "SUB_TITLE": "Camembert delle inegualità monetarie",
+            "SUMMARY": "Questo modulo permette di visualizzare l'evoluzione di una moneta distribuita tra i giocatori, grazie all'indice di Gini.",
+            "SUMMARY2": "L'indice di Gini misura le inegualità di distribuzione (spesso di reddito o ricchezza) in una popolazione."
+        }
+    }
 }

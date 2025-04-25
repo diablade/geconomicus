@@ -6,6 +6,7 @@
     "DEBT_MONEY": "Monedă de datorie",
     "GAME_NOTICE": "Notificare de joc",
     "BY_DEFAULT": "implicit",
+    "PUBLIC_KEY": "cheia publică",
     "VALUES_BY_DEFAULT": "Valori implicite",
     "CANCEL": "Anulează",
     "OK": "OK",
@@ -165,8 +166,8 @@
         "DEFAULT_CREDIT_AMOUNT": "3 implicit",
         "DEFAULT_INTEREST_AMOUNT": "1 implicit",
         "CREDIT_SUCCESS": "Credit acordat lui {{player}}",
-        "QUICK_CREDIT": "",
-        "MANUAL_CREDIT": ""
+        "QUICK_CREDIT": "Credit {{amount}} cu dobândă {{interest}}",
+        "MANUAL_CREDIT": "Acordă un împrumut manual"
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Jocul este în pauză...",
@@ -499,5 +500,27 @@
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY HH:mm"
     },
-    "PUBLIC_KEY": ""
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Alăturiți-vă într-o viață mai bună",
+        "TITLE": "Moduri de învățare",
+        "BUTTON": "Moduri de învățare"
+    },
+    "MODULE": {
+        "GALILEO": {
+            "TITLE": "Modul Galilée",
+            "SUB_TITLE": "Simulare a unei monedă libere",
+            "SUMMARY": "Acest modul permite vizualizarea evoluii unei monedă libere bazate pe Dividend Universel (DU). \nSimulează crearea monetară în timp, distribuția între membri, și impactul acțiunilor precum adăugarea sau ștergerea membrii, sau tranzacțiile. Prin grafice dinamice, ajută înțelegerea impactului DU asupra măsii monetare și partilele individuale.",
+            "DURATION": "Durată (anii)",
+            "GROWTH_RATE": "Rata de creștere (%)",
+            "INIT_MASS": "Masa monetară inițială",
+            "INIT_MEMBERS": "Numărul initial de membri",
+            "INIT_DISTRIB_MODE": "Modul de distribuție inițială"
+        },
+        "WEALTH": {
+            "TITLE": "Modul de reparation",
+            "SUB_TITLE": "Camembert a inegalităților monetare",
+            "SUMMARY": "Acest modul permite vizualizarea evoluii unei monedă repartite între jucători, folosind indicele Gini.",
+            "SUMMARY2": "Indicele Gini măsoresc inegalitățile distribuției (sau devenituri sau bogăție) într-o populație."
+        }
+    }
 }

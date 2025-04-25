@@ -6,6 +6,7 @@
     "DEBT_MONEY": "Dugovna valuta",
     "GAME_NOTICE": "Obaveštenje o igri",
     "BY_DEFAULT": "po defaultu",
+    "PUBLIC_KEY": "public key",
     "VALUES_BY_DEFAULT": "Podrazumevane vrednosti",
     "CANCEL": "Otkaži",
     "OK": "U redu",
@@ -165,8 +166,8 @@
         "DEFAULT_CREDIT_AMOUNT": "3 po defaultu",
         "DEFAULT_INTEREST_AMOUNT": "1 po defaultu",
         "CREDIT_SUCCESS": "Kredit dodeljen {{player}}",
-        "QUICK_CREDIT": "",
-        "MANUAL_CREDIT": ""
+        "QUICK_CREDIT": "Kredit {{amount}} sa kamata {{interest}}",
+        "MANUAL_CREDIT": "Dodeli kredit ručno"
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Igra na pauzi...",
@@ -499,5 +500,27 @@
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY u HH:mm"
     },
-    "PUBLIC_KEY": ""
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Allez plus loin avec les",
+        "TITLE": "Modules pédagogiques",
+        "BUTTON": "Modules pédagogiques"
+    },
+    "MODULE": {
+        "GALILEO": {
+            "TITLE": "Module Galilée",
+            "SUB_TITLE": "Simulacija pédagogičke monedje",
+            "SUMMARY": "Ovaj modul omogućava vizualizaciju evolucije slobodne monedje bazirane na Dividendu (DU). \nSimulacija monedje u vremenu, deljenje između članova, i uticaj akcija poput dodavanja ili uklanjanja članova, ili transakcija. S pomoću dinamičkih grafika, pomoću se razumijeva uticaj DU na masu monedje i individualne dijelove.",
+            "DURATION": "Vrijeme (godine)",
+            "GROWTH_RATE": "Stopa rasta (%)",
+            "INIT_MASS": "Masa monetare inicijalna",
+            "INIT_MEMBERS": "Broj članova",
+            "INIT_DISTRIB_MODE": "Izbor načina deljenja inicijalno"
+        },
+        "WEALTH": {
+            "TITLE": "Modul za deljenje",
+            "SUB_TITLE": "Camembert za inegalitete",
+            "SUMMARY": "Ovaj modul omogućava vizualizaciju evolucije monetare repartirane između igrača, pomoću indeksa Gini.",
+            "SUMMARY2": "Indeks Gini mera inegalitete distribucije (srednje obično od dohoda ili bogatstva) u populaciji."
+        }
+    }
 }

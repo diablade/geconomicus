@@ -5,6 +5,7 @@
     "DEBT_MONEY": "Moneda deuda",
     "GAME_NOTICE": "Instrucciones de juego",
     "BY_DEFAULT": "por defecto",
+    "PUBLIC_KEY": "Llave pública:",
     "VALUES_BY_DEFAULT": "Valores por defecto",
     "CANCEL": "Anular",
     "OK": "OK",
@@ -258,7 +259,6 @@
         },
         "IMPORT_EXPORT": "(La importación y exportación de partidas será posible en breve)."
     },
-    "PUBLIC_KEY": "Llave pública:",
     "CREDIT": {
         "REQUEST_CREDIT": "¿Prolongar?",
         "DEFAULT_CREDIT": "Falta de pago",
@@ -499,5 +499,28 @@
         "SAVE": "Guardar",
         "DELETE": "Suprimir",
         "OK": "OK"
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Vaya más allá con el",
+        "TITLE": "Módulos pedagógicos",
+        "BUTTON": "Módulos pedagógicos"
+    },
+    "MODULE": {
+        "GALILEO": {
+            "TITLE": "Módulo Galileo",
+            "SUB_TITLE": "Simulación educativa de la moneda libre",
+            "SUMMARY": "Este módulo permite visualizar la evolución de una moneda libre basada en el Dividendo Universo (DU). \nSimula la creación monetaria en el tiempo, la distribución entre miembros, y el impacto de acciones como el añadido o el retiro de miembros, o las transacciones. Gracias a gráficos dinámicos, ayuda a entender el efecto del DU sobre la masa monetaria y las partes relativas individuales.",
+            "DURATION": "Duración (años)",
+            "GROWTH_RATE": "Tasa de crecimiento (%)",
+            "INIT_MASS": "Masa monetaria inicial",
+            "INIT_MEMBERS": "Nombre de miembros inicial",
+            "INIT_DISTRIB_MODE": "Selecciona la distribución inicial"
+        },
+        "WEALTH": {
+            "TITLE": "Módulo distribución",
+            "SUB_TITLE": "Camembert de desigualdades de la moneda",
+            "SUMMARY": "Este módulo permite visualizar la evolución de una moneda repartida entre los jugadores, gracias al índice de Gini.",
+            "SUMMARY2": "El índice de Gini mide las desigualdades de distribución (suelen ser de ingresos o riquezas) en una población."
+        }
     }
 }

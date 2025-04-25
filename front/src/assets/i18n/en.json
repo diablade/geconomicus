@@ -5,11 +5,13 @@
 	"FREE_MONEY": "Free currency",
 	"DEBT_MONEY": "Debt currency",
 	"GAME_NOTICE": "Game notice",
+	"PUBLIC_KEY": "Public key:",
 	"BY_DEFAULT": "by default",
 	"VALUES_BY_DEFAULT": "Default values",
 	"CANCEL": "Cancel",
 	"OK": "OK",
 	"HOME": {
+		"CONTRIBUTION": "Contributions",
 		"WELCOME": "Discover free currency through play!",
 		"INSTALL": "Install the application",
 		"CREATE_GAME": "Create a game",
@@ -505,5 +507,31 @@
 	"DATE_FORMAT": {
 		"DATETIME": "dd-MM-YYYY at HH:mm"
 	},
-    "PUBLIC_KEY": ""
+	"RESSOURCES": {
+		"LEARN_FORWARD": "Learn more with",
+		"TITLE": "Pedagogical modules",
+		"BUTTON": "Pedagogical modules"
+	},
+	"CONTRIBUTION": {
+		"TITLE": "Contributions",
+		"SUBTITLE": "A big THANKS ❤\uFE0F to the following people for their contributions, supporters, advice, ideas, spelling corrections, translations, etc.."
+	},
+	"MODULE": {
+		"GALILEO": {
+			"TITLE": "Galileo Module",
+			"SUB_TITLE": "Pedagogical simulation of free currency",
+			"SUMMARY": "This module allows you to visualize the evolution of a free currency based on the Universal Dividend (DU). \nIt simulates the creation of money over time, the distribution between members, and the impact of actions such as adding or removing members, or transactions. Thanks to dynamic graphs, it helps you understand the effect of DU on the monetary mass and individual relative shares.",
+			"DURATION": "Duration (years)",
+			"GROWTH_RATE": "Growth rate (%)",
+			"INIT_MASS": "Initial monetary mass",
+			"INIT_MEMBERS": "Initial number of members",
+			"INIT_DISTRIB_MODE": "Initial distribution mode"
+		},
+		"WEALTH": {
+			"TITLE": "Wealth Module",
+			"SUB_TITLE": "Camembert of wealth inequality",
+			"SUMMARY": "This module allows you to visualize the evolution of a currency distributed between players, thanks to the Gini index.",
+			"SUMMARY2": "The Gini index measures the inequality of distribution (often income or wealth) in a population."
+		}
+	}
 }

@@ -86,7 +86,7 @@
         "SELL_4": "このQRコードまたは3桁を購入者に見せてください。",
         "TITLE_BUY": "カードを購入",
         "BUY_1": "画面の右下にある「購入」をクリックします。",
-        "BUY_2": "(ボタンが無効になっている場合、ゲームがまだ始まっていないか、すでに終了していることを意味します)",
+        "BUY_2": "(ボタンが無効になっていいる場合、ゲームがまだ始まっていないか、すでに終了していることを意味します)",
         "BUY_3": "カードを購入する方法は2つあります：",
         "BUY_4": "QRコードで（デフォルトモード）",
         "BUY_5": "購入をクリックすると、カメラが起動し、販売者の画面で希望するカードのQRコードをスキャンできます。",
@@ -165,8 +165,8 @@
         "DEFAULT_CREDIT_AMOUNT": "デフォルトで3",
         "DEFAULT_INTEREST_AMOUNT": "デフォルトで1",
         "CREDIT_SUCCESS": "{{player}}にクレジットが付与されました",
-        "QUICK_CREDIT": "",
-        "MANUAL_CREDIT": ""
+        "QUICK_CREDIT": "クレジット {{amount}}、利息 {{interest}}",
+        "MANUAL_CREDIT": "手動でクレジットを入力"
     },
     "CREDIT": {
         "PAUSED_CREDIT": "ゲームが一時停止中...",
@@ -499,5 +499,28 @@
     "DATE_FORMAT": {
         "DATETIME": "YYYY-MM-DD HH:mm"
     },
-    "PUBLIC_KEY": ""
+    "PUBLIC_KEY": "public key",
+	"RESSOURCES": {
+		"LEARN_FORWARD": "もっと学ぶ",
+		"TITLE": "Pedagogical modules",
+		"BUTTON": "Pedagogical modules"
+	},
+	"MODULE": {
+		"GALILEO": {
+			"TITLE": "Galilean module",
+			"SUB_TITLE": "Pedagogical simulation of free currency",
+			"SUMMARY": "This module allows you to visualize the evolution of a free currency based on the Universal Dividend (DU). \nIt simulates the creation of money over time, the distribution between members, and the impact of actions such as adding or removing members, or transactions. Thanks to dynamic graphs, it helps you understand the effect of DU on the monetary mass and individual relative shares.",
+			"DURATION": "Duration (years)",
+			"GROWTH_RATE": "Growth rate (%)",
+			"INIT_MASS": "Initial monetary mass",
+			"INIT_MEMBERS": "Initial number of members",
+			"INIT_DISTRIB_MODE": "Initial distribution mode"
+		},
+		"WEALTH": {
+			"TITLE": "Wealth Module",
+			"SUB_TITLE": "Camembert of wealth inequality",
+			"SUMMARY": "This module allows you to visualize the evolution of a currency distributed between players, thanks to the Gini index.",
+			"SUMMARY2": "The Gini index measures the inequality of distribution (often income or wealth) in a population."
+		}
+	}
 }
