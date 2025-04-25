@@ -18,9 +18,9 @@ export class I18nService {
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
-	constructor(private translate: TranslateService, private http: HttpClient) {
-		this.initializeLanguage();
-	}
+  constructor(private translate: TranslateService) {
+    this.initializeLanguage();
+  }
 
 	/**
 	 * Initialize the language based on stored preference or browser language
@@ -77,24 +77,26 @@ export class I18nService {
 			})
 		);
 	}
-
+	
 	onLangChange() {
 		return this.translate.onLangChange;
 	}
 
-	/**
-	 * Set current language
-	 * @param lang Language code
-	 * @throws Error if language is not supported
-	 */
-	use(lang: string): void {
-		if (!this.SUPPORTED_LANGS.includes(lang)) {
-			throw new Error(`Unsupported language: ${lang}`);
-		}
-		this.translate.use(lang);
-		localStorage.setItem(this.STORAGE_KEY, lang);
-		this.translationCache.clear(); // Clear cache when language changes
-	}
+  /**
+   * Set current language
+   * @param lang Language code
+   * @throws Error if language is not supported
+   */
+  use(lang: string): void {
+    if (!this.SUPPORTED_LANGS.includes(lang)) {
+			console.error(`Unsupported language: ${lang}`);
+			lang='fr';
+    }
+
+    this.translate.use(lang);
+    localStorage.setItem(this.STORAGE_KEY, lang);
+    this.translationCache.clear(); // Clear cache when language changes
+  }
 
 	/**
 	 * Get current language

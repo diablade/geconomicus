@@ -1,0 +1,39 @@
+<div class="pedago-dialog">
+	<h1 mat-dialog-title>{{ "RESSOURCES.TITLE" | translate }}</h1>
+	<div mat-dialog-content>
+		<mat-card class="card" (click)="openGalileo()">
+			<mat-card-header>
+				<mat-card-title-group>
+					<mat-card-title>{{ "MODULE.GALILEO.TITLE"|translate }}</mat-card-title>
+					<fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+					<mat-card-subtitle>{{ "MODULE.GALILEO.SUB_TITLE"| translate }}</mat-card-subtitle>
+				</mat-card-title-group>
+			</mat-card-header>
+			<mat-card-content>
+				<div class="summary">
+					{{ "MODULE.GALILEO.SUMMARY"|translate }}
+				</div>
+			</mat-card-content>
+			<img class="p-3" mat-card-image src="/assets/images/galileo.png" alt="">
+		</mat-card>
+		<mat-card class="card" (click)="openWealth()">
+			<mat-card-header>
+				<mat-card-title-group>
+					<mat-card-title>{{ "MODULE.WEALTH.TITLE"|translate }}</mat-card-title>
+					<fa-icon [icon]="faArrowUpRightFromSquare"></fa-icon>
+					<mat-card-subtitle>{{ "MODULE.WEALTH.SUB_TITLE"|translate }}</mat-card-subtitle>
+				</mat-card-title-group>
+			</mat-card-header>
+			<mat-card-content>
+				<div class="summary">
+					{{ "MODULE.WEALTH.SUMMARY"|translate }}
+					{{ "MODULE.WEALTH.SUMMARY2"|translate }}
+				</div>
+			</mat-card-content>
+			<img class="p-3" mat-card-image src="/assets/images/wealth.png" alt="">
+		</mat-card>
+	</div>
+	<div mat-dialog-actions align="end">
+		<button mat-button [mat-dialog-close]="">{{ "DIALOG.CLOSE"|translate }}</button>
+	</div>
+</div>

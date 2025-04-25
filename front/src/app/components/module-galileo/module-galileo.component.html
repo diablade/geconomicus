@@ -1,0 +1,107 @@
+<div class="module">
+	<button mat-raised-button [color]="" (click)="home()">Revenir à l'accueil</button>
+	<h1>Simulateur Monnaie Libre (Module Galilée)</h1>
+	<p>Ce module permet de visualiser l’évolution d’une monnaie libre basée sur le Dividende Universel (D.U).
+		Il simule la création monétaire dans le temps, la répartition entre membres, et l’impact d’actions comme l’ajout, le
+		retrait de membres, ou des transactions. Grâce à des graphiques dynamiques, il aide à comprendre l'effet du D.U sur
+		la masse monétaire et les parts relatives individuelles.</p>
+
+	<div class="controls">
+		<div class="controls d-flex flex-row">
+			<mat-card class="control-action card">
+				<h2>Paramètres initiaux</h2>
+				<label>{{ "MODULE.GALILEO.DURATION"| translate }}: {{ duration }}</label>
+				<input type="range" [min]="1" [max]="150" [step]="1" [(ngModel)]="duration"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.GROWTH_RATE"| translate }}: {{ growthRate }}</label>
+				<input type="range" [min]="0" [max]="40" [step]="0.1" [(ngModel)]="growthRate"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_MEMBERS"| translate }}: {{ initialMembers }}</label>
+				<input type="range" [min]="2" [max]="100" [step]="1" [(ngModel)]="initialMembers"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_MASS"| translate }}: {{ initialMass }}</label>
+				<input type="range" [min]="100" [max]="10000000" [step]="100" [(ngModel)]="initialMass"
+							 (change)="executeSimulationFromStart()">
+				<label>{{ "MODULE.GALILEO.INIT_DISTRIB_MODE"| translate }}:</label>
+				<select [(ngModel)]="distributionMode" (change)="executeSimulationFromStart()">
+					<option value="equal">Égale</option>
+					<option value="linear">Écart linéaire</option>
+					<option value="gini">Coéfficient de Gini</option>
+				</select>
+				<div *ngIf="distributionMode==='gini'">
+					<input type="range" [min]="0" [max]="1" [step]="0.1" [(ngModel)]="gini"
+								 (change)="executeSimulationFromStart()">{{ gini }}
+				</div>
+			</mat-card>
+			<mat-card class="control-action card">
+				<h2>Ajouter un membre</h2>
+				<div>A l'année : {{ actionYear }}</div>
+				<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
+				<div>Démarre à 0. A partir l'année {{ actionYear }} il reçoit le D.U chaque années</div>
+				<button mat-raised-button [color]="'accent'" (click)="addMember()">Ajouter un membre</button>
+			</mat-card>
+			<mat-card class="control-action card">
+				<h2>Retirer un membre</h2>
+				<div>A l'année : {{ actionYear }}</div>
+				<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
+				<div>le membre:
+					<select [(ngModel)]="removeMemberId">
+						<option *ngIf="removeMemberId" value="">Choisir...</option>
+						<option *ngFor="let m of members" [value]="m.id">{{ m.id }}</option>
+					</select>
+				</div>
+				<small>Ne reçoit plus le D.U à partir de l'année {{ actionYear }}</small>
+				<button mat-raised-button [color]="'accent'" (click)="removeMember()">Rendre Inactif</button>
+			</mat-card>
+			<mat-card class="control-action card">
+				<h2>Ajouter une transaction</h2>
+				<div>A l'année : {{ actionYear }}</div>
+				<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
+				<label>Transaction de:</label>
+				<select [(ngModel)]="txFrom">
+					<option *ngIf="!txFrom" value="">Choisir...</option>
+					<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
+				</select>
+				<label>vers:</label>
+				<select [(ngModel)]="txTo">
+					<option *ngIf="!txTo" value="">Choisir...</option>
+					<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
+				</select>
+				<label>Montant: {{ txAmount }}</label>
+				<input type="range" min="0" max="1000000" step="100" [(ngModel)]="txAmount">
+				<button mat-raised-button [color]="'accent'" (click)="addTransaction()">Ajouter transaction</button>
+			</mat-card>
+			<!--		</div>-->
+			<!--	</div>-->
+
+			<!--	<div class="mt-2 d-flex flex-row flex-wrap gap-2 align-items-center">-->
+			<mat-card class="control-action card">
+				<button mat-raised-button [color]="'warn'" (click)="resetSimulation()">RESET ALL</button>
+				<div class="align-content-center">Événements:</div>
+				<div class="d-flex flex-column overflow-auto">
+					<div class="itemEvent ms-1" *ngFor="let e of events; let i=index">
+						<mat-chip>
+							An {{ e.at }}:
+							<ng-container [ngSwitch]="e.type">
+								<span *ngSwitchCase="'add'">Ajout Membre</span>
+								<span *ngSwitchCase="'sup'">Inactivation Membre {{ e.to }}</span>
+								<span *ngSwitchCase="'tra'">Transaction {{ e.amount }} de {{ e.from }} vers {{ e.to }}</span>
+							</ng-container>
+						</mat-chip>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+	<div class="charts">
+		<mat-card class="chart-container card-chart">
+			<h2>Montants absolus des comptes en G1 (Quantitatif)</h2>
+			<canvas #quantitativeCanvas></canvas>
+			Échelle verticale logarithmique.
+		</mat-card>
+		<mat-card class="chart-container card-chart">
+			<h2>Parts de la Masse Monétaire en % (Relatif)</h2>
+			<canvas #relativeCanvas></canvas>
+		</mat-card>
+	</div>
+</div>

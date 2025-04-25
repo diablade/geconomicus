@@ -41,32 +41,37 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
 import { NgxKjuaComponent } from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
-import { ScannerDialogV3Component } from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
-import { MatListModule } from "@angular/material/list";
-import { MatMenuModule } from "@angular/material/menu";
-import { GameDeleteDialog, HistoryGamesComponent } from './history-games/history-games.component';
-import { SurveyComponent } from "./survey/survey.component";
-import { MatSliderModule } from "@angular/material/slider";
-import { BankBoardComponent } from './bank-board/bank-board.component';
-import { MatChipsModule } from "@angular/material/chips";
-import { ContractDialogComponent } from './dialogs/contract-dialog/contract-dialog.component';
-import { CreditComponent } from './credit/credit.component';
-import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
-import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
-import { MatExpansionModule } from "@angular/material/expansion";
-import { CdkMenuTrigger } from "@angular/cdk/menu";
-import { SeizureDialogComponent } from './dialogs/seizure-dialog/seizure-dialog.component';
-import { DragDropModule } from "@angular/cdk/drag-drop";
-import { CongratsDialogComponent } from './dialogs/congrats-dialog/congrats-dialog.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { LOAD_WASM, NgxScannerQrcodeModule } from "ngx-scanner-qrcode";
-import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
-import { MasterAdminComponent } from './master-admin/master-admin.component';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
-import { GameInfosDialog, NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
-import { I18nService } from './services/i18n.service';
+import {ScannerDialogV3Component} from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
+import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
+import {GameDeleteDialog, HistoryGamesComponent} from './history-games/history-games.component';
+import {SurveyComponent} from "./survey/survey.component";
+import {MatSliderModule} from "@angular/material/slider";
+import {BankBoardComponent} from './bank-board/bank-board.component';
+import {MatChipsModule} from "@angular/material/chips";
+import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
+import {CreditComponent} from './credit/credit.component';
+import {ConfirmDialogComponent} from './dialogs/confirm-dialog/confirm-dialog.component';
+import {BtnTimerAutoClickComponent} from './components/btn-timer-auto-click/btn-timer-auto-click.component';
+import {MatExpansionModule} from "@angular/material/expansion";
+import {CdkMenuTrigger} from "@angular/cdk/menu";
+import {SeizureDialogComponent} from './dialogs/seizure-dialog/seizure-dialog.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import {CongratsDialogComponent} from './dialogs/congrats-dialog/congrats-dialog.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {LOAD_WASM, NgxScannerQrcodeModule} from "ngx-scanner-qrcode";
+import {ShortcodeDialogComponent} from './dialogs/shortcode-dialog/shortcode-dialog.component';
+import {MasterAdminComponent} from './master-admin/master-admin.component';
+import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {LanguageBtnComponent} from './components/language-btn/language-btn.component';
+import { GameInfosDialog,NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
+import {I18nService} from './services/i18n.service';
+import {ModuleWealthDistribComponent} from './components/module-wealth-distrib/module-wealth-distrib.component';
+import {ModuleGalileoComponent} from './components/module-galileo/module-galileo.component';
+import {PedagoDialogComponent} from './dialogs/pedago-dialog/pedago-dialog.component';
+import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
+import {MatCardModule} from "@angular/material/card";
 import { ContributionsComponent } from './components/contributions/contributions.component';
 
 // required for AOT compilation
@@ -113,6 +118,10 @@ LOAD_WASM().subscribe();
 		LanguageBtnComponent,
 		NoticeBtnComponent,
 		ContributionsComponent,
+		ModuleWealthDistribComponent,
+		ModuleGalileoComponent,
+		PedagoDialogComponent,
+		PedagoBtnComponent,
 	],
 	imports: [
 		HttpClientModule,
@@ -141,6 +150,7 @@ LOAD_WASM().subscribe();
 		MatMenuModule,
 		MatSliderModule,
 		MatChipsModule,
+		MatCardModule,
 		MatExpansionModule,
 		CdkMenuTrigger,
 		DragDropModule,

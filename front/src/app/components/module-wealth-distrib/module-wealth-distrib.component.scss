@@ -1,0 +1,83 @@
+.module {
+	padding: 1rem;
+	background: white;
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+.cardParam{
+	padding: 1rem;
+	min-width: 300px;
+}
+.card {
+	background: #f9f9f9;
+	padding: 1rem;
+	border-radius: 8px;
+}
+
+.control-group {
+	flex: 1;
+	min-width: 200px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+input[type="range"] {
+	width: 100%;
+}
+
+.value-display {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 5px;
+}
+
+.chart-container {
+	position: relative;
+	height: 400px;
+	margin-top: 20px;
+}
+
+.results {
+	margin-top: 20px;
+	border-top: 1px solid #ddd;
+	padding-top: 20px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+th, td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+.toggle-view button {
+	padding: 8px 15px;
+	background-color: #f2f2f2;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.toggle-view button.active {
+	background-color: #007bff;
+	color: white;
+	border-color: #007bff;
+}

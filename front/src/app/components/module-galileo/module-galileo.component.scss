@@ -1,0 +1,59 @@
+.module {
+	padding: 1rem;
+	background: white;
+}
+
+.controls {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: center;
+}
+
+.control-action {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	width: 286px;
+}
+.yearInput{
+	width: 100px;
+}
+
+.card {
+	background: #f9f9f9;
+	padding: 1rem;
+	border-radius: 8px;
+	max-height: 370px;
+	&-chart {
+		background: #f9f9f9;
+		padding: 1rem;
+		border-radius: 8px;
+	}
+}
+
+.transaction {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.charts {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.chart-container canvas {
+	width: 100% !important;
+	height: auto !important;
+}
+
+@media (min-width: 768px) {
+	.charts {
+		grid-template-columns: 1fr 1fr;
+	}
+}

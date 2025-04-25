@@ -278,6 +278,7 @@
 		"DISTRIBUTION_TO": "Distribution à"
 	},
 	"DIALOG": {
+		"CLOSE": "Fermer",
 		"INFORMATION": {
 			"TITLE": "Information !",
 			"BTN1": "Ok"
@@ -334,6 +335,11 @@
 			"TITLE": "Confirmez-vous ?",
 			"MESSAGE": "Cette action est irréversible."
 		}
+	}
+	"RESSOURCES": {
+		"LEARN_FORWARD": "Allez plus loin avec les",
+		"TITLE": "Modules pédagogiques",
+		"BUTTON": "Modules pédagogiques"
 	},
 	"SURVEY": {
 		"THANK_YOU": "Merci ! Redirection vers les resultats...",
@@ -462,7 +468,7 @@
 	"CURRENCY": {
 		"EURO": "€",
 		"JUNE": "Ğ1",
-		"DU": "DU"
+		"DU": "D.U"
 	},
 	"PLAYER": {
 		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
@@ -510,5 +516,23 @@
 	"CONTRIBUTION": {
 		"TITLE": "Contributions",
 		"SUBTITLE": "Un grand MERCI  ❤\uFE0F aux personnes suivante pour leurs contributions, soutiens, conseils, idées, corrections d'orthographe, traductions,etc.."
+	},
+	"MODULE": {
+		"GALILEO": {
+			"TITLE": "Module Galilée",
+			"SUB_TITLE": "Simulation pédagogique de la monnaie libre",
+			"SUMMARY": "Ce module permet de visualiser l’évolution d’une monnaie libre basée sur le Dividende Universel (DU). \nIl simule la création monétaire dans le temps, la répartition entre membres, et l’impact d’actions comme l’ajout ou le retrait de membres, ou des transactions. Grâce à des graphiques dynamiques, il aide à comprendre l'effet du DU sur la masse monétaire et les parts relatives individuelles.",
+			"DURATION": "Durée (années)",
+			"GROWTH_RATE": "Taux de croissance (%)",
+			"INIT_MASS": "Masse monétaire initiale",
+			"INIT_MEMBERS": "Nombre initial de membres",
+			"INIT_DISTRIB_MODE": "Choix de la répartition initiale"
+		},
+		"WEALTH": {
+			"TITLE": "Module répartition",
+			"SUB_TITLE": "Camembert des inégalités de la monnaie",
+			"SUMMARY": "Ce module permet de visualiser l’évolution d’une monnaie repartie entre les joueurs, grace à l'indice de Gini.",
+			"SUMMARY2": "L’indice de Gini mesure les inégalités de distribution (souvent de revenus ou richesses) dans une population."
+		}
 	}
 }
