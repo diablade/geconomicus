@@ -169,20 +169,6 @@ function drawPieChart(values: number[], colors: any[]) {
 			maintainAspectRatio: false,
 			plugins: {
 				legend: {display: false},
-				// datalabels: {
-				// 	formatter: (value, context) => {
-				// 		const dataset = context.chart.data.datasets[0];
-				// 		// @ts-ignore
-				// 		const total = dataset.data.reduce((acc, val) => acc + val, 0);
-				// 		// @ts-ignore
-				// 		const percentage = ((value / total) * 100).toFixed(0);
-				// 		return `${percentage}%`;
-				// 	},
-				// 	color: '#fff',
-				// 	font: {
-				// 		weight: 'bold'
-				// 	}
-				// }
 			}
 		}
 	});
@@ -478,6 +464,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		"Agréssif",
 		"Irritable",
 		"Dépendant"];
+
 	public leftLabels = [
 		"(Positif 😊)  Trés",
 		"Assez",
@@ -486,28 +473,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		"Un peu",
 		"Assez",
 		"(Négatif 😒)  Trés"];
-	public feedbacksOptions: ChartConfiguration['options'] = {
-		responsive: true,
-		maintainAspectRatio: false,
-		plugins: {
-			tooltip: {
-				callbacks: {
-					// @ts-ignore
-					label: function (tooltipItem) {
-						// @ts-ignore
-						return tooltipItem.raw.count;
-					},
-				},
-			},
-		},
-		scales: {
-			x: {display: false, ticks: {stepSize: 1}},
-			y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3,},
-			x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
-			x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
-			y2: {position: "left", type: "category", labels: this.leftLabels,},
-		},
-	};
+	public feedbacksOptions = undefined;
 
 	constructor(private route: ActivatedRoute,
 							private platform: Platform,
@@ -517,7 +483,53 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 							private i18nService: I18nService) {
 	}
 
+	topLabelKeys = [
+		"SURVEY.HAPPY",
+		"SURVEY.COLLECTIVE",
+		"SURVEY.INTEGRATED",
+		"SURVEY.GENEROUS",
+		"SURVEY.COOPERATIVE",
+		"SURVEY.CONFIDENT",
+		"SURVEY.PLEASANT",
+		"SURVEY.TOLERANT",
+		"SURVEY.AUTONOMOUS"];
+
+	bottomLabelKeys = [
+		"SURVEY.DEPRESSED",
+		"SURVEY.INDIVIDUAL",
+		"SURVEY.ALONE",
+		"SURVEY.GREEDY",
+		"SURVEY.COMPETITIVE",
+		"SURVEY.ANXIOUS",
+		"SURVEY.AGGRESSIVE",
+		"SURVEY.IRRITABLE",
+		"SURVEY.DEPENDENT"];
+
+	leftLabelKeys = [
+		"SURVEY.VERY",
+		"SURVEY.ENOUGH",
+		"SURVEY.LITTLE",
+		"SURVEY.NUTRAL",
+		"SURVEY.LITTLE",
+		"SURVEY.ENOUGH",
+		"SURVEY.VERYNOT"];
+
+	convertLabels(labelKeys: string[]) {
+		const labels: string[] = [];
+		for (const key of labelKeys) {
+			labels.push(this.i18nService.instant(key));
+		}
+		return labels;
+	}
+
 	ngOnInit(): void {
+		this.i18nService.onLangChange().subscribe(() => {
+			this.feedbacksLabelsTop = this.convertLabels(this.topLabelKeys);
+			this.feedbacksLabelsBottom = this.convertLabels(this.bottomLabelKeys);
+			this.leftLabels = this.convertLabels(this.leftLabelKeys);
+			this.initChartOptions();
+
+		});
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
@@ -529,7 +541,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
 				}
 				this.nbPlayer = _.partition(this.players, p => p.status === C.ALIVE).length;
-				await this.initDatasets();
+				this.initDatasets();
 				if (this.game?.typeMoney == C.JUNE) {
 					const firstDu = _.find(this.events, e => {
 						return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU";
@@ -548,6 +560,32 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				},
 			});
 		});
+	}
+
+	initChartOptions() {
+		// @ts-ignore
+		this.feedbacksOptions = {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				tooltip: {
+					callbacks: {
+						// @ts-ignore
+						label: function (tooltipItem) {
+							// @ts-ignore
+							return tooltipItem.raw.count;
+						},
+					},
+				},
+			},
+			scales: {
+				x: {display: false, ticks: {stepSize: 1}},
+				y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3,},
+				x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
+				x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
+				y2: {position: "left", type: "category", labels: this.leftLabels,},
+			},
+		};
 	}
 
 	ngAfterViewInit() {
@@ -574,7 +612,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	async initDatasets() {
+	initDatasets() {
 		// Initialize empty dataset for each player with a running total
 		const players = _.sortBy(this.players, 'name');
 		_.forEach(players, player => {

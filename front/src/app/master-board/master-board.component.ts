@@ -349,15 +349,3 @@ export class JoinQrDialog {
 		this.dialogRef.close();
 	}
 }
-
-@Component({
-	selector: 'game-infos-dialog',
-	templateUrl: '../dialogs/game-infos-dialog.html',
-})
-export class GameInfosDialog {
-	constructor(public dialogRef: MatDialogRef<GameInfosDialog>) {
-	}
-
-	faQrcode = faQrcode;
-	faKeyboard = faKeyboard;
-}

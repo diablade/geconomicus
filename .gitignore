@@ -5,3 +5,5 @@
 /assets offline/*
 /.qodo/history.sqlite
 /.qodo/indexes.sqlite
+
+.qodo

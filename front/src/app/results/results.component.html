@@ -96,10 +96,8 @@
 				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{ startGameDate| date:"YYYY-MMM-dd
-					HH:mm" }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{ stopGameDate| date:"YYYY-MMM-dd
-					HH:mm" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{ startGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{ stopGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.TOTAL_DURATION" | translate }}: </span>{{ durationGame() }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.ROUND_DURATION" | translate }}: </span>{{ game?.roundMinutes }} {{
 					"RESULTS.MINUTES" | translate }}</div>

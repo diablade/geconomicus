@@ -1,3 +1,4 @@
+import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, tap} from 'rxjs';
@@ -17,7 +18,7 @@ export class I18nService {
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
-	constructor(private translate: TranslateService,) {
+	constructor(private translate: TranslateService, private http: HttpClient) {
 		this.initializeLanguage();
 	}
 
@@ -77,6 +78,10 @@ export class I18nService {
 		);
 	}
 
+	onLangChange() {
+		return this.translate.onLangChange;
+	}
+
 	/**
 	 * Set current language
 	 * @param lang Language code
@@ -86,7 +91,6 @@ export class I18nService {
 		if (!this.SUPPORTED_LANGS.includes(lang)) {
 			throw new Error(`Unsupported language: ${lang}`);
 		}
-
 		this.translate.use(lang);
 		localStorage.setItem(this.STORAGE_KEY, lang);
 		this.translationCache.clear(); // Clear cache when language changes

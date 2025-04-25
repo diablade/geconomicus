@@ -1,20 +1,19 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {Subscription} from "rxjs";
-import {Credit, Game, Player} from "../models/game";
-import {ActivatedRoute} from "@angular/router";
-import {BackService} from "../services/back.service";
-import {SnackbarService} from "../services/snackbar.service";
-import {MatDialog} from "@angular/material/dialog";
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Subscription } from "rxjs";
+import { Credit, Game, Player } from "../models/game";
+import { ActivatedRoute } from "@angular/router";
+import { BackService } from "../services/back.service";
+import { SnackbarService } from "../services/snackbar.service";
+import { MatDialog } from "@angular/material/dialog";
 import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
-import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
-import {environment} from "../../environments/environment";
-import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {GameInfosDialog} from "../master-board/master-board.component";
+import { faCircleInfo, faSackDollar, faLandmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { ContractDialogComponent } from "../dialogs/contract-dialog/contract-dialog.component";
+import { environment } from "../../environments/environment";
+import { SeizureDialogComponent } from "../dialogs/seizure-dialog/seizure-dialog.component";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { I18nService } from '../services/i18n.service';
 @Component({
 	selector: 'app-bank-board',
@@ -37,11 +36,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-							private backService: BackService,
-							private snackbarService: SnackbarService,
-							private sanitizer: DomSanitizer,
-							public dialog: MatDialog,
-							private i18nService: I18nService) {
+		private backService: BackService,
+		private snackbarService: SnackbarService,
+		private sanitizer: DomSanitizer,
+		public dialog: MatDialog,
+		private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -55,7 +54,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			});
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
-				this.prisoners = _.filter(game.players, {"status": "prison"});
+				this.prisoners = _.filter(game.players, { "status": "prison" });
 			});
 		});
 	}
@@ -156,7 +155,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	}
 
 	getAverageCurrency() {
-		return this.game.currentMassMonetary / _.size(_.filter(this.game.players, {'status': 'alive'}));
+		return this.game.currentMassMonetary / _.size(_.filter(this.game.players, { 'status': 'alive' }));
 	}
 
 	getPlayerName(idPlayer: string) {
@@ -166,12 +165,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 
 	showContract() {
 		const dialogRef = this.dialog.open(ContractDialogComponent, {
-			data: {game: _.clone(this.game)},
+			data: { game: _.clone(this.game) },
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
 			if (contrat) {
-				this.backService.createCredit({...contrat, idGame: this.idGame}).subscribe((credit: Credit) => {
-					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
+				this.backService.createCredit({ ...contrat, idGame: this.idGame }).subscribe((credit: Credit) => {
+					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", { player: this.getPlayerName(credit.idPlayer) }));
 					this.game.credits.push(credit);
 					this.game.currentMassMonetary += credit.amount;
 				});
