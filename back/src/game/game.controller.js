@@ -152,6 +152,13 @@ export default {
             }
         )
             .then((updatedGame) => {
+                const payload = {
+                    typeMoney: body.typeMoney,
+                    timerCredit: body.timerCredit,
+                    timerPrison: body.timerPrison,
+                    amountCardsForProd: body.amountCardsForProd
+                };
+                socket.emitTo(body.idGame, C.UPDATE_GAME_OPTION, payload);
                 return res.status(200).send({
                     status: "updated",
                 });

@@ -89,10 +89,10 @@ export class Game {
 
 	//option general
 	devMode = false;
-	priceWeight1 = 3;
-	priceWeight2 = 6;
-	priceWeight3 = 9;
-	priceWeight4 = 12;
+	priceWeight1 = 1;
+	priceWeight2 = 2;
+	priceWeight3 = 4;
+	priceWeight4 = 8;
 	currentMassMonetary = 0;
 	amountCardsForProd = 4;
 	distribInitCards = 4;
@@ -102,7 +102,7 @@ export class Game {
 	surveyEnabled = true;
 	round = 0;
 	roundMax = 1;
-	roundMinutes = 25;
+	roundMinutes = 20;
 	autoDeath = true;
 	deathPassTimer = 4;
 

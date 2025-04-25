@@ -52,7 +52,7 @@
 		<div
 			class="text-center gecoFont shadowed fs-1 m-4">{{ statusGame !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate) }}
 		</div>
-		<app-notice-btn *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
+		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit" *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
 		<button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
 						color="accent">
 			{{ "PLAYER.ANSWER_SURVEY" | translate }}

@@ -16,7 +16,7 @@
 		<p>{{ "NOTICE.GOAL_5"|translate }}</p>
 		<p>{{ "NOTICE.GOAL_6"|translate }}</p>
 		<p>{{ "NOTICE.GOAL_7"|translate }}</p>
-		<p>{{ "NOTICE.GOAL_8"|translate }}</p>
+		<p>{{ "NOTICE.GOAL_8"|translate : {count: amountCardsForProd} }}</p>
 	</div>
 	<h2 class="gecoFont shadowed m-2">{{ "NOTICE.TITLE_SETUP"|translate }}</h2>
 	<ul>
@@ -32,7 +32,7 @@
 		<li>
 			<p>{{ "NOTICE.SETUP_7"|translate }}</p>
 			<p>{{ "NOTICE.SETUP_8"|translate }}</p>
-			<p>{{ "NOTICE.SETUP_9"|translate }}</p>
+			<p>{{ "NOTICE.SETUP_9"|translate : {count: timerCredit} }}</p>
 			<p>{{ "NOTICE.SETUP_10"|translate }}</p>
 		</li>
 	</ul>
@@ -87,7 +87,7 @@
 					<img class="" style="width: 30px" src="/assets/images/stack.png" alt="">
 				</li>
 				<li>{{ "NOTICE.PROD_2"|translate }}</li>
-				<li>{{ "NOTICE.PROD_3"|translate }}</li>
+				<li>{{ "NOTICE.PROD_3"|translate : {count: amountCardsForProd} }}</li>
 			</ul>
 		</div>
 		<video class="video" #bc (click)="bc.play()" loop playsinline autoplay muted>
@@ -109,13 +109,13 @@
 			<li>
 				<p class="text-decoration-underline">{{ "NOTICE.BANK_7"|translate }}:</p>
 				<p>{{ "NOTICE.BANK_8"|translate }}</p>
-				<p>{{ "NOTICE.BANK_9"|translate }}</p>
+				<p>{{ "NOTICE.BANK_9"|translate : {count: timerCredit} }}</p>
 				<p>{{ "NOTICE.BANK_10"|translate }}</p>
 			</li>
 			<li>
 				<p class="text-decoration-underline">{{ "NOTICE.BANK_11"|translate }}:</p>
-				<p>{{ "NOTICE.BANK_12"|translate }}</p>
-				<p>{{ "NOTICE.BANK_13"|translate }}</p>
+				<p>{{ "NOTICE.BANK_12"|translate : {count: timerCredit} }}</p>
+				<p>{{ "NOTICE.BANK_13"|translate : {count: timerCredit} }}</p>
 			</li>
 			<li>
 				<p class="text-decoration-underline">{{ "NOTICE.BANK_14"|translate }}:</p>
