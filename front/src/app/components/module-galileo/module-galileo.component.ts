@@ -51,7 +51,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	gini = 1;
 	distributionMode: 'equal' | 'linear' | 'gini' = 'gini';
 	actionYear = 10;
-	removeMemberId = 1;
+	removeMemberId = 0;
 	txFrom = 0;
 	txTo = 0;
 	txAmount = 50;
@@ -82,7 +82,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	executeSimulationFromStart() {
 		this.events = [];
 		this.actionYear = 10;
-		this.removeMemberId = 1;
+		this.removeMemberId = 0;
 		this.txFrom = 0;
 		this.txTo = 0;
 		this.txAmount = 50;
@@ -109,7 +109,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		this.gini = 1;
 		this.distributionMode = 'gini';
 		this.actionYear = 10;
-		this.removeMemberId = 1;
+		this.removeMemberId = 0;
 		this.txFrom = 0;
 		this.txTo = 0;
 		this.txAmount = 50;
@@ -137,8 +137,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	}
 
 	addMember(): void {
-		this.events.push(new Event("add", this.actionYear, 0, 0, 0));
 		const member = new Member(this.members.length + 1, 0);
+		this.events.push(new Event("add", this.actionYear, 0, member.id, 0));
 		this.members.push(member);
 		for (let y = 0; y < this.years.length; y++) {
 			if (y >= (this.actionYear - 1)) {

@@ -3,6 +3,11 @@
 	background: white;
 }
 
+.description{
+	// font-size: 14px;
+	// line-height: 13px;
+}
+
 .controls {
 	display: flex;
 	flex-direction: row;
@@ -25,7 +30,7 @@
 	background: #f9f9f9;
 	padding: 1rem;
 	border-radius: 8px;
-	max-height: 370px;
+	max-height: 390px;
 	&-chart {
 		background: #f9f9f9;
 		padding: 1rem;
