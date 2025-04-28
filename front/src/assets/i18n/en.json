@@ -566,10 +566,31 @@
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)"
 		},
 		"WEALTH": {
-			"TITLE": "Wealth Module",
-			"SUB_TITLE": "Camembert of wealth inequality",
+			"TITLE": "Distribution module",
+			"SUB_TITLE": "Camembert of currency inequalities",
 			"SUMMARY": "This module allows you to visualize the evolution of a currency distributed between players, thanks to the Gini index.",
-			"SUMMARY2": "The Gini index measures the inequality of distribution (often income or wealth) in a population."
+			"SUMMARY2": "The Gini index measures the inequalities of distribution (often income or wealth) within a population.",
+			"SUMMARY3": "The total amount is distributed differently depending on the parameter P. 💸",
+			"SUMMARY4": "A low P means a more equal distribution. 🤝",
+			"SUMMARY5": "A high P creates more differences between people. 📊",
+			"SUMMARY6": "The closer the Gini index is to 1, the more unequal the distribution is.",
+			"SUMMARY7": "The Gini index measures the inequalities of distribution (often income or wealth) within a population.",
+			"SUMMARY8": "- 0 = perfect equality (everyone has the same)",
+			"SUMMARY9": "- 1 = complete inequality (only one person has everything)",
+			"SUMMARY10": "The closer the index is to 1, the more unequal the distribution is.",
+			"TOTAL": "Total Amount",
+			"NUM_PLAYERS": "Number of people",
+			"RESULTS": "Distribution results",
+			"PARAM_P": "Parameter P (inequality)",
+			"PERSON": "Person",
+			"AMOUNT": "Amount",
+			"GINI": "Gini index",
+			"RATIO": "Ratio High/Low",
+			"SIMULATION": "Simulation",
+			"PERCENTAGE": "% of Total",
+			"GRAPHIC": "Graphic",
+			"CURVE": "Curve",
+			"CAMBER": "Camembert"
 		}
 	}
 }

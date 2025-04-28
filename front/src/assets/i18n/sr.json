@@ -555,10 +555,31 @@
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)"
 		},
         "WEALTH": {
-            "TITLE": "Modul za deljenje",
-            "SUB_TITLE": "Camembert za inegalitete",
-            "SUMMARY": "Ovaj modul omogućava vizualizaciju evolucije monetare repartirane između igrača, pomoću indeksa Gini.",
-            "SUMMARY2": "Indeks Gini mera inegalitete distribucije (srednje obično od dohoda ili bogatstva) u populaciji."
-        }
+			"TITLE": "Modul raspodele",
+			"SUB_TITLE": "Kamber raspodele novca",
+			"SUMMARY": "Ovaj modul omogućuje vizualizaciju evolucije novca raspodeljenog između igrača, pomoću indeksa Gini.",
+			"SUMMARY2": "Indeks Gini meri nejednakosti distribucije (često prihoda ili bogatstva) u populaciji.",
+			"SUMMARY3": "Ukupan iznos se raspoređuje različito u zavisnosti od parametra P. 💸",
+			"SUMMARY4": "Nizak P znači raspodelu koja je više jednaka. 🤝",
+			"SUMMARY5": "Visok P stvara više razlika između ljudi. 📊",
+			"SUMMARY6": "Što je indeks Gini bliži 1, to je raspodela nejednaka.",
+			"SUMMARY7": "Indeks Gini meri nejednakosti distribucije (često prihoda ili bogatstva) u populaciji.",
+			"SUMMARY8": "- 0 = savršena jednakost (svi imaju isto)",
+			"SUMMARY9": "- 1 = potpuna nejednakost (samo jedna osoba ima sve)",
+			"SUMMARY10": "Što je indeks bliži 1, to je raspodela nejednaka.",
+			"TOTAL": "Ukupan iznos",
+			"NUM_PLAYERS": "Broj osoba",
+			"RESULTS": "Rezultati raspodele",
+			"PARAM_P": "Parametar P (nejednakost)",
+			"PERSON": "Osoba",
+			"AMOUNT": "Iznos",
+			"GINI": "Indeks Gini",
+			"RATIO": "Odnos Gornji/Doljni",
+			"SIMULATION": "Simulacija",
+			"PERCENTAGE": "% od ukupnog",
+			"GRAPHIC": "Grafik",
+			"CURVE": "Kriva",
+			"CAMBER": "Kamber"
+		}
     }
 }

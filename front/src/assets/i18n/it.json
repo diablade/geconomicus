@@ -555,10 +555,31 @@
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)"
 		},
         "WEALTH": {
-            "TITLE": "Modulo di distribuzione",
-            "SUB_TITLE": "Camembert delle inegualità monetarie",
-            "SUMMARY": "Questo modulo permette di visualizzare l'evoluzione di una moneta distribuita tra i giocatori, grazie all'indice di Gini.",
-            "SUMMARY2": "L'indice di Gini misura le inegualità di distribuzione (spesso di reddito o ricchezza) in una popolazione."
-        }
+			"TITLE": "Modulo distribuzione",
+			"SUB_TITLE": "Camembert delle disuguaglianze della moneta",
+			"SUMMARY": "Questo modulo consente di visualizzare l'evoluzione di una moneta distribuita tra i giocatori, grazie all'indice di Gini.",
+			"SUMMARY2": "L'indice di Gini misura le disuguaglianze di distribuzione (spesso di redditi o ricchezze) all'interno di una popolazione.",
+			"SUMMARY3": "L'importo totale viene ripartito in modo diverso in base al parametro P. 💸",
+			"SUMMARY4": "Un P basso significa una distribuzione più equa. 🤝",
+			"SUMMARY5": "Un P elevato crea più differenze tra le persone. 📊",
+			"SUMMARY6": "Più l'indice di Gini è vicino a 1, più la distribuzione è ineguale.",
+			"SUMMARY7": "L'indice di Gini misura le disuguaglianze di distribuzione (spesso di redditi o ricchezze) all'interno di una popolazione.",
+			"SUMMARY8": "- 0 = uguaglianza perfetta (tutti hanno la stessa cosa)",
+			"SUMMARY9": "- 1 = disuguaglianza totale (una sola persona ha tutto)",
+			"SUMMARY10": "Più l'indice è vicino a 1, più la distribuzione è ineguale.",
+			"TOTAL": "Importo Totale",
+			"NUM_PLAYERS": "Numero di persone",
+			"RESULTS": "Risultati della Distribuzione",
+			"PARAM_P": "Parametro P (disuguaglianza)",
+			"PERSON": "Persona",
+			"AMOUNT": "Importo",
+			"GINI": "Indice di Gini",
+			"RATIO": "Rapporto Alto/Basso",
+			"SIMULATION": "Simulazione",
+			"PERCENTAGE": "% del Totale",
+			"GRAPHIC": "Grafico",
+			"CURVE": "Curva",
+			"CAMBER": "Camembert"
+		}
     }
 }
