@@ -3,6 +3,10 @@
 	background: white;
 }
 
+.summary{
+	width:350px;
+}
+
 .controls {
 	display: flex;
 	flex-wrap: wrap;
@@ -12,13 +16,16 @@
 .cardParam{
 	padding: 1rem;
 	min-width: 300px;
+	max-width: 350px;
 }
 .card {
 	background: #f9f9f9;
 	padding: 1rem;
 	border-radius: 8px;
 }
-
+.graph{
+	width: 400px;
+}
 .control-group {
 	flex: 1;
 	min-width: 200px;

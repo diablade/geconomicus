@@ -1,29 +1,29 @@
 <div class="module overflow-auto">
-	<button mat-raised-button [color]="" (click)="home()">Revenir à l'accueil</button>
-	<h1>Visualisation de Distribution de Richesse</h1>
-	<div class="d-flex flex-row flex-wrap justify-content-center gap-4">
-		<div>
+	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
+	<button mat-raised-button [color]="" (click)="home()">{{"MODULE.BACK_HOME"| translate}}</button>
+	<h1>{{"MODULE.WEALTH.TITLE"| translate}}</h1>
+	<div class="d-flex flex-row flex-wrap justify-content-center gap-2">
+		<div class="summary">
 			<div class="game-explanation">
-				<h3>Comment fonctionne la Répartition ?</h3>
-				<p>
-					1. Le montant total est réparti différemment selon le paramètre P. 💸<br>
-					2. Un P bas signifie une répartition plus égale. 🤝<br>
-					3. Un P élevé crée plus de différences entre les personnes. 📊
-				</p>
+				<h3>{{"MODULE.WEALTH.SUB_TITLE"| translate}}</h3>
+				<ul>
+					<li>{{"MODULE.WEALTH.SUMMARY3"| translate}}</li>
+					<li>{{"MODULE.WEALTH.SUMMARY4"| translate}}</li>
+					<li>{{"MODULE.WEALTH.SUMMARY5"| translate}}</li>
+					<li>{{"MODULE.WEALTH.SUMMARY6"| translate}}</li>
+				</ul>
 			</div>
-			<div class="stats">
-				<p>L’indice de Gini mesure les inégalités de distribution  dans une population.</p>
-				<p>(souvent de revenus ou richesses)</p>
-				<p>- 0 = égalité parfaite (tout le monde a la même chose)</p>
-				<p>- 1 = inégalité totale (une seule personne a tout).</p>
-				<p>Plus l’indice est proche de 1, plus la répartition est inégalitaire.</p>
+			<div class="mt-2">
+				<div>{{"MODULE.WEALTH.SUMMARY7"| translate}}</div>
+				<div>{{"MODULE.WEALTH.SUMMARY8"| translate}}</div>
+				<div>{{"MODULE.WEALTH.SUMMARY9"| translate}}</div>
+				<div>{{"MODULE.WEALTH.SUMMARY10"| translate}}</div>
 			</div>
 		</div>
-
 		<mat-card class="cardParam card">
 			<div class="controls d-flex flex-column">
 				<div class="control-group">
-					<label for="total">Montant Total:</label>
+					<label for="total">{{"MODULE.WEALTH.TOTAL"| translate}}:</label>
 					<input type="range" id="total" [value]="total" min="100" max="1000000000" step="100"
 								 (input)="onTotalChange($event)">
 					<div class="value-display">
@@ -33,8 +33,8 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label for="numPlayers">Nombre de personnes:</label>
-					<input type="range" id="numPlayers" [value]="numPlayers" min="2" max="1000" step="1"
+					<label for="numPlayers">{{"MODULE.WEALTH.NUM_PLAYERS"| translate}}:</label>
+					<input type="range" id="numPlayers" [value]="numPlayers" min="0" max="1000" step="100"
 								 (input)="onNumPlayersChange($event)">
 					<div class="value-display">
 						<span>2</span>
@@ -43,24 +43,38 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label for="paramP">Paramètre P (inégalité):</label>
+					<label for="paramP">{{"MODULE.WEALTH.PARAM_P"| translate}}:</label>
 					<input type="range" id="paramP" [value]="paramP" min="0" max="3" step="0.1" (input)="onParamPChange($event)">
 					<div class="value-display">
 						<span>0</span>
 						<span>{{ paramP.toFixed(1) }}</span>
 						<span>3</span>
 					</div>
-					<p>Indice de Gini: {{ giniIndex.toFixed(4) }}</p>
-					<p>Ratio Haut/Bas: {{ ratioTopBottom.toFixed(2) }}</p>
+					<p>{{"MODULE.WEALTH.GINI"| translate}}: {{ giniIndex.toFixed(4) }}</p>
+					<p>{{"MODULE.WEALTH.RATIO"| translate}}: {{ ratioTopBottom.toFixed(2) }}</p>
+					<div class="d-flex flex-column">
+						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
+							<a href="https://tradingeconomics.com/european-union/gini-coefficient-of-equivalised-disposable-income-eurostat-data.html" target="_blank">(2023, gini ≃0.3)</a>
+							<button mat-raised-button color="accent" class="m-2" (click)="onEurosClick()">Euros €</button>
+						</div>
+						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
+							<a href="https://data.worldbank.org/indicator/SI.POV.GINI?locations=US" target="_blank">(2023, gini ≃0.42)</a>
+							<button mat-raised-button color="accent" class="m-2" (click)="onDollarsClick()">Dollars $</button>
+						</div>
+						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
+							<a href="https://arxiv.org/html/2501.11416v1" target="_blank">(2023, gini ≃0.8)</a>
+							<button mat-raised-button color="warn" class="m-2" (click)="onBitcoinClick()">Bitcoins 🪙</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</mat-card>
-		<mat-card class="flex-grow-1 card">
+		<mat-card class="flex-grow-1 graph card">
 			<div class="toggle-view">
-				<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">Graphique en Barres
+				<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">{{"MODULE.WEALTH.GRAPHIC"| translate}}
 				</button>
-				<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">Courbe</button>
-				<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">Camembert</button>
+				<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">{{"MODULE.WEALTH.CURVE"| translate}}</button>
+				<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">{{"MODULE.WEALTH.CAMBER"| translate}}</button>
 			</div>
 
 			<div class="chart-container">
@@ -69,13 +83,13 @@
 		</mat-card>
 	</div>
 	<div class="results">
-		<h2>Résultats de la Distribution</h2>
+		<h2>{{"MODULE.WEALTH.RESULTS"| translate}}</h2>
 		<table>
 			<thead>
 			<tr>
-				<th>Personne</th>
-				<th>Montant</th>
-				<th>% du Total</th>
+				<th>{{"MODULE.WEALTH.PERSON"| translate}}</th>
+				<th>{{"MODULE.WEALTH.AMOUNT"| translate}}</th>
+				<th>{{"MODULE.WEALTH.PERCENTAGE"| translate}}</th>
 			</tr>
 			</thead>
 			<tbody>

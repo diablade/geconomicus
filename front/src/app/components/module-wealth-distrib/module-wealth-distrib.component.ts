@@ -70,6 +70,24 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 		return sumOfAbsoluteDifferences / (2 * n * n * (sum / n));
 	}
 
+	// Fonction de simulation repartition euros
+	onEurosClick(): void {
+		this.paramP = 0.75;
+		this.updateChart();
+	}
+
+	// Fonction de simulation repartition dollars
+	onDollarsClick(): void {
+		this.paramP = 1;
+		this.updateChart();
+	}
+
+	// Fonction de simulation repartition bitcoin
+	onBitcoinClick(): void {
+		this.paramP = 2.6;
+		this.updateChart();
+	}
+
 	// Initialisation du graphique
 	initChart(): void {
 		const ctx = this.distributionCanvas.nativeElement.getContext('2d');

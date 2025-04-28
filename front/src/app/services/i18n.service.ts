@@ -14,7 +14,7 @@ import {environment} from '../../environments/environment';
 export class I18nService {
 	private readonly STORAGE_KEY = 'language';
 	private readonly DEFAULT_LANG = 'fr';
-	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'es'];
+	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'es', 'ja', 'ro','sr'];
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
