@@ -39,7 +39,7 @@ export const schemas = {
             idPlayer: Joi.string().custom(isValidObjectId).required(),
             amount: Joi.number().min(0).required(),
             interest: Joi.number().min(0).required(),
-            status: Joi.string().required()
+            status: Joi.string().required(),
         }).required()
             .messages({
                 'any.required': 'Credit object is required'

@@ -5,7 +5,7 @@ import {Card, Credit, Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {SnackbarService} from "./snackbar.service";
 import {Router} from "@angular/router";
-import { I18nService } from "./i18n.service";
+import {I18nService} from "./i18n.service";
 
 @Injectable({
 	providedIn: 'root'
@@ -39,7 +39,9 @@ export class BackService {
 			this.router.navigate([""]);
 		} else if (whatToDo == this.RELOAD) {
 			if (whatToSay) {
-				setTimeout(() => {}, 3000);
+				setTimeout(()=>{
+					// Delay for 3 seconds before proceeding
+				}, 3000);
 			}
 			window.location.reload();
 		}
@@ -58,21 +60,21 @@ export class BackService {
 	}
 
 	joinReincarnate(idGame: string, name: string, fromId: string | undefined): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, { idGame, name, fromId })
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame, name, fromId})
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.JOIN_REINCARNATE"))
 			);
 	}
 
 	isReincarnated(idGame: string | undefined, fromId: string | undefined): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.IS_REINCARNATED, { idGame, fromId })
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.IS_REINCARNATED, {idGame, fromId})
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.REINCARNATE"))
 			);
 	}
 
 	joinInGame(idGame: string, name: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_IN_GAME, { idGame: idGame, name: name })
+		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_IN_GAME, {idGame: idGame, name: name})
 			.pipe(
 				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.JOIN"))
 			);
@@ -163,7 +165,7 @@ export class BackService {
 	}
 
 	resetGame(idGame: string) {
-		return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, { idGame: idGame })
+		return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, {idGame: idGame})
 			.pipe(
 				catchError(err => this.handleError(err, this.RELOAD, "ERROR.RESET_GAME"))
 			);
@@ -182,28 +184,28 @@ export class BackService {
 	}
 
 	startRound(idGame: string, round: number) {
-		return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, { idGame: idGame, round: round })
+		return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
 			.pipe(
 				catchError(err => this.handleError(err, this.RELOAD, "ERROR.START_ROUND"))
 			);
 	}
 
 	stopRound(idGame: string, round: number) {
-		return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, { idGame: idGame, round: round })
+		return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
 			.pipe(
 				catchError(err => this.handleError(err, this.RELOAD, "ERROR.STOP_ROUND"))
 			);
 	}
 
 	interRound(idGame: string) {
-		return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, { idGame: idGame })
+		return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, {idGame: idGame})
 			.pipe(
 				catchError(err => this.handleError(err, this.RELOAD, "ERROR.INTER_ROUND"))
 			);
 	}
 
 	endGame(idGame: string) {
-		return this.http.post<any>(environment.API_HOST + environment.GAME.END, { idGame: idGame })
+		return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
 			.pipe(
 				catchError(err => this.handleError(err, this.RELOAD, "ERROR.END_GAME"))
 			);
@@ -220,7 +222,7 @@ export class BackService {
 	}
 
 	updateGame(idGame: string, game: Game) {
-		const allowedFields: {[key: string]: any} = {
+		const allowedFields: { [key: string]: any } = {
 			idGame,
 			name: game.name,
 			animator: game.animator,
@@ -318,15 +320,29 @@ export class BackService {
 
 	settleCredit(credit: Credit) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
-			credit: credit
+			credit: {
+				_id: credit._id,
+				idGame: credit.idGame,
+				idPlayer: credit.idPlayer,
+				amount: credit.amount,
+				interest: credit.interest,
+				status: credit.status,
+			}
 		}).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.REPAY_CREDIT"))
+			catchError(err => this.handleError(err, "", "ERROR.REPAY_CREDIT"))
 		)
 	}
 
 	payInterest(credit: Credit) {
-		return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {credit: credit}).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.PAY_INTEREST"))
+		return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {
+			credit: {
+				_id: credit._id,
+				idGame: credit.idGame,
+				idPlayer: credit.idPlayer,
+				interest: credit.interest
+			}
+		}).pipe(
+			catchError(err => this.handleError(err, "", "ERROR.PAY_INTEREST"))
 		)
 	}
 

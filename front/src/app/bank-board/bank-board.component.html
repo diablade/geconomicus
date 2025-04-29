@@ -18,7 +18,7 @@
 				{{ "BANK.AVG_PLAYERS" | translate }} :
 				<mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning':'good'">
 					<b>{{ getAverageCurrency() | number : '1.2-2' }} </b>
-					<fa-icon mat-raised-button [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate">
+					<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate">
 					</fa-icon>
 				</mat-chip>
 			</div>
@@ -70,7 +70,7 @@
 	</div>
 	<div class="mt-5 d-flex align-items-baseline flex-wrap">
 		<h2 class="fs-4 shadowed gecoFont">{{ "BANK.SUB_TITLE_CREDITS"|translate }}</h2>
-		<app-notice-btn class="ms-2" [	amountCardsForProd]="game.amountCardsForProd" [timerCredit]="game.timerCredit" [stroked]="true"></app-notice-btn>
+		<app-notice-btn class="ms-2" [amountCardsForProd]="game.amountCardsForProd" [timerCredit]="game.timerCredit" [stroked]="true"></app-notice-btn>
 		<button class="ms-2" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
 			(click)="showContract()"> {{ "BANK.GIVE_CREDIT"|translate }}
 			<fa-icon [icon]="faSackDollar"></fa-icon>
