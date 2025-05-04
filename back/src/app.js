@@ -87,7 +87,7 @@ app.use((req, res, next) => {
 
 // handle errors
 app.use(function (err, req, res) {
-	log.error('error', err);
+	log.error(err);
 
 	// Set error response
 	return res.status(err.status || 500).json({

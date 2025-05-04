@@ -93,7 +93,7 @@ class SocketManager {
 			log.error('Connection error:' + err.message);
 		});
 		socket.on("connect_timeout", (data) => {
-			log.error('time out' + data);
+			log.error('time out:' + data);
 		});
 		socket.on("timeout", (err) => {
 			log.error('io socket time out!:' + err);
@@ -114,7 +114,7 @@ class SocketManager {
 			log.error('Reconnection error');
 		});
 		socket.on('error', (err) => {
-			log.error('error io soket' + err);
+			log.error('error io soket:' + err);
 		});
 		// Ping handler
 		socket.on('ping_geco', () => {

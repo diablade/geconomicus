@@ -29,51 +29,35 @@ export const schemas = {
             .messages({
                 'number.min': 'Amount cannot be negative',
                 'any.required': 'Amount is required'
-            })
+            }),
+        startNow: Joi.boolean().default(false)
     }),
 
     settleCredit: Joi.object({
-        credit: Joi.object({
-            _id: Joi.string().custom(isValidObjectId).required(),
-            idGame: Joi.string().custom(isValidObjectId).required(),
-            idPlayer: Joi.string().custom(isValidObjectId).required(),
-            amount: Joi.number().min(0).required(),
-            interest: Joi.number().min(0).required(),
-            status: Joi.string().required(),
-        }).required()
-            .messages({
-                'any.required': 'Credit object is required'
-            })
+        idCredit: Joi.string().custom(isValidObjectId).required(),
+        idGame: Joi.string().custom(isValidObjectId).required(),
+        idPlayer: Joi.string().custom(isValidObjectId).required(),
     }),
 
     payInterest: Joi.object({
-        credit: Joi.object({
-            _id: Joi.string().custom(isValidObjectId).required(),
-            idGame: Joi.string().custom(isValidObjectId).required(),
-            idPlayer: Joi.string().custom(isValidObjectId).required(),
-            interest: Joi.number().min(0).required()
-        }).required()
-            .messages({
-                'any.required': 'Credit object is required'
-            })
+        idCredit: Joi.string().custom(isValidObjectId).required(),
+        idGame: Joi.string().custom(isValidObjectId).required(),
+        idPlayer: Joi.string().custom(isValidObjectId).required(),
     }),
 
     seizure: Joi.object({
-        credit: Joi.object({
-            _id: Joi.string().custom(isValidObjectId).required(),
-            idGame: Joi.string().custom(isValidObjectId).required(),
-            idPlayer: Joi.string().custom(isValidObjectId).required(),
-            interest: Joi.number().min(0).required()
-        }).required()
-            .messages({
-                'any.required': 'Credit object is required'
-            }),
+        idCredit: Joi.string().custom(isValidObjectId).required(),
+        idGame: Joi.string().custom(isValidObjectId).required(),
+        idPlayer: Joi.string().custom(isValidObjectId).required(),
         seizure: Joi.object({
             coins: Joi.number().min(0).required(),
             cards: Joi.array().items(
                 Joi.object({
                     _id: Joi.string().custom(isValidObjectId).required(),
-                    price: Joi.number().min(0).required()
+                    price: Joi.number().min(0).required(),
+                    letter: Joi.string().required(),
+                    color: Joi.string().required(),
+                    weight: Joi.number().min(0).required()
                 })
             ).required(),
             prisonTime: Joi.number().min(0)
@@ -94,25 +78,43 @@ export const schemas = {
                 'any.invalid': 'Invalid player ID format',
                 'any.required': 'Player ID is required'
             })
+    }),
+    lockDownPlayer: Joi.object({
+        idPlayer: Joi.string().custom(isValidObjectId).required()
+            .messages({
+                'any.invalid': 'Invalid player ID format',
+                'any.required': 'Player ID is required'
+            }),
+        idGame: Joi.string().custom(isValidObjectId).required()
+            .messages({
+                'any.invalid': 'Invalid game ID format',
+                'any.required': 'Game ID is required'
+            }),
+        prisonTime: Joi.number().min(0).max(10).required()
+            .messages({
+                'number.min': 'Prison time cannot be negative',
+                'number.max': 'Prison time cannot be greater than 10',
+                'any.required': 'Prison time is required'
+            })
     })
 };
 
 export const validate = (schema) => {
     return (req, res, next) => {
         const { error } = schema.validate(req.body, { abortEarly: false });
-        
+
         if (error) {
             const errors = error.details.map(detail => ({
                 field: detail.path.join('.'),
                 message: detail.message
             }));
-            
+
             return res.status(400).json({
                 status: 'validation_error',
                 errors
             });
         }
-        
+
         next();
     };
 }; 

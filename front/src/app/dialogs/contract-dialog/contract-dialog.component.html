@@ -39,7 +39,7 @@
 			<button class="m-2" mat-raised-button
 							(click)="cancel()">{{ "COMMON.CANCEL"|translate }}
 			</button>
-			<button class="m-2" mat-raised-button color="accent"
+			<button class="m-2" [disabled]="!selectedCreditOption || !idPlayer" mat-raised-button color="accent"
 							(click)="saveUserCredit()">{{ "CONTRACT.SIGN"|translate }}
 				<fa-icon [icon]="faFileSignature"></fa-icon>
 			</button>

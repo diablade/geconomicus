@@ -8,6 +8,7 @@ import {BehaviorSubject} from "rxjs";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {I18nService} from "./i18n.service";
 import {HttpClient} from "@angular/common/http";
+import {LocalStorageService} from "./local-storage/local-storage.service";
 
 @Injectable({
 	providedIn: 'root'
@@ -23,6 +24,7 @@ export class WebSocketService {
 	constructor(
 		private snackbarService: SnackbarService,
 		public dialog: MatDialog,
+		public localStorageService: LocalStorageService,
 		private i18nService: I18nService,
 		private http: HttpClient
 	) {
@@ -57,14 +59,16 @@ export class WebSocketService {
 					idPlayer: this.idPlayer,
 					idGame: this.idGame,
 				},
-				ackTimeout: 3000,
+				ackTimeout: 5000,             // Increase timeout
 				// allowEIO3: true,
 				autoConnect: true,
-				reconnection: true,           // Enable automatic reconnection
-				reconnectionAttempts: 5,      // Number of reconnection attempts
-				reconnectionDelay: 1000,      // Delay between reconnections
-				reconnectionDelayMax: 3000,   // Maximum delay between reconnections
-				timeout: 5000,                // Connection timeout
+				reconnection: true,       // Enable automatic reconnection
+				reconnectionAttempts: 10, // Number of reconnection attempts// Increase attempts
+				reconnectionDelay: 1000,  // Delay between reconnections
+				reconnectionDelayMax: 5000,   // Maximum delay between reconnections
+				timeout: 10000,               // connection timeout
+				transports: ['websocket', 'polling'],  // Explicitly set transports
+				// forceNew: true     // may not recconnect
 			});
 
 			this.setupConnectionListeners();
@@ -75,6 +79,20 @@ export class WebSocketService {
 
 	private setupConnectionListeners(): void {
 		if (!this.socket) return;
+		const last = this.getLastConnectedTime();
+		const now = Date.now();
+		const maxOfflineDuration = 1 * 60 * 1000; // 1 minutes
+
+		this.socket.io.on('reconnect', () => {
+			if (last && now - last > maxOfflineDuration) {
+				console.warn('Reconnected after long offline time — reloading page');
+				window.location.reload(); // force refresh
+			} else {
+				console.log('Reconnected — normal flow');
+				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTED"));
+			}
+		});
+
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');
 			if (this.disconnected) {
@@ -83,6 +101,7 @@ export class WebSocketService {
 				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
 				this.isReConnected.next(true);
 			}
+			this.saveLastConnectedTime();
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
@@ -163,4 +182,14 @@ export class WebSocketService {
 	private handleTimeout() {
 		this.snackbarService.showError(this.i18nService.instant("SOCKET.TIMEOUT"));
 	}
+
+	private saveLastConnectedTime(): void {
+		this.localStorageService.setItem('lastSocketConnected', Date.now().toString());
+	}
+
+	private getLastConnectedTime(): number | null {
+		const val = this.localStorageService.getItem('lastSocketConnected');
+		return val ? parseInt(val, 10) : null;
+	}
+
 }

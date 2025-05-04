@@ -36,7 +36,7 @@ const killPlayer = async (idGame, idPlayer) => {
 		socket.emitTo(idGame + C.BANK, C.DEAD, event);
 		socket.emitTo(idGame + C.MASTER, C.DEAD, event);
 	} catch (e) {
-		log.error('kill player error:', e);
+		log.error('kill player error:'+ e);
 		throw new Error("kill player failed");
 	}
 }

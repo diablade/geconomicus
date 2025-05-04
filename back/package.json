@@ -22,7 +22,7 @@
     "startMon": "nodemon ./src/app.js",
     "cleanProd": "npm ci --omit=dev && npm cache clean --force",
     "run": "node ./src/app.js",
-    "test": "export GECO_NODE_ENV=test && node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand"
+    "test": "cross-env GECO_NODE_ENV=test && node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand --detectOpenHandles"
   },
   "author": "Nicolas Markovic",
   "license": "ISC",

@@ -38,9 +38,9 @@ class BankTimerManager {
         });
     }
 
-    stopAllPlayerDebtsTimer(idGame,idPlayer) {
+    stopAllPlayerDebtsTimer(idGame, idPlayer) {
         _.forEach(this.timers, (timer) => {
-            if (timer && timer.data && timer.data.idGame === idGame && timer.data.idPlayer===idPlayer) {
+            if (timer && timer.data && timer.data.idGame === idGame && timer.data.idPlayer === idPlayer) {
                 this.stopAndRemoveTimer(timer.id);
             }
         });

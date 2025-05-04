@@ -15,6 +15,7 @@ const CREDITS_STARTED = "credits-started";
 const SETTLE_CREDIT = "settle-credit";
 const PROGRESS_CREDIT = "credit-progress";
 const TIMEOUT_CREDIT = "timeout-credit";
+const PAY_INTEREST = "pay-interest";
 const PAYED_INTEREST = "payed-interest";
 const SEIZED_DEAD = "seized-dead";
 const SEIZURE = "seizure";
@@ -82,6 +83,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		RUNNING_CREDIT: RUNNING_CREDIT,
 		PAUSED_CREDIT: PAUSED_CREDIT,
 		PAYED_INTEREST: PAYED_INTEREST,
+		PAY_INTEREST: PAY_INTEREST,
 		TIMEOUT_CREDIT: TIMEOUT_CREDIT,
 		SETTLE_CREDIT: SETTLE_CREDIT,
 		REQUEST_CREDIT: REQUEST_CREDIT,

@@ -169,7 +169,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
 			if (contrat) {
-				this.backService.createCredit({ ...contrat, idGame: this.idGame }).subscribe((credit: Credit) => {
+				this.backService.createCredit({ ...contrat, idGame: this.idGame, startNow: this.game.status == C.PLAYING }).subscribe((credit: Credit) => {
 					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", { player: this.getPlayerName(credit.idPlayer) }));
 					this.game.credits.push(credit);
 					this.game.currentMassMonetary += credit.amount;

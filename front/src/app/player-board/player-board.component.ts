@@ -1,29 +1,29 @@
-import { createAvatar, Options } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from "rxjs";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Card, Credit, Player } from "../models/game";
-import { BackService } from "../services/back.service";
-import { MatDialog } from "@angular/material/dialog";
-import { environment } from "../../environments/environment";
-import { I18nService } from "../services/i18n.service";
+import {createAvatar, Options} from '@dicebear/core';
+import {adventurer} from '@dicebear/collection';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Subscription} from "rxjs";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Card, Credit, Player} from "../models/game";
+import {BackService} from "../services/back.service";
+import {MatDialog} from "@angular/material/dialog";
+import {environment} from "../../environments/environment";
+import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
-import { faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode } from "@fortawesome/free-solid-svg-icons";
-import { SnackbarService } from "../services/snackbar.service";
-import { animate, animateChild, query, stagger, state, style, transition, trigger } from "@angular/animations";
-import { InformationDialogComponent } from "../dialogs/information-dialog/information-dialog.component";
-import { ConfirmDialogComponent } from "../dialogs/confirm-dialog/confirm-dialog.component";
-import { CongratsDialogComponent } from "../dialogs/congrats-dialog/congrats-dialog.component";
-import { ScannerDialogV3Component } from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
+import {SnackbarService} from "../services/snackbar.service";
+import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
+import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
+import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
+import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
+import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
-import { ShortCode } from "../models/shortCode";
-import { ShortcodeDialogComponent } from "../dialogs/shortcode-dialog/shortcode-dialog.component";
-import { WebSocketService } from "../services/web-socket.service";
-import { GameInfosDialog } from "../components/notice-btn/notice-btn.component";
+import {ShortCode} from "../models/shortCode";
+import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
+import {WebSocketService} from "../services/web-socket.service";
+import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
 import createCountdown from "../services/countDown";
-import { LocalStorageService } from "../services/local-storage/local-storage.service";
+import {LocalStorageService} from "../services/local-storage/local-storage.service";
 
 @Component({
 	selector: 'app-player-board',
@@ -34,20 +34,20 @@ import { LocalStorageService } from "../services/local-storage/local-storage.ser
 			transition(':enter', [
 				// child animation selector + stagger
 				query('@items',
-					stagger(600, animateChild()), { optional: true }
+					stagger(600, animateChild()), {optional: true}
 				)
 			]),
 		]),
 		trigger('items', [
 			transition(':enter', [
-				style({ transform: 'translateY(-100rem)' }),
+				style({transform: 'translateY(-100rem)'}),
 				animate('600ms',
-					style({ transform: 'translateY(0rem)' }))
+					style({transform: 'translateY(0rem)'}))
 			]),
 			transition(':leave', [
-				style({ transform: 'translateY(0rem)' }),
+				style({transform: 'translateY(0rem)'}),
 				animate('600ms',
-					style({ transform: 'translateY(-100rem)' }))
+					style({transform: 'translateY(-100rem)'}))
 			]),
 		]),
 		trigger('duReceived', [
@@ -64,14 +64,14 @@ import { LocalStorageService } from "../services/local-storage/local-storage.ser
 		]),
 		trigger('prisonDoor', [
 			transition(':enter', [
-				style({ transform: 'translateX(-100rem)' }),
+				style({transform: 'translateX(-100rem)'}),
 				animate('2000ms',
-					style({ transform: 'translateX(0rem)' }))
+					style({transform: 'translateX(0rem)'}))
 			]),
 			transition(':leave', [
-				style({ transform: 'translateX(0rem)' }),
+				style({transform: 'translateX(0rem)'}),
 				animate('2000ms',
-					style({ transform: 'translateX(-100rem)' }))
+					style({transform: 'translateX(-100rem)'}))
 			]),
 		]),
 	],
@@ -112,8 +112,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	minutesPrison = 5;
 	secondsPrison = 0;
 	shortCode: ShortCode | undefined;
-	prisonTimer = createCountdown({ h: 0, m: 0, s: 0 }, {
-		listen: ({ hh, mm, ss, s, h, m }) => {
+	prisonTimer = createCountdown({h: 0, m: 0, s: 0}, {
+		listen: ({hh, mm, ss, s, h, m}) => {
 			this.minutesPrison = m;
 			this.secondsPrison = s;
 		},
@@ -123,13 +123,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-		public dialog: MatDialog,
-		private router: Router,
-		private localStorageService: LocalStorageService,
-		private backService: BackService,
-		private wsService: WebSocketService,
-		private i18nService: I18nService,
-		private snackbarService: SnackbarService) {
+	            public dialog: MatDialog,
+	            private router: Router,
+	            private localStorageService: LocalStorageService,
+	            private backService: BackService,
+	            private wsService: WebSocketService,
+	            private i18nService: I18nService,
+	            private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -200,7 +200,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.amountCardsForProd = data.amountCardsForProd;
 			await this.receiveCards(data.cards);
 			if (cb) {
-				cb({ status: "ok" });
+				cb({status: "ok"});
 			}
 		});
 		this.socket.on(C.START_ROUND, async () => {
@@ -211,7 +211,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.dialog.closeAll();
 			this.statusGame = "waiting";
 			this.dialog.open(InformationDialogComponent, {
-				data: { text: "Tour terminé !" },
+				data: {text: "Tour terminé !"},
 			});
 		});
 		this.socket.on(C.END_GAME, (data: any) => {
@@ -260,7 +260,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.SHORT_CODE_BROADCAST, async (data: any) => {
 			if (this.shortCode && this.shortCode.code === data.code) {
-				this.socket.emit(C.SHORT_CODE_CONFIRMED, { payload: this.shortCode.payload, idBuyer: data.idBuyer });
+				this.socket.emit(C.SHORT_CODE_CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
 			}
 		});
 		this.socket.on(C.SHORT_CODE_CONFIRMED, async (data: any) => {
@@ -278,9 +278,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
 			this.player.coins = data.coins;
-			const cardSold = _.find(this.cards, { _id: data.idCardSold });
+			const cardSold = _.find(this.cards, {_id: data.idCardSold});
 			if (cardSold) {
-				_.remove(this.cards, { _id: data.idCardSold });
+				_.remove(this.cards, {_id: data.idCardSold});
 				//display the card that was bellow (if stacked)
 				_.forEach(this.cards, c => {
 					// @ts-ignore
@@ -295,7 +295,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", { amount: data.amount }),
+					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.amount}),
 					sound: "./assets/audios/coins.mp3"
 				},
 			});
@@ -331,7 +331,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					c.status = data.status;
 				}
 			});
-			this.snackbarService.showError("DEFAULT DE PAIEMENT");
+			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
 			this.defaultCredit = true;
 			let audioCops = new Audio();
 			audioCops.src = "./assets/audios/police.mp3";
@@ -351,7 +351,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			let seconds = Math.floor((data.remainingTime / 1000) % 60);
 			this.prisonTimer.stop();
 			this.prisonTimer.reset();
-			this.prisonTimer.set({ h: 0, m: minutes, s: seconds });
+			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
 			this.prisonTimer.start();
 		});
 		this.socket.on(C.PRISON_ENDED, async (data: any) => {
@@ -368,7 +368,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.SEIZURE, async (data: any) => {
 			_.forEach(data.seizure.cards, c => {
-				_.remove(this.cards, { _id: c._id });
+				_.remove(this.cards, {_id: c._id});
 			});
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
@@ -447,12 +447,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	produceLevelUp($event: Card) {
-		const identicalCards = _.filter(this.cards, { letter: $event.letter, weight: $event.weight });
+		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
 		if (identicalCards.length >= this.amountCardsForProd) {
 			const cardsForProd = identicalCards.slice(0, this.amountCardsForProd);
 			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
 				_.remove(this.cards, c => _.some(cardsForProd, c));
-				const cardGift = _.find(newCards, { weight: $event.weight + 1 });
+				const cardGift = _.find(newCards, {weight: $event.weight + 1});
 				if (cardGift) {
 					this.showGift(cardGift);
 				}
@@ -473,7 +473,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buyWithCode(code: string) {
-		this.socket.emit(C.SHORT_CODE_EMIT, { code, idBuyer: this.idPlayer }, (ack: any) => { console.log(ack) });
+		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
+			console.log(ack)
+		});
 		this.snackbarService.showSuccess("Code envoyé");
 	}
 
@@ -503,12 +505,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	getBackgroundStyle() {
 		switch (this.player.boardConf) {
 			case "green":
-				return { "background-image": "url('/assets/images/green-carpet.jpg')" };
+				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
 			case "custom":
-				return { "background-color": "" + this.player.boardColor };
+				return {"background-color": "" + this.player.boardColor};
 			case "wood":
 			default:
-				return { "background-image": "url('/assets/images/woodJapAlt.jpg')" };
+				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
 		}
 	}
 
@@ -517,7 +519,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
-				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", { amount: credit.amount, interest: credit.interest }),
+				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {amount: credit.amount, interest: credit.interest}),
 				labelBtn1: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN1"),
 				labelBtn2: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN2"),
 				autoClickBtn2: true,

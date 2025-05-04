@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from '../src/app';
-import db from '../__test__/config/database';
+import app from '../src/app.js';
+import db from './config/database.js';
 import * as C from "../../config/constantes.js";
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import socket from "../config/socket.js";
@@ -101,7 +101,7 @@ let play = async (round) => {
 				console.log("player" + player.name + " current playing ");
 				await playerDoPlay(player);
 			} else {
-				console.log("player " + player.status)
+				//console.log("player " + player.status)
 			}
 		}
 	}
@@ -115,18 +115,20 @@ let createPlayers = async (nb) => {
 		playersId.push(res.body);
 	}
 }
-let updatePlayersHand = async () => {
+let updatePlayers = async () => {
+	players= [];
+	for (let id of playersId) {
+		const resp = await agent.get("/player/" + idGame + "/" + id).send();
+		players.push(resp.body.player);
+	}
+}
+let CheckPlayersHand = async () => {
 	for (let id of playersId) {
 		const resp = await agent.get("/player/" + idGame + "/" + id).send();
 		expect(resp.body.player.cards.length === 4).toBeTruthy();
-		players.push(resp.body.player);
-		currentDU = resp.body.currentDU;
 	}
 }
-
-beforeAll(async () => await db.connect());
-// afterEach(async () => await db.clear());
-beforeEach(() => {
+beforeEach(async () => {
 	// Clear all instances and calls to constructor and all methods:
 	// io.mockClear();
 });
@@ -135,12 +137,12 @@ afterAll(async () => {
 	expect(res.statusCode).toEqual(200);
 	expect(res.body).toBeTruthy();
 	console.log("ALL GAME RESULT:");
-	for (let player of res.body.players) {
-		console.log("player cards", player.name, player.cards);
+	// for (let player of res.body.players) {
+		//console.log("player cards", player.name, player.cards);
 		// console.log("event:", event.typeEvent, event.emitter, event.receiver, event.amount);
-	}
+	// }
 	await db.clear();
-	await db.close();
+	// await db.close();
 });
 
 describe("FULL GAME simulation", () => {
@@ -225,8 +227,8 @@ describe("FULL GAME simulation", () => {
 	});
 	test("UPDATE game", async () => {
 		const res = await agent.put("/game/update").send({
-			typeMoney: "june",
-			name: "test-full-simu",
+			typeMoney: "debt",
+			name: "test-full-md-simu",
 			idGame: idGame,
 			surveyEnabled: false,
 			autoDeath: false,
@@ -241,12 +243,12 @@ describe("FULL GAME simulation", () => {
 		await createPlayers(numberOfPlayers);
 	});
 	test("START game", async () => {
-		const resStart = await agent.put("/game/start").send({idGame: idGame, typeMoney: C.JUNE});
+		const resStart = await agent.put("/game/start").send({idGame: idGame, typeMoney: C.DEBT});
 		expect(resStart.statusCode).toEqual(200);
 		expect(resStart.body).toBeTruthy();
 	});
 	test("CHECK cards distributed to players", async () => {
-		await updatePlayersHand();
+		await CheckPlayersHand();
 	});
 	test("CHECK decks cards in game", async () => {
 		const res = await agent.get("/game/" + idGame).send();
@@ -257,18 +259,41 @@ describe("FULL GAME simulation", () => {
 		expect(res.body.decks[2].length).toEqual(44);
 		expect(res.body.decks[3].length).toEqual(44);
 	});
+	test("GRANT CREDITS", async () => {
+		await updatePlayers();
+		for (let player of players) {
+			const resCredit = await agent.post("/bank/create-credit").send({
+				idGame: idGame,
+				idPlayer: player._id,
+				amount: 3,
+				interest: 1,
+			});
+			expect(resCredit.statusCode).toEqual(200);
+			expect(resCredit.body).toBeTruthy();
+			expect(resCredit.body._id).toBeTruthy();
+			expect(resCredit.body.status).toEqual(C.PAUSED_CREDIT);
+		}
+	});
 	test("START round", async () => {
 		const res = await agent.post("/game/start-round").send({idGame: idGame, round: 0});
 		expect(res.statusCode).toEqual(200);
 		expect(res.body.status).toEqual(C.START_ROUND);
 	});
+	test("RUNNING CREDIT", async () => {
+		const res = await agent.get("/game/" + idGame).send();
+		expect(res.statusCode).toEqual(200);
+		expect(res.body.credits.length).toEqual(numberOfPlayers);
+		for (let credit of res.body.credits) {
+			expect(credit.status).toEqual(C.RUNNING_CREDIT);
+		}
+	});
 	test("TEST concurrent TRANSACTION", async () => {
 		const seller = players[0];
 		const buyer1 = players[1];
 		const buyer2 = players[2];
-
+		
 		const cardToSell = seller.cards[0];
-
+		
 		const p1 = agent.post("/player/transaction").send({
 			idGame: idGame,
 			idBuyer: buyer1._id,
@@ -295,8 +320,37 @@ describe("FULL GAME simulation", () => {
 				expect(res.statusCode).toEqual(200)
 			));
 	});
+	test("CHECK pay interest and settle credits", async () => {
+		const res1 = await agent.post("/bank/create-credit").send({idGame: idGame, idPlayer: players[0]._id, amount: 3, interest: 0});
+		expect(res1.statusCode).toEqual(200);
+		expect(res1.body).toBeTruthy();
+		expect(res1.body._id).toBeTruthy();
+		expect(res1.body.status).toEqual(C.RUNNING_CREDIT);
+		const res2 = await agent.post("/bank/create-credit").send({idGame: idGame, idPlayer: players[1]._id, amount: 3, interest: 0});
+		expect(res2.statusCode).toEqual(200);
+		expect(res2.body).toBeTruthy();
+		expect(res2.body._id).toBeTruthy();
+		expect(res2.body.status).toEqual(C.RUNNING_CREDIT);
+
+		await updatePlayers();
+
+		const res = await agent.get("/game/" + idGame).send();
+		expect(res.statusCode).toEqual(200);
+		const credit1 = res.body.credits[0];
+		const credit2 = res.body.credits[1];
+		expect(credit1.status).toEqual(C.RUNNING_CREDIT);
+		expect(credit2.status).toEqual(C.RUNNING_CREDIT);
+
+		const credit1After = await agent.post("/bank/pay-interest").send({idGame: idGame, idPlayer: credit1.idPlayer, idCredit: credit1._id});
+		expect(credit1After.statusCode).toEqual(200);
+		expect(credit1After.body.status).toEqual(C.RUNNING_CREDIT);
+		const credit2After = await agent.post("/bank/settle-credit").send({idGame: idGame, idPlayer: credit2.idPlayer, idCredit: credit2._id});
+		expect(credit2After.statusCode).toEqual(200);
+		expect(credit2After.body.status).toEqual(C.CREDIT_DONE);
+	});
 	test("PLAY 10 rounds and STOP", async () => {
-		await play(2);	
+		await updatePlayers();
+		await play(2);
 		// await playerService.killPlayer()
 		// await play(5);
 		const res = await agent.post("/game/stop-round").send({idGame: idGame, round: 0});

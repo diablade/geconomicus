@@ -13,7 +13,9 @@ import {I18nService} from "./i18n.service";
 export class BackService {
 
 	REDIRECT_HOME = "redirectHome";
-	RELOAD = "reload";
+	NOTIF = "notif";
+	ERROR = "error";
+	ERROR_RELOAD = "errorReload";
 
 	httpOptions = {
 		headers: new HttpHeaders({
@@ -25,25 +27,18 @@ export class BackService {
 	}
 
 	private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
-		if (whatToSay) {
-			this.snackbarService.showError(this.i18nService.instant(whatToSay));
-		} else {
-			this.snackbarService.showError(error.error.message);
-		}
-		if (error.status === 0) {
-			console.error('An error occurred:', error.error);
-		} else {
-			console.error(`Backend returned code ${error.status}, body was: `, error.error);
-		}
 		if (whatToDo == this.REDIRECT_HOME) {
+			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
+			setTimeout(() => {
+				// Delay for 3 seconds before proceeding
+			}, 3000);
 			this.router.navigate([""]);
-		} else if (whatToDo == this.RELOAD) {
-			if (whatToSay) {
-				setTimeout(()=>{
-					// Delay for 3 seconds before proceeding
-				}, 3000);
-			}
-			window.location.reload();
+		} else if (whatToDo == this.ERROR_RELOAD) {
+			this.snackbarService.showReload(this.i18nService.instant(whatToSay));
+		} else if (whatToDo == this.NOTIF) {
+			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
+		} else if (whatToDo == this.ERROR) {
+			this.snackbarService.showError(this.i18nService.instant(whatToSay));
 		}
 		// Return an observable with a user-facing error message.
 		return throwError(() => new Error(this.i18nService.instant("ERROR.GENERIC")));
@@ -90,14 +85,14 @@ export class BackService {
 	getGame(idGame: string): Observable<Game> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GET + idGame)
 			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.GAME_UNAVAILABLE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GAME_UNAVAILABLE"))
 			);
 	}
 
 	getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
 			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.PLAYER_NOT_FOUND"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.PLAYER_NOT_FOUND"))
 			);
 	}
 
@@ -121,7 +116,7 @@ export class BackService {
 		};
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.UPDATE, newPlayer)
 			.pipe(
-				catchError(err => this.handleError(err, "", "ERROR.UPDATE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.UPDATE"))
 			);
 	}
 
@@ -138,7 +133,7 @@ export class BackService {
 			}))
 		})
 			.pipe(
-				catchError(err => this.handleError(err, "", "ERROR.EXCHANGE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.EXCHANGE"))
 			);
 	}
 
@@ -150,7 +145,7 @@ export class BackService {
 			}
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.DELETE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.DELETE"))
 			);
 	}
 
@@ -160,14 +155,14 @@ export class BackService {
 			typeMoney: game.typeMoney,
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.START_GAME"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.START_GAME"))
 			);
 	}
 
 	resetGame(idGame: string) {
 		return this.http.put<any>(environment.API_HOST + environment.GAME.RESET, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.RESET_GAME"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.RESET_GAME"))
 			);
 	}
 
@@ -179,35 +174,35 @@ export class BackService {
 			idCard
 		})
 			.pipe(
-				catchError(err => this.handleError(err, "", ""))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.TRANSACTION"))
 			);
 	}
 
 	startRound(idGame: string, round: number) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.START_ROUND, {idGame: idGame, round: round})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.START_ROUND"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.START_ROUND"))
 			);
 	}
 
 	stopRound(idGame: string, round: number) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.STOP_ROUND, {idGame: idGame, round: round})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.STOP_ROUND"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.STOP_ROUND"))
 			);
 	}
 
 	interRound(idGame: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.INTER_ROUND, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.INTER_ROUND"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.INTER_ROUND"))
 			);
 	}
 
 	endGame(idGame: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.END, {idGame: idGame})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.END_GAME"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.END_GAME"))
 			);
 	}
 
@@ -217,7 +212,7 @@ export class BackService {
 			idPlayer: idPlayer
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.KILL"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.KILL"))
 			);
 	}
 
@@ -270,21 +265,21 @@ export class BackService {
 		return this.http.put<Game>(environment.API_HOST + environment.GAME.UPDATE,
 			allowedFields
 		).pipe(
-			catchError(err => this.handleError(err, "", "ERROR.SAVE_OPTIONS"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SAVE_OPTIONS"))
 		);
 	}
 
 	getGames(): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.GAME_UNAVAILABLE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GAME_UNAVAILABLE"))
 			);
 	}
 
 	getFeedbacks(idGame: any): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GET_FEEDBACKS + idGame)
 			.pipe(
-				catchError(err => this.handleError(err, this.RELOAD, "ERROR.FEEDBACKS_UNAVAILABLE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.FEEDBACKS_UNAVAILABLE"))
 			);
 	}
 
@@ -302,56 +297,50 @@ export class BackService {
 			aloneIntegrated,
 			agressiveAvenant
 		}).pipe(
-			catchError(err => this.handleError(err, "", "ERROR.SEND_SURVEY"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SEND_SURVEY"))
 		);
 	}
 
 	createCredit(data: any) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.CREATE_CREDIT"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.CREATE_CREDIT"))
 		);
 	}
 
 	getPlayerCredits(idGame: any, idPlayer: any) {
 		return this.http.get<any>(environment.API_HOST + environment.BANK.GET_CREDITS + idGame + '/' + idPlayer).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.GET_CREDITS"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GET_CREDITS"))
 		)
 	}
 
 	settleCredit(credit: Credit) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.SETTLE_CREDIT, {
-			credit: {
-				_id: credit._id,
-				idGame: credit.idGame,
-				idPlayer: credit.idPlayer,
-				amount: credit.amount,
-				interest: credit.interest,
-				status: credit.status,
-			}
+			idCredit: credit._id,
+			idGame: credit.idGame,
+			idPlayer: credit.idPlayer
 		}).pipe(
-			catchError(err => this.handleError(err, "", "ERROR.REPAY_CREDIT"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REPAY_CREDIT"))
 		)
 	}
 
 	payInterest(credit: Credit) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.PAY_INTEREST, {
-			credit: {
-				_id: credit._id,
-				idGame: credit.idGame,
-				idPlayer: credit.idPlayer,
-				interest: credit.interest
-			}
+			idCredit: credit._id,
+			idGame: credit.idGame,
+			idPlayer: credit.idPlayer
 		}).pipe(
-			catchError(err => this.handleError(err, "", "ERROR.PAY_INTEREST"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.PAY_INTEREST"))
 		)
 	}
 
 	seizure(seizure: any, credit: Credit) {
 		return this.http.post<any>(environment.API_HOST + environment.BANK.SEIZURE, {
-			credit: credit,
+			idCredit: credit._id,
+			idGame: credit.idGame,
+			idPlayer: credit.idPlayer,
 			seizure: seizure
 		}).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.SEIZURE"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SEIZURE"))
 		)
 	}
 
@@ -359,7 +348,7 @@ export class BackService {
 		return this.http.post<any>(environment.API_HOST + environment.BANK.BREAK_FREE, {
 			idPlayerToFree, idGame
 		}).pipe(
-			catchError(err => this.handleError(err, this.RELOAD, "ERROR.BREAK_PRISON"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.BREAK_PRISON"))
 		)
 	}
 
@@ -367,7 +356,7 @@ export class BackService {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.DELETE_GAME, {
 			idGame, password
 		}).pipe(
-			catchError(err => this.handleError(err, "", "ERROR.DELETE_GAME"))
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.DELETE_GAME"))
 		)
 	}
 }

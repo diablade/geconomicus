@@ -10,5 +10,6 @@ router.post('/settle-credit', validate(schemas.settleCredit), bank.settleCredit)
 router.post('/pay-interest', validate(schemas.payInterest), bank.payInterest);
 router.post('/seizure', validate(schemas.seizure), bank.seizure);
 router.post('/prison-break', validate(schemas.prisonBreak), bank.iveGotToBreakFree);
+router.post('/lock-down-player', validate(schemas.lockDownPlayer), bank.lockDownPlayer);
 
 export default router;

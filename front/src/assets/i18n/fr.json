@@ -397,6 +397,7 @@
 		"PAY_INTEREST": "Paiement de l’intérêt impossible",
 		"SEIZURE": "Saisie de biens impossible",
 		"BREAK_PRISON": "I can't break prison :/",
+		"LOCK_DOWN_PLAYER": "Mise en prison du joueur impossible",
 		"DELETE_GAME": "Suppression impossible"
 	},
 	"SOCKET": {

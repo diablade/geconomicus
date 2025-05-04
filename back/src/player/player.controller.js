@@ -229,7 +229,7 @@ const produce = async (req, res, next) => {
 		return res.status(200).json(cardsDraw);
 	} catch (error) {
 		activeTransactions.delete(idGame);
-		log.error('Production error:', error);
+		log.error('Production error:'+ error);
 		return next({
 			status: 500,
 			message: "Production cards error"
@@ -314,7 +314,7 @@ const transaction = async (req, res, next) => {
 
 		return res.status(200).json({ buyedCard: card, coins: buyer.coins });
 	} catch (error) {
-		log.error('Transaction error:', error);
+		log.error('Transaction error:'+error);
 		activeTransactions.delete(idSeller);
 		return res.status(500).json({ message: 'Transaction error' });
 	} finally {
@@ -352,12 +352,12 @@ const joinReincarnate = async (req, res, next) => {
 	try {
 		const game = await GameModel.findById(idGame);
 		if (!game) {
-			log.error('JoinReincarnate error:', "game not found");
+			log.error('JoinReincarnate error: game not found');
 			return res.status(404).json({ message: "Reincarnate error, Game not found" });
 		}
 		const playerFromId = game.players.find(p => p._id.toString() === fromId);
 		if (!playerFromId) {
-			log.error('JoinReincarnate error:', "Player to reincarnate from, not found");
+			log.error('JoinReincarnate error: Player to reincarnate from, not found');
 			return res.status(404).json({ message: "Player to reincarnate from, not found" });
 		}
 		let playerAlreadyReincarnated = game.players.find(p => p.reincarnateFromId === fromId);
@@ -401,7 +401,7 @@ const joinReincarnate = async (req, res, next) => {
 			const newCards = shuffledDeck.slice(0, game.distribInitCards);
 			const newCardsIds = newCards.map(c => c._id);
 			if (!decksService.areCardIdsUnique(newCardsIds, game.distribInitCards)) {
-				log.error('JoinReincarnate error:', "duplicate new cards");
+				log.error('JoinReincarnate error: duplicate new cards');
 				return res.status(500).json({ message: "duplicate new cards for reincarnate" });
 			}
 			//create events
@@ -429,7 +429,7 @@ const joinReincarnate = async (req, res, next) => {
 		return res.status(200).json(player._id);
 
 	} catch (error) {
-		log.error('JoinReincarnate error:', error);
+		log.error('JoinReincarnate error:'+ error);
 		return res.status(500).json({ message: "Reincarnate failed" });
 	}
 };
