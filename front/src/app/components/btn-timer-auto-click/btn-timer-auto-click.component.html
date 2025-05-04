@@ -1,10 +1,8 @@
-<div class="autoBtn">
-  <button mat-button (click)="click()" [mat-dialog-close]="false">
+<div class="wrapper">
+  <button mat-raised-button class="content transparentButton" (click)="click()" [mat-dialog-close]="false">
     {{ label }}
   </button>
-  <div class="progressContainer">
-    <div class="progress progress-bar-striped progress-bar-animated" role="progressbar"
-         [style.width.%]="progress">
-    </div>
+  <div class="background progress progress-bar-striped progress-bar-animated" role="progressbar"
+    [style.width.%]="progress">
   </div>
 </div>

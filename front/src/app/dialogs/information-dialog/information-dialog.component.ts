@@ -1,6 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import { I18nService } from '../../services/i18n.service';
+import {I18nService} from '../../services/i18n.service';
+
 @Component({
 	selector: 'app-information-dialog',
 	templateUrl: './information-dialog.component.html',
@@ -10,12 +11,16 @@ import { I18nService } from '../../services/i18n.service';
 export class InformationDialogComponent {
 	text = "";
 	title = "";
+	labelBtn = "";
+	timerBtn = 5;
 	disableClose = false;
 
 	constructor(public dialogRef: MatDialogRef<InformationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private i18nService: I18nService) {
 		this.text = data.text;
 		this.title = data.title ? data.title : this.i18nService.instant("DIALOG.INFORMATION.TITLE");
+		this.labelBtn = data.labelBtn ? data.labelBtn : this.i18nService.instant("DIALOG.INFORMATION.BTN1");
 		this.disableClose = data.disableClose == undefined ? false : data.disableClose;
+		this.timerBtn = data.timerBtn ? data.timerBtn : 5;
 		if (data.sound) {
 			let audio = new Audio();
 			audio.src = data.sound;

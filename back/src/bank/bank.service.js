@@ -39,7 +39,6 @@ const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
     socket.emitTo(idPlayer, C.NEW_CREDIT, credit);
     return credit;
 }
-
 const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
     const credit = await getCreditOfPlayer(idGame, idPlayer, idCredit);
     if (!credit) {
@@ -78,7 +77,6 @@ const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
         throw new Error("Action not found");
     }
 }
-
 const addDebtTimer = (id, startTickNow, duration, data) => {
     bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data, (timer) => {
         let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
@@ -97,9 +95,8 @@ const addDebtTimer = (id, startTickNow, duration, data) => {
         timeoutCredit(timer);
     }), startTickNow);
 }
-
-// Function to seize cards to match the target amount cardsValue
 const seizeCards = (cards, targetAmount) => {
+    // Function to seize cards to match the target amount cardsValue
     // Sort the player's cards by price in descending order
     const sortedCards = _.sortBy(cards, 'price').reverse();
 
@@ -119,7 +116,6 @@ const seizeCards = (cards, targetAmount) => {
     }
     return seizedCards;
 };
-
 const getRunningCreditsOfPlayer = async (idGame, idPlayer) => {
     const game = await GameModel.findById(idGame.toString());
     return game.credits.filter(credit => credit.idPlayer === idPlayer && credit.status !== C.CREDIT_DONE);
@@ -128,7 +124,6 @@ const getCreditOfPlayer = async (idGame, idPlayer, idCredit) => {
     const game = await GameModel.findById(idGame.toString());
     return game.credits.find(credit => credit.idPlayer === idPlayer && credit._id == idCredit);
 }
-
 const seizure = async (idCredit, idGame, idPlayer, seizure) => {
     let {
         credit,
@@ -203,7 +198,6 @@ const seizure = async (idCredit, idGame, idPlayer, seizure) => {
         };
     }
 }
-
 const seizureOnDead = async (idGame, idPlayer) => {
     let player = await playerService.getPlayer(idGame, idPlayer);
     let cardsValue = _.reduce(player.cards, (acc, c) => c.price + acc, 0);
@@ -237,81 +231,81 @@ const seizureOnDead = async (idGame, idPlayer) => {
                 cardsValue = 0;
                 credit.interest -= cardsValue;
             }
+        }
 
-            //SECOND PAY CREDIT AMOUNT
-            if ((player.coins - credit.amount) >= 0) {
-                player.coins -= credit.amount;
-                payedAmount += credit.amount;
+        //SECOND PAY CREDIT AMOUNT
+        if ((player.coins - credit.amount) >= 0) {
+            player.coins -= credit.amount;
+            payedAmount += credit.amount;
+            credit.amount = 0;
+        }
+        else {
+            // seize the rest coins
+            credit.amount -= player.coins;
+            payedAmount += player.coins;
+            player.coins = 0;
+            //seizure on cards
+            if (cardsValue >= credit.amount) {
+                cardsValue -= credit.amount;
+                seizureCardsValue += credit.amount;
                 credit.amount = 0;
             }
             else {
-                // seize the rest coins
-                credit.amount -= player.coins;
-                payedAmount += player.coins;
-                player.coins = 0;
-                //seizure on cards
-                if (cardsValue >= credit.amount) {
-                    cardsValue -= credit.amount;
-                    seizureCardsValue += credit.amount;
-                    credit.amount = 0;
-                }
-                else {
-                    seizureCardsValue += cardsValue;
-                    credit.amount -= cardsValue;
-                    cardsValue = 0;
-                }
+                seizureCardsValue += cardsValue;
+                credit.amount -= cardsValue;
+                cardsValue = 0;
             }
-
-            // update status credit
-            await GameModel.updateOne({
-                _id:           credit.idGame,
-                'credits._id': credit._id
-            }, {
-                $set: {
-                    'credits.$.status':  C.CREDIT_DONE,
-                    'credits.$.endDate': Date.now(),
-                },
-            });
-            totalPayedInterest += payedInterest;
-            totalPayedAmount += payedAmount;
-            totalValuesToSeize += seizureCardsValue;
-            totalNotPayed += (credit.interest + credit.amount);
         }
 
-        //convert value to cards
-        let totalSeizedCards = seizeCards(player.cards, totalValuesToSeize);
-        let totalSeizedCardsValue = _.reduce(totalSeizedCards, (acc, c) => c.price + acc, 0);
-        let totalPayedInCoins = totalPayedInterest + totalPayedAmount;
-
-        //PUT BACK seized CARDS IN THE DECKs
-        await decksService.pushCardsInDecks(idGame, totalSeizedCards);
-        // remove seized cards from player's hand
-        // user update, bank update, and MMonetary update
-        let event = constructor.event(C.SEIZED_DEAD, idPlayer, C.BANK, totalPayedInCoins, [
-            {
-                interest:        totalPayedInterest,
-                amount:          totalPayedAmount,
-                cards:           totalSeizedCards,
-                bankMoneyLost:   totalNotPayed,
-                bankGoodsEarned: totalSeizedCardsValue
-            }
-        ], Date.now());
+        // update status credit
         await GameModel.updateOne({
-            _id:           idGame,
-            'players._id': idPlayer
+            _id:           credit.idGame,
+            'credits._id': credit._id
         }, {
-            $inc:  {
-                'players.$.coins':     -totalPayedInCoins,
-                'bankInterestEarned':  totalPayedInterest,
-                'bankGoodsEarned':     totalSeizedCardsValue,
-                'bankMoneyLost':       totalNotPayed,
-                'currentMassMonetary': -totalPayedInCoins
+            $set: {
+                'credits.$.status':  C.CREDIT_DONE,
+                'credits.$.endDate': Date.now(),
             },
-            $pull: {'players.$.cards': {_id: {$in: totalSeizedCards.map(c => c.id)}}},
-            $push: {'events': event},
-        },);
-        return event;
+        });
+        totalPayedInterest += payedInterest;
+        totalPayedAmount += payedAmount;
+        totalValuesToSeize += seizureCardsValue;
+        totalNotPayed += (credit.interest + credit.amount);
     }
+
+    //convert value to cards
+    let totalSeizedCards = seizeCards(player.cards, totalValuesToSeize);
+    let totalSeizedCardsValue = _.reduce(totalSeizedCards, (acc, c) => c.price + acc, 0);
+    let totalPayedInCoins = totalPayedInterest + totalPayedAmount;
+
+    //PUT BACK seized CARDS IN THE DECKs
+    await decksService.pushCardsInDecks(idGame, totalSeizedCards);
+    // remove seized cards from player's hand
+    // user update, bank update, and MMonetary update
+    let event = constructor.event(C.SEIZED_DEAD, idPlayer, C.BANK, totalPayedInCoins, [
+        {
+            interest:        totalPayedInterest,
+            amount:          totalPayedAmount,
+            cards:           totalSeizedCards,
+            bankMoneyLost:   totalNotPayed,
+            bankGoodsEarned: totalSeizedCardsValue
+        }
+    ], Date.now());
+    await GameModel.updateOne({
+        _id:           idGame,
+        'players._id': idPlayer
+    }, {
+        $inc:  {
+            'players.$.coins':     -totalPayedInCoins,
+            'bankInterestEarned':  totalPayedInterest,
+            'bankGoodsEarned':     totalSeizedCardsValue,
+            'bankMoneyLost':       totalNotPayed,
+            'currentMassMonetary': -totalPayedInCoins
+        },
+        $pull: {'players.$.cards': {_id: {$in: totalSeizedCards.map(c => c.id)}}},
+        $push: {'events': event},
+    },);
+    return event;
 }
 
 const settleCredit = async (idCredit, idGame, idPlayer) => {

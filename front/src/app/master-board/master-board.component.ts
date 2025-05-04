@@ -7,7 +7,7 @@ import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
-	faCircleInfo, faWarning, faBuildingColumns, faKeyboard
+	faCircleInfo, faWarning, faBuildingColumns
 } from '@fortawesome/free-solid-svg-icons';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -162,7 +162,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.videoPlayerRT.nativeElement.play();
 	}
 
-
 	//To prevent memory leak
 	ngOnDestroy(): void {
 		if (this.subscription)
@@ -274,7 +273,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	reJoin(idPlayer: string, username: string): void {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
-				text:username,
+				text: username,
 				url: this.getUserUrl(idPlayer)
 			},
 		});
@@ -290,7 +289,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
-				text:username,
+				text: username,
 				url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'
 			},
 		});

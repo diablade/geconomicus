@@ -288,6 +288,6 @@ describe('seizureOnDead', () => {
 	it('should throw an error when the operation fails', async () => {
 		playerService.getPlayer.mockRejectedValue(new Error('Database error'));
 
-		await expect(bankService.seizureOnDead(mockIdGame, mockIdPlayer)).rejects.toThrow('seizure on dead failed');
+		await expect(bankService.seizureOnDead(mockIdGame, mockIdPlayer)).rejects.toThrow('Database error');
 	});
 });

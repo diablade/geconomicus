@@ -9,8 +9,8 @@
 
 .wheel-container {
   position: fixed;
-  width: 120vh;
-  height: 120vh;
+  width: 230vh;
+  height: 230vh;
 }
 
 .wheel {
@@ -32,6 +32,12 @@
   margin: 50px;
   align-items: center;
   border:transparent;
+}
+
+.closeBtn{
+  position: fixed;
+  top: 10px;
+  right: 10px;
 }
 
 .congrats-message{
