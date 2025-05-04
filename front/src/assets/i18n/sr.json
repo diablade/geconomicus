@@ -566,7 +566,7 @@
 			"SUMMARY7": "Indeks Gini meri nejednakosti distribucije (često prihoda ili bogatstva) u populaciji.",
 			"SUMMARY8": "- 0 = savršena jednakost (svi imaju isto)",
 			"SUMMARY9": "- 1 = potpuna nejednakost (samo jedna osoba ima sve)",
-			"SUMMARY10": "Što je indeks bliži 1, to je raspodela nejednaka.",
+			"SUMMARY10": "☝️ U slobodnoj valuti, indeks Gini tende prema 0 zbog inflacije.",
 			"TOTAL": "Ukupan iznos",
 			"NUM_PLAYERS": "Broj osoba",
 			"RESULTS": "Rezultati raspodele",

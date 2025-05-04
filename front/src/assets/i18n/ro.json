@@ -566,7 +566,7 @@
 			"SUMMARY7": "Indicele de Gini măsoară inegalitățile de distribuție (de obicei de venituri sau bogății) într-o populație.",
 			"SUMMARY8": "- 0 = egalitate perfectă (toată lumea are același lucru)",
 			"SUMMARY9": "- 1 = inegalitate totală (o singură persoană are totul)",
-			"SUMMARY10": "Cu cât indicele este mai aproape de 1, cu atât mai inegalitară este distribuția.",
+			"SUMMARY10": "☝️ În moneda liberă, indicele Gini tende permanent către 0 din cauza inflației monetare.",
 			"TOTAL": "Cuantum total",
 			"NUM_PLAYERS": "Numărul de persoane",
 			"RESULTS": "Rezultatele distribuției",

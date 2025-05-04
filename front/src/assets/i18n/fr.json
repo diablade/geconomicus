@@ -579,7 +579,7 @@
 			"SUMMARY7": "L’indice de Gini mesure les inégalités de distribution (souvent de revenus ou richesses) dans une population.",
 			"SUMMARY8": "- 0 = égalité parfaite (tout le monde a la même chose)",
 			"SUMMARY9": "- 1 = inégalité totale (une seule personne a tout)",
-			"SUMMARY10": "Plus l’indice est proche de 1, plus la répartition est inégalitaire.",
+			"SUMMARY10": "☝️ En monnaie libre, l’indice Gini tend en permanence vers 0. à cause de l’inflation monétaire.",
 			"TOTAL": "Montant Total",
 			"NUM_PLAYERS": "Nombre de personnes",
 			"RESULTS": "Résultats de la Distribution",

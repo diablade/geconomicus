@@ -577,7 +577,7 @@
 			"SUMMARY7": "The Gini index measures the inequalities of distribution (often income or wealth) within a population.",
 			"SUMMARY8": "- 0 = perfect equality (everyone has the same)",
 			"SUMMARY9": "- 1 = complete inequality (only one person has everything)",
-			"SUMMARY10": "The closer the index is to 1, the more unequal the distribution is.",
+			"SUMMARY10": "☝️ In free currency, the Gini index tends permanently towards 0 due to inflation.",
 			"TOTAL": "Total Amount",
 			"NUM_PLAYERS": "Number of people",
 			"RESULTS": "Distribution results",
