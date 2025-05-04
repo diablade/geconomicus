@@ -1,20 +1,22 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { Subscription } from "rxjs";
-import { Credit, Game, Player } from "../models/game";
-import { ActivatedRoute } from "@angular/router";
-import { BackService } from "../services/back.service";
-import { SnackbarService } from "../services/snackbar.service";
-import { MatDialog } from "@angular/material/dialog";
+import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Subscription} from "rxjs";
+import {Credit, Game, Player} from "../models/game";
+import {ActivatedRoute} from "@angular/router";
+import {BackService} from "../services/back.service";
+import {SnackbarService} from "../services/snackbar.service";
+import {MatDialog} from "@angular/material/dialog";
 import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
-import { faCircleInfo, faSackDollar, faLandmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { ContractDialogComponent } from "../dialogs/contract-dialog/contract-dialog.component";
-import { environment } from "../../environments/environment";
-import { SeizureDialogComponent } from "../dialogs/seizure-dialog/seizure-dialog.component";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { I18nService } from '../services/i18n.service';
+import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
+import {environment} from "../../environments/environment";
+import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.component";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {I18nService} from '../services/i18n.service';
+import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
+
 @Component({
 	selector: 'app-bank-board',
 	templateUrl: './bank-board.component.html',
@@ -36,11 +38,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-		private backService: BackService,
-		private snackbarService: SnackbarService,
-		private sanitizer: DomSanitizer,
-		public dialog: MatDialog,
-		private i18nService: I18nService) {
+	            private backService: BackService,
+	            private snackbarService: SnackbarService,
+	            private sanitizer: DomSanitizer,
+	            public dialog: MatDialog,
+	            private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -54,7 +56,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			});
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
-				this.prisoners = _.filter(game.players, { "status": "prison" });
+				this.prisoners = _.filter(game.players, {"status": "prison"});
 			});
 		});
 	}
@@ -62,6 +64,25 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	ngAfterViewInit() {
 		this.socket.on(C.RESET_GAME, async () => {
 			window.location.reload();
+		});
+		this.socket.on(C.START_ROUND, async () => {
+			this.game.status = C.PLAYING;
+			this.snackbarService.showNotif("Le tour démarre !");
+		});
+		this.socket.on(C.STOP_ROUND, async () => {
+			this.dialog.closeAll();
+			this.game.status = "waiting";
+			this.dialog.open(InformationDialogComponent, {
+				data: {text: "Tour terminé !"},
+			});
+		});
+		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
+			if (data) {
+				this.game.typeMoney = data.typeMoney;
+				this.game.timerCredit = data.timerCredit;
+				this.game.timerPrison = data.timerPrison;
+				this.game.amountCardsForProd = data.amountCardsForProd;
+			}
 		});
 		this.socket.on(C.CREDITS_STARTED, async () => {
 			_.forEach(this.game.credits, c => {
@@ -155,7 +176,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	}
 
 	getAverageCurrency() {
-		return this.game.currentMassMonetary / _.size(_.filter(this.game.players, { 'status': 'alive' }));
+		return this.game.currentMassMonetary / _.size(_.filter(this.game.players, {'status': 'alive'}));
 	}
 
 	getPlayerName(idPlayer: string) {
@@ -165,12 +186,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 
 	showContract() {
 		const dialogRef = this.dialog.open(ContractDialogComponent, {
-			data: { game: _.clone(this.game) },
+			data: {game: _.clone(this.game)},
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
 			if (contrat) {
-				this.backService.createCredit({ ...contrat, idGame: this.idGame, startNow: this.game.status == C.PLAYING }).subscribe((credit: Credit) => {
-					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", { player: this.getPlayerName(credit.idPlayer) }));
+				this.backService.createCredit({...contrat, idGame: this.idGame, startNow: this.game.status == C.PLAYING}).subscribe((credit: Credit) => {
+					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
 					this.game.credits.push(credit);
 					this.game.currentMassMonetary += credit.amount;
 				});

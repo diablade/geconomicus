@@ -205,6 +205,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.statusGame = C.PLAYING;
+			this.credits.forEach(c => {
+				if (c.status == C.PAUSED_CREDIT) {
+					c.status = C.RUNNING_CREDIT;
+				}
+			});
 			this.snackbarService.showNotif("Le tour démarre !");
 		});
 		this.socket.on(C.STOP_ROUND, async () => {

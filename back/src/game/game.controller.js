@@ -475,7 +475,7 @@ export default {
         GameModel.findByIdAndUpdate(idGame, {
             $set: {
                 status:                  C.OPEN,
-                typeMoney:               C.JUNE,
+                // typeMoney:               C.JUNE,
                 decks:                   [],
                 players:                 players,
                 credits:                 [],
