@@ -552,7 +552,8 @@
 			"EVENT_SUP": "Eliminar miembro {{ to }}",
 			"EVENT_TRA": "Transacción {{ amount }} de {{ from }} a {{ to }}",
 			"CHART_QUANTITATIVE": "Cuentas absolutas",
-			"CHART_RELATIVE": "Partes de la masa monetaria en % (Relativo)"
+			"CHART_RELATIVE": "Partes de la masa monetaria en % (Relativo)",
+            "LEGEND": "Legenda"
 		},
 		"WEALTH": {
 			"TITLE": "Módulo distribución",

@@ -56,6 +56,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	txTo = 0;
 	txAmount = 50;
 	actionMemberId = 0;
+	legendQuantitative = true;
+	legendRelative = true;
 
 	events: Event[] = [];
 	years: Year[] = [];
@@ -76,7 +78,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 
 	ngAfterViewInit(): void {
 		this.createCharts();
-		this.executeSimulationFromStart();
+		this.resetSimulation();
 	}
 
 	executeSimulationFromStart() {
@@ -176,10 +178,15 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				label: member.id,
 				data,
 				fill: false,
-				borderColor: `hsl(${member.id * 36}, 70%, 50%)`,
 				tension: 0.1,
-				pointRadius: 0,
-				borderWidth: 1
+				backgroundColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				borderColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointBackgroundColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointBorderColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointStyle: "circle",
+				hoverBorderWidth: 4,
+				borderWidth: 2,
+				pointRadius: 0.8,
 			});
 		}
 		return datasets;
@@ -196,10 +203,15 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				label: member.id,
 				data,
 				fill: false,
-				borderColor: `hsl(${member.id * 36}, 70%, 50%)`,
 				tension: 0.1,
-				pointRadius: 0,
-				borderWidth: 1
+				backgroundColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				borderColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointBackgroundColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointBorderColor: `hsl(${member.id * 36}, 70%, 50%)`,
+				pointStyle: "circle",
+				hoverBorderWidth: 4,
+				borderWidth: 2,
+				pointRadius: 0.8,
 			});
 		}
 		return datasets;
@@ -216,7 +228,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				animation: false,
 				maintainAspectRatio: true,
 				plugins: {
-					legend: {display: false},
+					legend: {display: this.legendQuantitative},
 				},
 				scales: {
 					y: {
@@ -241,7 +253,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				animation: false,
 				maintainAspectRatio: true,
 				plugins: {
-					legend: {display: false},
+					legend: {display: this.legendRelative},
 				},
 			},
 			data: {
@@ -327,6 +339,22 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		return shares;
 	}
 
+	displayLegendRelative() {
+		this.legendRelative = !this.legendRelative;
+		if (this.relativeChart && this.relativeChart.options && this.relativeChart.options.plugins && this.relativeChart.options.plugins.legend) {
+			this.relativeChart.options.plugins.legend.display = this.legendRelative;
+			this.relativeChart.update();
+		}
+	}
+	
+	displayLegendQuantitative() {
+		this.legendQuantitative = !this.legendQuantitative;
+		if (this.quantitativeChart && this.quantitativeChart.options && this.quantitativeChart.options.plugins && this.quantitativeChart.options.plugins.legend) {
+			this.quantitativeChart.options.plugins.legend.display = this.legendQuantitative;
+			this.quantitativeChart.update();
+		}
+	}
+
 	updateCharts() {
 		// Relancer les graphiques après modification
 		if (this.relativeChart && this.quantitativeChart) {
@@ -341,4 +369,3 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		this.router.navigate(['home']);
 	}
 }
-

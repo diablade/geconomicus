@@ -552,7 +552,8 @@
 			"EVENT_SUP": "メンバー{{to}}を削除",
 			"EVENT_TRA": "取引{{amount}}を{{from}}から{{to}}へ",
 			"CHART_QUANTITATIVE": "口座金額 (Quantitative)",
-			"CHART_RELATIVE": "貨幣量の部分 (Relative)"
+			"CHART_RELATIVE": "貨幣量の部分 (Relative)",
+            "LEGEND": "凡例"	
 		},
 		"WEALTH": {
 			"TITLE": "ウェルスリパーティション",

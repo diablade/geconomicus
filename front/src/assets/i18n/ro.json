@@ -552,7 +552,8 @@
 			"EVENT_SUP": "Eliminați Membru {{ to }}",
 			"EVENT_TRA": "Tranzacție {{ amount }} de la {{ from }} la {{ to }}",
 			"CHART_QUANTITATIVE": "Suma absolută a conturilor în G1 (Cantitativ)",
-			"CHART_RELATIVE": "Părți ale Masei Monetare în % (Relativ)"
+			"CHART_RELATIVE": "Părți ale Masei Monetare în % (Relativ)",
+            "LEGEND": "Legenda"
 		},
 		"WEALTH": {
 			"TITLE": "Modul de distribuție",

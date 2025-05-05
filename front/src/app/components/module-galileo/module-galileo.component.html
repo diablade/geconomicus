@@ -111,11 +111,17 @@
 	</div>
 	<div class="charts">
 		<mat-card class="chart-container card-chart">
-			<h2>{{"MODULE.GALILEO.CHART_QUANTITATIVE"| translate}}</h2>
+			<div class="d-flex flex-row justify-content-between">
+				<h2>{{"MODULE.GALILEO.CHART_QUANTITATIVE"| translate}}</h2>
+				<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{"MODULE.GALILEO.LEGEND"| translate}}</mat-slide-toggle>
+			</div>
 			<canvas #quantitativeCanvas></canvas>
 		</mat-card>
 		<mat-card class="chart-container card-chart">
-			<h2>{{"MODULE.GALILEO.CHART_RELATIVE"| translate}}</h2>
+			<div class="d-flex flex-row justify-content-between">
+				<h2>{{"MODULE.GALILEO.CHART_RELATIVE"| translate}}</h2>
+				<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{"MODULE.GALILEO.LEGEND"| translate}}</mat-slide-toggle>
+			</div>
 			<canvas #relativeCanvas></canvas>
 		</mat-card>
 	</div>

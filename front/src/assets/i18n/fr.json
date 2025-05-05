@@ -565,7 +565,8 @@
 			"EVENT_SUP": "Suppression Membre {{ to }}",
 			"EVENT_TRA": "Transaction {{ amount }} de {{ from }} vers {{ to }}",
 			"CHART_QUANTITATIVE": "Montants absolus des comptes en G1 (Quantitatif)",
-			"CHART_RELATIVE": "Parts de la Masse Monétaire en % (Relatif)"
+			"CHART_RELATIVE": "Parts de la Masse Monétaire en % (Relatif)",
+			"LEGEND": "Legende"
 		},
 		"WEALTH": {
 			"TITLE": "Module répartition",
