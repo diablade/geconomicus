@@ -28,7 +28,7 @@ const routes: Routes = [
     {path: 'game/:idGame/player/:idPlayer/survey', component: SurveyComponent},
     {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
     {path: 'module/galileo', component: ModuleGalileoComponent},
-    {path: 'module/wealth', component: ModuleWealthDistribComponent},
+    {path: 'module/gini', component: ModuleWealthDistribComponent},
     {path: '**', redirectTo: '/'},
 ];
 

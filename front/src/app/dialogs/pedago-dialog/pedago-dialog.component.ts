@@ -20,7 +20,7 @@ export class PedagoDialogComponent {
 	}
 
 	openWealth() {
-		this.router.navigate(['module/wealth']);
+		this.router.navigate(['module/gini']);
 		this.dialogRef.close();
 	}
 }
