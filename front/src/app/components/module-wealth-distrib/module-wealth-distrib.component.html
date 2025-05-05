@@ -55,15 +55,15 @@
 					<div class="d-flex flex-column">
 						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
 							<a href="https://tradingeconomics.com/european-union/gini-coefficient-of-equivalised-disposable-income-eurostat-data.html" target="_blank">(2023, gini ≃0.3)</a>
-							<button mat-raised-button color="accent" class="m-2" (click)="onEurosClick()">Euros €</button>
+							<button mat-raised-button style="background-color: #003399; color: white;" class="m-2" (click)="onEurosClick()">Euros €</button>
 						</div>
 						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
 							<a href="https://data.worldbank.org/indicator/SI.POV.GINI?locations=US" target="_blank">(2023, gini ≃0.42)</a>
-							<button mat-raised-button color="accent" class="m-2" (click)="onDollarsClick()">Dollars $</button>
+							<button mat-raised-button style="background-color: #008000; color: white;" 	class="m-2" (click)="onDollarsClick()">Dollars $</button>
 						</div>
 						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
 							<a href="https://arxiv.org/html/2501.11416v1" target="_blank">(2023, gini ≃0.8)</a>
-							<button mat-raised-button color="warn" class="m-2" (click)="onBitcoinClick()">Bitcoins 🪙</button>
+							<button mat-raised-button style="background-color: #f7931a; color: white;" class="m-2" (click)="onBitcoinClick()">Bitcoins 🪙</button>
 						</div>
 					</div>
 				</div>
@@ -71,8 +71,7 @@
 		</mat-card>
 		<mat-card class="flex-grow-1 graph card">
 			<div class="toggle-view">
-				<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">{{"MODULE.WEALTH.GRAPHIC"| translate}}
-				</button>
+				<button [class.active]="currentChartType === 'bar'" (click)="changeChartType('bar')">{{"MODULE.WEALTH.GRAPHIC"| translate}}</button>
 				<button [class.active]="currentChartType === 'line'" (click)="changeChartType('line')">{{"MODULE.WEALTH.CURVE"| translate}}</button>
 				<button [class.active]="currentChartType === 'pie'" (click)="changeChartType('pie')">{{"MODULE.WEALTH.CAMBER"| translate}}</button>
 			</div>

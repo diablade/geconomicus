@@ -3,8 +3,8 @@
 	background: white;
 }
 
-.summary{
-	width:350px;
+.summary {
+	width: 350px;
 }
 
 .controls {
@@ -13,19 +13,23 @@
 	gap: 20px;
 	margin-bottom: 20px;
 }
-.cardParam{
+
+.cardParam {
 	padding: 1rem;
 	min-width: 300px;
 	max-width: 350px;
 }
+
 .card {
 	background: #f9f9f9;
 	padding: 1rem;
 	border-radius: 8px;
 }
-.graph{
+
+.graph {
 	width: 400px;
 }
+
 .control-group {
 	flex: 1;
 	min-width: 200px;
@@ -65,7 +69,8 @@ table {
 	margin-top: 10px;
 }
 
-th, td {
+th,
+td {
 	padding: 8px;
 	text-align: left;
 	border-bottom: 1px solid #ddd;
@@ -87,4 +92,20 @@ th {
 	background-color: #007bff;
 	color: white;
 	border-color: #007bff;
+}
+
+
+.bitcoin-btn {
+	background-color: #f7931a;
+	// color: white;
+}
+
+.euro-btn {
+	background-color: #003399;
+	// color: white;
+}
+
+.dollar-btn {
+	background-color: #008000;
+	color: white;
 }

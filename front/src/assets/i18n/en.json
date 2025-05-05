@@ -565,7 +565,7 @@
 			"CHART_QUANTITATIVE": "Absolute account amounts in G1 (Quantitative)",
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)",
             "LEGEND": "Legend"
-		},
+		},		
 		"WEALTH": {
 			"TITLE": "Distribution module",
 			"SUB_TITLE": "Camembert of currency inequalities",

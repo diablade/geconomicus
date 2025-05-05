@@ -1,13 +1,13 @@
-import {Component, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import {Router} from "@angular/router";
+import { Router } from "@angular/router";
 // Enregistrer tous les contrôleurs, éléments, etc. de Chart.js
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-module-wealth-distrib',
-  templateUrl: './module-wealth-distrib.component.html',
-  styleUrls: ['./module-wealth-distrib.component.scss']
+	selector: 'app-module-wealth-distrib',
+	templateUrl: './module-wealth-distrib.component.html',
+	styleUrls: ['./module-wealth-distrib.component.scss']
 })
 export class ModuleWealthDistribComponent implements AfterViewInit {
 	// Paramètres pour la distribution
@@ -24,12 +24,18 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 	giniIndex = 0;
 	ratioTopBottom = 0;
 
+	colorBitcoin = "#f7931a";
+	colorDollar = "#008000";
+	colorEuro = "#003399";
+	colorDefault = "#007bff";
+	selectedColor = this.colorDefault;
+
 	// Pour le tableau des résultats
-	tableData: Array<{player: string, amount: number, percentage: number}> = [];
+	tableData: Array<{ player: string, amount: number, percentage: number }> = [];
 
 	@ViewChild('distributionCanvas') distributionCanvas!: ElementRef;
 
-	constructor(private router:Router) { }
+	constructor(private router: Router) { }
 
 	ngAfterViewInit(): void {
 		this.initChart();
@@ -73,18 +79,21 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 	// Fonction de simulation repartition euros
 	onEurosClick(): void {
 		this.paramP = 0.75;
+		this.distributionChart.data.datasets[0].borderColor = this.colorEuro;
 		this.updateChart();
 	}
 
 	// Fonction de simulation repartition dollars
 	onDollarsClick(): void {
 		this.paramP = 1;
+		this.distributionChart.data.datasets[0].borderColor = this.colorDollar;
 		this.updateChart();
 	}
 
 	// Fonction de simulation repartition bitcoin
 	onBitcoinClick(): void {
 		this.paramP = 2.6;
+		this.distributionChart.data.datasets[0].borderColor = this.colorBitcoin;
 		this.updateChart();
 	}
 
@@ -92,7 +101,7 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 	initChart(): void {
 		const ctx = this.distributionCanvas.nativeElement.getContext('2d');
 		this.distributionChart = new Chart(ctx, {
-		// @ts-ignore
+			// @ts-ignore
 			type: this.currentChartType,
 			data: {
 				labels: [],
@@ -100,13 +109,13 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 					label: 'Distribution de Richesse',
 					data: [],
 					backgroundColor: [],
-					borderColor: 'rgba(0, 123, 255, 1)',
+					borderColor: this.colorDefault,
 					borderWidth: 1
 				}]
 			},
 			options: {
 				plugins: {
-					legend: {display: false},
+					legend: { display: false },
 				},
 				responsive: true,
 				maintainAspectRatio: false,
@@ -135,13 +144,19 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 		this.distribution = this.distributeInitialWealth(this.total, this.numPlayers, this.paramP);
 
 		// Préparer les données pour le graphique
-		const labels = Array.from({length: this.numPlayers}, (_, i) => `Personne ${i+1}`);
+		const labels = Array.from({ length: this.numPlayers }, (_, i) => `Personne ${i + 1}`);
 		const colors = [];
 
 		// Générer des couleurs en fonction de la richesse (plus riche = plus foncé)
 		for (let i = 0; i < this.numPlayers; i++) {
 			const intensity = 100 - (i / this.numPlayers) * 70;
-			colors.push(`hsla(210, 100%, ${intensity}%, 0.7)`);
+			const colorHex = this.distributionChart.data.datasets[0].borderColor.toString();
+			// Extract HSL values from the selected color
+			let h = 210; // Default hue
+			if (colorHex === this.colorEuro) h = 240;
+			else if (colorHex === this.colorDollar) h = 120;
+			else if (colorHex === this.colorBitcoin) h = 35;
+			colors.push(`hsla(${h}, 100%, ${intensity}%, 0.7)`);
 		}
 
 		// Mettre à jour le graphique
@@ -216,16 +231,19 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 
 	// Méthodes pour les événements de changement de valeur des sliders
 	onParamPChange(event: any): void {
+		this.distributionChart.data.datasets[0].borderColor = this.colorDefault;
 		this.paramP = parseFloat(event.target.value);
 		this.updateChart();
 	}
 
 	onTotalChange(event: any): void {
+		this.distributionChart.data.datasets[0].borderColor = this.colorDefault;
 		this.total = parseFloat(event.target.value);
 		this.updateChart();
 	}
 
 	onNumPlayersChange(event: any): void {
+		this.distributionChart.data.datasets[0].borderColor = this.colorDefault;
 		this.numPlayers = parseInt(event.target.value);
 		this.updateChart();
 	}
