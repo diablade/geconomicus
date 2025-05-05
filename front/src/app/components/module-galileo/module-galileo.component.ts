@@ -45,7 +45,6 @@ class Event {
 export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	duration = 80;
 	growthRate = 10;
-	initialFirstMember = 100;
 	initialMass = 1000000;
 	initialMembers = 10;
 	gini = 1;
@@ -79,6 +78,14 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	ngAfterViewInit(): void {
 		this.createCharts();
 		this.resetSimulation();
+		
+		// Ajouter ces lignes à la fin
+		setTimeout(() => {
+			if (this.quantitativeChart && this.relativeChart) {
+			this.quantitativeChart.update();
+			this.relativeChart.update();
+			}
+		}, 100);
 	}
 
 	executeSimulationFromStart() {
@@ -104,8 +111,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 
 	resetSimulation() {
 		this.duration = 80;
-		this.growthRate = 5;
-		this.initialFirstMember = 100;
+		this.growthRate = 10;
 		this.initialMass = 1000000;
 		this.initialMembers = 10;
 		this.gini = 1;
@@ -358,8 +364,15 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	updateCharts() {
 		// Relancer les graphiques après modification
 		if (this.relativeChart && this.quantitativeChart) {
+			// Update the labels array based on the current duration
+			const labels = Array.from({length: this.duration}, (_, i) => i);
+			
+			this.quantitativeChart.data.labels = labels;
+			this.relativeChart.data.labels = labels;
+			
 			this.quantitativeChart.data.datasets = this.buildDatasetsFromYears();
 			this.relativeChart.data.datasets = this.buildDatasetsFromYearsRelatif();
+			
 			this.quantitativeChart.update();
 			this.relativeChart.update();
 		}
