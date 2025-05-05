@@ -1,16 +1,16 @@
 <div class="module overflow-auto">
 	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
 	<button mat-raised-button [color]="" (click)="home()">{{"MODULE.BACK_HOME"| translate}}</button>
-	<h1 class="text-center">{{"MODULE.WEALTH.TITLE"| translate}}</h1>
+	<h1 class="text-center fw-bold">{{"MODULE.WEALTH.TITLE"| translate}}</h1>
 	<div class="d-flex flex-row flex-wrap justify-content-center gap-2">
 		<div class="summary">
 			<div class="game-explanation">
-				<h3>{{"MODULE.WEALTH.SUB_TITLE"| translate}}</h3>
+				<h3 class="fw-bold">{{"MODULE.WEALTH.SUB_TITLE"| translate}}</h3>
+				<div>{{"MODULE.WEALTH.DESCRIPTION"| translate}}</div>
 				<ul>
 					<li>{{"MODULE.WEALTH.SUMMARY3"| translate}}</li>
 					<li>{{"MODULE.WEALTH.SUMMARY4"| translate}}</li>
 					<li>{{"MODULE.WEALTH.SUMMARY5"| translate}}</li>
-					<li>{{"MODULE.WEALTH.SUMMARY6"| translate}}</li>
 				</ul>
 			</div>
 			<div class="mt-2">
@@ -50,8 +50,8 @@
 						<span>{{ paramP.toFixed(1) }}</span>
 						<span>3</span>
 					</div>
-					<p>{{"MODULE.WEALTH.GINI"| translate}}: {{ giniIndex.toFixed(4) }}</p>
-					<p>{{"MODULE.WEALTH.RATIO"| translate}}: {{ ratioTopBottom.toFixed(2) }}</p>
+					<label>{{"MODULE.WEALTH.GINI"| translate}}: {{ giniIndex.toFixed(4) }}</label>
+					<label>{{"MODULE.WEALTH.RATIO"| translate}}: {{ ratioTopBottom.toFixed(2) }}</label>
 					<div class="d-flex flex-column">
 						<div>{{"MODULE.WEALTH.SIMULATION"| translate}}:
 							<a href="https://tradingeconomics.com/european-union/gini-coefficient-of-equivalised-disposable-income-eurostat-data.html" target="_blank">(2023, gini ≃0.3)</a>
