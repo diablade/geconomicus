@@ -523,7 +523,7 @@
 		"GALILEO": {
 			"TITLE": "Module Galilée",
 			"SUMMARY": "Ce module permet de visualiser l’évolution d’une monnaie libre basée sur le Dividende Universel (DU).",
-			"SUMMARY2":"Il simule la création monétaire dans le temps, la répartition entre membres, et l’impact d’actions comme l’ajout ou le retrait de membres, ou des transactions.",
+			"SUMMARY2": "Il simule la création monétaire dans le temps, la répartition entre membres, et l’impact d’actions comme l’ajout ou le retrait de membres, ou des transactions.",
 			"SUMMARY3": "Grâce aux graphiques dynamiques ci-dessous, ils aident à comprendre l'effet du <b>D.U</b> sur la masse monétaire et les parts relatives individuelles.",
 			"SUMMARY4": "Chaque membre reçoit le <b>D.U</b> chaque année, et reçoit des transactions si elles sont ajoutées.",
 			"SUMMARY5": "Les graphiques affichent l'évolution des comptes des membres, ainsi que la masse monétaire.",

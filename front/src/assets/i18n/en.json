@@ -521,7 +521,7 @@
 		"GALILEO": {
 			"TITLE": "Simulation free currency (Galileo module)",
 			"SUMMARY": "This module allows you to visualize the evolution of a free currency based on the <b>Universal Dividend (DU)</b>.",
-			"SUMMARY2":"It simulates the creation of money over time, the distribution between members, and the impact of actions such as adding or removing members, or transactions.",
+			"SUMMARY2": "It simulates the creation of money over time, the distribution between members, and the impact of actions such as adding or removing members, or transactions.",
 			"SUMMARY3": "Thanks to dynamic graphs below, they help you understand the effect of <b>D.U</b> on the monetary mass and individual relative shares.",
 			"SUMMARY4": "Each member receives <b>D.U</b> each year, and receives transactions if they are added.",
 			"SUMMARY5": "The graphs show the evolution of members' accounts, as well as the monetary mass.",
@@ -564,8 +564,8 @@
 			"EVENT_TRA": "Transaction {{ amount }} from {{ from }} to {{ to }}",
 			"CHART_QUANTITATIVE": "Absolute account amounts in Ğ1 (Quantitative)",
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)",
-            "LEGEND": "Legend"
-		},		
+			"LEGEND": "Legend"
+		},
 		"WEALTH": {
 			"TITLE": "Distribution module",
 			"SUB_TITLE": "Understanding Currency Inequality with the Gini Coefficient",
