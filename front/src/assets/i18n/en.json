@@ -549,7 +549,7 @@
 			"SELECT": "Choose...",
 			"EVENTS": "Events",
 			"RESET": "Reset",
-			"ADD_MEMBER_DESC": "His account starts at 0 G1 from year {{ actionYear }}, then he receives D.U each following year",
+			"ADD_MEMBER_DESC": "His account starts at 0 Ğ1 from year {{ actionYear }}, then he receives D.U each following year",
 			"REMOVE_MEMBER": "Remove a member",
 			"REMOVE_MEMBER_DESC": "No longer receives D.U from year {{ actionYear }}",
 			"REMOVE_MEMBER_BUTTON": "Make Inactive",
@@ -562,7 +562,7 @@
 			"EVENT_ADD": "Add Member {{from}}",
 			"EVENT_SUP": "Remove Member {{ to }}",
 			"EVENT_TRA": "Transaction {{ amount }} from {{ from }} to {{ to }}",
-			"CHART_QUANTITATIVE": "Absolute account amounts in G1 (Quantitative)",
+			"CHART_QUANTITATIVE": "Absolute account amounts in Ğ1 (Quantitative)",
 			"CHART_RELATIVE": "Parts of Monetary Mass in % (Relative)",
             "LEGEND": "Legend"
 		},		

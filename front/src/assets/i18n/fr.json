@@ -551,7 +551,7 @@
 			"SELECT": "Choisir...",
 			"EVENTS": "Événements",
 			"RESET": "Réinitialiser",
-			"ADD_MEMBER_DESC": "Son compte démarre à 0 G1 à partir de l'année {{ actionYear }}, puis il reçoit le D.U chaque année suivante",
+			"ADD_MEMBER_DESC": "Son compte démarre à 0 Ğ1 à partir de l'année {{ actionYear }}, puis il reçoit le D.U chaque année suivante",
 			"REMOVE_MEMBER": "Retirer un membre",
 			"REMOVE_MEMBER_DESC": "Ne reçoit plus le D.U à partir de l'année {{ actionYear }}",
 			"REMOVE_MEMBER_BUTTON": "Rendre Inactif",
@@ -564,7 +564,7 @@
 			"EVENT_ADD": "Ajout Membre {{ from }}",
 			"EVENT_SUP": "Suppression Membre {{ to }}",
 			"EVENT_TRA": "Transaction {{ amount }} de {{ from }} vers {{ to }}",
-			"CHART_QUANTITATIVE": "Montants absolus des comptes en G1 (Quantitatif)",
+			"CHART_QUANTITATIVE": "Montants absolus des comptes en Ğ1 (Quantitatif)",
 			"CHART_RELATIVE": "Parts de la Masse Monétaire en % (Relatif)",
 			"LEGEND": "Legende"
 		},

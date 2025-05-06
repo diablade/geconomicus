@@ -538,7 +538,7 @@
 			"SELECT": "Scegli...",
 			"EVENTS": "Eventi",
 			"RESET": "Reimposta",
-			"ADD_MEMBER_DESC": "Il suo conto inizia a 0 G1 dall'anno {{ actionYear }}, poi riceve D.U ogni anno successivo",
+			"ADD_MEMBER_DESC": "Il suo conto inizia a 0 Ğ1 dall'anno {{ actionYear }}, poi riceve D.U ogni anno successivo",
 			"REMOVE_MEMBER": "Rimuovi un membro",
 			"REMOVE_MEMBER_DESC": "Non riceve più D.U dall'anno {{ actionYear }}",
 			"REMOVE_MEMBER_BUTTON": "Rendi inattivo",
@@ -551,7 +551,7 @@
 			"EVENT_ADD": "Aggiungi Membro {{from}}",
 			"EVENT_SUP": "Rimuovi Membro {{ to }}",
 			"EVENT_TRA": "Transazione {{ amount }} da {{ from }} a {{ to }}",
-			"CHART_QUANTITATIVE": "Importi assoluti dei conti in G1 (Quantitativo)",
+			"CHART_QUANTITATIVE": "Importi assoluti dei conti in Ğ1 (Quantitativo)",
 			"CHART_RELATIVE": "Parti della Massa Monetaria in % (Relativo)",
 			"LEGEND": "Legenda"
 		},

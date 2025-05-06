@@ -538,7 +538,7 @@
 			"SELECT": "Izaberi...",
 			"EVENTS": "Događaji",
 			"RESET": "Resetuj",
-			"ADD_MEMBER_DESC": "Njegov račun počinje sa 0 G1 od godine {{ actionYear }}, zatim prima D.U svake sledeće godine",
+			"ADD_MEMBER_DESC": "Njegov račun počinje sa 0 Ğ1 od godine {{ actionYear }}, zatim prima D.U svake sledeće godine",
 			"REMOVE_MEMBER": "Ukloni člana",
 			"REMOVE_MEMBER_DESC": "Više ne prima D.U od godine {{ actionYear }}",
 			"REMOVE_MEMBER_BUTTON": "Učini neaktivnim",
@@ -551,7 +551,7 @@
 			"EVENT_ADD": "Dodaj člana {{from}}",
 			"EVENT_SUP": "Ukloni člana {{ to }}",
 			"EVENT_TRA": "Transakcija {{ amount }} od {{ from }} za {{ to }}",
-			"CHART_QUANTITATIVE": "Apsolutni iznosi računa u G1 (Kvantitativno)",
+			"CHART_QUANTITATIVE": "Apsolutni iznosi računa u Ğ1 (Kvantitativno)",
 			"CHART_RELATIVE": "Delovi monetarne mase u % (Relativno)",
             "LEGEND": "Legenda"
 		},

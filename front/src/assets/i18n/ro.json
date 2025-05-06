@@ -538,7 +538,7 @@
 			"SELECT": "Alegeți...",
 			"EVENTS": "Evenimente",
 			"RESET": "Reset",
-			"ADD_MEMBER_DESC": "Contul său începe de la 0 G1 de la anul {{ actionYear }}, apoi primește D.U în fiecare an următor",
+			"ADD_MEMBER_DESC": "Contul său începe de la 0 Ğ1 de la anul {{ actionYear }}, apoi primește D.U în fiecare an următor",
 			"REMOVE_MEMBER": "Eliminați un membru",
 			"REMOVE_MEMBER_DESC": "Nu mai primește D.U de la anul {{ actionYear }}",
 			"REMOVE_MEMBER_BUTTON": "Faceți inactiv",
@@ -551,7 +551,7 @@
 			"EVENT_ADD": "Adăugați Membru {{from}}",
 			"EVENT_SUP": "Eliminați Membru {{ to }}",
 			"EVENT_TRA": "Tranzacție {{ amount }} de la {{ from }} la {{ to }}",
-			"CHART_QUANTITATIVE": "Suma absolută a conturilor în G1 (Cantitativ)",
+			"CHART_QUANTITATIVE": "Suma absolută a conturilor în Ğ1 (Cantitativ)",
 			"CHART_RELATIVE": "Părți ale Masei Monetare în % (Relativ)",
             "LEGEND": "Legenda"
 		},
