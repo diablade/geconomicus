@@ -7,7 +7,7 @@
     </mat-form-field>
   </div>
   <div mat-dialog-actions>
-    <button *ngIf="fromId" mat-raised-button color="primary" (click)="joinReincarnate()">{{ "JOIN.GO_NEW_LIFE" | translate }}</button>
+    <button-timer *ngIf="fromId" mat-raised-button (click)="joinReincarnate()" [secondsTimer]="5" (timerEnd)="joinReincarnate()" [label]="'JOIN.GO_NEW_LIFE' | translate"></button-timer>
 <!--    <button *ngIf="fromId==='false'" mat-raised-button color="primary" (click)="joinInGame()">{{ "JOIN.GO_BUTTON" | translate }}</button>-->
     <button *ngIf="fromId===undefined" mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
   </div>

@@ -33,4 +33,6 @@ export class GameOptionsDialogComponent {
 	getTranslate(key: string):string {
 		 return this.i18nService.instant(key);
 	}
+
+	protected readonly Math = Math;
 }

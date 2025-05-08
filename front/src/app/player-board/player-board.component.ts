@@ -142,17 +142,39 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem("scanV3");
-		this.subscription = this.route.params.subscribe(params => {
+		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
-			this.wsService.getReConnectionStatus().subscribe((status) => {
-				if (status) {
-					this.getPlayerInfos();
+			this.subscription = this.wsService.getReConnectionStatus().subscribe(data => {
+				if (data) {
+					this.refresh();
 				}
 			});
 			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
+			
+			// Setup error handling for socket timeouts
+			this.socket.on('error', (error: any) => {
+				console.error('Socket error:', error);
+				if (error && error.message && error.message.includes('timeout')) {
+					this.handleSocketTimeout();
+				}
+			});
+			
 			this.getPlayerInfos();
 		});
+	}
+	
+	/**
+	 * Handle socket timeout by forcing a complete page reload
+	 */
+	private handleSocketTimeout() {
+		this.snackbarService.showNotif("La connexion a expiré. Rechargement automatique de la page...");
+		
+		// Set a short delay to allow the notification to be shown before reload
+		setTimeout(() => {
+			// Force a complete page reload
+			window.location.reload();
+		}, 2000);
 	}
 
 	getPlayerInfos() {

@@ -59,14 +59,14 @@ export class WebSocketService {
 					idPlayer: this.idPlayer,
 					idGame: this.idGame,
 				},
-				ackTimeout: 5000,             // Increase timeout
+				ackTimeout: 15000,            // Increased timeout to 15 seconds
 				// allowEIO3: true,
 				autoConnect: true,
 				reconnection: true,       // Enable automatic reconnection
 				reconnectionAttempts: 10, // Number of reconnection attempts// Increase attempts
 				reconnectionDelay: 1000,  // Delay between reconnections
-				reconnectionDelayMax: 5000,   // Maximum delay between reconnections
-				timeout: 10000,               // connection timeout
+				reconnectionDelayMax: 10000,  // Maximum delay between reconnections (increased)
+				timeout: 20000,               // connection timeout (increased)
 				transports: ['websocket', 'polling'],  // Explicitly set transports
 				// forceNew: true     // may not recconnect
 			});

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-btn-timer-auto-click',
+  selector: 'button-timer',
   templateUrl: './btn-timer-auto-click.component.html',
   styleUrls: ['./btn-timer-auto-click.component.scss']
 })
