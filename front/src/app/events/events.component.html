@@ -27,7 +27,7 @@
           <span [matTooltip]="'EVENTS.UNIVERSAL_DIVIDEND' | translate">➕️1{{ "CURRENCY.DU" | translate }} ({{ event.amount }}{{ "CURRENCY.JUNE" | translate }})️</span>
         </span>
         <span *ngSwitchCase="C.FIRST_DU">
-          <span [matTooltip]="'EVENTS.FIRST_DU_CALCULATION' | translate">🧮{{ "EVENTS.FIRST_DU" | translate }}: {{ event.amount }}{{ "CURRENCY.DU" | translate }}</span>
+          <span [matTooltip]="'EVENTS.FIRST_DU_CALCULATION' | translate">🧮{{ "EVENTS.FIRST_DU" | translate }}: {{ event.amount }}{{ "CURRENCY.JUNE" | translate }}</span>
         </span>
         <span *ngSwitchCase="C.START_GAME">
           <span>{{ "EVENTS.GAME_START" | translate }}</span>
