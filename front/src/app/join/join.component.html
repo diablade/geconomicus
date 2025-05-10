@@ -1,13 +1,13 @@
 <div class="join sunyBg h-100">
-  <h1 mat-dialog-title class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
-  <div mat-dialog-content>
+  <h1 class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
+  <div>
     <p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
     <mat-form-field appearance="fill">
       <input matInput [disabled]="!!fromId" [(ngModel)]="name">
     </mat-form-field>
   </div>
-  <div mat-dialog-actions>
-    <button-timer *ngIf="fromId" mat-raised-button (click)="joinReincarnate()" [secondsTimer]="5" (timerEnd)="joinReincarnate()" [label]="'JOIN.GO_NEW_LIFE' | translate"></button-timer>
+  <div>
+    <button-timer *ngIf="fromId" [secondsTimer]="5" (timerEnd)="joinReincarnate()" [label]="'JOIN.GO_NEW_LIFE' | translate"></button-timer>
 <!--    <button *ngIf="fromId==='false'" mat-raised-button color="primary" (click)="joinInGame()">{{ "JOIN.GO_BUTTON" | translate }}</button>-->
     <button *ngIf="fromId===undefined" mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
   </div>
