@@ -13,13 +13,15 @@ import bankService from '../bank/bank.service.js';
 
 const minute = 60 * 1000;
 
+//***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 async function generateDU(game) {
-    const nbPlayer = _.partition(game.players, p => p.status === C.ALIVE).length;
+    const nbPlayer = game.players.filter(p => p.status === C.ALIVE).length;
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
-    const duRounded = _.round(du, 2);
+    const duRounded = Number(du.toFixed(2));
     return duRounded;
 }
+//******************************************************************************//
 
 async function distribDU(idGame) {
     GameModel.findById(idGame)

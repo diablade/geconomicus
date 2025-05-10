@@ -23,9 +23,9 @@ export class JoinComponent implements OnInit, OnDestroy {
 			this.fromId = params['fromId'];
 			if (this.fromId) {
 				this.name = params['name'];
-				let audioAngel = new Audio("./assets/audios/angel.mp3");
+				const audioAngel = new Audio("./assets/audios/angel.mp3");
 				audioAngel.load();
-				audioAngel.play();
+				audioAngel.play().then();
 			}
 		});
 	}
@@ -43,7 +43,6 @@ export class JoinComponent implements OnInit, OnDestroy {
 	}
 
 	joinReincarnate() {
-		console.log("callback ?");
 		this.backService.joinReincarnate(this.idGame, this.name, this.fromId).subscribe(idPlayer => {
 			this.router.navigate(['game', this.idGame, 'player', idPlayer]);
 		});

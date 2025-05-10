@@ -73,14 +73,14 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-	            private sessionStorageService: SessionStorageService,
-	            private backService: BackService,
-	            private snackbarService: SnackbarService,
-	            private translate: TranslateService,
-	            private router: Router,
-	            private sanitizer: DomSanitizer,
-	            private wsService: WebSocketService,
-	            public dialog: MatDialog) {
+				private sessionStorageService: SessionStorageService,
+				private backService: BackService,
+				private snackbarService: SnackbarService,
+				private translate: TranslateService,
+				private router: Router,
+				private sanitizer: DomSanitizer,
+				private wsService: WebSocketService,
+				public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -330,6 +330,17 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	onMoneyChange(event: any) {
+		if (this.game.typeMoney === C.JUNE) {
+			this.game.priceWeight1 = 3;
+			this.game.priceWeight2 = 6;
+			this.game.priceWeight3 = 9;
+			this.game.priceWeight4 = 12;
+		} else if (this.game.typeMoney === C.DEBT) {
+			this.game.priceWeight1 = 1;
+			this.game.priceWeight2 = 2;
+			this.game.priceWeight3 = 4;
+			this.game.priceWeight4 = 8;
+		}
 		this.backService.updateGame(this.idGame, this.game).subscribe(() => {
 			this.snackbarService.showSuccess("Option sauvegardé !");
 		});
