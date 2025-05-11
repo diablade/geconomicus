@@ -51,7 +51,7 @@ export default {
 
             //option june
             currentDU: 0,
-            tauxCroissance: 5,
+            tauxCroissance: defaultTauxDU,
             inequalityStart: false,
             startAmountCoins: 5,
             pctPoor: 10,
