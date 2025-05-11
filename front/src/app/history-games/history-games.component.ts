@@ -55,7 +55,7 @@ export class HistoryGamesComponent implements OnInit {
 		dialogRef.afterClosed().subscribe(dataRaw => {
 			if (dataRaw) {
 				this.backService.deleteGame(game._id, dataRaw).subscribe(async data => {
-					this.snackbarService.showSuccess("la partie est supprimé");
+					this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DELETE_GAME"));
 					this.games = _.filter(this.games, g => g._id !== game._id);
 				});
 			}

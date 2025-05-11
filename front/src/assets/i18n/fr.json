@@ -11,6 +11,7 @@
 	"CANCEL": "Annuler",
 	"OK": "OK",
 	"HOME": {
+		"PAGE": "Page d'accueil",
 		"CONTRIBUTION": "Contributions",
 		"WELCOME": "Découvrez la monnaie libre par le jeu !",
 		"INSTALL": "Installer l'app (optionnel)",
@@ -185,10 +186,15 @@
 		"CREATED": "Créé",
 		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
 		"DONE_AT": "Clos le",
-		"PROLONGATED": "Prolongé"
+		"EXTENDED": "Prolongé",
+		"DEFAULT_CREDIT_MESSAGE": "!!! UN CREDIT EST EN DEFAULT !!!",
+		"CREDIT_SETTLED": "Crédit remboursé",
+		"SETTLE_ALL": "Rembourser intégralement",
+		"SETTLE_CREDIT": "Etes vous sur de rembourser votre crédit , en payant: {{amount}}€ ?"
 	},
 	"OPTION": {
 		"TITLE": "Options générales",
+		"SAVED": "Options sauvegardées !",
 		"PARTY_NAME": "Nom de la partie",
 		"PARTY_ANIM": "Nom de l'animateur",
 		"LOCALIZATION": "Lieu",
@@ -275,10 +281,24 @@
 		"BANK_SEIZURE": "Saisie bancaire",
 		"IN_PRISON": "En prison",
 		"RELEASED_FROM_PRISON": "Libéré de prison",
-		"DISTRIBUTION_TO": "Distribution à"
+		"DISTRIBUTION_TO": "Distribution à",
+		"RESET_GAME": "Partie réinitialisée",
+		"PRISON_ENDED": "un prisonnier viens de purger sa peine",
+		"PRISON_END": "Sortie de prison",
+		"BREAK_FREE": "I want to break FREEEEEE !",
+		"DELETE_GAME": "la partie est supprimé",
+		"DEATH_PASS": "La mort viens de passer 😈",
+		"NEED_DEATH_PASS": "La mort dois passé 😈! (à vous de jouer)",
+		"ASK_END_ROUND": "Le tour n'est pas terminé, es-tu certain de mettre fin au tour?",
+		"SHORT_CODE_SEND": "Code envoyé",
+		"GIFT": "Bravo ! vous obtenez une carte supérieure.",
+		"TECHNOLOGY": "Bravo, vous avez acquis la technologie (fin de partie)"
 	},
 	"DIALOG": {
 		"CLOSE": "Fermer",
+		"YES": "Oui",
+		"NO": "Non",
+		"CANCEL": "Annuler",
 		"INFORMATION": {
 			"TITLE": "Information !",
 			"BTN1": "Ok"
@@ -371,6 +391,7 @@
 		"VERYNOT": "(Négatif 😒)  Trés"
 	},
 	"ERROR": {
+		"NOT_ENOUGH_MONEY": "Fond insuffisant.",
 		"GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
 		"JOIN_REINCARNATE": "Impossible de rejoindre",
 		"REINCARNATE": "Réincarnation impossible",
@@ -398,7 +419,9 @@
 		"SEIZURE": "Saisie de biens impossible",
 		"BREAK_PRISON": "I can't break prison :/",
 		"LOCK_DOWN_PLAYER": "Mise en prison du joueur impossible",
-		"DELETE_GAME": "Suppression impossible"
+		"DELETE_GAME": "Suppression impossible",
+		"CONNECTION_EXPIRED": "La connexion a expiré. Rechargement automatique de la page...",
+		"IO_SOCKET_ERROR": "Une erreur s'est produite, veuillez réessayer plus tard."
 	},
 	"SOCKET": {
 		"OFFLINE": {

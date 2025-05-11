@@ -10,6 +10,8 @@
     "CANCEL": "Anular",
     "OK": "OK",
     "HOME": {
+        "PAGE": "Pagina de inicio",
+        "CONTRIBUTION": "Contribuciones",
         "WELCOME": "¡Descubre la moneda libre a través del juego!",
         "INSTALL": "Instalar la aplicación",
         "CREATE_GAME": "Crear una partida",
@@ -157,7 +159,17 @@
         "NEW_PLAYER": "Nuevo jugador",
         "STARTING_MONEY": "Moneda de inicio",
         "STARTING_CARD": "Carta de inicio",
-        "UNIVERSAL_DIVIDEND": "Dividendo universal"
+        "UNIVERSAL_DIVIDEND": "Dividendo universal",
+        "PRISON_ENDED": "Un prisionero acaba de cumplir su condena",
+        "PRISON_END": "Salida de prisión",
+        "BREAK_FREE": "¡Quiero ser libre!",
+        "DELETE_GAME": "El juego ha sido eliminado",
+        "DEATH_PASS": "La muerte acaba de pasar 😈",
+        "NEED_DEATH_PASS": "¡La muerte debe pasar 😈! (es tu turno)",
+        "ASK_END_ROUND": "La ronda no ha terminado, ¿estás seguro de que quieres terminarla?",
+        "SHORT_CODE_SEND": "Código enviado",
+        "GIFT": "¡Bravo ! Obtienes una carta superior.",
+        "TECHNOLOGY": "¡BRAVO !!! Has adquirido la tecnología (fin de partida)"
     },
     "CARD": {
         "LV1": "Alimentación",
@@ -202,6 +214,7 @@
     },
     "OPTION": {
         "PRICE_DU": "Precio en DU:",
+        "SAVED": "¡Opciones guardadas!",
         "DEATH_MINUTES": "Pase de muerte cada {{deathMinute}} minutos",
         "START_MONEY_AMOUNT": "Bolsa inicial (clase media)",
         "START_MONEY_INEQUALITY": "Comienzo desigual en moneda libre",
@@ -271,7 +284,11 @@
         "INTEREST": "Interés",
         "CREATED": "Creado",
         "NOTICE_INTEREST": "Interés, pagadero para prolongar {{ interestMinutes }} minutos",
-        "PROLONGATED": "Prolongado",
+        "EXTENDED": "Prolongado",
+        "DEFAULT_CREDIT_MESSAGE": "!!! UN CRÉDITO ESTÁ EN INCUMPLIMIENTO !!!",
+        "CREDIT_SETTLED": "Crédito liquidado",
+        "SETTLE_ALL": "Liquidar todo",
+        "SETTLE_CREDIT": "¿Estás seguro de que quieres liquidar tu crédito pagando: {{amount}}€?",
         "DONE_AT": "Cancelado el",
         "PAUSED_CREDIT": "Juego en pausa...",
         "RUNNING_CREDIT": "En curso..."
@@ -332,7 +349,11 @@
         "DELETE_GAME": {
             "TITLE": "¿Confirmas?",
             "MESSAGE": "Esta acción es irreversible."
-        }
+        },
+        "CLOSE": "Cerrar",
+        "YES": "Sí",
+        "NO": "No",
+        "CANCEL": "Cancelar"
     },
     "ERROR": {
         "EXCHANGE": "Intercambio imposible",
@@ -361,7 +382,10 @@
         "STOP_ROUND": "Imposible parar la ronda",
         "INTER_ROUND": "Visita guiada imposible",
         "KILL": "Incapaz de matar",
-        "END_GAME": "Imposible detener el juego"
+        "END_GAME": "Imposible detener el juego",
+        "NOT_ENOUGH_MONEY": "Fondos insuficientes.",
+        "CONNECTION_EXPIRED": "La conexión ha expirado. Recargando la página automáticamente...",
+        "IO_SOCKET_ERROR": "Se ha producido un error, por favor inténtalo de nuevo más tarde."
     },
     "PLAYER": {
         "GO_TO_BANK": "🚨 ¡¡¡VAYA A LA BANCA!!! 🚨",

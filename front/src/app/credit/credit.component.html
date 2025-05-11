@@ -19,7 +19,7 @@
         +
         <mat-chip>
             {{ credit.interest }}
-            <fa-icon mat-raised-button [icon]="faCircleInfo"
+            <fa-icon [icon]="faCircleInfo"
                      [matTooltip]="'CREDIT.NOTICE_INTEREST' | translate :{interestMinutes}">
             </fa-icon>
         </mat-chip>
@@ -27,7 +27,7 @@
     <div *ngIf="credit.status===C.CREDIT_DONE" class="fontName m-1"><span
             class="fw-bold">{{ "CREDIT.DONE_AT"|translate }} :</span>{{ credit.endDate | date:"YY-MM-dd HH:mm" }}
     </div>
-    <div class="fontName m-1"><span class="fw-bold">{{ "CREDIT.PROLONGATED"|translate }} :</span>{{ credit.extended }}</div>
+    <div class="fontName m-1"><span class="fw-bold">{{ "CREDIT.EXTENDED"|translate }} :</span>{{ credit.extended }}</div>
     <button *ngIf="!bankOption && credit.status===C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button
             color="primary"
             (click)="actionBtnClick('settle')">{{ "CREDIT.SETTLE"|translate }}

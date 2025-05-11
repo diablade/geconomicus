@@ -11,6 +11,8 @@
     "CANCEL": "Otkaži",
     "OK": "U redu",
     "HOME": {
+        "PAGE": "Strana početka",
+        "CONTRIBUTION": "Donacije",
         "WELCOME": "Otkrijte slobodnu valutu kroz igru!",
         "INSTALL": "Instalirajte aplikaciju",
         "CREATE_GAME": "Kreirajte igru",
@@ -184,10 +186,15 @@
         "CREATED": "Kreirano",
         "NOTICE_INTEREST": "Kamatna stopa, plaćanje za produženje od {{ interestMinutes }} minuta",
         "DONE_AT": "Zatvoreno",
-        "PROLONGATED": "Produženo"
+        "EXTENDED": "Produženo",
+        "DEFAULT_CREDIT_MESSAGE": "!!! KREDIT JE U DEFAULTU !!!",
+        "CREDIT_SETTLED": "Kredit rambursen",
+        "SETTLE_ALL": "Rambursen intregalno",
+        "SETTLE_CREDIT": "Da li ste sigurni da rambursujete kredit, plaćanjem: {{amount}}€?"
     },
     "OPTION": {
         "TITLE": "Opšte opcije",
+        "SAVED": "Opcije sačuvane!",
         "PARTY_NAME": "ime igre",
         "PARTY_ANIM": "ime animatora",
         "LOCALIZATION": "Lokacija",
@@ -274,7 +281,18 @@
         "BANK_SEIZURE": "Zaplena banke",
         "IN_PRISON": "U zatvoru",
         "RELEASED_FROM_PRISON": "Oslobođen iz zatvora",
-        "DISTRIBUTION_TO": "Distribucija ka"
+        "DISTRIBUTION_TO": "Distribucija ka",
+        "RESET_GAME": "Igra je resetovana",
+        "PRISON_ENDED": "Zatvoreničar je upravo odslužio svoju kaznu",
+        "PRISON_END": "Izlazak iz zatvora",
+        "BREAK_FREE": "Želim da budem SLOBODAN!",
+        "DELETE_GAME": "Igra je izbrisana",
+        "DEATH_PASS": "Smrt je upravo prosla 😈",
+        "NEED_DEATH_PASS": "Smrt mora da prođe 😈! (Vas je red)",
+        "ASK_END_ROUND": "Runda nije završena, da li ste sigurni da želite da završite rundu?",
+        "SHORT_CODE_SEND": "Kod poslat",
+        "GIFT": "Bravo ! Dobili ste superiornu kartu.",
+        "TECHNOLOGY": "Bravo !! Dobili ste tehnologiju (kraj igre)"
     },
     "DIALOG": {
         "INFORMATION": {
@@ -332,7 +350,10 @@
         "DELETE_GAME": {
             "TITLE": "Da li si siguran?",
             "MESSAGE": "Ova akcija se ne može poništiti."
-        }
+        },
+        "CLOSE": "Zatvori",
+        "YES": "Da",
+        "NO": "Ne"
     },
     "SURVEY": {
         "TITLE": "Koji su bili vaši osećaji tokom ove igre?",
@@ -384,7 +405,10 @@
         "PAY_INTEREST": "plaćanje kamata nemoguće",
         "SEIZURE": "Zaplena imovine nemoguća",
         "BREAK_PRISON": "Ne mogu da prekinem zatvor :/",
-        "DELETE_GAME": "Ne mogu da obrišem"
+        "DELETE_GAME": "Ne mogu da obrišem",
+        "NOT_ENOUGH_MONEY": "Nedovoljno sredstava.",
+        "CONNECTION_EXPIRED": "Veza je istekla. Automatsko ponovno ucitavanje stranice...",
+        "IO_SOCKET_ERROR": "Došlo je do greške, pokušajte ponovo kasnije."
     },
     "SOCKET": {
         "OFFLINE": {

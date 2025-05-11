@@ -7,7 +7,6 @@ import {MatDialog} from "@angular/material/dialog";
 import {BehaviorSubject} from "rxjs";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {I18nService} from "./i18n.service";
-import {HttpClient} from "@angular/common/http";
 import {LocalStorageService} from "./local-storage/local-storage.service";
 
 @Injectable({
@@ -25,8 +24,7 @@ export class WebSocketService {
 		private snackbarService: SnackbarService,
 		public dialog: MatDialog,
 		public localStorageService: LocalStorageService,
-		private i18nService: I18nService,
-		private http: HttpClient
+		private i18nService: I18nService
 	) {
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
@@ -81,7 +79,7 @@ export class WebSocketService {
 		if (!this.socket) return;
 		const last = this.getLastConnectedTime();
 		const now = Date.now();
-		const maxOfflineDuration = 1 * 60 * 1000; // 1 minutes
+		const maxOfflineDuration = 30 * 1000; // 30 secondes
 
 		this.socket.io.on('reconnect', () => {
 			if (last && now - last > maxOfflineDuration) {
@@ -135,7 +133,7 @@ export class WebSocketService {
 			console.log('Reconnection error');
 		});
 		this.socket.on('error', () => {
-			this.snackbarService.showError("connection ioSocket error...");
+			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
 			console.log('error');
 		});
 		this.socket.on('reconnect_failed', () => {

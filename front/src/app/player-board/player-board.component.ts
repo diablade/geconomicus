@@ -118,18 +118,18 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.secondsPrison = s;
 		},
 		done: () => {
-			this.snackbarService.showSuccess("Sortie de prison");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.PRISON_END"));
 		}
 	});
 
 	constructor(private route: ActivatedRoute,
-	            public dialog: MatDialog,
-	            private router: Router,
-	            private localStorageService: LocalStorageService,
-	            private backService: BackService,
-	            private wsService: WebSocketService,
-	            private i18nService: I18nService,
-	            private snackbarService: SnackbarService) {
+				public dialog: MatDialog,
+				private router: Router,
+				private localStorageService: LocalStorageService,
+				private backService: BackService,
+				private wsService: WebSocketService,
+				private i18nService: I18nService,
+				private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -168,7 +168,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	 * Handle socket timeout by forcing a complete page reload
 	 */
 	private handleSocketTimeout() {
-		this.snackbarService.showNotif("La connexion a expiré. Rechargement automatique de la page...");
+		this.snackbarService.showError(this.i18nService.instant("ERROR.CONNECTION_EXPIRED"));
 
 		// Set a short delay to allow the notification to be shown before reload
 		setTimeout(() => {
@@ -232,17 +232,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					c.status = C.RUNNING_CREDIT;
 				}
 			});
-			this.snackbarService.showNotif("Le tour démarre !");
+			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
 			this.dialog.closeAll();
 			this.statusGame = "waiting";
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "Tour terminé !"},
+				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
 		this.socket.on(C.END_GAME, (data: any) => {
-			this.snackbarService.showSuccess("Jeu terminé !");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
 			this.statusGame = C.END_GAME;
 			if (data && data.redirect == 'survey') {
 				this.router.navigate(['game', this.idGame, 'player', this.idPlayer, 'survey']);
@@ -252,7 +252,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.DISTRIB_DU, (data: any) => {
 			this.duVisible = true;
-			let audioDu = new Audio("./assets/audios/audioDu.mp3");
+			const audioDu = new Audio("./assets/audios/audioDu.mp3");
 			audioDu.load();
 			audioDu.play();
 			this.player.coins += data.du;
@@ -360,7 +360,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
 			this.defaultCredit = true;
-			let audioCops = new Audio();
+			const audioCops = new Audio();
 			audioCops.src = "./assets/audios/police.mp3";
 			audioCops.load();
 			await audioCops.play();
@@ -374,8 +374,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
 			this.prisonProgress = data.progress;
-			let minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
-			let seconds = Math.floor((data.remainingTime / 1000) % 60);
+			const minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
+			const seconds = Math.floor((data.remainingTime / 1000) % 60);
 			this.prisonTimer.stop();
 			this.prisonTimer.reset();
 			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
@@ -407,7 +407,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.defaultCredit = false;
 			if (data.prisoner && data.prisoner._id == this.idPlayer) {
 				this.prison = true;
-				let audioPrison = new Audio("./assets/audios/prison.mp3");
+				const audioPrison = new Audio("./assets/audios/prison.mp3");
 				audioPrison.load();
 				await audioPrison.play();
 			}
@@ -437,7 +437,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			hasBackdrop: true,
 			backdropClass: 'bgBlur',
 			data: {
-				text: card.weight > 2 ? "BRAVO !!! vous avez acquis la technologie (fin de partie)" : "Bravo ! vous obtenez une carte supérieur.",
+				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
 				card: card
 			},
 			width: '10px',
@@ -503,7 +503,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
 			console.log(ack)
 		});
-		this.snackbarService.showSuccess("Code envoyé");
+		this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.SHORT_CODE_SEND"));
 	}
 
 	buy(dataRaw: any) {
@@ -521,7 +521,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		} else if (this.player.coins < cost) {
 			console.log(this.player.coins, cost);
 			this.snackbarService.showError("Fond insuffisant !");
-			let errorAudio = new Audio("../assets/audios/error.mp3");
+			const errorAudio = new Audio("../assets/audios/error.mp3");
 			errorAudio.load();
 			errorAudio.play();
 		} else {
@@ -546,7 +546,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
-				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {amount: (credit.amount+credit.interest), interest: credit.interest}),
+				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {
+					amount: (credit.amount + credit.interest),
+					interest: credit.interest
+				}),
 				labelBtn1: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN1"),
 				labelBtn2: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN2"),
 				autoClickBtn2: true,
@@ -568,7 +571,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							});
 							this.player.coins -= credit.interest;
 							this.player.status = C.ALIVE;
-							let interestAudio = new Audio("../assets/audios/interest.mp3");
+							const interestAudio = new Audio("../assets/audios/interest.mp3");
 							interestAudio.load();
 							interestAudio.play();
 						}
@@ -581,7 +584,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.settleCredit(credit);
 				} else {
 					this.snackbarService.showError("Fond insuffisant !");
-					let errorAudio = new Audio("../assets/audios/error.mp3");
+					const errorAudio = new Audio("../assets/audios/error.mp3");
 					errorAudio.load();
 					errorAudio.play();
 					this.requestingWhenCreditEnds(credit, false);
@@ -604,9 +607,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	settleDebt(credit: Credit) {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
-				message: "Etes vous sur de rembourser votre crédit , en payant: " + (credit.amount + credit.interest) + " ?",
-				labelBtn1: "Rembourser intégralement",
-				labelBtn2: "Annuler",
+				message: this.i18nService.instant("CREDIT.SETTLE_CREDIT", {amount: credit.amount + credit.interest}),
+				labelBtn1: this.i18nService.instant("CREDIT.SETTLE_ALL"),
+				labelBtn2: this.i18nService.instant("DIALOG.CANCEL"),
 			}
 		});
 		confDialogRef.afterClosed().subscribe(result => {
@@ -629,15 +632,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						}
 						return c;
 					});
-					this.snackbarService.showSuccess("Crédit soldé");
-					let interestAudio = new Audio("../assets/audios/interest.mp3");
+					this.snackbarService.showSuccess(this.i18nService.instant("CREDIT.CREDIT_SETTLED"));
+					const interestAudio = new Audio("../assets/audios/interest.mp3");
 					interestAudio.load();
 					interestAudio.play();
 				}
 			});
 		} else {
-			this.snackbarService.showError("Fond insuffisant...");
-			let errorAudio = new Audio("../assets/audios/error.mp3");
+			this.snackbarService.showError(this.i18nService.instant("ERROR.NOT_ENOUGH_MONEY"));
+			const errorAudio = new Audio("../assets/audios/error.mp3");
 			errorAudio.load();
 			errorAudio.play();
 		}

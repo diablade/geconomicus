@@ -38,11 +38,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-	            private backService: BackService,
-	            private snackbarService: SnackbarService,
-	            private sanitizer: DomSanitizer,
-	            public dialog: MatDialog,
-	            private i18nService: I18nService) {
+				private backService: BackService,
+				private snackbarService: SnackbarService,
+				private sanitizer: DomSanitizer,
+				public dialog: MatDialog,
+				private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
@@ -67,13 +67,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.game.status = C.PLAYING;
-			this.snackbarService.showNotif("Le tour démarre !");
+			this.snackbarService.showNotif(this.i18nService.instant("NOTIF.START_ROUND"));
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
 			this.dialog.closeAll();
 			this.game.status = "waiting";
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: "Tour terminé !"},
+				data: {text: this.i18nService.instant("NOTIF.STOP_ROUND")},
 			});
 		});
 		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
@@ -129,7 +129,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 					c.status = data.status;
 				}
 			});
-			this.snackbarService.showError("!!! UN CREDIT EST EN DEFAULT !!!");
+			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT_MESSAGE"));
 		});
 		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
 			_.forEach(this.prisoners, p => {
@@ -139,7 +139,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			});
 		});
 		this.socket.on(C.PRISON_ENDED, async (data: any) => {
-			this.snackbarService.showSuccess("un prisonnier viens de purger sa peine");
+			this.snackbarService.showSuccess(this.i18nService.instant("NOTIF.PRISON_ENDED"));
 			_.remove(this.prisoners, p => p._id == data.idPlayer);
 			_.forEach(this.game.players, p => {
 				if (p._id == data.idPlayer) {
@@ -190,7 +190,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		dialogRef.afterClosed().subscribe(contrat => {
 			if (contrat) {
-				this.backService.createCredit({...contrat, idGame: this.idGame, startNow: this.game.status == C.PLAYING}).subscribe((credit: Credit) => {
+				this.backService.createCredit({
+					...contrat,
+					idGame: this.idGame,
+					startNow: this.game.status == C.PLAYING
+				}).subscribe((credit: Credit) => {
 					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
 					this.game.credits.push(credit);
 					this.game.currentMassMonetary += credit.amount;
@@ -256,7 +260,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 
 	breakFree(idPlayerToFree: string) {
 		this.backService.breakFree(this.idGame, idPlayerToFree).subscribe(() => {
-			this.snackbarService.showSuccess("I want to break FREEEEEE !");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.BREAK_FREE"));
 		});
 	}
 }

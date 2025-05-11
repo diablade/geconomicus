@@ -11,6 +11,7 @@
 	"CANCEL": "Cancel",
 	"OK": "OK",
 	"HOME": {
+		"PAGE": "Homepage",
 		"CONTRIBUTION": "Contributions",
 		"WELCOME": "Discover free currency through play!",
 		"INSTALL": "Install the application",
@@ -185,10 +186,15 @@
 		"CREATED": "Created",
 		"NOTICE_INTEREST": "Interest, payable to extend by {{ interestMinutes }} minutes",
 		"DONE_AT": "Closed on",
-		"PROLONGATED": "Extended"
+		"EXTENDED": "Extended",
+		"DEFAULT_CREDIT_MESSAGE": "!!! A CREDIT IS IN DEFAULT !!!",
+		"CREDIT_SETTLED": "Credit settled",
+		"SETTLE_ALL": "Settle all",
+		"SETTLE_CREDIT": "Are you sure you want to settle your credit, by paying: {{amount}}€ ?"
 	},
 	"OPTION": {
 		"TITLE": "General options",
+		"SAVED": "Options saved!",
 		"PARTY_NAME": "game name",
 		"PARTY_ANIM": "animator name",
 		"LOCALIZATION": "Location",
@@ -275,7 +281,18 @@
 		"BANK_SEIZURE": "Bank seizure",
 		"IN_PRISON": "In prison",
 		"RELEASED_FROM_PRISON": "Released from prison",
-		"DISTRIBUTION_TO": "Distribution to"
+		"DISTRIBUTION_TO": "Distribution to",
+		"RESET_GAME": "Game reset",
+		"PRISON_ENDED": "A prisoner has just served their sentence",
+		"PRISON_END": "Prison release",
+		"BREAK_FREE": "I want to break FREE!",
+		"DELETE_GAME": "The game has been deleted",
+		"DEATH_PASS": "Death has just passed 😈",
+		"NEED_DEATH_PASS": "Death needs to pass 😈! (It's your turn)",
+		"ASK_END_ROUND": "The round isn't over, are you sure you want to end the round?",
+		"SHORT_CODE_SEND": "Code sent",
+		"GIFT": "Bravo ! You get a superior card.",
+		"TECHNOLOGY": "Bravo, you have acquired technology (end of game)"
 	},
 	"DIALOG": {
 		"INFORMATION": {
@@ -333,7 +350,10 @@
 		"DELETE_GAME": {
 			"TITLE": "Are you sure?",
 			"MESSAGE": "This action cannot be undone."
-		}
+		},
+		"CLOSE": "Close",
+		"YES": "Yes",
+		"NO": "No"
 	},
 	"SURVEY": {
 		"THANK_YOU": "Thank you ! let see the results...",
@@ -391,7 +411,10 @@
 		"PAY_INTEREST": "interest payment impossible",
 		"SEIZURE": "Asset seizure impossible",
 		"BREAK_PRISON": "I can't break prison :/",
-		"DELETE_GAME": "I can't delete"
+		"DELETE_GAME": "Deletion impossible",
+		"CONNECTION_EXPIRED": "Connection has expired. Automatically reloading the page...",
+		"IO_SOCKET_ERROR": "An error occurred, please try again later.",
+		"NOT_ENOUGH_MONEY": "Insufficient funds."
 	},
 	"SOCKET": {
 		"OFFLINE": {

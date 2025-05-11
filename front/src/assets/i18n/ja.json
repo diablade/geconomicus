@@ -10,6 +10,8 @@
 	"CANCEL": "キャンセル",
 	"OK": "OK",
 	"HOME": {
+		"PAGE": "ホームページ",
+		"CONTRIBUTION": "寄付",
 		"WELCOME": "ゲームを通じて自由な通貨を発見しましょう！",
 		"INSTALL": "アプリをインストール",
 		"CREATE_GAME": "ゲームを作成",
@@ -183,10 +185,15 @@
 		"CREATED": "作成済み",
 		"NOTICE_INTEREST": "利息、{{ interestMinutes }}分延長の支払い",
 		"DONE_AT": "閉じました",
-		"PROLONGATED": "延長されました"
+		"EXTENDED": "延長された",
+		"DEFAULT_CREDIT_MESSAGE": "！！！ クレジットがデフォルトになっています ！！！",
+		"CREDIT_SETTLED": "クレジット返済完了",
+		"SETTLE_ALL": "全額返済",
+		"SETTLE_CREDIT": "{{amount}}€を支払ってクレジットを返済しますか？"
 	},
 	"OPTION": {
 		"TITLE": "一般オプション",
+		"SAVED": "オプションが保存されました！",
 		"PARTY_NAME": "ゲーム名",
 		"PARTY_ANIM": "アニメーター名",
 		"LOCALIZATION": "ロケーション",
@@ -273,7 +280,18 @@
 		"BANK_SEIZURE": "銀行の差し押さえ",
 		"IN_PRISON": "刑務所にいる",
 		"RELEASED_FROM_PRISON": "刑務所から解放されました",
-		"DISTRIBUTION_TO": "配布先"
+		"DISTRIBUTION_TO": "配布先",
+		"RESET_GAME": "ゲームのリセット",
+		"PRISON_ENDED": "刑務所の刑が終わりました",
+		"PRISON_END": "刑務所から解放されました",
+		"BREAK_FREE": "解放したい",
+		"DELETE_GAME": "ゲームを削除",
+		"DEATH_PASS": "死が過ぎました 😈",
+		"NEED_DEATH_PASS": "死が過ぎるまで待ってください ��! (あなたの番です)",
+		"ASK_END_ROUND": "ラウンドが終わっていないようです。ラウンドを終わらせますか？",
+		"SHORT_CODE_SEND": "短いコードを送信",
+		"GIFT": " Bravo ! あなたは上位カードを獲得しました。",
+		"TECHNOLOGY": " Bravo, あなたは技術を獲得しました（ゲーム終了）"
 	},
 	"DIALOG": {
 		"INFORMATION": {
@@ -331,7 +349,10 @@
 		"DELETE_GAME": {
 			"TITLE": "本当にそうですか？",
 			"MESSAGE": "このアクションは元に戻せません。"
-		}
+		},
+		"CLOSE": "閉じる",
+		"YES": "はい",
+		"NO": "いいえ"
 	},
 	"SURVEY": {
 		"TITLE": "このゲーム中のあなたの感情はどうでしたか？",
@@ -383,7 +404,10 @@
 		"PAY_INTEREST": "利息を支払えません",
 		"SEIZURE": "資産を差し押さえることができません",
 		"BREAK_PRISON": "刑務所を破ることはできません :/",
-		"DELETE_GAME": "削除できません"
+		"DELETE_GAME": "削除できません",
+		"NOT_ENOUGH_MONEY": "資金不足です。",
+		"CONNECTION_EXPIRED": "接続が切れました。ページを自動的に再読み込みします...",
+		"IO_SOCKET_ERROR": "エラーが発生しました。後でもう一度お試しください。"
 	},
 	"SOCKET": {
 		"OFFLINE": {

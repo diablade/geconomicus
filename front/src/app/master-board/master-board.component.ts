@@ -22,6 +22,7 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
 import {TranslateService} from "@ngx-translate/core";
+import {I18nService} from "../services/i18n.service";
 
 @Component({
 	selector: 'app-master-board',
@@ -68,7 +69,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerProgress = secondsRemaining / (this.game.roundMinutes * 60) * 100;
 		},
 		done: () => {
-			this.snackbarService.showSuccess("Tour terminé");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.ROUND_END"));
 		}
 	});
 
@@ -80,6 +81,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				private router: Router,
 				private sanitizer: DomSanitizer,
 				private wsService: WebSocketService,
+				private i18nService: I18nService,
 				public dialog: MatDialog) {
 	}
 
@@ -136,11 +138,11 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.DEATH_IS_COMING, async () => {
 			if (this.game.autoDeath) {
-				this.snackbarService.showSuccess("La mort viens de passer 😈")
+				this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DEATH_PASS"));
 			} else {
 				this.dialog.open(InformationDialogComponent, {
 					data: {
-						text: "La mort dois passé 😈! (à vous de jouer)",
+						text: this.i18nService.instant("EVENTS.NEED_DEATH_PASS"),
 						sound: "./assets/audios/iamdeath.mp3"
 					},
 				});
@@ -198,7 +200,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.audioStart.load();
 			this.audioStart.play();
 
-			this.snackbarService.showSuccess("le tour " + this.game.round + " commence");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
 	}
 
@@ -209,18 +211,18 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.game.status = C.STOP_ROUND;
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
-		this.snackbarService.showNotif("Tour terminé !");
+		this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_END"));
 		this.dialog.open(InformationDialogComponent, {
-			data: {text: "Tour terminé !", sound: "../assets/audios/end.mp3"},
+			data: {text: this.i18nService.instant("EVENTS.ROUND_END"), sound: "../assets/audios/end.mp3"},
 		});
 	}
 
 	stopRoundForce() {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
-				message: "Le tour n'est pas terminé, es-tu certain de mettre fin au tour?",
-				labelBtn1: "Annuler",
-				labelBtn2: "OUI",
+				message: this.i18nService.instant("EVENTS.ASK_END_ROUND"),
+				labelBtn1: this.i18nService.instant("DIALOG.CONFIRM.CANCEL"),
+				labelBtn2: this.i18nService.instant("DIALOG.CONFIRM.YES"),
 			}
 		});
 		confDialogRef.afterClosed().subscribe(result => {
@@ -243,21 +245,21 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	resetGameFromBtn() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
-			this.snackbarService.showSuccess("RESET GAME");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.RESET_GAME"));
 			window.location.reload();
 		});
 	}
 
 	resetGameFromUrl() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
-			this.snackbarService.showSuccess("RESET GAME");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.RESET_GAME"));
 			this.router.navigate(['game', this.idGame, 'master']);
 		});
 	}
 
 	finishGame() {
 		this.backService.endGame(this.idGame).subscribe(() => {
-			this.snackbarService.showSuccess("Jeu terminé !");
+			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
 			this.goToResults();
 		});
 	}
@@ -315,7 +317,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			} else if (results === "cancel") {
 			} else {
 				this.backService.updateGame(this.idGame, results).subscribe(() => {
-					this.snackbarService.showSuccess("Option sauvegardé !");
+					this.snackbarService.showSuccess(this.i18nService.instant("OPTION.SAVED"));
 				});
 				this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
 				this.game = {...results};
@@ -342,7 +344,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.game.priceWeight4 = 8;
 		}
 		this.backService.updateGame(this.idGame, this.game).subscribe(() => {
-			this.snackbarService.showSuccess("Option sauvegardé !");
+			this.snackbarService.showSuccess(this.i18nService.instant("OPTION.SAVED"));
 		});
 	}
 }

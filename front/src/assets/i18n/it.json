@@ -10,6 +10,8 @@
     "CANCEL": "Annulla",
     "OK": "OK",
     "HOME": {
+        "PAGE": "Pagina di inizio",
+        "CONTRIBUTION": "Contributi",
         "WELCOME": "Scopri la Moneta Libera attraverso il gioco!",
         "INSTALL": "Installa l'applicazione",
         "CREATE_GAME": "Crea una partita",
@@ -183,10 +185,15 @@
         "CREATED": "Creato",
         "NOTICE_INTEREST": "Interesse, pagabile per estendere di {{ interestMinutes }} minuti",
         "DONE_AT": "Chiuso il",
-        "PROLONGATED": "Esteso"
+        "EXTENDED": "Prolungato",
+        "DEFAULT_CREDIT_MESSAGE": "!!! UN CREDITO È IN DEFAULT !!!",
+        "CREDIT_SETTLED": "Credito rimborsato",
+        "SETTLE_ALL": "Rimborsa tutto",
+        "SETTLE_CREDIT": "Sei sicuro di voler rimborsare il tuo credito, pagando: {{amount}}€?"
     },
     "OPTION": {
         "TITLE": "Opzioni generali",
+        "SAVED": "Opzioni salvate!",
         "PARTY_NAME": "nome del gioco",
         "PARTY_ANIM": "nome dell'animatore",
         "LOCALIZATION": "Luogo",
@@ -273,7 +280,18 @@
         "BANK_SEIZURE": "Sequestro bancario",
         "IN_PRISON": "In prigione",
         "RELEASED_FROM_PRISON": "Rilasciato dalla prigione",
-        "DISTRIBUTION_TO": "Distribuzione a"
+        "DISTRIBUTION_TO": "Distribuzione a",
+        "RESET_GAME": "Gioco reinițializat",
+        "PRISON_ENDED": "Un prizonier tocmai și-a ispășit pedeapsa",
+        "PRISON_END": "Ieșire din închisoare",
+        "BREAK_FREE": "Vreau să fiu LIBER!",
+        "DELETE_GAME": "Jocul a fost șters",
+        "DEATH_PASS": "Moartea tocmai a trecut 😈",
+        "NEED_DEATH_PASS": "Moartea trebuie să treacă ��! (E rândul tău)",
+        "ASK_END_ROUND": "Runda nu s-a terminat, ești sigur că vrei să închei runda?",
+        "SHORT_CODE_SEND": "Cod trimis",
+        "GIFT": "Bravo ! Hai ottenuta una carta superiore.",
+        "TECHNOLOGY": "Bravo, hai acquisito la tecnologia (fine partita)"
     },
     "DIALOG": {
         "INFORMATION": {
@@ -331,7 +349,10 @@
         "DELETE_GAME": {
             "TITLE": "Sei sicuro?",
             "MESSAGE": "Questa azione non può essere annullata."
-        }
+        },
+        "CLOSE": "Chiudi",
+        "YES": "Sì",
+        "NO": "No"
     },
     "SURVEY": {
         "TITLE": "Quali sono stati i tuoi sentimenti durante questo gioco?",
@@ -383,7 +404,10 @@
         "PAY_INTEREST": "pagamento degli interessi impossibile",
         "SEIZURE": "Sequestro di beni impossibile",
         "BREAK_PRISON": "Non posso rompere la prigione :/",
-        "DELETE_GAME": "Non posso eliminare"
+        "DELETE_GAME": "Eliminazione impossibile",
+        "NOT_ENOUGH_MONEY": "Fondi insufficienti.",
+        "CONNECTION_EXPIRED": "La connessione è scaduta. Ricaricamento automatico della pagina...",
+        "IO_SOCKET_ERROR": "Si è verificato un errore, riprova più tardi."
     },
     "SOCKET": {
         "OFFLINE": {
