@@ -27,12 +27,12 @@ services:
       - backnet
   mongodb:
     container_name: mongodb
-    image: mongo:4.4.29
+    image: mongo:8.0.9-noble
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
     volumes:
-      - /volume1/docker/mongoData:/data/db
+      - /volume1/docker/mongoData8:/data/db
     networks:
       - backnet
   mongo-express:

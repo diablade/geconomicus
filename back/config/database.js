@@ -19,22 +19,20 @@ const options = {
     maxPoolSize:        10
 }
 
-const connect = () => {
-    mongoose.connect(uri, options, (err, db) => {
-        if (err) {
-            log.error(err);
-        }
-        else {
-            log.info("Database connected!");
-        }
-    });
-    mongoose.connection.on("error", function(err) {
+const connect = async () => {
+    try {
+        await mongoose.connect(uri, options);
+        log.info("Database connected!");
+    } catch (err) {
+        log.error("Failed to connect to database:", err);
+    }
+    mongoose.connection.on("error", function (err) {
         log.error("Mongoose connection error: " + err);
     });
-    mongoose.connection.on("connected", function() {
+    mongoose.connection.on("connected", function () {
         log.info("Mongoose connected");
     });
-    mongoose.connection.on("disconnected", function() {
+    mongoose.connection.on("disconnected", function () {
         log.info("Mongoose disconnected");
     });
     mongoose.Promise = global.Promise;
