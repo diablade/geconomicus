@@ -151,7 +151,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			});
 			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
-			
+
 			// Setup error handling for socket timeouts
 			this.socket.on('error', (error: any) => {
 				console.error('Socket error:', error);
@@ -159,17 +159,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.handleSocketTimeout();
 				}
 			});
-			
+
 			this.getPlayerInfos();
 		});
 	}
-	
+
 	/**
 	 * Handle socket timeout by forcing a complete page reload
 	 */
 	private handleSocketTimeout() {
 		this.snackbarService.showNotif("La connexion a expiré. Rechargement automatique de la page...");
-		
+
 		// Set a short delay to allow the notification to be shown before reload
 		setTimeout(() => {
 			// Force a complete page reload
@@ -546,7 +546,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
-				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {amount: credit.amount, interest: credit.interest}),
+				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {amount: (credit.amount+credit.interest), interest: credit.interest}),
 				labelBtn1: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN1"),
 				labelBtn2: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN2"),
 				autoClickBtn2: true,
