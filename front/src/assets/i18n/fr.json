@@ -541,6 +541,24 @@
         "TITLE": "Contributions",
         "SUBTITLE": "Un grand MERCI  ❤️ aux personnes suivante pour leurs contributions, soutiens, conseils, idées, corrections d'orthographe, traductions,etc.."
     },
+    "TASK": {
+        "MASTER_TASK": "Animateur",
+        "UNSELECT_ALL": "Désélectionner tout",
+        "TITLE": "Liste des tâches de l'animateur",
+        "PREPARE": "Préparer les options de jeux",
+        "PRESENT_YOURSELF": "Se présenter soi meme",
+        "PRESENT_ML": "Présenter le but du jeu (2 monnaies 2 resultats de jeux different)",
+        "DELAY": "Expliquer les delais des deux manches",
+        "SQUARES": "constituer des ressources par la production de carré et les transactions",
+        "TRANSACTIONS": "faire une parti pour de faux 5mn max(utiliser le mode experimental pour avoir le bouton réinitialisation)",
+        "DEATH": "expliquer la mort et la renaissance durant la partie (la mort tire au sort regulierement)",
+        "START_1": "Demarrer une fois tout les joueurs rejoins, verification de distribution des cartes à tous avant de commencer le tour",
+        "SURVEY_1": "Fin du tour, retour de temoignage, ressenties de la partie (sondage)",
+        "NEXT_MONEY": "faire la manche dans l'autre monnaie",
+        "START_2": "Demarrer une fois tout les joueurs rejoins, verification de distribution des cartes à tous avant de commencer le tour",
+        "SURVEY_2": "Fin de la manche, retour de temoignage, ressenties de la partie (sondage)",
+        "RESULTS": "Fin de la partie, revelation des resultats en comparaison des deux parties"
+    },
     "MODULE": {
         "BACK_HOME": "Revenir à l'accueil",
         "GALILEO": {

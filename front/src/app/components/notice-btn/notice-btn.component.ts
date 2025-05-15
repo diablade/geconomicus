@@ -1,7 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { faCircleInfo, faKeyboard, faQrcode } from "@fortawesome/free-solid-svg-icons";
-import { Game } from 'src/app/models/game';
 
 @Component({
 	selector: 'app-notice-btn',

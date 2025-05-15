@@ -1,44 +1,44 @@
-import { NgModule, isDevMode } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PlayerBoardComponent } from './player-board/player-board.component';
+import {NgModule, isDevMode} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {AppComponent} from './app.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {PlayerBoardComponent} from './player-board/player-board.component';
 import {
 	JoinQrDialog,
 	MasterBoardComponent
 } from './master-board/master-board.component';
-import { CreateGameDialog, HomeComponent, InstallAppDialog } from './home/home.component';
-import { AppRoutingModule } from "./app-routing.module";
-import { MatRadioModule } from "@angular/material/radio";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
-import { HTTP_INTERCEPTORS, HttpClientModule, HttpClient } from "@angular/common/http";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { JoinComponent } from './join/join.component';
-import { MatIconModule } from "@angular/material/icon";
-import { PlayerSettingsComponent } from './player-settings/player-settings.component';
-import { NgxColorsModule } from "ngx-colors";
-import { CardComponent } from './card/card.component';
-import { NgOptimizedImage } from "@angular/common";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { LoadingComponent } from './loading/loading.component';
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { HttpRequestInterceptor } from "./services/http-request-interceptor.service";
-import { MatSelectModule } from "@angular/material/select";
-import { InformationDialogComponent } from "./dialogs/information-dialog/information-dialog.component";
-import { ResultsComponent } from './results/results.component';
-import { VersionComponent } from './components/version/version.component';
-import { EventsComponent } from './events/events.component';
-import { NgChartsModule } from 'ng2-charts';
-import { GameOptionsDialogComponent } from './dialogs/game-options-dialog/game-options-dialog.component';
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { ZXingScannerModule } from "@zxing/ngx-scanner";
-import { NgxKjuaComponent } from "./qrcodeTool/ngx-kjua.component";
+import {CreateGameDialog, HomeComponent, InstallAppDialog} from './home/home.component';
+import {AppRoutingModule} from "./app-routing.module";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatButtonModule} from "@angular/material/button";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatInputModule} from "@angular/material/input";
+import {FormsModule} from "@angular/forms";
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpClient} from "@angular/common/http";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {JoinComponent} from './join/join.component';
+import {MatIconModule} from "@angular/material/icon";
+import {PlayerSettingsComponent} from './player-settings/player-settings.component';
+import {NgxColorsModule} from "ngx-colors";
+import {CardComponent} from './card/card.component';
+import {NgOptimizedImage} from "@angular/common";
+import {MatBadgeModule} from "@angular/material/badge";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {LoadingComponent} from './loading/loading.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {HttpRequestInterceptor} from "./services/http-request-interceptor.service";
+import {MatSelectModule} from "@angular/material/select";
+import {InformationDialogComponent} from "./dialogs/information-dialog/information-dialog.component";
+import {ResultsComponent} from './results/results.component';
+import {VersionComponent} from './components/version/version.component';
+import {EventsComponent} from './events/events.component';
+import {NgChartsModule} from 'ng2-charts';
+import {GameOptionsDialogComponent} from './dialogs/game-options-dialog/game-options-dialog.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {ZXingScannerModule} from "@zxing/ngx-scanner";
+import {NgxKjuaComponent} from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
 import {ScannerDialogV3Component} from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
@@ -65,14 +65,15 @@ import {MasterAdminComponent} from './master-admin/master-admin.component';
 import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {LanguageBtnComponent} from './components/language-btn/language-btn.component';
-import { GameInfosDialog,NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
+import {GameInfosDialog, NoticeBtnComponent} from './components/notice-btn/notice-btn.component';
 import {I18nService} from './services/i18n.service';
 import {ModuleWealthDistribComponent} from './components/module-wealth-distrib/module-wealth-distrib.component';
 import {ModuleGalileoComponent} from './components/module-galileo/module-galileo.component';
 import {PedagoDialogComponent} from './dialogs/pedago-dialog/pedago-dialog.component';
 import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
 import {MatCardModule} from "@angular/material/card";
-import { ContributionsComponent } from './components/contributions/contributions.component';
+import {ContributionsComponent} from './components/contributions/contributions.component';
+import {TaskListBtnComponent, AnimatorTaskListDialog} from './components/tasklist-btn/tasklist-btn.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -122,6 +123,8 @@ LOAD_WASM().subscribe();
 		ModuleGalileoComponent,
 		PedagoDialogComponent,
 		PedagoBtnComponent,
+		TaskListBtnComponent,
+		AnimatorTaskListDialog
 	],
 	imports: [
 		HttpClientModule,
@@ -170,7 +173,7 @@ LOAD_WASM().subscribe();
 		}),
 	],
 	providers: [
-		{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
+		{provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true},
 		I18nService
 	],
 	bootstrap: [AppComponent]

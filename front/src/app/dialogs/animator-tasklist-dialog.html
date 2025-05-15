@@ -1,0 +1,30 @@
+<div class="tasklist overflow-auto">
+	<!-- <mat-dialog-header> -->
+		<h1 class="gecoFont shadowed m-2">{{ "TASK.TITLE" | translate }}</h1>
+	<!-- </mat-dialog-header> -->
+	<mat-dialog-content>
+		<section class="d-flex flex-column">
+			<mat-checkbox class="" [(ngModel)]="data.prepare">{{ "TASK.PREPARE" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.presentYourself">{{ "TASK.PRESENT_YOURSELF" | translate}}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.presentML">{{ "TASK.PRESENT_ML" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.delay">{{ "TASK.DELAY" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.squares">{{ "TASK.SQUARES" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.transactions">{{ "TASK.TRANSACTIONS" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.death">{{ "TASK.DEATH" | translate }}</mat-checkbox>
+		</section>
+
+		<section class="d-flex flex-column">
+			<mat-checkbox class="" [(ngModel)]="data.start1">{{ "TASK.START_1" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.survey1">{{ "TASK.SURVEY_1" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.nextMoney">{{ "TASK.NEXT_MONEY" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.start2">{{ "TASK.START_2" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.survey2">{{ "TASK.SURVEY_2" | translate }}</mat-checkbox>
+			<mat-checkbox class="" [(ngModel)]="data.results">{{ "TASK.RESULTS" | translate }}</mat-checkbox>
+		</section>
+	</mat-dialog-content>
+	<mat-dialog-actions class="d-flex flex-row justify-content-center">
+		<button mat-button color="primary" (click)="clean()">{{ "TASK.UNSELECT_ALL" | translate }}</button>
+		<button mat-button color="primary" (click)="close()">{{ "COMMON.CANCEL" | translate }}</button>
+		<button mat-button color="primary" (click)="save()">{{ "COMMON.SAVE" | translate }}</button>
+	</mat-dialog-actions>
+</div>
