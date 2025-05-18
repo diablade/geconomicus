@@ -1,4 +1,4 @@
-.svg {
+.imgTitle {
 	width: 50px;
 	height: 50px;
 	border: solid #5398ca 2px;
@@ -6,16 +6,17 @@
 	background: rgba(255, 255, 255, 0.65);
 }
 
-.free {
-	height: 40px;
-	width: 40px;
-	background-size: cover;
+.sold {
+	font-size: 2.1rem;
+	line-height: 100%;
+	margin: 10px;
+	font-weight: bold;
 }
-
-.debt {
-	height: 40px;
-	width: 40px;
-	background-size: cover;
+.smallSold {
+	font-size: 0.7rem;
+	line-height: 100%;
+	margin: 10px;
+	font-weight: bold;
 }
 
 .titleBar {
@@ -23,31 +24,22 @@
 	margin-bottom: 15px;
 }
 
-.name {
+.username {
 	border-radius: 5px;
-	height: fit-content;
-	padding: 4px;
+	padding: 2px;
+	max-width: 80px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	background: rgba(255, 255, 255, 0.65);
+	overflow: hidden;
 }
 
 .game {
 	background-size: cover;
 }
 
-.sold {
-	font-size: 3rem;
-	line-height: 100%;
-	margin: 10px;
-	font-weight: bold;
-}
 .du{
-	font-size: 2rem;
-}
-
-.g1 {
-	font-size: 0.8rem;
-	line-height: 100%;
-	font-weight: bold;
+	font-size: 1.5rem;
 }
 
 .duIcon {

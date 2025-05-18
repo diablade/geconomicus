@@ -23,38 +23,47 @@
 	<div class="default-credit d-flex flex-column">
 		<div class="shadowed gecoFont fs-3">{{ "PLAYER.THIS_LIFE_IS_GONE" | translate }}</div>
 		<button (click)="tryReincarnate()" mat-raised-button
-		color="accent">
-		{{ "PLAYER.GO_TO_SECOND_LIFE" | translate }}
-	</button>
-</div>
+				color="accent">
+			{{ "PLAYER.GO_TO_SECOND_LIFE" | translate }}
+		</button>
+	</div>
 </div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
-		<div class="symbol">
-			<div class="jeuTitle">{{ "PLAYER.BALANCE" | translate }}</div>
-			<img *ngIf="typeMoney===C.JUNE" [src]="'/assets/images/g1coin.png'" class="free" (click)="refresh()"/>
-			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="debt" (click)="refresh()"/>
+		<div class="">
+			<img *ngIf="typeMoney===C.JUNE" [src]="'/assets/images/g1coin.png'" class="imgTitle free"
+				 (click)="refresh()"/>
+			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="imgTitle debt"
+				 (click)="refresh()"/>
+			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>
 		</div>
 		<div *ngIf="typeMoney===C.JUNE" class="sold flex-grow-1 contour">
 			{{ (player.coins / currentDU) | number : '1.2-2' }}<span class="du">{{ "CURRENCY.DU" | translate }}</span>
-			<span class="g1">{{ player.coins | number : '1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</span>
+			<div class="smallSold">{{ player.coins | number : '1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
 			<img class="duIcon" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
 		</div>
 		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
-			<span *ngIf="typeMoney===C.DEBT" class="g1">{{"PLAYER.DEBT" | translate }}: {{ getDebts() | number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}</span>
+			<div *ngIf="typeMoney===C.DEBT" class="smallSold">{{ "PLAYER.DEBT" | translate }}
+				: {{ getDebts() | number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}</div>
 		</div>
-		<div class="user d-flex">
-			<div (click)="updatePlayer()" class="svg" [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
+		<div class="">
+			<div class="d-flex justify-content-end">
+				<div (click)="updatePlayer()" class="imgTitle"
+					 [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
+			</div>
+			<div class="username">{{ player.name }}</div>
 		</div>
 	</div>
 	<div class="" *ngIf="statusGame!==C.PLAYING">
 		<div
 			class="text-center gecoFont shadowed fs-1 m-4">{{ statusGame !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate) }}
 		</div>
-		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit" *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
-		<button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button
-						color="accent">
+		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit"
+						*ngIf="statusGame !== C.END_GAME"></app-notice-btn>
+		<button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
+				mat-raised-button
+				color="accent">
 			{{ "PLAYER.ANSWER_SURVEY" | translate }}
 		</button>
 	</div>
@@ -85,16 +94,16 @@
 		</div>
 	</div>
 	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
-			 [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
+		 [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
 		<div class="d-inline-flex" *ngFor="let credit of credits">
 			<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
-									[contractor]="player.name"
-									(actionBtn)="creditActionBtn($event,credit)"></app-credit>
+						[contractor]="player.name"
+						(actionBtn)="creditActionBtn($event,credit)"></app-credit>
 		</div>
 	</div>
 	<div class="btnCredits">
 		<button *ngIf="typeMoney===C.DEBT" class="buy" mat-raised-button color="primary"
-						(click)="panelCreditOpenState = !panelCreditOpenState">
+				(click)="panelCreditOpenState = !panelCreditOpenState">
 			{{ "PLAYER.CREDITS" | translate }}
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
 			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faEyeSlash"></fa-icon>
@@ -105,14 +114,14 @@
 			<fa-icon [icon]="faCamera"></fa-icon>
 		</mat-slide-toggle>
 		<button *ngIf="scanV3" class="buy" mat-raised-button color="accent"
-						[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-						(click)="scan()">
+				[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+				(click)="scan()">
 			{{ "PLAYER.BUY" | translate }}
 			<fa-icon [icon]="faQrcode"></fa-icon>
 		</button>
 		<button *ngIf="!scanV3" class="buy" mat-raised-button color="accent"
-						[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-						(click)="openDialogShorCode()">
+				[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+				(click)="openDialogShorCode()">
 			{{ "PLAYER.BUY" | translate }}
 			<fa-icon [icon]="faKeyboard"></fa-icon>
 		</button>
