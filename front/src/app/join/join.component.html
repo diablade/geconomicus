@@ -3,7 +3,7 @@
   <div>
     <p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
     <mat-form-field appearance="fill">
-      <input matInput [disabled]="!!fromId" [(ngModel)]="name">
+      <input matInput [disabled]="!!fromId" [(ngModel)]="name" (keydown.enter)="join()">
     </mat-form-field>
   </div>
   <div>

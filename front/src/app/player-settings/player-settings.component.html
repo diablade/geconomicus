@@ -3,7 +3,7 @@
 	<div class="text-center">
 		<mat-form-field appearance="fill">
 			<mat-label>{{ "PLAYER.NAME" | translate }}</mat-label>
-			<input matInput [disabled]="!!player.reincarnateFromId" [(ngModel)]="player.name">
+			<input matInput [disabled]="!!player.reincarnateFromId" [(ngModel)]="player.name" (keydown.enter)="saveAndClose()">
 		</mat-form-field>
 	</div>
 	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
