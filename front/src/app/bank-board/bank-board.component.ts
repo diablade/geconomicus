@@ -67,13 +67,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.game.status = C.PLAYING;
-			this.snackbarService.showNotif(this.i18nService.instant("NOTIF.START_ROUND"));
+			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
 			this.dialog.closeAll();
 			this.game.status = "waiting";
 			this.dialog.open(InformationDialogComponent, {
-				data: {text: this.i18nService.instant("NOTIF.STOP_ROUND")},
+				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
 		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
