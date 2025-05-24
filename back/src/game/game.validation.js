@@ -135,23 +135,7 @@ export const schemas = {
                       })
     }),
 
-    getEvents: Joi.object({
-        idGame: Joi.string().custom(isValidObjectId).required()
-                    .messages({
-                        'any.invalid':  'Invalid game ID format',
-                        'any.required': 'Game ID is required'
-                    })
-    }),
-
-    getFeedbacks: Joi.object({
-        idGame: Joi.string().custom(isValidObjectId).required()
-                    .messages({
-                        'any.invalid':  'Invalid game ID format',
-                        'any.required': 'Game ID is required'
-                    })
-    }),
-
-    getGameById: Joi.object({
+    idGame: Joi.object({
         idGame: Joi.string().custom(isValidObjectId).required()
                     .messages({
                         'any.invalid':  'Invalid game ID format',
@@ -202,9 +186,9 @@ export const schemas = {
     })
 };
 
-export const validate = (schema) => {
+export const validate = (schema, params = false) => {
     return (req, res, next) => {
-        const {error} = schema.validate(req.body, {abortEarly: false});
+        const {error} = schema.validate(params ? req.params : req.body, {abortEarly: false});
 
         if (error) {
             const errors = error.details.map(detail => ({
