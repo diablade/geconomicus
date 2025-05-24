@@ -76,15 +76,15 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-				private sessionStorageService: SessionStorageService,
-				private backService: BackService,
-				private snackbarService: SnackbarService,
-				private translate: TranslateService,
-				private router: Router,
-				private sanitizer: DomSanitizer,
-				private wsService: WebSocketService,
-				private i18nService: I18nService,
-				public dialog: MatDialog) {
+	            private sessionStorageService: SessionStorageService,
+	            private backService: BackService,
+	            private snackbarService: SnackbarService,
+	            private translate: TranslateService,
+	            private router: Router,
+	            private sanitizer: DomSanitizer,
+	            private wsService: WebSocketService,
+	            private i18nService: I18nService,
+	            public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -223,8 +223,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				message: this.i18nService.instant("EVENTS.ASK_END_ROUND"),
-				labelBtn1: this.i18nService.instant("DIALOG.CONFIRM.CANCEL"),
-				labelBtn2: this.i18nService.instant("DIALOG.CONFIRM.YES"),
 			}
 		});
 		confDialogRef.afterClosed().subscribe(result => {

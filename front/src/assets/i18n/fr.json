@@ -309,8 +309,8 @@
         "CONFIRM": {
             "TITLE": "Confirmer ?",
             "MESSAGE": "Confirmez-vous ?",
-            "BTN1": "Oui",
-            "BTN2": "Annuler"
+            "BTN1": "Annuler",
+            "BTN2": "Oui"
         },
         "CREDIT_EXPIRED": {
             "TITLE": "Le crédit est arrivé à expiration !",

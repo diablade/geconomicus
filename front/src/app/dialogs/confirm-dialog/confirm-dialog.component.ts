@@ -19,8 +19,8 @@ export class ConfirmDialogComponent {
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.title = data.title ? data.title : this.title;
 		this.message = data.message;
-		this.labelBtn1 = data.labelBtn1;
-		this.labelBtn2 = data.labelBtn2;
+		this.labelBtn1 = data.labelBtn1 ? data.labelBtn1: this.labelBtn1;
+		this.labelBtn2 = data.labelBtn2 ? data.labelBtn2: this.labelBtn2;
 		this.autoClickBtn2 = data.autoClickBtn2;
 		this.timerBtn2 = data.timerBtn2;
 		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;

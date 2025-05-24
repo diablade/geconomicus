@@ -302,8 +302,8 @@
         "CONFIRM": {
             "TITLE": "Potvrdi?",
             "MESSAGE": "Da li si siguran?",
-            "BTN1": "Da",
-            "BTN2": "Otkaži"
+            "BTN1": "Otkaži",
+            "BTN2": "Da"
         },
         "CREDIT_EXPIRED": {
             "TITLE": "Kredit je istekao!",
