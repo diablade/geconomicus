@@ -3,8 +3,6 @@ import * as C from "../../../config/constantes.js";
 import bcrypt from "bcrypt";
 import log from "../../config/log.js";
 import socket from "../../config/socket.js";
-import GameTimerManager from "./GameTimerManager.js";
-import BankTimerManager from '../bank/BankTimerManager.js';
 import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
 
@@ -22,74 +20,19 @@ export default {
         }
     },
     update:             async (req, res, next) => {
-        const body = req.body;
-
-        let priceWeight1 = body.typeMoney === C.DEBT ? defaultPriceWeight1 : defaultPriceWeight1ML;
-        let priceWeight2 = body.typeMoney === C.DEBT ? defaultPriceWeight2 : defaultPriceWeight2ML;
-        let priceWeight3 = body.typeMoney === C.DEBT ? defaultPriceWeight3 : defaultPriceWeight3ML;
-        let priceWeight4 = body.typeMoney === C.DEBT ? defaultPriceWeight4 : defaultPriceWeight4ML;
-        GameModel.updateOne({
-            _id: body.idGame,
-        }, {
-            $set: {
-                typeMoney:               body.typeMoney ? body.typeMoney : C.JUNE,
-                name:                    body.name ? body.name : "sans nom",
-                animator:                body.animator ? body.animator : "sans animateur",
-                location:                body.location ? body.location : "sans lieu",
-                priceWeight1:            body.priceWeight1 ? body.priceWeight1 : priceWeight1,
-                priceWeight2:            body.priceWeight2 ? body.priceWeight2 : priceWeight2,
-                priceWeight3:            body.priceWeight3 ? body.priceWeight3 : priceWeight3,
-                priceWeight4:            body.priceWeight4 ? body.priceWeight4 : priceWeight4,
-                roundMax:                body.roundMax ? body.roundMax : 1,
-                roundMinutes:            body.roundMinutes ? body.roundMinutes : 25,
-                devMode:                 body.devMode === undefined ? true : body.devMode,
-                surveyEnabled:           body.surveyEnabled === undefined ? true : body.surveyEnabled,
-                amountCardsForProd:      body.amountCardsForProd ? body.amountCardsForProd : 4,
-                distribInitCards:        body.distribInitCards ? body.distribInitCards : 4,
-                generateLettersAuto:     body.generateLettersAuto === undefined ? true : body.generateLettersAuto,
-                generateLettersInDeck:   body.generateLettersInDeck ? body.generateLettersInDeck : 0,
-                generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
-                autoDeath:               body.autoDeath === undefined ? true : body.autoDeath,
-                deathPassTimer:          body.deathPassTimer ? body.deathPassTimer : 4,
-
-                //option june
-                tauxCroissance:   body.tauxCroissance ? body.tauxCroissance : defaultTauxDU,
-                startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
-                inequalityStart:  body.inequalityStart === undefined ? false : body.inequalityStart,
-                pctPoor:          body.pctPoor ? body.pctPoor : 10,
-                pctRich:          body.pctRich ? body.pctRich : 10,
-
-                //option debt
-                defaultCreditAmount:   body.defaultCreditAmount ? body.defaultCreditAmount : 3,
-                defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount : 1,
-                timerCredit:           body.timerCredit ? body.timerCredit : 5,
-                timerPrison:           body.timerPrison ? body.timerPrison : 5,
-                manualBank:            body.manualBank ? body.manualBank : false,
-                seizureType:           body.seizureType ? body.seizureType : "decote",
-                seizureCosts:          body.seizureCosts ? body.seizureCosts : 2,
-                seizureDecote:         body.seizureDecote ? body.seizureDecote : 25,
-
-                modified: Date.now(),
-            },
-        })
-            .then((updatedGame) => {
-                const payload = {
-                    typeMoney:          body.typeMoney,
-                    timerCredit:        body.timerCredit,
-                    timerPrison:        body.timerPrison,
-                    amountCardsForProd: body.amountCardsForProd
-                };
-                socket.emitTo(body.idGame, C.UPDATE_GAME_OPTION, payload);
-                return res.status(200).send({
-                    status: "updated",
-                });
-            })
-            .catch((err) => {
-                log.error("update game error:" + err);
-                return res.status(500).json({
-                    message: "Update game error",
-                });
+        try {
+            const savedGame = await gameService.updateGame(req.body);
+            return res.status(200).send({
+                status: "updated",
             });
+        }
+        catch (err) {
+            log.error("Game update error:" + err);
+            return res.status(500).json({
+                message: "Game update error",
+            });
+        }
+
     },
     start:              async (req, res, next) => {
         const body = req.body;
@@ -414,79 +357,24 @@ export default {
         }
     },
     reset:              async (req, res, next) => {
-        const idGame = req.body.idGame;
-
-        GameTimerManager.stopAndRemoveTimer(idGame);
-        GameTimerManager.stopAndRemoveTimer(idGame + "death");
-        BankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
-        const game = await GameModel.findById(idGame);
-        const events = game.events.filter(e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);
-        const players = game.players.filter(e => e.reincarnateFromId == null);
-        players.forEach(p => {
-            p.cards = [];
-            p.coins = 0;
-            p.status = C.ALIVE;
-        });
-        GameModel.findByIdAndUpdate(idGame, {
-            $set: {
-                status:                  C.OPEN, // typeMoney:               C.JUNE,
-                decks:                   [],
-                players:                 players,
-                credits:                 [],
-                events:                  events,
-                priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
-                priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
-                priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,
-                priceWeight4:            game.typeMoney === C.JUNE ? defaultPriceWeight4ML : defaultPriceWeight4,
-                currentMassMonetary:     0,
-                surveyEnabled:           true,
-                devMode:                 true,
-                generatedIdenticalCards: 4,
-                distribInitCards:        4,
-                generateLettersAuto:     true,
-                generateLettersInDeck:   0,
-                amountCardsForProd:      4,
-                round:                   0,
-                roundMax:                1,
-                roundMinutes:            25,
-                autoDeath:               true,
-                deathPassTimer:          4,
-
-                //option june
-                currentDU:        0,
-                tauxCroissance:   defaultTauxDU,
-                inequalityStart:  false,
-                startAmountCoins: 5,
-                pctPoor:          10,
-                pctRich:          10,
-
-                //option debt
-                defaultCreditAmount:   3,
-                defaultInterestAmount: 1,
-                bankInterestEarned:    0,
-                bankGoodsEarned:       0,
-                bankMoneyLost:         0,
-                timerCredit:           5,
-                timerPrison:           5,
-                manualBank:            false,
-                seizureType:           "decote",
-                seizureCosts:          2,
-                seizureDecote:         33,
-            },
-        }, {
-            new: true,
-        })
-            .then((updatedGame) => {
-                socket.emitTo(idGame, C.RESET_GAME);
+        try {
+            const done = await gameService.resetGame(req.body.idGame);
+            if (done) {
                 return res.status(200).json({
                     status: "reset done",
                 });
-            })
-            .catch((error) => {
-                log.error("reset game error:" + error);
+            }
+            else {
                 return res.status(500).json({
-                    message: "Reset Game error",
+                    message: "Game reset error",
                 });
+            }
+        }
+        catch (err) {
+            log.error("Game reset error:" + err);
+            return res.status(500).json({
+                message: "Game reset error",
             });
+        }
     },
 };
