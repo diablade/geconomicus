@@ -327,7 +327,7 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
                 $inc:  {
                     'players.$.coins':     -(credit.interest + credit.amount),
                     'bankInterestEarned':  credit.interest,
-                    'currentMassMonetary': -credit.amount
+                    'currentMassMonetary': -(credit.interest + credit.amount)
                 },
                 $set:  {
                     'credits.$[c].status':  C.CREDIT_DONE,
