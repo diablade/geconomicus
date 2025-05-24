@@ -476,11 +476,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	public feedbacksOptions = undefined;
 
 	constructor(private route: ActivatedRoute,
-							private platform: Platform,
-							private router: Router,
-							private sanitizer: DomSanitizer,
-							private backService: BackService,
-							private i18nService: I18nService) {
+	            private platform: Platform,
+	            private router: Router,
+	            private sanitizer: DomSanitizer,
+	            private backService: BackService,
+	            private i18nService: I18nService) {
 	}
 
 	topLabelKeys = [
@@ -523,13 +523,6 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit(): void {
-		this.i18nService.onLangChange().subscribe(() => {
-			this.feedbacksLabelsTop = this.convertLabels(this.topLabelKeys);
-			this.feedbacksLabelsBottom = this.convertLabels(this.bottomLabelKeys);
-			this.leftLabels = this.convertLabels(this.leftLabelKeys);
-			this.initChartOptions();
-
-		});
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
@@ -559,6 +552,18 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					idGame: this.idGame,
 				},
 			});
+			this.initChartOptions();
+		});
+		this.i18nService.onLangChange().subscribe(() => {
+			this.feedbacksLabelsTop = this.convertLabels(this.topLabelKeys);
+			this.feedbacksLabelsBottom = this.convertLabels(this.bottomLabelKeys);
+			this.leftLabels = this.convertLabels(this.leftLabelKeys);
+			// Force complete reinitialization of the chart
+			this.initChartOptions();
+			// Force update the charts after a small delay to ensure the view is updated
+			setTimeout(() => {
+				this.updateCharts();
+			}, 100);
 		});
 	}
 
@@ -602,7 +607,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	updateCharts() {
 		this.charts?.forEach(chart => {
 			chart.render();
-			chart.update();
+			chart.update('none');
 		});
 	}
 

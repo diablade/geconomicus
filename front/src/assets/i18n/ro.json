@@ -356,6 +356,7 @@
         "NO": "Nu"
     },
     "SURVEY": {
+        "THANK_YOU": "Mulțumesc! Redirecționare către rezultate...",
         "TITLE": "Ce sentimente ai avut în timpul acestui joc?",
         "SUBTITLE": "Fii cât mai sincer posibil 🙏",
         "DEPRESSED": "Depresiv",
@@ -376,7 +377,12 @@
         "TOLERANT": "Tolerant",
         "DEPENDENT": "Dependent",
         "AUTONOMOUS": "Autonom",
-        "SEND": "Trimite"
+        "SEND": "Trimite",
+        "VERY": "(Pozitiv 😊)",
+        "ENOUGH": "Asigurare",
+        "LITTLE": "Un pic",
+        "NUTRAL": "Neutru",
+        "VERYNOT": "(Negativ 😒)"
     },
     "ERROR": {
         "GENERIC": "Ceva a mers prost; te rugăm să încerci din nou mai târziu.",

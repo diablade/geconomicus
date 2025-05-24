@@ -356,6 +356,7 @@
         "NO": "Ne"
     },
     "SURVEY": {
+        "THANK_YOU": "Hvala ! Preusmeravanje na rezultate...",
         "TITLE": "Koji su bili vaši osećaji tokom ove igre?",
         "SUBTITLE": "Budite što iskreniji 🙏",
         "DEPRESSED": "Depresivan",
@@ -376,7 +377,12 @@
         "TOLERANT": "Tolerantan",
         "DEPENDENT": "Zavistan",
         "AUTONOMOUS": "Autonom",
-        "SEND": "Pošalji"
+        "SEND": "Pošalji",
+        "VERY": "(Pozitivno 😊)",
+        "ENOUGH": "Dovoljno",
+        "LITTLE": "Neki",
+        "NUTRAL": "Neutralno",
+        "VERYNOT": "(Negativno 😒)"
     },
     "ERROR": {
         "GENERIC": "Nešto je pošlo po zlu; pokušajte ponovo kasnije.",

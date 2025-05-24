@@ -355,6 +355,7 @@
         "NO": "No"
     },
     "SURVEY": {
+        "THANK_YOU": "Grazie ! ...",
         "TITLE": "Quali sono stati i tuoi sentimenti durante questo gioco?",
         "SUBTITLE": "Sii il più onesto possibile 🙏",
         "DEPRESSED": "Depresso",
@@ -375,7 +376,12 @@
         "TOLERANT": "Tollerante",
         "DEPENDENT": "Dipendente",
         "AUTONOMOUS": "Autonomo",
-        "SEND": "Invia"
+        "SEND": "Invia",
+        "VERY": "(Positivo 😊)",
+        "ENOUGH": "Sufficiente",
+        "LITTLE": "Un po' ",
+        "NUTRAL": "Neutro",
+        "VERYNOT": "(Negativo 😒)"
     },
     "ERROR": {
         "GENERIC": "Qualcosa è andato storto; riprova più tardi.",

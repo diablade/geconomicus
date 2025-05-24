@@ -355,6 +355,7 @@
         "NO": "いいえ"
     },
     "SURVEY": {
+        "THANK_YOU": "ありがとう！結果に移動します...",
         "TITLE": "このゲーム中のあなたの感情はどうでしたか？",
         "SUBTITLE": "できるだけ正直に🙏",
         "DEPRESSED": "落ち込んでいる",
@@ -375,7 +376,12 @@
         "TOLERANT": "寛容",
         "DEPENDENT": "依存している",
         "AUTONOMOUS": "自律的",
-        "SEND": "送信"
+        "SEND": "送信",
+        "VERY": "(Positif 😊)",
+        "ENOUGH": "十分",
+        "LITTLE": "少し",
+        "NUTRAL": "中立的",
+        "VERYNOT": "(Negatif 😒)"
     },
     "ERROR": {
         "GENERIC": "何かがうまくいきませんでした。後で再試行してください。",

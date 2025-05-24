@@ -402,7 +402,7 @@
         "CREDITS": "CRÉDITOS"
     },
     "SURVEY": {
-        "INTEGRATED": "En comunidad",
+        "THANK_YOU": "Gracias ! ...",
         "TITLE": "¿Cuáles han sido tus sentimientos durante esta partida?",
         "SUBTITLE": "Sé lo más honesto posible 🙏",
         "DEPRESSED": "Deprimido(a)",
@@ -410,6 +410,7 @@
         "INDIVIDUAL": "Individual",
         "COLLECTIVE": "Colectivo",
         "ALONE": "Solo(a)",
+        "INTEGRATED": "En comunidad",
         "GREEDY": "Avaro",
         "GENEROUS": "Generoso(a)",
         "COMPETITIVE": "Competitivo(a)",
@@ -422,7 +423,12 @@
         "TOLERANT": "Tolerante",
         "DEPENDENT": "Dependiente",
         "AUTONOMOUS": "Autónomo(a)",
-        "SEND": "Enviar"
+        "SEND": "Enviar",
+        "VERY": "(Positivo 😊)",
+        "ENOUGH": "Suficiente",
+        "LITTLE": "Un po' ",
+        "NUTRAL": "Neutro",
+        "VERYNOT": "(Negativo 😒)"
     },
     "RESULTS": {
         "MOST_ACTIVE_TOOLTIP": "Quién hizo más transacciones",
