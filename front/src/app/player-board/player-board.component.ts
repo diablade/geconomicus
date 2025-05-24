@@ -123,13 +123,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-				public dialog: MatDialog,
-				private router: Router,
-				private localStorageService: LocalStorageService,
-				private backService: BackService,
-				private wsService: WebSocketService,
-				private i18nService: I18nService,
-				private snackbarService: SnackbarService) {
+	            public dialog: MatDialog,
+	            private router: Router,
+	            private localStorageService: LocalStorageService,
+	            private backService: BackService,
+	            private wsService: WebSocketService,
+	            private i18nService: I18nService,
+	            private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -397,6 +397,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
+			this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;

@@ -38,11 +38,11 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-				private backService: BackService,
-				private snackbarService: SnackbarService,
-				private sanitizer: DomSanitizer,
-				public dialog: MatDialog,
-				private i18nService: I18nService) {
+	            private backService: BackService,
+	            private snackbarService: SnackbarService,
+	            private sanitizer: DomSanitizer,
+	            public dialog: MatDialog,
+	            private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {

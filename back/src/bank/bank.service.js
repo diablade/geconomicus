@@ -51,6 +51,9 @@ const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
     if (credit.idPlayer !== idPlayer) {
         throw new Error("Player is not the owner of this credit");
     }
+    if (credit.status === C.CREDIT_DONE) {
+        throw new Error("Credit is already done");
+    }
 
     if (action === C.SETTLE_CREDIT) {
         return {
@@ -315,34 +318,32 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
             canPay
         } = await getCreditOnActionPayment(idGame, idPlayer, idCredit, C.SETTLE_CREDIT);
         if (canPay) {
-            await GameModel.findOneAndUpdate({
-                _id:           idGame,
-                'players._id': idPlayer
+            let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, (credit.interest + credit.amount), [credit], Date.now());
+            const updatedGame = await GameModel.findOneAndUpdate({
+                _id:           credit.idGame,
+                'players._id': idPlayer,
+                'credits._id': credit._id.toString(),
             }, {
-                $inc: {
+                $inc:  {
                     'players.$.coins':     -(credit.interest + credit.amount),
                     'bankInterestEarned':  credit.interest,
                     'currentMassMonetary': -credit.amount
                 },
-            });
-
-            let newEvent = constructor.event(C.SETTLE_CREDIT, credit.idPlayer, C.BANK, (credit.interest + credit.amount), [credit], Date.now());
-            const updatedGame = await GameModel.findOneAndUpdate({
-                _id:           credit.idGame,
-                'credits._id': credit._id
-            }, {
                 $set:  {
-                    'credits.$.status':  C.CREDIT_DONE,
-                    'credits.$.endDate': Date.now()
+                    'credits.$[c].status':  C.CREDIT_DONE,
+                    'credits.$[c].endDate': Date.now()
                 },
                 $push: {'events': newEvent},
-            }, {new: true});
+            }, {
+                new:          true,
+                arrayFilters: [{'c._id': credit._id.toString()}]
+            });
 
-            let creditUpdated = _.find(updatedGame.credits, c => c._id.toString() === credit._id);
-            await bankTimerManager.stopAndRemoveTimer(credit._id);
-            socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
-            socket.emitTo(credit.idPlayer, C.CREDIT_DONE, creditUpdated);
-            socket.emitTo(credit.idGame + C.BANK, C.CREDIT_DONE, creditUpdated);
+            let creditUpdated = updatedGame.credits.find(c => c._id.toString() === credit._id.toString());
+            await bankTimerManager.stopAndRemoveTimer(credit._id.toString());
+            socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
+            socket.emitTo(idPlayer, C.CREDIT_DONE, creditUpdated);
+            socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, creditUpdated);
             return creditUpdated;
         }
         else {
