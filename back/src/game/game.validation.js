@@ -135,6 +135,38 @@ export const schemas = {
                       })
     }),
 
+    getEvents: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid game ID format',
+                        'any.required': 'Game ID is required'
+                    })
+    }),
+
+    getFeedbacks: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid game ID format',
+                        'any.required': 'Game ID is required'
+                    })
+    }),
+
+    getGameById: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid game ID format',
+                        'any.required': 'Game ID is required'
+                    })
+    }),
+
+    getIdGameByShortId: Joi.object({
+        shortId: Joi.string().pattern(/^[a-z0-9]{4}$/).required()
+                     .messages({
+                         'any.required':        'Short ID is required',
+                         'string.pattern.base': 'Short ID must be 4 characters long and contain only letters and numbers'
+                     })
+    }),
+
     deletePlayer: Joi.object({
         idGame:   Joi.string().custom(isValidObjectId).required()
                       .messages({

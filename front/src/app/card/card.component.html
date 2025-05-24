@@ -2,7 +2,7 @@
 	<div class="whenFlipped" (click)="closeCard()"></div>
 </ng-container>
 <div class="card" [style.width]="width" [style.height]="height"
-		 [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
+     [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
 	<div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
 		<img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
 		<div class="containerLetter topLeft" [ngClass]="state==='flipped' ? 'hide' : 'show'">
@@ -12,9 +12,9 @@
 			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{ card.letter }}</span>
 		</div>
 		<div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
-				 [ngClass]="card.color+'Color'"></div>
+		     [ngClass]="card.color+'Color'"></div>
 		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
-						class="transform">
+		        class="transform">
 			{{ getBuildText(card) | translate }}
 			<fa-icon [icon]="faGift"></fa-icon>
 		</button>
@@ -24,23 +24,21 @@
 			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">{{ card.letter }}</div>
 			<div class="prices d-flex flex-column">
 				<div [style.font-size]="priceSize" [style.line-height]="priceSize"
-						 class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
+				     class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 				</div>
 				<div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price"
-						 *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
+				     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
 				</div>
 			</div>
 		</div>
 		<div class="qrcodeWrapper flex-grow-1">
+			<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
 			<ngx-kjua
-				[text]="getData()"
-				[cssClass]="'innerQrCode'"
-				[label]="shortCode ? shortCode.code : ''"
-				[fontcolor]="'#FF9818'"
-				[fontname]="'arial'"
-				[mode]="'label'"
-				[mSize]="15"
-				[render]="'svg'"
+					[text]="getData()"
+					[minVersion]="1"
+					[crisp]="true"
+					[ecLevel]="'Q'"
+					[render]="'svg'"
 			></ngx-kjua>
 		</div>
 	</div>

@@ -74,6 +74,7 @@ import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
 import {MatCardModule} from "@angular/material/card";
 import {ContributionsComponent} from './components/contributions/contributions.component';
 import {TaskListBtnComponent, AnimatorTaskListDialog} from './components/tasklist-btn/tasklist-btn.component';
+import { JoinShortDialogComponent } from './dialogs/join-short-dialog/join-short-dialog.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -124,7 +125,8 @@ LOAD_WASM().subscribe();
 		PedagoDialogComponent,
 		PedagoBtnComponent,
 		TaskListBtnComponent,
-		AnimatorTaskListDialog
+		AnimatorTaskListDialog,
+		JoinShortDialogComponent
 	],
 	imports: [
 		HttpClientModule,

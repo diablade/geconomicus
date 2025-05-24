@@ -98,8 +98,6 @@ export class CardComponent {
 	}
 
 	calculatePosition() {
-		// this.screenWidth = window.innerWidth;
-		// this.screenHeight = window.innerHeight;
 		// @ts-ignore
 		const element = this.elementRef.nativeElement as HTMLElement;
 		const rect = element.getBoundingClientRect();

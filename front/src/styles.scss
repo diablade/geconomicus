@@ -16,11 +16,6 @@ body {
   touch-action: manipulation;
 }
 
-.innerQrCode {
-  height: 100px !important;
-  width: 100px !important;
-}
-
 .guny {
   width: 300px;
 }
@@ -47,7 +42,8 @@ body {
             //TOP LEFT
           -1.5px -1.5px 0px black,
 }
-.sunyBg{
+
+.sunyBg {
   background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
@@ -55,8 +51,7 @@ body {
 
 .shadowed {
   color: white;
-  text-shadow:
-          //TOP
+  text-shadow: //TOP
           0px -1.5px 0px black,
             //TOP RIGHT
           1.5px -1.5px 0px black,
@@ -72,7 +67,6 @@ body {
           -1.5px 0px 0px black,
             //TOP LEFT
           -1.5px -1.5px 0px black,
-
             //la trainé vers en bas à droite
           1px 1px 0px black,
           2px 2px 0px black,
@@ -93,9 +87,9 @@ body {
   src: url('/assets/Retrow Mentho.woff') format('woff');
 }
 
-.bgBlur{
-	backdrop-filter: blur(5px);
-	background-color: rgba(0, 0, 0, 0.3);
+.bgBlur {
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 
@@ -128,55 +122,55 @@ body {
   clip-path: polygon(38% 0, 100% 100%, 100% 0);
 }
 
-.bulleResult::after{
-	content: "";
-	position: absolute;
-	width: 17px;
-	height: 17px;
-	right: -16px;
-	bottom: 37%;
-	background: rgba(255, 255, 255, 0.4117647059);
-	clip-path: polygon(100% 0%, 0 0, 0 100%);
+.bulleResult::after {
+  content: "";
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  right: -16px;
+  bottom: 37%;
+  background: rgba(255, 255, 255, 0.4117647059);
+  clip-path: polygon(100% 0%, 0 0, 0 100%);
 }
 
-.hg-button{
-	font-weight: bold;
+.hg-button {
+  font-weight: bold;
 }
 
 .hg-button-buy {
-	background-color: green !important;
-	color: white; /* Optional: Change text color for contrast */
+  background-color: green !important;
+  color: white; /* Optional: Change text color for contrast */
 }
 
 .hg-button-cancel {
-	background-color: red !important;
-	color: white; /* Optional: Change text color for contrast */
+  background-color: red !important;
+  color: white; /* Optional: Change text color for contrast */
 }
 
 .hg-button-bksp {
-	background-color: orange !important;
-	color: white; /* Optional: Change text color for contrast */
+  background-color: orange !important;
+  color: white; /* Optional: Change text color for contrast */
 }
 
-.notice{
-	max-height: 600px;
-	max-width: 400px;
-	padding: 10px;
+.notice {
+  max-height: 600px;
+  max-width: 400px;
+  padding: 10px;
 }
 
 .icon {
-	height: 20px;
-	width: 20px;
-	background-size: cover;
-	cursor: pointer;
+  height: 20px;
+  width: 20px;
+  background-size: cover;
+  cursor: pointer;
 }
 
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
-	.keyboard-dialog  {
-		transform: scale(0.85) !important;
-	}
-	.keyboard-dialog input {
-		height: 57px !important;
-	}
+  .keyboard-dialog {
+    transform: scale(0.85) !important;
+  }
+  .keyboard-dialog input {
+    height: 57px !important;
+  }
 }

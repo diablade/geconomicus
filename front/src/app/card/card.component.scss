@@ -7,7 +7,7 @@
   position: relative;
   transform-style: preserve-3d;
   z-index: 1;
-	margin: 0.4rem;
+  margin: 0.4rem;
 }
 
 .whenFlipped {
@@ -21,9 +21,26 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
+.shortCode {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  font-family: Arial, Roboto, sans-serif;
+  font-weight: bold;
+  color: #FF9818;
+  text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;
+}
+
 .hide {
   opacity: 0;
 }
+
 .show {
   opacity: 1;
 }
@@ -35,7 +52,7 @@
   display: flex;
   justify-content: center;
   padding: 5%;
-	font-variant-ligatures: none;
+  font-variant-ligatures: none;
 }
 
 .topLeft {
@@ -81,7 +98,7 @@
   border-radius: inherit;
   backface-visibility: hidden;
 
-  > img {
+  >img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -96,6 +113,7 @@
 
 .red {
   background-color: #E8A7A6;
+
   .mat-badge-content {
     background: #ce1421;
   }
@@ -103,6 +121,7 @@
 
 .yellow {
   background-color: #F3EFAD;
+
   .mat-badge-content {
     background: #c4bb13;
   }
@@ -110,6 +129,7 @@
 
 .green {
   background-color: #A2CBA2;
+
   .mat-badge-content {
     background: #14a549;
   }
@@ -117,6 +137,7 @@
 
 .blue {
   background-color: #BBDAE3;
+
   .mat-badge-content {
     background: #3c8fa2;
   }
@@ -127,7 +148,7 @@
   width: 100%;
   max-width: 100%;
   max-height: 100%;
-  padding: 1px;
+  padding: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +159,7 @@
 .letter {
   font-family: serif, Arial, Helvetica, sans-serif;
   z-index: 10;
-	font-variant-ligatures: none;
+  font-variant-ligatures: none;
 }
 
 .price {
@@ -148,11 +169,11 @@
 /* Apply a conditional statement to limit the font size */
 //@media (min-width: 1080px) {
 //  .letter {
-    //font-size: 7rem !important;
-    //line-height: 7rem !important;
-    //font-family: serif;
-    //z-index: 10;
-  //}
+//font-size: 7rem !important;
+//line-height: 7rem !important;
+//font-family: serif;
+//z-index: 10;
+//}
 //}
 
 /* Apply a conditional statement to limit the font size */

@@ -12,6 +12,7 @@
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.2",
     "morgan": "^1.10.0",
+    "nanoid": "^5.1.5",
     "socket.io": "^4.8.1",
     "uuid": "^9.0.0",
     "winston": "^3.12.0"

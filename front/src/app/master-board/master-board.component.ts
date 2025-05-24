@@ -7,7 +7,8 @@ import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
-	faCircleInfo, faWarning, faBuildingColumns
+	faCircleInfo, faWarning, faBuildingColumns,
+	faRightToBracket
 } from '@fortawesome/free-solid-svg-icons';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -37,7 +38,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('videoPlayerRT') videoPlayerRT!: ElementRef;
 	idGame = "";
 	public game: Game = new Game;
-	data = "";
+	joinLink = "";
 	private socket: any;
 	deleteUser = false;
 	killUser = false;
@@ -47,6 +48,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faQrcode = faQrcode;
 	faCogs = faCogs;
 	faInfo = faCircleInfo;
+	faRightToBracket = faRightToBracket;
 	faWarning = faWarning;
 	faBuildingColumns = faBuildingColumns;
 	audioStart = new Audio();
@@ -104,7 +106,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			} else {
 				this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
 			}
-			this.data = environment.WEB_HOST + environment.GAME.GET + this.idGame + '/join';
+			this.joinLink = environment.WEB_HOST + environment.GAME.GET + this.idGame + '/join';
 		});
 	}
 
@@ -281,6 +283,12 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe(() => {
 		});
+	}
+
+	copyJoinLink(): void {
+		navigator.clipboard.writeText(this.joinLink)
+			.then(() => this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.COPY_SUCCESS")))
+			.catch(err => console.error('Error copying: ', err));
 	}
 
 	qrCodeBank(): void {

@@ -14,9 +14,19 @@
 		<div class="d-flex flex-row">
 			<button class="ms-2" mat-raised-button color="accent" (click)="create()">{{ "HOME.CREATE_GAME"|translate }}
 			</button>
-			<button class="ms-2" mat-raised-button color="primary" (click)="join()">{{ "HOME.JOIN_GAME"| translate }}
-				<fa-icon [icon]="faCamera"></fa-icon>
+			<button class="ms-2" mat-raised-button color="primary" [matMenuTriggerFor]="menu">{{ "HOME.JOIN_GAME"| translate }}
+				<fa-icon [icon]="faChevronDown"></fa-icon>
 			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item class="align-items-center" (click)="join()">
+					<fa-icon [icon]="faCamera"></fa-icon>
+					{{ "HOME.JOIN_VIA_CAM" | translate }}
+				</button>
+				<button mat-menu-item class="align-items-center" (click)="joinShortId()">
+					<fa-icon [icon]="faKeyboard"></fa-icon>
+					{{ "HOME.JOIN_VIA_SHORT_ID" | translate }}
+				</button>
+			</mat-menu>
 		</div>
 		<div class="d-flex flex-row mt-2">
 			<app-notice-btn [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>

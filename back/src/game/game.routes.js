@@ -5,9 +5,10 @@ import { validate, schemas } from './game.validation.js';
 const router = express.Router();
 
 router.get('/all', game.all);
-router.get('/events/:idGame', game.getEvents);
-router.get('/feedbacks/:idGame', game.getFeedbacks);
-router.get('/:idGame', game.getGameById);
+router.get('/events/:idGame', validate(schemas.getEvents), game.getEvents);
+router.get('/feedbacks/:idGame', validate(schemas.getFeedbacks), game.getFeedbacks);
+router.get('/:idGame', validate(schemas.getGameById), game.getGameById);
+router.get('/short/:shortId', validate(schemas.getIdGameByShortId), game.getIdGameByShortId);
 router.post('/create', validate(schemas.create), game.create);
 router.post('/end', validate(schemas.end), game.end);
 router.post('/delete', validate(schemas.deleteGame), game.delete);

@@ -76,7 +76,7 @@
 						[typeMoney]="typeMoney"
 						[idOwner]="idPlayer"
 						[idGame]="idGame"
-						[suffixShortCode]="player.idx"
+						[suffixShortCode]="player.idx.toString().padStart(2, '0')"
 						[currentDU]="currentDU"
 						[amountCardsForProd]="amountCardsForProd"
 						(onBuildCardLvlUp)="produceLevelUp($event)"

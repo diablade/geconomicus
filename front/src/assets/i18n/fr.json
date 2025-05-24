@@ -17,6 +17,8 @@
         "INSTALL": "Installer l'app (optionnel)",
         "CREATE_GAME": "Créer une partie",
         "JOIN_GAME": "Rejoindre une partie",
+        "JOIN_VIA_SHORT_ID": "Via le code court",
+        "JOIN_VIA_CAM": "Via la caméra",
         "HOW_TO_PLAY": "Comment ça marche ?",
         "FUND_RAISE": "Une cagnotte pour me soutenir, ",
         "IN": "en",
@@ -36,7 +38,7 @@
     "MASTER": {
         "SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
         "JOIN": "Rejoins la partie {{name}}",
-        "GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la partie.",
+        "GUNY_WELCOME": "Hey ! Scanne mon QR Code pour rejoindre la partie.",
         "TYPE_OF_MONEY": "Type de monnaie",
         "GAME_OPTION": "Options du jeu",
         "START": "Distribuer les cartes",
@@ -292,7 +294,8 @@
         "ASK_END_ROUND": "La manche n'est pas terminée, es-tu certain de vouloir y mettre fin ?",
         "SHORT_CODE_SEND": "Code envoyé",
         "GIFT": "Bravo ! vous obtenez une carte de valeur supérieure.",
-        "TECHNOLOGY": "Bravo, vous avez acquis la technologie (fin de partie)"
+        "TECHNOLOGY": "Bravo, vous avez acquis la technologie (fin de partie)",
+        "COPY_SUCCESS": "Copié !"
     },
     "DIALOG": {
         "CLOSE": "Fermer",
@@ -320,7 +323,7 @@
             "FIELD1": "Nommer la partie",
             "FIELD2": "Nom de l'animateur",
             "FIELD3": "Lieu",
-            "BTN1": "Oui",
+            "BTN1": "Créer",
             "BTN2": "Annuler"
         },
         "INSTALL": {
@@ -527,8 +530,11 @@
     },
     "JOIN": {
         "TITLE": "Rejoindre la partie !",
+        "SHORT_ID_TITLE": "Entre le code à 4 lettres, pour rejoindre",
+        "SHORT_ID_DESC": "Le code se trouve au centre du QR Code de la partie en cours",
         "NAME_PROMPT": "Votre petit nom ?",
         "GO_BUTTON": "Ğo !",
+        "SEARCH": "Rechercher",
         "GO_NEW_LIFE": "Ğo pour ma nouvelle vie !",
         "REINCARNATED": "Hey ! Tu as été réincarné !",
         "GAME_STARTED": "Hey ! La partie a commencé. Bon courage.",

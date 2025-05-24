@@ -8,84 +8,20 @@ import BankTimerManager from '../bank/BankTimerManager.js';
 import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
 
-const defaultTauxDU= 10;
-const defaultPriceWeight1 = 1;
-const defaultPriceWeight2 = 2;
-const defaultPriceWeight3 = 4;
-const defaultPriceWeight4 = 8;
-const defaultPriceWeight1ML = 3;
-const defaultPriceWeight2ML = 6;
-const defaultPriceWeight3ML = 9;
-const defaultPriceWeight4ML = 12;
-
 export default {
-    create: async (req, res, next) => {
-        let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
-
-        const newGame = new GameModel({
-            name: req.body.name ? req.body.name : "sans nom",
-            animator: req.body.animator ? req.body.animator : "sans animateur",
-            location: req.body.location ? req.body.location : "sans lieu",
-            status: C.OPEN,
-            typeMoney: "june",
-            events: [createEvent],
-            decks: [],
-            players: [],
-            amountCardsForProd: 4,
-            currentMassMonetary: 0,
-            distribInitCards: 4,
-            generateLettersAuto: true,
-            generateLettersInDeck: 0,
-            generatedIdenticalCards: 4,
-            surveyEnabled: true,
-            devMode: false,
-            priceWeight1: defaultPriceWeight1ML,
-            priceWeight2: defaultPriceWeight2ML,
-            priceWeight3: defaultPriceWeight3ML,
-            priceWeight4: defaultPriceWeight4ML,
-            round: 0,
-            roundMax: 1,
-            roundMinutes: 25,
-            autoDeath: true,
-            deathPassTimer: 4,
-
-            //option june
-            currentDU: 0,
-            tauxCroissance: defaultTauxDU,
-            inequalityStart: false,
-            startAmountCoins: 5,
-            pctPoor: 10,
-            pctRich: 10,
-
-            //option debt
-            credits: [],
-            defaultCreditAmount: 3,
-            defaultInterestAmount: 1,
-            bankInterestEarned: 0,
-            bankGoodsEarned: 0,
-            bankMoneyLost: 0,
-            timerCredit: 5,
-            timerPrison: 5,
-            manualBank: true,
-            seizureType: "decote",
-            seizureCosts: 2,
-            seizureDecote: 33,
-
-            modified: Date.now(),
-            created: Date.now(),
-        });
-
+    create:             async (req, res, next) => {
         try {
-            const savedGame = await newGame.save();
+            const savedGame = await gameService.createGame(req);
             return res.status(200).send(savedGame);
-        } catch (err) {
+        }
+        catch (err) {
             log.error("Game creation error:" + err);
             return res.status(500).json({
                 message: "Game creation error",
             });
         }
     },
-    update: async (req, res, next) => {
+    update:             async (req, res, next) => {
         const body = req.body;
 
         let priceWeight1 = body.typeMoney === C.DEBT ? defaultPriceWeight1 : defaultPriceWeight1ML;
@@ -96,51 +32,51 @@ export default {
             _id: body.idGame,
         }, {
             $set: {
-                typeMoney: body.typeMoney ? body.typeMoney : C.JUNE,
-                name: body.name ? body.name : "sans nom",
-                animator: body.animator ? body.animator : "sans animateur",
-                location: body.location ? body.location : "sans lieu",
-                priceWeight1: body.priceWeight1 ? body.priceWeight1 : priceWeight1,
-                priceWeight2: body.priceWeight2 ? body.priceWeight2 : priceWeight2,
-                priceWeight3: body.priceWeight3 ? body.priceWeight3 : priceWeight3,
-                priceWeight4: body.priceWeight4 ? body.priceWeight4 : priceWeight4,
-                roundMax: body.roundMax ? body.roundMax : 1,
-                roundMinutes: body.roundMinutes ? body.roundMinutes : 25,
-                devMode: body.devMode === undefined ? true : body.devMode,
-                surveyEnabled: body.surveyEnabled === undefined ? true : body.surveyEnabled,
-                amountCardsForProd: body.amountCardsForProd ? body.amountCardsForProd : 4,
-                distribInitCards: body.distribInitCards ? body.distribInitCards : 4,
-                generateLettersAuto: body.generateLettersAuto === undefined ? true : body.generateLettersAuto,
-                generateLettersInDeck: body.generateLettersInDeck ? body.generateLettersInDeck : 0,
+                typeMoney:               body.typeMoney ? body.typeMoney : C.JUNE,
+                name:                    body.name ? body.name : "sans nom",
+                animator:                body.animator ? body.animator : "sans animateur",
+                location:                body.location ? body.location : "sans lieu",
+                priceWeight1:            body.priceWeight1 ? body.priceWeight1 : priceWeight1,
+                priceWeight2:            body.priceWeight2 ? body.priceWeight2 : priceWeight2,
+                priceWeight3:            body.priceWeight3 ? body.priceWeight3 : priceWeight3,
+                priceWeight4:            body.priceWeight4 ? body.priceWeight4 : priceWeight4,
+                roundMax:                body.roundMax ? body.roundMax : 1,
+                roundMinutes:            body.roundMinutes ? body.roundMinutes : 25,
+                devMode:                 body.devMode === undefined ? true : body.devMode,
+                surveyEnabled:           body.surveyEnabled === undefined ? true : body.surveyEnabled,
+                amountCardsForProd:      body.amountCardsForProd ? body.amountCardsForProd : 4,
+                distribInitCards:        body.distribInitCards ? body.distribInitCards : 4,
+                generateLettersAuto:     body.generateLettersAuto === undefined ? true : body.generateLettersAuto,
+                generateLettersInDeck:   body.generateLettersInDeck ? body.generateLettersInDeck : 0,
                 generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
-                autoDeath: body.autoDeath === undefined ? true : body.autoDeath,
-                deathPassTimer: body.deathPassTimer ? body.deathPassTimer : 4,
+                autoDeath:               body.autoDeath === undefined ? true : body.autoDeath,
+                deathPassTimer:          body.deathPassTimer ? body.deathPassTimer : 4,
 
                 //option june
-                tauxCroissance: body.tauxCroissance ? body.tauxCroissance : defaultTauxDU,
+                tauxCroissance:   body.tauxCroissance ? body.tauxCroissance : defaultTauxDU,
                 startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
-                inequalityStart: body.inequalityStart === undefined ? false : body.inequalityStart,
-                pctPoor: body.pctPoor ? body.pctPoor : 10,
-                pctRich: body.pctRich ? body.pctRich : 10,
+                inequalityStart:  body.inequalityStart === undefined ? false : body.inequalityStart,
+                pctPoor:          body.pctPoor ? body.pctPoor : 10,
+                pctRich:          body.pctRich ? body.pctRich : 10,
 
                 //option debt
-                defaultCreditAmount: body.defaultCreditAmount ? body.defaultCreditAmount : 3,
+                defaultCreditAmount:   body.defaultCreditAmount ? body.defaultCreditAmount : 3,
                 defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount : 1,
-                timerCredit: body.timerCredit ? body.timerCredit : 5,
-                timerPrison: body.timerPrison ? body.timerPrison : 5,
-                manualBank: body.manualBank ? body.manualBank : false,
-                seizureType: body.seizureType ? body.seizureType : "decote",
-                seizureCosts: body.seizureCosts ? body.seizureCosts : 2,
-                seizureDecote: body.seizureDecote ? body.seizureDecote : 25,
+                timerCredit:           body.timerCredit ? body.timerCredit : 5,
+                timerPrison:           body.timerPrison ? body.timerPrison : 5,
+                manualBank:            body.manualBank ? body.manualBank : false,
+                seizureType:           body.seizureType ? body.seizureType : "decote",
+                seizureCosts:          body.seizureCosts ? body.seizureCosts : 2,
+                seizureDecote:         body.seizureDecote ? body.seizureDecote : 25,
 
                 modified: Date.now(),
             },
         })
             .then((updatedGame) => {
                 const payload = {
-                    typeMoney: body.typeMoney,
-                    timerCredit: body.timerCredit,
-                    timerPrison: body.timerPrison,
+                    typeMoney:          body.typeMoney,
+                    timerCredit:        body.timerCredit,
+                    timerPrison:        body.timerPrison,
                     amountCardsForProd: body.amountCardsForProd
                 };
                 socket.emitTo(body.idGame, C.UPDATE_GAME_OPTION, payload);
@@ -155,7 +91,7 @@ export default {
                 });
             });
     },
-    start: async (req, res, next) => {
+    start:              async (req, res, next) => {
         const body = req.body;
         GameModel.findById(body.idGame)
             .then(async (game) => {
@@ -169,21 +105,21 @@ export default {
                     _id: body.idGame,
                 }, {
                     $set: {
-                        status: C.START_GAME,
-                        decks: gameUpdated.decks,
-                        events: gameUpdated.events,
-                        players: gameUpdated.players,
-                        round: gameUpdated.round + 1,
-                        currentDU: gameUpdated.currentDU,
+                        status:              C.START_GAME,
+                        decks:               gameUpdated.decks,
+                        events:              gameUpdated.events,
+                        players:             gameUpdated.players,
+                        round:               gameUpdated.round + 1,
+                        currentDU:           gameUpdated.currentDU,
                         currentMassMonetary: gameUpdated.currentMassMonetary,
-                        modified: Date.now(),
+                        modified:            Date.now(),
                     },
                 })
                     .then((updatedGame) => {
                         return res.status(200).send({
-                            status: C.START_GAME,
+                            status:      C.START_GAME,
                             timerCredit: gameUpdated.timerCredit,
-                            typeMoney: gameUpdated.typeMoney,
+                            typeMoney:   gameUpdated.typeMoney,
                         });
                     })
                     .catch((err) => {
@@ -200,7 +136,7 @@ export default {
                 });
             });
     },
-    startRound: async (req, res, next) => {
+    startRound:         async (req, res, next) => {
         const {
             idGame,
             round
@@ -210,7 +146,7 @@ export default {
             status: C.START_ROUND,
         });
     },
-    interRound: async (req, res, next) => {
+    interRound:         async (req, res, next) => {
         const id = req.body.idGame;
         GameModel.updateOne({
             _id: id,
@@ -219,7 +155,7 @@ export default {
                 round: 1,
             },
             $set: {
-                status: C.INTER_ROUND,
+                status:   C.INTER_ROUND,
                 modified: Date.now(),
             },
         })
@@ -231,12 +167,12 @@ export default {
             .catch((err) => {
                 log.error("get game error:" + err);
                 next({
-                    status: 404,
+                    status:  404,
                     message: "not found",
                 });
             });
     },
-    stopRound: async (req, res, next) => {
+    stopRound:          async (req, res, next) => {
         const {
             idGame,
             round
@@ -246,14 +182,14 @@ export default {
             status: C.STOP_ROUND,
         });
     },
-    end: async (req, res, next) => {
+    end:                async (req, res, next) => {
         const id = req.body.idGame;
         let stopGameEvent = constructor.event(C.END_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
         GameModel.findByIdAndUpdate({
             _id: id,
         }, {
-            $set: {
-                status: C.END_GAME,
+            $set:  {
+                status:   C.END_GAME,
                 modified: Date.now(),
             },
             $push: {
@@ -278,7 +214,7 @@ export default {
                 });
             });
     },
-    getFeedbacks: async (req, res, next) => {
+    getFeedbacks:       async (req, res, next) => {
         const id = req.params.idGame;
         try {
             const game = await GameModel.findById(id);
@@ -287,40 +223,53 @@ export default {
             return res.status(200).json({
                 feedbacks,
             });
-        } catch (e) {
+        }
+        catch (e) {
             log.error("Get feedbacks error:" + e);
             return res.status(404).json({
                 message: "Feedbacks not found",
             });
         }
     },
-    getGameById: async (req, res, next) => {
+    getGameById:        async (req, res, next) => {
         const id = req.params.idGame;
-
-        GameModel.findById(id)
-            .then((game) => {
-                if (game) {
-                    return res.status(200).json(game);
-                } else {
-                    return res.status(404).json({
-                        message: "Game not found",
-                    });
-                }
-            })
-            .catch((error) => {
-                log.error("get game error:" + error);
+        try {
+            const game = await gameService.getGameById(id);
+            return res.status(200).json(game);
+        }
+        catch (e) {
+            log.error("Get game error:" + e);
+            return res.status(404).json({
+                message: "Game not found",
+            });
+        }
+    },
+    getIdGameByShortId: async (req, res, next) => {
+        const shortId = req.params.shortId;
+        try {
+            const game = await gameService.getGameByShortId(shortId);
+            if (game.status === C.END_GAME) {
                 return res.status(404).json({
                     message: "Game not found",
                 });
+            }
+            return res.status(200).json(game._id.toString());
+        }
+        catch (e) {
+            log.error("Get game error:" + e);
+            return res.status(404).json({
+                message: "Game not found",
             });
+        }
     },
-    getEvents: async (req, res, next) => {
+    getEvents:          async (req, res, next) => {
         const id = req.params.idGame;
         GameModel.findById(id)
             .then((game) => {
                 if (game) {
                     return res.status(200).json(game.events);
-                } else {
+                }
+                else {
                     return res.status(404).json({
                         message: "Events of game not found",
                     });
@@ -333,7 +282,7 @@ export default {
                 });
             });
     },
-    deletePlayer: async (req, res, next) => {
+    deletePlayer:       async (req, res, next) => {
         const {
             idGame,
             idPlayer
@@ -343,9 +292,9 @@ export default {
                 players: {
                     _id: idPlayer,
                 },
-                events: {
+                events:  {
                     typeEvent: C.NEW_PLAYER,
-                    emitter: idPlayer
+                    emitter:   idPlayer
                 }
             },
         }, {
@@ -356,9 +305,10 @@ export default {
                 let player = players.find(p => p._id === idPlayer);
                 if (!player) {
                     return res.status(200).json(newGame);
-                } else {
+                }
+                else {
                     next({
-                        status: 404,
+                        status:  404,
                         message: "player Not deleted",
                     });
                 }
@@ -370,7 +320,7 @@ export default {
                 });
             });
     },
-    killPlayer: async (req, res, next) => {
+    killPlayer:         async (req, res, next) => {
         const {
             idGame,
             idPlayer
@@ -380,30 +330,31 @@ export default {
             return res.status(200).json({
                 status: "done",
             });
-        } catch (e) {
+        }
+        catch (e) {
             next({
-                status: 400,
+                status:  400,
                 message: e,
             });
         }
     },
-    all: async (req, res, next) => {
+    all:                async (req, res, next) => {
         GameModel.aggregate([
             {
                 $project: {
-                    name: 1,
-                    animator: 1,
-                    location: 1,
-                    status: 1,
-                    typeMoney: 1,
-                    modified: 1,
-                    created: 1,
+                    name:         1,
+                    animator:     1,
+                    location:     1,
+                    status:       1,
+                    typeMoney:    1,
+                    modified:     1,
+                    created:      1,
                     playersCount: {
                         $size: {
                             $filter: {
                                 input: "$players",
-                                as: "player",
-                                cond: {
+                                as:    "player",
+                                cond:  {
                                     $eq: [
                                         {
                                             $ifNull: ["$$player.reincarnateFromId", null],
@@ -429,7 +380,7 @@ export default {
                 });
             });
     },
-    delete: async (req, res, next) => {
+    delete:             async (req, res, next) => {
         const {
             idGame,
             password
@@ -440,26 +391,29 @@ export default {
                 return res.status(200).json({
                     status: "delete done",
                 });
-            } else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password,
+            }
+            else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password,
                 "$2b$04$/uSG6WTkDm94r6fot9lHNes.8MdMkRKTosxjCevTRAHtQXSvWJed6")) {
                 await GameModel.findByIdAndDelete(idGame);
                 return res.status(200).json({
                     status: "delete done",
                 });
-            } else {
+            }
+            else {
                 next({
-                    status: 500,
+                    status:  500,
                     message: "error",
                 });
             }
-        } catch (e) {
+        }
+        catch (e) {
             next({
-                status: 400,
+                status:  400,
                 message: e,
             });
         }
     },
-    reset: async (req, res, next) => {
+    reset:              async (req, res, next) => {
         const idGame = req.body.idGame;
 
         GameTimerManager.stopAndRemoveTimer(idGame);
@@ -475,50 +429,49 @@ export default {
         });
         GameModel.findByIdAndUpdate(idGame, {
             $set: {
-                status: C.OPEN,
-                // typeMoney:               C.JUNE,
-                decks: [],
-                players: players,
-                credits: [],
-                events: events,
-                priceWeight1: game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
-                priceWeight2: game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
-                priceWeight3: game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,
-                priceWeight4: game.typeMoney === C.JUNE ? defaultPriceWeight4ML : defaultPriceWeight4,
-                currentMassMonetary: 0,
-                surveyEnabled: true,
-                devMode: true,
+                status:                  C.OPEN, // typeMoney:               C.JUNE,
+                decks:                   [],
+                players:                 players,
+                credits:                 [],
+                events:                  events,
+                priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
+                priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
+                priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,
+                priceWeight4:            game.typeMoney === C.JUNE ? defaultPriceWeight4ML : defaultPriceWeight4,
+                currentMassMonetary:     0,
+                surveyEnabled:           true,
+                devMode:                 true,
                 generatedIdenticalCards: 4,
-                distribInitCards: 4,
-                generateLettersAuto: true,
-                generateLettersInDeck: 0,
-                amountCardsForProd: 4,
-                round: 0,
-                roundMax: 1,
-                roundMinutes: 25,
-                autoDeath: true,
-                deathPassTimer: 4,
+                distribInitCards:        4,
+                generateLettersAuto:     true,
+                generateLettersInDeck:   0,
+                amountCardsForProd:      4,
+                round:                   0,
+                roundMax:                1,
+                roundMinutes:            25,
+                autoDeath:               true,
+                deathPassTimer:          4,
 
                 //option june
-                currentDU: 0,
-                tauxCroissance: defaultTauxDU,
-                inequalityStart: false,
+                currentDU:        0,
+                tauxCroissance:   defaultTauxDU,
+                inequalityStart:  false,
                 startAmountCoins: 5,
-                pctPoor: 10,
-                pctRich: 10,
+                pctPoor:          10,
+                pctRich:          10,
 
                 //option debt
-                defaultCreditAmount: 3,
+                defaultCreditAmount:   3,
                 defaultInterestAmount: 1,
-                bankInterestEarned: 0,
-                bankGoodsEarned: 0,
-                bankMoneyLost: 0,
-                timerCredit: 5,
-                timerPrison: 5,
-                manualBank: false,
-                seizureType: "decote",
-                seizureCosts: 2,
-                seizureDecote: 33,
+                bankInterestEarned:    0,
+                bankGoodsEarned:       0,
+                bankMoneyLost:         0,
+                timerCredit:           5,
+                timerPrison:           5,
+                manualBank:            false,
+                seizureType:           "decote",
+                seizureCosts:          2,
+                seizureDecote:         33,
             },
         }, {
             new: true,

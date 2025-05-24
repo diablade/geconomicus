@@ -26,6 +26,7 @@ export const environment = {
 	},
 	GAME: {
 		GET: 'game/',
+		GET_BY_SHORT_ID: 'game/short/',
 		GETALL: 'game/all',
 		CREATE: 'game/create',
 		UPDATE: 'game/update',

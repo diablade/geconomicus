@@ -9,6 +9,9 @@
 	</div>
 	<div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="game && game.status==='open'">
 		{{ "MASTER.JOIN"| translate: {name: game.name} }}
+		<button class="ms-2" mat-icon-button (click)="copyJoinLink()">
+			<fa-icon [icon]="faRightToBracket"></fa-icon>
+		</button>
 	</div>
 	<div class="text text-center" *ngIf="game && game.status==='open'">
 		{{ "MASTER.SCAN_QR" | translate: {webHost: environment.WEB_HOST} }}
@@ -23,8 +26,15 @@
 				<div class="qrcodeImage">
 					<ngx-kjua
 						[size]="230"
-						[text]="data"
+						[text]="joinLink"
 						[render]="'svg'"
+						[fontcolor]="'#FF9818'"
+						[fontname]="'arial'"
+						[mode]="'label'"
+						[mSize]="14"
+						[ecLevel]="'H'"
+						[crisp]="true"
+						[label]="game.shortId"
 					></ngx-kjua>
 				</div>
 			</div>

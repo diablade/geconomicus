@@ -2,12 +2,13 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
-import {faCamera} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faChevronDown, faKeyboard} from "@fortawesome/free-solid-svg-icons";
 import {JoinQrDialog} from "../master-board/master-board.component";
 import {Platform} from "@angular/cdk/platform";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 import {I18nService} from "../services/i18n.service";
 import {ContributionsComponent} from "../components/contributions/contributions.component";
+import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
 
 @Component({
 	selector: 'app-home',
@@ -16,6 +17,8 @@ import {ContributionsComponent} from "../components/contributions/contributions.
 })
 export class HomeComponent implements OnInit {
 	faCamera = faCamera;
+	faChevronDown = faChevronDown;
+	faKeyboard = faKeyboard;
 	@ViewChild('coins') coins!: ElementRef;
 	modalPwaEvent: any;
 	modalPwaPlatform: string | undefined;
@@ -59,6 +62,19 @@ export class HomeComponent implements OnInit {
 			const u = new URL(url);
 			const paths = u.pathname.split('/').filter(Boolean);
 			this.router.navigate(paths);
+		});
+	}
+	joinShortId() {
+		const dialogRef = this.dialog.open(JoinShortDialogComponent, {});
+		dialogRef.afterClosed().subscribe( shortCode => {
+			if (shortCode) {
+				this.backService.getIdGameByShortId(shortCode)
+					.subscribe(
+						idGame => {
+							this.router.navigate(['game', idGame, 'join']);
+						}
+					);
+			}
 		});
 	}
 

@@ -10,8 +10,22 @@ import {differenceInMilliseconds} from "date-fns";
 import playerService from "../player/player.service.js";
 import decksService from "../misc/decks.service.js";
 import bankService from '../bank/bank.service.js';
+import { customAlphabet } from 'nanoid'
+const alphabet = 'abcdefghjkmnpqrstuvwxyz123456789' // remove o,l,i,... to avoid confusion
+const nanoid = customAlphabet(alphabet, 4) // 4 characters
 
+//***************** DEFAULT VALUES *******//
 const minute = 60 * 1000;
+const defaultTauxDU= 10;
+const defaultPriceWeight1 = 1;
+const defaultPriceWeight2 = 2;
+const defaultPriceWeight3 = 4;
+const defaultPriceWeight4 = 8;
+const defaultPriceWeight1ML = 3;
+const defaultPriceWeight2ML = 6;
+const defaultPriceWeight3ML = 9;
+const defaultPriceWeight4ML = 12;
+//***************************************//
 
 //***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 async function generateDU(game) {
@@ -225,8 +239,92 @@ async function initGameJune(game) {
     return game;
 }
 
+async function createGame(req) {
+    let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
+
+    const newGame = new GameModel({
+        name: req.body.name ? req.body.name : "sans nom",
+        animator: req.body.animator ? req.body.animator : "sans animateur",
+        location: req.body.location ? req.body.location : "sans lieu",
+        shortId: nanoid(),
+        status: C.OPEN,
+        typeMoney: req.body.typeMoney ? req.body.typeMoney : C.JUNE,
+        events: [createEvent],
+        decks: [],
+        players: [],
+        amountCardsForProd: 4,
+        currentMassMonetary: 0,
+        distribInitCards: 4,
+        generateLettersAuto: true,
+        generateLettersInDeck: 0,
+        generatedIdenticalCards: 4,
+        surveyEnabled: true,
+        devMode: false,
+        priceWeight1: req.body.typeMoney === C.DEBT ? defaultPriceWeight1 : defaultPriceWeight1ML,
+        priceWeight2: req.body.typeMoney === C.DEBT ? defaultPriceWeight2 : defaultPriceWeight2ML,
+        priceWeight3: req.body.typeMoney === C.DEBT ? defaultPriceWeight3 : defaultPriceWeight3ML,
+        priceWeight4: req.body.typeMoney === C.DEBT ? defaultPriceWeight4 : defaultPriceWeight4ML,
+        round: 0,
+        roundMax: 1,
+        roundMinutes: 25,
+        autoDeath: true,
+        deathPassTimer: 4,
+
+        //option june
+        currentDU: 0,
+        tauxCroissance: defaultTauxDU,
+        inequalityStart: false,
+        startAmountCoins: 5,
+        pctPoor: 10,
+        pctRich: 10,
+
+        //option debt
+        credits: [],
+        defaultCreditAmount: 3,
+        defaultInterestAmount: 1,
+        bankInterestEarned: 0,
+        bankGoodsEarned: 0,
+        bankMoneyLost: 0,
+        timerCredit: 5,
+        timerPrison: 5,
+        manualBank: true,
+        seizureType: "decote",
+        seizureCosts: 2,
+        seizureDecote: 33,
+
+        modified: Date.now(),
+        created: Date.now(),
+    });
+    
+    const savedGame = await newGame.save();
+    return savedGame;
+}
+
+async function updateGame(game) {
+    
+}
+
+async function getGameById(id) {
+    let game = await GameModel.findById(id);
+    if (!game) {
+        throw new Error("Game not found");
+    }
+    return game;
+}
+
+async function getGameByShortId(shortId) {
+    let game = await GameModel.findOne({shortId});
+    if (!game) {
+        throw new Error("Game not found");
+    }
+    return game;
+}
+
 export default {
+    createGame: createGame,
     stopRound: stopRound,
+    getGameById: getGameById,
+    getGameByShortId: getGameByShortId,
     async startRound(idGame, round, next) {
         let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
         await GameModel.findByIdAndUpdate(idGame, {
@@ -251,10 +349,10 @@ export default {
             })
     },
     async initGame(game) {
-        if (game.typeMoney === "june") {
+        if (game.typeMoney === C.JUNE) {
             return await initGameJune(game);
         }
-        else if (game.typeMoney === "debt") {
+        else if (game.typeMoney === C.DEBT) {
             return await initGameDebt(game);
         }
     }

@@ -45,7 +45,7 @@ let Feedback = {
 
 let Player = {
 	name: String,
-	idx: String,
+	idx: Number,
 	image: String,
 	coins: Number,
 	cards: [Card],
@@ -74,6 +74,7 @@ let Game = new Schema({
 	name: {type: String, required: true},
 	animator: {type: String, required: true},
 	location: {type: String, required: true},
+	shortId: {type: String, required: true},
 	typeMoney: {type: String, required: false},
 	events: {type: [EventGeco], required: false},
 	decks: {type: [[Card]], required: false},

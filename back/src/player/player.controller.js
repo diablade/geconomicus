@@ -41,49 +41,18 @@ const getById = async (req, res, next) => {
 };
 const join = async (req, res, next) => {
 	const { idGame, name } = req.body;
-	GameModel.findById(idGame).then(async game => {
-		if (game.status === C.END_GAME) {
-			return res.status(403).json({ message: "la partie est terminé mon poto, faut rentrer maintenant..." });
-		} else if (game.status !== C.OPEN) {
-			return res.status(403).json({ message: "la partie est déjà commencé... sorry mon poto" });
-		} else if (game.players.length >= 25) {
-			return res.status(403).json({ message: "25 joueurs max sorry..." });
-		} else {
-			const idPlayer = new mongoose.Types.ObjectId();
-			let player = {
-				_id: idPlayer,
-				idx: game.players.length.toString().padStart(2, '0'),
-				name: name,
-				image: "",
-				coins: 0,
-				credits: [],
-				cards: [],
-				status: C.ALIVE,
-				earringsProbability: 100,
-				glassesProbability: 100,
-				featuresProbability: 100
-			};
-			let joinEvent = constructor.event(C.NEW_PLAYER, idPlayer.toString(), C.MASTER, 0, [], Date.now());
-			GameModel.findByIdAndUpdate({ _id: idGame },
-				{ $push: { players: player, events: joinEvent } },
-				{ new: true })
-				.then(updatedGame => {
-					const newPlayer = updatedGame.players.find(p => p._id == idPlayer.toString());
-					socket.emitTo(idGame + C.MASTER, C.NEW_PLAYER, newPlayer);
-					return res.status(200).json(player._id);
-				}
-				)
-				.catch(error => {
-					log.error(error);
-					return res.status(404).json({ message: "Can't Join, game not found" });
-				}
-				);
+
+	try {
+		let game = await gameService.getGameById(idGame);
+		if (!game) {
+			return res.status(404).json({ message: "Game not found" });
 		}
-	}).catch(error => {
+		const idPlayer = await playerService.join(game, name);
+		return res.status(200).json(idPlayer);
+	} catch (error) {
 		log.error(error);
 		return res.status(404).json({ message: "Game not found" });
 	}
-	);
 };
 const update = async (req, res, next) => {
 	const player = req.body;
@@ -369,7 +338,7 @@ const joinReincarnate = async (req, res, next) => {
 		const player = {
 			_id: idPlayer,
 			name,
-			idx: game.players.length.toString().padStart(2, '0'),
+			idx: game.players.length + 1,
 			coins: 0,
 			credits: [],
 			cards: [],

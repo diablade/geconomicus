@@ -52,7 +52,7 @@ export class EventGeco {
 export class Player {
 	name = "";
 	_id = "";
-	idx = "";
+	idx = 0;
 	image = "";
 	coins = 0;
 	cards: Card[] = [];
@@ -82,6 +82,7 @@ export class Game {
 	name = "";
 	animator = "";
 	location = "";
+	shortId = "";
 	typeMoney = "june";
 	players: Player[] = [];
 	decks: Card[][] = [[]];

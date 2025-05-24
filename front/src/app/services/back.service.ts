@@ -54,6 +54,13 @@ export class BackService {
 			);
 	}
 
+	getIdGameByShortId(shortId: string): Observable<any> {
+		return this.http.get<any>(environment.API_HOST + environment.GAME.GET_BY_SHORT_ID + shortId)
+			.pipe(
+				catchError(err => this.handleError(err, this.ERROR, "ERROR.GAME_UNAVAILABLE"))
+			);
+	}
+
 	joinReincarnate(idGame: string, name: string, fromId: string | undefined): Observable<any> {
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame, name, fromId})
 			.pipe(
