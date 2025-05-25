@@ -34,6 +34,10 @@
 								[letterSize]="'20px'"
 								[flippable]="false"
 						></app-card>
+						<div class="shadowed decotePrice">
+							<span class="strike">{{ card.price }}</span> → {{ card.price - (card.price * seizureDecote / 100) | number : '1.2-2' }}
+							{{ "CURRENCY.EURO"|translate }}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -79,6 +83,10 @@
 								[letterSize]="'20px'"
 								[flippable]="false"
 						></app-card>
+						<div class="shadowed decotePrice">
+							{{ card.price - (card.price * seizureDecote / 100) | number : '1.2-2' }}
+							{{ "CURRENCY.EURO"|translate }}
+						</div>
 					</div>
 				</div>
 			</div>

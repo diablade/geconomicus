@@ -80,7 +80,7 @@ export class SeizureDialogComponent implements OnInit {
 		let seize = 0;
 		_.forEach(this.seizureCards, c => {
 			if (this.seizureType == "decote") {
-				seize += (c.price - (this.seizureDecote / 100));
+				seize += (c.price - (c.price * this.seizureDecote / 100));
 			} else {
 				seize += c.price;
 			}

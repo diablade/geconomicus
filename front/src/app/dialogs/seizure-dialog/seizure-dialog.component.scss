@@ -8,10 +8,26 @@
   height: 300px;
 }
 
-.sold{
+.sold {
   color: black;
   background: wheat;
   border: solid black 1px;
+}
+
+.decotePrice {
+  position: relative;
+  text-align: center;
+  bottom: 20px;
+  z-index: 2;
+  border-radius: 4px; 
+  font-size: 14px;
+  font-weight: bold;
+  
+  .strike {
+    text-decoration-line: line-through;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+  }
 }
 
 .bank-board {
