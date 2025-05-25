@@ -429,6 +429,7 @@ async function resetGame(idGame) {
     const players = game.players.filter(e => e.reincarnateFromId == null);
     players.forEach(p => {
         p.cards = [];
+        p.survey = undefined;
         p.coins = 0;
         p.status = C.ALIVE;
     });
