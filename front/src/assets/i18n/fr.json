@@ -278,7 +278,7 @@
         "CONTRACT": "Contrat",
         "CREDIT_TIMEOUT": "Délai de crédit",
         "INTEREST_PAID": "Intérêt payé",
-        "CREDIT_DEFAULT": "Défaut de crédit",
+        "CREDIT_DEFAULT": "Défaut de paiement",
         "CREDIT_REPAID": "Crédit remboursé",
         "BANK_SEIZURE": "Saisie bancaire",
         "IN_PRISON": "En prison",
