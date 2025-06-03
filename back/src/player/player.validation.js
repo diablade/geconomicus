@@ -71,9 +71,9 @@ export const schemas = {
                 'any.invalid': 'Invalid game ID format',
                 'any.required': 'Game ID is required'
             }),
-        name: Joi.string().min(2).max(30).required()
+        name: Joi.string().min(1).max(30).required()
             .messages({
-                'string.min': 'Name must be at least 2 characters long',
+                'string.min': 'Name must be at least 1 character long',
                 'string.max': 'Name cannot exceed 30 characters',
                 'any.required': 'Name is required'
             })
