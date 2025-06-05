@@ -23,7 +23,7 @@ export class SurveyComponent implements OnInit {
   dependantAutonomous = 0;
   anxiousConfident = 0;
   agressiveAvenant = 0;
-  aloneIntegrated = 0;
+  insatisfiedAccomplished = 0;
 
   constructor(private route: ActivatedRoute, private i18nService: I18nService, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
   }
@@ -44,7 +44,7 @@ export class SurveyComponent implements OnInit {
       +this.competitiveCooperative,
       +this.dependantAutonomous,
       +this.anxiousConfident,
-      +this.aloneIntegrated,
+      +this.insatisfiedAccomplished,
       +this.agressiveAvenant).subscribe(async () => {
       this.snackbarService.showSuccess(this.i18nService.instant("SURVEY.THANK_YOU"));
 

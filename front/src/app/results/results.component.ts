@@ -1,23 +1,25 @@
-import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {BackService} from "../services/back.service";
+import { AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { BackService } from "../services/back.service";
 import io from "socket.io-client";
-import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
+import { Card, EventGeco, Feedback, Game, Player } from "../models/game";
 import * as _ from 'lodash-es';
-import {environment} from "../../environments/environment";
-import {getRandomColor, hexToRgb} from "../services/tools";
+import { environment } from "../../environments/environment";
+import { getRandomColor, hexToRgb } from "../services/tools";
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
-import {ChartConfiguration, ChartDataset} from 'chart.js';
+import { ChartConfiguration, ChartDataset } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import {parseISO, subSeconds} from 'date-fns';
+import { parseISO, subSeconds } from 'date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {BaseChartDirective} from "ng2-charts";
-import {Platform} from "@angular/cdk/platform";
-import {I18nService} from '../services/i18n.service';
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { BaseChartDirective } from "ng2-charts";
+import { Platform } from "@angular/cdk/platform";
+import { I18nService } from '../services/i18n.service';
+import { TranslateService } from '@ngx-translate/core';
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -168,7 +170,7 @@ function drawPieChart(values: number[], colors: any[]) {
 			animation: false,
 			maintainAspectRatio: false,
 			plugins: {
-				legend: {display: false},
+				legend: { display: false },
 			}
 		}
 	});
@@ -206,9 +208,11 @@ function addValues(points: TooltipPoint[]) {
 	templateUrl: './results.component.html',
 	styleUrls: ['./results.component.scss']
 })
-export class ResultsComponent implements OnInit, AfterViewInit {
+export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	private socket: any;
 	idGame = "";
+
+	private destroy$ = new Subject<void>();
 
 	game: Game | undefined;
 	events: EventGeco[] = [];
@@ -244,45 +248,40 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	podiumRes: Player[] = [];
 	podiumTransac: Player[] = [];
 
-	durationGame() {
-		if (this.startGameDate && this.stopGameDate) {
-			const start = new Date(this.startGameDate);
-			const end = new Date(this.stopGameDate);
-			const durationInMilliseconds = end.getTime() - start.getTime();
-			const durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
-			return durationInMinutes + " minutes";
-		}
-		return "-";
-	}
+	feedbacksLabelsTop: string[] = [];
+	feedbacksLabelsBottom: string[] = [];
+	leftLabels: string[] = [];
 
-	getDebts() {
-		let debt = 0;
-		_.forEach(this.game?.credits, c => {
-			if (c.status != C.CREDIT_DONE) {
-				debt += (c.amount + c.interest)
-			}
-		});
-		return debt;
-	}
+	topLabelKeys = [
+		"SURVEY.HAPPY",
+		"SURVEY.COLLECTIVE",
+		"SURVEY.ACCOMPLISHED",
+		"SURVEY.GENEROUS",
+		"SURVEY.COOPERATIVE",
+		"SURVEY.CONFIDENT",
+		"SURVEY.PLEASANT",
+		"SURVEY.TOLERANT",
+		"SURVEY.AUTONOMOUS"];
 
-	getStatus() {
-		switch (this.game?.status) {
-			case C.OPEN:
-				return this.i18nService.instant("GAME.OPEN");
-			case C.PLAYING:
-				return this.i18nService.instant("GAME.PLAYING");
-			case C.END_GAME:
-				return this.i18nService.instant("GAME.END_GAME");
-			case C.STOP_ROUND:
-				return this.i18nService.instant("GAME.STOP_ROUND");
-			case C.INTER_ROUND :
-				return this.i18nService.instant("GAME.INTER_ROUND");
-			case C.START_GAME :
-				return this.i18nService.instant("GAME.START_GAME");
-			default:
-				return "-";
-		}
-	}
+	bottomLabelKeys = [
+		"SURVEY.DEPRESSED",
+		"SURVEY.INDIVIDUAL",
+		"SURVEY.INSATISFIED",
+		"SURVEY.GREEDY",
+		"SURVEY.COMPETITIVE",
+		"SURVEY.ANXIOUS",
+		"SURVEY.AGGRESSIVE",
+		"SURVEY.IRRITABLE",
+		"SURVEY.DEPENDENT"];
+
+	leftLabelKeys = [
+		"SURVEY.VERY",
+		"SURVEY.ENOUGH",
+		"SURVEY.LITTLE",
+		"SURVEY.NUTRAL",
+		"SURVEY.LITTLE",
+		"SURVEY.ENOUGH",
+		"SURVEY.VERYNOT"];
 
 	public lineChartData: ChartConfiguration['data'] | undefined;
 	public lineChartOptions: ChartConfiguration['options'] = {
@@ -297,7 +296,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: "auto" },
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -324,7 +323,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			},
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
@@ -361,7 +360,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: "auto" },
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -376,7 +375,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		plugins: {
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
@@ -408,7 +407,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: "auto" },
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -423,7 +422,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		plugins: {
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
@@ -444,82 +443,16 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	};
 
 	public feedbacksData: ChartConfiguration['data'] | undefined;
-	public feedbacksLabelsTop = [
-		"Joyeux",
-		"Collectif",
-		"En Communauté",
-		"Génereux",
-		"Coopératif",
-		"Confiant",
-		"Avenant",
-		"Tolérant",
-		"Autonome"];
-	public feedbacksLabelsBottom = [
-		"Déprimé",
-		"Individuel",
-		"Seul(e)",
-		"Avare",
-		"Compétitif",
-		"Anxieux",
-		"Agréssif",
-		"Irritable",
-		"Dépendant"];
-
-	public leftLabels = [
-		"(Positif 😊)  Trés",
-		"Assez",
-		"Un peu",
-		"neutre",
-		"Un peu",
-		"Assez",
-		"(Négatif 😒)  Trés"];
 	public feedbacksOptions = undefined;
 
-	constructor(private route: ActivatedRoute,
-	            private platform: Platform,
-	            private router: Router,
-	            private sanitizer: DomSanitizer,
-	            private backService: BackService,
-	            private i18nService: I18nService) {
-	}
-
-	topLabelKeys = [
-		"SURVEY.HAPPY",
-		"SURVEY.COLLECTIVE",
-		"SURVEY.INTEGRATED",
-		"SURVEY.GENEROUS",
-		"SURVEY.COOPERATIVE",
-		"SURVEY.CONFIDENT",
-		"SURVEY.PLEASANT",
-		"SURVEY.TOLERANT",
-		"SURVEY.AUTONOMOUS"];
-
-	bottomLabelKeys = [
-		"SURVEY.DEPRESSED",
-		"SURVEY.INDIVIDUAL",
-		"SURVEY.ALONE",
-		"SURVEY.GREEDY",
-		"SURVEY.COMPETITIVE",
-		"SURVEY.ANXIOUS",
-		"SURVEY.AGGRESSIVE",
-		"SURVEY.IRRITABLE",
-		"SURVEY.DEPENDENT"];
-
-	leftLabelKeys = [
-		"SURVEY.VERY",
-		"SURVEY.ENOUGH",
-		"SURVEY.LITTLE",
-		"SURVEY.NUTRAL",
-		"SURVEY.LITTLE",
-		"SURVEY.ENOUGH",
-		"SURVEY.VERYNOT"];
-
-	convertLabels(labelKeys: string[]) {
-		const labels: string[] = [];
-		for (const key of labelKeys) {
-			labels.push(this.i18nService.instant(key));
-		}
-		return labels;
+	constructor(
+		private route: ActivatedRoute,
+		private platform: Platform,
+		private router: Router,
+		private sanitizer: DomSanitizer,
+		private backService: BackService,
+		private i18nService: I18nService,
+		private translate: TranslateService) {
 	}
 
 	ngOnInit(): void {
@@ -554,17 +487,111 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			});
 			this.initChartOptions();
 		});
-		this.i18nService.onLangChange().subscribe(() => {
-			this.feedbacksLabelsTop = this.convertLabels(this.topLabelKeys);
-			this.feedbacksLabelsBottom = this.convertLabels(this.bottomLabelKeys);
-			this.leftLabels = this.convertLabels(this.leftLabelKeys);
-			// Force complete reinitialization of the chart
+
+		// Wait for translations to be fully loaded
+		this.waitForTranslationsReady().then(() => {
+			this.loadTranslations();
+
+			this.i18nService.onLangChange()
+				.pipe(takeUntil(this.destroy$))
+				.subscribe(async (langEvent) => {
+					console.log("🌐 Language changed to:", langEvent.lang);
+					// Wait for new translations to load
+					await this.waitForTranslationsReady();
+					this.loadTranslations();
+				});
+		});
+	}
+
+	private async waitForTranslationsReady(): Promise<void> {		
+		return new Promise((resolve) => {
+			// Try to get a translation every 50ms until it's not the key itself
+			const checkTranslations = async () => {
+				try {
+					const testKey = this.topLabelKeys[0] || 'common.test';
+					const translation = await firstValueFrom(this.translate.get(testKey));
+					
+					// If translation is not the key itself, translations are loaded
+					if (translation !== testKey) {
+						resolve();
+					} else {
+						setTimeout(checkTranslations, 50);
+					}
+				} catch (error) {
+					console.error("Error checking translations:", error);
+					setTimeout(checkTranslations, 50);
+				}
+			};
+			
+			checkTranslations();
+		});
+	}
+
+	durationGame() {
+		if (this.startGameDate && this.stopGameDate) {
+			const start = new Date(this.startGameDate);
+			const end = new Date(this.stopGameDate);
+			const durationInMilliseconds = end.getTime() - start.getTime();
+			const durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
+			return durationInMinutes + " minutes";
+		}
+		return "-";
+	}
+
+	getDebts() {
+		let debt = 0;
+		_.forEach(this.game?.credits, c => {
+			if (c.status != C.CREDIT_DONE) {
+				debt += (c.amount + c.interest)
+			}
+		});
+		return debt;
+	}
+
+	getStatus() {
+		switch (this.game?.status) {
+			case C.OPEN:
+				return this.i18nService.instant("GAME.OPEN");
+			case C.PLAYING:
+				return this.i18nService.instant("GAME.PLAYING");
+			case C.END_GAME:
+				return this.i18nService.instant("GAME.END_GAME");
+			case C.STOP_ROUND:
+				return this.i18nService.instant("GAME.STOP_ROUND");
+			case C.INTER_ROUND:
+				return this.i18nService.instant("GAME.INTER_ROUND");
+			case C.START_GAME:
+				return this.i18nService.instant("GAME.START_GAME");
+			default:
+				return "-";
+		}
+	}
+	private async loadTranslations() {
+		try {
+			await this.convertLabelsAsync();
 			this.initChartOptions();
-			// Force update the charts after a small delay to ensure the view is updated
 			setTimeout(() => {
 				this.updateCharts();
 			}, 100);
-		});
+		} catch (error) {
+			console.error('Error loading translations:', error);
+		}
+	}
+
+	async convertLabelsAsync(): Promise<void> {
+		const getTranslations = (keys: string[]) =>
+			keys.map(key => firstValueFrom(this.translate.get(key)));
+
+		const labels = await Promise.all([
+			...getTranslations(this.topLabelKeys),
+			...getTranslations(this.bottomLabelKeys),
+			...getTranslations(this.leftLabelKeys)
+		]);
+
+		// Split the results into their respective arrays
+		this.feedbacksLabelsTop = labels.slice(0, this.topLabelKeys.length);
+		this.feedbacksLabelsBottom = labels.slice(this.topLabelKeys.length, this.topLabelKeys.length + this.bottomLabelKeys.length);
+		this.leftLabels = labels.slice(this.topLabelKeys.length + this.bottomLabelKeys.length);
 	}
 
 	initChartOptions() {
@@ -584,11 +611,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				},
 			},
 			scales: {
-				x: {display: false, ticks: {stepSize: 1}},
-				y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3,},
-				x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop,},
-				x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom,},
-				y2: {position: "left", type: "category", labels: this.leftLabels,},
+				x: { display: false, ticks: { stepSize: 1 } },
+				y: { display: false, ticks: { stepSize: 1 }, type: "linear", min: -3, max: 3 },
+				x2: { position: "top", type: "category", labels: this.feedbacksLabelsTop },
+				x3: { position: "bottom", type: "category", labels: this.feedbacksLabelsBottom },
+				y2: { position: "left", type: "category", labels: this.leftLabels },
 			},
 		};
 	}
@@ -602,6 +629,11 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		this.socket.on(C.NEW_FEEDBACK, async () => {
 			this.getFeedbacks();
 		});
+	}
+
+	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 
 	updateCharts() {
@@ -727,7 +759,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 	initFeedbacks(feedbacks: (Feedback | undefined)[]) {
 		const feedbacksCounts1 = _.countBy(feedbacks, "depressedHappy");
 		const feedbacksCounts2 = _.countBy(feedbacks, "individualCollective");
-		const feedbacksCounts3 = _.countBy(feedbacks, "aloneIntegrated");
+		const feedbacksCounts3 = _.countBy(feedbacks, "insatisfiedAccomplished");
 		const feedbacksCounts4 = _.countBy(feedbacks, "greedyGenerous");
 		const feedbacksCounts5 = _.countBy(feedbacks, "competitiveCooperative");
 		const feedbacksCounts6 = _.countBy(feedbacks, "anxiousConfident");
@@ -739,7 +771,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		// @ts-ignore
 		this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
 			const data = _.map(feedback, (count, key) => {
-				return {x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count}
+				return { x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count }
 			});
 			return {
 				data: data,
@@ -816,7 +848,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			}
 			const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
 				// @ts-ignore
-				dataset.data.push({x: date, y: value});
+				dataset.data.push({ x: date, y: value });
 			}
 
 			switch (event.typeEvent) {
@@ -979,7 +1011,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				// @ts-ignore
 				if (lastPointValue && lastPointValue.y) {
 					// @ts-ignore
-					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
+					allLastPoints.push({ key: key, value: lastPointValue.y, label: dataset.label });
 				}
 			}
 		});
@@ -987,7 +1019,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		const podiumMo = _.orderBy(merged, 'value', 'desc');
 
 		this.podiumMoney = _.map(podiumMo, p => {
-			let playerFound = _.find(this.players, {_id: p.key});
+			let playerFound = _.find(this.players, { _id: p.key });
 			if (playerFound) {
 				return playerFound;
 			}
@@ -1005,7 +1037,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// @ts-ignore
 					this.finalResources += lastPointValue.y;
 					// @ts-ignore
-					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
+					allLastPoints.push({ key: key, value: lastPointValue.y, label: dataset.label });
 				}
 			}
 		});
@@ -1014,7 +1046,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 		const podiumR = _.orderBy(merged, 'value', 'desc');
 
 		this.podiumRes = _.map(podiumR, p => {
-			let playerFound = _.find(this.players, {_id: p.key});
+			let playerFound = _.find(this.players, { _id: p.key });
 			if (playerFound) {
 				return playerFound;
 			}
@@ -1031,7 +1063,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
 
 			this.podiumTransac = _.map(sortedPlayers, ([playerId]) => {
-				let playerFound = _.find(this.players, {_id: playerId});
+				let playerFound = _.find(this.players, { _id: playerId });
 				return playerFound || new Player();  // Return player object or a default Player if not found
 			});
 		}
@@ -1045,7 +1077,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 				if (cumulPlayer) {
 					cumulPlayer.value += current.value;
 				} else {
-					cumul.push({key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name});
+					cumul.push({ key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name });
 				}
 			} else if (currentPlayer && !currentPlayer.reincarnateFromId) {
 				// If current player is not reincarnate,
@@ -1054,7 +1086,7 @@ export class ResultsComponent implements OnInit, AfterViewInit {
 					// if value already exist update it
 					cumulPlayer.value += current.value;
 				} else {
-					cumul.push({...current});
+					cumul.push({ ...current });
 				}
 			}
 			return cumul;

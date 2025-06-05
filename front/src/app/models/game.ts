@@ -30,7 +30,7 @@ export class Credit {
 export class Feedback {
 	depressedHappy = 0;
 	individualCollective = 0;
-	aloneIntegrated = 0;
+	insatisfiedAccomplished = 0;
 	greedyGenerous = 0;
 	competitiveCooperative = 0;
 	anxiousConfident = 0;

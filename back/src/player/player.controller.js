@@ -407,7 +407,7 @@ const addFeedback = async (req, res, next) => {
 	const feedback = constructor.feedback(
 		body.depressedHappy,
 		body.individualCollective,
-		body.aloneIntegrated,
+		body.insatisfiedAccomplished,
 		body.greedyGenerous,
 		body.competitiveCooperative,
 		body.anxiousConfident,

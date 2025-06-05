@@ -113,7 +113,7 @@ export const schemas = {
         idPlayer: Joi.string().custom(isValidObjectId).required(),
         depressedHappy: Joi.number().min(-3).max(3).required(),
         individualCollective: Joi.number().min(-3).max(3).required(),
-        aloneIntegrated: Joi.number().min(-3).max(3).required(),
+        insatisfiedAccomplished: Joi.number().min(-3).max(3).required(),
         greedyGenerous: Joi.number().min(-3).max(3).required(),
         competitiveCooperative: Joi.number().min(-3).max(3).required(),
         anxiousConfident: Joi.number().min(-3).max(3).required(),

@@ -34,7 +34,7 @@ let EventGeco = {
 let Feedback = {
 	depressedHappy: Number,
 	individualCollective: Number,
-	aloneIntegrated: Number,
+	insatisfiedAccomplished: Number,
 	greedyGenerous: Number,
 	competitiveCooperative: Number,
 	anxiousConfident: Number,
@@ -159,7 +159,7 @@ let constructor = {
 	feedback: Feedback = (
 		depressedHappy,
 		individualCollective,
-		aloneIntegrated,
+		insatisfiedAccomplished,
 		greedyGenerous,
 		competitiveCooperative,
 		anxiousConfident,
@@ -170,7 +170,7 @@ let constructor = {
 		return {
 			depressedHappy,
 			individualCollective,
-			aloneIntegrated,
+			insatisfiedAccomplished,
 			greedyGenerous,
 			competitiveCooperative,
 			anxiousConfident,

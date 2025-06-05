@@ -290,7 +290,7 @@ export class BackService {
 			);
 	}
 
-	sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, aloneIntegrated: number, agressiveAvenant: number) {
+	sendFeedback(idGame: any, idPlayer: any, individualCollective: number, greedyGenerous: number, irritableTolerant: number, depressedHappy: number, competitiveCooperative: number, dependantAutonomous: number, anxiousConfident: number, insatisfiedAccomplished: number, agressiveAvenant: number) {
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.SURVEY, {
 			idGame,
 			idPlayer,
@@ -301,7 +301,7 @@ export class BackService {
 			competitiveCooperative,
 			dependantAutonomous,
 			anxiousConfident,
-			aloneIntegrated,
+			insatisfiedAccomplished,
 			agressiveAvenant
 		}).pipe(
 			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SEND_SURVEY"))

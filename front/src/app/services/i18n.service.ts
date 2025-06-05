@@ -1,8 +1,8 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {Observable, tap} from 'rxjs';
-import {environment} from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 /**
  * Service for handling internationalization (i18n) and translations
@@ -14,13 +14,13 @@ import {environment} from '../../environments/environment';
 export class I18nService {
 	private readonly STORAGE_KEY = 'language';
 	private readonly DEFAULT_LANG = 'fr';
-	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'es', 'ja', 'ro','sr'];
+	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'es', 'ja', 'ro', 'sr'];
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
-  constructor(private translate: TranslateService) {
-    this.initializeLanguage();
-  }
+	constructor(private translate: TranslateService) {
+		this.initializeLanguage();
+	}
 
 	/**
 	 * Initialize the language based on stored preference or browser language
@@ -77,26 +77,30 @@ export class I18nService {
 			})
 		);
 	}
-	
+
+	getAll(keys: string[]): Observable<string[]> {
+		return this.translate.get(keys);
+	}
+
 	onLangChange() {
 		return this.translate.onLangChange;
 	}
 
-  /**
-   * Set current language
-   * @param lang Language code
-   * @throws Error if language is not supported
-   */
-  use(lang: string): void {
-    if (!this.SUPPORTED_LANGS.includes(lang)) {
+	/**
+	 * Set current language
+	 * @param lang Language code
+	 * @throws Error if language is not supported
+	 */
+	use(lang: string): void {
+		if (!this.SUPPORTED_LANGS.includes(lang)) {
 			console.error(`Unsupported language: ${lang}`);
-			lang='fr';
-    }
+			lang = 'fr';
+		}
 
-    this.translate.use(lang);
-    localStorage.setItem(this.STORAGE_KEY, lang);
-    this.translationCache.clear(); // Clear cache when language changes
-  }
+		this.translate.use(lang);
+		localStorage.setItem(this.STORAGE_KEY, lang);
+		this.translationCache.clear(); // Clear cache when language changes
+	}
 
 	/**
 	 * Get current language

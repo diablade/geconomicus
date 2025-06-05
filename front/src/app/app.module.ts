@@ -183,6 +183,6 @@ LOAD_WASM().subscribe();
 
 export class AppModule {
 	constructor(private i18nService: I18nService) {
-		this.i18nService.setDefaultLang('fr');
+		// Language initialization is handled by I18nService.initializeLanguage()
 	}
 }
