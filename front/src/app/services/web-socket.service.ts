@@ -90,6 +90,14 @@ export class WebSocketService {
 				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTED"));
 			}
 		});
+		this.socket.io.on('ping', () => console.log('ping sent'));
+		// this.socket.on('pong', () => console.log('pong received'));
+		
+		// (this.socket.io as any).on('pong', (latency: number) => {
+		// 	console.log('Pong latency:', latency);
+		// });
+		  
+
 
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');

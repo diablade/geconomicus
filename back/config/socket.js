@@ -28,8 +28,8 @@ class SocketManager {
 				origin: "*",
 				credentials: false
 			},
-			pingInterval: 10000,
-			pingTimeout: 5000,
+			pingInterval: 5000,
+			pingTimeout: 25000,
 			allowEIO3: true, // if older clients need support
 			ackTimeout: 10000,
 			logFailure: true,      // Log failed emissions
@@ -117,9 +117,25 @@ class SocketManager {
 			log.error('error io soket:' + err);
 		});
 		// Ping handler
-		socket.on('ping_geco', () => {
-			socket.emit('pong_geco');
-		});
+		// socket.on('ping_geco', () => {
+		// 	socket.emit('pong_geco');
+		// });
+
+		// socket.on('ping', () => {
+		// 	console.log('Ping from client');
+		// });
+
+		// socket.on('pong', () => {
+		// 	console.log('Pong from client');
+		// });
+
+		//   socket.conn.on('packet', (packet) => {
+		// 	if (packet.type === 'ping') {
+		// 	  console.log('Ping from client');
+		// 	} else if (packet.type === 'pong') {
+		// 	  console.log('Pong from client');
+		// 	}
+		//   });
 	}
 
 	emitTo(roomId, event, data) {
