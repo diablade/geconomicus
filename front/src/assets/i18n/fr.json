@@ -38,7 +38,7 @@
     "MASTER": {
         "SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
         "JOIN": "Rejoins la partie {{name}}",
-        "GUNY_WELCOME": "Hey ! Scanne mon QR Code pour rejoindre la partie.",
+        "GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la partie.",
         "TYPE_OF_MONEY": "Type de monnaie",
         "GAME_OPTION": "Options du jeu",
         "START": "Distribuer les cartes",
@@ -530,8 +530,8 @@
     },
     "JOIN": {
         "TITLE": "Rejoindre la partie !",
-        "SHORT_ID_TITLE": "Entre le code à 4 lettres, pour rejoindre",
-        "SHORT_ID_DESC": "Le code se trouve au centre du QR Code de la partie en cours",
+        "SHORT_ID_TITLE": "Pour rejoindre la partie, entre le code à 4 lettres",
+        "SHORT_ID_DESC": "Le code se trouve au centre du QR code de la partie en cours",
         "NAME_PROMPT": "Votre petit nom ?",
         "GO_BUTTON": "Ğo !",
         "SEARCH": "Rechercher",
