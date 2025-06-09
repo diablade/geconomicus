@@ -79,11 +79,37 @@ app.get('/status', (req, res) => {
 		version: process.env.GECO_VERSION
 	})
 });
+//api memory routes
+app.get('/memory', (req, res) => {
+	const used = process.memoryUsage();
+	return res.status(200).json({
+		status: 'running',
+		version: process.env.GECO_VERSION,
+		memoryUsage: {
+			rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+			heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
+			heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+			external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
+		}	
+	})
+});
 
 // Catch-all for non-matching routes (404 handler)
 app.use((req, res, next) => {
 	return res.status(404).json({"not": "Found"});
 });
+
+// Add to your main app.js or server startup
+setInterval(() => {
+    const used = process.memoryUsage();
+    const memoryUsage = {
+        rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+        heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
+        heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+        external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
+    };
+    log.info('Memory usage:', memoryUsage);
+}, 3600000); // Log every hours
 
 // handle errors
 app.use(function (err, req, res) {

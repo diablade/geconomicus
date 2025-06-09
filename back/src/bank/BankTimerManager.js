@@ -22,10 +22,16 @@ class BankTimerManager {
     }
 
     async stopAndRemoveTimer(id) {
-        let timer = this.getTimer(id);
-        if (timer) {
-            await timer.stop();
-            _.remove(this.timers, {"id": id});
+        try {
+            const timer = this.getTimer(id);
+            if (timer) {
+                await timer.stop().catch(err => {
+                    log.error(`Error stopping timer ${id}:`, err);
+                });
+                _.remove(this.timers, { "id": id });
+            }
+        } catch (err) {
+            log.error(`Unexpected error in stopAndRemoveTimer for ${id}:`, err);
         }
     }
 
