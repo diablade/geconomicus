@@ -87,8 +87,8 @@ async function distribDU(idGame) {
 }
 
 async function stopRound(idGame, gameRound) {
-    gameTimerManager.stopAndRemoveTimer(idGame);
-    gameTimerManager.stopAndRemoveTimer(idGame + "death");
+    await gameTimerManager.stopAndRemoveTimer(idGame);
+    await gameTimerManager.stopAndRemoveTimer(idGame + C.DEATH);
 
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
     GameModel.updateOne({_id: idGame}, {
@@ -125,7 +125,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
     });
     timer.start();
 
-    let timerDeath = new Timer(idGame + "death", totalTimeRound, intervalDeath, {
+    let timerDeath = new Timer(idGame + C.DEATH, totalTimeRound, intervalDeath, {
         idGame,
         autoDeath: game.autoDeath,
         playersIdToKill
@@ -421,8 +421,8 @@ async function initGame(game) {
 }
 
 async function resetGame(idGame) {
-    GameTimerManager.stopAndRemoveTimer(idGame);
-    GameTimerManager.stopAndRemoveTimer(idGame + "death");
+    await GameTimerManager.stopAndRemoveTimer(idGame);
+    await GameTimerManager.stopAndRemoveTimer(idGame + C.DEATH);
     BankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
     const game = await getGameById(idGame);
     const events = game.events.filter(e => e.typeEvent === C.NEW_PLAYER || e.typeEvent === C.CREATE_GAME);

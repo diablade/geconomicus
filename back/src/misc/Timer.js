@@ -39,21 +39,32 @@ export default class Timer {
     }
 
     stop() {
-        if (this.timer) {
-            clearTimeout(this.timer);
+        try {
+            // Clear the main timer if it exists
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            
+            // Clear the heartbeat interval if it exists
+            if (this.heartbeat) {
+                clearInterval(this.heartbeat);
+                this.heartbeat = null;
+            }
+            
+            // Clear all properties to prevent memory leaks
+            this.duration = null;
+            this.interval = null;
+            this.data = null;
+            this.callbackAtInterval = null;
+            this.callbackAtEnd = null;
+            this.endTime = null;
+            this.startTime = null;
+            
+            return Promise.resolve();
+        } catch (error) {
+            console.error(`Error stopping timer ${this.id}:`, error);
+            return Promise.reject(error);
         }
-        if (this.heartbeat) {
-            clearInterval(this.heartbeat);
-        }
-        // this.id = null;
-        this.duration = null
-        this.interval = null;
-        this.data = null;
-        this.callbackAtInterval = null;
-        this.callbackAtEnd = null;
-        this.timer = null;
-        this.heartbeat = null;
-        this.endTime = null;
-        this.startTime = null;
     }
 }
