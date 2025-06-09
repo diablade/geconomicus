@@ -352,7 +352,12 @@
         },
         "CLOSE": "Chiudi",
         "YES": "Sì",
-        "NO": "No"
+        "NO": "No",
+        "CANCEL": "Annulla",
+        "CONTINUE_GAME": "Continua il gioco",
+        "ACTIVE_GAME": "Hai un gioco attivo :",
+        "DISMISS": "Chiudi",
+        "RESUME": "Continua"
     },
     "SURVEY": {
         "THANK_YOU": "Grazie ! ...",

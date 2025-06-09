@@ -352,7 +352,12 @@
         },
         "CLOSE": "閉じる",
         "YES": "はい",
-        "NO": "いいえ"
+        "NO": "いいえ",
+        "CANCEL": "キャンセル",
+        "CONTINUE_GAME": "ゲームを続ける",
+        "ACTIVE_GAME": "アクティブなゲーム：",
+        "DISMISS": "閉じる",
+        "RESUME": "続ける"
     },
     "SURVEY": {
         "THANK_YOU": "ありがとう！結果に移動します...",

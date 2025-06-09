@@ -287,6 +287,7 @@
         "RESET_GAME": "Partie réinitialisée",
         "PRISON_ENDED": "un prisonnier vient de purger sa peine",
         "PRISON_END": "Sortie de prison",
+        "PRISON_END_TEXT": "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ ",
         "BREAK_FREE": "I want to break FREEEEEE !",
         "DELETE_GAME": "la partie est supprimée",
         "DEATH_PASS": "La mort vient de passer 😈",
@@ -302,6 +303,10 @@
         "YES": "Oui",
         "NO": "Non",
         "CANCEL": "Annuler",
+        "CONTINUE_GAME": "Continuer votre partie",
+        "ACTIVE_GAME": "Vous avez une partie active :", 
+        "DISMISS": "Fermer",
+        "RESUME": "Continuer",
         "INFORMATION": {
             "TITLE": "Information !",
             "BTN1": "Ok"

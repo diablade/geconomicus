@@ -360,7 +360,8 @@ async function updateGame(body) {
             typeMoney:          body.typeMoney,
             timerCredit:        body.timerCredit,
             timerPrison:        body.timerPrison,
-            amountCardsForProd: body.amountCardsForProd
+            amountCardsForProd: body.amountCardsForProd,
+            gameName:           body.name
         };
 
         socket.emitTo(body.idGame, C.UPDATE_GAME_OPTION, payload);

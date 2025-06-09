@@ -89,6 +89,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Options> = {};
 	statusGame = "waiting";
+	gameName: string = "";
 	typeMoney = "june";
 	amountCardsForProd = 4;
 	currentDU = 0;
@@ -184,6 +185,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.typeMoney = data.typeMoney;
 			this.currentDU = data.currentDU;
 			this.statusGame = data.statusGame;
+			this.gameName = data.gameName;
 			this.timerCredit = data.timerCredit;
 			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
@@ -209,6 +211,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					});
 				});
 			}
+			this.localStorageService.setItem("session", 
+				{
+					idGame: this.idGame,
+					idPlayer: this.idPlayer,
+					gameName: this.gameName,
+					player: this.player
+				});
 		});
 	}
 
@@ -301,6 +310,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.timerCredit = data.timerCredit;
 				this.timerPrison = data.timerPrison;
 				this.amountCardsForProd = data.amountCardsForProd;
+				this.gameName = data.gameName;
 			}
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
@@ -388,7 +398,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: "Sortie de prison, qu'on ne vous y reprenne plus ! 👮‍♂️ ",
+					text: this.i18nService.instant("EVENTS.PRISON_END_TEXT"),
 					sound: "./../../assets/audios/outPrison.mp3"
 				},
 			});

@@ -353,7 +353,12 @@
         },
         "CLOSE": "Închide",
         "YES": "Da",
-        "NO": "Nu"
+        "NO": "Nu",
+        "CANCEL": "Anulează",
+        "CONTINUE_GAME": "Continua jocul",
+        "ACTIVE_GAME": "Jocul activ :",
+        "DISMISS": "Închide",
+        "RESUME": "Continua"
     },
     "SURVEY": {
         "THANK_YOU": "Mulțumesc! Redirecționare către rezultate...",

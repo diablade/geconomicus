@@ -353,7 +353,12 @@
         },
         "CLOSE": "Zatvori",
         "YES": "Da",
-        "NO": "Ne"
+        "NO": "Ne",
+        "CANCEL": "Otkaži",
+        "CONTINUE_GAME": "Nastavi igru",
+        "ACTIVE_GAME": "Aktivna igra :",
+        "DISMISS": "Zatvori",
+        "RESUME": "Nastavi"
     },
     "SURVEY": {
         "THANK_YOU": "Hvala ! Preusmeravanje na rezultate...",

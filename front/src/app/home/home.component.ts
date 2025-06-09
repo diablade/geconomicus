@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, AfterViewInit, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {BackService} from "../services/back.service";
 import {Router} from "@angular/router";
@@ -8,14 +8,16 @@ import {Platform} from "@angular/cdk/platform";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 import {I18nService} from "../services/i18n.service";
 import {ContributionsComponent} from "../components/contributions/contributions.component";
-import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
+import {JoinShortDialogComponent} from '../dialogs/join-short-dialog/join-short-dialog.component';
+import {LocalStorageService} from '../services/local-storage/local-storage.service';
+import {ResumeSessionPromptComponent} from '../dialogs/resume-session-prompt/resume-session-prompt.component';
 
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
 	styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 	faCamera = faCamera;
 	faChevronDown = faChevronDown;
 	faKeyboard = faKeyboard;
@@ -28,13 +30,28 @@ export class HomeComponent implements OnInit {
 		audio.play();
 	}
 
-	constructor(private router: Router, private i18nService: I18nService, private platform: Platform, private backService: BackService, public dialog: MatDialog) {
+	constructor(private router: Router,
+	            private i18nService: I18nService,
+	            private platform: Platform,
+	            private backService: BackService,
+	            private localStorageService: LocalStorageService,
+	            public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
 		this.loadModalPwa();
 	}
 
+	ngAfterViewInit(): void {
+		const session: any = this.localStorageService.getItem("session");
+		if (session && session.idGame && session.idPlayer) {
+			const dialogRef = this.dialog.open(ResumeSessionPromptComponent, {
+				disableClose: true,
+				data: session
+			});
+			dialogRef.afterClosed().subscribe();
+		}
+	}
 
 	create() {
 		const dialogRef = this.dialog.open(CreateGameDialog, {});
@@ -64,9 +81,10 @@ export class HomeComponent implements OnInit {
 			this.router.navigate(paths);
 		});
 	}
+
 	joinShortId() {
 		const dialogRef = this.dialog.open(JoinShortDialogComponent, {});
-		dialogRef.afterClosed().subscribe( shortCode => {
+		dialogRef.afterClosed().subscribe(shortCode => {
 			if (shortCode) {
 				this.backService.getIdGameByShortId(shortCode)
 					.subscribe(
@@ -90,7 +108,7 @@ export class HomeComponent implements OnInit {
 		});
 	}
 
-	private loadModalPwa(): void {
+	loadModalPwa(): void {
 		if (this.platform.ANDROID) {
 			window.addEventListener('beforeinstallprompt', (event: any) => {
 				event.preventDefault();

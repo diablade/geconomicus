@@ -353,7 +353,12 @@
         },
         "CLOSE": "Close",
         "YES": "Yes",
-        "NO": "No"
+        "NO": "No",
+        "CANCEL": "Cancel",
+        "CONTINUE_GAME": "Continue your game",
+        "ACTIVE_GAME": "You have an active game :",
+        "DISMISS": "Dismiss",
+        "RESUME": "Continue"
     },
     "SURVEY": {
         "THANK_YOU": "Thank you ! let see the results...",

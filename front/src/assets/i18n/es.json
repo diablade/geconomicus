@@ -353,7 +353,11 @@
         "CLOSE": "Cerrar",
         "YES": "Sí",
         "NO": "No",
-        "CANCEL": "Cancelar"
+        "CANCEL": "Cancelar",
+        "CONTINUE_GAME": "Continuar tu partida",
+        "ACTIVE_GAME": "Tienes una partida activa :",
+        "DISMISS": "Cerrar",
+        "RESUME": "Continuar"
     },
     "ERROR": {
         "EXCHANGE": "Intercambio imposible",

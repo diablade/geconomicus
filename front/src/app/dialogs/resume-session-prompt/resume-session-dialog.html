@@ -1,0 +1,15 @@
+<div class="resume-session-prompt">
+    <div class="resume-session-content">
+        <h3>{{"DIALOG.CONTINUE_GAME"|translate}}</h3>
+        <p>{{"DIALOG.ACTIVE_GAME"|translate}}</p>
+        <div class="session-details d-flex flex-column justify-content-between align-items-center">
+            <strong>{{ session.gameName }}</strong>
+            <div class="avatar" [ngStyle]="{'border-color':'#'+session.player.hairColor}" #svg></div>
+            <strong>{{ session.player.name }}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button mat-raised-button color="warn" (click)="dismiss()">{{"DIALOG.DISMISS"|translate}}</button>
+            <button mat-raised-button color="primary" (click)="resume()">{{"DIALOG.RESUME"|translate}}</button>
+        </div>
+    </div>
+</div>
