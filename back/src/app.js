@@ -80,7 +80,7 @@ app.get('/status', (req, res) => {
 	})
 });
 //api memory routes
-app.get('/memory', (req, res) => {
+app.get('/debug/memory', (req, res) => {
 	const used = process.memoryUsage();
 	return res.status(200).json({
 		status: 'running',
@@ -122,6 +122,10 @@ app.use(function (err, req, res) {
 });
 if (process.env.GECO_NODE_ENV !== "test") {
 	const server = http.createServer(app);
+	// Timeout settings
+	server.keepAliveTimeout = 70000;     // 70 secondes
+	server.headersTimeout = 75000;       // Doit être > keepAliveTimeout
+
 	let io = socket.initIo(server);
 	// Verify initialization
 	if (!io) {
