@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable, tap} from 'rxjs';
+import {environment} from '../../environments/environment';
 
 /**
  * Service for handling internationalization (i18n) and translations
@@ -14,7 +13,7 @@ import { environment } from '../../environments/environment';
 export class I18nService {
 	private readonly STORAGE_KEY = 'language';
 	private readonly DEFAULT_LANG = 'fr';
-	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'es', 'ja', 'ro', 'sr'];
+	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'de', 'es', 'ja', 'ro', 'sr'];
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
