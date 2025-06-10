@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {BackService} from "../services/back.service";
+import { Component, OnInit } from '@angular/core';
+import { BackService } from "../services/back.service";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
-import {faTrashCan} from "@fortawesome/free-solid-svg-icons";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {SnackbarService} from "../services/snackbar.service";
+import { faTrashCan, faArrowUpWideShort, faArrowDownShortWide } from "@fortawesome/free-solid-svg-icons";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { SnackbarService } from "../services/snackbar.service";
 import { I18nService } from '../services/i18n.service';
 
 @Component({
@@ -18,24 +18,51 @@ export class HistoryGamesComponent implements OnInit {
 	deleteGames = false;
 	games: any;
 	C = C;
+	gameName = "";
+	gameType = "";
+	gameStatus = "";
+	gameSort = "created";
+	gameSortOrder: "asc" | "desc" = "desc";
 
+	faArrowUpWideShort = faArrowUpWideShort;
+	faArrowDownShortWide = faArrowDownShortWide;
 	constructor(private backService: BackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
+
 	ngOnInit(): void {
 		this.backService.getGames().subscribe(async data => {
-			this.games = _.sortBy(data.games, "created");
+			this.games = _.orderBy(data.games, "created", "desc");
 		});
 	}
 
+	get filteredGames() {
+		let games= _.filter(this.games, (game: any) =>
+			(!this.gameName || game.name.includes(this.gameName)) &&
+			(!this.gameType || game.typeMoney === this.gameType) &&
+			(!this.gameStatus || game.status === this.gameStatus)
+		);
+		console.log(games);
+		console.log(this.gameSort);
+		console.log(this.gameSortOrder);
+		console.log(this.gameStatus);
+		console.log(this.gameType);
+		console.log(this.gameName);
+		games = _.orderBy(games, this.gameSort, this.gameSortOrder);
+		return games;
+	}
 	getStatus(status: string): string {
 		switch (status) {
 			case C.END_GAME:
-				return this.i18nService.instant("HISTORY.STATUS.ENDED");
+				return "HISTORY.STATUS.ENDED";
 			case C.OPEN:
-				return this.i18nService.instant("HISTORY.STATUS.OPEN");
+				return "HISTORY.STATUS.OPEN";
+			case C.START_GAME:
+				return "HISTORY.STATUS.START_GAME";
+			case C.STOP_ROUND:
+				return "HISTORY.STATUS.STOP_ROUND";
 			default:
-				return this.i18nService.instant("HISTORY.STATUS.IN_PROGRESS");
+				return "HISTORY.STATUS.IN_PROGRESS";
 		}
 	}
 
@@ -45,7 +72,7 @@ export class HistoryGamesComponent implements OnInit {
 				return "statusClosed";
 			case C.OPEN:
 				return "statusOpen";
-			default :
+			default:
 				return "statusOnGoing";
 		}
 	}

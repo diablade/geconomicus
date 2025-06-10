@@ -10,6 +10,7 @@
     "VALUES_BY_DEFAULT": "Valori implicite",
     "CANCEL": "Anulează",
     "OK": "OK",
+    "ALL": "Toate",
     "HOME": {
         "PAGE": "Pagina de start",
         "CONTRIBUTION": "Donacii",
@@ -246,10 +247,23 @@
         "ANIMATOR": "Animator:",
         "VIEW_RESULTS": "Vezi rezultatele",
         "VIEW": "Vezi",
+        "NAME_PARTY": "Numele partii",
+        "TYPE_MONEY": "Tipul monedei",
+        "STATUS_TEXT": "Status",
+        "SORT": "Sortare",
+        "BY_DATE": "Data",
+        "BY_PLAYERS": "Număr de jucători",
+        "BY_TYPE": "Tip",
+        "BY_LOCATION": "Locație",
+        "BY_ANIMATOR": "Animator",
+        "BY_STATUS": "Status",
         "STATUS": {
             "ENDED": "Încheiat",
             "OPEN": "Deschis",
-            "IN_PROGRESS": "În desfășurare"
+            "IN_PROGRESS": "În desfășurare",
+            "START_GAME": "Jocul a început",
+            "INTER_ROUND": "Runda în desfășurare",
+            "STOP_ROUND": "Runda încheiată"
         }
     },
     "EVENTS": {

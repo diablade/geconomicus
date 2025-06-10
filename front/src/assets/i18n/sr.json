@@ -10,6 +10,7 @@
     "VALUES_BY_DEFAULT": "Podrazumevane vrednosti",
     "CANCEL": "Otkaži",
     "OK": "U redu",
+    "ALL": "Svi",
     "HOME": {
         "PAGE": "Strana početka",
         "CONTRIBUTION": "Donacije",
@@ -246,10 +247,23 @@
         "ANIMATOR": "Animator:",
         "VIEW_RESULTS": "Pogledaj rezultate",
         "VIEW": "Pogledaj",
+        "NAME_PARTY": "Ime partije",
+        "TYPE_MONEY": "Tip novca",
+        "STATUS_TEXT": "Status",
+        "SORT": "Sortiraj po",
+        "BY_DATE": "Datum",
+        "BY_PLAYERS": "Broj igrača",
+        "BY_TYPE": "Tip",
+        "BY_LOCATION": "Lokacija",
+        "BY_ANIMATOR": "Animator",
+        "BY_STATUS": "Status",
         "STATUS": {
             "ENDED": "Završeno",
             "OPEN": "Otvoreno",
-            "IN_PROGRESS": "U toku"
+            "IN_PROGRESS": "U toku",
+            "START_GAME": "Igra počela",
+            "INTER_ROUND": "Runda u toku",
+            "STOP_ROUND": "Runda završena"
         }
     },
     "EVENTS": {

@@ -10,6 +10,7 @@
     "VALUES_BY_DEFAULT": "Default values",
     "CANCEL": "Cancel",
     "OK": "OK",
+    "ALL": "All",
     "HOME": {
         "PAGE": "Homepage",
         "CONTRIBUTION": "Contributions",
@@ -246,10 +247,23 @@
         "ANIMATOR": "Animator:",
         "VIEW_RESULTS": "View results",
         "VIEW": "View",
+        "NAME_PARTY": "Name of the party",
+        "TYPE_MONEY": "Type of money",
+        "STATUS_TEXT": "Status",
+        "SORT": "Sort by",
+        "BY_DATE": "Date",
+        "BY_PLAYERS": "Number of players",
+        "BY_TYPE": "Type",
+        "BY_LOCATION": "Location",
+        "BY_ANIMATOR": "Animator",
+        "BY_STATUS": "Status",
         "STATUS": {
             "ENDED": "Ended",
             "OPEN": "Open",
-            "IN_PROGRESS": "In progress"
+            "IN_PROGRESS": "In progress",
+            "START_GAME": "Game started",
+            "INTER_ROUND": "Round in progress",
+            "STOP_ROUND": "Round stopped"
         }
     },
     "EVENTS": {

@@ -10,6 +10,7 @@
     "VALUES_BY_DEFAULT": "Valeurs par défaut",
     "CANCEL": "Annuler",
     "OK": "OK",
+    "ALL": "Tous",
     "HOME": {
         "PAGE": "Page d'accueil",
         "CONTRIBUTION": "Contributions",
@@ -248,10 +249,23 @@
         "ANIMATOR": "Animateur :",
         "VIEW_RESULTS": "Voir les résultats",
         "VIEW": "Voir",
+        "NAME_PARTY": "Nom de la partie",
+        "TYPE_MONEY": "Type de monnaie",
+        "STATUS_TEXT": "Statut",
+        "SORT": "Trier par",
+        "BY_DATE": "Date",
+        "BY_PLAYERS": "Nombre de joueurs",
+        "BY_TYPE": "Type",
+        "BY_LOCATION": "Lieu",
+        "BY_ANIMATOR": "Animateur",
+        "BY_STATUS": "Statut",
         "STATUS": {
             "ENDED": "Terminé",
             "OPEN": "Ouvert",
-            "IN_PROGRESS": "En cours"
+            "IN_PROGRESS": "En cours",
+            "START_GAME": "Jeu démarré",
+            "INTER_ROUND": "Manche en cours",
+            "STOP_ROUND": "Manche terminée"
         }
     },
     "EVENTS": {

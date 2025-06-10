@@ -9,6 +9,7 @@
     "VALUES_BY_DEFAULT": "Valores por defecto",
     "CANCEL": "Anular",
     "OK": "OK",
+    "ALL": "Todo",
     "HOME": {
         "PAGE": "Pagina de inicio",
         "CONTRIBUTION": "Contribuciones",
@@ -265,10 +266,23 @@
         "ANIMATOR": "Animador:",
         "VIEW_RESULTS": "Ver los resultados",
         "VIEW": "Ver",
+        "NAME_PARTY": "Nombre de la partida",
+        "TYPE_MONEY": "Tipo de moneda",
+        "STATUS_TEXT": "Estado",
+        "SORT": "Ordenar por",
+        "BY_DATE": "Fecha",
+        "BY_PLAYERS": "Jugadores",
+        "BY_TYPE": "Tipo",
+        "BY_LOCATION": "Lugar",
+        "BY_ANIMATOR": "Animador",
+        "BY_STATUS": "Estado",
         "STATUS": {
             "ENDED": "Terminado",
             "OPEN": "Abierto",
-            "IN_PROGRESS": "En curso"
+            "IN_PROGRESS": "En curso",
+            "START_GAME": "Juego comenzado",
+            "INTER_ROUND": "Ronda en curso",
+            "STOP_ROUND": "Ronda terminada"
         },
         "IMPORT_EXPORT": "(La importación y exportación de partidas será posible en breve)."
     },

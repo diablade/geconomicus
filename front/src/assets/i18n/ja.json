@@ -9,6 +9,7 @@
     "VALUES_BY_DEFAULT": "デフォルト値",
     "CANCEL": "キャンセル",
     "OK": "OK",
+    "ALL": "すべて",
     "HOME": {
         "PAGE": "ホームページ",
         "CONTRIBUTION": "寄付",
@@ -245,10 +246,23 @@
         "ANIMATOR": "アニメーター：",
         "VIEW_RESULTS": "結果を表示",
         "VIEW": "表示",
+        "NAME_PARTY": "パーティ名",
+        "TYPE_MONEY": "通貨タイプ",
+        "STATUS_TEXT": "状態",
+        "SORT": "ソート",
+        "BY_DATE": "日付",
+        "BY_PLAYERS": "プレイヤー数",
+        "BY_TYPE": "タイプ",
+        "BY_LOCATION": "ロケーション",
+        "BY_ANIMATOR": "アニメーター",
+        "BY_STATUS": "状態",
         "STATUS": {
             "ENDED": "終了",
             "OPEN": "オープン",
-            "IN_PROGRESS": "進行中"
+            "IN_PROGRESS": "進行中",
+            "START_GAME": "ゲーム開始",
+            "INTER_ROUND": "ラウンド中",
+            "STOP_ROUND": "ラウンド終了"
         }
     },
     "EVENTS": {

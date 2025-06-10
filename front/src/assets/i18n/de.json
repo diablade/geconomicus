@@ -10,6 +10,7 @@
     "VALUES_BY_DEFAULT": "Standardwerte",
     "CANCEL": "Abbrechen",
     "OK": "OK",
+    "ALL": "Alle",
     "HOME": {
         "PAGE": "Startseite",
         "CONTRIBUTION": "Beiträge",
@@ -248,10 +249,23 @@
         "ANIMATOR": "Spielleiter:",
         "VIEW_RESULTS": "Ergebnisse ansehen",
         "VIEW": "Ansehen",
+        "NAME_PARTY": "Name der Partei",
+        "TYPE_MONEY": "Typ der Währung",
+        "STATUS_TEXT": "Status",
+        "SORT": "Sortieren nach",
+        "BY_DATE": "Datum",
+        "BY_PLAYERS": "Anzahl der Spieler",
+        "BY_TYPE": "Typ",
+        "BY_LOCATION": "Ort",
+        "BY_ANIMATOR": "Spielleiter",
+        "BY_STATUS": "Status",
         "STATUS": {
             "ENDED": "Beendet",
             "OPEN": "Offen",
-            "IN_PROGRESS": "In Bearbeitung"
+            "IN_PROGRESS": "In Bearbeitung",
+            "START_GAME": "Spiel gestartet",
+            "INTER_ROUND": "Runde in Bearbeitung",
+            "STOP_ROUND": "Runde beendet"
         }
     },
     "EVENTS": {
