@@ -55,7 +55,7 @@ export class CardComponent {
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
 	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
 	@Input() flippable = true;
-	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(11vw * 0.2)' : 'calc(11vh * 0.2)';
+	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(6vw * 0.2)' : 'calc(6vh * 0.2)';
 	state = "default";
 	translateX = 0;
 	translateY = 0;

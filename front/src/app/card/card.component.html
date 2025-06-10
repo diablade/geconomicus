@@ -6,13 +6,13 @@
 	<div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
 		<img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
 		<div class="containerLetter topLeft" [ngClass]="state==='flipped' ? 'hide' : 'show'">
-			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{ card.letter }}</span>
+			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
 		</div>
 		<div class="containerLetter bottomRight" [ngClass]="state==='flipped' ? 'hide' : 'show'">
-			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">{{ card.letter }}</span>
+			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
 		</div>
 		<div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
-		     [ngClass]="card.color+'Color'"></div>
+			[ngClass]="[card.color + 'Color', state === 'flipped' ? 'hide' : 'show']"></div>
 		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color="accent"
 		        class="transform">
 			<div class="giftBounce">🛠️</div>
@@ -22,8 +22,8 @@
 	</div>
 	<div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
 		<div class="d-flex flex-row align-items-center">
-			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">{{ card.letter }}</div>
-			<div class="prices d-flex flex-column">
+			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">&nbsp;{{ card.letter }}&nbsp;</div>
+			<div class="prices d-flex flex-column justify-content-between">
 				<div [style.font-size]="priceSize" [style.line-height]="priceSize"
 				     class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 				</div>
