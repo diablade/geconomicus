@@ -103,6 +103,8 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			_.forEach(this.game.credits, c => {
 				if (c._id == data._id) {
 					c.status = C.CREDIT_DONE;
+					this.game.currentMassMonetary -= c.interest;
+					this.game.currentMassMonetary -= c.amount;
 				}
 			});
 		});
