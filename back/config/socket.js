@@ -41,10 +41,10 @@ class SocketManager {
 				origin: "*",
 				credentials: false
 			},
-			pingInterval: 5000,
-			pingTimeout: 25000,
+			pingInterval: 3000,
+			pingTimeout: 6000,
 			allowEIO3: true, // if older clients need support
-			ackTimeout: 10000,
+			ackTimeout: 6000,
 			logFailure: true,      // Log failed emissions
 		});
 

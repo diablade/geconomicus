@@ -57,14 +57,15 @@ export class WebSocketService {
 					idPlayer: this.idPlayer,
 					idGame: this.idGame,
 				},
-				ackTimeout: 15000,            // Increased timeout to 15 seconds
+				ackTimeout: 4000,            // timeout to 5 seconds
 				// allowEIO3: true,
+				tryAllTransports: true,
 				autoConnect: true,
 				reconnection: true,       // Enable automatic reconnection
-				reconnectionAttempts: 10, // Number of reconnection attempts// Increase attempts
+				reconnectionAttempts: 5, // Number of reconnection attempts// Increase attempts
 				reconnectionDelay: 1000,  // Delay between reconnections
-				reconnectionDelayMax: 10000,  // Maximum delay between reconnections (increased)
-				timeout: 20000,               // connection timeout (increased)
+				reconnectionDelayMax: 2000,  // Maximum delay between reconnections (2s)
+				timeout: 6000,               // connection timeout (6s)
 				transports: ['websocket', 'polling'],  // Explicitly set transports
 				// forceNew: true     // may not recconnect
 			});
@@ -91,13 +92,9 @@ export class WebSocketService {
 			}
 		});
 		this.socket.io.on('ping', () => console.log('ping sent'));
-		// this.socket.on('pong', () => console.log('pong received'));
-		
 		// (this.socket.io as any).on('pong', (latency: number) => {
 		// 	console.log('Pong latency:', latency);
 		// });
-		  
-
 
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');
