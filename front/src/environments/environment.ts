@@ -1,8 +1,8 @@
 export const environment = {
 	production: false,
 
-	API_HOST: 'http://localhost:8085/',
-	WEB_HOST: 'http://localhost:4200/',
+	API_HOST: `http://${window.location.hostname}:8085/`,
+	WEB_HOST: `http://${window.location.hostname}:4200/`,
 
 	PLAYER: {
 		JOIN: 'player/join/',
