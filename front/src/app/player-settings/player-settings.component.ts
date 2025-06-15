@@ -29,8 +29,30 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 		...schema.properties,
 		...adventurer.schema.properties,
 	};
-	skinPalette: Array<any> = ['#f2d3b1', '#ecad80', '#9e5622', '#763900'];
-	hairPalette: Array<any> = ['#ac6511', '#cb6820', '#ab2a18', '#e5d7a3', '#b9a05f', '#796a45', '#6a4e35', '#562306', '#0e0e0e', '#afafaf', '#3eac2c', '#85c2c6', '#dba3be', '#592454'];
+	skinPalette: Array<any> = ['#f2d3b1', '#ecad80', '#9e5622', '#763900', '#371d00', '#ffffff','#000000' ];
+	hairPalette: Array<any> =
+		[
+			'#000000', // noir intense
+			'#808080', // gris (argent)
+			'#ffffff', // blanc (albinos/âgé)
+			'#5a3e2b', // brun chaud
+			'#a9745a', // brun clair
+			'#e2b77b', // blond foncé
+			'#fff0b3', // blond très clair
+			'#ffff00', // super sayian
+			'#aeff00', // broly
+			'#d8bfd8', // lavande pastel (fantaisie)
+			'#ff69b4', // rose flashy
+			'#c71585', // magenta foncé
+			'#6a5acd', // violet électrique
+			'#4169e1', // bleu stylisé
+			'#00ced1', // turquoise
+			'#32cd32', // vert lime
+			'#900000', // rouge foncé
+			'#ff6e6e', // saumon
+			'#d2691e', // roux foncé
+		]
+
 	boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
 	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {
@@ -206,13 +228,13 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	randomize() {
-		this.player.earrings = this.getRandomInt(-1, this.properties.earrings.default.length-1);
-		this.player.glasses = this.getRandomInt(-1, this.properties.glasses.default.length-1);
-		this.player.features = this.getRandomInt(-1, this.properties.features.default.length-1);
-		this.player.eyes = this.getRandomInt(0, this.properties.eyes.default.length-1);
-		this.player.eyebrows = this.getRandomInt(0, this.properties.eyebrows.default.length-1);
-		this.player.hair = this.getRandomInt(0, this.properties.hair.default.length-1);
-		this.player.mouth = this.getRandomInt(0, this.properties.mouth.default.length-1);
+		this.player.earrings = this.getRandomInt(-1, this.properties.earrings.default.length - 1);
+		this.player.glasses = this.getRandomInt(-1, this.properties.glasses.default.length - 1);
+		this.player.features = this.getRandomInt(-1, this.properties.features.default.length - 1);
+		this.player.eyes = this.getRandomInt(0, this.properties.eyes.default.length - 1);
+		this.player.eyebrows = this.getRandomInt(0, this.properties.eyebrows.default.length - 1);
+		this.player.hair = this.getRandomInt(0, this.properties.hair.default.length - 1);
+		this.player.mouth = this.getRandomInt(0, this.properties.mouth.default.length - 1);
 		this.hairColor = this.hairPalette[this.getRandomInt(0, 13)];
 		this.skin = this.skinPalette[this.getRandomInt(0, 3)];
 		this.player.skinColor = this.skin.replace("#", "");
