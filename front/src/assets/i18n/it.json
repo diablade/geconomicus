@@ -554,6 +554,24 @@
         "TITLE": "Moduli pedagogici",
         "BUTTON": "Moduli pedagogici"
     },
+    "TASK": {
+        "MASTER_TASK": "Animatore",
+        "UNSELECT_ALL": "Deseleziona tutti",
+        "TITLE": "Lista delle attivit dell'animatore",
+        "PREPARE": "Scegli le opzioni del gioco",
+        "PRESENT_YOURSELF": "Presentati",
+        "PRESENT_ML": "Presenta l'obiettivo del gioco (2 valute, 2 risultati di gioco diversi)",
+        "DELAY": "Spiega i tempi di attesa per ciascuna delle due manches",
+        "SQUARES": "crea valore raccogliendo carte identiche attraverso transazioni",
+        "TRANSACTIONS": "Spiega come effettuare acquisti (telecamera o codice di accesso) e gioca una partita per un massimo di 5 minuti (usa la modalit sperimentale per avere il pulsante di reset)",
+        "DEATH": "spiega la morte (chi cade arbitrariamente) e la reincarnazione immediata",
+        "START_1": "Inizia una volta che tutti i giocatori hanno partecipato al gioco, inizia la manche quando hanno ricevuto le carte",
+        "SURVEY_1": "Fine della manche, raccogli le sensazioni tramite un sondaggio sul telefono",
+        "NEXT_MONEY": "Inizia la manche con l'altra valuta",
+        "START_2": "Inizia una volta che tutti i giocatori hanno partecipato al gioco, inizia la manche quando hanno ricevuto le carte",
+        "SURVEY_2": "Fine della manche, raccogli le sensazioni tramite un sondaggio sul telefono",
+        "RESULTS": "Fine del gioco, rivela i risultati e confronta le due manches"
+    },
     "MODULE": {
         "BACK_HOME": "Torna alla home",
         "GALILEO": {

@@ -554,6 +554,24 @@
         "TITLE": "Obrazovni moduli",
         "BUTTON": "Obrazovni moduli"
     },
+    "TASK": {
+        "MASTER_TASK": "Animatore",
+        "UNSELECT_ALL": "Poništi sve",
+        "TITLE": "Lista zadataka animatorea",
+        "PREPARE": "Izaberite opcije igre",
+        "PRESENT_YOURSELF": "Predstavite se",
+        "PRESENT_ML": "Predstavi cilj igre (2 valute, 2 različita rezultata igre)",
+        "DELAY": "Objasnite vremenske okvire za svaku od dve runde",
+        "SQUARES": "stvaranje vrednosti putem trgovine identičnim kartama",
+        "TRANSACTIONS": "Objasnite kako izvršiti kupovinu (kamera ili kod) i izvršite lažnu igru najviše 5 minuta (koristite eksperimentalni režim za dobijanje dugmeta za ponovno pokretanje)",
+        "DEATH": "objasnite smrt (koja se događa slučajno) i trenutno rođenje",
+        "START_1": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
+        "SURVEY_1": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
+        "NEXT_MONEY": "pokrenite rundu u drugoj valuti",
+        "START_2": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
+        "SURVEY_2": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
+        "RESULTS": "Kraj igre, objavite rezultate i poređenje dve runde"
+    },
     "MODULE": {
         "BACK_HOME": "Nazad na početnu",
         "GALILEO": {

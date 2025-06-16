@@ -553,6 +553,24 @@
         "TITLE": "Módulos pedagógicos",
         "BUTTON": "Módulos pedagógicos"
     },
+    "TASK": {
+        "MASTER_TASK": "Animador",
+        "UNSELECT_ALL": "Desmarcar todos",
+        "TITLE": "Lista de tareas del animador",
+        "PREPARE": "Seleccionar opciones del juego",
+        "PRESENT_YOURSELF": "Presentarse",
+        "PRESENT_ML": "Presentar el objetivo del juego (2 monedas, 2 resultados de juego diferentes)",
+        "DELAY": "Explicar los plazos para cada una de las dos manchas",
+        "SQUARES": "crear valor mediante la unión de cartas idénticas mediante transacciones",
+        "TRANSACTIONS": "Explicar cómo realizar compras (cámara o digicode) y hacer una parte de prueba durante un máximo de 5 minutos (utilizar el modo experimental para obtener el botón de reinicio)",
+        "DEATH": "explicar la muerte (que cae arbitrariamente) y la resurrección inmediata",
+        "START_1": "Iniciar una vez que todos los jugadores hayan unido la partida, lanzar la mancha cuando hayan recibido las cartas",
+        "SURVEY_1": "Fin de la mancha, recopilar sentimientos mediante una encuesta en el teléfono",
+        "NEXT_MONEY": "lanzar la mancha en la otra moneda",
+        "START_2": "Iniciar una vez que todos los jugadores hayan unido la partida, lanzar la mancha cuando hayan recibido las cartas",
+        "SURVEY_2": "Fin de la mancha, recopilar sentimientos mediante una encuesta en el teléfono",
+        "RESULTS": "Fin de la partida, revelar resultados y comparar las dos manchas"
+    },
     "MODULE": {
         "BACK_HOME": "Back to home",
         "GALILEO": {

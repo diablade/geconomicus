@@ -558,6 +558,24 @@
         "TITLE": "Contributions",
         "SUBTITLE": "A big THANKS ❤️ to the following people for their contributions, supporters, advice, ideas, spelling corrections, translations, etc.."
     },
+    "TASK": {
+        "MASTER_TASK": "Master task",
+        "UNSELECT_ALL": "Unselect all",
+        "TITLE": "List of master tasks",
+        "PREPARE": "Choose game options",
+        "PRESENT_YOURSELF": "Present yourself",
+        "PRESENT_ML": "Present the game objective (2 currencies, 2 different game results)",
+        "DELAY": "Explain the delays for each of the two rounds",
+        "SQUARES": "create value by gathering identical cards through transactions",
+        "TRANSACTIONS": "Explain how to make purchases (camera or digicode) and play a fake game for a maximum of 5 minutes (use experimental mode to have the reset button)",
+        "DEATH": "explain the death (who falls arbitrarily) and immediate reincarnation",
+        "START_1": "Start once all players have joined the game, start the round when they have received the cards",
+        "SURVEY_1": "End of the round, collect feelings by a phone survey",
+        "NEXT_MONEY": "Start the round in the other currency",
+        "START_2": "Start once all players have joined the game, start the round when they have received the cards",
+        "SURVEY_2": "End of the round, collect feelings by a phone survey",
+        "RESULTS": "End of the game, reveal the results and compare the two rounds"
+    },
     "MODULE": {
         "BACK_HOME": "Back to home",
         "GALILEO": {

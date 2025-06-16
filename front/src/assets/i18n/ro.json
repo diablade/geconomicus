@@ -554,6 +554,24 @@
         "TITLE": "Moduri de învățare",
         "BUTTON": "Moduri de învățare"
     },
+    "TASK": {
+        "MASTER_TASK": "Animator",
+        "UNSELECT_ALL": "Deselectați tot",
+        "TITLE": "Lista de sarcini ale animatorului",
+        "PREPARE": "Selectați opțiunile jocului",
+        "PRESENT_YOURSELF": "Prezentați-vă",
+        "PRESENT_ML": "Prezentați scopul jocului (2 monede, 2 rezultate diferite)",
+        "DELAY": "Explicați termenele pentru fiecare dintre cele două manșe",
+        "SQUARES": "Creați valoare prin reunirea de cărți identice prin tranzacții",
+        "TRANSACTIONS": "Explicați cum să faceți achiziții (cameră sau cod de acces) și să faceți o parte pentru 5 minute (utilizați modul experimental pentru a obține butonul de resetare)",
+        "DEATH": "Explicați moartea (care are loc arbitrar) și renașterea imediată",
+        "START_1": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
+        "SURVEY_1": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
+        "NEXT_MONEY": "Lansați manșa în cealaltă monedă",
+        "START_2": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
+        "SURVEY_2": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
+        "RESULTS": "Sfârșitul părții, dezvăluirea rezultatelor și compararea celor două manșe"
+    },
     "MODULE": {
         "BACK_HOME": "Înapoi acasă",
         "GALILEO": {
