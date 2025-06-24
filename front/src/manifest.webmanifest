@@ -4,9 +4,9 @@
   "theme_color": "#1976d2",
   "background_color": "#ffd89b",
   "display": "standalone",
-  "orientation": "portrait",
-  "scope": "./",
-  "start_url": "./",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "assets/icons/icon-72.png",
