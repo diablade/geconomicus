@@ -4,7 +4,7 @@
     "ANIMATOR": "Animatore",
     "FREE_MONEY": "Moneta libera",
     "DEBT_MONEY": "Moneta debito",
-    "GAME_NOTICE": "Istruzioni di gioco",
+    "GAME_NOTICE": "Istruzioni del gioco",
     "BY_DEFAULT": "per impostazione predefinita",
     "VALUES_BY_DEFAULT": "Valori predefiniti",
     "CANCEL": "Annulla",
@@ -14,7 +14,7 @@
         "PAGE": "Pagina di inizio",
         "CONTRIBUTION": "Contributi",
         "WELCOME": "Scopri la Moneta Libera attraverso il gioco!",
-        "INSTALL": "Installa l'applicazione",
+        "INSTALL": "Installare l'app (facoltativo)",
         "CREATE_GAME": "Crea una partita",
         "JOIN_GAME": "Unisciti ad una partita",
         "HOW_TO_PLAY": "Come funziona?",
@@ -23,77 +23,79 @@
         "OR_IN": " o in",
         "SAY_HI": "Hai bisogno di aiuto, hai un'idea, hai trovato un bug, o vuoi semplicemente dirmi ciao?",
         "LINK_SAY_HI": "Clicca qui",
-        "LOOKING_FOR_PAPER_GAME": "Cerchi il gioco originale in versione cartacea?"
+        "LOOKING_FOR_PAPER_GAME": "Cerchi il gioco originale in versione cartacea?",
+        "JOIN_VIA_CAM": "Tramite la telecamera",
+        "JOIN_VIA_SHORT_ID": "Tramite il codice breve"
     },
     "GAME": {
-        "OPEN": "Aperto per partecipare",
+        "OPEN": "Partita aperta per partecipare",
         "PLAYING": "In corso",
-        "END_GAME": "Gioco terminato",
+        "END_GAME": "Giro terminato",
         "STOP_ROUND": "Giro terminato",
         "INTER_ROUND": "Inter turno",
-        "START_GAME": "Gioco avviato"
+        "START_GAME": "Partita iniziata"
     },
     "MASTER": {
-        "SCAN_QR": "vai su {{webHost}}, poi clicca su 'unisciti'!",
+        "SCAN_QR": "Vai su {{webHost}}, poi clicca su 'unisciti'!",
         "JOIN": "Unisciti al gioco {{name}}",
         "GUNY_WELCOME": "Ehi! Scansiona il mio codice QR per partecipare.",
         "TYPE_OF_MONEY": "Tipo di moneta",
-        "GAME_OPTION": "Opzioni di gioco",
-        "START": "Iniziare",
+        "GAME_OPTION": "Opzioni del gioco",
+        "START": "Distribuire le carte",
         "ROUND": "turno",
-        "LIVE_EVENT_BTN": "Risultati dal vivo",
+        "LIVE_EVENT_BTN": "Aprire la pagina coi risultati dal vivo",
         "RESET": "RESET",
-        "WAITING": "Ancora {{count}} giocatore(i) prima di iniziare",
-        "START_ROUND": "Inizia il turno",
+        "WAITING": "Ancora {{count}} giocatore(i) prima di distribuire le carte",
+        "START_ROUND": "Iniziare il turno",
         "STOP_ROUND": "Ferma",
         "NEXT_ROUND": "Turno successivo",
-        "SEND_SURVEY": "Lancia il sondaggio e mostra i risultati",
-        "SHOW_RESULTS": "Gioco terminato, mostra i risultati",
+        "SEND_SURVEY": "Lanciare il sondaggio e mostrare i risultati",
+        "SHOW_RESULTS": "Visualizzare i risultati",
         "BANK_BTN": "Visualizza banca",
         "DELETE_USER": "Eliminare un giocatore?",
         "USERS_CONNECTED": "Giocatori connessi",
         "PLAYERS": "Giocatori",
-        "KILL_USERS": "lascia passare la morte?"
+        "KILL_USERS": "Lasciare che la morte passi?"
     },
     "NOTICE": {
         "TITLE": "Guida dell'utente",
-        "INTRO_1": "Immergiti in un'esperienza ludica e immersiva dove esplori la creazione di moneta, l'economia e i loro impatti in base ai tipi di moneta che scegli.",
-        "INTRO_2": "Confronta gli effetti delle tue decisioni e scopri i complessi meccanismi del sistema economico in modo coinvolgente e interattivo.",
-        "INTRO_3": "Ogni gioco ti consente di sperimentare scenari unici mentre impari a padroneggiare le dinamiche monetarie in modo coinvolgente e divertente.",
+        "INTRO_1": "Un'esperienza ludica e coinvolgente in cui si simula un'economia e si vedono gli impatti in base della moneta scelta.",
+        "INTRO_2": "In modo affascinante e interattivo, capirai come si crea il denaro e scoprirai il funzionamento del sistema economico.",
+        "INTRO_3": "Ogni giro ti consente di sperimentare uno scenario unico ed impari a gestire le dinamiche monetarie in modo coinvolgente e divertente.",
         "INTRO_4": "Un gioco progettato per risvegliare la tua curiosità e stimolare il tuo pensiero sull'economia mentre ti intrattiene.",
         "PLAYERS": "(Da 6 a 25 giocatori).",
         "TITLE_GOAL": "Obiettivo del gioco",
-        "GOAL_1": "L'obiettivo è simulare due sistemi monetari, uno in moneta debito e l'altro in moneta libera.",
-        "GOAL_2": "A seconda del tipo di moneta utilizzata, le dinamiche economiche e le opportunità di scambio evolveranno, aggiungendo una dimensione strategica unica a ogni gioco.",
-        "GOAL_3": "Un gioco dura circa 20-25 minuti per tipo di moneta.",
-        "GOAL_4": "(quindi in totale, 40-50 minuti, più tempo di discussione)",
-        "GOAL_5": "Questi due giochi sono quindi utili per confrontare i risultati tra di loro, evidenziando le loro differenze e ciò che hanno permesso di fare collettivamente o meno.",
-        "GOAL_6": "Ogni giocatore deve massimizzare i propri valori economici (risorse e moneta) entro il tempo assegnato.",
-        "GOAL_7": "Per raggiungere questo obiettivo, ogni giocatore ha moneta e carte risorsa che può acquistare o vendere ad altri partecipanti.",
-        "GOAL_8": "La sfida consiste nell'assemblare quadrati di 4 carte identiche, quindi trasformarle in carte di valore superiore per aumentare le tue risorse. Puoi quindi rivendere la tua produzione.",
+        "GOAL_1": "L'obiettivo è quello di simulare due sistemi monetari, con un giro in moneta debito e l'altro in moneta libera.",
+        "GOAL_2": "Secondo il tipo di moneta utilizzata, le dinamiche economiche e le opportunità di scambio evolveranno, aggiungendo una dimensione strategica unica a ogni gioco.",
+        "GOAL_3": "Il gioco dedica un giro di circa 20-25 minuti per tipo di moneta.",
+        "GOAL_4": "Il gioco dura quindi 40-50 minuti, più il tempo della discussione.",
+        "GOAL_5": "I due giri sono necessari per confrontare i risultati tra di loro, evidenziando le loro differenze e ciò che hanno permesso di fare collettivamente.",
+        "GOAL_6": "Ogni giocatore deve ottimizzare i propri valori economici (risorse e moneta) entro il tempo assegnato.",
+        "GOAL_7": "Per raggiungere questo obiettivo, ogni giocatore dispone di carte risorse che può acquistare o vendere ad altri partecipanti tramite una moneta.",
+        "GOAL_8": "La sfida consiste nell'assemblare quadrati di {{count}} carte identiche, quindi trasformarle in carte di valore superiore per aumentare le tue risorse.",
         "TITLE_SETUP": "Impostazione",
-        "SETUP_1": "L'animatore crea il gioco, viene creato un codice QR per aiutare i giocatori a unirsi al gioco",
-        "SETUP_2": "I nuovi giocatori sono invitati a creare un avatar all'arrivo.",
-        "SETUP_3": "(Il colore dei capelli sarà il tuo colore sul grafico dei risultati, quindi non esitare a essere 'colorato' :)",
-        "SETUP_4": "All'inizio del gioco, ogni giocatore riceve 4 carte risorsa di basso valore economico, estratte a caso.",
-        "SETUP_5": "Ci sono 4 livelli di valore (cibo, conoscenza, energia, tecnologia) e ogni carta ha un prezzo associato al suo livello di valore. Questi prezzi per livello sono visibili dalla schermata di creazione del gioco. Il prezzo di ogni carta è anche ricordato sul retro.",
-        "SETUP_6": "In moneta libera, il primo Dividendo Universale (D.U) viene pagato all'inizio del gioco e automaticamente ogni minuto.",
+        "SETUP_1": "L'animatore crea il gioco, viene generato un codice QR per aiutare i giocatori di unirsi al gioco.",
+        "SETUP_2": "I nuovi giocatori sono invitati a creare un avatar.",
+        "SETUP_3": "Scegli un colore di capelli originale per ritrovarti più facilmente nel grafico dei risultati.",
+        "SETUP_4": "All'inizio di ogni giro, ogni giocatore riceve 4 carte risorse di basso valore economico, estratte a caso.",
+        "SETUP_5": "Ci sono 4 livelli di valore (cibo, conoscenza, energia, tecnologia) e ogni carta ha un prezzo associato al suo livello di valore. Questi prezzi per livello sono visibili dalla schermata di creazione del gioco. Il prezzo di ogni carta è anche indicato sul retro.",
+        "SETUP_6": "In moneta libera, il primo Dividendo Universale (D.U) viene pagato all'inizio del gioco e poi automaticamente ogni minuto.",
         "SETUP_7": "In Moneta Debito, l'animatore o un'altra persona deve svolgere il ruolo di banchiere.",
-        "SETUP_8": "Nessuna moneta viene pagata automaticamente, è necessario richiedere un prestito alla banca per avere moneta, prima dell'inizio del turno e secondo necessità durante il gioco.",
-        "SETUP_9": "Il prestito deve essere completamente rimborsato ogni 5 minuti dalla sua contrazione (o all'inizio del gioco), o esteso pagando gli interessi.",
-        "SETUP_10": "per ulteriori dettagli, vedere il paragrafo: La banca e il ruolo del banchiere.",
+        "SETUP_8": "Nessuna moneta viene pagata automaticamente. Prima dell'inizio del giro e secondo necessità durante il gioco dei giocatori devono richiedere un prestito alla banca per avere dei soldi, .",
+        "SETUP_9": "Il prestito deve essere completamente rimborsato dopo {{count}} minuti dalla sua contrazione o puo essere prolungato di {{count}} minuti pagando gli interessi.",
+        "SETUP_10": "Per ulteriori dettagli, vedere il paragrafo: \"La banca e il ruolo del banchiere\" in basso.",
         "TITLE_SELL": "Vendi una carta",
         "SELL_1": "Clicca sulla carta che desideri vendere.",
         "SELL_2": "Si gira, appare un codice QR.",
-        "SELL_3": "Un piccolo \"ShortCode\" al centro viene generato (codice valido solo quando visibile).",
-        "SELL_4": "Mostra questo codice QR o i 3 numeri al tuo acquirente.",
+        "SELL_3": "Al centro viene mostrato un codice a tre cifre, valido solo finché è visibile.",
+        "SELL_4": "Mostra questo codice QR o i 3 numeri al acquirente.",
         "TITLE_BUY": "Acquista una carta",
         "BUY_1": "Clicca su \"Acquista\" in basso a destra dello schermo.",
-        "BUY_2": "(Se il pulsante è disabilitato, significa che il gioco non è ancora iniziato o è già terminato)",
+        "BUY_2": "(Se il pulsante è disabilitato, significa che il giro non è ancora iniziato o è già terminato)",
         "BUY_3": "Due modi per acquistare una carta:",
-        "BUY_4": "Per codice QR (modalità predefinita)",
+        "BUY_4": "Tramite codice QR (modalità predefinita)",
         "BUY_5": "Cliccando su acquista, la fotocamera si attiva e puoi scansionare il codice QR della carta desiderata sullo schermo del venditore.",
-        "BUY_6": "Per Shortcode",
+        "BUY_6": "Tramite il codice a tre cifre",
         "BUY_7": "Disabilita la fotocamera accanto al pulsante acquista.",
         "BUY_8": "Cliccando su acquista, appare una tastiera e puoi inserire il codice scritto al centro del codice QR della carta del tuo venditore.",
         "TITLE_PRODUCTION": "Produci una carta superiore",
@@ -108,10 +110,10 @@
         "BANK_5": "Per un buon funzionamento del gioco, è interessante mantenere almeno una media di 2€ per giocatore.",
         "BANK_6": "In caso di recessione, è possibile fare una chiamata e offrire ai giocatori tassi bassi, anche tassi d'interesse al 0% eccezionalmente, per far aumentare la media per giocatore.",
         "BANK_7": "Richiedere un prestito",
-        "BANK_8": "Dalla vista \"Banca\", clicca sul pulsante \"Concedi un prestito\": appare una finestra di dialogo per inserire i parametri del prestito (prestito e interesse) e la persona richiedente.",
+        "BANK_8": "Dalla scheda \"Banca\", clicca sul pulsante \"Concedi un prestito\". Appare una finestra di dialogo per inserire i parametri: importo del credito, interessi e nome del giocatore che richiede il prestito.",
         "BANK_9": "Un prestito ha una scadenza di 5 minuti dalla contrazione.",
         "BANK_10": "Quando questa scadenza è raggiunta, viene chiesto al giocatore di rimborsare o estendere il prestito.",
-        "BANK_11": "Estensione del prestito:",
+        "BANK_11": "Estensione del prestito",
         "BANK_12": "Se il giocatore lo desidera o non ha scelta, può estenderlo di 5 minuti pagando gli interessi contrattati.",
         "BANK_13": "Una nuova scadenza di 5 minuti sarà applicata.",
         "BANK_14": "Inadempimento",
@@ -124,7 +126,7 @@
         "BANK_21": "esempio di sequestro:",
         "TITLE_DEATH": "La morte nel gioco",
         "DEATH_1": "La morte fa anche parte della simulazione",
-        "DEATH_2": "Ogni 4 minuti viene scelta una vittima a caso, se sei tu, verrai invitato a creare un nuovo personaggio immediatamente. L'idea è simulare l'impatto di una quantità di denaro non trasmessa",
+        "DEATH_2": "Regolarmente viene scelta una vittima a caso. Il giocatore perde i suoi beni e viene immediatamente resuscitato. Questo gioco non simula l'eredità.",
         "DEATH_3": "I tuoi risultati saranno ben accumulati, con la tua seconda vita per le statistiche alla fine del gioco. Normalmente tutti ci passano ;)",
         "TITLE_FOOTER": "Nota di chiusura",
         "FOOTER_1": "Se manca una carta o se appare un bug, segnalalo all'animatore.",
@@ -145,7 +147,7 @@
         "SUB_TITLE_IND": "Indicatori economici correnti",
         "MASS_MONEY": "Massa monetaria in circolazione",
         "AVG_PLAYERS": "Media per giocatore",
-        "AVG_NOTICE": "Un rapporto minimo di 2 è consigliato da mantenere, al di sotto si verifica una crisi di recessione.\n Per uscirne, puoi forse fare offerte temporanee di abbassamento dei tassi,\n vedere quando la crisi è troppo grave, fare tassi al 0% ad esempio.",
+        "AVG_NOTICE": "Per evitare una recessione è consigliato di mantenere un rapporto minimo di 2 euro per giocatore. In caso di recessione, è possibile abbassare il tasso di interesse, andando fino allo 0% se la crisi è grave.",
         "CURRENT_DEBT": "Debiti correnti",
         "INTEREST_GAIN": "Interessi guadagnati",
         "RESSOURCES_GAIN": "Valore totale delle risorse sequestrate",
@@ -161,15 +163,15 @@
         "CREDIT": "Credito",
         "INTEREST": "Interesse",
         "RATE_INTEREST": "Tasso d'interesse",
-        "CAN_CANCEL_CREDIT": "Rimborsare il credito per",
+        "CAN_CANCEL_CREDIT": "Importo da rimborsare",
         "DETAILS": "{{timer}} minuti per pagare",
         "WITH_PLAYER": "Con il giocatore",
         "SIGN": "Firmare",
         "DEFAULT_CREDIT_AMOUNT": "3 per impostazione predefinita",
         "DEFAULT_INTEREST_AMOUNT": "1 per impostazione predefinita",
         "CREDIT_SUCCESS": "Credito concesso a {{player}}",
-        "QUICK_CREDIT": "",
-        "MANUAL_CREDIT": ""
+        "QUICK_CREDIT": "Credito di {{amount}}, interessi a {{interest}}",
+        "MANUAL_CREDIT": "Inserire manualmente un credito"
     },
     "CREDIT": {
         "PAUSED_CREDIT": "Gioco in pausa...",
@@ -232,7 +234,7 @@
         "PLAYERS_6+": "(6+ giocatori)",
         "START_DISTRIB_CARDS": "Numero di carte distribuite ai giocatori all'inizio del gioco",
         "BUILD_AMOUNT": "Numero identico di carte per costruire una carta superiore:",
-        "DEATH_MINUTES_FORMULA": ""
+        "DEATH_MINUTES_FORMULA": "(durata del turno/numero di giocatori)"
     },
     "HISTORY": {
         "TITLE": "Storia dei giochi creati",
@@ -262,7 +264,7 @@
             "IN_PROGRESS": "In corso",
             "START_GAME": "Gioco iniziato",
             "INTER_ROUND": "Manche in corso",
-            "STOP_ROUND": "Manche terminée"
+            "STOP_ROUND": "Giro terminato"
         }
     },
     "EVENTS": {
@@ -305,7 +307,9 @@
         "ASK_END_ROUND": "Runda nu s-a terminat, ești sigur că vrei să închei runda?",
         "SHORT_CODE_SEND": "Cod trimis",
         "GIFT": "Bravo ! Hai ottenuta una carta superiore.",
-        "TECHNOLOGY": "Bravo, hai acquisito la tecnologia (fine partita)"
+        "TECHNOLOGY": "Bravo, hai acquisito la tecnologia (fine partita)",
+        "PRISON_END_TEXT": "Uscita dal carcere, non fatti piu vedere qui !👮‍♂️ ",
+        "COPY_SUCCESS": "Copiato!"
     },
     "DIALOG": {
         "INFORMATION": {
@@ -398,7 +402,7 @@
         "SEND": "Invia",
         "VERY": "(Positivo 😊)",
         "ENOUGH": "Sufficiente",
-        "LITTLE": "Un po' ",
+        "LITTLE": "Un po'",
         "NUTRAL": "Neutro",
         "VERYNOT": "(Negativo 😒)"
     },
@@ -432,7 +436,8 @@
         "DELETE_GAME": "Eliminazione impossibile",
         "NOT_ENOUGH_MONEY": "Fondi insufficienti.",
         "CONNECTION_EXPIRED": "La connessione è scaduta. Ricaricamento automatico della pagina...",
-        "IO_SOCKET_ERROR": "Si è verificato un errore, riprova più tardi."
+        "IO_SOCKET_ERROR": "Si è verificato un errore, riprova più tardi.",
+        "LOCK_DOWN_PLAYER": "L'incarcerazione del giocatore fallisce"
     },
     "SOCKET": {
         "OFFLINE": {
@@ -543,7 +548,10 @@
         "GO_NEW_LIFE": "Ğo per la mia nuova vita!",
         "REINCARNATED": "Ehi! Sei stato reincarnato!",
         "GAME_STARTED": "Ehi! Il gioco è già iniziato. Buona fortuna.",
-        "GUNY_INTRO": "Ehi! Sono Ğuny."
+        "GUNY_INTRO": "Ehi! Sono Ğuny.",
+        "SHORT_ID_DESC": "Il codice si trova al centro del codice QR della partita in corso",
+        "SHORT_ID_TITLE": "Per partecipare al gioco, inserire il codice di 4 lettere",
+        "SEARCH": "Cercare"
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY alle HH:mm"
@@ -647,7 +655,11 @@
             "PERCENTAGE": "% del Totale",
             "GRAPHIC": "Grafico",
             "CURVE": "Curva",
-            "CAMBER": "Camembert"
+            "CAMBER": "Grafico a torta"
         }
+    },
+    "CONTRIBUTION": {
+        "TITLE": "Contributi",
+        "SUBTITLE": "GRAZIE mille ❤️ alle seguenti persone per i loro contributi, il sostegno, i consigli, le idee, le correzioni ortografiche, le traduzioni, ecc."
     }
 }
