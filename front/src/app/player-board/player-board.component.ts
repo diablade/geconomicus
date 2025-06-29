@@ -11,7 +11,7 @@ import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
 import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
-import {animate, animateChild, query, stagger, state, style, transition, trigger} from "@angular/animations";
+import {animate, animateChild, keyframes, query, stagger, state, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
@@ -50,17 +50,34 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 					style({transform: 'translateY(-100rem)'}))
 			]),
 		]),
-		trigger('duReceived', [
-			state('void', style({
-				opacity: 0,
-				transform: 'rotate(0deg)'
-			})),
-			state('*', style({
-				opacity: 1,
-				transform: 'rotate(360deg)'
-			})),
-			transition(':enter', animate('1500ms ease')),
-			transition(':leave', animate('1500ms ease'))
+		trigger('coinFlip', [
+			transition('void => *', []),
+			transition('* => *', [
+				animate('500ms ease-in-out', 
+					keyframes([
+						style({ 
+							transform: 'rotateY(0deg) scale(1.1)',
+							offset: 0 
+						}),
+						style({ 
+							transform: 'rotateY(180deg) scale(1.1)',
+							offset: 0.25 
+						}),
+						style({ 
+							transform: 'rotateY(360deg) scale(1.1)',
+							offset: 0.5 
+						}),
+						style({ 
+							transform: 'rotateY(540deg) scale(1.1)',
+							offset: 0.75 
+						}),
+						style({ 
+							transform: 'rotateY(720deg) scale(1)',
+							offset: 1 
+						})
+					])
+				)
+			])
 		]),
 		trigger('prisonDoor', [
 			transition(':enter', [
@@ -90,7 +107,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	options: Partial<adventurer.Options & Options> = {};
 	statusGame = "waiting";
 	gameName: string = "";
-	typeMoney = "june";
+	typeMoney = C.JUNE;
 	amountCardsForProd = 4;
 	currentDU = 0;
 	cards: Card[] = [];
@@ -103,6 +120,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faInfo = faCircleInfo;
 	scanV3 = true;
 	duVisible = false;
+	creditReceived = false;
 	panelCreditOpenState = true;
 	C = C;
 	timerCredit = 5;
@@ -260,15 +278,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(C.DISTRIB_DU, (data: any) => {
-			this.duVisible = true;
 			const audioDu = new Audio("./assets/audios/audioDu.mp3");
 			audioDu.load();
 			audioDu.play();
 			this.player.coins += data.du;
 			this.currentDU = data.du;
+			this.duVisible = true;
 			setTimeout(() => {
 				this.duVisible = false;
-			}, 4000);
+			}, 2000);
 		});
 		this.socket.on(C.RESET_GAME, async (data: any) => {
 			this.dialog.closeAll();
@@ -338,6 +356,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.player.coins += data.amount;
 			this.credits.push(data);
+			this.creditReceived = true;
+			setTimeout(() => {
+				this.creditReceived = false;
+			}, 2000);
 		});
 		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
 			_.forEach(this.credits, c => {

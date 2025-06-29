@@ -30,17 +30,22 @@
 </div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
-		<div class="">
-			<img *ngIf="typeMoney===C.JUNE" [src]="'/assets/images/g1coin.png'" class="imgTitle free"
-				 (click)="refresh()"/>
-			<img *ngIf="typeMoney===C.DEBT" [src]="'/assets/images/eurocoin.png'" class="imgTitle debt"
-				 (click)="refresh()"/>
+		<div class="position-relative" (click)="refresh()">
+			<div class="coin-container" [ngSwitch]="typeMoney">
+				<ng-container *ngSwitchCase="C.JUNE">
+					<img [src]="'/assets/images/g1coin.png'" class="imgTitle free"
+					 [@coinFlip]="duVisible"/>
+				</ng-container>
+				<ng-container *ngSwitchCase="C.DEBT">
+					<img [src]="'/assets/images/eurocoin.png'" class="imgTitle debt"
+					 [@coinFlip]="creditReceived"/>
+				</ng-container>
+			</div>
 			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>
 		</div>
 		<div *ngIf="typeMoney===C.JUNE" class="sold flex-grow-1 contour">
 			{{ (player.coins / currentDU) | number : '1.2-2' }}<span class="du">{{ "CURRENCY.DU" | translate }}</span>
 			<div class="smallSold">{{ player.coins | number : '1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
-			<img class="duIcon" [@duReceived]="'in'" *ngIf="duVisible" src="assets/images/G1-logo-bleu_la-june.webp">
 		</div>
 		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
