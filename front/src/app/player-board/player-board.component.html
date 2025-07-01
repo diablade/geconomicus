@@ -69,10 +69,15 @@
 		</div>
 		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit"
 		                *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
-		<button *ngIf="statusGame===C.END_GAME" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
+		<button *ngIf="statusGame===C.END_GAME && !player.survey" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
 		        mat-raised-button
 		        color="accent">
 			{{ "PLAYER.ANSWER_SURVEY" | translate }}
+		</button>
+		<button class="ms-1" *ngIf="statusGame===C.END_GAME && player.survey" [routerLink]="['/game',idGame,'results']"
+		        mat-raised-button
+		        color="warn">
+			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
 	<div class="">
