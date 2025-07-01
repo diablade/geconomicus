@@ -61,39 +61,24 @@
 					x {{ game?.tauxCroissance | number:'1.2-2' }})
 					= {{ initialDU }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{ game?.currentMassMonetary|
-					number:'1.2-2' }}
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{ game?.currentMassMonetary| number:'1.2-2' }}
 					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
 					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
-					number:'1.2-2' }}{{ "CURRENCY.JUNE" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
-				</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary | number:'1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { currency: getCurrency(), cards: initialCards, resources: initialResources } }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { currency: getCurrency(), cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{
-					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
-					number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DEBTS" | translate }}: </span> {{ initialDebts }} {{
-					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_DEBTS" | translate }}: </span>{{ getDebts() }} {{ "CURRENCY.EURO" |
-					translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{ game?.bankInterestEarned }} {{
-					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{
-					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { cards: initialCards, resources: initialResources } }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}
-				</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM | number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary | number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DEBTS" | translate }}: </span> {{ initialDebts }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_DEBTS" | translate }}: </span>{{ getDebts() }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{ game?.bankInterestEarned }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{ "RESULTS.RESOURCES_VALUE" | translate: { currency: getCurrency(), cards: initialCards, resources: initialResources } }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{ "RESULTS.RESOURCES_FINAL_VALUE" | translate: { currency: getCurrency(), cards: finalCards, resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{ startGameDate| date:"YYYY-MMM-dd HH:mm" }}</div>

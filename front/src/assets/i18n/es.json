@@ -451,7 +451,6 @@
     "RESULTS": {
         "MOST_ACTIVE_TOOLTIP": "Quién hizo más transacciones",
         "LEARN_MORE_MOBILE": "¿Más información sobre la moneda libre?",
-        "RESOURCES_VALUE": "{{cards}} cartas ({{resources}} DU equ.)",
         "DESTROYED_MONEY": "Moneda destruida (créditos reembolsados)",
         "INITIAL_MASS": "Masa monetaria inicial",
         "NEW_GAME": "Nueva partida",
@@ -472,7 +471,8 @@
         "FINAL_MASS": "Masa monetaria final",
         "INITIAL_RESOURCES": "Recursos iniciales",
         "FINAL_RESOURCES": "Recursos finales",
-        "RESOURCES_FINAL_VALUE": "{{cards}} cartas ({{resources}} DU equ.) (número inicial ×{{multiplier}})",
+        "RESOURCES_VALUE": "{{cards}} cartas ({{resources}} {{currency}} equ.)",
+        "RESOURCES_FINAL_VALUE": "{{cards}} cartas ({{resources}} {{currency}} equ.) (número inicial ×{{multiplier}})",
         "INITIAL_DEBTS": "Deudas iniciales",
         "FINAL_DEBTS": "Deudas finales",
         "BANK_INTEREST": "Intereses percibidos por la banca",

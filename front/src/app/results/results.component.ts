@@ -1,25 +1,25 @@
-import { AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { BackService } from "../services/back.service";
+import {AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {BackService} from "../services/back.service";
 import io from "socket.io-client";
-import { Card, EventGeco, Feedback, Game, Player } from "../models/game";
+import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
-import { environment } from "../../environments/environment";
-import { getRandomColor, hexToRgb } from "../services/tools";
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import {environment} from "../../environments/environment";
+import {getRandomColor, hexToRgb} from "../services/tools";
+import {firstValueFrom, Subject, takeUntil} from 'rxjs';
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 
-import { ChartConfiguration, ChartDataset } from 'chart.js';
+import {ChartConfiguration, ChartDataset} from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import { parseISO, subSeconds } from 'date-fns';
+import {parseISO, subSeconds} from 'date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { BaseChartDirective } from "ng2-charts";
-import { Platform } from "@angular/cdk/platform";
-import { I18nService } from '../services/i18n.service';
-import { TranslateService } from '@ngx-translate/core';
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {BaseChartDirective} from "ng2-charts";
+import {Platform} from "@angular/cdk/platform";
+import {I18nService} from '../services/i18n.service';
+import {TranslateService} from '@ngx-translate/core';
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -170,7 +170,7 @@ function drawPieChart(values: number[], colors: any[]) {
 			animation: false,
 			maintainAspectRatio: false,
 			plugins: {
-				legend: { display: false },
+				legend: {display: false},
 			}
 		}
 	});
@@ -243,6 +243,9 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	nbPlayer = 0;
 	playersAtStart = 0;
 	deads = 0;
+	legendQuantitative = true;
+	legendRelative = true;
+	legendResources = true;
 
 	podiumMoney: Player[] = [];
 	podiumRes: Player[] = [];
@@ -296,7 +299,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: { source: "auto" },
+				ticks: {source: "auto"},
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -323,7 +326,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 			zoom: {
 				limits: {
-					y: { min: 0 },
+					y: {min: 0},
 				},
 				pan: {
 					enabled: true,
@@ -360,7 +363,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: { source: "auto" },
+				ticks: {source: "auto"},
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -375,7 +378,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		plugins: {
 			zoom: {
 				limits: {
-					y: { min: 0 },
+					y: {min: 0},
 				},
 				pan: {
 					enabled: true,
@@ -407,7 +410,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: { source: "auto" },
+				ticks: {source: "auto"},
 				time: {
 					unit: 'minute',
 					displayFormats: {
@@ -422,7 +425,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		plugins: {
 			zoom: {
 				limits: {
-					y: { min: 0 },
+					y: {min: 0},
 				},
 				pan: {
 					enabled: true,
@@ -503,14 +506,14 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	private async waitForTranslationsReady(): Promise<void> {		
+	private async waitForTranslationsReady(): Promise<void> {
 		return new Promise((resolve) => {
 			// Try to get a translation every 50ms until it's not the key itself
 			const checkTranslations = async () => {
 				try {
 					const testKey = this.topLabelKeys[0] || 'common.test';
 					const translation = await firstValueFrom(this.translate.get(testKey));
-					
+
 					// If translation is not the key itself, translations are loaded
 					if (translation !== testKey) {
 						resolve();
@@ -522,7 +525,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					setTimeout(checkTranslations, 50);
 				}
 			};
-			
+
 			checkTranslations();
 		});
 	}
@@ -566,6 +569,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				return "-";
 		}
 	}
+
 	private async loadTranslations() {
 		try {
 			await this.convertLabelsAsync();
@@ -611,11 +615,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			},
 			scales: {
-				x: { display: false, ticks: { stepSize: 1 } },
-				y: { display: false, ticks: { stepSize: 1 }, type: "linear", min: -3, max: 3 },
-				x2: { position: "top", type: "category", labels: this.feedbacksLabelsTop },
-				x3: { position: "bottom", type: "category", labels: this.feedbacksLabelsBottom },
-				y2: { position: "left", type: "category", labels: this.leftLabels },
+				x: {display: false, ticks: {stepSize: 1}},
+				y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3},
+				x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop},
+				x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom},
+				y2: {position: "left", type: "category", labels: this.leftLabels},
 			},
 		};
 	}
@@ -771,7 +775,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		// @ts-ignore
 		this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
 			const data = _.map(feedback, (count, key) => {
-				return { x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count }
+				return {x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count}
 			});
 			return {
 				data: data,
@@ -848,7 +852,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
 				// @ts-ignore
-				dataset.data.push({ x: date, y: value });
+				dataset.data.push({x: date, y: value});
 			}
 
 			switch (event.typeEvent) {
@@ -1011,7 +1015,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				// @ts-ignore
 				if (lastPointValue && lastPointValue.y) {
 					// @ts-ignore
-					allLastPoints.push({ key: key, value: lastPointValue.y, label: dataset.label });
+					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
 				}
 			}
 		});
@@ -1019,7 +1023,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		const podiumMo = _.orderBy(merged, 'value', 'desc');
 
 		this.podiumMoney = _.map(podiumMo, p => {
-			let playerFound = _.find(this.players, { _id: p.key });
+			let playerFound = _.find(this.players, {_id: p.key});
 			if (playerFound) {
 				return playerFound;
 			}
@@ -1037,7 +1041,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					// @ts-ignore
 					this.finalResources += lastPointValue.y;
 					// @ts-ignore
-					allLastPoints.push({ key: key, value: lastPointValue.y, label: dataset.label });
+					allLastPoints.push({key: key, value: lastPointValue.y, label: dataset.label});
 				}
 			}
 		});
@@ -1046,7 +1050,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		const podiumR = _.orderBy(merged, 'value', 'desc');
 
 		this.podiumRes = _.map(podiumR, p => {
-			let playerFound = _.find(this.players, { _id: p.key });
+			let playerFound = _.find(this.players, {_id: p.key});
 			if (playerFound) {
 				return playerFound;
 			}
@@ -1063,7 +1067,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
 
 			this.podiumTransac = _.map(sortedPlayers, ([playerId]) => {
-				let playerFound = _.find(this.players, { _id: playerId });
+				let playerFound = _.find(this.players, {_id: playerId});
 				return playerFound || new Player();  // Return player object or a default Player if not found
 			});
 		}
@@ -1077,7 +1081,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (cumulPlayer) {
 					cumulPlayer.value += current.value;
 				} else {
-					cumul.push({ key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name });
+					cumul.push({key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name});
 				}
 			} else if (currentPlayer && !currentPlayer.reincarnateFromId) {
 				// If current player is not reincarnate,
@@ -1086,7 +1090,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					// if value already exist update it
 					cumulPlayer.value += current.value;
 				} else {
-					cumul.push({ ...current });
+					cumul.push({...current});
 				}
 			}
 			return cumul;
@@ -1099,6 +1103,9 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getTransactionsTotal() {
 		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
+	}
+	getCurrency() {
+		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? "CURRENCY.EURO" : "CURRENCY.DU");
 	}
 
 	newGame() {

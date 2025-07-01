@@ -11,7 +11,7 @@ import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
 import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
-import {animate, animateChild, keyframes, query, stagger, state, style, transition, trigger} from "@angular/animations";
+import {animate, animateChild, keyframes, query, stagger, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
