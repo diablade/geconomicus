@@ -53,27 +53,27 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 		trigger('coinFlip', [
 			transition('void => *', []),
 			transition('* => *', [
-				animate('500ms ease-in-out', 
+				animate('500ms ease-in-out',
 					keyframes([
-						style({ 
+						style({
 							transform: 'rotateY(0deg) scale(1.1)',
-							offset: 0 
+							offset: 0
 						}),
-						style({ 
+						style({
 							transform: 'rotateY(180deg) scale(1.1)',
-							offset: 0.25 
+							offset: 0.25
 						}),
-						style({ 
+						style({
 							transform: 'rotateY(360deg) scale(1.1)',
-							offset: 0.5 
+							offset: 0.5
 						}),
-						style({ 
+						style({
 							transform: 'rotateY(540deg) scale(1.1)',
-							offset: 0.75 
+							offset: 0.75
 						}),
-						style({ 
+						style({
 							transform: 'rotateY(720deg) scale(1)',
-							offset: 1 
+							offset: 1
 						})
 					])
 				)
@@ -229,7 +229,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					});
 				});
 			}
-			this.localStorageService.setItem("session", 
+			this.localStorageService.setItem("session",
 				{
 					idGame: this.idGame,
 					idPlayer: this.idPlayer,
