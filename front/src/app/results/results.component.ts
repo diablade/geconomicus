@@ -1115,4 +1115,14 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			window.open(environment.WEB_HOST, '_blank');
 		}
 	}
+
+	displayLegendQuantitative() {
+		this.legendQuantitative = !this.legendQuantitative;
+	}
+	displayLegendRelative() {
+		this.legendRelative = !this.legendRelative;
+	}
+	displayLegendResources() {
+		this.legendResources = !this.legendResources;
+	}
 }

@@ -159,9 +159,13 @@
 			</div>
 		</div>
 
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.QUANTITATIVE_ACCOUNTS" | translate }}</h1>
+		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
+			<h1 class="m-2 mt-4 contour">{{ "RESULTS.QUANTITATIVE_ACCOUNTS" | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{ "MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
+		</div>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart id="chartQuant"
+			<canvas baseChart id="chartQuant" 
+							[legend]="legendQuantitative"
 							class="chart"
 							height="500"
 							[data]="lineChartData"
@@ -169,19 +173,27 @@
 							[type]="'line'">
 			</canvas>
 		</div>
-		<h1 *ngIf="game?.typeMoney===C.JUNE" class="m-2 mt-4 contour">{{ "RESULTS.RELATIVE_ACCOUNTS" | translate }}</h1>
+		<div *ngIf="game?.typeMoney===C.JUNE" class="mt-4 d-flex flex-row justify-content-between align-items-end">
+			<h1 class="contour">{{ "RESULTS.RELATIVE_ACCOUNTS" | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{ "MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
+		</div>
 		<div *ngIf="game?.typeMoney===C.JUNE" class="graph bg-white rounded shadow">
-			<canvas baseChart class="chart" height="500" [data]="lineChartDataRelatif" [options]="lineChartOptionsRelatif"
+			<canvas baseChart class="chart" height="500" [data]="lineChartDataRelatif" [options]="lineChartOptionsRelatif" [legend]="legendRelative"
 				[type]="'line'">
 			</canvas>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.RESOURCES" | translate }}</h1>
+		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
+			<h1 class="contour">{{ "RESULTS.RESOURCES" | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">{{ "MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
+		</div>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart class="chart" height="500" [data]="lineChartDataResources" [options]="lineChartOptionsResources"
+			<canvas baseChart class="chart" height="500" [data]="lineChartDataResources" [options]="lineChartOptionsResources" [legend]="legendResources"
 				[type]="'line'">
 			</canvas>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SURVEY_RESULTS" | translate }}</h1>
+		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
+			<h1 class="contour">{{ "RESULTS.SURVEY_RESULTS" | translate }}</h1>
+		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas baseChart class="chart" height="300" [data]="feedbacksData" [options]="feedbacksOptions" [legend]="false"
 				[type]="'bubble'">
