@@ -1,4 +1,4 @@
-import GameModel, {constructor} from "../game/game.model.js";
+import GameModel, { constructor } from "../game/game.model.js";
 import _ from "lodash";
 import gameTimerManager from "./GameTimerManager.js";
 import * as C from "../../../config/constantes.js";
@@ -6,11 +6,11 @@ import bankTimerManager from "../bank/BankTimerManager.js";
 import socket from "../../config/socket.js";
 import log from "../../config/log.js";
 import Timer from "../misc/Timer.js";
-import {differenceInMilliseconds} from "date-fns";
+import { differenceInMilliseconds } from "date-fns";
 import playerService from "../player/player.service.js";
 import decksService from "../misc/decks.service.js";
 import bankService from '../bank/bank.service.js';
-import {customAlphabet} from 'nanoid'
+import { customAlphabet } from 'nanoid'
 import GameTimerManager from './GameTimerManager.js';
 import BankTimerManager from '../bank/BankTimerManager.js';
 
@@ -51,7 +51,7 @@ async function distribDU(idGame) {
                 if (player.status === C.ALIVE) {
                     player.coins += du;
                     newMassMoney += du;
-                    socket.emitTo(player.id, C.DISTRIB_DU, {du: du});
+                    socket.emitTo(player.id, C.DISTRIB_DU, { du: du });
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
                     socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
                     newEvents.push(newEvent);
@@ -64,15 +64,15 @@ async function distribDU(idGame) {
                 }
             }
             GameModel.findByIdAndUpdate(idGame, {
-                $inc:  {"players.$[elem].coins": du},
-                $push: {events: {$each: newEvents}},
-                $set:  {
+                $inc: { "players.$[elem].coins": du },
+                $push: { events: { $each: newEvents } },
+                $set: {
                     currentMassMonetary: newMassMoney,
-                    currentDU:           du
+                    currentDU: du
                 }
             }, {
-                arrayFilters: [{"elem.status": C.ALIVE}],
-                new:          true
+                arrayFilters: [{ "elem.status": C.ALIVE }],
+                new: true
             })
                 .then(updatedGame => {
 
@@ -91,12 +91,12 @@ async function stopRound(idGame, gameRound) {
     await gameTimerManager.stopAndRemoveTimer(idGame + C.DEATH);
 
     let stopRoundEvent = constructor.event(C.STOP_ROUND, C.MASTER, "", gameRound, [], Date.now());
-    GameModel.updateOne({_id: idGame}, {
-        $set:  {
-            status:   C.STOP_ROUND,
+    GameModel.updateOne({ _id: idGame }, {
+        $set: {
+            status: C.STOP_ROUND,
             modified: Date.now(),
         },
-        $push: {events: stopRoundEvent}
+        $push: { events: stopRoundEvent }
     }).then(res => {
         bankTimerManager.stopAndRemoveAllIdGameDebtTimer(idGame);
         socket.emitTo(idGame, C.STOP_ROUND);
@@ -108,7 +108,7 @@ async function startRoundTimers(idGame, game, playersIdToKill) {
     const totalTimeRound = game.roundMinutes * minute;
     const intervalDeath = totalTimeRound / playersIdToKill.length;
     let timer = new Timer(idGame, totalTimeRound, minute, {
-        round:     game.round,
+        round: game.round,
         typeMoney: game.typeMoney
     }, async (timer) => {
         if (timer.data.typeMoney === C.JUNE) {
@@ -164,13 +164,13 @@ async function initGameDebt(game) {
         player.coins = 0;
 
         socket.emitTo(player.id, C.START_GAME, {
-            cards:              cards,
-            coins:              0,
-            typeMoney:          C.DEBT,
-            statusGame:         C.START_GAME,
+            cards: cards,
+            coins: 0,
+            typeMoney: C.DEBT,
+            statusGame: C.START_GAME,
             amountCardsForProd: game.amountCardsForProd,
-            timerCredit:        game.timerCredit,
-            timerPrison:        game.timerPrison
+            timerCredit: game.timerCredit,
+            timerPrison: game.timerPrison
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
@@ -224,10 +224,10 @@ async function initGameJune(game) {
         game.currentMassMonetary += player.coins;
 
         socket.emitAckTo(player.id, C.START_GAME, {
-            cards:              cards,
-            coins:              player.coins,
-            typeMoney:          C.JUNE,
-            statusGame:         C.START_GAME,
+            cards: cards,
+            coins: player.coins,
+            typeMoney: C.JUNE,
+            statusGame: C.START_GAME,
             amountCardsForProd: game.amountCardsForProd,
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
@@ -235,7 +235,7 @@ async function initGameJune(game) {
         game.events.push(newEvent);
     }
     game.currentDU = await generateDU(game);
-    socket.emitTo(game._id.toString(), C.FIRST_DU, {du: game.currentDU});
+    socket.emitTo(game._id.toString(), C.FIRST_DU, { du: game.currentDU });
 
     let firstDUevent = constructor.event(C.FIRST_DU, C.MASTER, C.MASTER, game.currentDU, [], Date.now());
     game.events.push(firstDUevent);
@@ -243,61 +243,61 @@ async function initGameJune(game) {
     return game;
 }
 
-async function createGame(req) {
+async function createGame(game, typeMoney) {
     let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
 
     const newGame = new GameModel({
-        name:                    req.body.name ? req.body.name : "sans nom",
-        animator:                req.body.animator ? req.body.animator : "sans animateur",
-        location:                req.body.location ? req.body.location : "sans lieu",
-        shortId:                 nanoid(),
-        status:                  C.OPEN,
-        typeMoney:               req.body.typeMoney ? req.body.typeMoney : C.JUNE,
-        events:                  [createEvent],
-        decks:                   [],
-        players:                 [],
-        amountCardsForProd:      4,
-        currentMassMonetary:     0,
-        distribInitCards:        4,
-        generateLettersAuto:     true,
-        generateLettersInDeck:   0,
+        name: game.name || "sans nom",
+        animator: game.animator || "sans animateur",
+        location: game.location || "sans lieu",
+        shortId: nanoid(),
+        status: C.OPEN,
+        typeMoney: typeMoney || C.JUNE,
+        events: [createEvent],
+        decks: [],
+        players: [],
+        amountCardsForProd: 4,
+        currentMassMonetary: 0,
+        distribInitCards: 4,
+        generateLettersAuto: true,
+        generateLettersInDeck: 0,
         generatedIdenticalCards: 4,
-        surveyEnabled:           true,
-        devMode:                 false,
-        priceWeight1:            req.body.typeMoney === C.DEBT ? defaultPriceWeight1 : defaultPriceWeight1ML,
-        priceWeight2:            req.body.typeMoney === C.DEBT ? defaultPriceWeight2 : defaultPriceWeight2ML,
-        priceWeight3:            req.body.typeMoney === C.DEBT ? defaultPriceWeight3 : defaultPriceWeight3ML,
-        priceWeight4:            req.body.typeMoney === C.DEBT ? defaultPriceWeight4 : defaultPriceWeight4ML,
-        round:                   0,
-        roundMax:                1,
-        roundMinutes:            25,
-        autoDeath:               true,
-        deathPassTimer:          4,
+        surveyEnabled: true,
+        devMode: false,
+        priceWeight1: typeMoney === C.DEBT ? defaultPriceWeight1 : defaultPriceWeight1ML,
+        priceWeight2: typeMoney === C.DEBT ? defaultPriceWeight2 : defaultPriceWeight2ML,
+        priceWeight3: typeMoney === C.DEBT ? defaultPriceWeight3 : defaultPriceWeight3ML,
+        priceWeight4: typeMoney === C.DEBT ? defaultPriceWeight4 : defaultPriceWeight4ML,
+        round: 0,
+        roundMax: 1,
+        roundMinutes: 25,
+        autoDeath: true,
+        deathPassTimer: 4,
 
         //option june
-        currentDU:        0,
-        tauxCroissance:   defaultTauxDU,
-        inequalityStart:  false,
+        currentDU: 0,
+        tauxCroissance: defaultTauxDU,
+        inequalityStart: false,
         startAmountCoins: 5,
-        pctPoor:          10,
-        pctRich:          10,
+        pctPoor: 10,
+        pctRich: 10,
 
         //option debt
-        credits:               [],
-        defaultCreditAmount:   3,
+        credits: [],
+        defaultCreditAmount: 3,
         defaultInterestAmount: 1,
-        bankInterestEarned:    0,
-        bankGoodsEarned:       0,
-        bankMoneyLost:         0,
-        timerCredit:           5,
-        timerPrison:           5,
-        manualBank:            true,
-        seizureType:           "decote",
-        seizureCosts:          2,
-        seizureDecote:         33,
+        bankInterestEarned: 0,
+        bankGoodsEarned: 0,
+        bankMoneyLost: 0,
+        timerCredit: 5,
+        timerPrison: 5,
+        manualBank: true,
+        seizureType: "decote",
+        seizureCosts: 2,
+        seizureDecote: 33,
 
         modified: Date.now(),
-        created:  Date.now(),
+        created: Date.now(),
     });
 
     const savedGame = await newGame.save();
@@ -314,42 +314,42 @@ async function updateGame(body) {
         _id: body.idGame,
     }, {
         $set: {
-            typeMoney:               body.typeMoney ? body.typeMoney : C.JUNE,
-            name:                    body.name ? body.name : "sans nom",
-            animator:                body.animator ? body.animator : "sans animateur",
-            location:                body.location ? body.location : "sans lieu",
-            priceWeight1:            body.priceWeight1 ? body.priceWeight1 : priceWeight1,
-            priceWeight2:            body.priceWeight2 ? body.priceWeight2 : priceWeight2,
-            priceWeight3:            body.priceWeight3 ? body.priceWeight3 : priceWeight3,
-            priceWeight4:            body.priceWeight4 ? body.priceWeight4 : priceWeight4,
-            roundMax:                body.roundMax ? body.roundMax : 1,
-            roundMinutes:            body.roundMinutes ? body.roundMinutes : 25,
-            devMode:                 body.devMode === undefined ? true : body.devMode,
-            surveyEnabled:           body.surveyEnabled === undefined ? true : body.surveyEnabled,
-            amountCardsForProd:      body.amountCardsForProd ? body.amountCardsForProd : 4,
-            distribInitCards:        body.distribInitCards ? body.distribInitCards : 4,
-            generateLettersAuto:     body.generateLettersAuto === undefined ? true : body.generateLettersAuto,
-            generateLettersInDeck:   body.generateLettersInDeck ? body.generateLettersInDeck : 0,
-            generatedIdenticalCards: body.generatedIdenticalCards ? body.generatedIdenticalCards : 4,
-            autoDeath:               body.autoDeath === undefined ? true : body.autoDeath,
-            deathPassTimer:          body.deathPassTimer ? body.deathPassTimer : 4,
+            typeMoney: body.typeMoney || C.JUNE,
+            name: body.name || "sans nom",
+            animator: body.animator || "sans animateur",
+            location: body.location || "sans lieu",
+            priceWeight1: body.priceWeight1 || priceWeight1,
+            priceWeight2: body.priceWeight2 || priceWeight2,
+            priceWeight3: body.priceWeight3 || priceWeight3,
+            priceWeight4: body.priceWeight4 || priceWeight4,
+            roundMax: body.roundMax || 1,
+            roundMinutes: body.roundMinutes || 25,
+            devMode: body.devMode === undefined ? true : body.devMode,
+            surveyEnabled: body.surveyEnabled === undefined ? true : body.surveyEnabled,
+            amountCardsForProd: body.amountCardsForProd || 4,
+            distribInitCards: body.distribInitCards || 4,
+            generateLettersAuto: body.generateLettersAuto === undefined ? true : body.generateLettersAuto,
+            generateLettersInDeck: body.generateLettersInDeck || 0,
+            generatedIdenticalCards: body.generatedIdenticalCards || 4,
+            autoDeath: body.autoDeath === undefined ? true : body.autoDeath,
+            deathPassTimer: body.deathPassTimer || 4,
 
             //option june
-            tauxCroissance:   body.tauxCroissance ? body.tauxCroissance : defaultTauxDU,
-            startAmountCoins: body.startAmountCoins ? body.startAmountCoins : 5,
-            inequalityStart:  body.inequalityStart === undefined ? false : body.inequalityStart,
-            pctPoor:          body.pctPoor ? body.pctPoor : 10,
-            pctRich:          body.pctRich ? body.pctRich : 10,
+            tauxCroissance: body.tauxCroissance || defaultTauxDU,
+            startAmountCoins: body.startAmountCoins || 5,
+            inequalityStart: body.inequalityStart === undefined ? false : body.inequalityStart,
+            pctPoor: body.pctPoor || 10,
+            pctRich: body.pctRich || 10,
 
             //option debt
-            defaultCreditAmount:   body.defaultCreditAmount ? body.defaultCreditAmount : 3,
-            defaultInterestAmount: body.defaultInterestAmount ? body.defaultInterestAmount : 1,
-            timerCredit:           body.timerCredit ? body.timerCredit : 5,
-            timerPrison:           body.timerPrison ? body.timerPrison : 5,
-            manualBank:            body.manualBank ? body.manualBank : false,
-            seizureType:           body.seizureType ? body.seizureType : "decote",
-            seizureCosts:          body.seizureCosts ? body.seizureCosts : 2,
-            seizureDecote:         body.seizureDecote ? body.seizureDecote : 25,
+            defaultCreditAmount: body.defaultCreditAmount || 3,
+            defaultInterestAmount: body.defaultInterestAmount || 1,
+            timerCredit: body.timerCredit || 5,
+            timerPrison: body.timerPrison || 5,
+            manualBank: body.manualBank || false,
+            seizureType: body.seizureType || "decote",
+            seizureCosts: body.seizureCosts || 2,
+            seizureDecote: body.seizureDecote || 25,
 
             modified: Date.now(),
         },
@@ -357,11 +357,11 @@ async function updateGame(body) {
 
     if (gameUpdated) {
         const payload = {
-            typeMoney:          body.typeMoney,
-            timerCredit:        body.timerCredit,
-            timerPrison:        body.timerPrison,
-            amountCardsForProd: body.amountCardsForProd,
-            gameName:           body.name
+            typeMoney: body.typeMoney || C.JUNE,
+            timerCredit: body.timerCredit || 5,
+            timerPrison: body.timerPrison || 5,
+            amountCardsForProd: body.amountCardsForProd || 4,
+            gameName: body.name || "sans nom",
         };
 
         socket.emitTo(body.idGame, C.UPDATE_GAME_OPTION, payload);
@@ -381,7 +381,7 @@ async function getGameById(id) {
 }
 
 async function getGameByShortId(shortId) {
-    let game = await GameModel.findOne({shortId});
+    let game = await GameModel.findOne({ shortId });
     if (!game) {
         throw new Error("Game not found");
     }
@@ -391,12 +391,12 @@ async function getGameByShortId(shortId) {
 async function startRound(idGame, round, next) {
     let startEvent = constructor.event(C.START_ROUND, C.MASTER, "", round, [], Date.now());
     await GameModel.findByIdAndUpdate(idGame, {
-        $set:  {
-            status:   C.PLAYING,
+        $set: {
+            status: C.PLAYING,
             modified: Date.now(),
         },
-        $push: {events: startEvent}
-    }, {new: true})
+        $push: { events: startEvent }
+    }, { new: true })
         .then(updatedGame => {
             let idPlayers = _.shuffle(updatedGame.players.map(p => p._id.toString()));
             startRoundTimers(updatedGame._id.toString(), updatedGame, idPlayers);
@@ -406,7 +406,7 @@ async function startRound(idGame, round, next) {
         .catch(err => {
             log.error('Start round game error:' + err);
             next({
-                status:  404,
+                status: 404,
                 message: "Start round game error"
             });
         })
@@ -437,49 +437,50 @@ async function resetGame(idGame) {
     // typeMoney:               C.JUNE,
     const updatedGame = await GameModel.findByIdAndUpdate(idGame, {
         $set: {
-            status:                  C.OPEN,
-            decks:                   [],
-            players:                 players,
-            credits:                 [],
-            events:                  events,
-            priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
-            priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
-            priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,
-            priceWeight4:            game.typeMoney === C.JUNE ? defaultPriceWeight4ML : defaultPriceWeight4,
-            currentMassMonetary:     0,
-            surveyEnabled:           true,
-            devMode:                 true,
+            status: C.OPEN,
+            decks: [],
+            players: players,
+            credits: [],
+            events: events,
+            nextGame: "",
+            priceWeight1: game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
+            priceWeight2: game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
+            priceWeight3: game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,
+            priceWeight4: game.typeMoney === C.JUNE ? defaultPriceWeight4ML : defaultPriceWeight4,
+            currentMassMonetary: 0,
+            surveyEnabled: true,
+            devMode: true,
             generatedIdenticalCards: 4,
-            distribInitCards:        4,
-            generateLettersAuto:     true,
-            generateLettersInDeck:   0,
-            amountCardsForProd:      4,
-            round:                   0,
-            roundMax:                1,
-            roundMinutes:            25,
-            autoDeath:               true,
-            deathPassTimer:          4,
+            distribInitCards: 4,
+            generateLettersAuto: true,
+            generateLettersInDeck: 0,
+            amountCardsForProd: 4,
+            round: 0,
+            roundMax: 1,
+            roundMinutes: 25,
+            autoDeath: true,
+            deathPassTimer: 4,
 
             //option june
-            currentDU:        0,
-            tauxCroissance:   defaultTauxDU,
-            inequalityStart:  false,
+            currentDU: 0,
+            tauxCroissance: defaultTauxDU,
+            inequalityStart: false,
             startAmountCoins: 5,
-            pctPoor:          10,
-            pctRich:          10,
+            pctPoor: 10,
+            pctRich: 10,
 
             //option debt
-            defaultCreditAmount:   3,
+            defaultCreditAmount: 3,
             defaultInterestAmount: 1,
-            bankInterestEarned:    0,
-            bankGoodsEarned:       0,
-            bankMoneyLost:         0,
-            timerCredit:           5,
-            timerPrison:           5,
-            manualBank:            false,
-            seizureType:           "decote",
-            seizureCosts:          2,
-            seizureDecote:         33,
+            bankInterestEarned: 0,
+            bankGoodsEarned: 0,
+            bankMoneyLost: 0,
+            timerCredit: 5,
+            timerPrison: 5,
+            manualBank: false,
+            seizureType: "decote",
+            seizureCosts: 2,
+            seizureDecote: 33,
         },
     }, {
         new: true,
@@ -493,13 +494,27 @@ async function resetGame(idGame) {
     }
 }
 
+async function newGameFromCopy(idGame) {
+    const game = await getGameById(idGame);
+    const newGame = await createGame(game, game.typeMoney === C.DEBT ? C.JUNE : C.DEBT);
+    await updatePreviousGame(game._id.toString(), newGame._id.toString());
+    socket.emitTo(idGame, C.NEW_GAME, newGame);
+    return newGame;
+}
+
+async function updatePreviousGame(idGame, idNextGame) {
+    await GameModel.updateOne({ _id: idGame }, { $set: { nextGame: idNextGame } });
+}
+
 export default {
-    createGame:       createGame,
-    updateGame:       updateGame,
-    stopRound:        stopRound,
-    getGameById:      getGameById,
+    createGame: createGame,
+    updateGame: updateGame,
+    stopRound: stopRound,
+    getGameById: getGameById,
     getGameByShortId: getGameByShortId,
-    startRound:       startRound,
-    initGame:         initGame,
-    resetGame:        resetGame
+    startRound: startRound,
+    initGame: initGame,
+    resetGame: resetGame,
+    newGameFromCopy: newGameFromCopy,
+    updatePreviousGame: updatePreviousGame
 }

@@ -90,6 +90,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
+			this.setMaster();
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
 				this.resetGameFromUrl();
 			}
@@ -352,6 +353,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.backService.updateGame(this.idGame, this.game).subscribe(() => {
 			this.snackbarService.showSuccess(this.i18nService.instant("OPTION.SAVED"));
 		});
+	}
+	
+	setMaster(){
+		this.sessionStorageService.setItem("master",this.idGame);
 	}
 }
 

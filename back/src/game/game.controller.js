@@ -377,4 +377,25 @@ export default {
             });
         }
     },
+    newGameFromCopy: async (req, res, next) => {
+        try {
+            const newGame = await gameService.newGameFromCopy(req.body.idGame);
+            if (newGame) {
+                return res.status(200).json({
+                    status: "new game done",
+                });
+            }
+            else {
+                return res.status(500).json({
+                    message: "Game new game error",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game new game error:" + err);
+            return res.status(500).json({
+                message: "Game new game error",
+            });
+        }
+    },
 };

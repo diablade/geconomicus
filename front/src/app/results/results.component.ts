@@ -20,6 +20,9 @@ import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
 import {I18nService} from '../services/i18n.service';
 import {TranslateService} from '@ngx-translate/core';
+import {LocalStorageService} from '../services/local-storage/local-storage.service';
+import { SessionStorageService } from '../services/local-storage/session-storage.service';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -214,6 +217,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	private destroy$ = new Subject<void>();
 
+	faCopy = faCopy;
+	isMaster = false;
 	game: Game | undefined;
 	events: EventGeco[] = [];
 	players: Player[] = [];
@@ -265,7 +270,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		"SURVEY.PLEASANT",
 		"SURVEY.TOLERANT",
 		"SURVEY.AUTONOMOUS"];
-
 	bottomLabelKeys = [
 		"SURVEY.DEPRESSED",
 		"SURVEY.INDIVIDUAL",
@@ -276,7 +280,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		"SURVEY.AGGRESSIVE",
 		"SURVEY.IRRITABLE",
 		"SURVEY.DEPENDENT"];
-
 	leftLabelKeys = [
 		"SURVEY.VERY",
 		"SURVEY.ENOUGH",
@@ -455,10 +458,13 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		private backService: BackService,
 		private i18nService: I18nService,
+		private sessionStorageService: SessionStorageService,
+		private localStorageService: LocalStorageService,
 		private translate: TranslateService) {
 	}
 
 	ngOnInit(): void {
+		this.getMaster();
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
@@ -504,6 +510,25 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.loadTranslations();
 				});
 		});
+	}
+
+	ngAfterViewInit() {
+		this.socket.on(C.EVENT, async (event: EventGeco) => {
+			this.events.push(event);
+			this.addEventsToDatasets([event]);
+			this.updateCharts();
+		});
+		this.socket.on(C.NEW_FEEDBACK, async () => {
+			this.getFeedbacks();
+		});
+		this.socket.on(C.NEW_GAME, async (payload: any) => {
+			this.newGame(payload);
+		});
+	}
+
+	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 
 	private async waitForTranslationsReady(): Promise<void> {
@@ -622,22 +647,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				y2: {position: "left", type: "category", labels: this.leftLabels},
 			},
 		};
-	}
-
-	ngAfterViewInit() {
-		this.socket.on(C.EVENT, async (event: EventGeco) => {
-			this.events.push(event);
-			this.addEventsToDatasets([event]);
-			this.updateCharts();
-		});
-		this.socket.on(C.NEW_FEEDBACK, async () => {
-			this.getFeedbacks();
-		});
-	}
-
-	ngOnDestroy() {
-		this.destroy$.next();
-		this.destroy$.complete();
 	}
 
 	updateCharts() {
@@ -1104,11 +1113,12 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	getTransactionsTotal() {
 		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
 	}
+
 	getCurrency() {
 		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? "CURRENCY.EURO" : "CURRENCY.DU");
 	}
 
-	newGame() {
+	home() {
 		if (this.platform.ANDROID || this.platform.IOS) {
 			this.router.navigate(['/']);
 		} else {
@@ -1116,12 +1126,37 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	getMaster(){
+		this.isMaster = this.sessionStorageService.getItem("master");
+	}
+
+	newGameFromCopy() {
+		this.backService.newGameFromCopy(this.idGame).subscribe((payload: any) => {
+			this.newGame(payload);
+		});
+	}
+
+	newGame(payload: any) {
+		if (payload.idGame == this.idGame) {
+			let gecoSession = this.localStorageService.getItem("geco-session");
+			if(gecoSession){
+				let idPlayer = gecoSession?.idPlayer;
+				let newIdPlayer = payload.players.find((idP: string) => idP == idPlayer);
+				if (newIdPlayer) {
+					this.router.navigate(["game", payload.newGame, "player", idPlayer]);
+				}
+			}
+		}
+	}
+
 	displayLegendQuantitative() {
 		this.legendQuantitative = !this.legendQuantitative;
 	}
+
 	displayLegendRelative() {
 		this.legendRelative = !this.legendRelative;
 	}
+
 	displayLegendResources() {
 		this.legendResources = !this.legendResources;
 	}

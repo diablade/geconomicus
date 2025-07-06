@@ -29,7 +29,6 @@ export class HistoryGamesComponent implements OnInit {
 	constructor(private backService: BackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
-
 	ngOnInit(): void {
 		this.backService.getGames().subscribe(async data => {
 			this.games = _.orderBy(data.games, "created", "desc");
@@ -42,12 +41,6 @@ export class HistoryGamesComponent implements OnInit {
 			(!this.gameType || game.typeMoney === this.gameType) &&
 			(!this.gameStatus || game.status === this.gameStatus)
 		);
-		console.log(games);
-		console.log(this.gameSort);
-		console.log(this.gameSortOrder);
-		console.log(this.gameStatus);
-		console.log(this.gameType);
-		console.log(this.gameName);
 		games = _.orderBy(games, this.gameSort, this.gameSortOrder);
 		return games;
 	}

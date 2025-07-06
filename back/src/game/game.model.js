@@ -75,6 +75,7 @@ let Game = new Schema({
 	animator: {type: String, required: true},
 	location: {type: String, required: true},
 	shortId: {type: String, required: true},
+	nextGame: {type: String, required: false},
 	typeMoney: {type: String, required: false},
 	events: {type: [EventGeco], required: false},
 	decks: {type: [[Card]], required: false},

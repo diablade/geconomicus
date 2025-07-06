@@ -10,6 +10,7 @@ router.get('/feedbacks/:idGame', validate(schemas.idGame, 'params'), game.getFee
 router.get('/:idGame', validate(schemas.idGame, 'params'), game.getGameById);
 router.get('/short/:shortId', validate(schemas.getIdGameByShortId, 'params'), game.getIdGameByShortId);
 router.post('/create', validate(schemas.create), game.create);
+router.post('/create-copy', validate(schemas.newGameFromCopy), game.newGameFromCopy);
 router.post('/end', validate(schemas.end), game.end);
 router.post('/delete', validate(schemas.deleteGame), game.delete);
 router.post('/start-round', validate(schemas.startRound), game.startRound);

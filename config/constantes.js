@@ -8,6 +8,7 @@ const BANK = 'bank';
 const DEATH = 'death';
 
 const CREATE_GAME = "create-game";
+const NEW_GAME = "new-game";
 const NEW_PLAYER = "new-player";
 const UPDATED_PLAYER = "updated-player";
 const UPDATE_GAME_OPTION = "update-game-option";
@@ -69,6 +70,7 @@ if (typeof module !== 'undefined' && module.exports) {
         DEATH:  DEATH,
 
         CREATE_GAME:        CREATE_GAME,
+        NEW_GAME:           NEW_GAME,
         NEW_PLAYER:         NEW_PLAYER,
         UPDATED_PLAYER:     UPDATED_PLAYER,
         UPDATE_GAME_OPTION: UPDATE_GAME_OPTION,

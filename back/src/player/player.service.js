@@ -65,6 +65,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
                 currentDU:          game.currentDU,
                 timerCredit:        game.timerCredit,
                 amountCardsForProd: game.amountCardsForProd,
+                nextGame:           game.nextGame,
                 gameName:           game.name
             });
         }

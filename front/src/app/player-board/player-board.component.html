@@ -28,6 +28,15 @@
 		</button>
 	</div>
 </div>
+<div class="blocked" *ngIf="nextGame">
+	<div class="default-credit d-flex flex-column">
+		<div class="shadowed gecoFont fs-3">{{ "PLAYER.NEXT_GAME" | translate }}</div>
+		<button (click)="newGame()" mat-raised-button
+		        color="accent">
+			{{ "PLAYER.GO_TO_NEXT_GAME" | translate }}
+		</button>
+	</div>
+</div>
 <div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
 		<div class="position-relative" (click)="refresh()">

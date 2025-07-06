@@ -98,6 +98,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	ioURl: string = environment.API_HOST;
 	private socket: any;
+	nextGame = false;
 	screenWidth = 0;
 	screenHeight = 0;
 	idGame: string | undefined;
@@ -204,6 +205,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.currentDU = data.currentDU;
 			this.statusGame = data.statusGame;
 			this.gameName = data.gameName;
+			this.nextGame = data.nextGame || false;
 			this.timerCredit = data.timerCredit;
 			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
@@ -490,6 +492,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	resurrection() {
 		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
 	}
+	
+	newGame() {
+		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
+	}
 
 	formatNewCards(newCards: Card[]) {
 		for (const c of newCards) {
@@ -552,7 +558,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			});
 		} else if (this.player.coins < cost) {
-			console.log(this.player.coins, cost);
 			this.snackbarService.showError("Fond insuffisant !");
 			const errorAudio = new Audio("../assets/audios/error.mp3");
 			errorAudio.load();

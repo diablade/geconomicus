@@ -19,7 +19,13 @@ export const schemas = {
         animator: Joi.string(),
         location: Joi.string(),
     }),
-
+    newGameFromCopy: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                     .messages({
+                         'any.invalid':  'Invalid game ID format',
+                         'any.required': 'Game ID is required'
+                     })
+    }),
     start: Joi.object({
         idGame:    Joi.string().custom(isValidObjectId).required()
                        .messages({
@@ -31,7 +37,6 @@ export const schemas = {
                            'any.required': 'Type of money is required'
                        })
     }),
-
     update: Joi.object({
         idGame:                  Joi.string().custom(isValidObjectId).required()
                                      .messages({
