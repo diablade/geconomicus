@@ -10,10 +10,12 @@ const areCardIdsUnique = (cardIds, authorizedLength) => {
     const uniqueIds = new Set(cardIds);  // Convert array to a Set to eliminate duplicates
     return uniqueIds.size === authorizedLength;  // Compare the size of the Set array length authorized
 }
-const generateOneCard = async (letter, color, weight, price) => {
-    const comId = new mongoose.Types.ObjectId();
-    let card = constructor.card(letter, color, weight, price);
-    card._id = comId;
+const generateOneCard = async (letterIndex, letterNumber, weight, price) => {
+    const letter = letters[letterIndex];
+    const color = colors[weight];
+    const key = letter + weight.toString() + letterNumber.toString();
+    let card = constructor.card(key, letter, color, weight, price);
+    card._id = new mongoose.Types.ObjectId();
     return card;
 }
 const generateDecks = async (game) => {
@@ -27,10 +29,10 @@ const generateDecks = async (game) => {
     // genere cartes pour les 4 lots
     for (let weight = 0; weight <= 3; weight++) {
         let deck = [];
-        for (let letter = 0; letter <= lettersInGame; letter++) {
+        for (let letterIndex = 0; letterIndex <= lettersInGame; letterIndex++) {
             // genere 3, 4 ou 5 cartes identiques
             for (let j = 1; j <= game.generatedIdenticalCards; j++) {
-                const card = await generateOneCard(letters[letter], colors[weight], weight, prices[weight]);
+                let card = await generateOneCard(letterIndex, j, weight, prices[weight]);
                 deck.push(card);
             }
         }

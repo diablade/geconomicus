@@ -76,10 +76,10 @@ import {ContributionsComponent} from './components/contributions/contributions.c
 import {TaskListBtnComponent, AnimatorTaskListDialog} from './components/tasklist-btn/tasklist-btn.component';
 import { JoinShortDialogComponent } from './dialogs/join-short-dialog/join-short-dialog.component';
 import { ResumeSessionPromptComponent } from './dialogs/resume-session-prompt/resume-session-prompt.component';
-
+import { ItemComponent } from './item/item.component';
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-	return new TranslateHttpLoader(http);
+	return new TranslateHttpLoader(http,'./assets/i18n/', '.json');
 }
 
 // Necessary to solve the problem of losing internet connection
@@ -128,7 +128,8 @@ LOAD_WASM().subscribe();
 		TaskListBtnComponent,
 		AnimatorTaskListDialog,
 		JoinShortDialogComponent,
-		ResumeSessionPromptComponent
+		ResumeSessionPromptComponent,
+		ItemComponent
 	],
 	imports: [
 		HttpClientModule,
