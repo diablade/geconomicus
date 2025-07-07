@@ -80,7 +80,7 @@
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
-	<div class="">
+	<div *ngIf="!modeNewCard" class="">
 		<div @list class="d-flex flex-row flex-wrap">
 			<ng-container *ngFor="let card of cards">
 				<div @items class="" *ngIf="card.displayed">
@@ -100,10 +100,30 @@
 							[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
 							[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
 							[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
-
 					></app-card>
 				</div>
 			</ng-container>
+		</div>
+	</div>
+	<div *ngIf="modeNewCard" class="">
+		<div @list class="d-flex flex-row flex-wrap">
+			<div @items class="" *ngFor="let card of cards">
+				<app-item
+						[card]="card"
+						[typeMoney]="typeMoney"
+						[idOwner]="idPlayer"
+						[idGame]="idGame"
+						[suffixShortCode]="player.idx.toString().padStart(2, '0')"
+						[currentDU]="currentDU"
+						(onCreateShortCode)="onCreateShortCode($event)"
+						[screenWidth]="screenWidth"
+						[screenHeight]="screenHeight"
+						[height]="screenWidth < screenHeight ? 'calc(18vw)':'calc(18vh)'"
+						[width]="screenWidth < screenHeight ? 'calc(18vw * 1.5)':'calc(18vh * 1.5)'"
+						[letterSize]="screenWidth < screenHeight ? 'calc(18vw * 0.33)' : 'calc(18vh * 0.33)'"
+						[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
+				></app-item>
+			</div>
 		</div>
 	</div>
 	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"

@@ -29,26 +29,21 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 	selector: 'app-player-board',
 	templateUrl: './player-board.component.html',
 	animations: [
-		// nice stagger effect when showing existing elements
 		trigger('list', [
 			transition(':enter', [
-				// child animation selector + stagger
-				query('@items',
-					stagger(600, animateChild()), {optional: true}
-				)
+				query('@items', [
+					animateChild()
+				], {optional: true})
 			]),
 		]),
 		trigger('items', [
 			transition(':enter', [
 				style({transform: 'translateY(-100rem)'}),
-				animate('600ms',
-					style({transform: 'translateY(0rem)'}))
+				animate('600ms ease-out', style({transform: 'translateY(0)'}))
 			]),
 			transition(':leave', [
-				style({transform: 'translateY(0rem)'}),
-				animate('600ms',
-					style({transform: 'translateY(-100rem)'}))
-			]),
+				animate('600ms ease-in', style({transform: 'translateY(-100rem)'}))
+			])
 		]),
 		trigger('coinFlip', [
 			transition('void => *', []),
@@ -108,6 +103,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	statusGame = "waiting";
 	gameName: string = "";
 	typeMoney = C.JUNE;
+	modeNewCard = false;
 	amountCardsForProd = 4;
 	currentDU = 0;
 	cards: Card[] = [];
@@ -198,12 +194,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getPlayerInfos() {
 		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
+			this.i18nService.loadNamespace("cards");
 			this.cards = [];
 			this.player = data.player;
 			this.typeMoney = data.typeMoney;
 			this.currentDU = data.currentDU;
 			this.statusGame = data.statusGame;
 			this.gameName = data.gameName;
+			this.modeNewCard = data.modeNewCard;
 			this.timerCredit = data.timerCredit;
 			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
@@ -344,7 +342,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				this.countOccurrencesAndHideDuplicates();
+				if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
@@ -429,7 +427,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			this.countOccurrencesAndHideDuplicates();
+			if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -503,7 +501,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const cards = this.formatNewCards(newCards);
 		this.cards = _.concat(this.cards, cards);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		this.countOccurrencesAndHideDuplicates();
+		if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
 	}
 
 	produceLevelUp($event: Card) {

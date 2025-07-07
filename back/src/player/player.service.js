@@ -65,7 +65,8 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
                 currentDU:          game.currentDU,
                 timerCredit:        game.timerCredit,
                 amountCardsForProd: game.amountCardsForProd,
-                gameName:           game.name
+                gameName:           game.name,
+                modeNewCard:        game.modeNewCard
             });
         }
         else {

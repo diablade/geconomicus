@@ -1,0 +1,45 @@
+<ng-container *ngIf="state==='flipped'">
+	<div class="whenFlipped" (click)="closeCard()"></div>
+</ng-container>
+<div class="card" [style.width]="width" [style.height]="height"
+     [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
+	<div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
+		<div class="containerLetter topLeft" [ngClass]="state==='flipped' ? 'hide' : 'show'">
+			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.key | translate }}&nbsp;</span>
+		</div>
+	</div>
+	<div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
+		<div class="d-flex flex-row align-items-center">
+			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">&nbsp;{{ card.key | translate }}&nbsp;</div>
+			<div class="prices d-flex flex-column justify-content-between">
+				<div [style.font-size]="priceSize" [style.line-height]="priceSize"
+				     class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
+				</div>
+				<div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price"
+				     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
+				</div>
+			</div>
+		</div>
+		<div class="qrcodeWrapper flex-grow-1">
+			<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
+			<ngx-kjua
+					[text]="getData()"
+					[minVersion]="1"
+					[crisp]="true"
+					[ecLevel]="'Q'"
+					[render]="'svg'"
+			></ngx-kjua>
+		</div>
+	</div>
+</div>
+<!-- Preload the image -->
+<audio #cardFlip>
+	<source src='/assets/audios/cardFlipGet.mp3' type="audio/mp3">
+</audio>
+<audio #cardBack>
+	<source src='/assets/audios/cardFlipBack.mp3' type="audio/mp3">
+</audio>
+<img src="/assets/images/lvl1.png" style="display: none;"/>
+<img src="/assets/images/lvl2.png" style="display: none;"/>
+<img src="/assets/images/lvl3.png" style="display: none;"/>
+<img src="/assets/images/lvl4.png" style="display: none;"/>

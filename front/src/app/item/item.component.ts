@@ -5,9 +5,9 @@ import {faGift} from "@fortawesome/free-solid-svg-icons";
 import {ShortCode} from "../models/shortCode";
 
 @Component({
-	selector: 'app-card',
-	templateUrl: './card.component.html',
-	styleUrls: ['./card.component.scss'],
+	selector: 'app-item',
+	templateUrl: './item.component.html',
+	styleUrls: ['./item.component.scss'],
 	animations: [
 		trigger("cardFlip", [
 			state(
@@ -27,21 +27,21 @@ import {ShortCode} from "../models/shortCode";
 				}),
 				{params: {translateX: 10, translateY: 10}}
 			),
-			transition("default => flipped", [animate("350ms")]),
-			transition("flipped => default", [animate("350ms")]),
+			transition("default => flipped", [animate("300ms")]),
+			transition("flipped => default", [animate("300ms")]),
 		])
 	]
 })
-export class CardComponent {
+export class ItemComponent {
 	@Input() card: Card = {
 		_id: "",
 		key: "",
-		count: 1,
 		color: "",
 		letter: "",
 		price: 0,
 		weight: 0,
-		displayed: false,
+		displayed: true,
+		count: 1,
 	};
 	@Input() idOwner: string | undefined;
 	@Input() idGame: string | undefined;
@@ -50,7 +50,6 @@ export class CardComponent {
 	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() amountCardsForProd = 4;
 	@Input() width = 'calc(28vw)';
 	@Input() height = 'calc(28vw * 1.5)';
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
@@ -62,7 +61,6 @@ export class CardComponent {
 	translateY = 0;
 	shortCode: ShortCode | undefined;
 	faGift = faGift;
-	@Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
 	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 	@ViewChild('cardFlip') cardFlip!: ElementRef;
 	@ViewChild('cardBack') cardBack!: ElementRef;
@@ -112,10 +110,6 @@ export class CardComponent {
 		this.translateX = (this.screenWidth / 2) - (positionX + (width / 2));
 	}
 
-	buildCardLvlUp() {
-		this.onBuildCardLvlUp.emit(this.card);
-	}
-
 	createShortCode() {
 		this.shortCode = new ShortCode(this.getData(), this.suffixShortCode);
 		this.onCreateShortCode.emit(this.shortCode);
@@ -124,17 +118,5 @@ export class CardComponent {
 	deleteShortCode() {
 		this.shortCode = undefined;
 		this.onCreateShortCode.emit(this.shortCode);
-	}
-
-	getBuildText(card: Card) {
-		switch (card.weight) {
-			case 0:
-				return "CARD.BUILD_UP_0";
-			case 1:
-				return "CARD.BUILD_UP_1";
-			case 2:
-				return "CARD.BUILD_UP_2";
-		}
-		return "CARD.BUILD_UP";
 	}
 }
