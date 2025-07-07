@@ -7,8 +7,8 @@ const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
 const colors = ["red", "yellow", "green", "blue"];
 
 const areCardIdsUnique = (cardIds, authorizedLength) => {
-	const uniqueIds = new Set(cardIds);  // Convert array to a Set to eliminate duplicates
-	return uniqueIds.size === authorizedLength;  // Compare the size of the Set array length authorized
+    const uniqueIds = new Set(cardIds);  // Convert array to a Set to eliminate duplicates
+    return uniqueIds.size === authorizedLength;  // Compare the size of the Set array length authorized
 }
 const generateOneCard = async (letter, color, weight, price) => {
 	const comId = new mongoose.Types.ObjectId();
@@ -37,29 +37,28 @@ const generateDecks = async (game) => {
 		tableDecks[weight] = _.shuffle(deck);
 	}
 	return tableDecks;
+    let lettersInGame = game.players.length + 1;
 }
 const pushCardsInDecks = async (idGame, cards) => {
-	try {
-		const groupedCards = _.groupBy(_.sortBy(cards, 'weight'), 'weight');
-		await GameModel.updateOne(
-			{_id: idGame},
-			{
-				$push: {
-					[`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
-					[`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
-					[`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
-					[`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
-				},
-			}
-		);
-	} catch (err) {
-		log.error(err);
-		throw new Error("Cards are not back in decks");
-	}
+    try {
+        const groupedCards = _.groupBy(_.sortBy(cards, 'weight'), 'weight');
+        await GameModel.updateOne({_id: idGame}, {
+            $push: {
+                [`decks.${0}`]: {$each: groupedCards[0] ? groupedCards[0] : []},
+                [`decks.${1}`]: {$each: groupedCards[1] ? groupedCards[1] : []},
+                [`decks.${2}`]: {$each: groupedCards[2] ? groupedCards[2] : []},
+                [`decks.${3}`]: {$each: groupedCards[3] ? groupedCards[3] : []},
+            },
+        });
+    }
+    catch (err) {
+        log.error(err);
+        throw new Error("Cards are not back in decks");
+    }
 }
 
 export default {
-	generateDecks,
-	pushCardsInDecks,
-	areCardIdsUnique,
+    generateDecks,
+    pushCardsInDecks,
+    areCardIdsUnique,
 }
