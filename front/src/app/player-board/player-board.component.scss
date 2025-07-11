@@ -68,6 +68,8 @@
 }
 
 .game {
+	width: 100vw;
+	height: 100vh;
 	background-size: cover;
 }
 
@@ -171,4 +173,11 @@
 	left: 0;
 	top: 0;
 	z-index: 1000;
+}
+
+.listItem{
+	flex-grow: 0.5;
+}
+.listReceipes{
+	flex-grow: 1;
 }

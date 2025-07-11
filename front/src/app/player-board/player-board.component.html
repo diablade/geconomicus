@@ -9,12 +9,8 @@
 				<div class="deuxpoints shadowed">:</div>
 				<div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
 			</div>
-			<mat-progress-spinner
-					[color]="'warn'"
-					[mode]="'determinate'"
-					[diameter]="300"
-					strokeWidth="20"
-					[value]="prisonProgress">
+			<mat-progress-spinner [color]="'warn'" [mode]="'determinate'" [diameter]="300" strokeWidth="20"
+				[value]="prisonProgress">
 			</mat-progress-spinner>
 		</div>
 	</div>
@@ -22,23 +18,20 @@
 <div class="blocked" *ngIf="player.status === C.DEAD">
 	<div class="default-credit d-flex flex-column">
 		<div class="shadowed gecoFont fs-3">{{ "PLAYER.THIS_LIFE_IS_GONE" | translate }}</div>
-		<button (click)="tryReincarnate()" mat-raised-button
-		        color="accent">
+		<button (click)="tryReincarnate()" mat-raised-button color="accent">
 			{{ "PLAYER.GO_TO_SECOND_LIFE" | translate }}
 		</button>
 	</div>
 </div>
-<div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
+<div class="p-2 game overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
 		<div class="position-relative" (click)="refresh()">
 			<div class="coin-container" [ngSwitch]="typeMoney">
 				<ng-container *ngSwitchCase="C.JUNE">
-					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"
-					     [@coinFlip]="duVisible"/>
+					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free" [@coinFlip]="duVisible" />
 				</ng-container>
 				<ng-container *ngSwitchCase="C.DEBT">
-					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"
-					     [@coinFlip]="creditReceived"/>
+					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt" [@coinFlip]="creditReceived" />
 				</ng-container>
 			</div>
 			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>
@@ -55,28 +48,25 @@
 		</div>
 		<div class="">
 			<div class="d-flex justify-content-end">
-				<div (click)="updatePlayer()" class="imgTitle"
-				     [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
+				<div (click)="updatePlayer()" class="imgTitle" [ngStyle]="{'border-color':'#'+player.hairColor}"
+					#svgContainer></div>
 			</div>
 			<div class="username">{{ player.name }}</div>
 		</div>
 	</div>
 	<div class="" *ngIf="statusGame!==C.PLAYING">
-		<div
-				class="text-center gecoFont shadowed fs-1 m-4">{{
-                statusGame !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
+		<div class="text-center gecoFont shadowed fs-1 m-4">{{
+			statusGame !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
 			}}
 		</div>
 		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit"
-		                *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
-		<button *ngIf="statusGame===C.END_GAME && !player.survey" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
-		        mat-raised-button
-		        color="accent">
+			*ngIf="statusGame !== C.END_GAME"></app-notice-btn>
+		<button *ngIf="statusGame===C.END_GAME && !player.survey"
+			[routerLink]="['/game',idGame,'player',idPlayer,'survey']" mat-raised-button color="accent">
 			{{ "PLAYER.ANSWER_SURVEY" | translate }}
 		</button>
 		<button class="ms-1" *ngIf="statusGame===C.END_GAME && player.survey" [routerLink]="['/game',idGame,'results']"
-		        mat-raised-button
-		        color="warn">
+			mat-raised-button color="warn">
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
@@ -84,59 +74,50 @@
 		<div @list class="d-flex flex-row flex-wrap">
 			<ng-container *ngFor="let card of cards">
 				<div @items class="" *ngIf="card.displayed">
-					<app-card
-							[card]="card"
-							[typeMoney]="typeMoney"
-							[idOwner]="idPlayer"
-							[idGame]="idGame"
-							[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-							[currentDU]="currentDU"
-							[amountCardsForProd]="amountCardsForProd"
-							(onBuildCardLvlUp)="produceLevelUp($event)"
-							(onCreateShortCode)="onCreateShortCode($event)"
-							[screenWidth]="screenWidth"
-							[screenHeight]="screenHeight"
-							[width]="screenWidth < screenHeight ? 'calc(28vw)':'calc(28vh)'"
-							[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
-							[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
-							[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
-					></app-card>
+					<app-card [card]="card" [typeMoney]="typeMoney" [idOwner]="idPlayer" [idGame]="idGame"
+						[suffixShortCode]="player.idx.toString().padStart(2, '0')" [currentDU]="currentDU"
+						[amountCardsForProd]="amountCardsForProd" (onBuildCardLvlUp)="produceLevelUp($event)"
+						(onCreateShortCode)="onCreateShortCode($event)" [screenWidth]="screenWidth"
+						[screenHeight]="screenHeight" [width]="isHorizontal() ? 'calc(28vh)':'calc(28vw)'"
+						[height]="isHorizontal() ? 'calc(28vh * 1.5)':'calc(28vw * 1.5)'"
+						[letterSize]="isHorizontal() ? 'calc(28vh * 0.33)':'calc(28vw * 0.33)'"
+						[priceSize]="isHorizontal() ?  'calc(18vh * 0.2)':'calc(18vw * 0.2)'">
+					</app-card>
 				</div>
 			</ng-container>
 		</div>
 	</div>
-	<div *ngIf="modeNewCard" class="">
-		<div @list class="d-flex flex-row flex-wrap">
-			<div @items class="" *ngFor="let card of cards">
-				<app-item
-						[card]="card"
-						[typeMoney]="typeMoney"
-						[idOwner]="idPlayer"
-						[idGame]="idGame"
-						[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-						[currentDU]="currentDU"
-						(onCreateShortCode)="onCreateShortCode($event)"
-						[screenWidth]="screenWidth"
-						[screenHeight]="screenHeight"
-						[height]="screenWidth < screenHeight ? 'calc(18vw)':'calc(18vh)'"
-						[width]="screenWidth < screenHeight ? 'calc(18vw * 1.5)':'calc(18vh * 1.5)'"
-						[letterSize]="screenWidth < screenHeight ? 'calc(18vw * 0.33)' : 'calc(18vh * 0.33)'"
-						[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
-				></app-item>
+
+	<div *ngIf="modeNewCard" class="d-flex flex-grow-1" [ngClass]="isHorizontal() ? 'flex-row' : 'flex-column'">
+		<div class="listItem">
+			<div @list class="d-flex flex-wrap">
+				<div @items class="" *ngFor="let card of cards">
+					<app-item [card]="card" [typeMoney]="typeMoney" [idOwner]="idPlayer" [idGame]="idGame"
+						[suffixShortCode]="player.idx.toString().padStart(2, '0')" [currentDU]="currentDU"
+						(onCreateShortCode)="onCreateShortCode($event)" [screenWidth]="screenWidth"
+						[screenHeight]="screenHeight" [width]="isHorizontal() ? 'calc(15vh)':'calc(15vw)'"
+						[height]="isHorizontal() ? 'calc(15vh)':'calc(15vw)'"
+						[iconSize]="isHorizontal() ?  'calc(15vh * 0.55)':'calc(15vw * 0.55)'"
+						[priceSize]="isHorizontal() ? 'calc(15vh * 0.2)':'calc(15vw * 0.2)' "></app-item>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
-	     [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
-		<div class="d-inline-flex" *ngFor="let credit of credits">
-			<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
-			            [contractor]="player.name"
-			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
+		<div class="listReceipes">
+			<app-receipes class="w-100 h-100" [items]="cards" [productionCards]="amountCardsForProd"
+				(onReceipeCompleted)="onReceipeCompleted($event)"></app-receipes>
 		</div>
 	</div>
-	<div class="btnCredits">
-		<button *ngIf="typeMoney===C.DEBT" class="buy" mat-raised-button color="primary"
-		        (click)="panelCreditOpenState = !panelCreditOpenState">
+
+	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
+		[ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
+		<div class="d-inline-flex" *ngFor="let credit of credits">
+			<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit" [contractor]="player.name"
+				(actionBtn)="creditActionBtn($event,credit)"></app-credit>
+		</div>
+	</div>
+	<div *ngIf="typeMoney===C.DEBT" class="btnCredits">
+		<button class="buy" mat-raised-button color="primary"
+			(click)="panelCreditOpenState = !panelCreditOpenState">
 			{{ "PLAYER.CREDITS" | translate }}
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
 			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faEyeSlash"></fa-icon>
@@ -147,17 +128,16 @@
 			<fa-icon [icon]="faCamera"></fa-icon>
 		</mat-slide-toggle>
 		<button *ngIf="scanV3" class="buy" mat-raised-button color="accent"
-		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-		        (click)="scan()">
+			[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+			(click)="scan()">
 			{{ "PLAYER.BUY" | translate }}
 			<fa-icon [icon]="faQrcode"></fa-icon>
 		</button>
 		<button *ngIf="!scanV3" class="buy" mat-raised-button color="accent"
-		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-		        (click)="openDialogShorCode()">
+			[disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+			(click)="openDialogShorCode()">
 			{{ "PLAYER.BUY" | translate }}
 			<fa-icon [icon]="faKeyboard"></fa-icon>
 		</button>
 	</div>
 </div>
-
