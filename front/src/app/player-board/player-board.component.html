@@ -125,6 +125,10 @@
 				></app-item>
 			</div>
 		</div>
+		<div class="listReceipes">
+			<app-receipes class="w-100 h-100" [items]="cards" [productionCards]="amountCardsForProd"
+				(onReceipeCompleted)="onReceipeCompleted($event)"></app-receipes>
+		</div>
 	</div>
 	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
 	     [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">

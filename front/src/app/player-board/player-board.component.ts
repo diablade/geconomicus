@@ -11,7 +11,7 @@ import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
 import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
-import {animate, animateChild, keyframes, query, stagger, style, transition, trigger} from "@angular/animations";
+import {animate, animateChild, keyframes, query, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
@@ -19,6 +19,7 @@ import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dia
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import {ShortCode} from "../models/shortCode";
+import {Receipe} from "../models/receipes";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
@@ -763,5 +764,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onChangeSysScan() {
 		this.localStorageService.setItem('scanV3', this.scanV3);
+	}
+
+	onReceipeCompleted(receipe: Receipe) {
+		console.log(receipe);
+	}
+
+	isHorizontal(){
+		return this.screenHeight < this.screenWidth
 	}
 }

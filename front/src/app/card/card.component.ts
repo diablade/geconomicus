@@ -52,8 +52,8 @@ export class CardComponent {
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
 	@Input() amountCardsForProd = 4;
-	@Input() width = 'calc(28vw)';
-	@Input() height = 'calc(28vw * 1.5)';
+	@Input() width = this.screenWidth < this.screenHeight ? 'calc(28vw)':'calc(28vh)';
+	@Input() height = this.screenWidth < this.screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)';
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
 	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
 	@Input() flippable = true;

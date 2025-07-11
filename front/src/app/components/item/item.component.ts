@@ -1,8 +1,8 @@
 import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Card} from "../models/game";
+import {Card} from "../../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
-import {ShortCode} from "../models/shortCode";
+import {ShortCode} from "../../models/shortCode";
 
 @Component({
 	selector: 'app-item',
@@ -50,12 +50,12 @@ export class ItemComponent {
 	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() width = 'calc(28vw)';
-	@Input() height = 'calc(28vw * 1.5)';
-	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
-	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
+	@Input() width = this.screenWidth < this.screenHeight ? 'calc(15vw)':'calc(15vh)';
+	@Input() height = this.screenWidth < this.screenHeight ? 'calc(15vw)':'calc(15vh)';
+	@Input() iconSize = this.screenWidth < this.screenHeight ? 'calc(15vw * 0.33)' : 'calc(15vh * 0.33)';
+	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(15vw * 0.2)' : 'calc(15vh * 0.2)';
 	@Input() flippable = true;
-	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(6vw * 0.2)' : 'calc(6vh * 0.2)';
+	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)';
 	state = "default";
 	translateX = 0;
 	translateY = 0;

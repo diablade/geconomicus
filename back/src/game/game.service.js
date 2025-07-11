@@ -255,7 +255,7 @@ async function createGame(game) {
         shortId:                 nanoid(),
         status:                  C.OPEN,
         typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-        modeNewCard:             req.body.modeNewCard || false,
+        modeNewCard: req.body.modeNewCard || false,
         events:                  [createEvent],
         decks:                   [],
         players:                 [],
@@ -318,7 +318,7 @@ async function updateGame(game) {
     }, {
         $set: {
             typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-            modeNewCard:             game.modeNewCard || false,
+            modeNewCard: game.modeNewCard || false,
             name:                    game.name ? game.name : "sans nom",
             animator:                game.animator ? game.animator : "sans animateur",
             location:                game.location ? game.location : "sans lieu",
