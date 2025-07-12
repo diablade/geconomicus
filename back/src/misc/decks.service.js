@@ -20,7 +20,7 @@ const generateDecks = async (game) => {
 	const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
 
 	let tableDecks = [[], [], [], []];
-	let lettersInGame = game.players.length +1;
+	let lettersInGame = game.players.length;
 	if (!game.generateLettersAuto) {
 		lettersInGame = game.generateLettersInDeck;
 	}

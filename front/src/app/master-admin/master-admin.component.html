@@ -1,17 +1,17 @@
 <div class="admin">
 	<h1>
-		{{ game.name }}
+		{{ game?.name }}
 	</h1>
 	<div class="infos">
 		<ul>
 			<li>
-				{{ game.animator }}
+				{{ game?.animator }}
 			</li>
 			<li>
-				{{ game.location }}
+				{{ game?.location }}
 			</li>
 			<li>
-				{{ game.typeMoney }}
+				{{ game?.typeMoney }}
 			</li>
 		</ul>
 	</div>
@@ -20,7 +20,7 @@
 		<div class="w-25">
 			<h3>niveau 1</h3>
 			<div class="d-flex flex-wrap">
-				<div *ngFor="let card of game.decks[0]">
+				<div *ngFor="let card of deck1">
 					<app-card *ngIf="card.displayed"
 										[card]="card"
 										[typeMoney]="''"
@@ -39,7 +39,7 @@
 		<div class="w-25">
 			<h3>niveau 2</h3>
 			<div class="d-flex flex-wrap">
-				<div *ngFor="let card of game.decks[1]">
+				<div *ngFor="let card of deck2">
 					<app-card *ngIf="card.displayed"
 										[card]="card"
 										[typeMoney]="''"
@@ -58,7 +58,7 @@
 		<div class="w-25">
 			<h3>niveau 3</h3>
 			<div class="d-flex flex-wrap">
-				<div *ngFor="let card of game.decks[2]">
+				<div *ngFor="let card of deck3">
 					<app-card *ngIf="card.displayed"
 										[card]="card"
 										[typeMoney]="''"
@@ -77,7 +77,7 @@
 		<div class="w-25">
 			<h3>niveau 4</h3>
 			<div class="d-flex flex-wrap">
-				<div *ngFor="let card of game.decks[3]">
+				<div *ngFor="let card of deck4">
 					<app-card *ngIf="card.displayed"
 										[card]="card"
 										[typeMoney]="''"
@@ -96,7 +96,7 @@
 	</div>
 	<h2>Players</h2>
 	<div class="d-flex flex-row flex-wrap">
-		<div *ngFor="let player of game.players" class="w-25">
+		<div *ngFor="let player of game?.players" class="w-25">
 			<div class="d-flex flex-column player-board m-2"
 					 [ngStyle]="getBackgroundStyle(player)">
 				<div class="header-board d-flex flex-row p-2">

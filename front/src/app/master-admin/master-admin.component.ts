@@ -15,6 +15,11 @@ export class MasterAdminComponent implements OnInit {
 	idGame = "";
 	game: any;
 
+	deck1: Card[] = [];
+	deck2: Card[] = [];
+	deck3: Card[] = [];
+	deck4: Card[] = [];
+
 	constructor(private route: ActivatedRoute,
 							private backService: BackService,
 							private sanitizer: DomSanitizer,) {
@@ -26,9 +31,10 @@ export class MasterAdminComponent implements OnInit {
 			// this.socket = this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
-				for(let deck of game.decks){
-					this.countOccurrencesAndHideDuplicates(deck);
-				}
+				this.deck1 = this.countOccurrencesAndHideDuplicates(game.decks[0]);
+				this.deck2 = this.countOccurrencesAndHideDuplicates(game.decks[1]);
+				this.deck3 = this.countOccurrencesAndHideDuplicates(game.decks[2]);
+				this.deck4 = this.countOccurrencesAndHideDuplicates(game.decks[3]);
 				for(let player of game.players){
 					this.countOccurrencesAndHideDuplicates(player.cards);
 				}
@@ -54,7 +60,7 @@ export class MasterAdminComponent implements OnInit {
 
 
 	countOccurrencesAndHideDuplicates(cards:Card[]) {
-		_.orderBy(cards, ["weight", "letter"]);
+		cards = _.orderBy(cards, ["letter"], ["asc"]);
 		const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
 		const keyDuplicates: string[] = [];
 		for (const c of cards) {
@@ -69,5 +75,6 @@ export class MasterAdminComponent implements OnInit {
 				c.displayed = true;
 			}
 		}
+		return cards;
 	}
 }
