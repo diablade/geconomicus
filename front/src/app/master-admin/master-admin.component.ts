@@ -4,6 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import * as _ from "lodash-es";
+import {SnackbarService} from "../services/snackbar.service";
 
 @Component({
 	selector: 'app-master-admin',
@@ -22,7 +23,8 @@ export class MasterAdminComponent implements OnInit {
 
 	constructor(private route: ActivatedRoute,
 							private backService: BackService,
-							private sanitizer: DomSanitizer,) {
+							private sanitizer: DomSanitizer,
+							private snackbarService: SnackbarService) {
 	}
 
 	ngOnInit(): void {
@@ -76,5 +78,18 @@ export class MasterAdminComponent implements OnInit {
 			}
 		}
 		return cards;
+	}
+	getAlivePlayers(){
+		return this.game?.players.filter((player: Player) => player.status === 'alive');
+	}
+	getDeadPlayers(){
+		return this.game?.players.filter((player: Player) => player.status === 'dead');
+	}
+	refreshForceAllPlayers(){
+		this.backService.refreshForceAllPlayers(this.idGame).subscribe( data => {
+			if(data){
+				this.snackbarService.showSuccess("Refresh force all players");
+			}
+		} );
 	}
 }

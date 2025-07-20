@@ -377,4 +377,25 @@ export default {
             });
         }
     },
+    refreshForceAllPlayers: async (req, res, next) => {
+        try {
+            const done = await gameService.refreshForceAllPlayers(req.body.idGame);
+            if (done) {
+                return res.status(200).json({
+                    status: "refresh done",
+                });
+            }
+            else {
+                return res.status(500).json({
+                    message: "Game refresh error",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game refresh error:" + err);
+            return res.status(500).json({
+                message: "Game refresh error",
+            });
+        }
+    },
 };

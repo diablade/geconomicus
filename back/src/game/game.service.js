@@ -493,6 +493,19 @@ async function resetGame(idGame) {
     }
 }
 
+async function refreshForceAllPlayers(idGame) {
+    const game = await GameModel.findById(idGame);
+    if (game) {
+        game.players.forEach(player => {
+            socket.emitTo(player.id, C.REFRESH_FORCE, {force: true});
+        });
+        return true;
+    }
+    else {
+        throw new Error("Refresh force all players error");
+    }
+}
+
 export default {
     createGame:       createGame,
     updateGame:       updateGame,
@@ -501,5 +514,6 @@ export default {
     getGameByShortId: getGameByShortId,
     startRound:       startRound,
     initGame:         initGame,
-    resetGame:        resetGame
+    resetGame:        resetGame,
+    refreshForceAllPlayers: refreshForceAllPlayers
 }

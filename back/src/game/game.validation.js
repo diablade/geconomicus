@@ -183,6 +183,14 @@ export const schemas = {
                         'any.invalid':  'Invalid game ID format',
                         'any.required': 'Game ID is required'
                     })
+    }),
+
+    refreshForceAllPlayers: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid game ID format',
+                        'any.required': 'Game ID is required'
+                    })
     })
 };
 

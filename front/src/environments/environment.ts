@@ -30,6 +30,7 @@ export const environment = {
 		GETALL: 'game/all',
 		CREATE: 'game/create',
 		UPDATE: 'game/update',
+		REFRESH_FORCE_ALL_PLAYERS: 'game/refresh-force-all-players',
 		EXPORT: 'game/export',
 		IMPORT: 'game/import',
 		START: 'game/start',

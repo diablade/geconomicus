@@ -56,6 +56,7 @@ const BIRTH = "birth";
 const SHORT_CODE_EMIT = "sce";
 const SHORT_CODE_CONFIRMED = "scc";
 const SHORT_CODE_BROADCAST = "scbc";
+const REFRESH_FORCE = "refresh-force";
 
 if (typeof module !== 'undefined' && module.exports) {
     // Export the constants for use in other scripts if needed (for ES6 and later).
@@ -115,6 +116,7 @@ if (typeof module !== 'undefined' && module.exports) {
         SHORT_CODE_CONFIRMED: SHORT_CODE_CONFIRMED,
         SHORT_CODE_EMIT:      SHORT_CODE_EMIT,
         SHORT_CODE_BROADCAST: SHORT_CODE_BROADCAST,
+        REFRESH_FORCE:        REFRESH_FORCE,
     };
 }
 

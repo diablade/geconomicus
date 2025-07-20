@@ -8,7 +8,7 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
 	faCircleInfo, faWarning, faBuildingColumns,
-	faRightToBracket
+	faRightToBracket, faEye
 } from '@fortawesome/free-solid-svg-icons';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
@@ -51,6 +51,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faRightToBracket = faRightToBracket;
 	faWarning = faWarning;
 	faBuildingColumns = faBuildingColumns;
+	faEye = faEye;
 	audioStart = new Audio();
 
 	C = C;
@@ -311,6 +312,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showBank() {
 		window.open('game/' + this.idGame + '/bank', '_blank');
+	}
+	
+	goToAdmin() {
+		window.open('game/' + this.idGame + '/admin', '_blank');
 	}
 
 	showOptions() {
