@@ -274,8 +274,6 @@ const transaction = async (req, res, next) => {
 		);
 
 		if (!updatedGame) {
-			activeTransactions.delete(idBuyer);
-			activeTransactions.delete(idSeller);
 			return res.status(400).json({ message: "Transaction failed: conditions not met" });
 		}
 
@@ -285,13 +283,9 @@ const transaction = async (req, res, next) => {
 		socket.emitTo(idGame + C.EVENT, C.EVENT, eventTransaction);
 		socket.emitTo(idSeller, C.TRANSACTION_DONE, { idCardSold: idCard, coins: seller.coins });
 
-		activeTransactions.delete(idBuyer);
-		activeTransactions.delete(idSeller);
 		return res.status(200).json({ buyedCard: card, coins: buyer.coins });
 	} catch (error) {
 		log.error('Transaction error:'+error);
-		activeTransactions.delete(idBuyer);
-		activeTransactions.delete(idSeller);
 		return res.status(500).json({ message: 'Transaction error' });
 	} finally {
 		activeTransactions.delete(idBuyer);
