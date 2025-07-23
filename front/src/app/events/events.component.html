@@ -97,7 +97,7 @@
         </span>
         <span *ngSwitchCase="C.SETTLE_CREDIT" class="">
           <span [matTooltip]="'EVENTS.CREDIT_REPAID' | translate">{{ event.amount }}{{ "CURRENCY.EURO" | translate }}➡️🏦️📝❌</span>
-          <span [matTooltip]="getPlayerName(event.receiver)"> 👤</span>
+          <span [matTooltip]="getPlayerName(event.emitter)"> 👤</span>
         </span>
         <span *ngSwitchCase="C.SEIZURE" class="">
           <span [matTooltip]="'EVENTS.BANK_SEIZURE' | translate">️🏦🫳</span>
