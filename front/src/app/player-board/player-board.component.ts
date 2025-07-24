@@ -131,6 +131,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	minutesPrison = 5;
 	secondsPrison = 0;
 	shortCode: ShortCode | undefined;
+	isBuying = false;
+	isProducing = false;
 	prisonTimer = createCountdown({h: 0, m: 0, s: 0}, {
 		listen: ({hh, mm, ss, s, h, m}) => {
 			this.minutesPrison = m;
@@ -510,6 +512,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	produceLevelUp($event: Card) {
+		if (this.isProducing) {
+			return; // Prevent double-clicks
+		}
+		this.isProducing = true;
 		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
 		if (identicalCards.length >= this.amountCardsForProd) {
 			const cardsForProd = identicalCards.slice(0, this.amountCardsForProd);
@@ -519,9 +525,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (cardGift) {
 					this.showGift(cardGift);
 				}
+				this.isProducing = false;
 				await this.receiveCards(newCards);
 			});
 		} else {
+			this.isProducing = false;
 			this.snackbarService.showError("are you trying to cheat???");
 		}
 	}
@@ -543,16 +551,23 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buy(dataRaw: any) {
+		if (this.isBuying) {
+			return; // Prevent double-clicks
+		}
+		this.isBuying = true;
+
 		const data = JSON.parse(dataRaw);
 		const cost = this.typeMoney == C.JUNE ? (data.p * this.currentDU).toFixed(2) : data.p;
 		if (this.idGame && data.g && this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
+			this.isBuying = false; // Reset flag
 		} else if (this.player.coins >= cost) {
 			this.backService.transaction(this.idGame, this.idPlayer, data.o, data.c).subscribe(async dataReceived => {
 				if (dataReceived?.buyedCard) {
 					await this.receiveCards([dataReceived.buyedCard]);
 					this.player.coins = dataReceived.coins;
 				}
+				this.isBuying = false; // Reset flag on success
 			});
 		} else if (this.player.coins < cost) {
 			console.log(this.player.coins, cost);
@@ -560,8 +575,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			const errorAudio = new Audio("../assets/audios/error.mp3");
 			errorAudio.load();
 			errorAudio.play();
+			this.isBuying = false; // Reset flag
 		} else {
 			this.snackbarService.showError("Erreur scan, réessaye !");
+			this.isBuying = false; // Reset flag
 		}
 	}
 

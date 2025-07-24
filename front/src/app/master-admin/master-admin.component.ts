@@ -5,6 +5,7 @@ import {BackService} from "../services/back.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import * as _ from "lodash-es";
 import {SnackbarService} from "../services/snackbar.service";
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-master-admin',
@@ -91,5 +92,8 @@ export class MasterAdminComponent implements OnInit {
 				this.snackbarService.showSuccess("Refresh force all players");
 			}
 		} );
+	}
+	getUserUrl(idPlayer: string) {
+		return environment.WEB_HOST + environment.GAME.GET + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
 	}
 }
