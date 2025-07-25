@@ -270,6 +270,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
+		this.socket.on(C.UPDATED_PLAYER, (data: any) => {
+			this.player = data;
+		});
 		this.socket.on(C.END_GAME, (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
 			this.statusGame = C.END_GAME;

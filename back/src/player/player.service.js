@@ -6,6 +6,8 @@ import socket from "../../config/socket.js";
 import bankService from "../bank/bank.service.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
 import mongoose from 'mongoose';
+import {createAvatar, schema} from '@dicebear/core';
+import {adventurer} from '@dicebear/collection';
 
 const killPlayer = async (idGame, idPlayer) => {
     try {
@@ -42,6 +44,7 @@ const killPlayer = async (idGame, idPlayer) => {
         throw new Error("kill player failed");
     }
 }
+
 const getPlayer = async (idGame, idPlayer, statusGames = false) => {
     try {
         if (!idPlayer || !idGame) {
@@ -78,7 +81,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
     }
 }
 
-async function join(game, name) {
+const join = async (game, name) => {
     if (game.status === C.END_GAME) {
         throw new Error("Game is finished");
     }
@@ -121,8 +124,74 @@ async function join(game, name) {
     }
 }
 
+export function updateSvg(player) {
+    let options = {};
+    let properties = {
+        ...schema.properties, ...adventurer.schema.properties,
+    };
+
+    options.hairColor = [player.hairColor.replace("#", "")];
+    options.skinColor = [player.skinColor];
+    options.mouth = [properties.mouth.default[player.mouth]];
+    console.log(" ___________________________________");
+    console.log("Mouth: " + options.mouth);
+    console.log("Mouth default: " + properties.mouth.default[player.mouth]);
+    console.log(" ___________________________________");
+    options.hair = [properties.hair.default[player.hair]];
+    options.eyebrows = [properties.eyebrows.default[player.eyebrows]];
+    options.eyes = [properties.eyes.default[player.eyes]];
+    options.earrings = [properties.earrings.default[player.earrings]];
+    options.glasses = [properties.glasses.default[player.glasses]];
+    options.features = [properties.features.default[player.features]];
+    options.glassesProbability = 100;
+    options.featuresProbability = 100;
+    options.earringsProbability = 100;
+    options.hairProbability = 100;
+    const avatar = createAvatar(adventurer, options).toString();
+    console.log(" ___________________________________");
+    // console.log(avatar);
+    console.log(" ___________________________________");
+    return avatar;
+}
+
+const updateHairColor = async (idGame, idPlayer, hairColor) => {
+
+    if (!idGame || !idPlayer || !hairColor) {
+        console.log(idGame, idPlayer, hairColor)
+        throw new Error("Bad request");
+    }
+
+    // Step 1: Find the document containing the player
+    const existingPlayer = await getPlayer(idGame, idPlayer);
+
+    // Step 2: Check the player's status or any other property
+    if (existingPlayer.status === C.DEAD) { // Adjust this check as needed
+        throw new Error("Player is DEAD and cannot be updated");
+    }
+
+    let image = updateSvg(existingPlayer);
+
+    const game = await GameModel.findOneAndUpdate({
+        _id:           idGame,
+        'players._id': idPlayer
+    }, {
+        $set: {
+            'players.$.hairColor': hairColor,
+            'players.$.image':     image,
+        }
+    }, {
+        new:            true,
+        returnOriginal: false
+    });
+    const updatedPlayer = game.players.find(p => p._id.toString() === idPlayer);
+    socket.emitTo(idPlayer, C.REFRESH_FORCE, {force: true});
+    socket.emitTo(idGame + C.MASTER, C.UPDATED_PLAYER, updatedPlayer);
+    return {"status": "updated"};
+};
+
 export default {
     killPlayer,
     getPlayer,
-    join
+    join,
+    updateHairColor
 }

@@ -154,9 +154,11 @@
 			</li>
 		</ul>
 	</div>
-	<h2 class="mt-5">Actions</h2>
-	<div>
-		<button mat-raised-button color="accent" (click)="refreshForceAllPlayers()">Force refresh all players</button>
+	<h2 class="mt-1">Actions</h2>
+	<div class="d-flex flex-row">
+		<button class="m-1" mat-raised-button color="accent" (click)="refresh()">🔄️</button>
+		<button class="m-1" mat-raised-button color="accent" (click)="refreshForceAllPlayers()">Send refresh to all clients 🔄️👥</button>
+		<button class="m-1" mat-raised-button color="accent" (click)="nextColorForDuplicateColorHair()">Resolve duplicate hair color</button>
 	</div>
 	<h2 class="mt-5">Decks</h2>
 	<div class="d-flex flex-row">
@@ -210,7 +212,8 @@
 						<div class="player-frame"
 							[ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
 							[ngStyle]="{'border-color':'#'+player.hairColor}"
-							[innerHTML]="getSanitizedSvgFromString(player.image)">
+							[innerHTML]="getSanitizedSvgFromString(player.image)"
+							(click)="forceRefreshPlayer(player)">
 						</div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
@@ -219,6 +222,7 @@
 						</div>
 						<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
 					</div>
+					<div class="reload" (click)="forceRefreshPlayer(player)">🔄️</div>
 				</div>
 				<div class="">
 					<div class="d-flex flex-row flex-wrap">
@@ -232,7 +236,7 @@
 			</div>
 		</div>
 	</div>
-	<h2 class="mt-5">Players dead (as reminder of their cards and money) (cards were back in decks)</h2>
+	<h2 class="mt-5">Players dead (as reminder of their cards and money) (the cards were back in decks)</h2>
 	<div class="d-flex flex-row flex-wrap">
 		<div *ngFor="let player of getDeadPlayers()" class="">
 			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player)">

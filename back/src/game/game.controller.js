@@ -7,7 +7,7 @@ import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
 
 export default {
-    create:             async (req, res, next) => {
+    create:                 async (req, res, next) => {
         try {
             const savedGame = await gameService.createGame(req);
             return res.status(200).send(savedGame);
@@ -19,7 +19,7 @@ export default {
             });
         }
     },
-    update:             async (req, res, next) => {
+    update:                 async (req, res, next) => {
         try {
             const savedGame = await gameService.updateGame(req.body);
             return res.status(200).send({
@@ -34,7 +34,7 @@ export default {
         }
 
     },
-    start:              async (req, res, next) => {
+    start:                  async (req, res, next) => {
         const body = req.body;
         GameModel.findById(body.idGame)
             .then(async (game) => {
@@ -79,7 +79,7 @@ export default {
                 });
             });
     },
-    startRound:         async (req, res, next) => {
+    startRound:             async (req, res, next) => {
         const {
             idGame,
             round
@@ -89,7 +89,7 @@ export default {
             status: C.START_ROUND,
         });
     },
-    interRound:         async (req, res, next) => {
+    interRound:             async (req, res, next) => {
         const id = req.body.idGame;
         GameModel.updateOne({
             _id: id,
@@ -115,7 +115,7 @@ export default {
                 });
             });
     },
-    stopRound:          async (req, res, next) => {
+    stopRound:              async (req, res, next) => {
         const {
             idGame,
             round
@@ -125,7 +125,7 @@ export default {
             status: C.STOP_ROUND,
         });
     },
-    end:                async (req, res, next) => {
+    end:                    async (req, res, next) => {
         const id = req.body.idGame;
         let stopGameEvent = constructor.event(C.END_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
         GameModel.findByIdAndUpdate({
@@ -157,7 +157,7 @@ export default {
                 });
             });
     },
-    getFeedbacks:       async (req, res, next) => {
+    getFeedbacks:           async (req, res, next) => {
         const id = req.params.idGame;
         try {
             const game = await GameModel.findById(id);
@@ -174,7 +174,7 @@ export default {
             });
         }
     },
-    getGameById:        async (req, res, next) => {
+    getGameById:            async (req, res, next) => {
         const id = req.params.idGame;
         try {
             const game = await gameService.getGameById(id);
@@ -187,7 +187,7 @@ export default {
             });
         }
     },
-    getIdGameByShortId: async (req, res, next) => {
+    getIdGameByShortId:     async (req, res, next) => {
         const shortId = req.params.shortId;
         try {
             const game = await gameService.getGameByShortId(shortId);
@@ -205,7 +205,7 @@ export default {
             });
         }
     },
-    getEvents:          async (req, res, next) => {
+    getEvents:              async (req, res, next) => {
         const id = req.params.idGame;
         GameModel.findById(id)
             .then((game) => {
@@ -225,7 +225,7 @@ export default {
                 });
             });
     },
-    deletePlayer:       async (req, res, next) => {
+    deletePlayer:           async (req, res, next) => {
         const {
             idGame,
             idPlayer
@@ -263,7 +263,7 @@ export default {
                 });
             });
     },
-    killPlayer:         async (req, res, next) => {
+    killPlayer:             async (req, res, next) => {
         const {
             idGame,
             idPlayer
@@ -281,7 +281,7 @@ export default {
             });
         }
     },
-    all:                async (req, res, next) => {
+    all:                    async (req, res, next) => {
         GameModel.aggregate([
             {
                 $project: {
@@ -323,7 +323,7 @@ export default {
                 });
             });
     },
-    delete:             async (req, res, next) => {
+    delete:                 async (req, res, next) => {
         const {
             idGame,
             password
@@ -356,7 +356,7 @@ export default {
             });
         }
     },
-    reset:              async (req, res, next) => {
+    reset:                  async (req, res, next) => {
         try {
             const done = await gameService.resetGame(req.body.idGame);
             if (done) {
@@ -380,6 +380,27 @@ export default {
     refreshForceAllPlayers: async (req, res, next) => {
         try {
             const done = await gameService.refreshForceAllPlayers(req.body.idGame);
+            if (done) {
+                return res.status(200).json({
+                    status: "refresh done",
+                });
+            }
+            else {
+                return res.status(500).json({
+                    message: "Game refresh error",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game refresh error:" + err);
+            return res.status(500).json({
+                message: "Game refresh error",
+            });
+        }
+    },
+    refreshPlayer: async (req, res, next) => {
+        try {
+            const done = await gameService.refreshPlayer(req.body.idGame, req.body.idPlayer);
             if (done) {
                 return res.status(200).json({
                     status: "refresh done",

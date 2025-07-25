@@ -103,6 +103,13 @@ export class BackService {
 			);
 	}
 
+	refreshForcePlayer(idGame: string, idPlayer: string) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.REFRESH_PLAYER, {idGame: idGame, idPlayer: idPlayer})
+			.pipe(
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REFRESH_FORCE_PLAYER"))
+			);
+	}
+	
 	updatePlayer(idGame: string | undefined, player: Player) {
 		const newPlayer = {
 			_id: player._id,

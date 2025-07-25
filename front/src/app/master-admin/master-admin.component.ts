@@ -5,7 +5,12 @@ import {BackService} from "../services/back.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import * as _ from "lodash-es";
 import {SnackbarService} from "../services/snackbar.service";
-import { environment } from 'src/environments/environment';
+import {environment} from 'src/environments/environment';
+import {schema} from '@dicebear/core';
+import {adventurer} from '@dicebear/collection';
+import {createAvatar, Options as Opt} from '@dicebear/core';
+
+// import * as C from "../../../../config/constantes.js";
 
 @Component({
 	selector: 'app-master-admin',
@@ -22,10 +27,38 @@ export class MasterAdminComponent implements OnInit {
 	deck3: Card[] = [];
 	deck4: Card[] = [];
 
+	options: Partial<adventurer.Options & Opt> = {};
+	properties: any = {
+		...schema.properties,
+		...adventurer.schema.properties,
+	};
+	hairPalette: Array<any> =
+		[
+			'000000', // noir intense
+			'808080', // gris (argent)
+			'ffffff', // blanc (albinos/âgé)
+			'5a3e2b', // brun chaud
+			'a9745a', // brun clair
+			'e2b77b', // blond foncé
+			'fff0b3', // blond très clair
+			'ffff00', // super sayian
+			'aeff00', // broly
+			'd8bfd8', // lavande pastel (fantaisie)
+			'ff69b4', // rose flashy
+			'c71585', // magenta foncé
+			'6a5acd', // violet électrique
+			'4169e1', // bleu stylisé
+			'00ced1', // turquoise
+			'32cd32', // vert lime
+			'900000', // rouge foncé
+			'ff6e6e', // saumon
+			'd2691e', // roux foncé
+		];
+
 	constructor(private route: ActivatedRoute,
-							private backService: BackService,
-							private sanitizer: DomSanitizer,
-							private snackbarService: SnackbarService) {
+	            private backService: BackService,
+	            private sanitizer: DomSanitizer,
+	            private snackbarService: SnackbarService) {
 	}
 
 	ngOnInit(): void {
@@ -38,7 +71,7 @@ export class MasterAdminComponent implements OnInit {
 				this.deck2 = this.countOccurrencesAndHideDuplicates(game.decks[1]);
 				this.deck3 = this.countOccurrencesAndHideDuplicates(game.decks[2]);
 				this.deck4 = this.countOccurrencesAndHideDuplicates(game.decks[3]);
-				for(let player of game.players){
+				for (let player of game.players) {
 					this.countOccurrencesAndHideDuplicates(player.cards);
 				}
 			});
@@ -62,7 +95,7 @@ export class MasterAdminComponent implements OnInit {
 	}
 
 
-	countOccurrencesAndHideDuplicates(cards:Card[]) {
+	countOccurrencesAndHideDuplicates(cards: Card[]) {
 		cards = _.orderBy(cards, ["letter"], ["asc"]);
 		const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
 		const keyDuplicates: string[] = [];
@@ -80,19 +113,105 @@ export class MasterAdminComponent implements OnInit {
 		}
 		return cards;
 	}
-	getAlivePlayers(){
+
+	getAlivePlayers() {
 		return this.game?.players.filter((player: Player) => player.status === 'alive');
 	}
-	getDeadPlayers(){
+
+	getDeadPlayers() {
 		return this.game?.players.filter((player: Player) => player.status === 'dead');
 	}
-	refreshForceAllPlayers(){
-		this.backService.refreshForceAllPlayers(this.idGame).subscribe( data => {
-			if(data){
+
+	refreshForceAllPlayers() {
+		this.backService.refreshForceAllPlayers(this.idGame).subscribe(data => {
+			if (data) {
 				this.snackbarService.showSuccess("Refresh force all players");
 			}
-		} );
+		});
 	}
+
+	refresh() {
+		window.location.reload();
+	}
+
+	async nextColorForDuplicateColorHair() {
+		const colorsUsed = new Set(this.game.players.map((player: Player) => player.hairColor.toLowerCase()));
+
+		// check player with same hair color
+		const grouped = Object.values(this.game.players.reduce((acc: any, player: Player) => {
+			if (player.status === 'alive') {
+				const color = player.hairColor.toLowerCase();
+				acc[color] = acc[color] || [];
+				acc[color].push(player);
+			}
+			return acc;
+		}, {}));
+
+		// //remove alone
+		const groupedWithoutAlone = grouped.filter((group: any) => group.length > 1);
+
+		//then change one of those duplicate
+		let playersWithChangedColor: Player[] = [];
+		groupedWithoutAlone.forEach((group: any) => {
+			const ignoreIndex = Math.floor(Math.random() * group.length);
+			//
+			for (let i = 0; i < group.length; i++) {
+				if (i !== ignoreIndex) {
+					const nextColorAvailable = this.hairPalette.filter(color => !colorsUsed.has(color))[Math.floor(Math.random() * this.hairPalette.length)];
+					let player = group[i];
+					player.hairColor = nextColorAvailable;
+					player.image = this.updateSvg(player);
+					playersWithChangedColor.push(player);
+					colorsUsed.add(nextColorAvailable);
+				}
+			}
+		});
+
+		// update players
+		for (let i = 0; i < playersWithChangedColor.length; i++) {
+			this.backService.updatePlayer(this.idGame, playersWithChangedColor[i]).subscribe(
+				data => {
+					if (data) {
+						this.snackbarService.showSuccess("color applied for player: " + playersWithChangedColor[i].name);
+						this.forceRefreshPlayer(playersWithChangedColor[i]);
+					}
+				}
+			);
+		}
+		return true;
+		window.location.reload();
+	}
+
+	forceRefreshPlayer(player: Player) {
+		this.snackbarService.showSuccess("Refresh Sended for player: " + player.name);
+		this.backService.refreshForcePlayer(this.idGame, player._id).subscribe();
+	}
+
+
+	updateSvg(player: Player) {
+		let options: Partial<adventurer.Options & Opt> = {};
+		let properties: any = {
+			...schema.properties,
+			...adventurer.schema.properties,
+		};
+
+		options.hairColor = [player.hairColor];
+		options.skinColor = [player.skinColor];
+		options.mouth = [properties.mouth.default[player.mouth]];
+		options.hair = [properties.hair.default[player.hair]];
+		options.eyebrows = [properties.eyebrows.default[player.eyebrows]];
+		options.eyes = [properties.eyes.default[player.eyes]];
+		options.earrings = [properties.earrings.default[player.earrings]];
+		options.glasses = [properties.glasses.default[player.glasses]];
+		options.features = [properties.features.default[player.features]];
+		options.glassesProbability = 100;
+		options.featuresProbability = 100;
+		options.earringsProbability = 100;
+		options.hairProbability = 100;
+		const avatar = createAvatar(adventurer, options).toString();
+		return avatar;
+	}
+
 	getUserUrl(idPlayer: string) {
 		return environment.WEB_HOST + environment.GAME.GET + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
 	}

@@ -506,14 +506,32 @@ async function refreshForceAllPlayers(idGame) {
     }
 }
 
+async function refreshPlayer(idGame, idPlayer) {
+    const game = await GameModel.findById(idGame);
+    if (game) {
+        const player = game.players.find(player => player.id === idPlayer);
+        if (player) {
+            socket.emitTo(player.id, C.REFRESH_FORCE, {force: true});
+            return true;
+        }
+        else {
+            throw new Error("Refresh player error");
+        }
+    }
+    else {
+        throw new Error("Refresh player error");
+    }
+}
+
 export default {
-    createGame:       createGame,
-    updateGame:       updateGame,
-    stopRound:        stopRound,
-    getGameById:      getGameById,
-    getGameByShortId: getGameByShortId,
-    startRound:       startRound,
-    initGame:         initGame,
-    resetGame:        resetGame,
-    refreshForceAllPlayers: refreshForceAllPlayers
+    createGame:             createGame,
+    updateGame:             updateGame,
+    stopRound:              stopRound,
+    getGameById:            getGameById,
+    getGameByShortId:       getGameByShortId,
+    startRound:             startRound,
+    initGame:               initGame,
+    resetGame:              resetGame,
+    refreshForceAllPlayers: refreshForceAllPlayers,
+    refreshPlayer:          refreshPlayer
 }
