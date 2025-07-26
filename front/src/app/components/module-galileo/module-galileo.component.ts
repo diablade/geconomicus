@@ -2,6 +2,7 @@ import {Component, OnInit, AfterViewInit, ElementRef, ViewChild} from '@angular/
 import {Chart, Point} from 'chart.js';
 import * as _ from 'lodash-es';
 import {Router} from "@angular/router";
+import 'chartjs-adapter-date-fns';
 
 
 class Year {
@@ -36,6 +37,174 @@ class Event {
 		this.at = at;
 	}
 }
+
+interface TooltipPoint {
+	label: string
+	date: Date;
+	value: number;
+	color: string;
+}
+
+function filterMostRecent(data: any[]): TooltipPoint[] {
+	const map = new Map<string, TooltipPoint>();
+
+	data.forEach(item => {
+		const existing = map.get(item.label);
+		if (!existing || new Date(item.date) > new Date(existing.date)) {
+			map.set(item.label, item);
+		}
+	});
+
+	return Array.from(map.values());
+}
+
+// Position du tooltip
+function positionTooltip(context: any, tooltipEl: HTMLElement, tooltipModel: any) {
+	const position = context.chart.canvas.getBoundingClientRect();
+	let left = position.left + window.scrollX + tooltipModel.caretX;
+	let top = position.top + window.scrollY + tooltipModel.caretY;
+
+	const tooltipWidth = tooltipEl.offsetWidth;
+	const tooltipHeight = tooltipEl.offsetHeight;
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
+
+	// Vérifie si le tooltip dépasse à droite et ajuste
+	if ((left + tooltipWidth) > windowWidth) {
+		left -= tooltipWidth;
+	}
+	// Vérifie si le tooltip dépasse en bas et ajuste
+	if ((top + tooltipHeight) > windowHeight) {
+		top -= tooltipHeight;
+	}
+
+	tooltipEl.style.left = `${left}px`;
+	tooltipEl.style.top = `${top}px`;
+	tooltipEl.style.opacity = '1';
+}
+
+
+function externalTooltip(context: any, legendQuantitative: boolean) {
+	let tooltipEl = document.getElementById('custom-tooltip');
+
+	// Si le tooltip n'existe pas, on le crée
+	if (!tooltipEl) {
+		tooltipEl = document.createElement('div');
+		tooltipEl.id = 'custom-tooltip';
+		tooltipEl.style.position = 'absolute';
+		tooltipEl.style.background = 'white';
+		tooltipEl.style.width = '190px';
+		tooltipEl.style.border = '2px solid black';
+		tooltipEl.style.pointerEvents = 'none';
+		tooltipEl.style.borderRadius = '10px';
+		tooltipEl.style.padding = '5px';
+		tooltipEl.style.boxShadow = '2px 2px 10px rgba(0,0,0,0.2)';
+		tooltipEl.style.display = 'flex';
+		tooltipEl.style.flexDirection = 'column';
+		tooltipEl.style.justifyContent = 'center';
+		tooltipEl.style.alignItems = 'center';
+
+		// Ajout du canvas pour le pie chart
+		const canvas = document.createElement('canvas');
+		canvas.id = 'tooltip-chart';
+		canvas.width = 100;
+		tooltipEl.appendChild(canvas);
+
+		// Ajout des values
+		const values = document.createElement('div');
+		values.id = 'tooltip-values';
+		tooltipEl.appendChild(values);
+
+		document.body.appendChild(tooltipEl);
+	}
+
+	const tooltipModel = context.tooltip;
+	if (!tooltipModel || tooltipModel.opacity === 0) {
+		tooltipEl.style.opacity = '0';
+		return;
+	}
+
+	// Position du tooltip
+	positionTooltip(context, tooltipEl, tooltipModel);
+
+	// Récupération des valeurs du dataset
+	if (tooltipModel.dataPoints) {
+		const dataRaw = tooltipModel.dataPoints;
+		const points = _.map(dataRaw, (item: any): TooltipPoint => ({
+			value: item.raw,
+			date: item.label,
+			label: item.dataset.label,
+			color: item.dataset.backgroundColor,
+		}));
+
+		const values = points.map(item => item.value);
+		const colors = points.map(item => item.color);
+		drawPieChart(values, colors);
+		if(legendQuantitative){
+			addValues(points);
+		}
+	}
+}
+
+// Fonction pour dessiner le pie chart dans le tooltip
+function drawPieChart(values: number[], colors: any[]) {
+	const canvas = document.getElementById('tooltip-chart') as HTMLCanvasElement;
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	if (!ctx) return;
+	// Vérification et suppression de l'ancien graphique
+	const existingChart = Chart.getChart(canvas);
+	if (existingChart) {
+		existingChart.destroy();
+	}
+	// Création du pie chart
+	new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: values.map((_, i) => `Valeur ${i + 1}`),
+			datasets: [{
+				data: values,
+				backgroundColor: colors,
+			}]
+		},
+		options: {
+			responsive: false,
+			animation: false,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {display: false},
+			}
+		}
+	});
+}
+
+// Fonction pour ajouter les values dans le tooltip
+function addValues(points: TooltipPoint[]) {
+	const div = document.getElementById('tooltip-values');
+	if (!div) return;
+
+	div.innerHTML = '';
+	points.forEach(point => {
+		const entry = document.createElement('div');
+		entry.style.display = 'flex';
+		entry.style.alignItems = 'center';
+
+		const colorBox = document.createElement('span');
+		colorBox.style.width = '10px';
+		colorBox.style.height = '10px';
+		colorBox.style.backgroundColor = point.color;
+		colorBox.style.marginRight = '5px';
+		document.createElement('span');
+
+		const text = document.createElement('span');
+		text.innerText = `${point.label}: ${Math.round(point.value)}`;
+
+		entry.appendChild(colorBox);
+		entry.appendChild(text);
+		div.appendChild(entry);
+	});
+}
+
 
 @Component({
 	selector: 'app-module-galileo',
@@ -78,12 +247,12 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	ngAfterViewInit(): void {
 		this.createCharts();
 		this.resetSimulation();
-		
+
 		// Ajouter ces lignes à la fin
 		setTimeout(() => {
 			if (this.quantitativeChart && this.relativeChart) {
-			this.quantitativeChart.update();
-			this.relativeChart.update();
+				this.quantitativeChart.update();
+				this.relativeChart.update();
 			}
 		}, 100);
 	}
@@ -202,8 +371,9 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		const datasets = [];
 		for (const member of this.members) {
 			const data = this.years.map(year => {
+				const mm = year.members.reduce((m, mem) => mem.amount + m, 0);
 				const mem = year.members.find(m => m.id === member.id);
-				return mem ? (mem.amount / year.du) : undefined;
+				return mem ? (mem.amount / mm)*100 : undefined;
 			});
 			datasets.push({
 				label: member.id,
@@ -233,7 +403,15 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				responsive: true,
 				animation: false,
 				maintainAspectRatio: true,
+				interaction: {
+					mode: 'x',
+				},
 				plugins: {
+					tooltip: {
+						enabled: false,
+						animation: false,
+						external: (context: any) => externalTooltip(context, this.legendQuantitative),
+					},
 					legend: {display: this.legendQuantitative},
 				},
 				scales: {
@@ -352,7 +530,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 			this.relativeChart.update();
 		}
 	}
-	
+
 	displayLegendQuantitative() {
 		this.legendQuantitative = !this.legendQuantitative;
 		if (this.quantitativeChart && this.quantitativeChart.options && this.quantitativeChart.options.plugins && this.quantitativeChart.options.plugins.legend) {
@@ -366,13 +544,13 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		if (this.relativeChart && this.quantitativeChart) {
 			// Update the labels array based on the current duration
 			const labels = Array.from({length: this.duration}, (_, i) => i);
-			
+
 			this.quantitativeChart.data.labels = labels;
 			this.relativeChart.data.labels = labels;
-			
+
 			this.quantitativeChart.data.datasets = this.buildDatasetsFromYears();
 			this.relativeChart.data.datasets = this.buildDatasetsFromYearsRelatif();
-			
+
 			this.quantitativeChart.update();
 			this.relativeChart.update();
 		}
