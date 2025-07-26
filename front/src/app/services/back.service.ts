@@ -109,7 +109,7 @@ export class BackService {
 				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REFRESH_FORCE_PLAYER"))
 			);
 	}
-	
+
 	updatePlayer(idGame: string | undefined, player: Player) {
 		const newPlayer = {
 			_id: player._id,
@@ -373,6 +373,7 @@ export class BackService {
 			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.DELETE_GAME"))
 		)
 	}
+
 	refreshForceAllPlayers(idGame: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.REFRESH_FORCE_ALL_PLAYERS, {
 			idGame

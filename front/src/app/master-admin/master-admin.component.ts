@@ -9,8 +9,8 @@ import {environment} from 'src/environments/environment';
 import {schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {createAvatar, Options as Opt} from '@dicebear/core';
-
-// import * as C from "../../../../config/constantes.js";
+// @ts-ignore
+import * as C from '../../../../config/constantes.js';
 
 @Component({
 	selector: 'app-master-admin',
@@ -19,6 +19,7 @@ import {createAvatar, Options as Opt} from '@dicebear/core';
 })
 export class MasterAdminComponent implements OnInit {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
+	C = C;
 	idGame = "";
 	game: any;
 
@@ -47,7 +48,8 @@ export class MasterAdminComponent implements OnInit {
 			'ff69b4', // rose flashy
 			'c71585', // magenta foncé
 			'6a5acd', // violet électrique
-			'4169e1', // bleu stylisé
+			'7fa0ff', // bleu stylisé
+			'0033e5', // bleu foncé
 			'00ced1', // turquoise
 			'32cd32', // vert lime
 			'900000', // rouge foncé
@@ -135,12 +137,12 @@ export class MasterAdminComponent implements OnInit {
 	}
 
 	async nextColorForDuplicateColorHair() {
-		const colorsUsed = new Set(this.game.players.map((player: Player) => player.hairColor.toLowerCase()));
+		const colorsUsed = new Set(this.game.players.map((player: Player) => player.hairColor));
 
 		// check player with same hair color
 		const grouped = Object.values(this.game.players.reduce((acc: any, player: Player) => {
 			if (player.status === 'alive') {
-				const color = player.hairColor.toLowerCase();
+				const color = player.hairColor;
 				acc[color] = acc[color] || [];
 				acc[color].push(player);
 			}
@@ -153,17 +155,15 @@ export class MasterAdminComponent implements OnInit {
 		//then change one of those duplicate
 		let playersWithChangedColor: Player[] = [];
 		groupedWithoutAlone.forEach((group: any) => {
-			const ignoreIndex = Math.floor(Math.random() * group.length);
-			//
-			for (let i = 0; i < group.length; i++) {
-				if (i !== ignoreIndex) {
-					const nextColorAvailable = this.hairPalette.filter(color => !colorsUsed.has(color))[Math.floor(Math.random() * this.hairPalette.length)];
-					let player = group[i];
-					player.hairColor = nextColorAvailable;
-					player.image = this.updateSvg(player);
-					playersWithChangedColor.push(player);
-					colorsUsed.add(nextColorAvailable);
-				}
+			for (let i = 1; i < group.length; i++) {
+				const paletteAvailable = _.filter(this.hairPalette, color => !colorsUsed.has(color));
+				const randomIndex = _.random(0, (paletteAvailable.length - 1), false)
+				const nextColor = paletteAvailable[randomIndex];
+				colorsUsed.add(nextColor);
+				let player = group[i];
+				player.hairColor = nextColor;
+				player.image = this.updateSvg(player);
+				playersWithChangedColor.push(player);
 			}
 		});
 
@@ -178,8 +178,6 @@ export class MasterAdminComponent implements OnInit {
 				}
 			);
 		}
-		return true;
-		window.location.reload();
 	}
 
 	forceRefreshPlayer(player: Player) {
