@@ -3,6 +3,7 @@ import {Chart, Point} from 'chart.js';
 import * as _ from 'lodash-es';
 import {Router} from "@angular/router";
 import 'chartjs-adapter-date-fns';
+import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 
 
 class Year {
@@ -140,7 +141,7 @@ function externalTooltip(context: any, legendQuantitative: boolean) {
 		const values = points.map(item => item.value);
 		const colors = points.map(item => item.color);
 		drawPieChart(values, colors);
-		if(legendQuantitative){
+		if (legendQuantitative) {
 			addValues(points);
 		}
 	}
@@ -216,8 +217,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	growthRate = 10;
 	initialMass = 1000000;
 	initialMembers = 10;
-	gini = 1;
-	distributionMode: 'equal' | 'linear' | 'gini' = 'gini';
+	pareto = 0.5;
+	distributionMode: 'equal' | 'linear' | 'pareto' = 'pareto';
 	actionYear = 10;
 	removeMemberId = 0;
 	txFrom = 0;
@@ -283,8 +284,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 		this.growthRate = 10;
 		this.initialMass = 1000000;
 		this.initialMembers = 10;
-		this.gini = 1;
-		this.distributionMode = 'gini';
+		this.pareto = 0.5;
+		this.distributionMode = 'pareto';
 		this.actionYear = 10;
 		this.removeMemberId = 0;
 		this.txFrom = 0;
@@ -299,7 +300,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 
 	initYearsAndInitMembers() {
 		this.members = Array.from({length: this.initialMembers}, (_, i) => new Member(i + 1));
-		const shares = this.buildSharesInitialAmount(this.initialMass, this.initialMembers, this.distributionMode, this.gini);
+		const shares = this.buildSharesInitialAmount(this.initialMass, this.initialMembers, this.distributionMode, this.pareto);
 		for (let y = 0; y < this.duration; y++) {
 			let newYear = new Year();
 			let members = [];
@@ -373,7 +374,7 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 			const data = this.years.map(year => {
 				const mm = year.members.reduce((m, mem) => mem.amount + m, 0);
 				const mem = year.members.find(m => m.id === member.id);
-				return mem ? (mem.amount / mm)*100 : undefined;
+				return mem ? (mem.amount / mm) * 100 : undefined;
 			});
 			datasets.push({
 				label: member.id,
@@ -486,8 +487,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	buildSharesInitialAmount(
 		amount: number,
 		memberCount: number,
-		mode: 'equal' | 'linear' | 'gini',
-		gini = 0.5
+		mode: 'equal' | 'linear' | 'pareto',
+		pareto = 0.5
 	): number[] {
 		if (memberCount <= 0) return [];
 
@@ -503,20 +504,16 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 				const totalWeight = weights.reduce((a, b) => a + b, 0);
 				shares = weights.map(w => parseFloat((amount * w / totalWeight).toFixed(2)));
 				break;
-			case 'gini':
-				if (memberCount === 1) {
-					shares = [amount];
-					break;
+			case 'pareto':
+				if (memberCount <= 0) {
+					memberCount = 2;
 				}
-				const weightsGini = Array.from({length: memberCount}, (_, i) =>
-					Math.pow(i + 1, gini * 2) // L'implémentation originale
-				);
-				const total = weightsGini.reduce((a, b) => a + b, 0);
-				if (total === 0) { // Cas où tous les poids sont 0 (ne devrait pas arriver avec cette formule)
-					shares = Array(memberCount).fill(0);
-				} else {
-					shares = weightsGini.map(w => parseFloat(((w / total) * amount).toFixed(2)));
-				}
+				const alpha = 1 / (1 - pareto);
+				const ranks = Array.from({length: memberCount}, (_, i) => (i + 1) / memberCount);
+				const invPareto = ranks.map(r => Math.pow(r, alpha));
+				const total = invPareto.reduce((acc, val) => acc + val, 0);
+				const distribution = invPareto.map(x => (x / total) * amount);
+				shares = distribution;
 				break;
 		}
 
@@ -559,4 +556,6 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	home() {
 		this.router.navigate(['home']);
 	}
+
+	protected readonly faCircleInfo = faCircleInfo;
 }

@@ -1,7 +1,7 @@
 <div class="module">
 	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
-	<button mat-raised-button [color]="" (click)="home()">{{"MODULE.BACK_HOME"| translate}}</button>
-	<h1 class="text-center"><b>{{"MODULE.GALILEO.TITLE"| translate}}</b></h1>
+	<button mat-raised-button [color]="" (click)="home()">{{ "MODULE.BACK_HOME"| translate }}</button>
+	<h1 class="text-center"><b>{{ "MODULE.GALILEO.TITLE"| translate }}</b></h1>
 	<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
 		<div class="description d-flex flex-column">
 			<div [innerHTML]="'MODULE.GALILEO.SUMMARY' | translate"></div>
@@ -12,97 +12,104 @@
 			<div [innerHTML]="'MODULE.GALILEO.SUMMARY6' | translate"></div>
 		</div>
 		<div class="">
-			<div><b>{{"MODULE.GALILEO.DESC_ACTIONS"| translate}}</b></div>
+			<div><b>{{ "MODULE.GALILEO.DESC_ACTIONS"| translate }}</b></div>
 			<ul>
-				<li>{{"MODULE.GALILEO.DESC_ACTION_CHANGE"| translate}}</li>
-				<li>{{"MODULE.GALILEO.DESC_ACTION_SIMULATE"| translate}}:
+				<li>{{ "MODULE.GALILEO.DESC_ACTION_CHANGE"| translate }}</li>
+				<li>{{ "MODULE.GALILEO.DESC_ACTION_SIMULATE"| translate }}:
 					<ul>
-						<li>{{"MODULE.GALILEO.DESC_ACTION_ADD"| translate}}</li>
-						<li>{{"MODULE.GALILEO.DESC_ACTION_REMOVE"| translate}}</li>
-						<li>{{"MODULE.GALILEO.DESC_ACTION_TX"| translate}}</li>
+						<li>{{ "MODULE.GALILEO.DESC_ACTION_ADD"| translate }}</li>
+						<li>{{ "MODULE.GALILEO.DESC_ACTION_REMOVE"| translate }}</li>
+						<li>{{ "MODULE.GALILEO.DESC_ACTION_TX"| translate }}</li>
 					</ul>
 				</li>
-				<li>{{"MODULE.GALILEO.DESC_ACTION_VISUALIZE"| translate}}</li>
+				<li>{{ "MODULE.GALILEO.DESC_ACTION_VISUALIZE"| translate }}</li>
 			</ul>
 		</div>
 	</div>
 	<div class="controls">
 		<mat-card class="control-action card">
-			<h2>{{"MODULE.GALILEO.PARAMETERS"| translate}}</h2>
+			<h2>{{ "MODULE.GALILEO.PARAMETERS"| translate }}</h2>
 			<label>{{ "MODULE.GALILEO.DURATION"| translate }}: {{ duration }}</label>
 			<input type="range" [min]="1" [max]="150" [step]="1" [(ngModel)]="duration"
-				(input)="executeSimulationFromStart()">
+			       (input)="executeSimulationFromStart()">
 			<label>{{ "MODULE.GALILEO.GROWTH_RATE"| translate }}: {{ growthRate }}</label>
 			<input type="range" [min]="0" [max]="40" [step]="0.1" [(ngModel)]="growthRate"
-				(input)="executeSimulationFromStart()">
+			       (input)="executeSimulationFromStart()">
 			<label>{{ "MODULE.GALILEO.INIT_MEMBERS"| translate }}: {{ initialMembers }}</label>
 			<input type="range" [min]="2" [max]="100" [step]="1" [(ngModel)]="initialMembers"
-				(input)="executeSimulationFromStart()">
+			       (input)="executeSimulationFromStart()">
 			<label>{{ "MODULE.GALILEO.INIT_MASS"| translate }}: {{ initialMass }}</label>
 			<input type="range" [min]="100" [max]="10000000" [step]="100" [(ngModel)]="initialMass"
-				(input)="executeSimulationFromStart()">
+			       (input)="executeSimulationFromStart()">
 			<label>{{ "MODULE.GALILEO.INIT_DISTRIB_MODE"| translate }}:</label>
 			<select [(ngModel)]="distributionMode" (change)="executeSimulationFromStart()">
-				<option value="equal">{{"MODULE.GALILEO.INIT_DISTRIB_EQUAL"| translate}}</option>
-				<option value="linear">{{"MODULE.GALILEO.INIT_DISTRIB_LINEAR"| translate}}</option>
-				<option value="gini">{{"MODULE.GALILEO.INIT_DISTRIB_GINI"| translate}}</option>
+				<option value="equal">{{ "MODULE.GALILEO.INIT_DISTRIB_EQUAL"| translate }}</option>
+				<option value="linear">{{ "MODULE.GALILEO.INIT_DISTRIB_LINEAR"| translate }}</option>
+				<option value="pareto">{{ "MODULE.GALILEO.INIT_DISTRIB_PARETO"| translate }}</option>
 			</select>
-			<div *ngIf="distributionMode==='gini'">
-				<input type="range" [min]="0" [max]="1" [step]="0.1" [(ngModel)]="gini"
-					(input)="executeSimulationFromStart()">{{ gini }}
+			<div *ngIf="distributionMode==='pareto'">
+				<input type="range" [min]="0.01" [max]="0.99" [step]="0.01" [(ngModel)]="pareto"
+				       (input)="executeSimulationFromStart()">
+				<span>
+					{{ pareto }}
+					<fa-icon [icon]="faCircleInfo" [matTooltip]="'MODULE.GALILEO.PARETO_DESC' | translate"></fa-icon>
+				</span>
 			</div>
 		</mat-card>
 		<mat-card class="control-action card">
-			<h2>{{"MODULE.GALILEO.ADD_MEMBER"| translate}}</h2>
-			<div>{{"MODULE.GALILEO.AT_YEAR"| translate: { actionYear:actionYear} }}</div>
+			<h2>{{ "MODULE.GALILEO.ADD_MEMBER"| translate }}</h2>
+			<div>{{ "MODULE.GALILEO.AT_YEAR"| translate: {actionYear: actionYear} }}</div>
 			<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
-			<div>{{"MODULE.GALILEO.ADD_MEMBER_DESC"| translate: { actionYear:actionYear} }}</div>
-			<button mat-raised-button [color]="'accent'" (click)="addMember()">{{"MODULE.GALILEO.ADD_MEMBER"| translate}}</button>
+			<div>{{ "MODULE.GALILEO.ADD_MEMBER_DESC"| translate: {actionYear: actionYear} }}</div>
+			<button mat-raised-button [color]="'accent'" (click)="addMember()">{{ "MODULE.GALILEO.ADD_MEMBER"| translate }}</button>
 		</mat-card>
 		<mat-card class="control-action card">
-			<h2>{{"MODULE.GALILEO.REMOVE_MEMBER"| translate}}</h2>
-			<div>{{"MODULE.GALILEO.AT_YEAR"| translate: { actionYear:actionYear} }}</div>
+			<h2>{{ "MODULE.GALILEO.REMOVE_MEMBER"| translate }}</h2>
+			<div>{{ "MODULE.GALILEO.AT_YEAR"| translate: {actionYear: actionYear} }}</div>
 			<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
-			<div>{{"MODULE.GALILEO.THE_MEMBER"| translate}}:
+			<div>{{ "MODULE.GALILEO.THE_MEMBER"| translate }}:
 				<select [(ngModel)]="removeMemberId">
-					<option value="0">{{"MODULE.GALILEO.SELECT"| translate}}</option>
+					<option value="0">{{ "MODULE.GALILEO.SELECT"| translate }}</option>
 					<option *ngFor="let m of members" [value]="m.id">{{ m.id }}</option>
 				</select>
 			</div>
-			<small>{{"MODULE.GALILEO.REMOVE_MEMBER_DESC"| translate: { actionYear:actionYear} }}</small>
-			<button mat-raised-button [color]="'accent'" [disabled]="removeMemberId == 0" (click)="removeMember()">{{"MODULE.GALILEO.REMOVE_MEMBER_BUTTON"| translate}}</button>
+			<small>{{ "MODULE.GALILEO.REMOVE_MEMBER_DESC"| translate: {actionYear: actionYear} }}</small>
+			<button mat-raised-button [color]="'accent'" [disabled]="removeMemberId == 0"
+			        (click)="removeMember()">{{ "MODULE.GALILEO.REMOVE_MEMBER_BUTTON"| translate }}
+			</button>
 		</mat-card>
 		<mat-card class="control-action card">
-			<h2>{{"MODULE.GALILEO.ADD_TRANSACTION"| translate}}</h2>
-			<div>{{"MODULE.GALILEO.AT_YEAR"| translate: { actionYear:actionYear} }}</div>
+			<h2>{{ "MODULE.GALILEO.ADD_TRANSACTION"| translate }}</h2>
+			<div>{{ "MODULE.GALILEO.AT_YEAR"| translate: {actionYear: actionYear} }}</div>
 			<input type="range" [min]="1" [max]="duration" [step]="1" [(ngModel)]="actionYear" step="1">
-			<label>{{"MODULE.GALILEO.FROM"| translate}}</label>
+			<label>{{ "MODULE.GALILEO.FROM"| translate }}</label>
 			<select [(ngModel)]="txFrom">
-				<option *ngIf="!txFrom" value="0">{{"MODULE.GALILEO.SELECT"| translate}}</option>
+				<option *ngIf="!txFrom" value="0">{{ "MODULE.GALILEO.SELECT"| translate }}</option>
 				<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
 			</select>
-			<label>{{"MODULE.GALILEO.TO"| translate}}</label>
+			<label>{{ "MODULE.GALILEO.TO"| translate }}</label>
 			<select [(ngModel)]="txTo">
-				<option *ngIf="!txTo" value="0">{{"MODULE.GALILEO.SELECT"| translate}}</option>
+				<option *ngIf="!txTo" value="0">{{ "MODULE.GALILEO.SELECT"| translate }}</option>
 				<option *ngFor="let m of members" [value]=m.id>{{ m.id }}</option>
 			</select>
-			<label>{{"MODULE.GALILEO.AMOUNT"| translate}} : {{ txAmount }}</label>
+			<label>{{ "MODULE.GALILEO.AMOUNT"| translate }} : {{ txAmount }}</label>
 			<input type="range" min="0" max="1000000" step="100" [(ngModel)]="txAmount">
-			<button mat-raised-button [color]="'accent'" 
-			[disabled]="txTo == 0 || txFrom == 0 || txAmount == 0" 
-			(click)="addTransaction()">{{"MODULE.GALILEO.ADD_TRANSACTION_BUTTON"| translate}}</button>
+			<button mat-raised-button [color]="'accent'"
+			        [disabled]="txTo == 0 || txFrom == 0 || txAmount == 0"
+			        (click)="addTransaction()">{{ "MODULE.GALILEO.ADD_TRANSACTION_BUTTON"| translate }}
+			</button>
 		</mat-card>
 		<mat-card class="control-action card">
-			<button mat-raised-button [color]="'warn'" (click)="resetSimulation()">{{"MODULE.GALILEO.RESET"| translate}}</button>
-			<div class="align-content-center">{{"MODULE.GALILEO.EVENTS"| translate}}</div>
+			<button mat-raised-button [color]="'warn'" (click)="resetSimulation()">{{ "MODULE.GALILEO.RESET"| translate }}</button>
+			<div class="align-content-center">{{ "MODULE.GALILEO.EVENTS"| translate }}</div>
 			<div class="d-flex flex-column overflow-auto">
 				<div class="itemEvent ms-1" *ngFor="let e of events; let i=index">
 					<mat-chip>
-						{{"MODULE.GALILEO.YEAR"| translate}} {{ e.at }}:
+						{{ "MODULE.GALILEO.YEAR"| translate }} {{ e.at }}:
 						<ng-container [ngSwitch]="e.type">
-							<span *ngSwitchCase="'add'">{{"MODULE.GALILEO.EVENT_ADD"| translate: { from: e.from } }}</span>
-							<span *ngSwitchCase="'sup'">{{"MODULE.GALILEO.EVENT_SUP"| translate: { to:e.to } }}</span>
-							<span *ngSwitchCase="'tra'">{{"MODULE.GALILEO.EVENT_TRA"| translate: { amount:e.amount , from:e.from , to:e.to } }}</span>
+							<span *ngSwitchCase="'add'">{{ "MODULE.GALILEO.EVENT_ADD"| translate: {from: e.from} }}</span>
+							<span *ngSwitchCase="'sup'">{{ "MODULE.GALILEO.EVENT_SUP"| translate: {to: e.to} }}</span>
+							<span *ngSwitchCase="'tra'">{{ "MODULE.GALILEO.EVENT_TRA"| translate: {amount: e.amount, from: e.from, to: e.to} }}</span>
 						</ng-container>
 					</mat-chip>
 				</div>
@@ -112,15 +119,16 @@
 	<div class="charts">
 		<mat-card class="chart-container card-chart">
 			<div class="d-flex flex-row justify-content-between">
-				<h2>{{"MODULE.GALILEO.CHART_QUANTITATIVE"| translate}}</h2>
-				<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{"MODULE.GALILEO.LEGEND"| translate}}</mat-slide-toggle>
+				<h2>{{ "MODULE.GALILEO.CHART_QUANTITATIVE"| translate }}</h2>
+				<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{ "MODULE.GALILEO.LEGEND"| translate }}
+				</mat-slide-toggle>
 			</div>
 			<canvas #quantitativeCanvas></canvas>
 		</mat-card>
 		<mat-card class="chart-container card-chart">
 			<div class="d-flex flex-row justify-content-between">
-				<h2>{{"MODULE.GALILEO.CHART_RELATIVE"| translate}}</h2>
-				<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{"MODULE.GALILEO.LEGEND"| translate}}</mat-slide-toggle>
+				<h2>{{ "MODULE.GALILEO.CHART_RELATIVE"| translate }}</h2>
+				<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{ "MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
 			</div>
 			<canvas #relativeCanvas></canvas>
 		</mat-card>

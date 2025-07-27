@@ -612,6 +612,8 @@
             "INIT_DISTRIB_EQUAL": "Égale",
             "INIT_DISTRIB_LINEAR": "Écart linéaire",
             "INIT_DISTRIB_GINI": "Indice de Gini",
+            "INIT_DISTRIB_PARETO": "Coef concentration (type Pareto)",
+            "PARETO_DESC": " (entre 0 = égalité et 0.99 = extrême inégalité)",
             "AT_YEAR": "À l'année {{actionYear}}",
             "THE_MEMBER": "Le membre",
             "SELECT": "Choisir...",
