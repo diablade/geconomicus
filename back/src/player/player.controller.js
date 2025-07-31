@@ -281,7 +281,7 @@ const transaction = async (req, res, next) => {
 		seller.coins = Number((seller.coins + cost).toFixed(2));
 
 		socket.emitTo(idGame + C.EVENT, C.EVENT, eventTransaction);
-		socket.emitTo(idSeller, C.TRANSACTION_DONE, { idCardSold: idCard, coins: seller.coins });
+		socket.emitAckTo(idSeller, C.TRANSACTION_DONE, { idCardSold: idCard, coins: seller.coins });
 
 		return res.status(200).json({ buyedCard: card, coins: buyer.coins });
 	} catch (error) {

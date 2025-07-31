@@ -163,7 +163,7 @@ async function initGameDebt(game) {
         player.status = C.ALIVE;
         player.coins = 0;
 
-        socket.emitTo(player.id, C.START_GAME, {
+        socket.emitAckTo(player.id, C.START_GAME, {
             cards:              cards,
             coins:              0,
             typeMoney:          C.DEBT,

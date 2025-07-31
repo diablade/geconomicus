@@ -339,7 +339,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.REFRESH_FORCE, async (data: any) => {
 			this.refresh();
 		});
-		this.socket.on(C.TRANSACTION_DONE, async (data: any) => {
+		this.socket.on(C.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok"});
 			this.player.coins = data.coins;
 			const cardSold = _.find(this.cards, {_id: data.idCardSold});
 			if (cardSold) {
