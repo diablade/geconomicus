@@ -78,11 +78,11 @@ async function distribDU(idGame) {
 
                 })
                 .catch(err => {
-                    log.error('update game error:' + err);
+                    log.error('update game error:', err);
                 })
         })
         .catch(err => {
-            log.error('get game error:' + err);
+            log.error('get game error:', err);
         })
 }
 
@@ -404,7 +404,7 @@ async function startRound(idGame, round, next) {
             socket.emitTo(idGame + C.EVENT, C.EVENT, startEvent);
         })
         .catch(err => {
-            log.error('Start round game error:' + err);
+            log.error('Start round game error:', err);
             next({
                 status:  404,
                 message: "Start round game error"

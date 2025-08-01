@@ -145,7 +145,7 @@ if (process.env.GECO_NODE_ENV !== "test") {
         log.info('Socket.IO successfully initialized');
     }
     catch (error) {
-        log.error('Socket.IO initialization failed:' + error);
+        log.error('Socket.IO initialization failed:', error);
     }
 }
 export default app;

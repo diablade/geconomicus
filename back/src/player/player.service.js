@@ -38,7 +38,7 @@ const killPlayer = async (idGame, idPlayer) => {
         socket.emitTo(idGame + C.MASTER, C.DEAD, event);
     }
     catch (e) {
-        log.error('kill player error:' + e);
+        log.error('kill player error:', e);
         throw new Error("kill player failed");
     }
 }
@@ -74,7 +74,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
         }
     }
     catch (error) {
-        log.error("GetPlayer: " + error);
+        log.error("GetPlayer: ", error);
         throw error;
     }
 }

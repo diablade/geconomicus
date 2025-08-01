@@ -27,7 +27,7 @@ const connect = async () => {
         log.error("Failed to connect to database:", err);
     }
     mongoose.connection.on("error", function (err) {
-        log.error("Mongoose connection error: " + err);
+        log.error("Mongoose connection error: ", err);
     });
     mongoose.connection.on("connected", function () {
         log.info("Mongoose connected");

@@ -13,7 +13,7 @@ export default {
             return res.status(200).send(savedGame);
         }
         catch (err) {
-            log.error("Game creation error:" + err);
+            log.error("Game creation error:", err);
             return res.status(500).json({
                 message: "Game creation error",
             });
@@ -27,7 +27,7 @@ export default {
             });
         }
         catch (err) {
-            log.error("Game update error:" + err);
+            log.error("Game update error:", err);
             return res.status(500).json({
                 message: "Game update error",
             });
@@ -66,14 +66,14 @@ export default {
                         });
                     })
                     .catch((err) => {
-                        log.error("Start game error:" + err);
+                        log.error("Start game error:", err);
                         return res.status(500).json({
                             message: "Start game error",
                         });
                     });
             })
             .catch((err) => {
-                log.error("Cannot start Game, not found:" + err);
+                log.error("Cannot start Game, not found:", err);
                 return res.status(404).json({
                     message: "Cannot start Game, not found",
                 });
@@ -108,7 +108,7 @@ export default {
                 });
             })
             .catch((err) => {
-                log.error("get game error:" + err);
+                log.error("get game error:", err);
                 next({
                     status:  404,
                     message: "not found",
@@ -151,7 +151,7 @@ export default {
                 });
             })
             .catch((err) => {
-                log.error("End game error:" + err);
+                log.error("End game error:", err);
                 return res.status(404).json({
                     message: "End Game error",
                 });
@@ -168,7 +168,7 @@ export default {
             });
         }
         catch (e) {
-            log.error("Get feedbacks error:" + e);
+            log.error("Get feedbacks error:", e);
             return res.status(404).json({
                 message: "Feedbacks not found",
             });
@@ -181,7 +181,7 @@ export default {
             return res.status(200).json(game);
         }
         catch (e) {
-            log.error("Get game error:" + e);
+            log.error("Get game error:", e);
             return res.status(404).json({
                 message: "Game not found",
             });
@@ -199,7 +199,7 @@ export default {
             return res.status(200).json(game._id.toString());
         }
         catch (e) {
-            log.error("Get game error:" + e);
+            log.error("Get game error:", e);
             return res.status(404).json({
                 message: "Game not found",
             });
@@ -219,7 +219,7 @@ export default {
                 }
             })
             .catch((error) => {
-                log.error("events,get game error:" + error);
+                log.error("events,get game error:", error);
                 return res.status(404).json({
                     message: "Events of game not found",
                 });
@@ -257,7 +257,7 @@ export default {
                 }
             })
             .catch((error) => {
-                log.error("delete player error:" + error);
+                log.error("delete player error:", error);
                 return res.status(404).json({
                     message: "can't delete player not found",
                 });
@@ -317,7 +317,7 @@ export default {
                 });
             })
             .catch((err) => {
-                log.error("all games error:" + err);
+                log.error("all games error:", err);
                 return res.status(500).json({
                     message: "Get Games error",
                 });
@@ -371,7 +371,7 @@ export default {
             }
         }
         catch (err) {
-            log.error("Game reset error:" + err);
+            log.error("Game reset error:", err);
             return res.status(500).json({
                 message: "Game reset error",
             });
@@ -392,7 +392,7 @@ export default {
             }
         }
         catch (err) {
-            log.error("Game refresh error:" + err);
+            log.error("Game refresh error:", err);
             return res.status(500).json({
                 message: "Game refresh error",
             });
@@ -413,7 +413,7 @@ export default {
             }
         }
         catch (err) {
-            log.error("Game refresh error:" + err);
+            log.error("Game refresh error:", err);
             return res.status(500).json({
                 message: "Game refresh error",
             });
