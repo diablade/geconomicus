@@ -60,7 +60,7 @@ export const schemas = {
                     weight: Joi.number().min(0).required()
                 })
             ).required(),
-            prisonTime: Joi.number().min(0)
+            prisonTime: Joi.number().min(0).max(20)
         }).required()
             .messages({
                 'any.required': 'Seizure object is required'
@@ -117,4 +117,4 @@ export const validate = (schema) => {
 
         next();
     };
-}; 
+};
