@@ -1,6 +1,7 @@
-import {AfterViewInit, Component, ElementRef, Inject, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Inject, Input} from '@angular/core';
 import {Card} from "../../models/game";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {AudioService} from "../../services/audio.service";
 
 @Component({
   selector: 'app-congrats-dialog',
@@ -10,15 +11,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 export class CongratsDialogComponent implements AfterViewInit {
   @Input() card!: Card;
   @Input() text!: string;
-  @ViewChild('giftAudio') audioPlayerRef!: ElementRef;
 
-  constructor(public dialogRef: MatDialogRef<CongratsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(public dialogRef: MatDialogRef<CongratsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
     this.text = data.text;
     this.card = data.card;
   }
 
   ngAfterViewInit(): void {
-    this.audioPlayerRef.nativeElement.play();
+    this.audioService.playSound("gotitem");
   }
 
 	close(){

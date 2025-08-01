@@ -1,16 +1,17 @@
-import {Component, ElementRef, AfterViewInit, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {BackService} from "../services/back.service";
-import {Router} from "@angular/router";
-import {faCamera, faChevronDown, faKeyboard} from "@fortawesome/free-solid-svg-icons";
-import {JoinQrDialog} from "../master-board/master-board.component";
-import {Platform} from "@angular/cdk/platform";
-import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
-import {I18nService} from "../services/i18n.service";
-import {ContributionsComponent} from "../components/contributions/contributions.component";
-import {JoinShortDialogComponent} from '../dialogs/join-short-dialog/join-short-dialog.component';
-import {LocalStorageService} from '../services/local-storage/local-storage.service';
-import {ResumeSessionPromptComponent} from '../dialogs/resume-session-prompt/resume-session-prompt.component';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { BackService } from "../services/back.service";
+import { Router } from "@angular/router";
+import { faCamera, faChevronDown, faKeyboard } from "@fortawesome/free-solid-svg-icons";
+import { JoinQrDialog } from "../master-board/master-board.component";
+import { Platform } from "@angular/cdk/platform";
+import { ScannerDialogV3Component } from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+import { I18nService } from "../services/i18n.service";
+import { ContributionsComponent } from "../components/contributions/contributions.component";
+import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
+import { LocalStorageService } from '../services/local-storage/local-storage.service';
+import { ResumeSessionPromptComponent } from '../dialogs/resume-session-prompt/resume-session-prompt.component';
+import { AudioService } from '../services/audio.service';
 
 @Component({
 	selector: 'app-home',
@@ -21,27 +22,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	faCamera = faCamera;
 	faChevronDown = faChevronDown;
 	faKeyboard = faKeyboard;
-	@ViewChild('coins') coins!: ElementRef;
 	modalPwaEvent: any;
 	modalPwaPlatform: string | undefined;
 
-	beep() {
-		const audio: HTMLAudioElement = this.coins.nativeElement;
-		audio.play();
-	}
-
 	constructor(private router: Router,
-	            private i18nService: I18nService,
-	            private platform: Platform,
-	            private backService: BackService,
-	            private localStorageService: LocalStorageService,
-	            public dialog: MatDialog) {
+		private i18nService: I18nService,
+		private platform: Platform,
+		private backService: BackService,
+		private localStorageService: LocalStorageService,
+		private audioService: AudioService,
+		public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
 		this.loadModalPwa();
 	}
-
+	
 	ngAfterViewInit(): void {
 		const session: any = this.localStorageService.getItem("session");
 		if (session && session.idGame && session.idPlayer) {
@@ -51,6 +47,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 			});
 			dialogRef.afterClosed().subscribe();
 		}
+	}
+	
+	beep() {
+		this.audioService.playSound("coins");
 	}
 
 	create() {

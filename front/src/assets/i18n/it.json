@@ -294,6 +294,7 @@
         "CREDIT_DEFAULT": "Inadempimento del credito",
         "CREDIT_REPAID": "Credito rimborsato",
         "BANK_SEIZURE": "Sequestro bancario",
+        "RECEIVED_COINS": "💰 Ricevuto {{amount}}",
         "IN_PRISON": "In prigione",
         "RELEASED_FROM_PRISON": "Rilasciato dalla prigione",
         "DISTRIBUTION_TO": "Distribuzione a",

@@ -293,6 +293,7 @@
         "CREDIT_DEFAULT": "Neplaćanje kredita",
         "CREDIT_REPAID": "Kredit otplaćen",
         "BANK_SEIZURE": "Zaplena banke",
+        "RECEIVED_COINS": "💰 Dobi {{amount}}",
         "IN_PRISON": "U zatvoru",
         "RELEASED_FROM_PRISON": "Oslobođen iz zatvora",
         "DISTRIBUTION_TO": "Distribucija ka",

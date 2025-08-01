@@ -293,6 +293,7 @@
         "CREDIT_DEFAULT": "Credit default",
         "CREDIT_REPAID": "Credit repaid",
         "BANK_SEIZURE": "Bank seizure",
+        "RECEIVED_COINS": "💰 received {{amount}}",
         "IN_PRISON": "In prison",
         "RELEASED_FROM_PRISON": "Released from prison",
         "DISTRIBUTION_TO": "Distribution to",

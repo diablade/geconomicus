@@ -24,6 +24,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {WebSocketService} from "../services/web-socket.service";
 import {TranslateService} from "@ngx-translate/core";
 import {I18nService} from "../services/i18n.service";
+import { AudioService } from '../services/audio.service';
 
 @Component({
 	selector: 'app-master-board',
@@ -52,7 +53,6 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faWarning = faWarning;
 	faBuildingColumns = faBuildingColumns;
 	faEye = faEye;
-	audioStart = new Audio();
 
 	C = C;
 	timerProgress = 100;
@@ -85,6 +85,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	            private sanitizer: DomSanitizer,
 	            private wsService: WebSocketService,
 	            private i18nService: I18nService,
+	            private audioService: AudioService,
 	            public dialog: MatDialog) {
 	}
 
@@ -199,9 +200,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
 			this.timer.start();
 			this.game.status = C.PLAYING;
-			this.audioStart.src = "./../../assets/audios/start.mp3";
-			this.audioStart.load();
-			this.audioStart.play();
+			this.audioService.playSound("start");
 
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.ROUND_START"));
 		});

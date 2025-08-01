@@ -1,5 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {AudioService} from '../../services/audio.service';
 
 @Component({
 	selector: 'app-confirm-dialog',
@@ -13,10 +14,9 @@ export class ConfirmDialogComponent {
 	labelBtn2 = "DIALOG.CONFIRM.BTN2";
 	autoClickBtn2 = false;
 	timerBtn2 = 5;
-	audio = new Audio();
 	btn1Enable= true;
 
-	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
 		this.title = data.title ? data.title : this.title;
 		this.message = data.message;
 		this.labelBtn1 = data.labelBtn1 ? data.labelBtn1: this.labelBtn1;
@@ -25,9 +25,7 @@ export class ConfirmDialogComponent {
 		this.timerBtn2 = data.timerBtn2;
 		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;
 		if (data.beep) {
-			this.audio.src = "./../../../assets/audios/request.mp3";
-			this.audio.load();
-			this.audio.play();
+			this.audioService.playSound("request");
 		}
 	}
 

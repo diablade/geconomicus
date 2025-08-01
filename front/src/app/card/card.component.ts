@@ -3,6 +3,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
 import {ShortCode} from "../models/shortCode";
+import { AudioService } from '../services/audio.service';
 
 @Component({
 	selector: 'app-card',
@@ -63,14 +64,12 @@ export class CardComponent {
 	faGift = faGift;
 	@Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
 	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
-	@ViewChild('cardFlip') cardFlip!: ElementRef;
-	@ViewChild('cardBack') cardBack!: ElementRef;
 
-	constructor(private elementRef: ElementRef) {
+	constructor(private elementRef: ElementRef, private audioService: AudioService) {
 	}
 
 	closeCard() {
-		this.cardBack.nativeElement.play();
+		this.audioService.playSound("cardFlipBack");
 		this.state = "default";
 	}
 
@@ -80,9 +79,9 @@ export class CardComponent {
 			if (this.state === "default") {
 				this.state = "flipped";
 				this.createShortCode();
-				this.cardFlip.nativeElement.play();
+				this.audioService.playSound("cardFlipGet");
 			} else {
-				this.cardBack.nativeElement.play();
+				this.audioService.playSound("cardFlipBack");
 				this.state = "default";
 				this.deleteShortCode();
 			}

@@ -292,6 +292,7 @@
         "CREDIT_DEFAULT": "クレジットの不履行",
         "CREDIT_REPAID": "クレジットが返済されました",
         "BANK_SEIZURE": "銀行の差し押さえ",
+        "RECEIVED_COINS": "💰 受け取り {{amount}}",
         "IN_PRISON": "刑務所にいる",
         "RELEASED_FROM_PRISON": "刑務所から解放されました",
         "DISTRIBUTION_TO": "配布先",

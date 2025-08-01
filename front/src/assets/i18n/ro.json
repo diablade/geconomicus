@@ -293,6 +293,7 @@
         "CREDIT_DEFAULT": "Neplata creditului",
         "CREDIT_REPAID": "Credit rambursat",
         "BANK_SEIZURE": "Sechestrare bancară",
+        "RECEIVED_COINS": "💰 Dobi {{amount}}",
         "IN_PRISON": "În închisoare",
         "RELEASED_FROM_PRISON": "Eliberat din închisoare",
         "DISTRIBUTION_TO": "Distribuție către",

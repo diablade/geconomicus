@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {Subscription} from "rxjs";
+import { AudioService } from '../services/audio.service';
 
 @Component({
 	selector: 'app-join',
@@ -14,7 +15,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 	name = "";
 	private subscription: Subscription | undefined;
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {
+	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private audioService: AudioService) {
 	}
 
 	ngOnInit(): void {
@@ -23,9 +24,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 			this.fromId = params['fromId'];
 			if (this.fromId) {
 				this.name = params['name'];
-				const audioAngel = new Audio("./assets/audios/angel.mp3");
-				audioAngel.load();
-				audioAngel.play().then();
+				this.audioService.playSound("angel");
 			}
 		});
 	}

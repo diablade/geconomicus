@@ -133,6 +133,7 @@
     "HELLO": "¡Hola!",
     "EVENTS": {
         "BANK_SEIZURE": "Incautación de cuentas bancarias",
+        "RECEIVED_COINS": "💰 Recibido {{amount}}",
         "FIRST_DU": "Primer DU",
         "CREDIT_TIMEOUT": "Período de crédito",
         "INTEREST_PAID": "Interés pagado",

@@ -34,11 +34,11 @@
 			<div class="coin-container" [ngSwitch]="typeMoney">
 				<ng-container *ngSwitchCase="C.JUNE">
 					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"
-					     [@coinFlip]="duVisible"/>
+					     [@coinFlip]="flipCoin"/>
 				</ng-container>
 				<ng-container *ngSwitchCase="C.DEBT">
 					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"
-					     [@coinFlip]="creditReceived"/>
+					     [@coinFlip]="flipCoin"/>
 				</ng-container>
 			</div>
 			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>

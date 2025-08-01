@@ -14,7 +14,4 @@
 	</div>
 	<button-timer class="closeBtn" [secondsTimer]="5" (timerEnd)="close()"></button-timer>
 	<div (click)="close()" class="gecoFont shadowed fs-4 congrats-message">{{ text }}</div>
-	<audio #giftAudio>
-		<source src='./assets/audios/gotitem.mp3' type="audio/mp3">
-	</audio>
 </div>

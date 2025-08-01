@@ -295,6 +295,7 @@
         "CREDIT_DEFAULT": "Défaut de paiement",
         "CREDIT_REPAID": "Crédit remboursé",
         "BANK_SEIZURE": "Saisie bancaire",
+        "RECEIVED_COINS": "💰 Reçu {{amount}}",
         "IN_PRISON": "En prison",
         "RELEASED_FROM_PRISON": "Libéré de prison",
         "DISTRIBUTION_TO": "Distribution à",

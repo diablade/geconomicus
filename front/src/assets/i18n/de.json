@@ -295,6 +295,7 @@
         "CREDIT_DEFAULT": "Ausbleibende Zahlung",
         "CREDIT_REPAID": "Kredit zurückbezahlt",
         "BANK_SEIZURE": "Bankpfändung",
+        "RECEIVED_COINS": "💰 Erhalten {{amount}}",
         "IN_PRISON": "Im Gefängnis",
         "RELEASED_FROM_PRISON": "Aus dem Gefängnis entlassen",
         "DISTRIBUTION_TO": "Verteilung an",

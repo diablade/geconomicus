@@ -24,6 +24,7 @@ import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
 import createCountdown from "../services/countDown";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
+import {AudioService} from '../services/audio.service';
 
 @Component({
 	selector: 'app-player-board',
@@ -119,8 +120,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faKeyboard = faKeyboard;
 	faInfo = faCircleInfo;
 	scanV3 = true;
-	duVisible = false;
-	creditReceived = false;
+	flipCoin = false;
 	panelCreditOpenState = true;
 	C = C;
 	timerCredit = 5;
@@ -150,6 +150,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	            private backService: BackService,
 	            private wsService: WebSocketService,
 	            private i18nService: I18nService,
+	            private audioService: AudioService,
 	            private snackbarService: SnackbarService) {
 	}
 
@@ -283,15 +284,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(C.DISTRIB_DU, (data: any) => {
-			const audioDu = new Audio("./assets/audios/audioDu.mp3");
-			audioDu.load();
-			audioDu.play();
+			this.audioService.playSound("audioDu");
 			this.player.coins += data.du;
 			this.currentDU = data.du;
-			this.duVisible = true;
-			setTimeout(() => {
-				this.duVisible = false;
-			}, 2000);
+			this.flipCoins();
 		});
 		this.socket.on(C.RESET_GAME, async (data: any) => {
 			this.dialog.closeAll();
@@ -340,7 +336,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.refresh();
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok"});
+			cb({status: "ok", idPlayer: this.idPlayer});
+			if (data.cost > 0) {
+				this.audioService.playSound("coin");
+				this.flipCoins();
+				this.snackbarService.showNotif(this.i18nService.instant("EVENTS.RECEIVED_COINS", {amount: data.cost}) +
+					this.i18nService.instant(this.typeMoney == C.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
+			}
 			this.player.coins = data.coins;
 			const cardSold = _.find(this.cards, {_id: data.idCardSold});
 			if (cardSold) {
@@ -359,16 +361,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.amount}),
-					sound: "./assets/audios/coins.mp3"
+					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.amount})
 				},
 			});
 			this.player.coins += data.amount;
 			this.credits.push(data);
-			this.creditReceived = true;
-			setTimeout(() => {
-				this.creditReceived = false;
-			}, 2000);
+			this.flipCoins();
+			this.audioService.playSound("coins");
 		});
 		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
 			_.forEach(this.credits, c => {
@@ -401,10 +400,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
 			this.defaultCredit = true;
-			const audioCops = new Audio();
-			audioCops.src = "./assets/audios/police.mp3";
-			audioCops.load();
-			await audioCops.play();
+			this.audioService.playSound("police");
 		});
 		this.socket.on(C.CREDIT_DONE, async (data: any) => {
 			_.forEach(this.credits, c => {
@@ -449,9 +445,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.defaultCredit = false;
 			if (data.prisoner && data.prisoner._id == this.idPlayer) {
 				this.prison = true;
-				const audioPrison = new Audio("./assets/audios/prison.mp3");
-				audioPrison.load();
-				await audioPrison.play();
+				this.audioService.playSound("prison");
 			}
 		});
 	}
@@ -485,6 +479,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			width: '10px',
 			height: '10px'
 		});
+	}
+
+	flipCoins() {
+		this.flipCoin = true;
+		setTimeout(() => {
+			this.flipCoin = false;
+		}, 2000);
 	}
 
 	//To prevent memory leak
@@ -570,15 +571,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (dataReceived?.buyedCard) {
 					await this.receiveCards([dataReceived.buyedCard]);
 					this.player.coins = dataReceived.coins;
+					this.audioService.playSound("cardFlipBack");
 				}
 				this.isBuying = false; // Reset flag on success
 			});
 		} else if (this.player.coins < cost) {
 			console.log(this.player.coins, cost);
 			this.snackbarService.showError("Fond insuffisant !");
-			const errorAudio = new Audio("../assets/audios/error.mp3");
-			errorAudio.load();
-			errorAudio.play();
+			this.audioService.playSound("error");
 			this.isBuying = false; // Reset flag
 		} else {
 			this.snackbarService.showError("Erreur scan, réessaye !");
@@ -628,9 +628,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							});
 							this.player.coins -= credit.interest;
 							this.player.status = C.ALIVE;
-							const interestAudio = new Audio("../assets/audios/interest.mp3");
-							interestAudio.load();
-							interestAudio.play();
+							this.audioService.playSound("interest");
 						}
 					});
 				} else {
@@ -641,9 +639,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.settleCredit(credit);
 				} else {
 					this.snackbarService.showError("Fond insuffisant !");
-					const errorAudio = new Audio("../assets/audios/error.mp3");
-					errorAudio.load();
-					errorAudio.play();
+					this.audioService.playSound("error");
 					this.requestingWhenCreditEnds(credit, false);
 				}
 			}
@@ -690,16 +686,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 						return c;
 					});
 					this.snackbarService.showSuccess(this.i18nService.instant("CREDIT.CREDIT_SETTLED"));
-					const interestAudio = new Audio("../assets/audios/interest.mp3");
-					interestAudio.load();
-					interestAudio.play();
+					this.audioService.playSound("interest");
 				}
 			});
 		} else {
 			this.snackbarService.showError(this.i18nService.instant("ERROR.NOT_ENOUGH_MONEY"));
-			const errorAudio = new Audio("../assets/audios/error.mp3");
-			errorAudio.load();
-			errorAudio.play();
+			this.audioService.playSound("error");
 		}
 	}
 
