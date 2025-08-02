@@ -55,4 +55,22 @@ export class SnackbarService {
 			window.location.reload();
 		});
 	}
+	showForceReload(message: string) {
+		const config = new MatSnackBarConfig();
+		config.panelClass = ['snackbar-error'];
+		config.politeness = 'assertive';
+		config.verticalPosition = 'top';
+		config.horizontalPosition = 'center';
+		config.duration = this.durationInSeconds;
+
+		const snackBarRef = this.snackBar.open(message, "🔄", config);
+
+		snackBarRef.onAction().subscribe(() => {
+			window.location.reload();
+		});
+		
+		snackBarRef.afterDismissed().subscribe(() => {
+			window.location.reload();
+		});
+	}
 }

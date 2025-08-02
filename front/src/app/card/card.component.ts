@@ -135,4 +135,15 @@ export class CardComponent {
 		}
 		return "CARD.BUILD_UP";
 	}
+	getBuildColor(card: Card) {
+		switch (card.weight) {
+			case 0:
+				return "yellow";
+			case 1:
+				return "green";
+			case 2:
+				return "blue";
+		}
+		return "red";
+	}
 }

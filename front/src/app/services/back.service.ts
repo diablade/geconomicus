@@ -16,7 +16,7 @@ export class BackService {
 	NOTIF = "notif";
 	ERROR = "error";
 	ERROR_RELOAD = "errorReload";
-
+	ERROR_FORCE_RELOAD = "errorForceReload";
 	httpOptions = {
 		headers: new HttpHeaders({
 			'Content-Type': 'application/json'
@@ -35,6 +35,8 @@ export class BackService {
 			this.router.navigate([""]);
 		} else if (whatToDo == this.ERROR_RELOAD) {
 			this.snackbarService.showReload(this.i18nService.instant(whatToSay));
+		} else if (whatToDo == this.ERROR_FORCE_RELOAD) {
+			this.snackbarService.showForceReload(this.i18nService.instant(whatToSay));
 		} else if (whatToDo == this.NOTIF) {
 			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
 		} else if (whatToDo == this.ERROR) {
@@ -106,7 +108,7 @@ export class BackService {
 	refreshForcePlayer(idGame: string, idPlayer: string) {
 		return this.http.post<any>(environment.API_HOST + environment.GAME.REFRESH_PLAYER, {idGame: idGame, idPlayer: idPlayer})
 			.pipe(
-				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REFRESH_FORCE_PLAYER"))
+				catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.REFRESH_FORCE_PLAYER"))
 			);
 	}
 
@@ -147,7 +149,7 @@ export class BackService {
 			}))
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.EXCHANGE"))
+				catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.EXCHANGE"))
 			);
 	}
 
@@ -188,7 +190,7 @@ export class BackService {
 			idCard
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.TRANSACTION"))
+				catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.TRANSACTION"))
 			);
 	}
 
@@ -317,7 +319,7 @@ export class BackService {
 
 	createCredit(data: any) {
 		return this.http.post<Credit>(environment.API_HOST + environment.BANK.CREATE_CREDIT, data).pipe(
-			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.CREATE_CREDIT"))
+			catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.CREATE_CREDIT"))
 		);
 	}
 
@@ -333,7 +335,7 @@ export class BackService {
 			idGame: credit.idGame,
 			idPlayer: credit.idPlayer
 		}).pipe(
-			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REPAY_CREDIT"))
+			catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.REPAY_CREDIT"))
 		)
 	}
 
@@ -343,7 +345,7 @@ export class BackService {
 			idGame: credit.idGame,
 			idPlayer: credit.idPlayer
 		}).pipe(
-			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.PAY_INTEREST"))
+			catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.PAY_INTEREST"))
 		)
 	}
 
@@ -354,7 +356,7 @@ export class BackService {
 			idPlayer: credit.idPlayer,
 			seizure: seizure
 		}).pipe(
-			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SEIZURE"))
+			catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.SEIZURE"))
 		)
 	}
 
