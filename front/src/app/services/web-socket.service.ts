@@ -31,6 +31,7 @@ export class WebSocketService {
 			this.dialog.closeAll();
 			this.disconnected = true;
 			this.socket?.disconnect();
+			this.socket?.removeAllListeners();
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
@@ -48,6 +49,10 @@ export class WebSocketService {
 	}
 
 	private connect(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
+
+		this.socket?.disconnect();
+		this.socket?.removeAllListeners();
+
 		this.idGame = idGame;
 		this.idPlayer = idPlayer;
 
@@ -55,14 +60,14 @@ export class WebSocketService {
 			this.socket = io(this.ioUrl, {
 				query: {
 					idPlayer: this.idPlayer,
-					idGame: this.idGame,
+					idGame: this.idGame
 				},
 				ackTimeout: 4000,            // timeout to 5 seconds
 				// allowEIO3: true,
 				tryAllTransports: true,
 				autoConnect: true,
 				reconnection: true,       // Enable automatic reconnection
-				reconnectionAttempts: 5, // Number of reconnection attempts// Increase attempts
+				reconnectionAttempts: 6, // Number of reconnection attempts// Increase attempts
 				reconnectionDelay: 1000,  // Delay between reconnections
 				reconnectionDelayMax: 2000,  // Maximum delay between reconnections (2s)
 				timeout: 6000,               // connection timeout (6s)
@@ -80,9 +85,20 @@ export class WebSocketService {
 		if (!this.socket) return;
 		const last = this.getLastConnectedTime();
 		const now = Date.now();
-		const maxOfflineDuration = 30 * 1000; // 30 secondes
+		const maxOfflineDuration = 100000; // 100 secondes
 
-		this.socket.io.on('reconnect', () => {
+		this.socket.on('kicked', (data) => {
+			console.warn("kicked : " + data.reason);
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					disableClose: true,
+					title: this.i18nService.instant("SOCKET.KICKED.TITLE"),
+					text: this.i18nService.instant("SOCKET.KICKED.TEXT") + " " + data.reason
+				},
+			});
+		});
+		this.socket.io.on('reconnect', (attemptNumber: number) => {
+			console.log('Reconnect after', attemptNumber, 'attempts');
 			if (last && now - last > maxOfflineDuration) {
 				console.warn('Reconnected after long offline time — reloading page');
 				window.location.reload(); // force refresh
@@ -92,10 +108,6 @@ export class WebSocketService {
 			}
 		});
 		this.socket.io.on('ping', () => console.log('ping sent'));
-		// (this.socket.io as any).on('pong', (latency: number) => {
-		// 	console.log('Pong latency:', latency);
-		// });
-
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');
 			if (this.disconnected) {
@@ -110,31 +122,30 @@ export class WebSocketService {
 			console.log('Connection failed due to error:', error);
 			this.dialog.closeAll();
 			this.showDisconnectedDialog();
+			// this.socket?.io?.reconnection();
 		});
-
 		this.socket.on("disconnect", (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
 			this.showReconnectingDialog();
+			//try reconnection
+			// this.socket?.io?.reconnection();
 		});
 		this.socket.on("reconnecting", (data: any) => {
+			this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTING"));
 			console.log('reconnecting...');
 		});
-
 		this.socket.on("connect_timeout", (data: any) => {
 			console.log('time out');
 			this.handleTimeout();
+			// this.socket?.io?.reconnection();
 		});
-
 		this.socket.on('reconnect_attempt', (attempt) => {
 			console.log('Reconnection attempt:', attempt);
 		});
 
-		this.socket.on('reconnect', (attemptNumber) => {
-			console.log('Reconnected after', attemptNumber, 'attempts');
-		});
-
 		this.socket.on('reconnect_error', () => {
+			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
 			console.log('Reconnection error');
 		});
 		this.socket.on('error', () => {
@@ -142,15 +153,22 @@ export class WebSocketService {
 			console.log('error');
 		});
 		this.socket.on('reconnect_failed', () => {
+			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
 			console.log('Reconnection failed');
 		});
 	}
 
 	getSocket(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
-		if (this.socket) {
+		if (this.socket && this.socket.connected) {
+			this.disconnected = false;
 			return this.socket;
 		} else {
-			return this.connect(idGame, idPlayer);
+			let sock = this.connect(idGame, idPlayer);
+			if (sock) {
+				return sock;
+			} else {
+				throw Error("WebSocketService: idGame or idPlayer is undefined");
+			}
 		}
 	}
 
@@ -169,6 +187,8 @@ export class WebSocketService {
 				autoClickBtn2: true,
 				timerBtn2: this.i18nService.instant("SOCKET.DISCONNECTED.TIMER"),
 			}
+		}).afterClosed().subscribe(() => {
+			this.socket?.connect();
 		});
 	}
 
@@ -179,11 +199,14 @@ export class WebSocketService {
 				title: this.i18nService.instant("SOCKET.RECONNECTING.TITLE"),
 				text: this.i18nService.instant("SOCKET.RECONNECTING.TEXT")
 			},
+		}).afterClosed().subscribe(() => {
+			this.socket?.connect();
 		});
 	}
 
 	private handleTimeout() {
 		this.snackbarService.showError(this.i18nService.instant("SOCKET.TIMEOUT"));
+		this.socket?.connect();
 	}
 
 	private saveLastConnectedTime(): void {
