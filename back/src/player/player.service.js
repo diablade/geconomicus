@@ -6,6 +6,7 @@ import socket from "../../config/socket.js";
 import bankService from "../bank/bank.service.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
 import mongoose from 'mongoose';
+import _ from 'lodash';
 
 const killPlayer = async (idGame, idPlayer) => {
     try {
@@ -122,9 +123,86 @@ const join = async (game, name) => {
     }
 }
 
+const produceCardLevelUp = async (idGame, idPlayer, cards) => {
+    const game = await GameModel.findById(idGame);
+    if (!game) {
+        throw new Error("Can't produce, game not found");
+    }
+
+    const player = game.players.find(p => p._id.toString() === idPlayer);
+    if (!player) {
+        throw new Error("Can't produce, Player not found");
+    }
+
+    const idsToFilter = cards.map(c => c._id);
+    if (!decksService.areCardIdsUnique(idsToFilter, game.amountCardsForProd)) {
+        throw new Error("Can't produce, cards are not unique");
+    }
+    const cardsToExchange = player.cards.filter(card => idsToFilter.includes(card._id.toString()));
+
+    if (cardsToExchange.length !== game.amountCardsForProd) {
+        throw new Error("Can't produce, not enough cards");
+    }
+
+    const weight = cardsToExchange[0].weight;
+
+    if (weight >= 3) {
+        throw new Error("Technological change not yet implemented");
+    }
+
+    // Remove cards from player's hand
+    await GameModel.updateOne({
+        _id:           idGame,
+        'players._id': idPlayer
+    }, {$pull: {'players.$.cards': {_id: {$in: cardsToExchange.map(c => c._id)}}}});
+
+    // Add cards back to the deck and shuffle
+    const updatedGame = await GameModel.findByIdAndUpdate(idGame, {$push: {[`decks.${weight}`]: {$each: cardsToExchange}}}, {new: true});
+
+    const shuffledDeck = _.shuffle(updatedGame.decks[weight]);
+    const shuffledDeck2 = _.shuffle(updatedGame.decks[weight + 1]);
+
+    const newCards = shuffledDeck.slice(0, game.amountCardsForProd);
+    const newCardsIds = newCards.map(c => c._id);
+    if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
+        throw new Error("Can't produce, cards are not unique");
+    }
+    const newCardSup = shuffledDeck2[0];
+    const cardsDraw = [...newCards, newCardSup];
+
+    const discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
+    const newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
+
+    // Remove drawn cards from decks, add events
+    await GameModel.updateOne({_id: idGame}, {
+        $pull: {
+            [`decks.${weight}`]:     {_id: {$in: newCards.map(c => c._id)}},
+            [`decks.${weight + 1}`]: {_id: newCardSup._id}
+        },
+        $push: {
+            'events': {$each: [discardEvent, newCardsEvent]}
+        }
+    });
+
+    // Add new cards to player's hand
+    await GameModel.updateOne({
+        _id:           idGame,
+        'players._id': idPlayer
+    }, {$push: {'players.$.cards': {$each: cardsDraw}}});
+
+    if (newCardSup.weight > 2) {
+        await gameService.stopRound(idGame, updatedGame.round);
+    }
+
+    socket.emitTo(idGame + C.EVENT, C.EVENT, discardEvent);
+    socket.emitTo(idGame + C.EVENT, C.EVENT, newCardsEvent);
+
+    return cardsDraw;
+}
 
 export default {
     killPlayer,
     getPlayer,
-    join
+    join,
+    produceCardLevelUp
 }
