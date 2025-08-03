@@ -1,59 +1,109 @@
 .results {
-	background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-	&Header {
-		height: 80px;
-	}
+  &Header {
+    height: 80px;
+  }
 }
 
 .geco {
-	width: 200px;
+  width: 200px;
 }
 
 .gunyResults {
-	height: 140px;
+  height: 140px;
 }
 
 .events {
-	min-width: 250px;
-	height: 100%;
-	overflow: auto;
-	padding: 10px;
+  min-width: 250px;
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
 
 }
 
 .eventsSmall {
-	width: 100%;
-	min-height: 600px;
-	overflow: auto;
+  width: 100%;
+  min-height: 600px;
+  overflow: auto;
 }
 
-#pie-chart-tooltip{
-	display: none;
+#pie-chart-tooltip {
+  display: none;
 }
+
 .mini-graph {
-	height: 150px;
- 	width: 150px;
-	padding: 0.2rem !important;
-	position: relative;
+  height: 150px;
+  width: 150px;
+  padding: 0.2rem !important;
+  position: relative;
 }
-.wrapPie{
-	margin: auto;
-	position: relative;
-	height: 80px;
-	width: 80px;
+
+.wrapPie {
+  margin: auto;
+  position: relative;
+  height: 80px;
+  width: 80px;
 }
+
 .graph {
-	height: 500px;
-	border-radius: 15px;
-	padding: 0.5rem !important
+  height: 500px;
+  border-radius: 15px;
+  padding: 0.5rem !important
 }
 
 .player-frame {
-	width: 100px;
+  width: 100px;
 
-	&-second-third {
-		width: 50px;
-	}
+  &-second {
+    width: 70px;
+  }
+
+  &-third {
+    width: 60px;
+  }
+
+  &-second-third {
+    width: 50px;
+  }
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  height: 220px;
+  margin-bottom: 10px;
+}
+
+.step {
+  width: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: #ccc;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 33px;
+  border-radius: 5px 5px 0 0;
+  box-shadow: 2px 2px 15px -5px #000;
+}
+
+/* hauteurs différentes pour l'effet escalier */
+.first {
+  height: 150px;
+  background: gold;
+}
+
+.second {
+  height: 105px;
+  background: silver;
+}
+
+.third {
+  height: 90px;
+  background: #cd7f32; /* bronze */
 }
