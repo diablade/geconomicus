@@ -20,6 +20,7 @@ import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
 import {I18nService} from '../services/i18n.service';
 import {TranslateService} from '@ngx-translate/core';
+import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -1030,7 +1031,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			}
 		});
-		
+
 		const merged = this.mergedReincarnatePlayers(allLastPointsMoney.concat(allLastPointsRessources))
 		const podiumm = _.orderBy(merged, 'value', 'desc');
 
@@ -1112,4 +1113,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	displayLegendResources() {
 		this.legendResources = !this.legendResources;
 	}
+
+	protected readonly faCircleInfo = faCircleInfo;
 }

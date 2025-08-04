@@ -31,32 +31,37 @@
 				</div>
 				<img class="gunyResults" src="./assets/images/guny.png">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "HOME.PAGE" | translate
-				}}</button>
+			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{
+                    "HOME.PAGE" | translate
+				}}
+			</button>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: { name: game?.name } }}</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">{{ "RESULTS.STATUS" | translate }}: </span>{{ getStatus() }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.MONEY_TYPE" | translate }}: </span>
-					<span class="fw-bold">{{ game?.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" |
-						translate) }}
-						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'" />
-						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'" />
+					<span class="fw-bold">{{
+                            game?.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" |
+                                translate)
+						}}
+						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
+						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
 					</span>
 				</div>
 				<div><span class="fw-bold">{{ "RESULTS.ANIMATOR" | translate }}: </span>{{ game?.animator }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.LOCATION" | translate }}: </span>{{ game?.location }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.PLAYERS" | translate }}: </span>{{ playersAtStart > 0 ?
-					playersAtStart :
-					"-" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.PLAYERS" | translate }}: </span>{{
+                        playersAtStart > 0 ? playersAtStart : "-"
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.DEAD_REINCARNATED" | translate }}: </span>{{ deads }}</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">{{ "RESULTS.GROWTH_RATE" | translate }}: </span>{{ game?.tauxCroissance }}%
 				</div>
 				<div><span class="fw-bold" [matTooltip]="'RESULTS.DU_FORMULA_TOOLTIP' | translate">
-						{{"RESULTS.DU_FORMULA" | translate }}:
+						{{ "RESULTS.DU_FORMULA" | translate }}:
 					</span>{{ "RESULTS.DU_FORMULA_TEXT" | translate }}
 				</div>
 				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DU" | translate }}: </span>({{ initialMM }}
@@ -64,115 +69,181 @@
 					x {{ game?.tauxCroissance | number:'1.2-2' }})
 					= {{ initialDU }} {{ "CURRENCY.JUNE" | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{ game?.currentMassMonetary|
-					number:'1.2-2' }}
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{
+                        game?.currentMassMonetary|
+                            number:'1.2-2'
+					}}
 					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
-					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} {{ "CURRENCY.JUNE" |
-					translate }}
+					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} {{
+                        "CURRENCY.JUNE" |
+                            translate
+					}}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM |
-					number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
-					number:'1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{
+                        initialMM |
+                            number:'1.2-2'
+					}} {{ "CURRENCY.JUNE" | translate }}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{
+                        game?.currentMassMonetary |
+                            number:'1.2-2'
+					}}{{ "CURRENCY.JUNE" | translate }}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{
-					"RESULTS.RESOURCES_VALUE" | translate: { currency: getCurrency(), cards: initialCards, resources:
-					initialResources } }}</div>
+                        "RESULTS.RESOURCES_VALUE" | translate: {
+                            currency: getCurrency(), cards: initialCards, resources: initialResources
+                        }
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{
-					"RESULTS.RESOURCES_FINAL_VALUE" | translate: { currency: getCurrency(), cards: finalCards,
-					resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}</div>
+                        "RESULTS.RESOURCES_FINAL_VALUE" | translate: {
+                            currency: getCurrency(),
+                            cards: finalCards,
+                            resources: finalResources,
+                            multiplier: finalResources / initialResources | number:'1.2-2'
+                        }
+					}}
+				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{ initialMM |
-					number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{ game?.currentMassMonetary |
-					number:'1.2-2' }} {{ "CURRENCY.EURO" | translate }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{
+                        initialMM |
+                            number:'1.2-2'
+					}} {{ "CURRENCY.EURO" | translate }}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{
+                        game?.currentMassMonetary |
+                            number:'1.2-2'
+					}} {{ "CURRENCY.EURO" | translate }}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DEBTS" | translate }}: </span> {{ initialDebts }} {{
-					"CURRENCY.EURO" | translate }}</div>
+                        "CURRENCY.EURO" | translate
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.FINAL_DEBTS" | translate }}: </span>{{ getDebts() }} {{
-					"CURRENCY.EURO" | translate }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{ game?.bankInterestEarned
-					}} {{ "CURRENCY.EURO" | translate }}</div>
+                        "CURRENCY.EURO" | translate
+					}}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{
+                        game?.bankInterestEarned
+					}} {{ "CURRENCY.EURO" | translate }}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{
-					"CURRENCY.EURO" | translate }}</div>
+                        "CURRENCY.EURO" | translate
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{
-					"RESULTS.RESOURCES_VALUE" | translate: { currency: getCurrency(), cards: initialCards, resources:
-					initialResources } }}</div>
+                        "RESULTS.RESOURCES_VALUE" | translate: {
+                            currency: getCurrency(), cards: initialCards, resources: initialResources
+                        }
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{
-					"RESULTS.RESOURCES_FINAL_VALUE" | translate: { currency: getCurrency(), cards: finalCards,
-					resources: finalResources, multiplier: finalResources / initialResources | number:'1.2-2' } }}</div>
+                        "RESULTS.RESOURCES_FINAL_VALUE" | translate: {
+                            currency: getCurrency(),
+                            cards: finalCards,
+                            resources: finalResources,
+                            multiplier: finalResources / initialResources | number:'1.2-2'
+                        }
+					}}
+				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{ startGameDate|
-					date:"YYYY-MMM-dd HH:mm" }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{ stopGameDate|
-					date:"YYYY-MMM-dd HH:mm" }}</div>
+				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{
+                        startGameDate|
+                            date:"YYYY-MMM-dd HH:mm"
+					}}
+				</div>
+				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{
+                        stopGameDate|
+                            date:"YYYY-MMM-dd HH:mm"
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.TOTAL_DURATION" | translate }}: </span>{{ durationGame() }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.ROUND_DURATION" | translate }}: </span>{{ game?.roundMinutes }}
 					{{
-					"RESULTS.MINUTES" | translate }}</div>
+                        "RESULTS.MINUTES" | translate
+					}}
+				</div>
 				<div><span class="fw-bold">{{ "RESULTS.ROUNDS_PLAYED" | translate }}: </span>{{ game?.round }}</div>
 				<div><span class="fw-bold">{{ "RESULTS.TOTAL_TRANSACTIONS" | translate }}: </span>{{
-					getTransactionsTotal() }}
+                        getTransactionsTotal()
+					}}
 				</div>
 				<div><span class="fw-bold">{{ "RESULTS.TOTAL_PRODUCTIONS" | translate }}: </span>{{ productionTotal }}
 				</div>
 			</div>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.PODIUM" | translate }}</h1>
+		<h1 class="m-2 mt-4 contour">{{ "RESULTS.PODIUM" | translate }}
+			<fa-icon class="fs-6" [icon]="faCircleInfo" [matTooltip]="'RESULTS.RICHER' | translate"></fa-icon>
+		</h1>
 		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap align-items-end">
-				<div class="podium">
+				<div class="podium d-none d-md-flex">
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-second player-svg"
-							[ngStyle]="{'border-color':'#'+podium[1].hairColor}"
-							[innerHTML]="getSanitizedSvgFromString(podium[1].image)">
+						<div class="player-frame-second player-svg" [ngStyle]="{'border-color':'#'+podium[1].hairColor}"
+						     [innerHTML]="getSanitizedSvgFromString(podium[1].image)">
 						</div>
-						<div class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[1].name }}<span class="fs-4"> 🥈</span></div>
+						<div
+								class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
+							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[1].name }}<span class="fs-4">
+									🥈</span></div>
 							<div>2</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
 						<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+podium[0].hairColor}"
-							[innerHTML]="getSanitizedSvgFromString(podium[0].image)">
+						     [innerHTML]="getSanitizedSvgFromString(podium[0].image)">
 						</div>
-						<div class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[0].name }}<span class="fs-4"> 🥇</span></div>
+						<div
+								class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
+							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[0].name }}<span class="fs-4">
+									🥇</span></div>
 							<div>1</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-third player-svg"
-							[ngStyle]="{'border-color':'#'+podium[2].hairColor}"
-							[innerHTML]="getSanitizedSvgFromString(podium[2].image)">
+						<div class="player-frame-third player-svg" [ngStyle]="{'border-color':'#'+podium[2].hairColor}"
+						     [innerHTML]="getSanitizedSvgFromString(podium[2].image)">
 						</div>
-						<div class="step third shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[2].name }}<span class="fs-4"> 🥉</span></div>
+						<div
+								class="step third shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
+							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[2].name }}<span class="fs-4">
+									🥉</span></div>
 							<div>3</div>
 						</div>
 					</div>
 				</div>
+				<div class="d-block d-md-none p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
+					<div class="fw-bold" [matTooltip]="'RESULTS.RICHER' | translate">{{ "RESULTS.RICHER" | translate }}
+					</div>
+					<div *ngIf="podium.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
+					<ng-container *ngFor="let player of podium, let i=index">
+						<div *ngIf="i === 0 || i === 1 || i === 2" class="d-flex flex-row align-items-center">
+							<div class="player-svg"
+							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
+							     [innerHTML]="getSanitizedSvgFromString(player.image)">
+							</div>
+							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5">{{
+                                    i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
+								}}</span></div>
+						</div>
+					</ng-container>
+				</div>
 				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
-					<div class="fw-bold" [matTooltip]="'RESULTS.MOST_ACTIVE_TOOLTIP' | translate">{{
-						"RESULTS.MOST_ACTIVE" | translate }}</div>
+					<div class="fw-bold" [matTooltip]="'RESULTS.MOST_ACTIVE_TOOLTIP' | translate">
+						{{ "RESULTS.MOST_ACTIVE" | translate }}
+					</div>
 					<div *ngIf="podiumTransac.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
 					<ng-container *ngFor="let player of podiumTransac, let i=index">
-						<div class="mb-4 d-flex align-items-center flex-column" *ngIf="i===0">
-							<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+player.hairColor}"
-								[innerHTML]="getSanitizedSvgFromString(player.image)">
+						<div *ngIf="i === 0 || i === 1 || i === 2" class="d-flex flex-row align-items-center">
+							<div class="player-svg"
+							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
+							     [innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="text-center gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5"> 🥇</span>
-							</div>
-						</div>
-						<div *ngIf="i ===1 || i=== 2" class="d-flex align-items-center">
-							<div class="player-frame-second-third player-svg"
-								[ngStyle]="{'border-color':'#'+player.hairColor}"
-								[innerHTML]="getSanitizedSvgFromString(player.image)">
-							</div>
-							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5">{{ i === 1 ? " 🥈 " : "
-									🥉 " }}
-								</span>
-							</div>
+							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5">{{
+                                    i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
+								}}</span></div>
 						</div>
 					</ng-container>
 				</div>
@@ -182,31 +253,38 @@
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
 			<h1 class="m-2 mt-4 contour">{{ "RESULTS.QUANTITATIVE_ACCOUNTS" | translate }}</h1>
 			<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{
-				"MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
+                    "MODULE.GALILEO.LEGEND"| translate
+				}}
+			</mat-slide-toggle>
 		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas baseChart id="chartQuant" [legend]="legendQuantitative" class="chart" height="500"
-				[data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
+			        [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
 			</canvas>
 		</div>
 		<div *ngIf="game?.typeMoney===C.JUNE" class="mt-4 d-flex flex-row justify-content-between align-items-end">
 			<h1 class="contour">{{ "RESULTS.RELATIVE_ACCOUNTS" | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{ "MODULE.GALILEO.LEGEND"|
-				translate }}</mat-slide-toggle>
+			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{
+                    "MODULE.GALILEO.LEGEND"|
+                        translate
+				}}
+			</mat-slide-toggle>
 		</div>
 		<div *ngIf="game?.typeMoney===C.JUNE" class="graph bg-white rounded shadow">
 			<canvas baseChart class="chart" height="500" [data]="lineChartDataRelatif"
-				[options]="lineChartOptionsRelatif" [legend]="legendRelative" [type]="'line'">
+			        [options]="lineChartOptionsRelatif" [legend]="legendRelative" [type]="'line'">
 			</canvas>
 		</div>
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
 			<h1 class="contour">{{ "RESULTS.RESOURCES" | translate }}</h1>
 			<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">{{
-				"MODULE.GALILEO.LEGEND"| translate }}</mat-slide-toggle>
+                    "MODULE.GALILEO.LEGEND"| translate
+				}}
+			</mat-slide-toggle>
 		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas baseChart class="chart" height="500" [data]="lineChartDataResources"
-				[options]="lineChartOptionsResources" [legend]="legendResources" [type]="'line'">
+			        [options]="lineChartOptionsResources" [legend]="legendResources" [type]="'line'">
 			</canvas>
 		</div>
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
@@ -214,7 +292,7 @@
 		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas baseChart class="chart" height="300" [data]="feedbacksData" [options]="feedbacksOptions"
-				[legend]="false" [type]="'bubble'">
+			        [legend]="false" [type]="'bubble'">
 			</canvas>
 		</div>
 		<div class="d-block d-md-none eventsSmall">
