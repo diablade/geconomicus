@@ -303,7 +303,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
 					text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
-					sound: "./assets/audios/marioDeath.mp3"
+					sound: "dead"
 				},
 			});
 			this.cards = [];
