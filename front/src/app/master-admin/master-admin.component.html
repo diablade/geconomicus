@@ -222,6 +222,7 @@
 								</div>
 							</div>
 							<div class="d-flex flex-column align-items-center flex-grow-1">
+								{{ player.reincarnateFromId ? "🚼" : "" }}
 								<div class="fs-6 gecoFont shadowed">
 									{{ player.name }}
 								</div>
@@ -254,12 +255,13 @@
 						     [ngStyle]="{'border-color':'#'+player.hairColor}"
 						     [innerHTML]="getSanitizedSvgFromString(player.image)">
 						</div>
-						<div style="font-size: 3rem; z-index: 15; position: absolute;" *ngIf="player.status==='dead'">
+						<div style="font-size: 3rem; z-index: 10; position: absolute;" *ngIf="player.status==='dead'">
 							🪦
 						</div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
-						<div class="fs-6 gecoFont shadowed">{{ player.name }}</div>
+						<div class="fs-6 gecoFont shadowed" style="z-index: 10"><a href="{{getUserUrl(player._id)}}" target="_blank"
+						                                                           style="text-decoration: none; color: inherit;">{{ player.name }}</a></div>
 						<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
 					</div>
 				</div>

@@ -4,26 +4,38 @@
 		<mat-form-field class="mt-2" appearance="fill">
 			<mat-label>{{ "CONTRACT.WITH_PLAYER"|translate }}</mat-label>
 			<mat-select [(value)]="idPlayer">
-				<mat-option [value]="player._id"
-										*ngFor="let player of getAlivePlayer()">{{ player.name }}
+				<mat-option *ngFor="let player of getAlivePlayer()" [value]="player._id">
+					{{ player.reincarnateFromId ? "🚼" : "" }}{{ player.name }}
 				</mat-option>
 			</mat-select>
 		</mat-form-field>
 		<mat-radio-group [(ngModel)]="selectedCreditOption" (change)="onCreditOptionChange($event)">
-			<mat-radio-button value="basic">{{ "CONTRACT.QUICK_CREDIT"|translate : {amount:game.defaultCreditAmount, interest:game.defaultInterestAmount} }}</mat-radio-button>
-			<mat-radio-button value="double">{{ "CONTRACT.QUICK_CREDIT"|translate : {amount:game.defaultCreditAmount * 2, interest:game.defaultInterestAmount * 2} }}</mat-radio-button>
+			<mat-radio-button value="basic">{{
+                    "CONTRACT.QUICK_CREDIT"|translate : {
+                        amount: game.defaultCreditAmount,
+                        interest: game.defaultInterestAmount
+                    }
+				}}
+			</mat-radio-button>
+			<mat-radio-button value="double">{{
+                    "CONTRACT.QUICK_CREDIT"|translate : {
+                        amount: game.defaultCreditAmount * 2,
+                        interest: game.defaultInterestAmount * 2
+                    }
+				}}
+			</mat-radio-button>
 			<mat-radio-button value="manual">{{ "CONTRACT.MANUAL_CREDIT"|translate }}</mat-radio-button>
 		</mat-radio-group>
 		<div *ngIf="selectedCreditOption === 'manual'">
 			<mat-form-field class="input">
 				<mat-label>{{ "CONTRACT.CREDIT"|translate }}</mat-label>
 				<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_CREDIT_AMOUNT'|translate"
-							 [(ngModel)]="amount">
+				       [(ngModel)]="amount">
 			</mat-form-field>
 			<mat-form-field class="input">
 				<mat-label>{{ "CONTRACT.INTEREST"|translate }}</mat-label>
 				<input type="number" min="0" matInput [placeholder]="'CONTRACT.DEFAULT_INTEREST_AMOUNT'|translate"
-							 [(ngModel)]="interest">
+				       [(ngModel)]="interest">
 			</mat-form-field>
 		</div>
 		<div>
@@ -33,14 +45,14 @@
 			- {{ "CONTRACT.CAN_CANCEL_CREDIT"|translate }}:
 			<b>{{ interest + amount }} </b> <br>
 			- <span
-			[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: game.timerCredit }"></span>
+				[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: game.timerCredit }"></span>
 		</div>
 		<div>
 			<button class="m-2" mat-raised-button
-							(click)="cancel()">{{ "COMMON.CANCEL"|translate }}
+			        (click)="cancel()">{{ "COMMON.CANCEL"|translate }}
 			</button>
 			<button class="m-2" [disabled]="!selectedCreditOption || !idPlayer" mat-raised-button color="accent"
-							(click)="saveUserCredit()">{{ "CONTRACT.SIGN"|translate }}
+			        (click)="saveUserCredit()">{{ "CONTRACT.SIGN"|translate }}
 				<fa-icon [icon]="faFileSignature"></fa-icon>
 			</button>
 		</div>
