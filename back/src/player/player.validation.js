@@ -104,7 +104,7 @@ export const schemas = {
 
     joinReincarnate: Joi.object({
         idGame: Joi.string().custom(isValidObjectId).required(),
-        name: Joi.string().min(2).max(30).required(),
+        name: Joi.string().min(1).max(30).required(),
         fromId: Joi.string().custom(isValidObjectId).required()
     }),
 
@@ -126,19 +126,19 @@ export const schemas = {
 export const validate = (schema) => {
     return (req, res, next) => {
         const { error } = schema.validate(req.body, { abortEarly: false });
-        
+
         if (error) {
             const errors = error.details.map(detail => ({
                 field: detail.path.join('.'),
                 message: detail.message
             }));
-            
+
             return res.status(400).json({
                 status: 'validation_error',
                 errors
             });
         }
-        
+
         next();
     };
-}; 
+};
