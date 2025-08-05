@@ -62,7 +62,7 @@ export class WebSocketService {
 					idPlayer: this.idPlayer,
 					idGame: this.idGame
 				},
-				ackTimeout: 4000,            // timeout to 5 seconds
+				ackTimeout: 4000,            // timeout to 4 seconds
 				// allowEIO3: true,
 				tryAllTransports: true,
 				autoConnect: true,
