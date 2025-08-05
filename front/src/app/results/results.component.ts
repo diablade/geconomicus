@@ -21,6 +21,7 @@ import {Platform} from "@angular/cdk/platform";
 import {I18nService} from '../services/i18n.service';
 import {TranslateService} from '@ngx-translate/core';
 import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import {WebSocketService} from "../services/web-socket.service";
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -455,6 +456,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		private backService: BackService,
 		private i18nService: I18nService,
+		private wsService: WebSocketService,
 		private translate: TranslateService) {
 	}
 
@@ -482,12 +484,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.addEventsToDatasets(this.events);
 				this.getBestPlayers();
 			});
-			this.socket = io(environment.API_HOST, {
-				query: {
-					idPlayer: this.idGame + C.EVENT,
-					idGame: this.idGame,
-				},
-			});
+			this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.EVENT);
 			this.initChartOptions();
 		});
 

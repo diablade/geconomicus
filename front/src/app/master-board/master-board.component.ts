@@ -95,7 +95,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
 				this.resetGameFromUrl();
 			}
-			this.socket = this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
+			this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
 		});
 		this.backService.getGame(this.idGame).subscribe(game => {
 			this.game = game;
@@ -312,7 +312,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	showBank() {
 		window.open('game/' + this.idGame + '/bank', '_blank');
 	}
-	
+
 	goToAdmin() {
 		window.open('game/' + this.idGame + '/admin', '_blank');
 	}

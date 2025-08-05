@@ -71,13 +71,14 @@ export class WebSocketService {
 				reconnectionDelay: 1000,  // Delay between reconnections
 				reconnectionDelayMax: 2000,  // Maximum delay between reconnections (2s)
 				timeout: 6000,               // connection timeout (6s)
-				transports: ['websocket', 'polling'],  // Explicitly set transports
+				transports: ['websocket'],  // Explicitly set transports
 				// forceNew: true     // may not recconnect
 			});
 
 			this.setupConnectionListeners();
 			return this.socket;
 		}
+		this.snackbarService.showError("SOCKET UNDEFINED");
 		return undefined;
 	}
 

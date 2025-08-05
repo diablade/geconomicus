@@ -16,6 +16,7 @@ import {SeizureDialogComponent} from "../dialogs/seizure-dialog/seizure-dialog.c
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {I18nService} from '../services/i18n.service';
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
+import {WebSocketService} from "../services/web-socket.service";
 
 @Component({
 	selector: 'app-bank-board',
@@ -42,18 +43,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	            private snackbarService: SnackbarService,
 	            private sanitizer: DomSanitizer,
 	            public dialog: MatDialog,
+	            private wsService: WebSocketService,
 	            private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
-			this.socket = io(this.ioURl, {
-				query: {
-					idPlayer: this.idGame + 'bank',
-					idGame: this.idGame,
-				},
-			});
+			this.socket = this.wsService.getSocket(this.idGame,this.idGame + C.BANK);
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
 				this.prisoners = _.filter(game.players, {"status": "prison"});
