@@ -48,4 +48,15 @@ export class CreditComponent {
 				return "error";
 		}
 	}
+
+	getStatusColor(progress: number) {
+		console.log(progress)
+		if (progress < 50) {
+			return "#28a745";
+		} else if (progress < 75) {
+			return "#ffc107";
+		} else {
+			return "#dc3545";
+		}
+	}
 }
