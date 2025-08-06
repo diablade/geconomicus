@@ -249,8 +249,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	legendRelative = true;
 	legendResources = true;
 
-	podium: Player[] = [];
-	podiumTransac: Player[] = [];
+	podium: any[] = [];
+	podiumTransac: any[] = [];
 
 	feedbacksLabelsTop: string[] = [];
 	feedbacksLabelsBottom: string[] = [];
@@ -1035,7 +1035,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.podium = _.map(podiumm, p => {
 			let playerFound = _.find(this.players, {_id: p.key});
 			if (playerFound) {
-				return playerFound;
+				return {...playerFound, value: p.value.toFixed(2)};
 			}
 			return new Player();
 		});
@@ -1048,10 +1048,9 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 			const transactionPlayersArray = _.toPairs(transactionPlayers);
 			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
-
-			this.podiumTransac = _.map(sortedPlayers, ([playerId]) => {
+			this.podiumTransac = _.map(sortedPlayers, ([playerId, value]) => {
 				let playerFound = _.find(this.players, {_id: playerId});
-				return playerFound || new Player();  // Return player object or a default Player if not found
+				return {...playerFound, value} || new Player();  // Return player object or a default Player if not found
 			});
 		}
 	}
@@ -1089,6 +1088,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	getTransactionsTotal() {
 		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
 	}
+
 	getCurrency() {
 		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? "CURRENCY.EURO" : "CURRENCY.DU");
 	}
@@ -1104,9 +1104,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	displayLegendQuantitative() {
 		this.legendQuantitative = !this.legendQuantitative;
 	}
+
 	displayLegendRelative() {
 		this.legendRelative = !this.legendRelative;
 	}
+
 	displayLegendResources() {
 		this.legendResources = !this.legendResources;
 	}

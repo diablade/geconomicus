@@ -184,22 +184,30 @@
 						<div class="player-frame-second player-svg" [ngStyle]="{'border-color':'#'+podium[1].hairColor}"
 						     [innerHTML]="getSanitizedSvgFromString(podium[1].image)">
 						</div>
-						<div
-								class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[1].name }}<span class="fs-4">
-									🥈</span></div>
-							<div>2</div>
+						<div class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
+							<div class="gecoFont shadowed fs-5 overflow-hidden">
+								<span class="fs-3">🥈</span>
+							</div>
+							{{ podium[1].name }}
+							<div class="font-monospace fs-6">
+								{{ podium[1].value }}
+								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
+							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
 						<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+podium[0].hairColor}"
 						     [innerHTML]="getSanitizedSvgFromString(podium[0].image)">
 						</div>
-						<div
-								class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[0].name }}<span class="fs-4">
-									🥇</span></div>
-							<div>1</div>
+						<div class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
+							<div class="gecoFont shadowed fs-5 overflow-hidden">
+								<span class="fs-3">🥇</span>
+							</div>
+							{{ podium[0].name }}
+							<div class="font-monospace fs-6">
+								{{ podium[0].value }}
+								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
+							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
@@ -208,9 +216,13 @@
 						</div>
 						<div
 								class="step third shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">{{ podium[2].name }}<span class="fs-4">
-									🥉</span></div>
-							<div>3</div>
+							<div class="gecoFont shadowed fs-5 overflow-hidden">
+								<span class="fs-3">🥉</span></div>
+							{{ podium[2].name }}
+							<div class="font-monospace fs-6">{{ podium[2].value }} {{
+                                    (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
+								}}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -224,13 +236,15 @@
 							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
 							     [innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5">{{
+							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-6">{{
                                     i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
+								}}  {{ podium[i].value }} {{
+                                    (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
 								}}</span></div>
 						</div>
 					</ng-container>
 				</div>
-				<div class="p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
+				<div class="p-1 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold" [matTooltip]="'RESULTS.MOST_ACTIVE_TOOLTIP' | translate">
 						{{ "RESULTS.MOST_ACTIVE" | translate }}
 					</div>
@@ -241,9 +255,8 @@
 							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
 							     [innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-5">{{
-                                    i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
-								}}</span></div>
+							<div class="gecoFont shadowed"> {{ player.name }}
+								<span class="fs-6 font-monospace">{{ i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉" }} {{ podiumTransac[i].value }}x</span></div>
 						</div>
 					</ng-container>
 				</div>
