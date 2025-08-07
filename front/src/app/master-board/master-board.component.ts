@@ -24,7 +24,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {WebSocketService} from "../services/web-socket.service";
 import {TranslateService} from "@ngx-translate/core";
 import {I18nService} from "../services/i18n.service";
-import { AudioService } from '../services/audio.service';
+import {AudioService} from '../services/audio.service';
 
 @Component({
 	selector: 'app-master-board',
@@ -215,7 +215,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_END"));
 		this.dialog.open(InformationDialogComponent, {
-			data: {text: this.i18nService.instant("EVENTS.ROUND_END"), sound: "../assets/audios/end.mp3"},
+			data: {text: this.i18nService.instant("EVENTS.ROUND_END"), sound: "end"},
 		});
 	}
 

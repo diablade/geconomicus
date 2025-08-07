@@ -17,16 +17,14 @@ class SocketManager {
         }
         this.ioInstance = null;
         this.connections = new Map(); // idPlayer -> { socket, lastActive, reconnectAttempts, idGame }
+        // Acknowledgment pool: idPlayer -> Map(eventId -> { event, data, timestamp })
+        this.ackPool = new Map();
 
         // Setup cleanup interval for stale connections
         this.cleanupInterval = setInterval(() => {
             const now = Date.now();
             for (const [idPlayer, data] of this.connections.entries()) {
-                const {
-                    socket,
-                    lastActive,
-                    reconnectAttempts
-                } = data;
+                const { socket, lastActive, reconnectAttempts } = data;
 
                 // Clean up if socket is disconnected and exceeded max reconnection attempts
                 if (!socket.connected && reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
@@ -39,6 +37,10 @@ class SocketManager {
                     this.cleanupConnection(idPlayer);
                 }
             }
+
+            // Clean up old unacknowledged events (older than 1 day)
+            this.cleanupOldAcks();
+
         }, CLEANUP_INTERVAL);
 
         // Handle process cleanup
@@ -91,6 +93,7 @@ class SocketManager {
     }
 
     setupConnectionHandlers() {
+        this.setupAckHandler();
         this.ioInstance.on('connection', (socket) => {
             const {
                 idPlayer,
@@ -196,6 +199,23 @@ class SocketManager {
         socket.on('reconnect', (attemptNumber) => log.info('Reconnected after ' + attemptNumber + ' attempts'));
         socket.on('reconnect_error', () => log.error('Reconnection error'));
         socket.on('error', (err) => log.error('error io socket:', err));
+
+        // Check for unacknowledged events
+        const unacknowledged = this.getUnacknowledgedEvents(idPlayer);
+        if (unacknowledged.length > 0) {
+            log.info(`Player ${idPlayer} reconnected with ${unacknowledged.length} unacknowledged events`);
+
+            // Send resync signal
+            socket.emit('resync', { needsResync: true });
+
+            // Optionally, you can resend unacknowledged events here
+            // unacknowledged.forEach(({ event, data, timestamp }) => {
+            //     socket.emit(event, { ...data, _isResend: true });
+            // });
+
+            // Or just clear the ack pool for this player
+            this.ackPool.delete(idPlayer);
+        }
     }
 
     // Handle disconnection
@@ -277,6 +297,9 @@ class SocketManager {
         // Remove from connections map
         this.connections.delete(idPlayer);
         log.info(`Cleaned up connection for player ${idPlayer}`);
+
+        // Clean up ack pool
+        this.ackPool.delete(idPlayer);
     }
 
     // Clean up all connections (for server shutdown)
@@ -307,21 +330,32 @@ class SocketManager {
     }
 
     emitAckTo(roomId, event, data) {
-        // Get all sockets in the room
+        // Generate a unique ID for this event if not provided
+        const eventId = data?.eventId || `${event}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+        // Add the event to the ack pool for each player in the room
         this.getIo().in(roomId).fetchSockets().then(sockets => {
-            // Emit to each socket individually
             sockets.forEach(socket => {
-                socket.emit(event, data, (ack) => {
-                    if (ack && ack.status === 'ok') {
-                        log.info('io ack received from socket:' + socket.id + ' ' , ack);
-                    }
-                    else {
-                        log.error('io ack failed from socket:' + socket.id);
-                    }
-                });
+                const playerData = Array.from(this.connections.values())
+                    .find(conn => conn.socket.id === socket.id);
+
+                if (playerData) {
+                    const idPlayer = playerData.idPlayer;
+                    this.addToAckPool(idPlayer, eventId, event, data);
+
+                    // Emit with the eventId included
+                    const eventData = { ...data, _ackId: eventId };
+
+                    socket.emit(event, eventData, (ack) => {
+                        if (ack && ack.status === 'ok') {
+                            log.info(`Ack received from socket ${socket.id} for event ${eventId}`);
+                            this.removeFromAckPool(idPlayer, eventId);
+                        } else {
+                            log.error(`Ack failed from socket ${socket.id} for event ${eventId}`);
+                        }
+                    });
+                }
             });
-        }).catch(err => {
-            log.error('Error fetching sockets:', err);
         });
     }
 
@@ -332,6 +366,107 @@ class SocketManager {
             throw new Error('Socket.IO not initialized');
         }
         return this.ioInstance;
+    }
+
+    /**
+     * Add an event to the acknowledgment pool
+     * @param {string} idPlayer - Player ID
+     * @param {string} eventId - Unique event ID
+     * @param {string} event - Event name
+     * @param {*} data - Event data
+     */
+    addToAckPool(idPlayer, eventId, event, data) {
+        if (!this.ackPool.has(idPlayer)) {
+            this.ackPool.set(idPlayer, new Map());
+        }
+
+        const playerAcks = this.ackPool.get(idPlayer);
+        playerAcks.set(eventId, {
+            event,
+            data,
+            timestamp: Date.now()
+        });
+
+        log.debug(`Added event ${eventId} to ack pool for player ${idPlayer}`);
+    }
+
+    /**
+     * Remove an event from the acknowledgment pool
+     * @param {string} idPlayer - Player ID
+     * @param {string} eventId - Event ID to remove
+     * @returns {boolean} - True if event was found and removed
+     */
+    removeFromAckPool(idPlayer, eventId) {
+        if (!this.ackPool.has(idPlayer)) return false;
+
+        const playerAcks = this.ackPool.get(idPlayer);
+        const wasRemoved = playerAcks.delete(eventId);
+
+        if (wasRemoved) {
+            log.debug(`Removed event ${eventId} from ack pool for player ${idPlayer}`);
+
+            // Clean up empty player maps
+            if (playerAcks.size === 0) {
+                this.ackPool.delete(idPlayer);
+            }
+        }
+
+        return wasRemoved;
+    }
+
+    /**
+     * Get all unacknowledged events for a player
+     * @param {string} idPlayer - Player ID
+     * @returns {Array} - Array of unacknowledged events
+     */
+    getUnacknowledgedEvents(idPlayer) {
+        if (!this.ackPool.has(idPlayer)) return [];
+        return Array.from(this.ackPool.get(idPlayer).values());
+    }
+
+    /**
+     * Clean up old unacknowledged events
+     */
+    cleanupOldAcks() {
+        const now = Date.now();
+        const MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
+
+        for (const [idPlayer, playerAcks] of this.ackPool.entries()) {
+            for (const [eventId, eventData] of playerAcks.entries()) {
+                if (now - eventData.timestamp > MAX_AGE) {
+                    log.info(`Removing old unacknowledged event ${eventId} for player ${idPlayer}`);
+                    playerAcks.delete(eventId);
+                }
+            }
+
+            // Clean up empty player maps
+            if (playerAcks.size === 0) {
+                this.ackPool.delete(idPlayer);
+            }
+        }
+    }
+
+    setupAckHandler() {
+        this.getIo().on('connection', (socket) => {
+            socket.on('acknowledge', (data, callback) => {
+                const { eventId } = data;
+                const playerData = Array.from(this.connections.values())
+                    .find(conn => conn.socket.id === socket.id);
+
+                if (playerData && eventId) {
+                    const wasRemoved = this.removeFromAckPool(playerData.idPlayer, eventId);
+                    if (wasRemoved) {
+                        log.info(`Received explicit ack for event ${eventId} from player ${playerData.idPlayer}`);
+                        callback({ status: 'ok' });
+                    } else {
+                        log.warn(`Received ack for unknown event ${eventId} from player ${playerData.idPlayer}`);
+                        callback({ status: 'error', message: 'Event not found' });
+                    }
+                } else {
+                    callback({ status: 'error', message: 'Invalid ack data' });
+                }
+            });
+        });
     }
 }
 

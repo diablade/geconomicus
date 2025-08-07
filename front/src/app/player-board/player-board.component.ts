@@ -243,6 +243,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
+		this.socket.on('resync', (data: any) => {
+			if (data.needsResync) {
+				this.getPlayerInfos();
+			}
+		});
 		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
 			this.statusGame = "waiting";
 			this.player.coins = data.coins;
