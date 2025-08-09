@@ -37,8 +37,8 @@ const getById = async (req, res, next) => {
         const player = await playerService.getPlayer(idGame, idPlayer, true);
         return res.status(200).json(player);
     }
-    catch (e) {
-        log.error(e);
+    catch (err) {
+        log.error(err);
         next({
             status:  404,
             message: "Player not found"
@@ -59,8 +59,8 @@ const join = async (req, res, next) => {
         const idPlayer = await playerService.join(game, name);
         return res.status(200).json(idPlayer);
     }
-    catch (error) {
-        log.error(error);
+    catch (err) {
+        log.error(err);
         return res.status(404).json({message: "Game not found"});
     }
 };
@@ -108,11 +108,11 @@ const update = async (req, res, next) => {
         socket.emitTo(idGame, C.UPDATED_PLAYER, updatedPlayer);
         return res.status(200).json({"status": "updated"});
     }
-    catch (e) {
-        log.error(e);
+    catch (err) {
+        log.error(err);
         next({
             status:  400,
-            message: e
+            message: err
         });
     }
 };
@@ -123,25 +123,28 @@ const produce = async (req, res, next) => {
         cards
     } = req.body;
 
-	// Check if the player is already in progress
-	if (activeTransactions.has(idGame) || activeTransactions.has(idPlayer)) {
-		const resultWaitingQueue = await waitForProductionToClear(activeTransactions, idGame);
-		if (resultWaitingQueue === 'timeout') {
-			return res.status(409).json({message: 'Producing already in progress'});
-		}
-	}
+    // Check if the player is already in progress
+    if (activeTransactions.has(idGame) || activeTransactions.has(idPlayer)) {
+        const resultWaitingQueue = await waitForProductionToClear(activeTransactions, idGame);
+        if (resultWaitingQueue === 'timeout') {
+            return res.status(409).json({message: 'Producing already in progress'});
+        }
+    }
     try {
         activeTransactions.add(idGame); // Mark the production as active for this game
+        activeTransactions.add(idPlayer); // Mark the production as active for this game
         const cardsDraw = await playerService.produceCardLevelUp(idGame, idPlayer, cards);
-		activeTransactions.delete(idGame);
+        activeTransactions.delete(idGame);
+        activeTransactions.delete(idPlayer);
         return res.status(200).json(cardsDraw);
     }
-    catch (error) {
+    catch (err) {
         activeTransactions.delete(idGame);
-        log.error('Production error:', error);
+        activeTransactions.delete(idPlayer);
+        log.error('Production error:', err);
         return next({
-            status:  500,
-            message: "Production cards error"
+            status:     400,
+            message:    err.message || err || "Production error"
         });
     }
 };
@@ -242,8 +245,8 @@ const transaction = async (req, res, next) => {
             coins:     buyer.coins
         });
     }
-    catch (error) {
-        log.error('Transaction error:', error);
+    catch (err) {
+        log.error('Transaction error:', err);
         return res.status(500).json({message: 'Transaction error'});
     }
     finally {
@@ -367,8 +370,8 @@ const joinReincarnate = async (req, res, next) => {
         return res.status(200).json(player._id);
 
     }
-    catch (error) {
-        log.error('JoinReincarnate error:', error);
+    catch (err) {
+        log.error('JoinReincarnate error:', err);
         return res.status(500).json({message: "Reincarnate failed"});
     }
 };
