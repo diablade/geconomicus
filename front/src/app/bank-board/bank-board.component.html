@@ -55,13 +55,13 @@
 							🆓
 						</div>
 						<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+prisoner.hairColor}"
-							[innerHTML]="getSanitizedSvgFromString(prisoner.image)">
+						     [innerHTML]="getSanitizedSvgFromString(prisoner.image)">
 						</div>
 						<div class="gecoFont shadowed"> {{ prisoner.name }}</div>
 						<div class="progress m-2" role="progressbar" aria-label="" aria-valuenow="10" aria-valuemin="0"
-							aria-valuemax="100">
+						     aria-valuemax="100">
 							<div class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
-								[style.width.%]="prisoner.progressPrison"></div>
+							     [style.width.%]="prisoner.progressPrison"></div>
 						</div>
 					</div>
 				</div>
@@ -72,16 +72,22 @@
 		<h2 class="fs-4 shadowed gecoFont">{{ "BANK.SUB_TITLE_CREDITS"|translate }}</h2>
 		<app-notice-btn class="ms-2" [amountCardsForProd]="game.amountCardsForProd" [timerCredit]="game.timerCredit" [stroked]="true"></app-notice-btn>
 		<button class="ms-2" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
-			(click)="showContract()"> {{ "BANK.GIVE_CREDIT"|translate }}
+		        (click)="showContract()"> {{ "BANK.GIVE_CREDIT"|translate }}
 			<fa-icon [icon]="faSackDollar"></fa-icon>
 		</button>
 		<div class="ms-2">
 			{{ "BANK.SOLUTION"|translate }}
 		</div>
+		<button class="ms-2" mat-raised-button color="accent" [disabled]="game.status === C.END_GAME"
+		        (click)="creditForAll()"> {{ "BANK.CREDIT_FOR_ALL"|translate }}
+			<fa-icon [icon]="faSackDollar"></fa-icon>
+			<fa-icon [icon]="faSackDollar"></fa-icon>
+			<fa-icon [icon]="faSackDollar"></fa-icon>
+		</button>
 	</div>
 	<div class="d-inline-flex" *ngFor="let credit of game.credits">
 		<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
-			[contractor]="getPlayerName(credit.idPlayer)" (actionBtn)="actionBtn($event,credit)"></app-credit>
+		            [contractor]="getPlayerName(credit.idPlayer)" (actionBtn)="actionBtn($event,credit)"></app-credit>
 	</div>
 </div>
 <div *ngIf="game.typeMoney===C.JUNE">{{ "BANK.NO_BANK_FREE_MONEY"|translate }}</div>

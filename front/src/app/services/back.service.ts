@@ -27,6 +27,11 @@ export class BackService {
 	}
 
 	private handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
+		console.log(error);
+
+		// Try to get the error message from the response
+		const errorMessage = error.error?.message || error.message || whatToSay;
+
 		if (whatToDo == this.REDIRECT_HOME) {
 			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
 			setTimeout(() => {
@@ -149,7 +154,7 @@ export class BackService {
 			}))
 		})
 			.pipe(
-				catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.EXCHANGE"))
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.EXCHANGE"))
 			);
 	}
 

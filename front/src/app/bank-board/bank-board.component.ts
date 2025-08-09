@@ -17,6 +17,7 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {I18nService} from '../services/i18n.service';
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
 	selector: 'app-bank-board',
@@ -50,7 +51,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
-			this.socket = this.wsService.getSocket(this.idGame,this.idGame + C.BANK);
+			this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.BANK);
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
 				this.prisoners = _.filter(game.players, {"status": "prison"});
@@ -98,7 +99,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.CREDIT_DONE, async (data: any) => {
 			_.forEach(this.game.credits, c => {
-				if (c._id == data._id) {
+				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
 					this.game.currentMassMonetary -= c.interest;
 					this.game.currentMassMonetary -= c.amount;
@@ -198,6 +199,34 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 					this.game.credits.push(credit);
 					this.game.currentMassMonetary += credit.amount;
 				});
+			}
+		});
+	}
+
+	creditForAll() {
+
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant("BANK.CREDIT_FOR_ALL"),
+				message: this.i18nService.instant("BANK.CREDIT_FOR_ALL_MESSAGE"),
+			}
+		});
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.game.players.filter(p=>p.status===C.ALIVE).forEach(p=>{
+					this.backService.createCredit({
+						idPlayer: p._id,
+						amount: this.game.defaultCreditAmount,
+						interest: this.game.defaultInterestAmount,
+						idGame: this.idGame,
+						startNow: this.game.status == C.PLAYING
+					}).subscribe((credit: Credit) => {
+						this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
+						this.game.credits.push(credit);
+						this.game.currentMassMonetary += credit.amount;
+					});
+				});
+				// 	this.snackbarService.showSuccess(this.i18nService.instant("BANK.CREDIT_FOR_ALL_SUCCESS"));
 			}
 		});
 	}

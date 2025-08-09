@@ -36,8 +36,18 @@ const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
     });
     addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
     socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
-    socket.emitTo(idPlayer, C.NEW_CREDIT, credit);
+    socket.emitAckTo(idPlayer, C.NEW_CREDIT, {credit});
     return credit;
+}
+const creditForAll = async (idGame, startNow) => {
+    const game = await GameModel.findById(idGame.toString());
+    if (!game) {
+        throw new Error("Game not found");
+    }
+    for (let player of game.players) {
+        await createCredit(idGame, player._id, game.defaultCreditAmount, game.defaultInterestAmount, startNow);
+    }
+    return true;
 }
 const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
     const credit = await getCreditOfPlayer(idGame, idPlayer, idCredit);
@@ -177,7 +187,7 @@ const seizure = async (idCredit, idGame, idPlayer, seizure) => {
     if (seizure.prisonTime && seizure.prisonTime > 0) {
         const result = await lockDownPlayer(idPlayer, idGame, seizure.prisonTime);
         socket.emitTo(idGame + C.EVENT, C.EVENT, result.event);
-        socket.emitTo(idPlayer, C.SEIZURE, {
+        socket.emitAckTo(idPlayer, C.SEIZURE, {
             credit:   credit,
             seizure:  seizure,
             prisoner: result.prisoner,
@@ -189,7 +199,7 @@ const seizure = async (idCredit, idGame, idPlayer, seizure) => {
         };
     }
     else {
-        socket.emitTo(idPlayer, C.SEIZURE, {
+        socket.emitAckTo(idPlayer, C.SEIZURE, {
             credit:   credit,
             seizure:  seizure,
             prisoner: undefined,
@@ -342,7 +352,7 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
             let creditUpdated = updatedGame.credits.find(c => c._id.toString() === credit._id.toString());
             await bankTimerManager.stopAndRemoveTimer(credit._id.toString());
             socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
-            socket.emitTo(idPlayer, C.CREDIT_DONE, creditUpdated);
+            socket.emitAckTo(idPlayer, C.CREDIT_DONE, {credit:creditUpdated});
             socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, creditUpdated);
             return creditUpdated;
         }
@@ -351,7 +361,6 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
         }
     }
     catch (err) {
-        console.log(err);
         log.error(err);
         throw err;
     }
@@ -455,7 +464,7 @@ const timeoutCredit = async (timer) => {
                             .then((result) => {
                                 credit.status = C.REQUEST_CREDIT;
                                 socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
-                                socket.emitTo(credit.idPlayer, C.TIMEOUT_CREDIT, credit);
+                                socket.emitAckTo(credit.idPlayer, C.TIMEOUT_CREDIT, {credit});
                                 socket.emitTo(credit.idGame + C.BANK, C.TIMEOUT_CREDIT, credit);
                             })
                             .catch((error) => {
@@ -476,7 +485,7 @@ const timeoutCredit = async (timer) => {
                                 socket.emitTo(credit.idGame + C.EVENT, C.EVENT, newEvent);
                                 socket.emitTo(credit.idGame + C.BANK, C.DEFAULT_CREDIT, credit);
                                 if (credit && player.status !== C.DEAD) {
-                                    socket.emitTo(credit.idPlayer, C.DEFAULT_CREDIT, credit);
+                                    socket.emitAckTo(credit.idPlayer, C.DEFAULT_CREDIT, {credit});
                                 }
                             })
                             .catch((error) => {
@@ -543,14 +552,14 @@ const getOut = async (idGame, idPlayer) => {
             },
         });
         socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
-        socket.emitTo(idPlayer, C.PRISON_ENDED, {cards: newCards});
+        socket.emitAckTo(idPlayer, C.PRISON_ENDED, {cards: newCards});
         socket.emitTo(idGame + C.BANK, C.PRISON_ENDED, {
             idPlayer: idPlayer,
             cards:    newCards,
         });
     }
-    catch (error) {
-        log.error(error);
+    catch (err) {
+        log.error(err);
     }
 }
 
@@ -576,6 +585,7 @@ export default {
     seizure,
     seizureOnDead,
     createCredit,
+    creditForAll,
     settleCredit,
     payInterest,
     addDebtTimer,
