@@ -348,10 +348,10 @@ class SocketManager {
 
                     socket.emit(event, eventData, (ack) => {
                         if (ack && ack.status === 'ok') {
-                            log.info(`Ack received from socket ${socket.id} for event ${eventId}`);
-                            this.removeFromAckPool(idPlayer, eventId);
+                            log.info(`Ack received from socket ${socket.id} for event ${ack._ackId}`);
+                            this.removeFromAckPool(ack.idPlayer, ack._ackId);
                         } else {
-                            log.error(`Ack failed from socket ${socket.id} for event ${eventId}`);
+                            log.error(`Ack failed from socket ${socket.id} for event ${ack._ackId}`);
                         }
                     });
                 }

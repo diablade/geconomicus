@@ -517,8 +517,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					} else {
 						setTimeout(checkTranslations, 50);
 					}
-				} catch (error) {
-					console.error("Error checking translations:", error);
+				} catch (err) {
+					console.error("Error checking translations:", err);
 					setTimeout(checkTranslations, 50);
 				}
 			};
@@ -574,8 +574,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			setTimeout(() => {
 				this.updateCharts();
 			}, 100);
-		} catch (error) {
-			console.error('Error loading translations:', error);
+		} catch (err) {
+			console.error('Error loading translations:', err);
 		}
 	}
 
@@ -788,8 +788,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	getValueCardsFromEvent(cards: Card[]) {
-		return _.reduce(cards, function (sum, card) {
-			return sum + card.price; // € or DU
+		return _.reduce(cards, (sum, card) => {
+			return card ? sum + card.price : sum // € or DU
 		}, 0);
 	}
 

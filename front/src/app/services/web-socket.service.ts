@@ -86,7 +86,7 @@ export class WebSocketService {
 		if (!this.socket) return;
 		const last = this.getLastConnectedTime();
 		const now = Date.now();
-		const maxOfflineDuration = 100000; // 100 secondes
+		const maxOfflineDuration = 10000; // 10 secondes
 
 		this.socket.on('kicked', (data) => {
 			console.warn("kicked : " + data.reason);

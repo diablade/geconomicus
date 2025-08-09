@@ -249,6 +249,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.statusGame = "waiting";
 			this.player.coins = data.coins;
 			this.typeMoney = data.typeMoney;
@@ -256,9 +257,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerPrison = data.timerPrison;
 			this.amountCardsForProd = data.amountCardsForProd;
 			await this.receiveCards(data.cards);
-			if (cb) {
-				cb({status: "ok"});
-			}
 		});
 		this.socket.on(C.START_ROUND, async () => {
 			this.statusGame = C.PLAYING;
@@ -288,7 +286,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.router.navigate(['game', this.idGame, 'results']);
 			}
 		});
-		this.socket.on(C.DISTRIB_DU, (data: any) => {
+		this.socket.on(C.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
+			if (cb) {
+				cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
+			}
 			this.audioService.playSound("audioDu");
 			this.player.coins += data.du;
 			this.currentDU = data.du;
@@ -297,7 +298,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.RESET_GAME, async (data: any) => {
 			this.dialog.closeAll();
 			await new Promise(resolve => setTimeout(resolve, 2000));
-			this.refresh();
+			if (this.player.reincarnateFromId) {
+				this.router.navigate(['game', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
+					this.refresh();
+				});
+			} else {
+				this.refresh();
+			}
 		});
 		this.socket.on(C.FIRST_DU, async (data: any) => {
 			this.currentDU = data.du;
@@ -337,11 +344,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.gameName = data.gameName;
 			}
 		});
-		this.socket.on(C.REFRESH_FORCE, async (data: any) => {
+		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.refresh();
 		});
 		this.socket.on(C.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer});
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			if (data.cost > 0) {
 				this.audioService.playSound("coin");
 				this.flipCoins();
@@ -363,21 +371,23 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.countOccurrencesAndHideDuplicates();
 			}
 		});
-		this.socket.on(C.NEW_CREDIT, async (data: Credit) => {
+		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.amount})
+					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.credit.amount})
 				},
 			});
-			this.player.coins += data.amount;
-			this.credits.push(data);
+			this.credits.push(data.credit);
+			this.player.coins += data.credit.amount;
 			this.flipCoins();
 			this.audioService.playSound("coins");
 		});
-		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
+		this.socket.on(C.TIMEOUT_CREDIT, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
-				if (c._id == data._id) {
-					c.status = data.status;
+				if (c._id == data.credit._id) {
+					c.status = data.credit.status;
 				}
 			});
 			this.requestingWhenCreditEnds(data, true);
@@ -397,19 +407,21 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			});
 		});
-		this.socket.on(C.DEFAULT_CREDIT, async (data: any) => {
+		this.socket.on(C.DEFAULT_CREDIT, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
-				if (c._id == data._id) {
-					c.status = data.status;
+				if (c._id == data.credit._id) {
+					c.status = data.credit.status;
 				}
 			});
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
 			this.defaultCredit = true;
 			this.audioService.playSound("police");
 		});
-		this.socket.on(C.CREDIT_DONE, async (data: any) => {
+		this.socket.on(C.CREDIT_DONE, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
-				if (c._id == data._id) {
+				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
 				}
 			});
@@ -423,7 +435,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
 			this.prisonTimer.start();
 		});
-		this.socket.on(C.PRISON_ENDED, async (data: any) => {
+		this.socket.on(C.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.prison = false;
 			if (data && data.cards) {
 				await this.receiveCards(data.cards);
@@ -435,7 +448,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			});
 		});
-		this.socket.on(C.SEIZURE, async (data: any) => {
+		this.socket.on(C.SEIZURE, async (data: any, cb: (response: any) => void) => {
+			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
@@ -456,7 +470,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	countOccurrencesAndHideDuplicates() {
-		_.orderBy(this.cards, ["weight", "letter"]);
+		this.cards = _.orderBy(this.cards, ["weight", "letter"]);
 		const countByResult = _.countBy(this.cards, (obj: any) => `${obj.weight}-${obj.letter}`);
 		const keyDuplicates: string[] = [];
 		for (const c of this.cards) {

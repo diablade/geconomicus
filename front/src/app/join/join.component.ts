@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {Subscription} from "rxjs";
-import { AudioService } from '../services/audio.service';
+import {AudioService} from '../services/audio.service';
 
 @Component({
 	selector: 'app-join',
@@ -43,9 +43,13 @@ export class JoinComponent implements OnInit, OnDestroy {
 
 	joinReincarnate() {
 		this.backService.joinReincarnate(this.idGame, this.name, this.fromId).subscribe(idPlayer => {
-			this.router.navigate(['game', this.idGame, 'player', idPlayer]);
+			this.router.navigate(['game', this.idGame, 'player', idPlayer]).then(() =>
+				// Force a complete page reload to ensure clean state
+				window.location.reload()
+			);
 		});
 	}
+
 	//
 	// joinInGame() {
 	// 	this.backService.joinInGame(this.idGame, this.name).subscribe(idPlayer => {
