@@ -1,4 +1,5 @@
 import {addMilliseconds} from 'date-fns';
+import log from "../../config/log.js";
 
 export default class Timer {
     /**
@@ -30,7 +31,7 @@ export default class Timer {
         // Start the timer
         this.timer = setTimeout(() => {
             this.callbackAtEnd(this);
-            }, this.duration);
+        }, this.duration);
 
         // Start the heartbeat
         this.heartbeat = setInterval(() => {
@@ -45,13 +46,13 @@ export default class Timer {
                 clearTimeout(this.timer);
                 this.timer = null;
             }
-            
+
             // Clear the heartbeat interval if it exists
             if (this.heartbeat) {
                 clearInterval(this.heartbeat);
                 this.heartbeat = null;
             }
-            
+
             // Clear all properties to prevent memory leaks
             this.duration = null;
             this.interval = null;
@@ -60,11 +61,12 @@ export default class Timer {
             this.callbackAtEnd = null;
             this.endTime = null;
             this.startTime = null;
-            
+
             return Promise.resolve();
-        } catch (error) {
-            console.error(`Error stopping timer ${this.id}:`, error);
-            return Promise.reject(error);
+        }
+        catch (err) {
+            log.error(`Error stopping timer ${this.id}:`, err);
+            return Promise.reject(err);
         }
     }
 }

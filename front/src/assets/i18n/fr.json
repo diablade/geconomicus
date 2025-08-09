@@ -157,7 +157,9 @@
         "SUB_TITLE_CREDITS": "Détails des crédits",
         "GIVE_CREDIT": "Accorder un crédit",
         "SOLUTION": "(Si le joueur ne voit pas son crédit, rafraîchis sa page ! 😉 )",
-        "NO_BANK_FREE_MONEY": "Pas de banque en monnaie libre ;)"
+        "NO_BANK_FREE_MONEY": "Pas de banque en monnaie libre ;)",
+        "CREDIT_FOR_ALL": "Créditer tous les joueurs",
+        "CREDIT_FOR_ALL_MESSAGE": "Voulez-vous vraiment créditer tous les joueurs ? (Crédit par defaut)"
     },
     "CONTRACT": {
         "TITLE": "Contrat",
@@ -414,6 +416,12 @@
         "VERYNOT": "(Négatif 😒)  Très"
     },
     "ERROR": {
+        "IN_PROGRESS": "déjà en cours",
+        "GAME_NOT_FOUND" : "Jeu introuvable",
+        "PLAYER_NOT_FOUND" : "Joueur introuvable",
+        "CARDS_NOT_UNIQUE" : "Cartes non uniques",
+        "NOT_ENOUGH_CARDS" : "Pas assez de cartes",
+        "NOT_ENOUGH_CARDS_IN_DECK" : "Pas assez de cartes dans le deck",
         "NOT_ENOUGH_MONEY": "Fonds insuffisant.",
         "GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
         "JOIN_REINCARNATE": "Impossible de rejoindre",

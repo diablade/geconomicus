@@ -111,12 +111,12 @@ setInterval(() => {
 }, 3600000); // Log every hours
 
 // handle errors
-app.use(function(err, req, res) {
+app.use((err, req, res) => {
     log.error(err);
 
     // Set error response
     return res.status(err.status || 500).json({
-        message: err.message || "Something looks wrong :(",
+        message: err.message || err || "Something looks wrong :(",
     });
 });
 if (process.env.GECO_NODE_ENV !== "test") {
@@ -132,13 +132,9 @@ if (process.env.GECO_NODE_ENV !== "test") {
     }
 
     server.listen(process.env.GECO_PORT_NODE, '0.0.0.0', () => console.log(
-        "\n"
-        + "   ____                                      _                \n"
-        + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
-        + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n"
-        + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"
-        + "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n"
-        + "                                                              \n"
+        "\n" + "   ____                                      _                \n" + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
+        + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"
+        + "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" + "                                                              \n"
         + process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
     try {
         socket.getIo(); // This should not throw an error if initialized correctly

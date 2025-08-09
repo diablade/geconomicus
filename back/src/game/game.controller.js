@@ -14,8 +14,9 @@ export default {
         }
         catch (err) {
             log.error("Game creation error:", err);
-            return res.status(500).json({
-                message: "Game creation error",
+            next({
+                status:  500,
+                message: "ERROR.CREATE",
             });
         }
     },
@@ -28,8 +29,9 @@ export default {
         }
         catch (err) {
             log.error("Game update error:", err);
-            return res.status(500).json({
-                message: "Game update error",
+            next({
+                status:  500,
+                message: "ERROR.UPDATE",
             });
         }
 
@@ -167,10 +169,11 @@ export default {
                 feedbacks,
             });
         }
-        catch (e) {
-            log.error("Get feedbacks error:", e);
-            return res.status(404).json({
-                message: "Feedbacks not found",
+        catch (err) {
+            log.error("Get feedbacks error:", err);
+            next({
+                status:  404,
+                message: "ERROR.NOT_FOUND",
             });
         }
     },
@@ -180,10 +183,11 @@ export default {
             const game = await gameService.getGameById(id);
             return res.status(200).json(game);
         }
-        catch (e) {
-            log.error("Get game error:", e);
-            return res.status(404).json({
-                message: "Game not found",
+        catch (err) {
+            log.error("Get game error:", err);
+            next({
+                status:  404,
+                message: "ERROR.NOT_FOUND",
             });
         }
     },
@@ -198,10 +202,11 @@ export default {
             }
             return res.status(200).json(game._id.toString());
         }
-        catch (e) {
-            log.error("Get game error:", e);
-            return res.status(404).json({
-                message: "Game not found",
+        catch (err) {
+            log.error("Get game error:", err);
+            next({
+                status:  404,
+                message: "ERROR.NOT_FOUND",
             });
         }
     },
@@ -274,10 +279,11 @@ export default {
                 status: "done",
             });
         }
-        catch (e) {
+        catch (err) {
+            log.error("kill player error", err);
             next({
                 status:  400,
-                message: e,
+                message: err,
             });
         }
     },
@@ -349,10 +355,11 @@ export default {
                 });
             }
         }
-        catch (e) {
+        catch (err) {
+            log.error("delete game error", err);
             next({
                 status:  400,
-                message: e,
+                message: err,
             });
         }
     },
@@ -372,7 +379,8 @@ export default {
         }
         catch (err) {
             log.error("Game reset error:", err);
-            return res.status(500).json({
+            next({
+                status:  500,
                 message: "Game reset error",
             });
         }
@@ -393,12 +401,13 @@ export default {
         }
         catch (err) {
             log.error("Game refresh error:", err);
-            return res.status(500).json({
-                message: "Game refresh error",
+            next({
+                status:  400,
+                message: "ERROR.REFRESH",
             });
         }
     },
-    refreshPlayer: async (req, res, next) => {
+    refreshPlayer:          async (req, res, next) => {
         try {
             const done = await gameService.refreshPlayer(req.body.idGame, req.body.idPlayer);
             if (done) {
@@ -414,7 +423,8 @@ export default {
         }
         catch (err) {
             log.error("Game refresh error:", err);
-            return res.status(500).json({
+            next({
+                status:  400,
                 message: "Game refresh error",
             });
         }

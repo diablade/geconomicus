@@ -51,7 +51,7 @@ async function distribDU(idGame) {
                 if (player.status === C.ALIVE) {
                     player.coins += du;
                     newMassMoney += du;
-                    socket.emitTo(player.id, C.DISTRIB_DU, {du: du});
+                    socket.emitAckTo(player.id, C.DISTRIB_DU, {du});
                     let newEvent = constructor.event(C.DISTRIB_DU, C.MASTER, player.id, du, [], Date.now());
                     socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
                     newEvents.push(newEvent);
@@ -497,7 +497,7 @@ async function refreshForceAllPlayers(idGame) {
     const game = await GameModel.findById(idGame);
     if (game) {
         game.players.forEach(player => {
-            socket.emitTo(player.id, C.REFRESH_FORCE, {force: true});
+            socket.emitAckTo(player.id, C.REFRESH_FORCE, {force: true});
         });
         return true;
     }
@@ -511,7 +511,7 @@ async function refreshPlayer(idGame, idPlayer) {
     if (game) {
         const player = game.players.find(player => player.id === idPlayer);
         if (player) {
-            socket.emitTo(player.id, C.REFRESH_FORCE, {force: true});
+            socket.emitAckTo(player.id, C.REFRESH_FORCE, {force: true});
             return true;
         }
         else {

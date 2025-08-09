@@ -20,7 +20,7 @@ const generateDecks = async (game) => {
     const prices = [game.priceWeight1, game.priceWeight2, game.priceWeight3, game.priceWeight4];
 
     let tableDecks = [[], [], [], []];
-    let lettersInGame = game.players.length;
+    let lettersInGame = Math.round(1.25 * game.players.length);
     if (!game.generateLettersAuto) {
         lettersInGame = game.generateLettersInDeck;
     }
@@ -51,8 +51,7 @@ const pushCardsInDecks = async (idGame, cards) => {
         });
     }
     catch (err) {
-        log.error(err);
-        throw new Error("Cards are not back in decks");
+        log.error("Cards are not back in decks", err);
     }
 }
 

@@ -74,7 +74,7 @@ export class MasterAdminComponent implements OnInit {
 				this.deck3 = this.countOccurrencesAndHideDuplicates(game.decks[2]);
 				this.deck4 = this.countOccurrencesAndHideDuplicates(game.decks[3]);
 				for (let player of game.players) {
-					this.countOccurrencesAndHideDuplicates(player.cards);
+					player.cards = this.countOccurrencesAndHideDuplicates(player.cards);
 				}
 			});
 		});
@@ -98,7 +98,7 @@ export class MasterAdminComponent implements OnInit {
 
 
 	countOccurrencesAndHideDuplicates(cards: Card[]) {
-		cards = _.orderBy(cards, ["letter"], ["asc"]);
+		cards = _.orderBy(cards, ["weight", "letter"], ["asc"]);
 		const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
 		const keyDuplicates: string[] = [];
 		for (const c of cards) {
