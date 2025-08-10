@@ -9,7 +9,13 @@
 			<div class="statusLabel">{{ getStatus(credit.status) | translate }}</div>
 		</div>
 	</div>
-	<div *ngIf="!small" class="fw-bold text-truncate">{{ contractor }}</div>
+	<div *ngIf="!small && contractorSvg !== 'none'" class="d-flex flex-row align-content-center">
+		<div class="player-frame player-svg"
+		     [ngStyle]="{'border-color':'#'+contractorColor}"
+		     [innerHTML]="getSanitizedSvgFromString(contractorSvg)">
+		</div>
+		<div *ngIf="!small" class="fw-bold text-truncate">{{ contractor }}</div>
+	</div>
 	<div *ngIf="!small" class="fontName"><span
 			class="fw-bold">{{ "CREDIT.CREATED"|translate }} :</span>{{ credit.createDate| date: "YY-MM-dd HH:mm" }}
 	</div>

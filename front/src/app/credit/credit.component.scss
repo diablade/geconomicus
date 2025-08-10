@@ -76,3 +76,17 @@
   vertical-align: middle;
   z-index: 2;
 }
+
+.player {
+  &-frame {
+    background: white;
+  }
+
+  &-svg {
+    width: 60px;
+    height: 60px;
+    border-radius: 80px;
+    border: solid black 2px;
+    box-shadow: 2px 2px 4px -2px black;
+  }
+}

@@ -183,6 +183,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		const player = _.find(this.game.players, p => p._id === idPlayer);
 		return player ? player.name : idPlayer;
 	}
+	getContractorColor(idPlayer: string) {
+		const player = _.find(this.game.players, p => p._id === idPlayer);
+		return player ? player.hairColor : 'black';
+	}
+	getContractorSvg(idPlayer: string) {
+		const player = _.find(this.game.players, p => p._id === idPlayer);
+		return player ? player.image : 'none';
+	}
 
 	showContract() {
 		const dialogRef = this.dialog.open(ContractDialogComponent, {

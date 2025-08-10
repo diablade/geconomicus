@@ -4,6 +4,7 @@ import {Credit} from "../models/game";
 
 // @ts-ignore
 import * as C from "../../../../config/constantes";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({
 	selector: 'app-credit',
@@ -18,6 +19,9 @@ export class CreditComponent {
 
 	@Input() credit!: Credit;
 	@Input() contractor!: string | undefined;
+	@Input() contractorSvg!: string | "";
+	@Input() contractorColor!: string | "black";
+
 	@Input() interestMinutes = 5;
 	@Input() bankOption = false;
 	@Output() actionBtn = new EventEmitter<string>();
@@ -25,11 +29,15 @@ export class CreditComponent {
 
 	C = C;
 
-	constructor() {
+	constructor(private sanitizer: DomSanitizer) {
 	}
 
 	actionBtnClick(action: string) {
 		this.actionBtn.emit(action);
+	}
+
+	getSanitizedSvgFromString(svgString: string): SafeHtml {
+		return this.sanitizer.bypassSecurityTrustHtml(svgString);
 	}
 
 	getStatus(status: string) {

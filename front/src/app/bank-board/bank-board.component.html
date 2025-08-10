@@ -85,9 +85,21 @@
 			<fa-icon [icon]="faSackDollar"></fa-icon>
 		</button>
 	</div>
+	<h2 class="fs-4 shadowed gecoFont">{{ "CREDIT.RUNNING_CREDIT"|translate }}</h2>
 	<div class="d-inline-flex" *ngFor="let credit of game.credits">
-		<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
-		            [contractor]="getPlayerName(credit.idPlayer)" (actionBtn)="actionBtn($event,credit)"></app-credit>
+		<ng-container *ngIf="credit.status!=C.CREDIT_DONE">
+			<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
+			            [contractor]="getPlayerName(credit.idPlayer)" [contractorColor]="getContractorColor(credit.idPlayer)"
+			            [contractorSvg]="getContractorSvg(credit.idPlayer)" (actionBtn)="actionBtn($event,credit)"></app-credit>
+		</ng-container>
+	</div>
+	<h2 class="fs-4 shadowed gecoFont">{{ "CREDIT.CREDIT_DONE"|translate }}</h2>
+	<div class="d-inline-flex" *ngFor="let credit of game.credits">
+		<ng-container *ngIf="credit.status==C.CREDIT_DONE">
+			<app-credit [interestMinutes]="game.timerCredit" [credit]="credit" [bankOption]=true
+			            [contractor]="getPlayerName(credit.idPlayer)" [contractorColor]="getContractorColor(credit.idPlayer)"
+			            [contractorSvg]="getContractorSvg(credit.idPlayer)" (actionBtn)="actionBtn($event,credit)"></app-credit>
+		</ng-container>
 	</div>
 </div>
 <div *ngIf="game.typeMoney===C.JUNE">{{ "BANK.NO_BANK_FREE_MONEY"|translate }}</div>
