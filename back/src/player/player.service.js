@@ -170,7 +170,7 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
     const newCardSup = shuffledDeck2.splice(0, 1)[0];
     const cardsDraw = [...newCards, newCardSup];
 
-    if(cardsDraw.length < game.amountCardsForProd + 1 || newCardSup === undefined) {
+    if (cardsDraw.length < game.amountCardsForProd + 1 || newCardSup === undefined) {
         throw new Error("ERROR.NOT_ENOUGH_CARDS_IN_DECK");
     }
 

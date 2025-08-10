@@ -39,16 +39,7 @@ const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
     socket.emitAckTo(idPlayer, C.NEW_CREDIT, {credit});
     return credit;
 }
-const creditForAll = async (idGame, startNow) => {
-    const game = await GameModel.findById(idGame.toString());
-    if (!game) {
-        throw new Error("Game not found");
-    }
-    for (let player of game.players) {
-        await createCredit(idGame, player._id, game.defaultCreditAmount, game.defaultInterestAmount, startNow);
-    }
-    return true;
-}
+
 const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
     const credit = await getCreditOfPlayer(idGame, idPlayer, idCredit);
     if (!credit) {
@@ -585,7 +576,6 @@ export default {
     seizure,
     seizureOnDead,
     createCredit,
-    creditForAll,
     settleCredit,
     payInterest,
     addDebtTimer,
