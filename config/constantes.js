@@ -9,6 +9,7 @@ const DEATH = 'death';
 
 const CREATE_GAME = "create-game";
 const NEW_PLAYER = "new-player";
+const COPY_PLAYER = "copy-player";
 const UPDATED_PLAYER = "updated-player";
 const UPDATE_GAME_OPTION = "update-game-option";
 const NEW_CREDIT = "new-credit";
@@ -71,6 +72,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
         CREATE_GAME:        CREATE_GAME,
         NEW_PLAYER:         NEW_PLAYER,
+        COPY_PLAYER:        COPY_PLAYER,
         UPDATED_PLAYER:     UPDATED_PLAYER,
         UPDATE_GAME_OPTION: UPDATE_GAME_OPTION,
         DEAD:               DEAD,

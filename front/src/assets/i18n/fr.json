@@ -474,6 +474,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "Nouvelle partie",
+        "NEXT_GAME_COPY": "Demarrer une nouvelle manche",
         "LEARN_MORE": "En savoir plus sur la monnaie libre ?",
         "LEARN_MORE_MOBILE": "En savoir plus sur la monnaie libre ?",
         "SUMMARY": "Résumé de la partie : {{name}}",

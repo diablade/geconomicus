@@ -29,6 +29,7 @@ export const environment = {
 		GET_BY_SHORT_ID: 'game/short/',
 		GETALL: 'game/all',
 		CREATE: 'game/create',
+		COPY_GAME: 'game/copy',
 		UPDATE: 'game/update',
 		REFRESH_PLAYER: 'game/refresh-player',
 		REFRESH_FORCE_ALL_PLAYERS: 'game/refresh-force-all-players',

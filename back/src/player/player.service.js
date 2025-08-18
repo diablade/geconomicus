@@ -81,7 +81,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
     }
 }
 
-const join = async (game, name) => {
+const join = async (game, name, copyPlayer) => {
     if (game.status === C.END_GAME) {
         throw new Error("Game is finished");
     }
@@ -106,6 +106,26 @@ const join = async (game, name) => {
             glassesProbability:  100,
             featuresProbability: 100
         };
+
+        if(copyPlayer) {
+            player.idx = copyPlayer.idx;
+            player.image = copyPlayer.image;
+            player.eyes = copyPlayer.eyes;
+            player.earrings = copyPlayer.earrings;
+            player.eyebrows = copyPlayer.eyebrows;
+            player.features = copyPlayer.features;
+            player.hair = copyPlayer.hair;
+            player.glasses = copyPlayer.glasses;
+            player.mouth = copyPlayer.mouth;
+            player.skinColor = copyPlayer.skinColor;
+            player.hairColor = copyPlayer.hairColor;
+            player.earringsProbability = copyPlayer.earringsProbability;
+            player.glassesProbability = copyPlayer.glassesProbability;
+            player.featuresProbability = copyPlayer.featuresProbability;
+            player.boardConf = copyPlayer.boardConf;
+            player.boardColor = copyPlayer.boardColor;
+        }
+
         let joinEvent = constructor.event(C.NEW_PLAYER, idPlayer.toString(), C.MASTER, 0, [], Date.now());
         let updatedGame = await GameModel.findByIdAndUpdate({_id: game._id}, {
             $push: {
@@ -116,7 +136,7 @@ const join = async (game, name) => {
         if (updatedGame) {
             const newPlayer = updatedGame.players.find(p => p._id == idPlayer.toString());
             socket.emitTo(game._id + C.MASTER, C.NEW_PLAYER, newPlayer);
-            return player._id;
+            return player._id.toString();
         }
         else {
             throw new Error("Join game error: game not found");

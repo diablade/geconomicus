@@ -32,7 +32,6 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	subscription: Subscription | undefined;
 	idGame = "";
 	game: Game = new Game;
-	data = "";
 	socket: any;
 	C = C;
 	faInfoCircle = faInfoCircle;
@@ -52,10 +51,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.BANK);
-			this.backService.getGame(this.idGame).subscribe(game => {
-				this.game = game;
-				this.prisoners = _.filter(game.players, {"status": "prison"});
-			});
+			this.getGame();
 		});
 	}
 
@@ -172,6 +168,16 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.NEW_PLAYER, (player: Player) => {
 			this.game.players.push(player);
+		});
+		this.socket.on(C.UPDATED_PLAYER, (_data:any) => {
+			this.getGame();
+		});
+	}
+
+	getGame() {
+		this.backService.getGame(this.idGame).subscribe(game => {
+			this.game = game;
+			this.prisoners = _.filter(game.players, {"status": "prison"});
 		});
 	}
 

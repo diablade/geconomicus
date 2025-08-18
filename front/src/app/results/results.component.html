@@ -8,7 +8,7 @@
 			<div class="d-flex flex-column">
 				<img class="geco" src="./assets/images/geconomicus.png" alt="">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{ "HOME.PAGE" | translate }}
+			<button mat-button mat-stroked-button color="primary" (click)="home()">{{ "HOME.PAGE" | translate }}
 			</button>
 			<div class="d-flex flex-row align-items-center">
 				<div class="text-center bulleResult gecoFont bienvenue">
@@ -31,12 +31,19 @@
 				</div>
 				<img class="gunyResults" src="./assets/images/guny.png">
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="newGame()">{{
+			<button mat-button mat-stroked-button color="primary" (click)="home()">{{
                     "HOME.PAGE" | translate
 				}}
 			</button>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>
+		<div class="d-flex flex-row justify-content-between align-items-end">
+			<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>
+			<button *ngIf="isMaster" mat-button mat-stroked-button color="primary" (click)="newGameFromCopy()">
+				<fa-icon [icon]="faCopy"></fa-icon>
+				{{ "RESULTS.NEXT_GAME_COPY" | translate }}
+			</button>
+		</div>
+		<!--		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>-->
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
 				<div><span class="fw-bold">{{ "RESULTS.STATUS" | translate }}: </span>{{ getStatus() }}</div>
@@ -181,45 +188,45 @@
 			<div class="d-flex flex-row justify-content-evenly flex-wrap align-items-end">
 				<div class="podium d-none d-md-flex">
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-second player-svg" [ngStyle]="{'border-color':'#'+podium[1].hairColor}"
-						     [innerHTML]="getSanitizedSvgFromString(podium[1].image)">
+						<div class="player-frame-second player-svg"
+						     [innerHTML]="getSanitizedSvgFromString(podium[1]?.image)">
 						</div>
 						<div class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
 							<div class="gecoFont shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥈</span>
 							</div>
-							{{ podium[1].name }}
+							{{ podium[1]?.name }}
 							<div class="font-monospace fs-6">
-								{{ podium[1].value }}
+								{{ podium[1]?.value }}
 								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
 							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame player-svg" [ngStyle]="{'border-color':'#'+podium[0].hairColor}"
-						     [innerHTML]="getSanitizedSvgFromString(podium[0].image)">
+						<div class="player-frame player-svg"
+						     [innerHTML]="getSanitizedSvgFromString(podium[0]?.image)">
 						</div>
 						<div class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
 							<div class="gecoFont shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥇</span>
 							</div>
-							{{ podium[0].name }}
+							{{ podium[0]?.name }}
 							<div class="font-monospace fs-6">
-								{{ podium[0].value }}
+								{{ podium[0]?.value }}
 								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
 							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-third player-svg" [ngStyle]="{'border-color':'#'+podium[2].hairColor}"
-						     [innerHTML]="getSanitizedSvgFromString(podium[2].image)">
+						<div class="player-frame-third player-svg"
+						     [innerHTML]="getSanitizedSvgFromString(podium[2]?.image)">
 						</div>
 						<div
 								class="step third shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
 							<div class="gecoFont shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥉</span></div>
-							{{ podium[2].name }}
-							<div class="font-monospace fs-6">{{ podium[2].value }} {{
+							{{ podium[2]?.name }}
+							<div class="font-monospace fs-6">{{ podium[2]?.value }} {{
                                     (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
 								}}
 							</div>

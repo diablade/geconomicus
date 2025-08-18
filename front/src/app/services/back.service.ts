@@ -103,6 +103,13 @@ export class BackService {
 			);
 	}
 
+	newGameFromCopy(idGame: string): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.COPY_GAME, {idGame: idGame})
+			.pipe(
+				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.NEW_GAME_FROM_COPY"))
+			);
+	}
+
 	getPlayer(idGame: string | undefined, idPlayer: string | undefined): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.PLAYER.GET + idGame + '/' + idPlayer)
 			.pipe(

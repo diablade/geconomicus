@@ -9,7 +9,7 @@ import playerService from "../player/player.service.js";
 export default {
     create:                 async (req, res, next) => {
         try {
-            const savedGame = await gameService.createGame(req);
+            const savedGame = await gameService.createGame(req.body);
             return res.status(200).send(savedGame);
         }
         catch (err) {
@@ -426,6 +426,29 @@ export default {
             next({
                 status:  400,
                 message: "Game refresh error",
+            });
+        }
+    },
+    copyGame:               async (req, res, next) => {
+        try {
+            const newGame = await gameService.newGameFromCopy(req.body.idGame);
+            if (newGame) {
+                return res.status(200).json({
+                    status: "copy done",
+                    idGame: newGame._id.toString(),
+                });
+            }
+            else {
+                return res.status(500).json({
+                    message: "Game copy error",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game copy error:", err);
+            next({
+                status:  400,
+                message: "Game copy error",
             });
         }
     },

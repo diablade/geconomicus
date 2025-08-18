@@ -20,8 +20,9 @@ import {BaseChartDirective} from "ng2-charts";
 import {Platform} from "@angular/cdk/platform";
 import {I18nService} from '../services/i18n.service';
 import {TranslateService} from '@ngx-translate/core';
-import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import {faCircleInfo, faCopy} from "@fortawesome/free-solid-svg-icons";
 import {WebSocketService} from "../services/web-socket.service";
+import {SessionStorageService} from "../services/local-storage/session-storage.service";
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -241,13 +242,15 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	roundStarted = false;
 	pointsBefore1second = true;
 	C = C;
-	baseRadius = 2.1;
 	nbPlayer = 0;
 	playersAtStart = 0;
 	deads = 0;
 	legendQuantitative = true;
 	legendRelative = true;
 	legendResources = true;
+	faCircleInfo = faCircleInfo;
+	faCopy = faCopy;
+	isMaster: any;
 
 	podium: any[] = [];
 	podiumTransac: any[] = [];
@@ -457,10 +460,12 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private backService: BackService,
 		private i18nService: I18nService,
 		private wsService: WebSocketService,
+		private sessionStorageService: SessionStorageService,
 		private translate: TranslateService) {
 	}
 
 	ngOnInit(): void {
+		this.getMaster();
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.backService.getGame(this.idGame).subscribe(async game => {
@@ -621,6 +626,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		};
 	}
 
+	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
+
 	ngAfterViewInit() {
 		this.socket.on(C.EVENT, async (event: EventGeco) => {
 			this.events.push(event);
@@ -630,11 +640,21 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.NEW_FEEDBACK, async () => {
 			this.getFeedbacks();
 		});
+		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
+			await this.router.navigate(["game", payload.idGame, "player", payload.idPlayer]).then(() => {
+				window.location.reload();
+			});
+		});
 	}
 
-	ngOnDestroy() {
-		this.destroy$.next();
-		this.destroy$.complete();
+	getMaster(){
+		this.isMaster = this.sessionStorageService.getItem("master");
+	}
+
+	newGameFromCopy() {
+		this.backService.newGameFromCopy(this.idGame).subscribe((payload: any) => {
+			this.router.navigate(["game", payload.idGame, "master"]);
+		});
 	}
 
 	updateCharts() {
@@ -1093,7 +1113,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? "CURRENCY.EURO" : "CURRENCY.DU");
 	}
 
-	newGame() {
+	home() {
 		if (this.platform.ANDROID || this.platform.IOS) {
 			this.router.navigate(['/']);
 		} else {
@@ -1112,6 +1132,4 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	displayLegendResources() {
 		this.legendResources = !this.legendResources;
 	}
-
-	protected readonly faCircleInfo = faCircleInfo;
 }

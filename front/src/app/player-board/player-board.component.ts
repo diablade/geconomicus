@@ -275,7 +275,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		});
 		this.socket.on(C.UPDATED_PLAYER, (data: any) => {
-			this.player = data;
+			if(data.id == this.idPlayer){
+				this.player = data;
+			}
 		});
 		this.socket.on(C.END_GAME, (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
@@ -397,6 +399,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (c.status == C.PAUSED_CREDIT) {
 					c.status = C.RUNNING_CREDIT;
 				}
+			});
+		});
+		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
+			console.log(payload);
+			this.router.navigate(['game', payload.idGame, 'player', payload.idPlayer]).then(() => {
+				// window.location.reload();
 			});
 		});
 		this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
