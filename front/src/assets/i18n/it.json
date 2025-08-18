@@ -460,6 +460,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "nuovo gioco",
+        "NEXT_GAME_COPY": "nuova manche",
         "LEARN_MORE": "Scopri di più sulla moneta libera?",
         "LEARN_MORE_MOBILE": "Scopri di più sulla moneta libera?",
         "SUMMARY": "Riepilogo del gioco: {{name}}",

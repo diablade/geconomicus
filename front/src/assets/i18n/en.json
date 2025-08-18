@@ -456,6 +456,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "new game",
+        "COPY_GAME": "new round",
         "LEARN_MORE": "Learn more about free money?",
         "LEARN_MORE_MOBILE": "Learn more about free money?",
         "SUMMARY": "Game summary: {{name}}",

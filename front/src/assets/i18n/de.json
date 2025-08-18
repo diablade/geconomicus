@@ -466,6 +466,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "Neues Spiel",
+        "COPY_GAME": "Neue Manche",
         "LEARN_MORE": "Mehr erfahren über das Freigeld?",
         "LEARN_MORE_MOBILE": "Mehr Infos über das Freigeld ?",
         "SUMMARY": "Zusammenfassung des Spieles: {{name}}",

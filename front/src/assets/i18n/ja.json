@@ -455,6 +455,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "新しいゲーム",
+        "NEXT_GAME_COPY": "次のゲーム",
         "LEARN_MORE": "自由な通貨についてもっと知りたいですか？",
         "LEARN_MORE_MOBILE": "自由な通貨についてもっと知りたいですか？",
         "SUMMARY": "ゲームの要約：{{name}}",

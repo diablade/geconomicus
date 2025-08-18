@@ -456,6 +456,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "joc nou",
+        "NEXT_GAME_COPY": "joc nou",
         "LEARN_MORE": "Află mai multe despre moneda liberă?",
         "LEARN_MORE_MOBILE": "Află mai multe despre moneda liberă?",
         "SUMMARY": "Rezumatul jocului: {{name}}",

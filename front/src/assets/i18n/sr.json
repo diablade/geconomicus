@@ -456,6 +456,7 @@
     },
     "RESULTS": {
         "NEW_GAME": "nova igra",
+        "NEXT_GAME_COPY": "nova igra",
         "LEARN_MORE": "Saznajte više o slobodnoj valuti?",
         "LEARN_MORE_MOBILE": "Saznajte više o slobodnoj valuti?",
         "SUMMARY": "Sažetak igre: {{name}}",
