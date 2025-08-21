@@ -1,0 +1,29 @@
+COMMERCIAL LICENSE AGREEMENT
+
+This software is dual-licensed.
+
+You may use this software under the terms of the [AGPL v3 License](/LICENSE),
+OR you may obtain a commercial license from the copyright holder
+to use it under different terms, including closed-source or proprietary use.
+
+---
+
+Commercial Use Restriction:
+
+Unless you have purchased a commercial license, YOU MAY NOT:
+
+- Use this software, in whole or in part, for commercial purposes.
+- Include it in any product or service for which you or a third party receives compensation.
+- Use it in a SaaS, hosting, or consulting context with commercial value.
+- Distribute it as part of a product that is sold, licensed, or monetized in any way.
+
+---
+
+To purchase a commercial license, contact:
+contact@geconomicus.fr
+
+---
+
+Copyright (c) [année] [ton nom ou entité]
+
+All rights reserved.
