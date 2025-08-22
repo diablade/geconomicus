@@ -1,21 +1,28 @@
 <ng-container *ngIf="state==='flipped'">
-	<div class="whenFlipped" (click)="closeCard()"></div>
+	<div class="overlay" (click)="closeCard()"></div>
 </ng-container>
-<div class="card"  [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY , width: width, height: height}}">
-	<div class="face" [style.width]="width" [style.height]="height" (click)="cardClicked()" [ngClass]="[card.color]">
-		<div class="containerIcon" [ngClass]="state==='flipped' ? 'hide' : 'show'">
-			<span [style.font-size]="iconSize" [style.line-height]="iconSize" class="icon">
-				{{ card.key+"i" | translate }}</span>
+<div class="card"
+     [ngClass]="[card.color]"
+     [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
+	<div class="face" (click)="cardClicked()">
+		<div [style.font-size]="iconSize" class="card-icon">
+			{{ card.key + "i" | translate }}
 		</div>
+		<div [style.font-size]="textSize" class="card-text contou">{{ card.key + "n" | translate }}</div>
+		<div [style.font-size]="letterSize" class="smallLetter contour ">&nbsp;{{ card.letter }}&nbsp;</div>
 	</div>
-	<div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
+	<div class="back d-flex flex-column align-items-center"
+	     [ngClass]="[card.color]"
+	     (click)="cardClicked()">
 		<div class="d-flex flex-row align-items-center">
-			<div [style.font-size]="iconSize" [style.line-height]="iconSize" class="icon m-2">{{ card.key+"i" | translate }}</div>
+			<div class="smallLetter">&nbsp;{{ card.letter }}&nbsp;</div>
+			<div class="iconBack m-1">{{ card.key + "i" | translate }}</div>
 			<div class="prices d-flex flex-column justify-content-between">
-				<div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">
-					 {{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
+				<div class="price">
+					<div class="ion m-2">{{ card.key + "n" | translate }}</div>
+					{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 				</div>
-				<div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price"
+				<div class="currency"
 				     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
 				</div>
 			</div>
@@ -32,10 +39,3 @@
 		</div>
 	</div>
 </div>
-<!-- Preload -->
-<audio #cardFlip>
-	<source src='/assets/audios/cardFlipGet.mp3' type="audio/mp3">
-</audio>
-<audio #cardBack>
-	<source src='/assets/audios/cardFlipBack.mp3' type="audio/mp3">
-</audio>

@@ -1,14 +1,12 @@
-<div class="receipe" [style.width]="width" [style.height]="height">
+<mat-card class="receipe" [ngClass]="getReceipeColor()" >
     <button *ngIf="receipe.completed" class="completedBtn" (click)="buildCardLvlUp()" mat-raised-button color="accent">
         <div class="giftBounce">🛠️</div>
         {{ getBuildText() | translate }}
         🎁
     </button>
-    <div class="">
-        <div class="imgReceipe">{{receipe.letter+"i" | translate}}</div>
-        <div class="imgReceipe">{{receipe.letter+"n" | translate}}</div>
-        <div class="level">{{"level" | translate}} {{receipe.weight}}</div>
-    </div>
+    <div class="level">{{"level" | translate}} {{receipe.weight}}</div>
+    <div class="iconReceipe">{{receipe.letter}} {{receipe.letter+"i" | translate}}</div>
+    <div class="nameReceipe">{{receipe.letter+"n" | translate}}</div>
     <div class="d-flex flex-column flex-wrap">
         <mat-chip *ngFor="let ingredient of receipe.ingredients" [ngClass]="ingredient.have > 0 ? 'got' : ''">
             <fa-icon [icon]="faCheck" *ngIf="ingredient.have > 0"></fa-icon>
@@ -16,4 +14,4 @@
             {{ingredient.key+"n" | translate}}
         </mat-chip>
     </div>
-</div>
+</mat-card>

@@ -539,9 +539,11 @@
         "YOUR_AVATAR": "Votre avatar",
         "DEBT": "Dettes",
         "BUY": "ACHETER",
-        "CREDITS": "CRÉDITS"
+        "CREDITS": "CRÉDITS",
+        "OBJECTIVES": "Objectifs"
     },
     "PLAYER_SETTINGS": {
+        "SYS_SCAN": "Achat par camera et QRCode",
         "EYES": "Yeux",
         "EYEBROWS": "Sourcils",
         "MOUTH": "Bouche",

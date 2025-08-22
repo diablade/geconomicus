@@ -1,8 +1,66 @@
 .receipe{
-    border-radius: 10px;
-    border: dashed 1px black;
+    border-radius: 20px;
+    border: solid 1px beige;
+    padding: 0.5rem;
 }
 
 .got {
     background-color: #A2CBA2 !important;
 }
+
+.level{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1rem;
+}
+
+.iconReceipe{
+    position: absolute;
+    margin: 10px;
+    top: 0;
+    left: 0;
+    font-size: 2rem;
+}
+
+.nameReceipe{
+    margin-top: 2rem;
+    font-size: 1rem;
+}
+
+
+.red {
+    background-color: #e8a7a68c;
+    backdrop-filter: blur(3px);
+  
+    .mat-badge-content {
+      background: #ce1421;
+    }
+  }
+  
+  .yellow {
+    background-color: #f3f0ad8c;
+    backdrop-filter: blur(3px);
+  
+    .mat-badge-content {
+      background: #c4bb13;
+    }
+  }
+  
+  .green {
+    background-color: #A2CBA28c;
+    backdrop-filter: blur(3px);
+  
+    .mat-badge-content {
+      background: #14a549;
+    }
+  }
+  
+  .blue {
+    background-color: #BBDAE38c;
+    backdrop-filter: blur(3px);
+  
+    .mat-badge-content {
+      background: #3c8fa2;
+    }
+  }

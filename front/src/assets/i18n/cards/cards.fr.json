@@ -228,8 +228,8 @@
     "F02n":"Chevaux",
     "F03i":"🛶",
     "F03n":"Pirogues",
-    "F04i":"🐫",
-    "F04n":"Caravanes",
+    "F04i":"\uD83D\uDEDE",
+    "F04n":"Roulotte",
     "F05i":"🛷",
     "F05n":"Traîneaux",
     "F11i":"⛵",
@@ -659,7 +659,7 @@
 
     "Pi":"🏪",
     "Pn":"Commerce",
-    
+
     "P01i":"🤝",
     "P01n":"Échanges",
     "P02i":"🥣",
@@ -703,7 +703,7 @@
 
     "Qi":"🏛️",
     "Qn":"Gouvernance",
-    
+
     "Q01i":"👑",
     "Q01n":"Chefs tribaux",
     "Q02i":"🗣️",

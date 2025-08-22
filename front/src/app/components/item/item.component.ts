@@ -3,6 +3,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
 import {ShortCode} from "../../models/shortCode";
+import { AudioService } from 'src/app/services/audio.service';
 
 @Component({
 	selector: 'app-item',
@@ -14,18 +15,25 @@ import {ShortCode} from "../../models/shortCode";
 				"default",
 				style({
 					transform: "none",
-					zIndex: "1"
-				})
+					zIndex: "1",
+					width: "{{width}}",
+					height: "{{height}}",
+				}),
+				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
 			),
 			state(
 				"flipped",
 				style({
-					transform: "rotateY(180deg) scale(2.2)",
+					transform: "rotateY(180deg) scale(5.0)",
+					zIndex: "99",
 					top: "{{translateY}}px",
 					left: "{{translateX}}px",
-					zIndex: "99",
+					width: "{{width}}",
+					height: "{{height}}",
 				}),
-				{params: {translateX: 10, translateY: 10}}
+				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
+				// {params: {translateX: 0, translateY: 0, width: "{{calc(width *2)}}", height: "{{calc(height*2.2)}}"}}
+				// {params: {translateX: 0, translateY: 0, width: "{{width scale(2.2)}}", height: "{{height scale(2.2)}}"}}
 			),
 			transition("default => flipped", [animate("300ms")]),
 			transition("flipped => default", [animate("300ms")]),
@@ -50,26 +58,32 @@ export class ItemComponent {
 	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() width = this.screenWidth < this.screenHeight ? 'calc(15vw)':'calc(15vh)';
-	@Input() height = this.screenWidth < this.screenHeight ? 'calc(15vw)':'calc(15vh)';
-	@Input() iconSize = this.screenWidth < this.screenHeight ? 'calc(15vw * 0.33)' : 'calc(15vh * 0.33)';
-	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(15vw * 0.2)' : 'calc(15vh * 0.2)';
+	@Input() height = this.screenWidth < this.screenHeight ? '18vw':'18vh';
+	@Input() width = this.screenWidth < this.screenHeight ? '18vw':'18vh';
+	@Input() iconSize = this.screenWidth < this.screenHeight ? '10vw' : '10vh';
+	@Input() letterSize = this.screenWidth < this.screenHeight ? '1vw' : '1vw';
+	@Input() textSize = this.screenWidth < this.screenHeight ? '1vw' : '1vw';
+	@Input() priceSize = this.screenWidth < this.screenHeight ? '10vw' : '10vh';
 	@Input() flippable = true;
 	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)';
 	state = "default";
 	translateX = 0;
 	translateY = 0;
 	shortCode: ShortCode | undefined;
-	faGift = faGift;
 	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
-	@ViewChild('cardFlip') cardFlip!: ElementRef;
-	@ViewChild('cardBack') cardBack!: ElementRef;
+	// animationParams = {
+	// 	translateX: this.translateX,
+	// 	translateY: this.translateY,
+	// 	width: this.width * 2,
+	// 	height: this.height * 3
+	// };
 
-	constructor(private elementRef: ElementRef) {
+
+	constructor(private elementRef: ElementRef, private audioService: AudioService) {
 	}
 
 	closeCard() {
-		this.cardBack.nativeElement.play();
+		this.audioService.playSound("cardFlipBack");
 		this.state = "default";
 	}
 
@@ -79,9 +93,9 @@ export class ItemComponent {
 			if (this.state === "default") {
 				this.state = "flipped";
 				this.createShortCode();
-				this.cardFlip.nativeElement.play();
+				this.audioService.playSound("cardFlipGet");
 			} else {
-				this.cardBack.nativeElement.play();
+				this.audioService.playSound("cardFlipBack");
 				this.state = "default";
 				this.deleteShortCode();
 			}

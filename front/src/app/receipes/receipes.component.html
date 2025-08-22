@@ -1,11 +1,11 @@
 <div class="h-100 w-100">
 	<div class="d-flex flex-row overflow-auto">
-		<div *ngFor="let receipe of receipes">
+		<div class="m-1" *ngFor="let receipe of receipes">
 			<!-- [letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'" -->
 			<!-- [priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'" -->
 			<app-receipe [receipe]="receipe"
-			[width]="screenWidth < screenHeight ? 'calc(28vw)':'calc(28vh)'"
-			[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
+			[width]="screenWidth < screenHeight ? '36vw':'36vh'"
+			[height]="screenWidth < screenHeight ? 'calc(35vw * 1.5)':'calc(35vh * 1.5)'"
 			(onReceipeCompleted)="receipeCompleted($event)"></app-receipe>
 		</div>
 	</div>

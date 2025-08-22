@@ -165,6 +165,39 @@ body {
   cursor: pointer;
 }
 
+
+.red {
+  background-color: #E8A7A6;
+
+  .mat-badge-content {
+    background: #ce1421;
+  }
+}
+
+.yellow {
+  background-color: #F3EFAD;
+
+  .mat-badge-content {
+    background: #c4bb13;
+  }
+}
+
+.green {
+  background-color: #A2CBA2;
+
+  .mat-badge-content {
+    background: #14a549;
+  }
+}
+
+.blue {
+  background-color: #BBDAE3;
+
+  .mat-badge-content {
+    background: #3c8fa2;
+  }
+}
+
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
   .keyboard-dialog {

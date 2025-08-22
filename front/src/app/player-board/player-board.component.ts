@@ -9,7 +9,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {environment} from "../../environments/environment";
 import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
-import {faCamera, faCircleInfo, faEye, faEyeSlash, faKeyboard, faQrcode} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faCircleInfo, faClipboardCheck, faEye, faEyeSlash, faFileContract, faKeyboard, faQrcode, faCreditCardAlt} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, keyframes, query, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
@@ -38,7 +38,7 @@ import {AudioService} from '../services/audio.service';
 				], {optional: true})
 			]),
 		]),
-		trigger('items', [
+		trigger('item', [
 			transition(':enter', [
 				style({transform: 'translateY(-100rem)'}),
 				animate('600ms ease-out', style({transform: 'translateY(0)'}))
@@ -116,9 +116,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faQrcode = faQrcode;
 	faKeyboard = faKeyboard;
 	faInfo = faCircleInfo;
+	faFileContract = faFileContract;
+	faClipboardCheck = faClipboardCheck;
+	faCreditCardAlt = faCreditCardAlt;
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = true;
+	panelReceipeOpenState = true;
 	C = C;
 	timerCredit = 5;
 	timerPrison = 5;
@@ -760,10 +764,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showRules() {
 		this.dialog.open(GameInfosDialog, {});
-	}
-
-	onChangeSysScan() {
-		this.localStorageService.setItem('scanV3', this.scanV3);
 	}
 
 	onReceipeCompleted(receipe: Receipe) {
