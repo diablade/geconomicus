@@ -17,19 +17,18 @@
 			<div class="card-text">{{ card.key + "n" | translate }}</div>
 			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
 		</div>
-		<!-- <div class="prices d-flex flex-column justify-content-between">
+		<div class="prices d-flex flex-column justify-content-between">
 			<div class="price">
 				{{ card.price }} {{ typeMoney === C.JUNE ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 			</div>
 			<div class="price"
 				 *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
 			</div>
-		</div> -->
+		</div>
 		<div class="flex-grow-1 w-100 h-100">
 			<div class="qrcodeWrapper">
 				<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
-				<ngx-kjua [text]="getData()" [minVersion]="1" [crisp]="true" [ecLevel]="'M'" [render]="'svg'"
-				          [size]="90"></ngx-kjua>
+				<ngx-kjua [text]="getData()" [minVersion]="1" [crisp]="true" [ecLevel]="'M'" [render]="'svg'"></ngx-kjua>
 			</div>
 		</div>
 	</div>

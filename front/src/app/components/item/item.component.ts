@@ -30,7 +30,7 @@ import * as C from "../../../../../config/constantes.js";
 					top: "{{translateY}}px",
 					left: "{{translateX}}px",
 					width: "{{width}}",
-					height: "{{height}}",
+					height: "100%",
 				}),
 				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
 			),
