@@ -1,9 +1,10 @@
-import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../../models/game";
-import {faGift} from "@fortawesome/free-solid-svg-icons";
 import {ShortCode} from "../../models/shortCode";
 import { AudioService } from 'src/app/services/audio.service';
+// @ts-ignore
+import * as C from "../../../../../config/constantes.js";
 
 @Component({
 	selector: 'app-item',
@@ -24,7 +25,7 @@ import { AudioService } from 'src/app/services/audio.service';
 			state(
 				"flipped",
 				style({
-					transform: "rotateY(180deg) scale(5.0)",
+					transform: "rotateY(180deg) scale(3.5)",
 					zIndex: "99",
 					top: "{{translateY}}px",
 					left: "{{translateX}}px",
@@ -32,8 +33,6 @@ import { AudioService } from 'src/app/services/audio.service';
 					height: "{{height}}",
 				}),
 				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
-				// {params: {translateX: 0, translateY: 0, width: "{{calc(width *2)}}", height: "{{calc(height*2.2)}}"}}
-				// {params: {translateX: 0, translateY: 0, width: "{{width scale(2.2)}}", height: "{{height scale(2.2)}}"}}
 			),
 			transition("default => flipped", [animate("300ms")]),
 			transition("flipped => default", [animate("300ms")]),
@@ -41,6 +40,7 @@ import { AudioService } from 'src/app/services/audio.service';
 	]
 })
 export class ItemComponent {
+	C = C;
 	@Input() card: Card = {
 		_id: "",
 		key: "",
@@ -70,14 +70,8 @@ export class ItemComponent {
 	translateX = 0;
 	translateY = 0;
 	shortCode: ShortCode | undefined;
-	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
-	// animationParams = {
-	// 	translateX: this.translateX,
-	// 	translateY: this.translateY,
-	// 	width: this.width * 2,
-	// 	height: this.height * 3
-	// };
 
+	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 
 	constructor(private elementRef: ElementRef, private audioService: AudioService) {
 	}

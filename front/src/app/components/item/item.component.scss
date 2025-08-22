@@ -51,6 +51,7 @@
 
 .back {
   position: absolute;
+  border-radius: 5px;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
@@ -82,6 +83,7 @@
 
 .shortCode {
   position: absolute;
+  padding: 5px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -95,22 +97,18 @@
   1px 1px 0 black;
 }
 
-.hide {
-  opacity: 0;
-}
-
-.show {
-  opacity: 1;
-}
-
-.transform {
-  position: absolute;
-  z-index: 20;
-  max-height: 100%;
-  max-width: 100%;
-  width: 100%;
+.qrcodeWrapper {
   height: 100%;
-  left: 0;
+  width: 100%;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  contain: content;
+}
+
+.price {
+  font-family: Times, Arial, serif;
 }
 
 .red {
@@ -143,28 +141,4 @@
   .mat-badge-content {
     background: #3c8fa2;
   }
-}
-
-.qrcodeWrapper {
-  height: 100%;
-  width: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  //contain: strict;
-}
-
-
-.letter {
-  font-family: Times, Arial, serif;
-  z-index: 10;
-  font-variant-ligatures: none;
-  text-transform: none;
-}
-
-.price {
-  font-family: Times, Arial, serif;
 }
