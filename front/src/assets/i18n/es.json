@@ -202,7 +202,9 @@
         "GIVE_CREDIT": "Conceder un crédito",
         "SOLUTION": "(Si el jugador no ve su crédito, ¡actualiza su página! 😉)",
         "NO_BANK_FREE_MONEY": "No hay banca en moneda libre ;)",
-        "AVG_NOTICE": "Se aconseja mantener una media de al menos 2 € por jugador, para evitar la recesión. En caso de recesión, se puede bajar la tasa de interés, hasta el 0% cuando la crisis es severa."
+        "AVG_NOTICE": "Se aconseja mantener una media de al menos 2 € por jugador, para evitar la recesión. En caso de recesión, se puede bajar la tasa de interés, hasta el 0% cuando la crisis es severa.",
+        "CREDIT_FOR_ALL": "Dar crédito a todos los jugadores",
+        "CREDIT_FOR_ALL_MESSAGE": "¿Realmente quieres dar créditos a todos los jugadores? (Crédito predeterminado)"
     },
     "CONTRACT": {
         "TITLE": "Contrato",
@@ -410,7 +412,12 @@
         "NOT_ENOUGH_MONEY": "Fondos insuficientes.",
         "CONNECTION_EXPIRED": "La conexión ha expirado. Recargando automáticamente la página...",
         "IO_SOCKET_ERROR": "Se ha producido un error, por favor inténtalo de nuevo más tarde.",
-        "LOCK_DOWN_PLAYER": "Fallo en el encarcelamiento del jugador"
+        "LOCK_DOWN_PLAYER": "Fallo en el encarcelamiento del jugador",
+        "IN_PROGRESS": "ya en curso",
+        "GAME_NOT_FOUND": "Juego no encontrado",
+        "CARDS_NOT_UNIQUE": "Cartas no únicas",
+        "NOT_ENOUGH_CARDS": "No hay suficientes cartas",
+        "NOT_ENOUGH_CARDS_IN_DECK": "No hay suficientes cartas en la baraja"
     },
     "PLAYER": {
         "GO_TO_BANK": "🚨 ¡¡¡VAYA A LA BANCA!!! 🚨",
@@ -631,7 +638,9 @@
             "EVENT_TRA": "Transacción {{ amount }} de {{ from }} a {{ to }}",
             "CHART_QUANTITATIVE": "Monto absoluto de las cuentas en Ğ1 (cuantitativo)",
             "CHART_RELATIVE": "Partes de la masa monetaria en % (relativo)",
-            "LEGEND": "Leyenda"
+            "LEGEND": "Leyenda",
+            "INIT_DISTRIB_PARETO": "Coef. concentración (tipo Pareto)",
+            "PARETO_DESC": " (entre 0 = igualdad, y 0,99 = desigualdad extrema)"
         },
         "WEALTH": {
             "TITLE": "Módulo de reparto",
