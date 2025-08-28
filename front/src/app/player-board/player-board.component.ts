@@ -164,7 +164,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.updateScreenSize();
-		this.scanV3 = this.localStorageService.getItem("scanV3");
+		this.scanV3 = this.localStorageService.getItem("scanV3"); 
+		this.panelCreditOpenState = this.localStorageService.getItem("panelCredit") == undefined ? true : this.localStorageService.getItem("panelCredit");
+		this.panelReceipeOpenState = this.localStorageService.getItem("panelReceipe") == undefined ? true : this.localStorageService.getItem("panelReceipe");
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
@@ -770,7 +772,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		console.log(receipe);
 	}
 
-	isHorizontal(){
-		return this.screenHeight < this.screenWidth
+	togglePanel(panel: string) {
+		if (panel == 'credit') {
+			this.panelCreditOpenState = !this.panelCreditOpenState;
+			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+		} else if (panel == 'receipe') {
+			this.panelReceipeOpenState = !this.panelReceipeOpenState;
+			this.localStorageService.setItem('panelReceipe', this.panelReceipeOpenState);
+		}
 	}
 }

@@ -110,12 +110,7 @@
 	overflow: auto;
 }
 
-.creditsPanelOpen {
-	visibility: visible;
-	animation: ease 1s;
-}
-
-.receipePanelOpen {
+.panelOpen {
 	visibility: visible;
 	animation: ease 1s;
 }
@@ -178,10 +173,7 @@
 	}
 }
 
-.h-60 {
-	height: 60% !important;
-}
-
-.h-40 {
-	height: 40% !important;
+.separator {
+	width: 2px;
+	background-color:#673ab7;
 }

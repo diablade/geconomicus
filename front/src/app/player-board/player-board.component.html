@@ -124,34 +124,35 @@
 			></app-item>
 		</div>
 	</div>
-	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
-	     [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
-		<div class="d-inline-flex" *ngFor="let credit of credits">
-			<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
-			            [contractor]="player.name"
-			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
-		</div>
-	</div>
 	<div *ngIf="modeNewCard" class="credits w-100 d-flex flex-row"
-	     [ngClass]="panelReceipeOpenState? 'receipePanelOpen':'receipePanelClose' ">
-		<app-receipes [items]="cards" [productionCards]="amountCardsForProd"
-		              (onReceipeCompleted)="onReceipeCompleted($event)"></app-receipes>
+	     [ngClass]="panelReceipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
+		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelReceipeOpenState ? 'w-50':'w-100'">
+				<app-credit *ngFor="let credit of credits"[small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+				            [contractor]="player.name"
+				            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
+
+		</div>
+		<div *ngIf="panelCreditOpenState && panelReceipeOpenState" class="separator"></div>
+		<div class="d-flex flex-row overflow-auto" *ngIf="panelReceipeOpenState" [ngClass]="panelCreditOpenState ? 'w-50':'w-100'">
+			<app-receipes class="" *ngIf="panelReceipeOpenState" [items]="cards" [productionCards]="amountCardsForProd"
+			              (onReceipeCompleted)="onReceipeCompleted($event)"></app-receipes>
+		</div>
 	</div>
 	<div class="bottomBtn d-flex flex-row justify-content-between">
 		<button *ngIf="typeMoney===C.DEBT && !panelCreditOpenState" class="buy" mat-icon-button color="primary"
-		        (click)="panelCreditOpenState = !panelCreditOpenState">
+		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
 		<button *ngIf="typeMoney===C.DEBT && panelCreditOpenState" class="buy" mat-fab color="primary"
-		        (click)="panelCreditOpenState = !panelCreditOpenState">
+		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
 		<button *ngIf="modeNewCard && !panelReceipeOpenState" class="buy" mat-icon-button color="primary"
-		        (click)="panelReceipeOpenState = !panelReceipeOpenState">
+		        (click)="togglePanel('receipe')">
 			<fa-icon *ngIf="!panelReceipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
 		<button *ngIf="modeNewCard && panelReceipeOpenState" class="buy" mat-fab color="primary"
-		        (click)="panelReceipeOpenState = !panelReceipeOpenState">
+		        (click)="togglePanel('receipe')">
 			<fa-icon *ngIf="panelReceipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
 		<button *ngIf="scanV3" class="buy" mat-fab color="accent"
