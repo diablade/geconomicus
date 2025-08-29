@@ -14,7 +14,6 @@ import {
 	faCreditCardAlt
 } from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
-import {animate, animateChild, keyframes, query, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
@@ -29,69 +28,12 @@ import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
 import createCountdown from "../services/countDown";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import {AudioService} from '../services/audio.service';
+import {animations} from "../services/animations";
 
 @Component({
 	selector: 'app-player-board',
 	templateUrl: './player-board.component.html',
-	animations: [
-		trigger('list', [
-			transition(':enter', [
-				query('@items', [
-					animateChild()
-				], {optional: true})
-			]),
-		]),
-		trigger('item', [
-			transition(':enter', [
-				style({transform: 'translateY(-100rem)'}),
-				animate('600ms ease-out', style({transform: 'translateY(0)'}))
-			]),
-			transition(':leave', [
-				animate('600ms ease-in', style({transform: 'translateY(-100rem)'}))
-			])
-		]),
-		trigger('coinFlip', [
-			transition('void => *', []),
-			transition('* => *', [
-				animate('500ms ease-in-out',
-					keyframes([
-						style({
-							transform: 'rotateY(0deg) scale(1.1)',
-							offset: 0
-						}),
-						style({
-							transform: 'rotateY(180deg) scale(1.1)',
-							offset: 0.25
-						}),
-						style({
-							transform: 'rotateY(360deg) scale(1.1)',
-							offset: 0.5
-						}),
-						style({
-							transform: 'rotateY(540deg) scale(1.1)',
-							offset: 0.75
-						}),
-						style({
-							transform: 'rotateY(720deg) scale(1)',
-							offset: 1
-						})
-					])
-				)
-			])
-		]),
-		trigger('prisonDoor', [
-			transition(':enter', [
-				style({transform: 'translateX(-100rem)'}),
-				animate('2000ms',
-					style({transform: 'translateX(0rem)'}))
-			]),
-			transition(':leave', [
-				style({transform: 'translateX(0rem)'}),
-				animate('2000ms',
-					style({transform: 'translateX(-100rem)'}))
-			]),
-		]),
-	],
+	animations,
 	styleUrls: ['./player-board.component.scss']
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -2,7 +2,7 @@
 	<div class="overlay" (click)="closeCard()"></div>
 </ng-container>
 <div class="card" [ngClass]="[card.color]"
-     [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
+     [@itemFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
 	<div class="face" *ngIf="state==='default'" (click)="cardClicked()">
 		<div [style.font-size]="iconSize" class="card-icon">
 			{{ card.key + "i" | translate }}

@@ -1,43 +1,16 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Card} from "../../models/game";
 import {ShortCode} from "../../models/shortCode";
-import { AudioService } from 'src/app/services/audio.service';
+import {AudioService} from 'src/app/services/audio.service';
 // @ts-ignore
 import * as C from "../../../../../config/constantes.js";
+import {animations} from "../../services/animations";
 
 @Component({
 	selector: 'app-item',
 	templateUrl: './item.component.html',
 	styleUrls: ['./item.component.scss'],
-	animations: [
-		trigger("cardFlip", [
-			state(
-				"default",
-				style({
-					transform: "none",
-					zIndex: "1",
-					width: "{{width}}",
-					height: "{{height}}",
-				}),
-				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
-			),
-			state(
-				"flipped",
-				style({
-					transform: "rotateY(180deg) scale(3.5)",
-					zIndex: "99",
-					top: "{{translateY}}px",
-					left: "{{translateX}}px",
-					width: "{{width}}",
-					height: "100%",
-				}),
-				{params: {translateX: 0, translateY: 0, width: "{{width}}", height: "{{height}}"}}
-			),
-			transition("default => flipped", [animate("300ms")]),
-			transition("flipped => default", [animate("300ms")]),
-		])
-	]
+	animations
 })
 export class ItemComponent {
 	C = C;
@@ -58,8 +31,8 @@ export class ItemComponent {
 	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() height = this.screenWidth < this.screenHeight ? '18vw':'18vh';
-	@Input() width = this.screenWidth < this.screenHeight ? '18vw':'18vh';
+	@Input() height = this.screenWidth < this.screenHeight ? '18vw' : '18vh';
+	@Input() width = this.screenWidth < this.screenHeight ? '18vw' : '18vh';
 	@Input() iconSize = this.screenWidth < this.screenHeight ? '10vw' : '10vh';
 	@Input() letterSize = this.screenWidth < this.screenHeight ? '1vw' : '1vw';
 	@Input() textSize = this.screenWidth < this.screenHeight ? '1vw' : '1vw';
