@@ -12,19 +12,19 @@
 			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
 		</div>
 		<div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
-			[ngClass]="[card.color + 'Color', state === 'flipped' ? 'hide' : 'show']"></div>
+		     [ngClass]="[card.color + 'Color', state === 'flipped' ? 'hide' : 'show']"></div>
 		<div *ngIf="card.count>=amountCardsForProd" [style.width]="height" [style.height]="height" class="wheel-container">
 			<div class="wheel">
 			</div>
 		</div>
-		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button color=""
+		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button
 		        class="transform" [ngClass]="getBuildColor(card)">
-				<div class="giftBounce">
-					🛠️
-				</div>
-				<div class="buildText">
-					{{ getBuildText(card) | translate }}🎁
-				</div>
+			<div class="giftBounce">
+				🛠️
+			</div>
+			<div class="buildText">
+				{{ getBuildText(card) | translate }}🎁
+			</div>
 		</button>
 	</div>
 	<div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">

@@ -1,18 +1,19 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Receipe} from '../../models/receipes';
+import {Recipe} from '../../models/recipe';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-	selector: 'app-receipe',
-	templateUrl: './receipe.component.html',
-	styleUrls: ['./receipe.component.scss']
+	selector: 'app-recipe',
+	templateUrl: './recipe.component.html',
+	styleUrls: ['./recipe.component.scss']
 })
-export class ReceipeComponent {
+export class RecipeComponent {
 
-	@Input() receipe: Receipe = new Receipe('', 0);
+	@Input() recipe: Recipe = new Recipe('', 0);
 	@Input() width: string = 'calc(18vw)';
 	@Input() height: string = 'calc(18vw * 1.5)';
-	@Output() onReceipeCompleted: EventEmitter<Receipe> = new EventEmitter<Receipe>();
+	@Output() onReceipeCompleted: EventEmitter<Recipe> = new EventEmitter<Recipe>();
+	@Output() onIngredientClick: EventEmitter<any> = new EventEmitter<any>();
 	faCheck = faCheck;
 
 	constructor() {
@@ -23,11 +24,11 @@ export class ReceipeComponent {
 	}
 
 	buildCardLvlUp() {
-		this.onReceipeCompleted.emit(this.receipe);
+		this.onReceipeCompleted.emit(this.recipe);
 	}
 
 	getBuildText() {
-		switch (this.receipe.weight) {
+		switch (this.recipe.weight) {
 			case 0:
 				return "CARD.BUILD_UP_0";
 			case 1:
@@ -39,7 +40,7 @@ export class ReceipeComponent {
 	}
 
 	getReceipeColor() {
-		switch (this.receipe.weight) {
+		switch (this.recipe.weight) {
 			case 0:
 				return "red";
 			case 1:
@@ -48,5 +49,11 @@ export class ReceipeComponent {
 				return "green";
 		}
 		return "blue";
+	}
+
+	ingredientClick(ingredient: any) {
+		if (ingredient.have == 0) {
+			this.onIngredientClick.emit(ingredient);
+		}
 	}
 }

@@ -6,10 +6,13 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Credit, Player} from "../models/game";
 import {BackService} from "../services/back.service";
 import {MatDialog} from "@angular/material/dialog";
-import {environment} from "../../environments/environment";
 import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
-import {faCamera, faCircleInfo, faClipboardCheck, faEye, faEyeSlash, faFileContract, faKeyboard, faQrcode, faCreditCardAlt} from "@fortawesome/free-solid-svg-icons";
+import {
+	faClipboardCheck,
+	faFileContract,
+	faCreditCardAlt
+} from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {animate, animateChild, keyframes, query, style, transition, trigger} from "@angular/animations";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
@@ -19,7 +22,7 @@ import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dia
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import {ShortCode} from "../models/shortCode";
-import {Receipe} from "../models/receipes";
+import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
@@ -93,7 +96,6 @@ import {AudioService} from '../services/audio.service';
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	ioURl: string = environment.API_HOST;
 	private socket: any;
 	screenWidth = 0;
 	screenHeight = 0;
@@ -110,19 +112,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	currentDU = 0;
 	cards: Card[] = [];
 	credits: Credit[] = [];
-	faCamera = faCamera;
-	faEye = faEye;
-	faEyeSlash = faEyeSlash;
-	faQrcode = faQrcode;
-	faKeyboard = faKeyboard;
-	faInfo = faCircleInfo;
+	recipes: Recipe[] = [];
 	faFileContract = faFileContract;
 	faClipboardCheck = faClipboardCheck;
 	faCreditCardAlt = faCreditCardAlt;
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = true;
-	panelReceipeOpenState = true;
+	panelRecipeOpenState = true;
 	C = C;
 	timerCredit = 5;
 	timerPrison = 5;
@@ -164,9 +161,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.updateScreenSize();
-		this.scanV3 = this.localStorageService.getItem("scanV3"); 
+		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.panelCreditOpenState = this.localStorageService.getItem("panelCredit") == undefined ? true : this.localStorageService.getItem("panelCredit");
-		this.panelReceipeOpenState = this.localStorageService.getItem("panelReceipe") == undefined ? true : this.localStorageService.getItem("panelReceipe");
+		this.panelRecipeOpenState = this.localStorageService.getItem("panelRecipe") == undefined ? true : this.localStorageService.getItem("panelRecipe");
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
@@ -280,7 +277,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		});
 		this.socket.on(C.UPDATED_PLAYER, (data: any) => {
-			if(data.id == this.idPlayer){
+			if (data.id == this.idPlayer) {
 				this.player = data;
 			}
 		});
@@ -375,7 +372,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
+				if (!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
@@ -466,7 +463,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
+			if (!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -545,7 +542,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const cards = this.formatNewCards(newCards);
 		this.cards = _.concat(this.cards, cards);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		if(!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
+		if (!this.modeNewCard) {
+			this.countOccurrencesAndHideDuplicates();
+		} else {
+			this.recipes = getAvailableRecipes(this.cards, this.amountCardsForProd);
+		}
 	}
 
 	produceLevelUp($event: Card) {
@@ -768,17 +769,31 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.dialog.open(GameInfosDialog, {});
 	}
 
-	onReceipeCompleted(receipe: Receipe) {
-		console.log(receipe);
-	}
-
 	togglePanel(panel: string) {
 		if (panel == 'credit') {
 			this.panelCreditOpenState = !this.panelCreditOpenState;
 			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
-		} else if (panel == 'receipe') {
-			this.panelReceipeOpenState = !this.panelReceipeOpenState;
-			this.localStorageService.setItem('panelReceipe', this.panelReceipeOpenState);
+		} else if (panel == 'recipe') {
+			this.panelRecipeOpenState = !this.panelRecipeOpenState;
+			this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
 		}
+	}
+
+	onRecipeCompleted(recipe: Recipe) {
+		console.log(recipe);
+	}
+
+	whoHaveCard(ingredient: Ingredient) {
+		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					text: payload.status == "deck" ? this.i18nService.instant("CARD.IN_DECK") : this.i18nService.instant("CARD.IN_PLAYER", {player: payload.name})
+				}
+			});
+		});
+	}
+
+	recipeCompleted($event: Recipe) {
+
 	}
 }

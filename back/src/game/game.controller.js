@@ -452,4 +452,29 @@ export default {
             });
         }
     },
+    whoHaveCard:            async (req, res, next) => {
+        const {
+            idGame,
+            cardKey
+        } = req.params;
+        try {
+            const payload = await gameService.whoHaveCard(idGame, cardKey);
+            if (payload) {
+                return res.status(200).json(payload);
+            }
+            else {
+                return res.status(500).json({
+                    status:  "ko",
+                    message: "ERROR.FINDING_INGREDIENT",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game who have ingredient error:", err);
+            next({
+                status:  400,
+                message: "ERROR.FINDING_INGREDIENT",
+            });
+        }
+    },
 };

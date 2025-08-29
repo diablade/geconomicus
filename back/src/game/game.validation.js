@@ -193,24 +193,35 @@ export const schemas = {
                         'any.required': 'Game ID is required'
                     })
     }),
-    refreshPlayer: Joi.object({
+    refreshPlayer:          Joi.object({
+        idGame:   Joi.string().custom(isValidObjectId).required()
+                      .messages({
+                          'any.invalid':  'Invalid game ID format',
+                          'any.required': 'Game ID is required'
+                      }),
+        idPlayer: Joi.string().custom(isValidObjectId).required()
+                      .messages({
+                          'any.invalid':  'Invalid player ID format',
+                          'any.required': 'Player ID is required'
+                      })
+    }),
+    copyGame:               Joi.object({
         idGame: Joi.string().custom(isValidObjectId).required()
                     .messages({
                         'any.invalid':  'Invalid game ID format',
                         'any.required': 'Game ID is required'
-                    }),
-        idPlayer: Joi.string().custom(isValidObjectId).required()
-                    .messages({
-                        'any.invalid':  'Invalid player ID format',
-                        'any.required': 'Player ID is required'
                     })
     }),
-    copyGame: Joi.object({
-        idGame: Joi.string().custom(isValidObjectId).required()
-                    .messages({
-                        'any.invalid':  'Invalid game ID format',
-                        'any.required': 'Game ID is required'
-                    })
+    whoHaveCard:            Joi.object({
+        idGame:  Joi.string().custom(isValidObjectId).required()
+                     .messages({
+                         'any.invalid':  'Invalid game ID format',
+                         'any.required': 'Game ID is required'
+                     }),
+        cardKey: Joi.string().required()
+                     .messages({
+                         'any.required': 'card key is required'
+                     })
     })
 };
 

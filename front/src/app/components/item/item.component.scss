@@ -29,15 +29,14 @@
     width: 100%;
     position: absolute;
   }
-}
 
-.smallLetter {
-  z-index: 2;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-size: 1rem;
-  margin: 5px;
+  &-letter {
+    z-index: 2;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 5px;
+  }
 }
 
 
@@ -66,18 +65,6 @@
   left: 0;
   display: flex;
   background: rgba(0, 0, 0, 0.3);
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.6);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 
 .shortCode {

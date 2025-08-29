@@ -255,7 +255,7 @@ async function createGame(game) {
         shortId:                 nanoid(),
         status:                  C.OPEN,
         typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-        modeNewCard: req.body.modeNewCard || false,
+        modeNewCard:             req.body.modeNewCard || false,
         events:                  [createEvent],
         decks:                   [],
         players:                 [],
@@ -318,7 +318,7 @@ async function updateGame(game) {
     }, {
         $set: {
             typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-            modeNewCard: game.modeNewCard || false,
+            modeNewCard:             game.modeNewCard || false,
             name:                    game.name ? game.name : "sans nom",
             animator:                game.animator ? game.animator : "sans animateur",
             location:                game.location ? game.location : "sans lieu",
@@ -553,6 +553,32 @@ async function newGameFromCopy(idGame) {
     // return newGame;
 }
 
+async function whoHaveCard(idGame, cardKey) {
+    const game = await GameModel.findById(idGame).lean();
+    if (game) {
+        const player = game.players.find(player => player.cards.find(card => card.key === cardKey));
+        if (player) {
+            return {
+                status: "player",
+                name:   player.name
+            };
+        }
+        else {
+            const inDeck = game.decks.some(deck => deck.some(card => card.key === cardKey));
+            if (inDeck) {
+                return {
+                    status: "deck",
+                    name:   ""
+                };
+            }
+            throw new Error("Player not found");
+        }
+    }
+    else {
+        throw new Error("Game not found");
+    }
+}
+
 export default {
     createGame:             createGame,
     updateGame:             updateGame,
@@ -564,5 +590,6 @@ export default {
     initGame:               initGame,
     resetGame:              resetGame,
     refreshForceAllPlayers: refreshForceAllPlayers,
-    refreshPlayer:          refreshPlayer
+    refreshPlayer:          refreshPlayer,
+    whoHaveCard:            whoHaveCard
 }

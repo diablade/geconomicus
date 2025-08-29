@@ -7,8 +7,8 @@
 		<div [style.font-size]="iconSize" class="card-icon">
 			{{ card.key + "i" | translate }}
 		</div>
-		<div [style.font-size]="textSize" class="card-text contou">{{ card.key + "n" | translate }}</div>
-		<div [style.font-size]="letterSize" class="smallLetter contour ">&nbsp;{{ card.letter }}&nbsp;</div>
+		<div [style.font-size]="textSize" class="card-text">{{ card.key + "n" | translate }}</div>
+		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">&nbsp;{{ card.letter }}&nbsp;</div>
 	</div>
 	<div class="back d-flex flex-column align-items-center" [ngClass]="[card.color]" *ngIf="state==='flipped'"
 	     (click)="cardClicked()">
@@ -22,7 +22,7 @@
 				{{ card.price }} {{ typeMoney === C.JUNE ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
 			</div>
 			<div class="price"
-				 *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
+			     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
 			</div>
 		</div>
 		<div class="flex-grow-1 w-100 h-100">

@@ -396,4 +396,10 @@ export class BackService {
 			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.REFRESH_FORCE_ALL_PLAYERS"))
 		)
 	}
+
+	whoHaveCard(idGame: string | undefined, ingredientKey: string) {
+		return this.http.get<any>(environment.API_HOST + environment.GAME.WHO_HAVE_CARD + idGame + '/' + ingredientKey).pipe(
+			catchError(err => this.handleError(err, this.ERROR, "ERROR.FINDING_CARD"))
+		)
+	}
 }
