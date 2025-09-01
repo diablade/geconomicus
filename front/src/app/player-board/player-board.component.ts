@@ -336,6 +336,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					c.status = data.credit.status;
 				}
 			});
+			this.panelCreditOpenState = true;
+			this.localStorageService.setItem('panelCredit', true);
 			this.requestingWhenCreditEnds(data, true);
 		});
 		this.socket.on(C.CREDITS_STARTED, async () => {
@@ -491,7 +493,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	produceLevelUp($event: Card) {
+	produceLevelUp($event: any) {
 		if (this.isProducing) {
 			return; // Prevent double-clicks
 		}
@@ -735,7 +737,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	recipeCompleted($event: Recipe) {
-
+	recipeCompleted(recipe: Recipe) {
+		if (recipe.completed && recipe.ingredients.some(i => i.have > 0)) {
+			this.produceLevelUp({letter: recipe.letter, weight: recipe.weight});
+		}
 	}
 }
