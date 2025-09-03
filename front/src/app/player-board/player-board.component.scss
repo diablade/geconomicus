@@ -13,9 +13,8 @@
     background: rgba(255, 255, 255, 0.8);
     backface-visibility: visible;
     transform-style: preserve-3d;
-    box-shadow:
-      inset 0 0 10px rgba(0,0,0,0.2),
-      0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(0, 0, 0, 0.3);
 
     &::before {
       content: '';
@@ -25,155 +24,161 @@
       right: 0;
       bottom: 0;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 51%, rgba(0,0,0,0.05) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 51%, rgba(0, 0, 0, 0.05) 100%);
       z-index: 1;
     }
   }
 }
 
 .imgTitle {
-	width: 50px;
-	height: 50px;
-	border: solid #5398ca 2px;
-	border-radius: 40px;
-	background: rgba(255, 255, 255, 0.65);
+  width: 50px;
+  height: 50px;
+  border: solid #5398ca 2px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.65);
 }
 
 .sold {
-	font-size: 2.1rem;
-	line-height: 100%;
-	margin: 10px;
-	font-weight: bold;
+  font-size: 2.1rem;
+  line-height: 100%;
+  margin: 10px;
+  font-weight: bold;
 }
+
 .smallSold {
-	font-size: 0.7rem;
-	line-height: 100%;
-	margin: 10px;
-	font-weight: bold;
+  font-size: 0.7rem;
+  line-height: 100%;
+  margin: 10px;
+  font-weight: bold;
 }
 
 .titleBar {
-	height: 50px;
-	margin-bottom: 25px;
+  height: 50px;
+  margin-bottom: 25px;
 }
 
 .username {
-	border-radius: 5px;
-	padding: 2px;
-	max-width: 80px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	background: rgba(255, 255, 255, 0.65);
-	overflow: hidden;
+  border-radius: 5px;
+  padding: 2px;
+  max-width: 80px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.65);
+  overflow: hidden;
 }
 
 .game {
-	width: 100vw;
-	height: 100vh;
-	background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
 }
 
-.du{
-	font-size: 1.5rem;
+.du {
+  font-size: 1.5rem;
 }
 
 .duIcon {
-	height: 100%;
-	object-fit: cover;
+  height: 100%;
+  object-fit: cover;
 }
 
 .btnCredits {
-	position: fixed;
-	bottom: 0;
-	padding: 15px;
-	left: 0;
-	z-index: 2;
+  position: fixed;
+  bottom: 0;
+  padding: 15px;
+  left: 0;
+  z-index: 2;
 }
+
 .btnBuy {
-	position: fixed;
-	bottom: 0;
-	padding: 15px;
-	right: 0;
-	z-index: 2;
+  position: fixed;
+  bottom: 0;
+  padding: 15px;
+  right: 0;
+  z-index: 2;
 }
 
 .buy {
-	height: 50px;
+  height: 50px;
+  //background-color: white
+  backdrop-filter: blur(15px);
+  border: solid gray 2px;
+  padding: 5px;
 }
 
 .credits {
-	position: fixed;
-	bottom: 80px;
-	left: 0;
-	z-index: 2;
-	visibility: hidden;
-	overflow: auto;
+  position: fixed;
+  bottom: 80px;
+  left: 0;
+  z-index: 2;
+  visibility: hidden;
+  overflow: auto;
 }
 
 .panelOpen {
-	visibility: visible;
-	animation: ease 1s;
+  visibility: visible;
+  animation: ease 1s;
 }
 
 .bottomBtn {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	display: flex;
-	justify-content: space-around;
-	padding: 15px;
-	z-index: 2;
-	font-size: 1.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  z-index: 2;
+  font-size: 1.5rem;
 }
 
 .blocked {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	display: flex;
-	z-index: 1000;
-	background: rgba(0, 0, 0, 0.3);
-	user-select: none;
-	justify-content: center;
-	align-items: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  user-select: none;
+  justify-content: center;
+  align-items: center;
 }
 
 .prison {
-	background-image: url('/assets/images/prison.png');
-	background-size: cover;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  background-image: url('/assets/images/prison.png');
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .default-credit {
-	background: white;
-	width: 300px;
-	height: 130px;
-	display: flex;
-	align-items: center;
-	border-radius: 20px;
-	padding: 10px;
-	justify-content: space-around;
+  background: white;
+  width: 300px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  padding: 10px;
+  justify-content: space-around;
 }
 
 .countDownContainer {
-	display: block;
-	position: relative;
+  display: block;
+  position: relative;
 
-	.time {
-		font-size: 65px;
-		position: absolute;
-		display: flex;
-		top: 46%;
-		left: 23%;
-	}
+  .time {
+    font-size: 65px;
+    position: absolute;
+    display: flex;
+    top: 46%;
+    left: 23%;
+  }
 }
 
 .separator {
-	width: 2px;
-	background-color:#673ab7;
+  width: 2px;
+  background-color: #673ab7;
 }
