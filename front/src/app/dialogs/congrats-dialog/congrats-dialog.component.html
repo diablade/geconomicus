@@ -1,16 +1,27 @@
 <div (click)="close()"
-		 class="w-100 h-100 d-flex align-items-center align-content-center justify-content-center">
+     class="w-100 h-100 d-flex align-items-center align-content-center justify-content-center">
 	<div class="wheel-container">
 		<div class="wheel"></div>
 	</div>
-	<div class="card">
+	<div *ngIf="!modelItem" class="card">
 		<app-card
-		[card]="card"
-		[typeMoney]="'debt'"
-		[idOwner]="''"
-		[idGame]="''"
-		[flippable]="false"
+				[card]="card"
+				[typeMoney]="'debt'"
+				[idOwner]="''"
+				[idGame]="''"
+				[flippable]="false"
 		></app-card>
+	</div>
+	<div *ngIf="modelItem" class="card">
+		<app-item
+				[card]="card"
+				[typeMoney]="'debt'"
+				[idOwner]="''"
+				[idGame]="''"
+				[flippable]="false"
+				[letterSize]="'2rem'"
+				[textSize]="'1rem'"
+		></app-item>
 	</div>
 	<button-timer class="closeBtn" [secondsTimer]="5" (timerEnd)="close()"></button-timer>
 	<div (click)="close()" class="gecoFont shadowed fs-4 congrats-message">{{ text }}</div>

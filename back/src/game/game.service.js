@@ -171,7 +171,7 @@ async function initGameDebt(game) {
             amountCardsForProd: game.amountCardsForProd,
             timerCredit:        game.timerCredit,
             timerPrison:        game.timerPrison,
-            modeNewCard:        game.modeNewCard
+            modelItem:        game.modelItem
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
@@ -230,7 +230,7 @@ async function initGameJune(game) {
             typeMoney:          C.JUNE,
             statusGame:         C.START_GAME,
             amountCardsForProd: game.amountCardsForProd,
-            modeNewCard:        game.modeNewCard
+            modelItem:        game.modelItem
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
@@ -255,7 +255,7 @@ async function createGame(game) {
         shortId:                 nanoid(),
         status:                  C.OPEN,
         typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-        modeNewCard:             req.body.modeNewCard || false,
+        modelItem:             req.body.modelItem || false,
         events:                  [createEvent],
         decks:                   [],
         players:                 [],
@@ -318,7 +318,7 @@ async function updateGame(game) {
     }, {
         $set: {
             typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-            modeNewCard:             game.modeNewCard || false,
+            modelItem:             game.modelItem || false,
             name:                    game.name ? game.name : "sans nom",
             animator:                game.animator ? game.animator : "sans animateur",
             location:                game.location ? game.location : "sans lieu",
@@ -366,7 +366,7 @@ async function updateGame(game) {
             timerPrison:        game.timerPrison,
             amountCardsForProd: game.amountCardsForProd,
             gameName:           game.name,
-            modeNewCard:        game.modeNewCard,
+            modelItem:        game.modelItem,
         };
 
         socket.emitTo(game.idGame, C.UPDATE_GAME_OPTION, payload);
@@ -447,7 +447,7 @@ async function resetGame(idGame) {
             players:                 players,
             credits:                 [],
             events:                  events,
-            modeNewCard:             game.modeNewCard || false,
+            modelItem:             game.modelItem || false,
             priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
             priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
             priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,

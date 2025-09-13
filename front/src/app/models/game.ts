@@ -85,7 +85,7 @@ export class Game {
 	location = "";
 	shortId = "";
 	typeMoney = "june";
-	modeNewCard = false;
+	modelItem = false;
 	players: Player[] = [];
 	decks: Card[][] = [[]];
 	events: EventGeco[] = [];

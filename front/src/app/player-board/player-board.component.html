@@ -80,7 +80,7 @@
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
-	<div *ngIf="!modeNewCard" @list class="d-flex flex-row flex-wrap">
+	<div *ngIf="!modelItem" @list class="d-flex flex-row flex-wrap">
 		<ng-container *ngFor="let card of cards">
 			<app-card
 					@item *ngIf="card.displayed"
@@ -102,7 +102,7 @@
 			></app-card>
 		</ng-container>
 	</div>
-	<div *ngIf="modeNewCard" class="d-flex flex-row flex-wrap justify-content-center">
+	<div *ngIf="modelItem" class="d-flex flex-row flex-wrap justify-content-center">
 		<div @list *ngFor="let card of cards">
 			<app-item
 					@item
@@ -124,7 +124,7 @@
 			></app-item>
 		</div>
 	</div>
-	<div *ngIf="modeNewCard" class="credits w-100 d-flex flex-row"
+	<div *ngIf="modelItem" class="credits w-100 d-flex flex-row"
 	     [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
 		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelRecipeOpenState ? 'w-50':'w-100'">
 			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
@@ -152,11 +152,11 @@
 		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
-		<button *ngIf="modeNewCard && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
+		<button *ngIf="modelItem && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
 		        (click)="togglePanel('recipe')">
 			<fa-icon *ngIf="!panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
-		<button *ngIf="modeNewCard && panelRecipeOpenState" class="buy" mat-fab color="primary"
+		<button *ngIf="modelItem && panelRecipeOpenState" class="buy" mat-fab color="primary"
 		        (click)="togglePanel('recipe')">
 			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>

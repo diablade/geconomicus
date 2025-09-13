@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {Credit} from "../models/game";
+import {Credit} from "../../models/game";
 
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import * as C from "../../../../../config/constantes";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({

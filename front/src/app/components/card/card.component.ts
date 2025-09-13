@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {Card} from "../models/game";
+import {Card} from "../../models/game";
 import {faGift} from "@fortawesome/free-solid-svg-icons";
-import {ShortCode} from "../models/shortCode";
-import {AudioService} from '../services/audio.service';
-import {animations} from "../services/animations";
+import {ShortCode} from "../../models/shortCode";
+import {AudioService} from '../../services/audio.service';
+import {animations} from "../../services/animations";
 
 @Component({
 	selector: 'app-card',

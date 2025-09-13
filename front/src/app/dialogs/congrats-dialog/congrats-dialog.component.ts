@@ -11,10 +11,12 @@ import {AudioService} from "../../services/audio.service";
 export class CongratsDialogComponent implements AfterViewInit {
   @Input() card!: Card;
   @Input() text!: string;
+  @Input() modelItem = false;
 
   constructor(public dialogRef: MatDialogRef<CongratsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
     this.text = data.text;
     this.card = data.card;
+	this.modelItem = data.modelItem;
   }
 
   ngAfterViewInit(): void {

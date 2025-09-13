@@ -77,7 +77,7 @@ let Game = new Schema({
 	location: {type: String, required: true},
 	shortId: {type: String, required: true},
 	typeMoney: {type: String, required: false},
-	modeNewCard: {type: Boolean, required: false},
+	modelItem: {type: Boolean, required: false},
 	events: {type: [EventGeco], required: false},
 	decks: {type: [[Card]], required: false},
 	players: {type: [Player], required: false},

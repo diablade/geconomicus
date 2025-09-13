@@ -49,7 +49,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	statusGame = "waiting";
 	gameName: string = "";
 	typeMoney = C.JUNE;
-	modeNewCard = false;
+	modelItem = false;
 	amountCardsForProd = 4;
 	currentDU = 0;
 	cards: Card[] = [];
@@ -150,7 +150,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.currentDU = data.currentDU;
 			this.statusGame = data.statusGame;
 			this.gameName = data.gameName;
-			this.modeNewCard = data.modeNewCard;
+			this.modelItem = data.modelItem;
 			this.timerCredit = data.timerCredit;
 			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
@@ -314,7 +314,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
+				if (!this.modelItem) this.countOccurrencesAndHideDuplicates();
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
@@ -407,7 +407,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			if (!this.modeNewCard) this.countOccurrencesAndHideDuplicates();
+			if (!this.modelItem) this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -447,7 +447,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			backdropClass: 'bgBlur',
 			data: {
 				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
-				card: card
+				card: card,
+				modelItem: this.modelItem
 			},
 			width: '10px',
 			height: '10px'
@@ -486,7 +487,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const cards = this.formatNewCards(newCards);
 		this.cards = _.concat(this.cards, cards);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		if (!this.modeNewCard) {
+		if (!this.modelItem) {
 			this.countOccurrencesAndHideDuplicates();
 		} else {
 			this.recipes = getAvailableRecipes(this.cards, this.amountCardsForProd);

@@ -46,7 +46,7 @@ export const schemas = {
         animator:                Joi.string(),
         location:                Joi.string(),
         typeMoney:               Joi.string(),
-        modeNewCard:             Joi.boolean(),
+        modelItem:             Joi.boolean(),
         surveyEnabled:           Joi.boolean(),
         devMode:                 Joi.boolean(),
         autoDeath:               Joi.boolean(),
