@@ -15,7 +15,7 @@ interface Language {
 export class LanguageBtnComponent implements OnInit {
 	languages: Language[] = [
 		{flag: "🇫🇷", language: "Français", lang: "fr"},
-		{flag: "🇪🇸", language: "Spanish", lang: "es"},
+		{flag: "🇪🇸", language: "Español", lang: "es"},
 		{flag: "🇮🇹", language: "Italiano", lang: "it"},
 		{flag: "🇬🇧", language: "English", lang: "en"},
 		{flag: "🇷🇸", language: "Srpski", lang: "sr"},
