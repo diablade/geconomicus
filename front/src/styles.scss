@@ -198,6 +198,19 @@ body {
   }
 }
 
+/* emoji */
+.emoji {
+  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 
+               'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji', 
+               'EmojiOne Color', 'Android Emoji', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: -0.125em;
+  font-size: 1em;
+}
+
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
   .keyboard-dialog {

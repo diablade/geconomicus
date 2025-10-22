@@ -4,17 +4,17 @@
 <div class="card" [ngClass]="[card.color]"
      [@itemFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
 	<div class="face" *ngIf="state==='default'" (click)="cardClicked()">
-		<div [style.font-size]="iconSize" class="card-icon">
-			{{ card.key + "i" | translate }}
+		<div [style.font-size]="iconSize" class="card-icon emoji">
+			{{ getIcon(card.key) }}
 		</div>
-		<div [style.font-size]="textSize" class="card-text">{{ card.key + "n" | translate }}</div>
+		<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
 		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">&nbsp;{{ card.letter }}&nbsp;</div>
 	</div>
 	<div class="back d-flex flex-column align-items-center" [ngClass]="[card.color]" *ngIf="state==='flipped'"
 	     (click)="cardClicked()">
 		<div class="d-flex flex-row justify-content-between w-100">
-			<div class="card-icon-back">{{ card.key + "i" | translate }}</div>
-			<div class="card-text">{{ card.key + "n" | translate }}</div>
+			<div class="card-icon-back emoji">{{ getIcon(card.key) }}</div>
+			<div class="card-text">{{ card.key | translate }}</div>
 			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
 		</div>
 		<div class="prices d-flex flex-column justify-content-between">

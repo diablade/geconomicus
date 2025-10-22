@@ -5,6 +5,7 @@ import {AudioService} from 'src/app/services/audio.service';
 // @ts-ignore
 import * as C from "../../../../../config/constantes.js";
 import {animations} from "../../services/animations";
+import {ThemesService} from "../../services/themes.service";
 
 @Component({
 	selector: 'app-item',
@@ -46,7 +47,7 @@ export class ItemComponent {
 
 	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 
-	constructor(private elementRef: ElementRef, private audioService: AudioService) {
+	constructor(private elementRef: ElementRef, private audioService: AudioService, private themesService: ThemesService) {
 	}
 
 	closeCard() {
@@ -75,6 +76,10 @@ export class ItemComponent {
 			+ '", "g":"' + this.idGame
 			+ '", "p":' + this.card.price
 			+ '}';
+	}
+
+	getIcon(icon: string) {
+		return this.themesService.getIcon(icon);
 	}
 
 	calculatePosition() {

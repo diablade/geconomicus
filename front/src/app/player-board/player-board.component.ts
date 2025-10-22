@@ -29,6 +29,7 @@ import createCountdown from "../services/countDown";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
+import { ThemesService } from '../services/themes.service';
 
 @Component({
 	selector: 'app-player-board',
@@ -90,6 +91,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	            private backService: BackService,
 	            private wsService: WebSocketService,
 	            private i18nService: I18nService,
+	            private themesService: ThemesService,
 	            private audioService: AudioService,
 	            private snackbarService: SnackbarService) {
 	}
@@ -143,7 +145,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getPlayerInfos() {
 		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-			this.i18nService.loadNamespace("cards");
+			this.themesService.loadTheme("emojis");
 			this.cards = [];
 			this.player = data.player;
 			this.typeMoney = data.typeMoney;
@@ -731,7 +733,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
-		let cardName = this.i18nService.instant(ingredient.key + "i") + " " + this.i18nService.instant(ingredient.key + "n");
+		let cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
 		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {

@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Recipe} from '../../models/recipe';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
+import {ThemesService} from '../../services/themes.service';
 
 @Component({
 	selector: 'app-recipe',
@@ -16,7 +17,7 @@ export class RecipeComponent {
 	@Output() onIngredientClick: EventEmitter<any> = new EventEmitter<any>();
 	faCheck = faCheck;
 
-	constructor() {
+	constructor(private themesService: ThemesService) {
 	}
 
 	ngOnInit(): void {
@@ -55,5 +56,9 @@ export class RecipeComponent {
 		if (ingredient.have == 0) {
 			this.onIngredientClick.emit(ingredient);
 		}
+	}
+
+	getIcon(icon: string) {
+		return this.themesService.getIcon(icon);
 	}
 }

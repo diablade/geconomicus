@@ -2,15 +2,15 @@
 	<!-- <div class="level">{{ recipe.weight+1 }}</div> -->
 	<div class="header">
 		<div class="header-letter contour">{{ recipe.letter }}</div>
-		<div class="header-icon">{{ recipe.letter + "i" | translate }}</div>
-		<div class="header-name">{{ recipe.letter + "n" | translate }}</div>
+		<div class="header-icon">{{ getIcon(recipe.letter ) }}</div>
+		<div class="header-name">{{ recipe.letter | translate }}</div>
 	</div>
 	<div class="d-flex flex-column flex-wrap">
 		<mat-chip *ngFor="let ingredient of recipe.ingredients" [ngClass]="ingredient.have > 0 ? 'got' : ''"
 			(click)="ingredientClick(ingredient)">
 			<fa-icon [icon]="faCheck" *ngIf="ingredient.have > 0"></fa-icon>
-			{{ ingredient.key + "i" | translate }}
-			{{ ingredient.key + "n" | translate }}
+			<span class="ms-1 emoji">{{ getIcon(ingredient.key) }}</span>
+			<span class="ms-1">{{ ingredient.key | translate }}</span>
 		</mat-chip>
 	</div>
 	<div  class="completed">
