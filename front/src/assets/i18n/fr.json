@@ -142,8 +142,8 @@
         "BUILD_UP_1": "Créer une carte Énergie",
         "BUILD_UP_2": "Créer une carte Technologie",
         "BUILD_UP": "Créer une carte de valeur supérieure",
-        "IN_DECK": "la carte est dans le deck",
-        "IN_PLAYER": "la carte est chez le joueur {{player}}"
+        "IN_DECK": "la carte <b>({{cardName}})</b> est dans le <b>deck</b>",
+        "IN_PLAYER": "la carte <b>({{cardName}})</b> est chez le joueur <b>{{player}}</b>"
     },
     "BANK": {
         "TITLE": "Banque",

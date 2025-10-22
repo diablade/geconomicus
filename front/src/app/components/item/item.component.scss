@@ -13,6 +13,7 @@
     font-size: 0.5rem;
     line-break: auto;
     line-height: 0.7rem;
+    font-weight: bold;
     display: flex;
     width: 100%;
     height: 100%;
@@ -28,6 +29,11 @@
     height: 100%;
     width: 100%;
     position: absolute;
+
+    &-back {
+      font-size: 1rem;
+      line-height: 1rem;
+    }
   }
 
   &-letter {

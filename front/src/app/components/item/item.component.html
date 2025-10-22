@@ -13,7 +13,7 @@
 	<div class="back d-flex flex-column align-items-center" [ngClass]="[card.color]" *ngIf="state==='flipped'"
 	     (click)="cardClicked()">
 		<div class="d-flex flex-row justify-content-between w-100">
-			<div class="iconBack">{{ card.key + "i" | translate }}</div>
+			<div class="card-icon-back">{{ card.key + "i" | translate }}</div>
 			<div class="card-text">{{ card.key + "n" | translate }}</div>
 			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
 		</div>

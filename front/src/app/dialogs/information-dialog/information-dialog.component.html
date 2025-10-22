@@ -1,6 +1,6 @@
 <h1 (click)="back()" mat-dialog-title>{{ title }}</h1>
 <div (click)="back()" mat-dialog-content>
-	{{ text }}
+	<p [innerHTML]="text"></p>
 </div>
 <div mat-dialog-actions class="d-flex justify-content-end">
 	<button-timer [secondsTimer]="timerBtn" [label]="labelBtn" (timerEnd)="back()"></button-timer>

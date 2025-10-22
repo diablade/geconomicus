@@ -486,9 +486,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	async receiveCards(newCards: Card[]) {
 		const cards = this.formatNewCards(newCards);
 		this.cards = _.concat(this.cards, cards);
+		this.cards = _.orderBy(this.cards, ["weight", "letter"],);
 		await new Promise(resolve => setTimeout(resolve, 1000));
 		if (!this.modelItem) {
 			this.countOccurrencesAndHideDuplicates();
+			this.cards = _.orderBy(this.cards, ["count"], "desc");
 		} else {
 			this.recipes = getAvailableRecipes(this.cards, this.amountCardsForProd);
 		}
@@ -729,10 +731,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
+		let cardName = this.i18nService.instant(ingredient.key + "i") + " " + this.i18nService.instant(ingredient.key + "n");
 		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: payload.status == "deck" ? this.i18nService.instant("CARD.IN_DECK") : this.i18nService.instant("CARD.IN_PLAYER", {player: payload.name})
+					text: payload.status == "deck" ? this.i18nService.instant("CARD.IN_DECK", {cardName}) : this.i18nService.instant("CARD.IN_PLAYER", {
+						player: payload.name,
+						cardName
+					}),
 				}
 			});
 		});
