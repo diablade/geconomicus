@@ -3,7 +3,7 @@
 	<div class="wheel-container">
 		<div class="wheel"></div>
 	</div>
-	<div *ngIf="!modelItem" class="card">
+	<div *ngIf="typeTheme=='CARD'" class="card">
 		<app-card
 				[card]="card"
 				[typeMoney]="'debt'"
@@ -12,10 +12,11 @@
 				[flippable]="false"
 		></app-card>
 	</div>
-	<div *ngIf="modelItem" class="card">
+	<div *ngIf="typeTheme!='CARD'" class="card">
 		<app-item
 				[card]="card"
 				[typeMoney]="'debt'"
+				[typeTheme]="typeTheme"
 				[idOwner]="''"
 				[idGame]="''"
 				[flippable]="false"

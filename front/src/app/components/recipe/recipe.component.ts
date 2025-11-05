@@ -11,6 +11,7 @@ import {ThemesService} from '../../services/themes.service';
 export class RecipeComponent {
 
 	@Input() recipe: Recipe = new Recipe('', 0);
+	@Input() typeTheme: string = 'EMOJI';
 	@Input() width: string = 'calc(18vw)';
 	@Input() height: string = 'calc(18vw * 1.5)';
 	@Output() onReceipeCompleted: EventEmitter<Recipe> = new EventEmitter<Recipe>();

@@ -24,8 +24,7 @@ body {
   color: white !important;
   font-weight: bold;
 
-  text-shadow:
-          //TOP
+  text-shadow: //TOP
           0px -1.5px 0px black,
             //TOP RIGHT
           1.5px -1.5px 0px black,
@@ -200,15 +199,19 @@ body {
 
 /* emoji */
 .emoji {
-  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 
-               'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji', 
-               'EmojiOne Color', 'Android Emoji', sans-serif;
   font-weight: normal;
   font-style: normal;
   display: inline-block;
   line-height: 1;
   vertical-align: -0.125em;
   font-size: 1em;
+}
+
+/* twemoji */
+.twemoji {
+  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+  'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+  'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
 /* Target landscape mode */
@@ -222,9 +225,15 @@ body {
 }
 
 @keyframes pulse {
-  0%   { transform: scale(1.5); }
-  50%  { transform: scale(2.5); }
-  100% { transform: scale(1.5); }
+  0% {
+    transform: scale(1.5);
+  }
+  50% {
+    transform: scale(2.5);
+  }
+  100% {
+    transform: scale(1.5);
+  }
 }
 
 

@@ -24,7 +24,7 @@ export class I18nService {
 
 	loadNamespace(namespace: string): void {
 		const lang = this.getCurrentLang();
-		const path = `assets/i18n/themes/${namespace}/${lang}.json`;
+		const path = `assets/i18n/${namespace}/${lang}.json`;
 
 		this.http.get(path).subscribe((extra: any) => {
 			this.translate.setTranslation(lang, extra, true); // true = merge

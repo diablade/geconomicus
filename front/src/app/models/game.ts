@@ -85,7 +85,8 @@ export class Game {
 	location = "";
 	shortId = "";
 	typeMoney = "june";
-	modelItem = false;
+	typeTheme = "CARD";
+	theme = "THEME.CLASSIC";
 	players: Player[] = [];
 	decks: Card[][] = [[]];
 	events: EventGeco[] = [];

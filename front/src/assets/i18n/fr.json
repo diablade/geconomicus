@@ -199,6 +199,12 @@
         "SETTLE_ALL": "Rembourser intégralement",
         "SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?"
     },
+    "THEME": {
+        "TITLE": "Theme",
+        "CLASSIC": "Cartes classiques",
+        "EMOJIS": "Items emoji",
+        "TWEMOJIS": "Items twemoji (uniform)"
+    },
     "OPTION": {
         "TITLE": "Options générales",
         "SAVED": "Options sauvegardées !",

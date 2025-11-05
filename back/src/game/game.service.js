@@ -171,7 +171,7 @@ async function initGameDebt(game) {
             amountCardsForProd: game.amountCardsForProd,
             timerCredit:        game.timerCredit,
             timerPrison:        game.timerPrison,
-            modelItem:        game.modelItem
+            theme:              game.theme
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
@@ -230,7 +230,7 @@ async function initGameJune(game) {
             typeMoney:          C.JUNE,
             statusGame:         C.START_GAME,
             amountCardsForProd: game.amountCardsForProd,
-            modelItem:        game.modelItem
+            theme:              game.theme
         });
         let newEvent = constructor.event(C.INIT_DISTRIB, C.MASTER, player.id, player.coins, cards, Date.now());
         socket.emitTo(game._id.toString() + C.EVENT, C.EVENT, newEvent);
@@ -249,13 +249,13 @@ async function createGame(game) {
     let createEvent = constructor.event(C.CREATE_GAME, C.MASTER, C.MASTER, 0, [], Date.now());
 
     const newGame = new GameModel({
-        name:                    game.name ? game.name : "sans nom",
-        animator:                game.animator ? game.animator : "sans animateur",
-        location:                game.location ? game.location : "sans lieu",
+        name:                    game.name || "sans nom",
+        animator:                game.animator || "sans animateur",
+        location:                game.location || "sans lieu",
         shortId:                 nanoid(),
         status:                  C.OPEN,
-        typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-        modelItem:             req.body.modelItem || false,
+        typeMoney:               game.typeMoney || C.JUNE,
+        theme:                   game.theme || "OPTION.THEME_CLASSIC",
         events:                  [createEvent],
         decks:                   [],
         players:                 [],
@@ -317,43 +317,43 @@ async function updateGame(game) {
         _id: game.idGame,
     }, {
         $set: {
-            typeMoney:               game.typeMoney ? game.typeMoney : C.JUNE,
-            modelItem:             game.modelItem || false,
-            name:                    game.name ? game.name : "sans nom",
-            animator:                game.animator ? game.animator : "sans animateur",
-            location:                game.location ? game.location : "sans lieu",
-            priceWeight1:            game.priceWeight1 ? game.priceWeight1 : priceWeight1,
-            priceWeight2:            game.priceWeight2 ? game.priceWeight2 : priceWeight2,
-            priceWeight3:            game.priceWeight3 ? game.priceWeight3 : priceWeight3,
-            priceWeight4:            game.priceWeight4 ? game.priceWeight4 : priceWeight4,
-            roundMax:                game.roundMax ? game.roundMax : 1,
-            roundMinutes:            game.roundMinutes ? game.roundMinutes : 25,
+            typeMoney:               game.typeMoney || C.JUNE,
+            theme:                   game.theme || "OPTION.THEME_CLASSIC",
+            name:                    game.name || "sans nom",
+            animator:                game.animator || "sans animateur",
+            location:                game.location || "sans lieu",
+            priceWeight1:            game.priceWeight1 || priceWeight1,
+            priceWeight2:            game.priceWeight2 || priceWeight2,
+            priceWeight3:            game.priceWeight3 || priceWeight3,
+            priceWeight4:            game.priceWeight4 || priceWeight4,
+            roundMax:                game.roundMax || 1,
+            roundMinutes:            game.roundMinutes || 25,
             devMode:                 game.devMode === undefined ? true : game.devMode,
             surveyEnabled:           game.surveyEnabled === undefined ? true : game.surveyEnabled,
-            amountCardsForProd:      game.amountCardsForProd ? game.amountCardsForProd : 4,
-            distribInitCards:        game.distribInitCards ? game.distribInitCards : 4,
+            amountCardsForProd:      game.amountCardsForProd || 4,
+            distribInitCards:        game.distribInitCards || 4,
             generateLettersAuto:     game.generateLettersAuto === undefined ? true : game.generateLettersAuto,
-            generateLettersInDeck:   game.generateLettersInDeck ? game.generateLettersInDeck : 0,
-            generatedIdenticalCards: game.generatedIdenticalCards ? game.generatedIdenticalCards : 4,
+            generateLettersInDeck:   game.generateLettersInDeck || 0,
+            generatedIdenticalCards: game.generatedIdenticalCards || 4,
             autoDeath:               game.autoDeath === undefined ? true : game.autoDeath,
-            deathPassTimer:          game.deathPassTimer ? game.deathPassTimer : 4,
+            deathPassTimer:          game.deathPassTimer || 4,
 
             //option june
-            tauxCroissance:   game.tauxCroissance ? game.tauxCroissance : defaultTauxDU,
-            startAmountCoins: game.startAmountCoins ? game.startAmountCoins : 5,
+            tauxCroissance:   game.tauxCroissance || defaultTauxDU,
+            startAmountCoins: game.startAmountCoins || 5,
             inequalityStart:  game.inequalityStart === undefined ? false : game.inequalityStart,
-            pctPoor:          game.pctPoor ? game.pctPoor : 10,
-            pctRich:          game.pctRich ? game.pctRich : 10,
+            pctPoor:          game.pctPoor || 10,
+            pctRich:          game.pctRich || 10,
 
             //option debt
-            defaultCreditAmount:   game.defaultCreditAmount ? game.defaultCreditAmount : 3,
-            defaultInterestAmount: game.defaultInterestAmount ? game.defaultInterestAmount : 1,
-            timerCredit:           game.timerCredit ? game.timerCredit : 5,
-            timerPrison:           game.timerPrison ? game.timerPrison : 5,
-            manualBank:            game.manualBank ? game.manualBank : false,
-            seizureType:           game.seizureType ? game.seizureType : "decote",
-            seizureCosts:          game.seizureCosts ? game.seizureCosts : 2,
-            seizureDecote:         game.seizureDecote ? game.seizureDecote : 25,
+            defaultCreditAmount:   game.defaultCreditAmount || 3,
+            defaultInterestAmount: game.defaultInterestAmount || 1,
+            timerCredit:           game.timerCredit || 5,
+            timerPrison:           game.timerPrison || 5,
+            manualBank:            game.manualBank || false,
+            seizureType:           game.seizureType || "decote",
+            seizureCosts:          game.seizureCosts || 2,
+            seizureDecote:         game.seizureDecote || 25,
 
             modified: Date.now(),
         },
@@ -366,7 +366,7 @@ async function updateGame(game) {
             timerPrison:        game.timerPrison,
             amountCardsForProd: game.amountCardsForProd,
             gameName:           game.name,
-            modelItem:        game.modelItem,
+            theme:              game.theme,
         };
 
         socket.emitTo(game.idGame, C.UPDATE_GAME_OPTION, payload);
@@ -447,7 +447,7 @@ async function resetGame(idGame) {
             players:                 players,
             credits:                 [],
             events:                  events,
-            modelItem:             game.modelItem || false,
+            theme:                   game.theme || false,
             priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
             priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
             priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,

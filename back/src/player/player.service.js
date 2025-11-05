@@ -69,7 +69,7 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
                 timerCredit:        game.timerCredit,
                 amountCardsForProd: game.amountCardsForProd,
                 gameName:           game.name,
-                modelItem:        game.modelItem
+                theme:        game.theme
             });
         }
         else {

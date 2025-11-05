@@ -251,7 +251,7 @@ export class BackService {
 			animator: game.animator,
 			location: game.location,
 			typeMoney: game.typeMoney,
-			modelItem: game.modelItem,
+			theme: game.theme,
 			surveyEnabled: game.surveyEnabled,
 			devMode: game.devMode,
 			autoDeath: game.autoDeath,

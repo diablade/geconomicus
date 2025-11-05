@@ -39,6 +39,7 @@ export class ItemComponent {
 	@Input() textSize = this.screenWidth < this.screenHeight ? '1vw' : '1vw';
 	@Input() priceSize = this.screenWidth < this.screenHeight ? '10vw' : '10vh';
 	@Input() flippable = true;
+	@Input() typeTheme: string | null = "";
 	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)';
 	state = "default";
 	translateX = 0;

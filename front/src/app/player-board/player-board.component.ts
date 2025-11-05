@@ -1,7 +1,7 @@
 import {createAvatar, Options} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
+import {Subscription, Observable} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Credit, Player} from "../models/game";
 import {BackService} from "../services/back.service";
@@ -29,7 +29,7 @@ import createCountdown from "../services/countDown";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
-import { ThemesService } from '../services/themes.service';
+import {ThemesService} from '../services/themes.service';
 
 @Component({
 	selector: 'app-player-board',
@@ -50,7 +50,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	statusGame = "waiting";
 	gameName: string = "";
 	typeMoney = C.JUNE;
-	modelItem = false;
+	typeTheme$ = this.themesService.typeTheme$;
+	theme = 'THEME.CLASSIC';
 	amountCardsForProd = 4;
 	currentDU = 0;
 	cards: Card[] = [];
@@ -61,8 +62,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faCreditCardAlt = faCreditCardAlt;
 	scanV3 = true;
 	flipCoin = false;
-	panelCreditOpenState = true;
-	panelRecipeOpenState = true;
+	panelCreditOpenState = false;
+	panelRecipeOpenState = false;
 	C = C;
 	timerCredit = 5;
 	timerPrison = 5;
@@ -106,7 +107,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem("scanV3");
-		this.panelCreditOpenState = this.localStorageService.getItem("panelCredit") == undefined ? true : this.localStorageService.getItem("panelCredit");
+		this.panelCreditOpenState = this.localStorageService.getItem("panelCredit") == undefined ? false : this.localStorageService.getItem("panelCredit");
 		this.panelRecipeOpenState = this.localStorageService.getItem("panelRecipe") == undefined ? true : this.localStorageService.getItem("panelRecipe");
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
@@ -145,14 +146,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getPlayerInfos() {
 		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-			this.themesService.loadTheme("emojis");
+			this.themesService.loadTheme(data.theme);
+			this.theme = data.theme;
 			this.cards = [];
 			this.player = data.player;
 			this.typeMoney = data.typeMoney;
 			this.currentDU = data.currentDU;
 			this.statusGame = data.statusGame;
 			this.gameName = data.gameName;
-			this.modelItem = data.modelItem;
 			this.timerCredit = data.timerCredit;
 			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
@@ -178,6 +179,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					});
 				});
 			}
+			this.panelCreditOpenState = this.typeMoney === C.DEBT;
+			this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
 			this.localStorageService.setItem("session",
 				{
 					idGame: this.idGame,
@@ -202,6 +205,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerCredit = data.timerCredit;
 			this.timerPrison = data.timerPrison;
 			this.amountCardsForProd = data.amountCardsForProd;
+			this.panelCreditOpenState = this.typeMoney === C.DEBT;
+			this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
 			await this.receiveCards(data.cards);
 		});
 		this.socket.on(C.START_ROUND, async () => {
@@ -290,6 +295,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.timerPrison = data.timerPrison;
 				this.amountCardsForProd = data.amountCardsForProd;
 				this.gameName = data.gameName;
+				this.panelCreditOpenState = this.typeMoney === C.DEBT;
+				this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
+				this.theme = data.theme;
+				this.themesService.loadTheme(data.theme);
 			}
 		});
 		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
@@ -316,7 +325,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (!this.modelItem) this.countOccurrencesAndHideDuplicates();
+				if (this.theme == 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
@@ -409,7 +418,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			if (!this.modelItem) this.countOccurrencesAndHideDuplicates();
+			if (this.theme != 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -450,7 +459,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			data: {
 				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
 				card: card,
-				modelItem: this.modelItem
+				theme: this.theme
 			},
 			width: '10px',
 			height: '10px'
@@ -490,7 +499,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.cards = _.concat(this.cards, cards);
 		this.cards = _.orderBy(this.cards, ["weight", "letter"],);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		if (!this.modelItem) {
+		if (this.theme == 'THEME.CLASSIC') {
 			this.countOccurrencesAndHideDuplicates();
 			this.cards = _.orderBy(this.cards, ["count"], "desc");
 		} else {

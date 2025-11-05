@@ -16,6 +16,14 @@
 				<mat-label>{{ "OPTION.LOCALIZATION"|translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="game.location">
 			</mat-form-field>
+			<mat-form-field>
+				<mat-label>{{ "THEME.TITLE"|translate }}</mat-label>
+				<mat-select class="m-auto" [(ngModel)]="game.theme">
+					<mat-option *ngFor="let theme of themes" [value]="theme">
+						{{ theme | translate }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
 					{{ "OPTION.SURVEY_Q"|translate }}
@@ -24,11 +32,6 @@
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.devMode">
 					{{ "OPTION.DEVMODE"|translate }}
-				</mat-checkbox>
-			</div>
-			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="game.modelItem">
-					{{ "OPTION.MODE_NEW_CARD"|translate }}
 				</mat-checkbox>
 			</div>
 			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
@@ -85,7 +88,10 @@
 					{{ "CARD.LV4"|translate }}
 				</div>
 				<mat-form-field *ngIf="game" class="input">
-					<mat-label>{{ (game.typeMoney === 'june' ? "OPTION.PRICE_DU" : "OPTION.PRICE_NET")|translate }}</mat-label>
+					<mat-label>{{
+                            (game.typeMoney === 'june' ? "OPTION.PRICE_DU" : "OPTION.PRICE_NET")|translate
+						}}
+					</mat-label>
 					<input type="number" min="0" matInput
 					       [placeholder]="(game.typeMoney === 'june' ?'12 ':'8 ')+getTranslate('BY_DEFAULT')"
 					       [(ngModel)]="game.priceWeight4">
@@ -109,7 +115,11 @@
 				<mat-checkbox class="" [(ngModel)]="game.autoDeath">
 					{{ "OPTION.DEATH"|translate }}
 				</mat-checkbox>
-				<p>{{ "OPTION.DEATH_MINUTES"|translate : {deathMinute: (Math.round(game.roundMinutes / game.players.length))} }}
+				<p>{{
+                        "OPTION.DEATH_MINUTES"|translate : {
+                            deathMinute: (Math.round(game.roundMinutes / game.players.length))
+                        }
+					}}
 				</p>
 				<p>{{ "OPTION.DEATH_MINUTES_FORMULA"|translate }}
 				</p>
@@ -162,14 +172,14 @@
 								<div>{{ "OPTION.SEIZURE_FIX1"|translate }}</div>
 								<div>{{ "OPTION.SEIZURE_FIX2"|translate }}</div>
 							</div>
-							<input type="number" min="0" class="smallInput" placeholder="2" [(ngModel)]="game.seizureCosts">
+							<input type="number" min="0" class="smallInput" placeholder="2"
+							       [(ngModel)]="game.seizureCosts">
 						</div>
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="'decote'">
-						<div class="d-flex flex-row infoLabel">{{ "OPTION.SEIZURE_DECOTE"|translate }}<input type="number" min="0"
-						                                                                                     class="smallInput"
-						                                                                                     placeholder="33"
-						                                                                                     [(ngModel)]="game.seizureDecote">%
+						<div class="d-flex flex-row infoLabel">{{ "OPTION.SEIZURE_DECOTE"|translate }}<input
+								type="number" min="0" class="smallInput" placeholder="33"
+								[(ngModel)]="game.seizureDecote">%
 						</div>
 					</mat-radio-button>
 				</mat-radio-group>
@@ -200,8 +210,7 @@
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=false>
 						{{ "OPTION.GEN_LETTERS_MANU"|translate }} <input class="smallInput" type="number"
-						                                                 [disabled]="game.generateLettersAuto"
-						                                                 [(ngModel)]="game.generateLettersInDeck">
+						                                                 [disabled]="game.generateLettersAuto" [(ngModel)]="game.generateLettersInDeck">
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ "OPTION.GEN_LETTERS_IDENTICAL"|translate }}</mat-label>
@@ -240,7 +249,9 @@
 	<div mat-dialog-actions>
 		<button mat-button (click)="onNoClick()">{{ "COMMON.CANCEL"|translate }}</button>
 		<button mat-button [color]="'warn'" (click)="onReset()">{{ "VALUES_BY_DEFAULT"|translate }}</button>
-		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="game" cdkFocusInitial>{{ "OK"|translate }}
+		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="game" cdkFocusInitial>{{
+                "OK"|translate
+			}}
 		</button>
 	</div>
 </div>
