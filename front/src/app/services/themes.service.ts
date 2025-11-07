@@ -35,7 +35,10 @@ export class ThemesService {
 			//load icons for the theme
 			if (namespace === "twemojis") {
 				//use emojis from twemojis  (twemoji is loaded via css)
+				this.loadTwemojiCss();
 				pathIcon = "emojis";
+			} else {
+				this.unloadTwemojiCss();
 			}
 			this.i18nService.loadNamespace("themes/" + pathIcon);
 			const path = `assets/i18n/themes/${pathIcon}/icons.json`;
@@ -50,6 +53,21 @@ export class ThemesService {
 			});
 		}
 	}
+
+	loadTwemojiCss() {
+		if (document.getElementById('twemoji-css')) return;
+		const link = document.createElement('link');
+		link.id = 'twemoji-css';
+		link.rel = 'stylesheet';
+		link.href = 'https://cdn.jsdelivr.net/npm/twemoji-colr-font@latest/twemoji.css';
+		document.head.appendChild(link);
+	}
+
+	unloadTwemojiCss() {
+		const link = document.getElementById('twemoji-css');
+		if (link) link.remove();
+	}
+
 
 	getIcon(key: string): string {
 		return this.icons[key];
