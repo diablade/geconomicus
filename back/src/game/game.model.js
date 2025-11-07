@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import * as C from "../../../config/constantes.js";
 
 const Schema = mongoose.Schema;
 
@@ -76,7 +77,7 @@ let Game = new Schema({
 	animator: {type: String, required: true},
 	location: {type: String, required: true},
 	shortId: {type: String, required: true},
-	typeMoney: {type: String, required: false},
+	typeMoney: {type: String, enum: [C.DEBT, C.JUNE], required: false},
 	theme: {type: String, required: false},
 	events: {type: [EventGeco], required: false},
 	decks: {type: [[Card]], required: false},

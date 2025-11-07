@@ -255,7 +255,7 @@ async function createGame(game) {
         shortId:                 nanoid(),
         status:                  C.OPEN,
         typeMoney:               game.typeMoney || C.JUNE,
-        theme:                   game.theme || "OPTION.THEME_CLASSIC",
+        theme:                   game.theme || "THEME.CLASSIC",
         events:                  [createEvent],
         decks:                   [],
         players:                 [],
@@ -318,7 +318,7 @@ async function updateGame(game) {
     }, {
         $set: {
             typeMoney:               game.typeMoney || C.JUNE,
-            theme:                   game.theme || "OPTION.THEME_CLASSIC",
+            theme:                   game.theme || "THEME.CLASSIC",
             name:                    game.name || "sans nom",
             animator:                game.animator || "sans animateur",
             location:                game.location || "sans lieu",
@@ -447,7 +447,7 @@ async function resetGame(idGame) {
             players:                 players,
             credits:                 [],
             events:                  events,
-            theme:                   game.theme || false,
+            theme:                   game.theme || "THEME.CLASSIC",
             priceWeight1:            game.typeMoney === C.JUNE ? defaultPriceWeight1ML : defaultPriceWeight1,
             priceWeight2:            game.typeMoney === C.JUNE ? defaultPriceWeight2ML : defaultPriceWeight2,
             priceWeight3:            game.typeMoney === C.JUNE ? defaultPriceWeight3ML : defaultPriceWeight3,

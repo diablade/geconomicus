@@ -341,8 +341,7 @@ export default {
                     status: "delete done",
                 });
             }
-            else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password,
-                "$2b$04$/uSG6WTkDm94r6fot9lHNes.8MdMkRKTosxjCevTRAHtQXSvWJed6")) {
+            else if (process.env.GECO_NODE_ENV !== "production" && password === "admin") {
                 await GameModel.findByIdAndDelete(idGame);
                 return res.status(200).json({
                     status: "delete done",

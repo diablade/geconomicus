@@ -179,8 +179,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					});
 				});
 			}
-			this.panelCreditOpenState = this.typeMoney === C.DEBT;
-			this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
 			this.localStorageService.setItem("session",
 				{
 					idGame: this.idGame,
@@ -205,8 +203,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.timerCredit = data.timerCredit;
 			this.timerPrison = data.timerPrison;
 			this.amountCardsForProd = data.amountCardsForProd;
-			this.panelCreditOpenState = this.typeMoney === C.DEBT;
-			this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
 			await this.receiveCards(data.cards);
 		});
 		this.socket.on(C.START_ROUND, async () => {
@@ -251,6 +247,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.socket.on(C.RESET_GAME, async (data: any) => {
 			this.dialog.closeAll();
 			await new Promise(resolve => setTimeout(resolve, 2000));
+			this.panelCreditOpenState = false;
+			this.localStorageService.setItem("panelCredit", false);
 			if (this.player.reincarnateFromId) {
 				this.router.navigate(['game', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
 					this.refresh();
@@ -295,8 +293,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.timerPrison = data.timerPrison;
 				this.amountCardsForProd = data.amountCardsForProd;
 				this.gameName = data.gameName;
-				this.panelCreditOpenState = this.typeMoney === C.DEBT;
-				this.localStorageService.setItem("panelCredit", this.panelCreditOpenState);
 				this.theme = data.theme;
 				this.themesService.loadTheme(data.theme);
 			}
@@ -339,6 +335,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.player.coins += data.credit.amount;
 			this.flipCoins();
 			this.audioService.playSound("coins");
+			this.panelCreditOpenState = true;
+			this.localStorageService.setItem("panelCredit", true);
 		});
 		this.socket.on(C.TIMEOUT_CREDIT, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
@@ -379,6 +377,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					c.status = data.credit.status;
 				}
 			});
+
+			this.panelCreditOpenState = true;
+			this.localStorageService.setItem("panelCredit", true);
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
 			this.defaultCredit = true;
 			this.audioService.playSound("police");
