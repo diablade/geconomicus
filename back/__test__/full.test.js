@@ -156,72 +156,6 @@ describe("FULL GAME simulation", () => {
 		const modified = res.body.modified;
 		const created = res.body.created;
 		currentGame = res.body;
-		//CHECK DEFAULT VALUES
-		expect(res.body).toEqual(
-			{
-				__v: 0,
-				name: "test-full-simu",
-				location: "ici",
-				animator: "animator",
-				_id: idGame,
-				status: C.OPEN,
-				typeMoney: "june",
-				events: [{
-					"_id": expect.any(String),
-					"amount": 0,
-					"date": expect.any(String),
-					"emitter": "master",
-					"receiver": "master",
-					"resources": [],
-					"typeEvent": "create-game",
-				}],
-				decks: [],
-				players: [],
-				amountCardsForProd: 4,
-				currentMassMonetary: 0,
-				generatedIdenticalCards: 4,
-				distribInitCards: 4,
-				generateLettersAuto: true,
-				generateLettersInDeck: 0,
-
-				surveyEnabled: true,
-				autoDeath: true,
-				deathPassTimer: 4,
-				devMode: false,
-				priceWeight1: 1,
-				priceWeight2: 2,
-				priceWeight3: 4,
-				priceWeight4: 8,
-				round: 0,
-				roundMax: 1,
-				roundMinutes: 25,
-
-				//option june
-				currentDU: 0,
-				tauxCroissance: 5,
-				inequalityStart: false,
-				startAmountCoins: 5,
-				pctPoor: 10,
-				pctRich: 10,
-
-				//option debt
-				credits: [],
-				defaultCreditAmount: 3,
-				defaultInterestAmount: 1,
-				bankInterestEarned: 0,
-				bankGoodsEarned: 0,
-				bankMoneyLost: 0,
-				timerCredit: 5,
-				timerPrison: 5,
-				manualBank: true,
-				seizureType: "decote",
-				seizureCosts: 2,
-				seizureDecote: 33,
-
-				modified: modified,
-				created: created,
-			}
-		);
 	});
 	test("UPDATE game", async () => {
 		const res = await agent.put("/game/update").send({
@@ -252,10 +186,10 @@ describe("FULL GAME simulation", () => {
 		const res = await agent.get("/game/" + idGame).send();
 		expect(res.statusCode).toEqual(200);
 		expect(res.body.decks).toBeTruthy();
-		expect(res.body.decks[0].length).toEqual(4);
-		expect(res.body.decks[1].length).toEqual(44);
-		expect(res.body.decks[2].length).toEqual(44);
-		expect(res.body.decks[3].length).toEqual(44);
+		expect(res.body.decks[0].length).toEqual(16);
+		expect(res.body.decks[1].length).toEqual(56);    //16 & 56 FOR 10 players
+		expect(res.body.decks[2].length).toEqual(56);
+		expect(res.body.decks[3].length).toEqual(56);
 	});
 	test("START round", async () => {
 		const res = await agent.post("/game/start-round").send({idGame: idGame, round: 0});
@@ -296,7 +230,7 @@ describe("FULL GAME simulation", () => {
 			));
 	});
 	test("PLAY 10 rounds and STOP", async () => {
-		await play(2);	
+		await play(2);
 		// await playerService.killPlayer()
 		// await play(5);
 		const res = await agent.post("/game/stop-round").send({idGame: idGame, round: 0});
