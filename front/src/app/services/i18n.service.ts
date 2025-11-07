@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, tap} from 'rxjs';
 import {environment} from '../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 /**
  * Service for handling internationalization (i18n) and translations
@@ -17,8 +18,17 @@ export class I18nService {
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
-	constructor(private translate: TranslateService) {
+	constructor(private translate: TranslateService, private http: HttpClient) {
 		this.initializeLanguage();
+	}
+
+	loadNamespace(namespace: string): void {
+		const lang = this.getCurrentLang();
+		const path = `assets/i18n/${namespace}/${lang}.json`;
+
+		this.http.get(path).subscribe((extra: any) => {
+			this.translate.setTranslation(lang, extra, true); // true = merge
+		});
 	}
 
 	/**

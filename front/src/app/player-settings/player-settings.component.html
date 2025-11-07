@@ -111,6 +111,12 @@
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
+			<div class="item">
+				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.SYS_SCAN" | translate }}</div>
+				<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3">
+					<fa-icon [icon]="faCamera"></fa-icon>
+				</mat-slide-toggle>
+			</div>
 		</div>
 	</div>
 </div>

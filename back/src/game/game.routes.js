@@ -1,6 +1,6 @@
 import express from 'express';
 import game from './game.controller.js';
-import { validate, schemas } from './game.validation.js';
+import {validate, schemas} from './game.validation.js';
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ router.get('/events/:idGame', validate(schemas.idGame, 'params'), game.getEvents
 router.get('/feedbacks/:idGame', validate(schemas.idGame, 'params'), game.getFeedbacks);
 router.get('/:idGame', validate(schemas.idGame, 'params'), game.getGameById);
 router.get('/short/:shortId', validate(schemas.getIdGameByShortId, 'params'), game.getIdGameByShortId);
+router.get('/who-have-card/:idGame/:cardKey', validate(schemas.whoHaveCard, 'params'), game.whoHaveCard);
 router.post('/create', validate(schemas.create), game.create);
 router.post('/end', validate(schemas.end), game.end);
 router.post('/delete', validate(schemas.deleteGame), game.delete);

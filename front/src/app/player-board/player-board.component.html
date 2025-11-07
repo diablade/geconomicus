@@ -28,7 +28,7 @@
 		</button>
 	</div>
 </div>
-<div class="p-2 w-100 h-100 game overflow-auto" [ngStyle]="getBackgroundStyle()">
+<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
 		<div class="position-relative" (click)="refresh()">
 			<div class="coin-container" [ngSwitch]="typeMoney">
@@ -80,63 +80,98 @@
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
-	<div class="">
-		<div @list class="d-flex flex-row flex-wrap">
-			<ng-container *ngFor="let card of cards">
-				<div @items class="" *ngIf="card.displayed">
-					<app-card
-							[card]="card"
-							[typeMoney]="typeMoney"
-							[idOwner]="idPlayer"
-							[idGame]="idGame"
-							[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-							[currentDU]="currentDU"
-							[amountCardsForProd]="amountCardsForProd"
-							(onBuildCardLvlUp)="produceLevelUp($event)"
-							(onCreateShortCode)="onCreateShortCode($event)"
-							[screenWidth]="screenWidth"
-							[screenHeight]="screenHeight"
-							[width]="screenWidth < screenHeight ? 'calc(28vw)':'calc(28vh)'"
-							[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
-							[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
-							[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
-
-					></app-card>
-				</div>
-			</ng-container>
+	<div *ngIf="(typeTheme$ | async)=='CARD'" @list class="d-flex flex-row flex-wrap">
+		<ng-container *ngFor="let card of cards">
+			<app-card
+					@item *ngIf="card.displayed"
+					[card]="card"
+					[typeMoney]="typeMoney"
+					[idOwner]="idPlayer"
+					[idGame]="idGame"
+					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
+					[currentDU]="currentDU"
+					[amountCardsForProd]="amountCardsForProd"
+					(onBuildCardLvlUp)="produceLevelUp($event)"
+					(onCreateShortCode)="onCreateShortCode($event)"
+					[screenWidth]="screenWidth"
+					[screenHeight]="screenHeight"
+					[width]="screenWidth < screenHeight ? '28vw':'28vh'"
+					[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
+					[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
+					[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
+			></app-card>
+		</ng-container>
+	</div>
+	<div *ngIf="(typeTheme$ | async)!='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
+		<div @list *ngFor="let card of cards">
+			<app-item
+					@item
+					[card]="card"
+					[typeMoney]="typeMoney"
+					[idOwner]="idPlayer"
+					[idGame]="idGame"
+					[typeTheme]="(typeTheme$ | async)"
+					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
+					[currentDU]="currentDU"
+					(onCreateShortCode)="onCreateShortCode($event)"
+					[screenWidth]="screenWidth"
+					[screenHeight]="screenHeight"
+					[height]="screenWidth < screenHeight ? '28vw':'28vh'"
+					[width]="screenWidth < screenHeight ? '28vw':'28vh'"
+					[iconSize]="screenWidth < screenHeight ? '16vw' : '16vh'"
+					[letterSize]="screenWidth < screenHeight ? '2rem' : '2rem'"
+					[textSize]="screenWidth < screenHeight ? '1rem' : '1rem'"
+					[priceSize]="screenWidth < screenHeight ? '1rem' : '1rem'"
+			></app-item>
 		</div>
 	</div>
-	<div *ngIf="typeMoney===C.DEBT" class="credits w-100 d-flex flex-row"
-	     [ngClass]="panelCreditOpenState? 'creditsPanelOpen':'creditsPanelClose' ">
-		<div class="d-inline-flex" *ngFor="let credit of credits">
-			<app-credit [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+	<div *ngIf="(typeTheme$ | async)!='CARD'" class="credits w-100 d-flex flex-row"
+	     [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
+		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelRecipeOpenState ? 'w-50':'w-100'">
+			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
 			            [contractor]="player.name"
 			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
+
+		</div>
+		<div *ngIf="panelCreditOpenState && panelRecipeOpenState" class="separator"></div>
+		<div class="d-flex flex-row overflow-auto" *ngIf="panelRecipeOpenState" [ngClass]="panelCreditOpenState ? 'w-50':'w-100'">
+			<div class="m-1" *ngFor="let recipe of recipes">
+				<app-recipe *ngIf="typeTheme$ | async as typeTheme" [recipe]="recipe"
+				            [typeTheme]="typeTheme"
+				            [width]="screenWidth < screenHeight ? '36vw':'36vh'"
+				            [height]="screenWidth < screenHeight ? 'calc(35vw * 1.5)':'calc(35vh * 1.5)'"
+				            (onReceipeCompleted)="recipeCompleted($event)"
+				            (onIngredientClick)="whoHaveCard($event)">
+				</app-recipe>
+			</div>
 		</div>
 	</div>
-	<div class="btnCredits">
-		<button *ngIf="typeMoney===C.DEBT" class="buy" mat-raised-button color="primary"
-		        (click)="panelCreditOpenState = !panelCreditOpenState">
-			{{ "PLAYER.CREDITS" | translate }}
-			<fa-icon *ngIf="panelCreditOpenState" [icon]="faEye"></fa-icon>
-			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faEyeSlash"></fa-icon>
+	<div class="bottomBtn d-flex flex-row justify-content-between">
+		<button *ngIf="typeMoney===C.DEBT && !panelCreditOpenState" class="buy" mat-icon-button color="primary"
+		        (click)="togglePanel('credit')">
+			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
-	</div>
-	<div class="btnBuy">
-		<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3">
-			<fa-icon [icon]="faCamera"></fa-icon>
-		</mat-slide-toggle>
-		<button *ngIf="scanV3" class="buy" mat-raised-button color="accent"
+		<button *ngIf="typeMoney===C.DEBT && panelCreditOpenState" class="buy" mat-fab color="primary"
+		        (click)="togglePanel('credit')">
+			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
+		</button>
+		<button *ngIf="(typeTheme$ | async)!='CARD' && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
+		        (click)="togglePanel('recipe')">
+			<fa-icon *ngIf="!panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
+		</button>
+		<button *ngIf="(typeTheme$ | async)!='CARD' && panelRecipeOpenState" class="buy" mat-fab color="primary"
+		        (click)="togglePanel('recipe')">
+			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
+		</button>
+		<button *ngIf="scanV3" class="buy" mat-fab color="accent"
 		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 		        (click)="scan()">
-			{{ "PLAYER.BUY" | translate }}
-			<fa-icon [icon]="faQrcode"></fa-icon>
+			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 		</button>
-		<button *ngIf="!scanV3" class="buy" mat-raised-button color="accent"
+		<button *ngIf="!scanV3" class="buy" mat-fab color="accent"
 		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 		        (click)="openDialogShorCode()">
-			{{ "PLAYER.BUY" | translate }}
-			<fa-icon [icon]="faKeyboard"></fa-icon>
+			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 		</button>
 	</div>
 </div>

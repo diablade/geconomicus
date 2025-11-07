@@ -1,0 +1,26 @@
+<mat-card class="recipe d-flex flex-column" [ngClass]="getReceipeColor()">
+	<!-- <div class="level">{{ recipe.weight+1 }}</div> -->
+	<div class="header">
+		<div class="header-letter contour">{{ recipe.letter }}</div>
+		<div class="header-icon" [ngClass]="typeTheme=='TWEMOJI' ? 'twemoji' : ''">{{ getIcon(recipe.letter) }}</div>
+		<div class="header-name">{{ recipe.letter | translate }}</div>
+	</div>
+	<div class="d-flex flex-column flex-wrap">
+		<mat-chip *ngFor="let ingredient of recipe.ingredients" [ngClass]="ingredient.have > 0 ? 'got' : ''"
+		          (click)="ingredientClick(ingredient)">
+			<fa-icon [icon]="faCheck" *ngIf="ingredient.have > 0"></fa-icon>
+			<span class="ms-1 emoji" [ngClass]="typeTheme=='TWEMOJI' ? 'twemoji' : ''">{{ getIcon(ingredient.key) }}</span>
+			<span class="ms-1">{{ ingredient.key | translate }}</span>
+		</mat-chip>
+	</div>
+	<div class="completed">
+		<div *ngIf="recipe.completed" class="wheel-container">
+			<div class="wheel"></div>
+		</div>
+		<button *ngIf="recipe.completed" class="completed-btn" (click)="buildCardLvlUp()" mat-raised-button color="accent">
+			<div class="giftBounce">🛠️</div>
+			{{ getBuildText() | translate }}
+			🎁
+		</button>
+	</div>
+</mat-card>

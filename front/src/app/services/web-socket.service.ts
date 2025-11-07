@@ -108,7 +108,7 @@ export class WebSocketService {
 				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTED"));
 			}
 		});
-		this.socket.io.on('ping', () => console.log('ping sent'));
+		//this.socket.io.on('ping', () => console.log('ping sent'));
 		this.socket.on("connected", (data: any) => {
 			console.log('Connected to the server');
 			if (this.disconnected) {

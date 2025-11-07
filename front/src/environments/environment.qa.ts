@@ -33,6 +33,7 @@ export const environment = {
 		UPDATE: 'game/update',
 		REFRESH_PLAYER: 'game/refresh-player',
 		REFRESH_FORCE_ALL_PLAYERS: 'game/refresh-force-all-players',
+		WHO_HAVE_CARD: 'game/who-have-card/',
 		EXPORT: 'game/export',
 		IMPORT: 'game/import',
 		START: 'game/start',

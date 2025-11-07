@@ -20,7 +20,7 @@ import {JoinComponent} from './join/join.component';
 import {MatIconModule} from "@angular/material/icon";
 import {PlayerSettingsComponent} from './player-settings/player-settings.component';
 import {NgxColorsModule} from "ngx-colors";
-import {CardComponent} from './card/card.component';
+import {CardComponent} from './components/card/card.component';
 import {NgOptimizedImage} from "@angular/common";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
@@ -50,7 +50,7 @@ import {MatSliderModule} from "@angular/material/slider";
 import {BankBoardComponent} from './bank-board/bank-board.component';
 import {MatChipsModule} from "@angular/material/chips";
 import {ContractDialogComponent} from './dialogs/contract-dialog/contract-dialog.component';
-import {CreditComponent} from './credit/credit.component';
+import {CreditComponent} from './components/credit/credit.component';
 import {ConfirmDialogComponent} from './dialogs/confirm-dialog/confirm-dialog.component';
 import {BtnTimerAutoClickComponent} from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 import {MatExpansionModule} from "@angular/material/expansion";
@@ -74,12 +74,14 @@ import {PedagoBtnComponent} from "./components/pedago-btn/pedago-btn.component";
 import {MatCardModule} from "@angular/material/card";
 import {ContributionsComponent} from './components/contributions/contributions.component';
 import {TaskListBtnComponent, AnimatorTaskListDialog} from './components/tasklist-btn/tasklist-btn.component';
-import { JoinShortDialogComponent } from './dialogs/join-short-dialog/join-short-dialog.component';
-import { ResumeSessionPromptComponent } from './dialogs/resume-session-prompt/resume-session-prompt.component';
+import {JoinShortDialogComponent} from './dialogs/join-short-dialog/join-short-dialog.component';
+import {ResumeSessionPromptComponent} from './dialogs/resume-session-prompt/resume-session-prompt.component';
+import {ItemComponent} from './components/item/item.component';
+import {RecipeComponent} from './components/recipe/recipe.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-	return new TranslateHttpLoader(http);
+	return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 // Necessary to solve the problem of losing internet connection
@@ -128,7 +130,9 @@ LOAD_WASM().subscribe();
 		TaskListBtnComponent,
 		AnimatorTaskListDialog,
 		JoinShortDialogComponent,
-		ResumeSessionPromptComponent
+		ResumeSessionPromptComponent,
+		ItemComponent,
+		RecipeComponent
 	],
 	imports: [
 		HttpClientModule,

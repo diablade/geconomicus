@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {Credit} from "../models/game";
+import {Credit} from "../../models/game";
 
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import * as C from "../../../../../config/constantes";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({
@@ -58,7 +58,6 @@ export class CreditComponent {
 	}
 
 	getStatusColor(progress: number) {
-		console.log(progress)
 		if (progress < 50) {
 			return "#28a745";
 		} else if (progress < 75) {

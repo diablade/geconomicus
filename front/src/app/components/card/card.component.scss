@@ -26,15 +26,6 @@
   padding: 10px 20px;
   border-radius: 22px;
   animation: pulse 1.5s infinite;
-  // background: gold;
-  // color: black;
-  // box-shadow: 0px 0px 10px gold;
-}
-
-@keyframes pulse {
-  0%   { transform: scale(1.5); }
-  50%  { transform: scale(2.5); }
-  100% { transform: scale(1.5); }
 }
 
 .shortCode {
@@ -108,21 +99,11 @@
   background-color:  #A2CBA2;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
 .wheel-container {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  // width: 20vh;
-  // height: 20vh;
 }
 
 .wheel {
@@ -157,38 +138,6 @@
 .back {
   background-size: contain;
   transform: rotateY(180deg);
-}
-
-.red {
-  background-color: #E8A7A6;
-
-  .mat-badge-content {
-    background: #ce1421;
-  }
-}
-
-.yellow {
-  background-color: #F3EFAD;
-
-  .mat-badge-content {
-    background: #c4bb13;
-  }
-}
-
-.green {
-  background-color: #A2CBA2;
-
-  .mat-badge-content {
-    background: #14a549;
-  }
-}
-
-.blue {
-  background-color: #BBDAE3;
-
-  .mat-badge-content {
-    background: #3c8fa2;
-  }
 }
 
 .qrcodeWrapper {

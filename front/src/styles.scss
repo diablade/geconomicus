@@ -24,8 +24,7 @@ body {
   color: white !important;
   font-weight: bold;
 
-  text-shadow:
-          //TOP
+  text-shadow: //TOP
           0px -1.5px 0px black,
             //TOP RIGHT
           1.5px -1.5px 0px black,
@@ -165,6 +164,56 @@ body {
   cursor: pointer;
 }
 
+
+.red {
+  background-color: #E8A7A6;
+
+  .mat-badge-content {
+    background: #ce1421;
+  }
+}
+
+.yellow {
+  background-color: #F3EFAD;
+
+  .mat-badge-content {
+    background: #c4bb13;
+  }
+}
+
+.green {
+  background-color: #A2CBA2;
+
+  .mat-badge-content {
+    background: #14a549;
+  }
+}
+
+.blue {
+  background-color: #BBDAE3;
+
+  .mat-badge-content {
+    background: #3c8fa2;
+  }
+}
+
+/* emoji */
+.emoji {
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  vertical-align: -0.125em;
+  font-size: 1em;
+}
+
+/* twemoji */
+.twemoji {
+  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+  'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+  'EmojiOne Color', 'Android Emoji', sans-serif;
+}
+
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
   .keyboard-dialog {
@@ -172,5 +221,27 @@ body {
   }
   .keyboard-dialog input {
     height: 57px !important;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1.5);
+  }
+  50% {
+    transform: scale(2.5);
+  }
+  100% {
+    transform: scale(1.5);
+  }
+}
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

@@ -141,7 +141,9 @@
         "BUILD_UP_0": "Créer une carte Savoir",
         "BUILD_UP_1": "Créer une carte Énergie",
         "BUILD_UP_2": "Créer une carte Technologie",
-        "BUILD_UP": "Créer une carte de valeur supérieure"
+        "BUILD_UP": "Créer une carte de valeur supérieure",
+        "IN_DECK": "la carte <b>({{cardName}})</b> est dans le <b>deck</b>",
+        "IN_PLAYER": "la carte <b>({{cardName}})</b> est chez le joueur <b>{{player}}</b>"
     },
     "BANK": {
         "TITLE": "Banque",
@@ -196,6 +198,12 @@
         "CREDIT_SETTLED": "Crédit remboursé",
         "SETTLE_ALL": "Rembourser intégralement",
         "SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?"
+    },
+    "THEME": {
+        "TITLE": "Theme",
+        "CLASSIC": "Cartes classiques",
+        "EMOJIS": "Items emoji",
+        "TWEMOJIS": "Items twemoji (uniform)"
     },
     "OPTION": {
         "TITLE": "Options générales",
@@ -311,7 +319,7 @@
         "NEED_DEATH_PASS": "La mort doit passer 😈! (à vous de jouer)",
         "ASK_END_ROUND": "La manche n'est pas terminée, es-tu certain de vouloir y mettre fin ?",
         "SHORT_CODE_SEND": "Code envoyé",
-        "GIFT": "Bravo ! Vous obtenez une carte de valeur supérieure.",
+        "GIFT": "Production terminé ! Vous obtenez 4 nouvelles cartes et 1 carte de valeur supérieure.",
         "TECHNOLOGY": "Bravo, vous avez acquis la technologie (fin de partie)",
         "COPY_SUCCESS": "Copié !"
     },
@@ -418,17 +426,18 @@
     "ERROR": {
         "IN_PROGRESS": "déjà en cours",
         "GAME_NOT_FOUND": "Jeu introuvable",
-        "PLAYER_NOT_FOUND": "Joueur inexistant",
+        "PLAYER_NOT_FOUND": "Joueur introuvable",
         "CARDS_NOT_UNIQUE": "Cartes non uniques",
         "NOT_ENOUGH_CARDS": "Pas assez de cartes",
         "NOT_ENOUGH_CARDS_IN_DECK": "Pas assez de cartes dans le deck",
-        "NOT_ENOUGH_MONEY": "Fonds insuffisants.",
+        "NOT_ENOUGH_MONEY": "Fonds insuffisant.",
         "GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
         "JOIN_REINCARNATE": "Impossible de rejoindre",
         "REINCARNATE": "Échec de la résurrection",
         "JOIN": "Impossible de rejoindre",
         "CREATE": "Échec de la création",
         "GAME_UNAVAILABLE": "Partie indisponible",
+        "PLAYER_NOT_FOUND": "Joueur inexistant",
         "UPDATE": "Échec de la modification",
         "EXCHANGE": "Échange impossible",
         "DELETE": "Échec de la suppression",
@@ -451,7 +460,8 @@
         "LOCK_DOWN_PLAYER": "Échec de la mise en prison du joueur",
         "DELETE_GAME": "Échec de la suppression",
         "CONNECTION_EXPIRED": "La connexion a expiré. Rechargement automatique de la page...",
-        "IO_SOCKET_ERROR": "Une erreur s'est produite, veuillez réessayer plus tard."
+        "IO_SOCKET_ERROR": "Une erreur s'est produite, veuillez réessayer plus tard.",
+        "FINDING_CARD": "Carte non trouvé"
     },
     "SOCKET": {
         "OFFLINE": {
@@ -538,9 +548,11 @@
         "YOUR_AVATAR": "Votre avatar",
         "DEBT": "Dettes",
         "BUY": "ACHETER",
-        "CREDITS": "CRÉDITS"
+        "CREDITS": "CRÉDITS",
+        "OBJECTIVES": "Objectifs"
     },
     "PLAYER_SETTINGS": {
+        "SYS_SCAN": "Achat par camera et QRCode",
         "EYES": "Yeux",
         "EYEBROWS": "Sourcils",
         "MOUTH": "Bouche",

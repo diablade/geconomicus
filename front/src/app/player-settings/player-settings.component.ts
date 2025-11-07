@@ -5,7 +5,8 @@ import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Player} from "../models/game";
 import {BackService} from "../services/back.service";
-import {faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
+import {faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
+import {LocalStorageService} from "../services/local-storage/local-storage.service";
 
 @Component({
 	selector: 'app-player-settings',
@@ -22,6 +23,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	faChevronLeft = faChevronLeft;
 	faChevronRight = faChevronRight;
 	faWandMagicSparkles = faWandMagicSparkles;
+	scanV3 = true;
 
 	skin = "#f2d3b1";
 	hairColor = "#ac6511";
@@ -56,11 +58,12 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 
 	boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService) {
+	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private localStorageService: LocalStorageService) {
 
 	}
 
 	ngOnInit(): void {
+		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
@@ -75,6 +78,10 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 				}
 			});
 		});
+	}
+
+	onChangeSysScan() {
+		this.localStorageService.setItem('scanV3', this.scanV3);
 	}
 
 	getBackgroundStyle() {
@@ -242,4 +249,6 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 		this.player.hairColor = this.hairColor.replace("#", "");
 		this.updateSvg();
 	}
+
+	protected readonly faCamera = faCamera;
 }

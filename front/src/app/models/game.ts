@@ -1,5 +1,6 @@
 export class Card {
 	_id = "";
+	key = "";
 	color = "";
 	weight = 0;
 	price = 0;
@@ -84,6 +85,8 @@ export class Game {
 	location = "";
 	shortId = "";
 	typeMoney = "june";
+	typeTheme = "CARD";
+	theme = "THEME.CLASSIC";
 	players: Player[] = [];
 	decks: Card[][] = [[]];
 	events: EventGeco[] = [];

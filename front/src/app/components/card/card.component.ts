@@ -1,41 +1,19 @@
-import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Card} from "../models/game";
-import {faGift} from "@fortawesome/free-solid-svg-icons";
-import {ShortCode} from "../models/shortCode";
-import { AudioService } from '../services/audio.service';
+import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import {Card} from "../../models/game";
+import {ShortCode} from "../../models/shortCode";
+import {AudioService} from '../../services/audio.service';
+import {animations} from "../../services/animations";
 
 @Component({
 	selector: 'app-card',
 	templateUrl: './card.component.html',
 	styleUrls: ['./card.component.scss'],
-	animations: [
-		trigger("cardFlip", [
-			state(
-				"default",
-				style({
-					transform: "none",
-					zIndex: "1"
-				})
-			),
-			state(
-				"flipped",
-				style({
-					transform: "rotateY(180deg) scale(2.2)",
-					top: "{{translateY}}px",
-					left: "{{translateX}}px",
-					zIndex: "99",
-				}),
-				{params: {translateX: 10, translateY: 10}}
-			),
-			transition("default => flipped", [animate("350ms")]),
-			transition("flipped => default", [animate("350ms")]),
-		])
-	]
+	animations
 })
 export class CardComponent {
 	@Input() card: Card = {
 		_id: "",
+		key: "",
 		count: 1,
 		color: "",
 		letter: "",
@@ -51,8 +29,8 @@ export class CardComponent {
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
 	@Input() amountCardsForProd = 4;
-	@Input() width = 'calc(28vw)';
-	@Input() height = 'calc(28vw * 1.5)';
+	@Input() width = this.screenWidth < this.screenHeight ? 'calc(28vw)' : 'calc(28vh)';
+	@Input() height = this.screenWidth < this.screenHeight ? 'calc(28vw * 1.5)' : 'calc(28vh * 1.5)';
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
 	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
 	@Input() flippable = true;
@@ -61,7 +39,6 @@ export class CardComponent {
 	translateX = 0;
 	translateY = 0;
 	shortCode: ShortCode | undefined;
-	faGift = faGift;
 	@Output() onBuildCardLvlUp: EventEmitter<Card> = new EventEmitter<Card>();
 	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 
@@ -135,6 +112,7 @@ export class CardComponent {
 		}
 		return "CARD.BUILD_UP";
 	}
+
 	getBuildColor(card: Card) {
 		switch (card.weight) {
 			case 0:

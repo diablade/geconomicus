@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import * as C from "../../../config/constantes.js";
 
 const Schema = mongoose.Schema;
 
 let Card = {
+	key: String,
 	letter: String,
 	color: String,
 	weight: Number,
@@ -75,7 +77,8 @@ let Game = new Schema({
 	animator: {type: String, required: true},
 	location: {type: String, required: true},
 	shortId: {type: String, required: true},
-	typeMoney: {type: String, required: false},
+	typeMoney: {type: String, enum: [C.DEBT, C.JUNE], required: false},
+	theme: {type: String, required: false},
 	events: {type: [EventGeco], required: false},
 	decks: {type: [[Card]], required: false},
 	players: {type: [Player], required: false},
@@ -126,8 +129,8 @@ let Game = new Schema({
 
 
 let constructor = {
-	card: Card = (letter, color, weight, price) => {
-		return {letter: letter, color: color, weight: weight, price: price};
+	card: Card = (key, letter, color, weight, price) => {
+		return {key, letter, color, weight, price};
 	},
 	credit: Credit = (id, amount, interest, idGame, idPlayer, status, createDate, startDate, endDate) => {
 		return {

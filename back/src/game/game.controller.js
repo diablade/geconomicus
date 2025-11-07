@@ -341,8 +341,7 @@ export default {
                     status: "delete done",
                 });
             }
-            else if (process.env.GECO_NODE_ENV !== "production" && bcrypt.compareSync(password,
-                "$2b$04$/uSG6WTkDm94r6fot9lHNes.8MdMkRKTosxjCevTRAHtQXSvWJed6")) {
+            else if (process.env.GECO_NODE_ENV !== "production" && password === "admin") {
                 await GameModel.findByIdAndDelete(idGame);
                 return res.status(200).json({
                     status: "delete done",
@@ -449,6 +448,31 @@ export default {
             next({
                 status:  400,
                 message: "Game copy error",
+            });
+        }
+    },
+    whoHaveCard:            async (req, res, next) => {
+        const {
+            idGame,
+            cardKey
+        } = req.params;
+        try {
+            const payload = await gameService.whoHaveCard(idGame, cardKey);
+            if (payload) {
+                return res.status(200).json(payload);
+            }
+            else {
+                return res.status(500).json({
+                    status:  "ko",
+                    message: "ERROR.FINDING_INGREDIENT",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game who have ingredient error:", err);
+            next({
+                status:  400,
+                message: "ERROR.FINDING_INGREDIENT",
             });
         }
     },
