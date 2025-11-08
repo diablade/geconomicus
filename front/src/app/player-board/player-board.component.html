@@ -103,7 +103,7 @@
 		</ng-container>
 	</div>
 	<div @list *ngIf="(typeTheme$ | async)!='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
-		<div *ngFor="let card of cards">
+		<div @item *ngFor="let card of cards">
 			<app-item
 					@item
 					[card]="card"
