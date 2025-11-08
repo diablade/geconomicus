@@ -100,14 +100,14 @@
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.DU_RATES"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '++getTranslate('BY_DEFAULT')"
+					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
 					       [(ngModel)]="game.tauxCroissance">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.START_MONEY_AMOUNT"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '++getTranslate('BY_DEFAULT')"
+					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
 					       [(ngModel)]="game.startAmountCoins">
 				</mat-form-field>
 			</div>
