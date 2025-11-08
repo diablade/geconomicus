@@ -31,7 +31,7 @@ const generateDecks = async (game) => {
         let deck = [];
         for (let letterIndex = 0; letterIndex <= lettersInGame; letterIndex++) {
             // genere 3, 4 ou 5 cartes identiques
-            for (let j = 1; j <= game.generatedIdenticalCards; j++) {
+            for (let j = 1; j <= game.generatedIdenticalLetters; j++) {
                 let card = await generateOneCard(letterIndex, j, weight, prices[weight]);
                 deck.push(card);
             }

@@ -59,7 +59,7 @@ export const schemas = {
         roundMax:                Joi.number().integer().min(1),
         roundMinutes:            Joi.number().integer().min(1).max(30),
         amountCardsForProd:      Joi.number().integer().min(3).max(5),
-        generatedIdenticalCards: Joi.number().integer().min(0),
+        generatedIdenticalLetters: Joi.number().integer().min(0),
         generateLettersAuto:     Joi.boolean(),
         generateLettersInDeck:   Joi.number().integer().min(0),
         distribInitCards:        Joi.number().integer().min(0),

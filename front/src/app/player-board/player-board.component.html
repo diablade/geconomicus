@@ -31,7 +31,7 @@
 <div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
 	<div class="titleBar d-flex flex-row">
 		<div class="position-relative" (click)="refresh()">
-			<div class="coin-container" [ngSwitch]="typeMoney">
+			<div class="coin-container" [ngSwitch]="game.typeMoney">
 				<ng-container *ngSwitchCase="C.JUNE">
 					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"
 					     [@coinFlip]="flipCoin"/>
@@ -43,13 +43,13 @@
 			</div>
 			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>
 		</div>
-		<div *ngIf="typeMoney===C.JUNE" class="sold flex-grow-1 contour">
-			{{ (player.coins / currentDU) | number : '1.2-2' }}<span class="du">{{ "CURRENCY.DU" | translate }}</span>
+		<div *ngIf="game.typeMoney===C.JUNE" class="sold flex-grow-1 contour">
+			{{ (player.coins / game.currentDU) | number : '1.2-2' }}<span class="du">{{ "CURRENCY.DU" | translate }}</span>
 			<div class="smallSold">{{ player.coins | number : '1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
 		</div>
-		<div *ngIf="typeMoney===C.DEBT" class="sold flex-grow-1 contour">
+		<div *ngIf="game.typeMoney===C.DEBT" class="sold flex-grow-1 contour">
 			{{ player.coins| number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
-			<div *ngIf="typeMoney===C.DEBT" class="smallSold">{{ "PLAYER.DEBT" | translate }}
+			<div *ngIf="game.typeMoney===C.DEBT" class="smallSold">{{ "PLAYER.DEBT" | translate }}
 				: {{ getDebts() | number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
 			</div>
 		</div>
@@ -61,20 +61,20 @@
 			<div class="username">{{ player.name }}</div>
 		</div>
 	</div>
-	<div class="" *ngIf="statusGame!==C.PLAYING">
-		<div
-				class="text-center gecoFont shadowed fs-1 m-4">{{
-                statusGame !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
+	<div class="" *ngIf="game.status!==C.PLAYING">
+		<div class="text-center gecoFont shadowed fs-1 m-4">
+			{{
+                game.status !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
 			}}
 		</div>
-		<app-notice-btn [amountCardsForProd]="amountCardsForProd" [timerCredit]="timerCredit"
-		                *ngIf="statusGame !== C.END_GAME"></app-notice-btn>
-		<button *ngIf="statusGame===C.END_GAME && !player.survey" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
+		<app-notice-btn [amountCardsForProd]="game.amountCardsForProd" [timerCredit]="game.timerCredit"
+		                *ngIf="game.status !== C.END_GAME"></app-notice-btn>
+		<button *ngIf="game.status===C.END_GAME && !player.survey" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
 		        mat-raised-button
 		        color="accent">
 			{{ "PLAYER.ANSWER_SURVEY" | translate }}
 		</button>
-		<button class="ms-1" *ngIf="statusGame===C.END_GAME && player.survey" [routerLink]="['/game',idGame,'results']"
+		<button class="ms-1" *ngIf="game.status===C.END_GAME && player.survey" [routerLink]="['/game',idGame,'results']"
 		        mat-raised-button
 		        color="warn">
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
@@ -85,12 +85,12 @@
 			<app-card
 					@item *ngIf="card.displayed"
 					[card]="card"
-					[typeMoney]="typeMoney"
+					[typeMoney]="game.typeMoney"
 					[idOwner]="idPlayer"
 					[idGame]="idGame"
 					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-					[currentDU]="currentDU"
-					[amountCardsForProd]="amountCardsForProd"
+					[currentDU]="game.currentDU"
+					[amountCardsForProd]="game.amountCardsForProd"
 					(onBuildCardLvlUp)="produceLevelUp($event)"
 					(onCreateShortCode)="onCreateShortCode($event)"
 					[screenWidth]="screenWidth"
@@ -102,17 +102,17 @@
 			></app-card>
 		</ng-container>
 	</div>
-	<div *ngIf="(typeTheme$ | async)!='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
-		<div @list *ngFor="let card of cards">
+	<div @list *ngIf="(typeTheme$ | async)!='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
+		<div *ngFor="let card of cards">
 			<app-item
 					@item
 					[card]="card"
-					[typeMoney]="typeMoney"
+					[typeMoney]="game.typeMoney"
 					[idOwner]="idPlayer"
 					[idGame]="idGame"
 					[typeTheme]="(typeTheme$ | async)"
 					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-					[currentDU]="currentDU"
+					[currentDU]="game.currentDU"
 					(onCreateShortCode)="onCreateShortCode($event)"
 					[screenWidth]="screenWidth"
 					[screenHeight]="screenHeight"
@@ -128,7 +128,7 @@
 	<div *ngIf="(typeTheme$ | async)!='CARD'" class="credits w-100 d-flex flex-row"
 	     [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
 		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelRecipeOpenState ? 'w-50':'w-100'">
-			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="timerCredit" [credit]="credit"
+			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="game.timerCredit" [credit]="credit"
 			            [contractor]="player.name"
 			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
 
@@ -147,11 +147,11 @@
 		</div>
 	</div>
 	<div class="bottomBtn d-flex flex-row justify-content-between">
-		<button *ngIf="typeMoney===C.DEBT && !panelCreditOpenState" class="buy" mat-icon-button color="primary"
+		<button *ngIf="game.typeMoney===C.DEBT && !panelCreditOpenState" class="buy" mat-icon-button color="primary"
 		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
-		<button *ngIf="typeMoney===C.DEBT && panelCreditOpenState" class="buy" mat-fab color="primary"
+		<button *ngIf="game.typeMoney===C.DEBT && panelCreditOpenState" class="buy" mat-fab color="primary"
 		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
@@ -164,12 +164,12 @@
 			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
 		<button *ngIf="scanV3" class="buy" mat-fab color="accent"
-		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 		        (click)="scan()">
 			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 		</button>
 		<button *ngIf="!scanV3" class="buy" mat-fab color="accent"
-		        [disabled]="statusGame!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
+		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 		        (click)="openDialogShorCode()">
 			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 		</button>

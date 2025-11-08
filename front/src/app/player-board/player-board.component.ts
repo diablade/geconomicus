@@ -3,7 +3,7 @@ import {adventurer} from '@dicebear/collection';
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription, Observable} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Card, Credit, Player} from "../models/game";
+import {Card, Credit, Game, Player} from "../models/game";
 import {BackService} from "../services/back.service";
 import {MatDialog} from "@angular/material/dialog";
 import {I18nService} from "../services/i18n.service";
@@ -47,13 +47,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	player: Player = new Player();
 	private subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Options> = {};
-	statusGame = "waiting";
-	gameName: string = "";
-	typeMoney = C.JUNE;
+	game: Game = new Game();
 	typeTheme$ = this.themesService.typeTheme$;
-	theme = 'THEME.CLASSIC';
-	amountCardsForProd = 4;
-	currentDU = 0;
 	cards: Card[] = [];
 	credits: Credit[] = [];
 	recipes: Recipe[] = [];
@@ -65,8 +60,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
 	C = C;
-	timerCredit = 5;
-	timerPrison = 5;
 	prison = false;
 	defaultCredit = false;
 	prisonProgress = 0;
@@ -146,16 +139,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getPlayerInfos() {
 		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-			this.themesService.loadTheme(data.theme);
-			this.theme = data.theme;
+			this.game = {...this.game, ...data.game};
+			this.themesService.loadTheme(this.game.theme);
 			this.cards = [];
 			this.player = data.player;
-			this.typeMoney = data.typeMoney;
-			this.currentDU = data.currentDU;
-			this.statusGame = data.statusGame;
-			this.gameName = data.gameName;
-			this.timerCredit = data.timerCredit;
-			this.amountCardsForProd = data.amountCardsForProd;
 			if (this.player.image === "") {
 				this.options.seed = data.player.name.toString();
 				const avatar = createAvatar(adventurer, this.options);
@@ -167,7 +154,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (data.player.status == "prison") {
 				this.prison = true;
 			}
-			if (this.typeMoney === C.DEBT) {
+			if (this.game.typeMoney === C.DEBT) {
 				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
 					this.credits = data;
 					_.forEach(data, d => {
@@ -183,7 +170,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				{
 					idGame: this.idGame,
 					idPlayer: this.idPlayer,
-					gameName: this.gameName,
+					gameName: this.game.name,
 					player: this.player
 				});
 		});
@@ -197,16 +184,12 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.statusGame = "waiting";
 			this.player.coins = data.coins;
-			this.typeMoney = data.typeMoney;
-			this.timerCredit = data.timerCredit;
-			this.timerPrison = data.timerPrison;
-			this.amountCardsForProd = data.amountCardsForProd;
+			this.game = {...this.game, ...data.game};
 			await this.receiveCards(data.cards);
 		});
 		this.socket.on(C.START_ROUND, async () => {
-			this.statusGame = C.PLAYING;
+			this.game.status = C.PLAYING;
 			this.credits.forEach(c => {
 				if (c.status == C.PAUSED_CREDIT) {
 					c.status = C.RUNNING_CREDIT;
@@ -216,7 +199,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
 			this.dialog.closeAll();
-			this.statusGame = "waiting";
+			this.game.status = C.WAITING;
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
@@ -228,7 +211,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.END_GAME, (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
-			this.statusGame = C.END_GAME;
+			this.game.status = C.END_GAME;
 			if (data && data.redirect == 'survey') {
 				this.router.navigate(['game', this.idGame, 'player', this.idPlayer, 'survey']);
 			} else {
@@ -241,7 +224,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			this.audioService.playSound("audioDu");
 			this.player.coins += data.du;
-			this.currentDU = data.du;
+			this.game.currentDU = data.du;
 			this.flipCoins();
 		});
 		this.socket.on(C.RESET_GAME, async (data: any) => {
@@ -258,7 +241,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(C.FIRST_DU, async (data: any) => {
-			this.currentDU = data.du;
+			this.game.currentDU = data.du;
 		});
 		this.socket.on(C.DEAD, async () => {
 			this.player.status = C.DEAD;
@@ -270,7 +253,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			});
 			this.cards = [];
-			if (this.typeMoney === C.DEBT) {
+			if (this.game.typeMoney === C.DEBT) {
 				this.player.coins = 0;
 			}
 			await new Promise(resolve => setTimeout(resolve, 4000));
@@ -288,13 +271,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
 			if (data) {
-				this.typeMoney = data.typeMoney;
-				this.timerCredit = data.timerCredit;
-				this.timerPrison = data.timerPrison;
-				this.amountCardsForProd = data.amountCardsForProd;
-				this.gameName = data.gameName;
-				this.theme = data.theme;
-				this.themesService.loadTheme(data.theme);
+				this.game = {...this.game, ...data};
+				this.themesService.loadTheme(this.game.theme);
 			}
 		});
 		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
@@ -307,7 +285,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.audioService.playSound("coin");
 				this.flipCoins();
 				this.snackbarService.showNotif(this.i18nService.instant("EVENTS.RECEIVED_COINS", {amount: data.cost}) +
-					this.i18nService.instant(this.typeMoney == C.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
+					this.i18nService.instant(this.game.typeMoney == C.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
 			}
 			this.player.coins = data.coins;
 			const cardSold = _.find(this.cards, {_id: data.idCardSold});
@@ -321,7 +299,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (this.theme == 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
+				if (this.game.theme == 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
@@ -419,7 +397,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			if (this.theme != 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
+			if (this.game.theme != 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -460,7 +438,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			data: {
 				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
 				card: card,
-				theme: this.theme
+				theme: this.game.theme
 			},
 			width: '10px',
 			height: '10px'
@@ -500,11 +478,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.cards = _.concat(this.cards, cards);
 		this.cards = _.orderBy(this.cards, ["weight", "letter"],);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		if (this.theme == 'THEME.CLASSIC') {
+		if (this.game.theme == 'THEME.CLASSIC') {
 			this.countOccurrencesAndHideDuplicates();
 			this.cards = _.orderBy(this.cards, ["count"], "desc");
 		} else {
-			this.recipes = getAvailableRecipes(this.cards, this.amountCardsForProd);
+			this.recipes = getAvailableRecipes(this.cards, this.game.amountCardsForProd, this.game.generatedIdenticalLetters);
 		}
 	}
 
@@ -514,8 +492,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 		this.isProducing = true;
 		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
-		if (identicalCards.length >= this.amountCardsForProd) {
-			const cardsForProd = identicalCards.slice(0, this.amountCardsForProd);
+		if (identicalCards.length >= this.game.amountCardsForProd) {
+			const cardsForProd = identicalCards.slice(0, this.game.amountCardsForProd);
 			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
 				_.remove(this.cards, c => _.some(cardsForProd, c));
 				const cardGift = _.find(newCards, {weight: $event.weight + 1});
@@ -554,7 +532,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.isBuying = true;
 
 		const data = JSON.parse(dataRaw);
-		const cost = this.typeMoney == C.JUNE ? (data.p * this.currentDU).toFixed(2) : data.p;
+		const cost = this.game.typeMoney == C.JUNE ? (data.p * this.game.currentDU).toFixed(2) : data.p;
 		if (this.idGame && data.g && this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
 			this.isBuying = false; // Reset flag
@@ -688,7 +666,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
-		if (this.statusGame == C.PLAYING && this.player.status != C.DEAD) {
+		if (this.game.status == C.PLAYING && this.player.status != C.DEAD) {
 			if ($event == 'settle') {
 				this.settleDebt(credit);
 			} else if ($event == 'answer') {

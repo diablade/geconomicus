@@ -24,14 +24,14 @@ export class Recipe {
 	}
 }
 
-export function getAvailableRecipes(items: Card[], productionCards: number) {
+export function getAvailableRecipes(items: Card[], productionCards: number, identicalLetters: number) {
 	let recipes: Recipe[] = [];
 	_.forEach(items, item => {
 		//found recipe
 		let recipe = _.find(recipes, (recipe: Recipe) => recipe.letter == item.letter && recipe.weight == item.weight);
 		if (!recipe) {
 			let newRecipe = new Recipe(item.letter, item.weight);
-			newRecipe.generateIngredients(productionCards);
+			newRecipe.generateIngredients(identicalLetters);
 			recipes.push(newRecipe);
 		}
 	});
@@ -45,7 +45,8 @@ export function getAvailableRecipes(items: Card[], productionCards: number) {
 
 	//recipe check completed
 	recipes.forEach(recipe => {
-		recipe.completed = recipe.ingredients.every(ingredient => ingredient.have > 0);
+		let have = recipe.ingredients.filter(i => i.have).length;
+		recipe.completed = have >= productionCards;
 	});
 
 	//order by count ingredients

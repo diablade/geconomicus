@@ -266,7 +266,7 @@ export class BackService {
 			distribInitCards: game.distribInitCards,
 			generateLettersAuto: game.generateLettersAuto,
 			generateLettersInDeck: game.generateLettersInDeck,
-			generatedIdenticalCards: game.generatedIdenticalCards,
+			generatedIdenticalLetters: game.generatedIdenticalLetters,
 
 			// June options
 			tauxCroissance: game.tauxCroissance,

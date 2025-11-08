@@ -214,7 +214,7 @@
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ "OPTION.GEN_LETTERS_IDENTICAL"|translate }}</mat-label>
-				<mat-radio-group [(ngModel)]="game.generatedIdenticalCards">
+				<mat-radio-group [(ngModel)]="game.generatedIdenticalLetters">
 					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
 						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️ EXPERIMENTAL
 					</mat-radio-button>

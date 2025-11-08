@@ -84,7 +84,7 @@ let Game = new Schema({
 	players: {type: [Player], required: false},
 	currentMassMonetary: {type: Number, required: true},
 	amountCardsForProd: {type: Number, required: true},
-	generatedIdenticalCards: {type: Number, required: true},
+	generatedIdenticalLetters: {type: Number, required: true},
 	generateLettersAuto: {type: Boolean, required: true},
 	generateLettersInDeck: {type: Number, required: false},
 	distribInitCards: {type: Number, required: false},

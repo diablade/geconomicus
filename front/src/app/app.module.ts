@@ -166,6 +166,7 @@ LOAD_WASM().subscribe();
 		CdkMenuTrigger,
 		DragDropModule,
 		NgxScannerQrcodeModule,
+		TranslateModule,
 		TranslateModule.forRoot({
 			loader: {
 				provide: TranslateLoader,

@@ -17,7 +17,7 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {I18nService} from '../services/i18n.service';
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {WebSocketService} from "../services/web-socket.service";
-import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent} from '../dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
 	selector: 'app-bank-board',
@@ -31,7 +31,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	ioURl: string = environment.API_HOST;
 	subscription: Subscription | undefined;
 	idGame = "";
-	game: Game = new Game;
+	game: Game = new Game();
 	socket: any;
 	C = C;
 	faInfoCircle = faInfoCircle;
@@ -65,17 +65,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		this.socket.on(C.STOP_ROUND, async () => {
 			this.dialog.closeAll();
-			this.game.status = "waiting";
+			this.game.status = C.WAITING;
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
 		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
 			if (data) {
-				this.game.typeMoney = data.typeMoney;
-				this.game.timerCredit = data.timerCredit;
-				this.game.timerPrison = data.timerPrison;
-				this.game.amountCardsForProd = data.amountCardsForProd;
+				this.game = {...this.game, ...data};
 			}
 		});
 		this.socket.on(C.CREDITS_STARTED, async () => {
@@ -169,7 +166,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		this.socket.on(C.NEW_PLAYER, (player: Player) => {
 			this.game.players.push(player);
 		});
-		this.socket.on(C.UPDATED_PLAYER, (_data:any) => {
+		this.socket.on(C.UPDATED_PLAYER, (_data: any) => {
 			this.getGame();
 		});
 	}
@@ -189,10 +186,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		const player = _.find(this.game.players, p => p._id === idPlayer);
 		return player ? player.name : idPlayer;
 	}
+
 	getContractorColor(idPlayer: string) {
 		const player = _.find(this.game.players, p => p._id === idPlayer);
 		return player ? player.hairColor : 'black';
 	}
+
 	getContractorSvg(idPlayer: string) {
 		const player = _.find(this.game.players, p => p._id === idPlayer);
 		return player ? player.image : 'none';
@@ -227,7 +226,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
-				this.game.players.filter(p=>p.status===C.ALIVE).forEach(p=>{
+				this.game.players.filter(p => p.status === C.ALIVE).forEach(p => {
 					this.backService.createCredit({
 						idPlayer: p._id,
 						amount: this.game.defaultCreditAmount,

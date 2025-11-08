@@ -15,26 +15,26 @@ let idPlayer;
 let currentGame;
 
 let updatedPlayer = {
-    idGame: "",
-    name: "player-name-updated",
-    image: "",
-    eyes: 0,
-    eyebrows: 1,
-    earrings: 2,
-    features: 3,
-    hair: 4,
-    glasses: 5,
-    mouth: 6,
-    skinColor: "#1234",
-    hairColor: "#1234",
-    boardConf: "custom",
+    idGame:     "",
+    name:       "player-name-updated",
+    image:      "",
+    eyes:       0,
+    eyebrows:   1,
+    earrings:   2,
+    features:   3,
+    hair:       4,
+    glasses:    5,
+    mouth:      6,
+    skinColor:  "#1234",
+    hairColor:  "#1234",
+    boardConf:  "custom",
     boardColor: "#1234",
 };
 
 beforeAll(async () => {
     await db.connect();
     const res = await agent.post("/game/create").send({
-        name: "test-player-controller",
+        name:     "test-player-controller",
         animator: "player-controller",
         location: "player-controller",
     });
@@ -65,7 +65,10 @@ describe("PLAYER controller tests", () => {
                 expect(message.name).toBe('player-one');
                 done();
             });
-            const bod = {idGame: idGame, name: "player-one"};
+            const bod = {
+                idGame: idGame,
+                name:   "player-one"
+            };
             const res = await agent.post("/player/join").send(bod);
             expect(res.body).toBeTruthy();
             expect(res.statusCode).toEqual(200);
@@ -78,10 +81,10 @@ describe("PLAYER controller tests", () => {
             expect(res.statusCode).toEqual(200);
             expect(res.body).toBeTruthy();
             expect(res.body.player).toBeTruthy();
-            expect(res.body.statusGame).toBe(C.OPEN);
-            expect(res.body.typeMoney).toBe(C.JUNE);
-            expect(res.body.currentDU).toBe(0);
-            expect(res.body.amountCardsForProd).toBe(4);
+            expect(res.body.game.status).toBe(C.OPEN);
+            expect(res.body.game.typeMoney).toBe(C.JUNE);
+            expect(res.body.game.currentDU).toBe(0);
+            expect(res.body.game.amountCardsForProd).toBe(4);
         });
     });
     describe('UPDATE PLAYER OPTIONS', () => {
@@ -92,7 +95,11 @@ describe("PLAYER controller tests", () => {
                 done();
             });
 
-            let updatePlayer = {...updatedPlayer, idGame:idGame, _id:idPlayer};
+            let updatePlayer = {
+                ...updatedPlayer,
+                idGame: idGame,
+                _id:    idPlayer
+            };
             const res = await agent.post("/player/update").send(updatePlayer);
             expect(res.statusCode).toEqual(200);
             expect(res.body).toStrictEqual({
@@ -100,7 +107,7 @@ describe("PLAYER controller tests", () => {
             });
         });
         test("should get player by id", async () => {
-            const res = await agent.get("/player/" + idGame+"/"+idPlayer).send();
+            const res = await agent.get("/player/" + idGame + "/" + idPlayer).send();
             expect(res.statusCode).toEqual(200);
             expect(res.body).toBeTruthy();
             expect(res.body.player).toBeTruthy();
@@ -117,11 +124,10 @@ describe("PLAYER controller tests", () => {
             expect(res.body.player.hairColor).toEqual(updatedPlayer.hairColor);
             expect(res.body.player.boardConf).toEqual(updatedPlayer.boardConf);
             expect(res.body.player.boardColor).toEqual(updatedPlayer.boardColor);
-            expect(res.body.statusGame).toBeTruthy();
-            expect(res.body.typeMoney).toBeTruthy();
-            expect(res.body.currentDU).toEqual(0);
-            expect(res.body.amountCardsForProd).toEqual(4);
+            expect(res.body.game.status).toBeTruthy();
+            expect(res.body.game.typeMoney).toBeTruthy();
+            expect(res.body.game.currentDU).toEqual(0);
+            expect(res.body.game.amountCardsForProd).toEqual(4);
         });
     });
-})
-;
+});

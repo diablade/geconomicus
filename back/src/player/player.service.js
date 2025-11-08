@@ -45,7 +45,7 @@ const killPlayer = async (idGame, idPlayer) => {
     }
 }
 
-const getPlayer = async (idGame, idPlayer, statusGames = false) => {
+const getPlayer = async (idGame, idPlayer, statusGame = false) => {
     try {
         if (!idPlayer || !idGame) {
             throw new Error("Bad request: missing game ID or player ID");
@@ -60,16 +60,19 @@ const getPlayer = async (idGame, idPlayer, statusGames = false) => {
         if (!player) {
             throw new Error("Player not found");
         }
-        if (statusGames) {
+        if (statusGame) {
             return ({
-                player:             player,
-                statusGame:         game.status,
-                typeMoney:          game.typeMoney,
-                currentDU:          game.currentDU,
-                timerCredit:        game.timerCredit,
-                amountCardsForProd: game.amountCardsForProd,
-                gameName:           game.name,
-                theme:        game.theme
+                player: player,
+                game:   {
+                    status:                    game.status,
+                    typeMoney:                 game.typeMoney,
+                    currentDU:                 game.currentDU,
+                    timerCredit:               game.timerCredit,
+                    amountCardsForProd:        game.amountCardsForProd,
+                    generatedIdenticalLetters: game.generatedIdenticalLetters,
+                    name:                      game.name,
+                    theme:                     game.theme
+                }
             });
         }
         else {
@@ -108,7 +111,7 @@ const join = async (game, name, copyPlayer) => {
             featuresProbability: 100
         };
 
-        if(copyPlayer) {
+        if (copyPlayer) {
             player.idx = copyPlayer.idx;
             player.image = copyPlayer.image;
             player.eyes = copyPlayer.eyes;

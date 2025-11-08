@@ -65,19 +65,19 @@
 		</ul>
 		<ul>
 			<li>
-				distribInitCards: {{ game?.distribInitCards }}
+				gen letters auto: {{ game?.generateLettersAuto }}
+			</li>
+			<li *ngIf="!game?.generateLettersAuto">
+				lettersProd: {{ game?.generateLettersInDeck }}
+			</li>
+			<li>
+				identicalLetters: {{ game?.generatedIdenticalLetters }}
 			</li>
 			<li>
 				amountCardsForProd: {{ game?.amountCardsForProd }}
 			</li>
 			<li>
-				lettre: {{ game?.generateLettersInDeck }}
-			</li>
-			<li>
-				auto: {{ game?.generateLettersAuto }}
-			</li>
-			<li>
-				identical: {{ game?.generatedIdenticalCards }}
+				distribInitCards: {{ game?.distribInitCards }}
 			</li>
 		</ul>
 		<ul>

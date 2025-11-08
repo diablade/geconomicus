@@ -79,7 +79,7 @@ export class Player {
 
 export class Game {
 	_id = "";
-	status = "";
+	status = "waiting";
 	name = "";
 	animator = "";
 	location = "";
@@ -102,7 +102,7 @@ export class Game {
 	distribInitCards = 4;
 	generateLettersInDeck = 0;
 	generateLettersAuto = true;
-	generatedIdenticalCards = 4;
+	generatedIdenticalLetters = 4;
 	surveyEnabled = true;
 	round = 0;
 	roundMax = 1;

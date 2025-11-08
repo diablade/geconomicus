@@ -181,7 +181,7 @@ describe("FULL GAME simulation", () => {
 				players: [],
 				amountCardsForProd: 4,
 				currentMassMonetary: 0,
-				generatedIdenticalCards: 4,
+				generatedIdenticalLetters: 4,
 				distribInitCards: 4,
 				generateLettersAuto: true,
 				generateLettersInDeck: 0,
