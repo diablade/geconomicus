@@ -68,6 +68,7 @@ let Player = {
 	boardColor: String,
 	status: String,
 	reincarnateFromId: String,
+	actionUsed: Boolean,
 }
 
 

@@ -402,4 +402,14 @@ export class BackService {
 			catchError(err => this.handleError(err, this.ERROR, "ERROR.FINDING_CARD"))
 		)
 	}
+
+	sendAction(idGame: string, idPlayer: string, action: any) {
+		return this.http.post<any>(environment.API_HOST + environment.GAME.SEND_ACTION, {
+			idGame,
+			idPlayer,
+			action
+		}).pipe(
+			catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.SEND_ACTION"))
+		)
+	}
 }

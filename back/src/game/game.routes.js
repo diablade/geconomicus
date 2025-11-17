@@ -24,4 +24,5 @@ router.delete('/delete-player', validate(schemas.deletePlayer), game.deletePlaye
 router.post('/refresh-force-all-players', validate(schemas.refreshForceAllPlayers), game.refreshForceAllPlayers);
 router.post('/refresh-player', validate(schemas.refreshPlayer), game.refreshPlayer);
 router.post('/copy', validate(schemas.copyGame), game.copyGame);
+router.post('/send-action', validate(schemas.sendAction), game.sendAction);
 export default router;

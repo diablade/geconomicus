@@ -163,6 +163,10 @@
 		        (click)="togglePanel('recipe')">
 			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
+		<button *ngIf="action" class="buy" mat-fab color="primary"
+		        (click)="dialogAction()">
+			<fa-icon [icon]="faHandHoldingHand"></fa-icon>
+		</button>
 		<button *ngIf="scanV3" class="buy" mat-fab color="accent"
 		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
 		        (click)="scan()">

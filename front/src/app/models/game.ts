@@ -75,6 +75,7 @@ export class Player {
 	status = "alive";
 	progressPrison = 0;
 	reincarnateFromId: string | undefined;
+	sSed = false;
 }
 
 export class Game {
@@ -93,6 +94,8 @@ export class Game {
 
 	//option general
 	devMode = false;
+	action = f+
+		alse;
 	priceWeight1 = 1;
 	priceWeight2 = 2;
 	priceWeight3 = 4;

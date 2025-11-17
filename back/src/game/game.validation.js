@@ -222,6 +222,22 @@ export const schemas = {
                      .messages({
                          'any.required': 'card key is required'
                      })
+    }),
+    sendAction: Joi.object({
+        idGame: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid game ID format',
+                        'any.required': 'Game ID is required'
+                    }),
+        idPlayer: Joi.string().custom(isValidObjectId).required()
+                    .messages({
+                        'any.invalid':  'Invalid player ID format',
+                        'any.required': 'Player ID is required'
+                    }),
+        action: Joi.string().required()
+                    .messages({
+                        'any.required': 'Action is required'
+                    })
     })
 };
 

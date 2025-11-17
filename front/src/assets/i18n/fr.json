@@ -244,6 +244,7 @@
         "PLAYERS_6TO15": "(de 6 à 15 joueurs)",
         "PLAYERS_16+": "( 16 joueurs et plus)",
         "PLAYERS_6+": "(6 joueurs et plus)",
+        "ACTION": "1 Action don/vol de carte par joueur",
         "START_DISTRIB_CARDS": "Nombre de cartes distribuées aux joueurs en début de manche",
         "BUILD_AMOUNT": "Nombre de cartes identiques attendues pour obtenir une carte de valeur supérieure :"
     },

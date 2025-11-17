@@ -25,6 +25,11 @@
 				</mat-select>
 			</mat-form-field>
 			<div>
+				<mat-checkbox class="m-auto" [(ngModel)]="game.action">
+					{{ "OPTION.ACTION"|translate }}
+				</mat-checkbox>
+			</div>
+			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
 					{{ "OPTION.SURVEY_Q"|translate }}
 				</mat-checkbox>

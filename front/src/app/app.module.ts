@@ -78,6 +78,7 @@ import {JoinShortDialogComponent} from './dialogs/join-short-dialog/join-short-d
 import {ResumeSessionPromptComponent} from './dialogs/resume-session-prompt/resume-session-prompt.component';
 import {ItemComponent} from './components/item/item.component';
 import {RecipeComponent} from './components/recipe/recipe.component';
+import { ActionDialogComponent } from './dialogs/action-dialog/action-dialog.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -132,7 +133,8 @@ LOAD_WASM().subscribe();
 		JoinShortDialogComponent,
 		ResumeSessionPromptComponent,
 		ItemComponent,
-		RecipeComponent
+		RecipeComponent,
+  ActionDialogComponent
 	],
 	imports: [
 		HttpClientModule,

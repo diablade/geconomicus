@@ -168,6 +168,7 @@ async function initGameDebt(game) {
             coins:                     0,
             typeMoney:                 C.DEBT,
             status:                    C.START_GAME,
+            action:                    game.action,
             amountCardsForProd:        game.amountCardsForProd,
             generatedIdenticalLetters: game.generatedIdenticalLetters,
             timerCredit:               game.timerCredit,

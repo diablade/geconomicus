@@ -11,7 +11,8 @@ import * as _ from 'lodash-es';
 import {
 	faClipboardCheck,
 	faFileContract,
-	faCreditCardAlt
+	faCreditCardAlt,
+	faHandHoldingHand
 } from "@fortawesome/free-solid-svg-icons";
 import {SnackbarService} from "../services/snackbar.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
@@ -30,6 +31,7 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
 import {ThemesService} from '../services/themes.service';
+import {ActionDialogComponent} from '../dialogs/action-dialog/action-dialog.component';
 
 @Component({
 	selector: 'app-player-board',
@@ -55,6 +57,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faFileContract = faFileContract;
 	faClipboardCheck = faClipboardCheck;
 	faCreditCardAlt = faCreditCardAlt;
+	faHandHoldingHand = faHandHoldingHand;
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
@@ -704,6 +707,25 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	showRules() {
 		this.dialog.open(GameInfosDialog, {});
+	}
+
+	showActions() {
+		const actionDialogRef = this.dialog.open(ActionDialogComponent, {
+			data: {
+				recipes: this.recipes,
+				cards: this.cards,
+				actionUsed: this.player.actionUsed
+			}
+		});
+		actionDialogRef.afterClosed().subscribe(action => {
+			if (action) {
+				this.backService.sendAction(this.idGame, this.idPlayer, action).subscribe(data => {
+					if (data) {
+						this.player.actionUsed = true;
+					}
+				});
+			}
+		});
 	}
 
 	togglePanel(panel: string) {
