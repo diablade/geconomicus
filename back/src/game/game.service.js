@@ -561,7 +561,9 @@ async function newGameFromCopy(idGame) {
 async function whoHaveCard(idGame, cardKey) {
     const game = await GameModel.findById(idGame).lean();
     if (game) {
-        const player = game.players.find(player => player.cards.find(card => card.key === cardKey));
+        const player = game.players
+            .filter(p => p.status === "alive")
+            .find(player => player.cards.find(card => card.key === cardKey));
         if (player) {
             return {
                 status: "player",

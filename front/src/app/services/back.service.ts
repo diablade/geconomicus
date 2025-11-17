@@ -369,7 +369,7 @@ export class BackService {
 			idPlayer: credit.idPlayer,
 			seizure: seizure
 		}).pipe(
-			catchError(err => this.handleError(err, this.ERROR_FORCE_RELOAD, "ERROR.SEIZURE"))
+			catchError(err => this.handleError(err, this.ERROR, "ERROR.SEIZURE"))
 		)
 	}
 
