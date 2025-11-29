@@ -184,12 +184,12 @@
 					<fa-icon [icon]="faEye"></fa-icon>
 				</button>
 			</div>
-			<button class="m-2" mat-raised-button
+			<button *ngIf="game.typeMoney===C.DEBT" class="m-2" mat-raised-button
 			        color="accent"
 			        (click)="showBank()">{{ "MASTER.BANK_BTN"|translate }}
 				<fa-icon [icon]="faBuildingColumns"></fa-icon>
 			</button>
-			<fa-icon class="joinQr" (click)="qrCodeBank()" [icon]="faQrcode"></fa-icon>
+			<fa-icon *ngIf="game.typeMoney===C.DEBT" class="joinQr" (click)="qrCodeBank()" [icon]="faQrcode"></fa-icon>
 		</div>
 	</div>
 	<div class="text-center" *ngIf="game && game.status===C.OPEN">
