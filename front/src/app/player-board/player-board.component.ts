@@ -1,7 +1,7 @@
 import {createAvatar, Options} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription, Observable} from "rxjs";
+import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Credit, Game, Player} from "../models/game";
 import {BackService} from "../services/back.service";
@@ -79,15 +79,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-	            public dialog: MatDialog,
-	            private router: Router,
-	            private localStorageService: LocalStorageService,
-	            private backService: BackService,
-	            private wsService: WebSocketService,
-	            private i18nService: I18nService,
-	            private themesService: ThemesService,
-	            private audioService: AudioService,
-	            private snackbarService: SnackbarService) {
+				public dialog: MatDialog,
+				private router: Router,
+				private localStorageService: LocalStorageService,
+				private backService: BackService,
+				private wsService: WebSocketService,
+				private i18nService: I18nService,
+				private themesService: ThemesService,
+				private audioService: AudioService,
+				private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -100,8 +100,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem("scanV3");
-		this.panelCreditOpenState = this.localStorageService.getItem("panelCredit") == undefined ? false : this.localStorageService.getItem("panelCredit");
-		this.panelRecipeOpenState = this.localStorageService.getItem("panelRecipe") == undefined ? true : this.localStorageService.getItem("panelRecipe");
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
 			this.idPlayer = params['idPlayer'];
@@ -137,10 +135,35 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}, 2000);
 	}
 
+	initPanels() {
+		const panelC = this.localStorageService.getItem("panelCredit");
+		const panelR = this.localStorageService.getItem("panelRecipe");
+		this.panelCreditOpenState = panelC == undefined ? false : panelC;
+		this.panelRecipeOpenState = panelR == undefined ? false : panelR;
+		if (this.game.typeMoney === C.JUNE) {
+			this.localStorageService.setItem('panelCredit', false);
+			if (this.game.theme === "THEME.CLASSIC") {
+				this.localStorageService.setItem('panelRecipe', false);
+				this.panelRecipeOpenState = false;
+			} else {
+				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
+			}
+		} else {
+			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+			if (this.game.theme === "THEME.CLASSIC") {
+				this.localStorageService.setItem('panelRecipe', false);
+				this.panelRecipeOpenState = false;
+			} else {
+				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
+			}
+		}
+	}
+
 	getPlayerInfos() {
 		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
 			this.game = {...this.game, ...data.game};
 			this.themesService.loadTheme(this.game.theme);
+			this.initPanels();
 			this.cards = [];
 			this.player = data.player;
 			if (this.player.image === "") {
@@ -271,8 +294,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
 			if (data) {
-				this.game = {...this.game, ...data};
-				this.themesService.loadTheme(this.game.theme);
+				//this.game = {...this.game, ...data};
+				//this.themesService.loadTheme(this.game.theme);
+				//this.initPanels(); // not working... in some cases
+				//refresh all
+				this.refresh();
 			}
 		});
 		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
@@ -293,13 +319,14 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				_.remove(this.cards, {_id: data.idCardSold});
 				//display the card that was bellow (if stacked)
 				_.forEach(this.cards, c => {
-					// @ts-ignore
 					if (!c.displayed && c.weight == cardSold.weight && c.letter == cardSold.letter) {
 						c.displayed = true;
 					}
 				});
 				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (this.game.theme == 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
+				if (this.game.theme == 'THEME.CLASSIC') {
+					this.countOccurrencesAndHideDuplicates();
+				}
 			}
 		});
 		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
@@ -397,7 +424,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
 			});
-			if (this.game.theme != 'THEME.CLASSIC') this.countOccurrencesAndHideDuplicates();
+			if (this.game.theme == 'THEME.CLASSIC') {
+				this.countOccurrencesAndHideDuplicates();
+			}
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
 					c.status = C.CREDIT_DONE;
@@ -429,6 +458,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				c.displayed = true;
 			}
 		}
+		this.cards = _.orderBy(this.cards, ["count"], "desc");
 	}
 
 	showGift(card: Card) {
@@ -480,7 +510,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		await new Promise(resolve => setTimeout(resolve, 1000));
 		if (this.game.theme == 'THEME.CLASSIC') {
 			this.countOccurrencesAndHideDuplicates();
-			this.cards = _.orderBy(this.cards, ["count"], "desc");
 		} else {
 			this.recipes = getAvailableRecipes(this.cards, this.game.amountCardsForProd, this.game.generatedIdenticalLetters);
 		}
@@ -516,6 +545,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.buy(dataRaw);
 			}
 		});
+	}
+
+	buyWith(){
+		if(this.scanV3){
+			this.scan();
+		}
+		else{
+			this.openDialogShorCode();
+		}
 	}
 
 	buyWithCode(code: string) {
@@ -721,7 +759,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
-		let cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
+		const cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
 		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {

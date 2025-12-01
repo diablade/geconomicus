@@ -77,7 +77,7 @@ export class ThemesService {
 		return this._typeTheme$.value!;
 	}
 
-	getTheme(): string {
+	getCurrentTheme(): string {
 		return this.currentTheme;
 	}
 

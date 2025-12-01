@@ -80,7 +80,7 @@
 			{{ "HISTORY.VIEW_RESULTS" | translate }}
 		</button>
 	</div>
-	<div *ngIf="(typeTheme$ | async)=='CARD'" @list class="d-flex flex-row flex-wrap">
+	<div *ngIf="(typeTheme$ | async)==='CARD'" @list class="d-flex flex-row flex-wrap">
 		<ng-container *ngFor="let card of cards">
 			<app-card
 					@item *ngIf="card.displayed"
@@ -102,7 +102,7 @@
 			></app-card>
 		</ng-container>
 	</div>
-	<div @list *ngIf="(typeTheme$ | async)!='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
+	<div @list *ngIf="(typeTheme$ | async)!=='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
 		<div @item *ngFor="let card of cards">
 			<app-item
 					@item
@@ -125,13 +125,11 @@
 			></app-item>
 		</div>
 	</div>
-	<div *ngIf="(typeTheme$ | async)!='CARD'" class="credits w-100 d-flex flex-row"
-	     [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
+	<div class="credits w-100 d-flex flex-row" [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
 		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelRecipeOpenState ? 'w-50':'w-100'">
 			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="game.timerCredit" [credit]="credit"
 			            [contractor]="player.name"
 			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
-
 		</div>
 		<div *ngIf="panelCreditOpenState && panelRecipeOpenState" class="separator"></div>
 		<div class="d-flex flex-row overflow-auto" *ngIf="panelRecipeOpenState" [ngClass]="panelCreditOpenState ? 'w-50':'w-100'">
@@ -155,22 +153,17 @@
 		        (click)="togglePanel('credit')">
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
-		<button *ngIf="(typeTheme$ | async)!='CARD' && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
+		<button *ngIf="(typeTheme$ | async)!=='CARD' && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
 		        (click)="togglePanel('recipe')">
 			<fa-icon *ngIf="!panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
-		<button *ngIf="(typeTheme$ | async)!='CARD' && panelRecipeOpenState" class="buy" mat-fab color="primary"
+		<button *ngIf="(typeTheme$ | async)!=='CARD' && panelRecipeOpenState" class="buy" mat-fab color="primary"
 		        (click)="togglePanel('recipe')">
 			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
 		</button>
-		<button *ngIf="scanV3" class="buy" mat-fab color="accent"
+		<button class="buy" mat-fab color="accent"
 		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-		        (click)="scan()">
-			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
-		</button>
-		<button *ngIf="!scanV3" class="buy" mat-fab color="accent"
-		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-		        (click)="openDialogShorCode()">
+		        (click)="buyWith()">
 			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 		</button>
 	</div>
