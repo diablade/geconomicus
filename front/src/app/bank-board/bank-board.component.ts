@@ -5,7 +5,6 @@ import {ActivatedRoute} from "@angular/router";
 import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
-import io from "socket.io-client";
 // @ts-ignore
 import * as C from "../../../../config/constantes";
 import * as _ from 'lodash-es';
@@ -39,12 +38,12 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-	            private backService: BackService,
-	            private snackbarService: SnackbarService,
-	            private sanitizer: DomSanitizer,
-	            public dialog: MatDialog,
-	            private wsService: WebSocketService,
-	            private i18nService: I18nService) {
+				private backService: BackService,
+				private snackbarService: SnackbarService,
+				private sanitizer: DomSanitizer,
+				public dialog: MatDialog,
+				private wsService: WebSocketService,
+				private i18nService: I18nService) {
 	}
 
 	ngOnInit(): void {

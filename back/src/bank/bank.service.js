@@ -344,7 +344,7 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
             await bankTimerManager.stopAndRemoveTimer(credit._id.toString());
             socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
             socket.emitAckTo(idPlayer, C.CREDIT_DONE, {credit:creditUpdated});
-            socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, creditUpdated);
+            socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, {credit:creditUpdated});
             return creditUpdated;
         }
         else {
