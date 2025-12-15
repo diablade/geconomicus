@@ -102,7 +102,7 @@
         "TITLE_PRODUCTION": "Producir una carta de valor superior",
         "PROD_1": "En la esquina de la carta se muestra el número de cartas idénticas y apiladas que posees.",
         "PROD_2": "Estas cartas se pueden vender, como todas las demás, pero una a una.",
-        "PROD_3": "Cuando hayas juntado {{count}} cartas idénticas, un botón permite obtener la carta de valor superior, de la manera que se ve en la imagen.",
+        "PROD_3": "Cuando hayas juntado {{count}} cartas idénticas, un botón permite obtener la carta de valor superior, como sigue :",
         "TITLE_BANK": "La banca y el papel del banquero",
         "BANK_1": "Para acceder a las funcionalidades de la banca (únicamente en moneda deuda), es suficiente con hacer clic en el botón \"Banca\" de la pantalla principal, que permite iniciar o detener una manga del juego.",
         "BANK_3": "La banca dispone de indicadores económicos para facilitar el papel del banquero.",
@@ -189,7 +189,7 @@
         "BUILD_UP_0": "Crear una carta Conocimientos"
     },
     "BANK": {
-        "TITLE": "Banca",
+        "TITLE": "Banco",
         "SUB_TITLE_IND": "Indicadores económicos actuales",
         "MASS_MONEY": "Masa monetaria en circulación",
         "AVG_PLAYERS": "Media por jugador",
