@@ -94,8 +94,7 @@ export class Game {
 
 	//option general
 	devMode = false;
-	action = f+
-		alse;
+	action = false;
 	priceWeight1 = 1;
 	priceWeight2 = 2;
 	priceWeight3 = 4;

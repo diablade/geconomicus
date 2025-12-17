@@ -587,6 +587,26 @@ async function whoHaveCard(idGame, cardKey) {
     }
 }
 
+async function sendAction(idGame, idPlayer, action) {
+    const game = await GameModel.findById(idGame).lean();
+    if (game) {
+        const player = game.players.find(player => player.id === idPlayer);
+        if (player && player.actionUsed === false) {
+            if(action.type === "rob"){
+
+            } else if(action.type === "give"){
+
+            }
+            player.actionUsed = action;
+            return true;
+        }
+        throw new Error("Player not found");
+    }
+    else {
+        throw new Error("Game not found");
+    }
+}
+
 export default {
     createGame:             createGame,
     updateGame:             updateGame,
@@ -599,5 +619,6 @@ export default {
     resetGame:              resetGame,
     refreshForceAllPlayers: refreshForceAllPlayers,
     refreshPlayer:          refreshPlayer,
-    whoHaveCard:            whoHaveCard
+    whoHaveCard:            whoHaveCard,
+    sendAction:             sendAction,
 }

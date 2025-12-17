@@ -476,4 +476,26 @@ export default {
             });
         }
     },
+    sendAction:             async (req, res, next) => {
+        try {
+            const done = await gameService.sendAction(req.body.idGame, req.body.idPlayer, req.body.action);
+            if (done) {
+                return res.status(200).json({
+                    status: "send action done",
+                });
+            }
+            else {
+                return res.status(500).json({
+                    message: "Game send action error",
+                });
+            }
+        }
+        catch (err) {
+            log.error("Game send action error:", err);
+            next({
+                status:  400,
+                message: "Game send action error",
+            });
+        }
+    },
 };
