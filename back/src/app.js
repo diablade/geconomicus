@@ -10,6 +10,8 @@ import log from '../config/log.js';
 import bankRoutes from "./bank/bank.routes.js";
 import gameRoutes from './game/game.routes.js';
 import playerRoutes from './player/player.routes.js';
+import eventRoutes from './event/event.routes.js';
+import surveyRoutes from './survey/survey.routes.js';
 
 import * as db from "../config/database.js";
 // import {connect} from "../config/database2.js";
@@ -70,6 +72,8 @@ app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" 
 app.use('/bank', bankRoutes);
 app.use('/game', gameRoutes);
 app.use('/player', playerRoutes);
+app.use('/survey', surveyRoutes);
+app.use('/event', eventRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
