@@ -1,5 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import env from './../config/env.js';
 import morgan from 'morgan';
 import cors from 'cors';
 import socket from '../config/socket.js';
@@ -16,8 +16,7 @@ import surveyRoutes from './survey/survey.routes.js';
 import * as db from "../config/database.js";
 // import {connect} from "../config/database2.js";
 
-dotenv.config();
-if (process.env.GECO_NODE_ENV !== "test") {
+if (env.environment !== "test") {
     db.connect();
     // connect();
 }
@@ -79,7 +78,7 @@ app.use('/event', eventRoutes);
 app.get('/status', (req, res) => {
     return res.status(200).json({
         status:  'running',
-        version: process.env.GECO_VERSION
+        version: env.version
     })
 });
 //api memory routes
@@ -87,7 +86,7 @@ app.get('/debug/memory', (req, res) => {
     const used = process.memoryUsage();
     return res.status(200).json({
         status:      'running',
-        version:     process.env.GECO_VERSION,
+        version:     env.version,
         memoryUsage: {
             rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
             heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
@@ -123,7 +122,7 @@ app.use((err, req, res) => {
         message: err.message || err || "Something looks wrong :(",
     });
 });
-if (process.env.GECO_NODE_ENV !== "test") {
+if (env.environment !== "test") {
     const server = http.createServer(app);
     // Timeout settings
     server.keepAliveTimeout = 70000;     // 70 secondes
@@ -135,11 +134,11 @@ if (process.env.GECO_NODE_ENV !== "test") {
         log.error('Socket.IO failed to initialize');
     }
 
-    server.listen(process.env.GECO_PORT_NODE, '0.0.0.0', () => console.log(
+    server.listen(env.port, '0.0.0.0', () => console.log(
         "\n" + "   ____                                      _                \n" + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
         + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"
         + "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" + "                                                              \n"
-        + process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
+        + env.version + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
     try {
         socket.getIo(); // This should not throw an error if initialized correctly
         log.info('Socket.IO successfully initialized');

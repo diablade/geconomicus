@@ -1,4 +1,4 @@
-import SurveyModel from '../survey/survey.model.js';
+import SurveyModel from './survey.model.js';
 import socket from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 

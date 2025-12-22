@@ -1,11 +1,11 @@
-import SurveyModel from '../schemas/survey.schema.js';
+import SurveyModel from './survey.schema.js';
 
 /* Create */
 SurveyModel.createNew = async (surveyObject) => {
     const newSurvey = new SurveyModel({
-        SessionId: surveyObject.sessionId,
-        GameId: surveyObject.gameId,
-        PlayerId: surveyObject.playerId,
+        sessionId: surveyObject.sessionId,
+        gameId: surveyObject.gameId,
+        playerId: surveyObject.playerId,
         depressedHappy: surveyObject.depressedHappy,
         individualCollective: surveyObject.individualCollective,
         insatisfiedAccomplished: surveyObject.insatisfiedAccomplished,
