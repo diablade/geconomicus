@@ -8,11 +8,12 @@ import {BehaviorSubject} from "rxjs";
 })
 export class ThemesService {
 	icons: Record<string, string> = {};
-	currentTheme: string = "";
+	namespace = "";
 	themes: Record<string, string> = {
 		"THEME.CLASSIC": "classic",
 		"THEME.EMOJIS": "emojis",
-		"THEME.TWEMOJIS": "twemojis"
+		"THEME.TWEMOJIS": "twemojis",
+		"THEME.CUSTOM1": "custom1"
 	};
 
 	private _typeTheme$ = new BehaviorSubject<string>("CARD");
@@ -20,6 +21,9 @@ export class ThemesService {
 
 	setTypeTheme(typeTheme: string) {
 		this._typeTheme$.next(typeTheme);
+	}
+	getTypeTheme(): any {
+		return this._typeTheme$.getValue();
 	}
 
 	constructor(private i18nService: I18nService, private http: HttpClient) {
@@ -30,22 +34,20 @@ export class ThemesService {
 		if (themeKey === "THEME.CLASSIC") {
 			this.setTypeTheme("CARD");
 		} else {
-			const namespace = this.themes[themeKey];
-			let pathIcon = this.themes[themeKey];
+			this.namespace = this.themes[themeKey];
 			//load icons for the theme
-			if (namespace === "twemojis") {
+			if (this.namespace === "twemojis") {
 				//use emojis from twemojis  (twemoji is loaded via css)
 				this.loadTwemojiCss();
-				pathIcon = "emojis";
+				this.namespace = "emojis";
 			} else {
 				this.unloadTwemojiCss();
 			}
-			this.i18nService.loadNamespace("themes/" + pathIcon);
-			const path = `assets/i18n/themes/${pathIcon}/icons.json`;
+			this.i18nService.loadNamespace("themes/" + this.namespace);
+			const path = `assets/i18n/themes/${this.namespace}/icons.json`;
 			this.http.get<Record<string, string>>(path).subscribe((icons: Record<string, string>) => {
 				this.icons = icons;
-				this.currentTheme = namespace;
-				if (namespace === "twemojis") {
+				if (this.themes[themeKey] === "twemojis") {
 					this.setTypeTheme("TWEMOJI");
 				} else {
 					this.setTypeTheme(icons["type"] as "CARD" | "EMOJI" | "TWEMOJI" | "SVG" | "PNG");
@@ -68,21 +70,12 @@ export class ThemesService {
 		if (link) link.remove();
 	}
 
-
 	getIcon(key: string): string {
 		return this.icons[key];
 	}
 
-	getTypeTheme(): string {
-		return this._typeTheme$.value!;
-	}
-
-	getCurrentTheme(): string {
-		return this.currentTheme;
-	}
-
-	getThemes(): Record<string, string> {
-		return this.themes;
+	getPNG(key: string): string {
+		return `assets/i18n/themes/${this.namespace}/images/${this.icons[key]}`;
 	}
 
 	getThemesKeys(): string[] {

@@ -83,6 +83,10 @@ export class ItemComponent {
 		return this.themesService.getIcon(icon);
 	}
 
+	getPNG(key: string) {
+		return this.themesService.getPNG(key);
+	}
+
 	calculatePosition() {
 		// @ts-ignore
 		const element = this.elementRef.nativeElement as HTMLElement;

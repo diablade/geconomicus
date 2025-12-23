@@ -14,19 +14,15 @@ export class RecipeComponent {
 	@Input() typeTheme: string = 'EMOJI';
 	@Input() width: string = 'calc(18vw)';
 	@Input() height: string = 'calc(18vw * 1.5)';
-	@Output() onReceipeCompleted: EventEmitter<Recipe> = new EventEmitter<Recipe>();
-	@Output() onIngredientClick: EventEmitter<any> = new EventEmitter<any>();
+	@Output() receipeCompleted: EventEmitter<Recipe> = new EventEmitter<Recipe>();
+	@Output() ingredientClicked: EventEmitter<any> = new EventEmitter<any>();
 	faCheck = faCheck;
 
 	constructor(private themesService: ThemesService) {
 	}
 
-	ngOnInit(): void {
-
-	}
-
 	buildCardLvlUp() {
-		this.onReceipeCompleted.emit(this.recipe);
+		this.receipeCompleted.emit(this.recipe);
 	}
 
 	getBuildText() {
@@ -53,13 +49,17 @@ export class RecipeComponent {
 		return "blue";
 	}
 
-	ingredientClick(ingredient: any) {
+	onIngredientClick(ingredient: any) {
 		if (ingredient.have == 0) {
-			this.onIngredientClick.emit(ingredient);
+			this.ingredientClicked.emit(ingredient);
 		}
 	}
 
 	getIcon(icon: string) {
 		return this.themesService.getIcon(icon);
+	}
+
+	getPNG(key: string) {
+		return this.themesService.getPNG(key);
 	}
 }

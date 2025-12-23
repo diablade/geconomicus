@@ -468,7 +468,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			data: {
 				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
 				card: card,
-				theme: this.game.theme
 			},
 			width: '10px',
 			height: '10px'
@@ -759,7 +758,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
-		const cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
+		const cardName = this.i18nService.instant(ingredient.key);
 		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {

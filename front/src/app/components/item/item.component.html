@@ -4,8 +4,11 @@
 <div class="card" [ngClass]="[card.color]"
      [@itemFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
 	<div class="face" *ngIf="state==='default'" (click)="cardClicked()">
-		<div [style.font-size]="iconSize" class="card-icon emoji" [ngClass]="typeTheme=='TWEMOJI' ? 'twemoji' : ''">
+		<div *ngIf="typeTheme==='TWEMOJI'|| typeTheme==='EMOJI'" [style.font-size]="iconSize" class="card-icon emoji" [ngClass]="typeTheme==='TWEMOJI' ? 'twemoji' : ''">
 			{{ getIcon(card.key) }}
+		</div>
+		<div *ngIf="typeTheme==='PNG'">
+			<img alt="" class="card-png" ngSrc="{{getPNG(card.key)}}" fill>
 		</div>
 		<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
 		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">&nbsp;{{ card.letter }}&nbsp;</div>
@@ -13,7 +16,10 @@
 	<div class="back d-flex flex-column align-items-center" [ngClass]="[card.color]" *ngIf="state==='flipped'"
 	     (click)="cardClicked()">
 		<div class="d-flex flex-row justify-content-between w-100">
-			<div class="card-icon-back emoji" [ngClass]="typeTheme=='TWEMOJI' ? 'twemoji' : ''">{{ getIcon(card.key) }}</div>
+			<div *ngIf="typeTheme==='TWEMOJI'|| typeTheme==='EMOJI'" class="card-icon-back emoji" [ngClass]="typeTheme==='TWEMOJI' ? 'twemoji' : ''">{{ getIcon(card.key) }}</div>
+			<div *ngIf="typeTheme==='PNG'">
+				<img alt="" class="card-png-back" ngSrc="{{getPNG(card.key)}}" width="25" height="25">
+			</div>
 			<div class="card-text">{{ card.key | translate }}</div>
 			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
 		</div>

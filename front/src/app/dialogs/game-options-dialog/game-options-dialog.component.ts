@@ -15,6 +15,7 @@ export class GameOptionsDialogComponent {
 	game: Game;
 	themes: string[];
 	C = C;
+	protected readonly Math = Math;
 
 	constructor(
 		private i18nService: I18nService,
@@ -38,5 +39,4 @@ export class GameOptionsDialogComponent {
 		return this.i18nService.instant(key);
 	}
 
-	protected readonly Math = Math;
 }

@@ -138,8 +138,8 @@
 				            [typeTheme]="typeTheme"
 				            [width]="screenWidth < screenHeight ? '36vw':'36vh'"
 				            [height]="screenWidth < screenHeight ? 'calc(35vw * 1.5)':'calc(35vh * 1.5)'"
-				            (onReceipeCompleted)="recipeCompleted($event)"
-				            (onIngredientClick)="whoHaveCard($event)">
+				            (receipeCompleted)="recipeCompleted($event)"
+				            (ingredientClicked)="whoHaveCard($event)">
 				</app-recipe>
 			</div>
 		</div>
