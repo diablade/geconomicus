@@ -7,11 +7,13 @@ import http from 'http';
 import log from '../config/log.js';
 
 // IMPORT ROUTES
-import bankRoutes from "./bank/bank.routes.js";
-import gameRoutes from './game/game.routes.js';
-import playerRoutes from './player/player.routes.js';
+// import gameRoutes from './game/game.routes.js';
+import sessionRoutes from './session/session.routes.js';
 import eventRoutes from './event/event.routes.js';
 import surveyRoutes from './survey/survey.routes.js';
+import gameStateRoutes from './gameState/game.state.routes.js';
+import bankRoutes from "./gameState/bank/bank.routes.js";
+import avatarRoutes from './session/avatar/avatar.routes.js';
 
 import * as db from "../config/database.js";
 // import {connect} from "../config/database2.js";
@@ -46,7 +48,7 @@ const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
 app.use((req, res, next) => {
     if (botPattern.test(req.headers['user-agent'])) {
         // Respond with 403 Forbidden for bots
-        return res.status(403).json({message: 'Forbidden'});
+        return res.status(403).json({ message: 'Forbidden' });
     }
     next();
 });
@@ -59,7 +61,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 // Morgan logger setup: Log only defined routes
 app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
     skip: (req, res) => {
@@ -68,16 +70,19 @@ app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" 
 }));
 
 // MAIN ROUTES middleware
-app.use('/bank', bankRoutes);
-app.use('/game', gameRoutes);
-app.use('/player', playerRoutes);
+app.use('/session', sessionRoutes);
 app.use('/survey', surveyRoutes);
 app.use('/event', eventRoutes);
+app.use('/avatar', avatarRoutes);
+app.use('/gameState', gameStateRoutes);
+app.use('/bank', bankRoutes);
+// app.use('/game', gameRoutes);
+// app.use('/player', playerRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
     return res.status(200).json({
-        status:  'running',
+        status: 'running',
         version: env.version
     })
 });
@@ -85,30 +90,30 @@ app.get('/status', (req, res) => {
 app.get('/debug/memory', (req, res) => {
     const used = process.memoryUsage();
     return res.status(200).json({
-        status:      'running',
-        version:     env.version,
+        status: 'running',
+        version: env.version,
         memoryUsage: {
-            rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+            rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
             heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-            heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-            external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
+            heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+            external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
         }
     })
 });
 
 // Catch-all for non-matching routes (404 handler)
 app.use((req, res, next) => {
-    return res.status(404).json({"not": "Found"});
+    return res.status(404).json({ "not": "Found" });
 });
 
 // Add to your main app.js or server startup
 setInterval(() => {
     const used = process.memoryUsage();
     const memoryUsage = {
-        rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+        rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
         heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-        heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-        external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
+        heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+        external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
     };
     log.info('Memory usage:', memoryUsage);
 }, 3600000); // Log every hours

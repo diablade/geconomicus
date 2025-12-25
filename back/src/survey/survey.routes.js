@@ -5,10 +5,10 @@ import { schemas } from './survey.validation.js';
 
 const router = express.Router();
 
-router.get('/game/:gameId/player/:playerId', validate(schemas.getByGameIdAndPlayerId, true), surveyController.getByGameIdAndPlayerId);
-router.get('/game/:gameId', validate(schemas.getByGameId, true), surveyController.getByGameId);
+router.get('/:gameStateId/:avatarId', validate(schemas.getByGameStateIdAndAvatarId, true), surveyController.getByGameStateIdAndAvatarId);
+router.get('/game/:gameStateId', validate(schemas.getByGameStateId, true), surveyController.getByGameStateId);
 router.get('/session/:sessionId', validate(schemas.getBySessionId, true), surveyController.getBySessionId);
 router.post('/feedback', validate(schemas.addFeedback), surveyController.addFeedback);
-router.delete('/session/:sessionId', validate(schemas.removeBySessionId, true), surveyController.removeBySessionId);
-router.delete('/game/:gameId', validate(schemas.removeByGameId, true), surveyController.removeByGameId);
+router.delete('/session/:sessionId', validate(schemas.removeAllBySessionId, true), surveyController.removeAllBySessionId);
+router.delete('/game/:gameStateId', validate(schemas.removeAllByGameStateId, true), surveyController.removeAllByGameStateId);
 export default router;

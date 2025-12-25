@@ -8,15 +8,15 @@ export const schemas = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
-        gameId: Joi.string().custom(isValidObjectId).required()
+        gameStateId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid game ID format',
-                'any.required': 'Game ID is required'
+                'any.invalid': 'Invalid game state ID format',
+                'any.required': 'Game state ID is required'
             }),
-        playerId: Joi.string().custom(isValidObjectId).required()
+        avatarId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid player ID format',
-                'any.required': 'Player ID is required'
+                'any.invalid': 'Invalid avatar ID format',
+                'any.required': 'Avatar ID is required'
             }),
         depressedHappy: Joi.number().min(-3).max(3).required(),
         individualCollective: Joi.number().min(-3).max(3).required(),
@@ -28,23 +28,23 @@ export const schemas = {
         irritableTolerant: Joi.number().min(-3).max(3).required(),
         dependantAutonomous: Joi.number().min(-3).max(3).required()
     }),
-    getByGameIdAndPlayerId: Joi.object({
-        gameId: Joi.string().custom(isValidObjectId).required()
+    getByGameStateIdAndAvatarId: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid game ID format',
-                'any.required': 'Game ID is required'
+                'any.invalid': 'Invalid game state ID format',
+                'any.required': 'Game state ID is required'
             }),
-        playerId: Joi.string().custom(isValidObjectId).required()
+        avatarId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid player ID format',
-                'any.required': 'Player ID is required'
+                'any.invalid': 'Invalid avatar ID format',
+                'any.required': 'Avatar ID is required'
             })
     }),
-    getByGameId: Joi.object({
-        gameId: Joi.string().custom(isValidObjectId).required()
+    getByGameStateId: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid game ID format',
-                'any.required': 'Game ID is required'
+                'any.invalid': 'Invalid game state ID format',
+                'any.required': 'Game state ID is required'
             })
     }),
     getBySessionId: Joi.object({
@@ -54,18 +54,18 @@ export const schemas = {
                 'any.required': 'Session ID is required'
             })
     }),
-    removeBySessionId: Joi.object({
+    removeAllBySessionId: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
             .messages({
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             })
     }),
-    removeByGameId: Joi.object({
-        gameId: Joi.string().custom(isValidObjectId).required()
+    removeAllByGameStateId: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required()
             .messages({
-                'any.invalid': 'Invalid game ID format',
-                'any.required': 'Game ID is required'
+                'any.invalid': 'Invalid game state ID format',
+                'any.required': 'Game state ID is required'
             })
     })
 };

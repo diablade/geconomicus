@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const SurveySchema = new Schema({
     sessionId: String,
-    gameId: String,
+    gameStateId: String,
     playerId: String,
     depressedHappy: Number,
     individualCollective: Number,

@@ -4,9 +4,9 @@ import * as C from '../../../config/constantes.js';
 
 const SurveyController = {};
 
-SurveyController.getByGameIdAndPlayerId = async (req, res, next) => {
+SurveyController.getByGameStateIdAndPlayerId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameIdAndPlayerId(req.params.gameId, req.params.playerId);
+        let surveyFound = await SurveyModel.getByGameStateIdAndPlayerId(req.params.gameStateId, req.params.playerId);
         if (!surveyFound) {
             next({
                 status: 404,
@@ -24,9 +24,9 @@ SurveyController.getByGameIdAndPlayerId = async (req, res, next) => {
         });
     }
 }
-SurveyController.getByGameId = async (req, res, next) => {
+SurveyController.getByGameStateId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameId(req.params.gameId);
+        let surveyFound = await SurveyModel.getByGameStateId(req.params.gameStateId);
         if (!surveyFound) {
             next({
                 status: 404,
@@ -64,14 +64,13 @@ SurveyController.getBySessionId = async (req, res, next) => {
         });
     }
 }
-
 SurveyController.addFeedback = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameIdAndPlayerId(req.body.gameId, req.body.playerId);
+        let surveyFound = await SurveyModel.getByGameStateIdAndAvatarId(req.body.gameStateId, req.body.avatarId);
         if (!surveyFound) {
-            let newSurvey = await SurveyModel.createNew(req.body);
+            let newSurvey = await SurveyModel.create(req.body);
             if (newSurvey && newSurvey._id) {
-                socket.emitTo(req.body.gameId, C.NEW_FEEDBACK);
+                socket.emitTo(req.body.gameStateId, C.NEW_FEEDBACK);
                 return res.status(200).json(newSurvey);
             }
             else {
@@ -95,11 +94,10 @@ SurveyController.addFeedback = async (req, res, next) => {
         });
     }
 };
-
-SurveyController.removeByGameId = async (req, res, next) => {
-    const id = req.params.gameId;
+SurveyController.removeAllByGameStateId = async (req, res, next) => {
+    const id = req.params.gameStateId;
     try {
-        const result = await SurveyModel.removeByGameId(id);
+        const result = await SurveyModel.removeAllByGameStateId(id);
         if (result.deletedCount > 0) {
             return res.json(result);
         }
@@ -117,10 +115,10 @@ SurveyController.removeByGameId = async (req, res, next) => {
         });
     }
 };
-SurveyController.removeBySessionId = async (req, res, next) => {
+SurveyController.removeAllBySessionId = async (req, res, next) => {
     const id = req.params.sessionId;
     try {
-        const result = await SurveyModel.removeBySessionId(id);
+        const result = await SurveyModel.removeAllBySessionId(id);
         if (result.deletedCount > 0) {
             return res.json(result);
         }

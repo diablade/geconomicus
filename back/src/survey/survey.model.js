@@ -1,11 +1,11 @@
 import SurveyModel from './survey.schema.js';
 
 /* Create */
-SurveyModel.createNew = async (surveyObject) => {
+SurveyModel.create = async (surveyObject) => {
     const newSurvey = new SurveyModel({
         sessionId: surveyObject.sessionId,
-        gameId: surveyObject.gameId,
-        playerId: surveyObject.playerId,
+        gameStateId: surveyObject.gameStateId,
+        avatarId: surveyObject.avatarId,
         depressedHappy: surveyObject.depressedHappy,
         individualCollective: surveyObject.individualCollective,
         insatisfiedAccomplished: surveyObject.insatisfiedAccomplished,
@@ -20,11 +20,11 @@ SurveyModel.createNew = async (surveyObject) => {
 };
 
 /* Retrieve */
-SurveyModel.getByGameIdAndPlayerId = async (idGame, idPlayer) => {
-    return await SurveyModel.findOne({ idGame, idPlayer }).exec();
+SurveyModel.getByGameStateIdAndAvatarId = async (gameStateId, avatarId) => {
+    return await SurveyModel.findOne({ gameStateId: gameStateId, avatarId: avatarId }).exec();
 };
-SurveyModel.getByGameId = async (gameId) => {
-    return await SurveyModel.find({ gameId }).exec();
+SurveyModel.getByGameStateId = async (gameStateId) => {
+    return await SurveyModel.find({ gameStateId }).exec();
 };
 SurveyModel.getBySessionId = async (sessionId) => {
     return await SurveyModel.find({ sessionId }).exec();
@@ -36,11 +36,11 @@ SurveyModel.update = async (id, updates) => {
 };
 
 /* Remove */
-SurveyModel.removeBySessionId = async (sessionId) => {
+SurveyModel.removeAllBySessionId = async (sessionId) => {
     return await SurveyModel.deleteMany({ sessionId }).exec();
 };
-SurveyModel.removeByGameId = async (gameId) => {
-    return await SurveyModel.deleteMany({ gameId }).exec();
+SurveyModel.removeAllByGameStateId = async (gameStateId) => {
+    return await SurveyModel.deleteMany({ gameStateId }).exec();
 };
 
 export default SurveyModel;
