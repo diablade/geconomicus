@@ -1,12 +1,12 @@
-import SurveyModel from './survey.model.js';
+import SurveyService from './survey.service.js';
 import socket from '../../config/socket.js';
 import * as C from '../../../config/constantes.js';
 
 const SurveyController = {};
 
-SurveyController.getByGameStateIdAndPlayerId = async (req, res, next) => {
+SurveyController.getByGameStateIdAndAvatarId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameStateIdAndPlayerId(req.params.gameStateId, req.params.playerId);
+        let surveyFound = await SurveyService.getByGameStateIdAndAvatarId(req.params.gameStateId, req.params.avatarId);
         if (!surveyFound) {
             next({
                 status: 404,
@@ -26,7 +26,7 @@ SurveyController.getByGameStateIdAndPlayerId = async (req, res, next) => {
 }
 SurveyController.getByGameStateId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameStateId(req.params.gameStateId);
+        let surveyFound = await SurveyService.getByGameStateId(req.params.gameStateId);
         if (!surveyFound) {
             next({
                 status: 404,
@@ -46,7 +46,7 @@ SurveyController.getByGameStateId = async (req, res, next) => {
 }
 SurveyController.getBySessionId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getBySessionId(req.params.sessionId);
+        let surveyFound = await SurveyService.getBySessionId(req.params.sessionId);
         if (!surveyFound) {
             next({
                 status: 404,
@@ -66,9 +66,9 @@ SurveyController.getBySessionId = async (req, res, next) => {
 }
 SurveyController.addFeedback = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyModel.getByGameStateIdAndAvatarId(req.body.gameStateId, req.body.avatarId);
+        let surveyFound = await SurveyService.getByGameStateIdAndAvatarId(req.body.gameStateId, req.body.avatarId);
         if (!surveyFound) {
-            let newSurvey = await SurveyModel.create(req.body);
+            let newSurvey = await SurveyService.create(req.body);
             if (newSurvey && newSurvey._id) {
                 socket.emitTo(req.body.gameStateId, C.NEW_FEEDBACK);
                 return res.status(200).json(newSurvey);
@@ -97,7 +97,7 @@ SurveyController.addFeedback = async (req, res, next) => {
 SurveyController.removeAllByGameStateId = async (req, res, next) => {
     const id = req.params.gameStateId;
     try {
-        const result = await SurveyModel.removeAllByGameStateId(id);
+        const result = await SurveyService.removeAllByGameStateId(id);
         if (result.deletedCount > 0) {
             return res.json(result);
         }
@@ -118,7 +118,7 @@ SurveyController.removeAllByGameStateId = async (req, res, next) => {
 SurveyController.removeAllBySessionId = async (req, res, next) => {
     const id = req.params.sessionId;
     try {
-        const result = await SurveyModel.removeAllBySessionId(id);
+        const result = await SurveyService.removeAllBySessionId(id);
         if (result.deletedCount > 0) {
             return res.json(result);
         }
