@@ -16,4 +16,4 @@ const SurveySchema = new Schema({
     dependantAutonomous: Number,
 });
 
-export default SurveySchema;
+export default mongoose.model('Survey', SurveySchema);
