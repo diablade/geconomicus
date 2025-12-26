@@ -1,7 +1,7 @@
 import log from '../../../config/log.js';
 import socket from '../../../config/socket.js';
 import * as C from '../../../../config/constantes.js';
-import AvatarModel from "./avatar.model.js";
+import AvatarService from "./avatar.service.js";
 import nanoid from '../../misc/misc.tool.js';
 import EventModel from '../../event/event.model.js';
 
@@ -14,7 +14,7 @@ AvatarController.join = async (req, res, next) => {
     } = req.body;
     try {
         const nanoId = nanoid();
-        let session = await AvatarModel.create(sessionId, nanoId, name);
+        let session = await AvatarService.create(sessionId, nanoId, name);
         if (!session) {
             return res.status(404).json({message: "Session not found"});
         }
@@ -33,7 +33,7 @@ AvatarController.getById = async (req, res, next) => {
         avatarId
     } = req.params;
     try {
-        const avatar = await AvatarModel.getById(sessionId, avatarId);
+        const avatar = await AvatarService.getById(sessionId, avatarId);
         return res.status(200).json(avatar);
     }
     catch (err) {
@@ -50,7 +50,7 @@ AvatarController.update = async (req, res, next) => {
             avatarId,
             updates
         } = req.body;
-        const updatedAvatar = await AvatarModel.update(sessionId, avatarId, updates);
+        const updatedAvatar = await AvatarService.update(sessionId, avatarId, updates);
         socket.emitTo(sessionId, C.UPDATED_AVATAR, updatedAvatar);
         return res.status(200).json({"status": "updated"});
     }
@@ -65,7 +65,7 @@ AvatarController.delete = async (req, res, next) => {
             sessionId,
             avatarId
         } = req.body;
-        const session = await AvatarModel.removeById(sessionId, avatarId);
+        const session = await AvatarService.removeById(sessionId, avatarId);
         if (!session) {
             return res.status(404).json({message: "Cannot delete avatar"});
         }

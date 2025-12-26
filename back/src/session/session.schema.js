@@ -5,7 +5,7 @@ import Rules from './rules/rules.schema.js';
 const Schema = mongoose.Schema;
 
 
-let Session = new Schema({
+let SessionSchema = new Schema({
 	name: { type: String, required: true },
 	animator: { type: String, required: true, default: "-" },
 	location: { type: String, required: true, default: "-" },
@@ -17,4 +17,4 @@ let Session = new Schema({
 }, { timestamps: true });
 
 
-export default mongoose.model('Session', Session);
+export default SessionSchema;
