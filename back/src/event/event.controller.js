@@ -1,4 +1,4 @@
-import EventModel from './event.model.js';
+import EventService from './event.service.js';
 import log from '../../config/log.js';
 
 const EventController = {};
@@ -7,10 +7,10 @@ const EventController = {};
  * @route GET /api/events/:id
  * @access Private
  */
-EventController.getEventBySessionId = async (req, res) => {
+EventController.getBySessionId = async (req, res) => {
     try {
         const { id } = req.params;
-        const event = await EventModel.getBySessionId(id);
+        const event = await EventService.getBySessionId(id);
 
         if (!event) {
             return res.status(404).json({
@@ -34,12 +34,12 @@ EventController.getEventBySessionId = async (req, res) => {
  * @route GET /api/events/session/:sessionId/game/:gameStateId
  * @access Private
  */
-EventController.getEventsByGameStateId = async (req, res) => {
+EventController.getByGameStateId = async (req, res) => {
     try {
         const {
             gameStateId
         } = req.params;
-        const events = await EventModel.getByGameStateId(gameStateId);
+        const events = await EventService.getByGameStateId(gameStateId);
         return res.status(200).json({
             count: events.length,
             data: events

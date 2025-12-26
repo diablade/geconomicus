@@ -1,12 +1,11 @@
 import log from "../../config/log.js";
-import RulesModel from './rules.model.js';
+import RulesService from './rules.service.js';
 
 const RulesController = {};
 
 RulesController.create = async (req, res, next) => {
     try {
-        const rules = req.body.rules;
-        const rulesCreatedAck = await RulesModel.create(rules);
+        const rulesCreatedAck = await RulesService.create(req.body.sessionId, req.body.rules);
         return res.status(200).send(rulesCreatedAck);
     }
     catch (err) {
@@ -18,7 +17,7 @@ RulesController.create = async (req, res, next) => {
 };
 RulesController.update = async (req, res, next) => {
     try {
-        const rulesUpdatedAck = await RulesModel.update(req.body);
+        const rulesUpdatedAck = await RulesService.update(req.body.sessionId, req.body.ruleId, req.body.rules);
         return res.status(200).send({
             status: "updated",
         });
@@ -29,7 +28,6 @@ RulesController.update = async (req, res, next) => {
             message: "ERROR.UPDATE",
         });
     }
-
 };
 RulesController.getById = async (req, res, next) => {
     try {
@@ -43,7 +41,6 @@ RulesController.getById = async (req, res, next) => {
         });
     }
 };
-
 RulesController.remove = async (req, res, next) => {
     try {
         await RulesModel.removeById(req.body.sessionId, req.body.ruleId);

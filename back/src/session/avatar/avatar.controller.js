@@ -3,7 +3,7 @@ import socket from '../../../config/socket.js';
 import * as C from '../../../../config/constantes.js';
 import AvatarService from "./avatar.service.js";
 import nanoid from '../../misc/misc.tool.js';
-import EventModel from '../../event/event.model.js';
+import EventService from '../../event/event.service.js';
 
 const AvatarController = {};
 
@@ -16,15 +16,15 @@ AvatarController.join = async (req, res, next) => {
         const nanoId = nanoid();
         let session = await AvatarService.create(sessionId, nanoId, name);
         if (!session) {
-            return res.status(404).json({message: "Session not found"});
+            return res.status(404).json({ message: "Session not found" });
         }
-        let joinEvent = await EventModel.create(C.NEW_AVATAR, sessionId, null, nanoId, C.MASTER, {name: name});
+        let joinEvent = await EventService.create(C.NEW_AVATAR, sessionId, null, nanoId, C.MASTER, { name: name });
         socket.emitTo(sessionId, C.NEW_AVATAR, joinEvent);
-        return res.status(200).json({avatarId: nanoId});
+        return res.status(200).json({ avatarId: nanoId });
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({message: "Game not found"});
+        return res.status(404).json({ message: "Game not found" });
     }
 };
 AvatarController.getById = async (req, res, next) => {
@@ -52,11 +52,11 @@ AvatarController.update = async (req, res, next) => {
         } = req.body;
         const updatedAvatar = await AvatarService.update(sessionId, avatarId, updates);
         socket.emitTo(sessionId, C.UPDATED_AVATAR, updatedAvatar);
-        return res.status(200).json({"status": "updated"});
+        return res.status(200).json({ "status": "updated" });
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({message: err});
+        return res.status(404).json({ message: err });
     }
 };
 AvatarController.delete = async (req, res, next) => {
@@ -67,11 +67,11 @@ AvatarController.delete = async (req, res, next) => {
         } = req.body;
         const session = await AvatarService.removeById(sessionId, avatarId);
         if (!session) {
-            return res.status(404).json({message: "Cannot delete avatar"});
+            return res.status(404).json({ message: "Cannot delete avatar" });
         }
-        let deleteEvent = await EventModel.create(C.DELETED_AVATAR, sessionId, null, avatarId, C.MASTER, {});
+        let deleteEvent = await EventService.create(C.DELETED_AVATAR, sessionId, null, avatarId, C.MASTER, {});
         socket.emitTo(sessionId, C.DELETED_AVATAR, deleteEvent);
-        return res.status(200).json({"status": "deleted"});
+        return res.status(200).json({ "status": "deleted" });
     }
     catch (error) {
         log.error("delete avatar error:", error);

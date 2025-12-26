@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { isValidObjectId } from '../misc/validate.tool.js';
 
-export const schemas = {
+export const inputs = {
     getById: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
             .messages({

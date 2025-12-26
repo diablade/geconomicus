@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { isValidObjectId } from '../../misc/validate.tool.js';
 
-export const schemas = {
+export const sanitize = {
     create: Joi.object({
         rules: Joi.object({
             typeMoney: Joi.string(),
@@ -80,6 +80,11 @@ export const schemas = {
             .messages({
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
+            }),
+        ruleId: Joi.string().custom(isValidObjectId).required()
+            .messages({
+                'any.invalid': 'Invalid rule ID format',
+                'any.required': 'Rule ID is required'
             })
     }),
     reset: Joi.object({

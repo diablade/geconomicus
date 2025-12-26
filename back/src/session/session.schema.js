@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
-import Avatar from './avatar/avatar.schema.js';
-import Rules from './rules/rules.schema.js';
-
+import AvatarSchema from './avatar/avatar.schema.js';
+import RulesSchema from './rules/rules.schema.js';
 const Schema = mongoose.Schema;
-
 
 let SessionSchema = new Schema({
 	name: { type: String, required: true },
@@ -12,8 +10,8 @@ let SessionSchema = new Schema({
 	shortId: { type: String, required: true },
 	devMode: { type: Boolean, required: true, default: false },
 	theme: { type: String, required: true, default: "CLASSIC" },
-	gamesRules: { type: [Rules], required: true, default: [] },
-	players: { type: [Avatar], required: true, default: [] },
+	gamesRules: { type: [RulesSchema], required: true, default: [] },
+	players: { type: [AvatarSchema], required: true, default: [] },
 }, { timestamps: true });
 
 

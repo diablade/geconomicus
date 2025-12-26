@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const Event = new Schema({
+const EventSchema = new Schema({
     typeEvent: { type: String, required: true },
     sessionId: { type: String, required: true },
     gameId: { type: String, required: true },
@@ -10,4 +10,4 @@ const Event = new Schema({
     payload: { type: Object, required: true },
 }, { timestamps: true });
 
-export default Event;
+export default EventSchema;
