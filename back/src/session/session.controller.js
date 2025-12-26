@@ -1,5 +1,5 @@
 import log from "../../config/log.js";
-import SessionModel from "./session.model.js";
+import SessionService from "./session.service.js";
 import SurveyModel from '../survey/survey.model.js';
 import EventModel from '../event/event.model.js';
 import GameStateModel from '../gameState/game.state.model.js';
@@ -8,7 +8,7 @@ const SessionController = {};
 
 SessionController.getById = async (req, res, next) => {
     try {
-        const session = await SessionModel.getById(req.params.id);
+        const session = await SessionService.getById(req.params.id);
         return res.status(200).send(session);
     }
     catch (err) {
@@ -20,7 +20,7 @@ SessionController.getById = async (req, res, next) => {
 };
 SessionController.getByShortId = async (req, res, next) => {
     try {
-        const session = await SessionModel.getByShortId(req.params.id);
+        const session = await SessionService.getByShortId(req.params.id);
         return res.status(200).send(session);
     }
     catch (err) {
@@ -32,7 +32,7 @@ SessionController.getByShortId = async (req, res, next) => {
 };
 SessionController.create = async (req, res, next) => {
     try {
-        const session = await SessionModel.create(req.body);
+        const session = await SessionService.create(req.body);
         return res.status(200).send(session);
     }
     catch (err) {
@@ -44,7 +44,7 @@ SessionController.create = async (req, res, next) => {
 };
 SessionController.update = async (req, res, next) => {
     try {
-        const sessionUpdated = await SessionModel.update(req.body);
+        const sessionUpdated = await SessionService.update(req.body);
         return res.status(200).send({
             status: "updated",
         });
@@ -60,7 +60,7 @@ SessionController.update = async (req, res, next) => {
 SessionController.getAll = async (req, res, next) => {
     try {
         //TODO pagination  one day and with filters in req 
-        const sessions = await SessionModel.getAll();
+        const sessions = await SessionService.getAll();
         return res.status(200).send(sessions);
     }
     catch (err) {
@@ -73,10 +73,10 @@ SessionController.getAll = async (req, res, next) => {
 SessionController.delete = async (req, res, next) => {
     try {
         //todo rules manager to delete all rules associated
-        await EventModel.removeAllBySessionId(req.params.id);
-        await SurveyModel.removeAllBySessionId(req.params.id);
-        await GameStateModel.removeAllBySessionId(req.params.id);
-        await SessionModel.delete(req.params.id);
+        await EventService.removeAllBySessionId(req.params.id);
+        await SurveyService.removeAllBySessionId(req.params.id);
+        await GameStateService.removeAllBySessionId(req.params.id);
+        await SessionService.delete(req.params.id);
         return res.status(200).send({
             status: "removed",
         });
