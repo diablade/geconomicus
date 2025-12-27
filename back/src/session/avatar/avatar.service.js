@@ -1,5 +1,7 @@
 import SessionModel from './../session.schema.js';
 
+const AvatarService = {};
+
 /* Create */
 AvatarService.create = async (sessionId, nanoId, name) => {
     let newAvatar = {

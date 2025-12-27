@@ -1,8 +1,8 @@
 import log from "../../config/log.js";
 import SessionService from "./session.service.js";
-import SurveyModel from '../survey/survey.model.js';
-import EventModel from '../event/event.model.js';
-import GameStateModel from '../gameState/game.state.model.js';
+import EventService from "../event/event.service.js";
+import SurveyService from "../survey/survey.service.js";
+import GameStateService from "../gameState/game.state.service.js";
 
 const SessionController = {};
 
