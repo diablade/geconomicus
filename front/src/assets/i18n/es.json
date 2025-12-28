@@ -9,6 +9,8 @@
     "VALUES_BY_DEFAULT": "Valores predeterminados",
     "CANCEL": "Anular",
     "OK": "OK",
+	"SAVE": "Guardar",
+	"DELETE": "Suprimir",
     "ALL": "Todos",
     "HOME": {
         "PAGE": "Pagina de inicio",
@@ -560,12 +562,6 @@
         "GAME_TABLE": "Tablero de juego",
         "SKIN": "Piel",
         "HAIR": "Cabello"
-    },
-    "COMMON": {
-        "CANCEL": "Anular",
-        "SAVE": "Guardar",
-        "DELETE": "Suprimir",
-        "OK": "OK"
     },
     "RESSOURCES": {
         "LEARN_FORWARD": "Ve más allá con los",

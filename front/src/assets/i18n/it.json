@@ -9,6 +9,8 @@
     "VALUES_BY_DEFAULT": "Valori predefiniti",
     "CANCEL": "Annulla",
     "OK": "OK",
+	"SAVE": "Salva",
+	"DELETE": "Elimina",
     "ALL": "Tutto",
     "HOME": {
         "PAGE": "Pagina di inizio",
@@ -544,12 +546,6 @@
         "GAME_TABLE": "Tavolo da gioco",
         "SKIN": "Pelle",
         "HAIR": "Capelli"
-    },
-    "COMMON": {
-        "CANCEL": "Annulla",
-        "SAVE": "Salva",
-        "DELETE": "Elimina",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "Unisciti al gioco!",

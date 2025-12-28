@@ -11,6 +11,8 @@
     "CANCEL": "Otkaži",
     "OK": "U redu",
     "ALL": "Svi",
+	"SAVE": "Sačuvaj",
+	"DELETE": "Obriši",
     "HOME": {
         "PAGE": "Strana početka",
         "CONTRIBUTION": "Donacije",
@@ -533,12 +535,6 @@
         "GAME_TABLE": "Igračka tabla",
         "SKIN": "Koža",
         "HAIR": "Kosa"
-    },
-    "COMMON": {
-        "CANCEL": "Otkaži",
-        "SAVE": "Sačuvaj",
-        "DELETE": "Obriši",
-        "OK": "U redu"
     },
     "JOIN": {
         "TITLE": "Pridružite se igri!",

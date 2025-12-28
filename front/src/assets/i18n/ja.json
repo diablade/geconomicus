@@ -9,6 +9,8 @@
     "VALUES_BY_DEFAULT": "デフォルト値",
     "CANCEL": "キャンセル",
     "OK": "OK",
+	"SAVE": "保存",
+	"DELETE": "削除",
     "ALL": "すべて",
     "HOME": {
         "PAGE": "ホームページ",
@@ -532,12 +534,6 @@
         "GAME_TABLE": "ゲームテーブル",
         "SKIN": "肌",
         "HAIR": "髪"
-    },
-    "COMMON": {
-        "CANCEL": "キャンセル",
-        "SAVE": "保存",
-        "DELETE": "削除",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "ゲームに参加！",

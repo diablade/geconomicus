@@ -10,6 +10,8 @@
     "VALUES_BY_DEFAULT": "Valori implicite",
     "CANCEL": "Anulează",
     "OK": "OK",
+	"SAVE": "Salvează",
+	"DELETE": "Șterge",
     "ALL": "Toate",
     "HOME": {
         "PAGE": "Pagina de start",
@@ -533,12 +535,6 @@
         "GAME_TABLE": "Masă de joc",
         "SKIN": "Piele",
         "HAIR": "Păr"
-    },
-    "COMMON": {
-        "CANCEL": "Anulează",
-        "SAVE": "Salvează",
-        "DELETE": "Șterge",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "Alătură-te jocului!",

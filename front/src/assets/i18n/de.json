@@ -10,6 +10,8 @@
     "VALUES_BY_DEFAULT": "Standardwerte",
     "CANCEL": "Abbrechen",
     "OK": "OK",
+	"SAVE": "Speichern",
+	"DELETE": "Löschen",
     "ALL": "Alle",
     "HOME": {
         "PAGE": "Startseite",
@@ -543,12 +545,6 @@
         "GAME_TABLE": "Spielfeld",
         "SKIN": "Hautfarbe",
         "HAIR": "Haare"
-    },
-    "COMMON": {
-        "CANCEL": "Abbrechen",
-        "SAVE": "Speichern",
-        "DELETE": "Löschen",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "Spiel beitreten!",

@@ -7,6 +7,7 @@ import {Player} from "../models/game";
 import {BackService} from "../services/back.service";
 import {faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
+import {I18nService} from "../services/i18n.service";
 
 @Component({
 	selector: 'app-player-settings',
@@ -58,7 +59,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 
 	boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private localStorageService: LocalStorageService) {
+	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private localStorageService: LocalStorageService, private i18nService : I18nService) {
 
 	}
 
@@ -251,4 +252,8 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	protected readonly faCamera = faCamera;
+
+	translate(key: string) {
+		return this.i18nService.instant(key);
+	}
 }

@@ -10,6 +10,8 @@
     "VALUES_BY_DEFAULT": "Default values",
     "CANCEL": "Cancel",
     "OK": "OK",
+	"SAVE": "Save",
+	"DELETE": "Delete",
     "ALL": "All",
     "HOME": {
         "PAGE": "Homepage",
@@ -533,12 +535,6 @@
         "GAME_TABLE": "Game Table",
         "SKIN": "Skin",
         "HAIR": "Hair"
-    },
-    "COMMON": {
-        "CANCEL": "Cancel",
-        "SAVE": "Save",
-        "DELETE": "Delete",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "Join the game!",

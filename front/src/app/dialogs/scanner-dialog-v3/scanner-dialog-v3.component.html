@@ -14,5 +14,5 @@
 			<option *ngFor="let c of action.devices.value; let i = index" [value]="c.deviceId" [selected]="i == action.deviceIndexActive">{{ c.label }}</option>
 		</select>
 	</mat-form-field>
-	<button mat-button (click)="closeDialog()">{{ "COMMON.CANCEL"|translate }}</button>
+	<button mat-button (click)="closeDialog()">{{ "CANCEL"|translate }}</button>
 </mat-dialog-actions>

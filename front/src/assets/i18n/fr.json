@@ -10,6 +10,8 @@
     "VALUES_BY_DEFAULT": "Valeurs par défaut",
     "CANCEL": "Annuler",
     "OK": "OK",
+	"SAVE": "Sauvegarder",
+	"DELETE": "Supprimer",
     "ALL": "Tous",
     "HOME": {
         "PAGE": "Page d'accueil",
@@ -562,12 +564,6 @@
         "GAME_TABLE": "Table de jeu",
         "SKIN": "Peau",
         "HAIR": "Cheveux"
-    },
-    "COMMON": {
-        "CANCEL": "Annuler",
-        "SAVE": "Sauvegarder",
-        "DELETE": "Supprimer",
-        "OK": "OK"
     },
     "JOIN": {
         "TITLE": "Rejoindre la partie !",
