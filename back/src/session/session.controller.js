@@ -8,7 +8,7 @@ const SessionController = {};
 
 SessionController.getById = async (req, res, next) => {
     try {
-        const session = await SessionService.getById(req.params.id);
+        const session = await SessionService.getById(req.params.sessionId);
         return res.status(200).send(session);
     }
     catch (err) {
@@ -20,7 +20,7 @@ SessionController.getById = async (req, res, next) => {
 };
 SessionController.getByShortId = async (req, res, next) => {
     try {
-        const session = await SessionService.getByShortId(req.params.id);
+        const session = await SessionService.getByShortId(req.params.shortId);
         return res.status(200).send(session);
     }
     catch (err) {
@@ -44,10 +44,8 @@ SessionController.create = async (req, res, next) => {
 };
 SessionController.update = async (req, res, next) => {
     try {
-        const sessionUpdated = await SessionService.update(req.body);
-        return res.status(200).send({
-            status: "updated",
-        });
+        const sessionUpdated = await SessionService.update(req.body.sessionId, req.body.updates);
+        return res.status(200).send(sessionUpdated);
     }
     catch (err) {
         log.error("Session update error:", err);
@@ -59,7 +57,7 @@ SessionController.update = async (req, res, next) => {
 };
 SessionController.getAll = async (req, res, next) => {
     try {
-        //TODO pagination  one day and with filters in req 
+        //TODO pagination  one day and with filters in req
         const sessions = await SessionService.getAll();
         return res.status(200).send(sessions);
     }
@@ -73,13 +71,11 @@ SessionController.getAll = async (req, res, next) => {
 SessionController.delete = async (req, res, next) => {
     try {
         //todo rules manager to delete all rules associated
-        await EventService.removeAllBySessionId(req.params.id);
-        await SurveyService.removeAllBySessionId(req.params.id);
-        await GameStateService.removeAllBySessionId(req.params.id);
-        await SessionService.delete(req.params.id);
-        return res.status(200).send({
-            status: "removed",
-        });
+        await EventService.removeAllBySessionId(req.params.sessionId);
+        await SurveyService.removeAllBySessionId(req.params.sessionId);
+        await GameStateService.removeAllBySessionId(req.params.sessionId);
+        const deletedSession = await SessionService.delete(req.params.sessionId);
+        return res.status(200).send(deletedSession);
     }
     catch (err) {
         log.error("try remove session with error:", err);

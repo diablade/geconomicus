@@ -1,7 +1,15 @@
 import mongoose from 'mongoose';
+import { isNanoId4 } from '../misc/misc.tool.js';
 
 export const isValidObjectId = (value, helpers) => {
     if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.error('any.invalid');
+    }
+    return value;
+};
+
+export const isValidNanoId4 = (value, helpers) => {
+    if (!isNanoId4(value)) {
         return helpers.error('any.invalid');
     }
     return value;

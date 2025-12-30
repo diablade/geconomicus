@@ -14,5 +14,4 @@ let SessionSchema = new Schema({
 	players: { type: [AvatarSchema], required: true, default: [] },
 }, { timestamps: true });
 
-
 export default SessionSchema;

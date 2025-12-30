@@ -5,9 +5,9 @@ import { validate } from '../misc/validate.tool.js';
 
 const router = express.Router();
 
+router.get('/all', SessionController.getAll);
 router.get('/:sessionId', validate(sanitize.getById, 'params'), SessionController.getById);
 router.get('/short/:shortId', validate(sanitize.getByShortId, 'params'), SessionController.getByShortId);
-router.get('/all', SessionController.getAll);
 router.post('/create', validate(sanitize.create), SessionController.create);
 router.put('/update', validate(sanitize.update), SessionController.update);
 router.delete('/:sessionId', validate(sanitize.deleteSession, 'params'), SessionController.delete);

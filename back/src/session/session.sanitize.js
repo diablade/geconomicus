@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { isValidObjectId } from '../misc/validate.tool.js';
+import { isValidObjectId, isValidNanoId4 } from '../misc/validate.tool.js';
 
 export const sanitize = {
     getById: Joi.object({
@@ -10,7 +10,7 @@ export const sanitize = {
             }),
     }),
     getByShortId: Joi.object({
-        shortId: Joi.string().custom(isValidObjectId).required()
+        shortId: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid short ID format',
                 'any.required': 'Short ID is required'
@@ -31,11 +31,13 @@ export const sanitize = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
-        name: Joi.string().required(),
-        animator: Joi.string(),
-        location: Joi.string(),
-        devMode: Joi.boolean(),
-        theme: Joi.string(),
+        updates: Joi.object({
+            name: Joi.string().required(),
+            animator: Joi.string(),
+            location: Joi.string(),
+            devMode: Joi.boolean(),
+            theme: Joi.string(),
+        }).required(),
     }).required(),
     deleteSession: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()

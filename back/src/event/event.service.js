@@ -1,4 +1,4 @@
-import EventModel from './event.schema.js';
+import EventModel from './event.model.js';
 
 const EventService = {};
 
@@ -20,17 +20,17 @@ EventService.getByGameStateId = async (gameStateId) => {
  * @description Create an event
  * @param {string} typeEvent - The type of the event
  * @param {string} sessionId - The ID of the session
- * @param {string} gameId - The ID of the game
+ * @param {string} gameStateId - The ID of the game state
  * @param {string} emitter - The emitter of the event
  * @param {string} receiver - The receiver of the event
  * @param {object} payload - The payload of the event
  * @returns {Promise<EventModel>} The created event
  */
-EventService.create = async (typeEvent, sessionId, gameId, emitter, receiver, payload) => {
+EventService.create = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
     const newEvent = new EventModel({
         typeEvent: typeEvent,
         sessionId: sessionId,
-        gameId: gameId,
+        gameStateId: gameStateId,
         emitter: emitter,
         receiver: receiver,
         payload: payload,

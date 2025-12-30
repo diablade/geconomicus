@@ -1,9 +1,9 @@
 import SessionModel from './../session.schema.js';
-import { nanoid } from 'nanoid';
+import { nanoId4 } from './../../misc/misc.tool.js';
 
 RulesService.create = async (sessionId, rules) => {
     let newGameRules = {
-        id: nanoid(), // gameStateId: "", to be populated once created in game state as game laodded ready to start
+        id: nanoId4(), // gameStateId: "", to be populated once created in game state as game laodded ready to start
         ...rules
     };
 
@@ -24,7 +24,9 @@ RulesService.getById = async (sessionId, ruleId) => {
         'gamesRules.id': ruleId
     }).exec();
 };
-
+RulesService.updateGameStateId = async (sessionId, ruleId, gameStateId) => {
+    return await SessionModel.updateOne({ _id: sessionId }, { $set: { 'gamesRules.$[rule].gameStateId': gameStateId } }, { arrayFilters: [{ 'rule.id': ruleId }], runValidators: true }).exec();
+};
 RulesService.removeById = async (sessionId, ruleId) => {
     return await SessionModel.updateOne({ _id: sessionId }, { $pull: { gamesRules: { id: ruleId } } }).exec();
 };

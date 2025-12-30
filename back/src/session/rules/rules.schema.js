@@ -4,7 +4,7 @@ import * as C from '../../../../config/constantes.js';
 const Schema = mongoose.Schema;
 
 let RulesSchema = new Schema({
-	ruleId: { type: String, required: true },
+	id: { type: String, required: true },
 	gameStateId: { type: String, required: false },
 
 	//common
