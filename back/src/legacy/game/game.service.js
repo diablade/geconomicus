@@ -1,14 +1,14 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
 import gameTimerManager from "./GameTimerManager.js";
-import * as C from "../../../config/constantes.js";
+import * as C from "../../../../config/constantes.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
-import socket from "../../config/socket.js";
-import log from "../../config/log.js";
-import Timer from "../misc/Timer.js";
+import socket from "../../../config/socket.js";
+import log from "../../../config/log.js";
+import Timer from "../../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
 import playerService from "../player/player.service.js";
-import decksService from "../misc/decks.service.js";
+import decksService from "./../legacy.decks.service.js";
 import bankService from '../bank/bank.service.js';
 import {customAlphabet} from 'nanoid'
 import GameTimerManager from './GameTimerManager.js';

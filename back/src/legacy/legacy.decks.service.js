@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import GameModel, {constructor} from "../game/game.model.js";
+import GameModel, {constructor} from "./game/game.model.js";
 import _ from "lodash";
 import log from "../../config/log.js";
 

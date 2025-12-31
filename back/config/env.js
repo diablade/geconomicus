@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config({path: './../config/.env'});
 
 const {
-    GECO_NODE_ENV,
+    NODE_ENV,
     GECO_VERSION,
     GECO_WEB_HOST,
     GECO_PORT_NODE,
@@ -21,7 +21,7 @@ const {
 } = process.env;
 
 export default {
-    environment:                GECO_NODE_ENV,
+    environment:                NODE_ENV,
     version:                    GECO_VERSION,
     web_host:                   GECO_WEB_HOST,
     admin_password:             GECO_ADMIN_PASSWORD,

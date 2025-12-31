@@ -1,4 +1,4 @@
-import log from "../../config/log.js";
+import log from "../../../config/log.js";
 
 class BankTimerManager {
     constructor() {
@@ -33,14 +33,17 @@ class BankTimerManager {
                 const wasDeleted = this.timers.delete(id);
                 if (wasDeleted) {
                     log.debug(`Successfully stopped and removed bank timer ${id}`);
-                } else {
+                }
+                else {
                     log.warn(`Bank timer ${id} not found in timers map when trying to remove`);
                 }
-            } else {
+            }
+            else {
                 log.debug(`Bank timer ${id} not found, nothing to stop`);
             }
             return true;
-        } catch (err) {
+        }
+        catch (err) {
             log.error(`Unexpected error in stopAndRemoveTimer for bank timer ${id}:`, err);
             return false;
         }

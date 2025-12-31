@@ -1,8 +1,8 @@
 import GameModel, {constructor} from "./game.model.js";
-import * as C from "../../../config/constantes.js";
+import * as C from "../../../../config/constantes.js";
 import bcrypt from "bcrypt";
-import log from "../../config/log.js";
-import socket from "../../config/socket.js";
+import log from "../../../config/log.js";
+import socket from "../../../config/socket.js";
 import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
 

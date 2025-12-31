@@ -1,5 +1,5 @@
 import GameModel from "../game/game.model.js";
-import log from "../../config/log.js";
+import log from "../../../config/log.js";
 import bankTimerManager from "./BankTimerManager.js";
 import bankService from './bank.service.js';
 

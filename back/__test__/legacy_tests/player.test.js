@@ -1,8 +1,8 @@
 import request from 'supertest';
-import app from '../src/app';
-import db from '../__test__/config/database';
-import * as C from "../../config/constantes.js";
-import socket from '../config/socket.js';
+import app from '../../src/app';
+import db from '../../__test__/config/database';
+import * as C from "../../../config/constantes.js";
+import socket from '../../__test__/config/socket.js';
 import {jest} from "@jest/globals";
 
 const agent = request.agent(app);

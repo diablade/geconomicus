@@ -1,17 +1,40 @@
 // (ES5 compatible)
-const OPEN = 'open';
+
+// GAME TYPE
 const JUNE = 'june';
 const DEBT = 'debt';
+
 const EVENT = 'event';
+
+//PLAYERS Master & Bank
 const MASTER = 'master';
 const BANK = 'bank';
 const DEATH = 'death';
 
-const CREATE_GAME = "create-game";
-const NEW_PLAYER = "new-player";
-const COPY_PLAYER = "copy-player";
-const UPDATED_PLAYER = "updated-player";
-const UPDATE_GAME_OPTION = "update-game-option";
+//PLAYER STATUS
+const ALIVE = 'alive';
+const DEAD = 'dead';
+const PRISON = 'prison';
+const NEED_ANSWER = "needAnswer";
+const REMIND_DEAD = "rd";
+
+//GAME STATUS
+const OPEN = 'open';
+const ENDED = 'ended';
+const STARTED = 'started';
+const PLAYING = 'playing';
+const PAUSING = 'pausing';
+const WAITING = 'waiting';
+const STOPED = 'stoped';
+
+//GAME EVENTS & SOCKETS
+const SESSION_CREATED = "sc";
+const GAME_STATE_CREATED = "gsc";
+const PLAYER_JOIN = "pj";
+const PLAYER_UPDATED = "pu";
+const RULES_UPDATED = "ru";
+
+//CREDITS
 const NEW_CREDIT = "new-credit";
 const CREDITS_STARTED = "credits-started";
 const SETTLE_CREDIT = "settle-credit";
@@ -21,7 +44,8 @@ const PAY_INTEREST = "pay-interest";
 const PAYED_INTEREST = "payed-interest";
 const SEIZED_DEAD = "seized-dead";
 const SEIZURE = "seizure";
-
+const DECOTE = "decote";
+const FEES = "fees";
 //STATUS CREDIT
 const PAUSED_CREDIT = "paused";
 const RUNNING_CREDIT = "running";
@@ -29,36 +53,25 @@ const REQUEST_CREDIT = "requesting";
 const DEFAULT_CREDIT = "default-credit";
 const CREDIT_DONE = "credit-done";
 
-const START_GAME = 'start-game';
-const END_GAME = 'end-game';
-const START_ROUND = 'start-round';
-const PLAYING = 'playing';
-const WAITING = 'waiting';
-const STOP_ROUND = 'stop-round';
-const TIMER_LEFT = 'timer-left';
-const INTER_ROUND = 'inter-round';
-const DISTRIB_DU = 'distrib_du';
-const INIT_DISTRIB = 'distrib';
-const FIRST_DU = 'first_du';
-const RESET_GAME = 'reset-game';
-const NEW_FEEDBACK = 'new-feedback';
-const TRANSACTION_DONE = 'transaction-done';
-const TRANSACTION = 'transaction';
-const TRANSFORM_DISCARDS = "transformDiscards";
-const TRANSFORM_NEWCARDS = "transformNewCards";
-const DEATH_IS_COMING = "death-is-coming";
-const DEAD = "dead";
-const NEED_ANSWER = "needAnswer";
-const REMIND_DEAD = "remind-dead";
-const ALIVE = "alive";
-const PRISON = "prison"
-const PRISON_ENDED = "prison-ended"
-const PROGRESS_PRISON = "progress-prison"
+//PUR SOCKET EVENTS :
+const RESET = 'reset';
+const TIMER_LEFT = 'tl';
+const DISTRIB_DU = 'ddu';
+const INIT_DISTRIB = 'id';
+const FIRST_DU = 'fdu';
+const NEW_FEEDBACK = 'nfb';
+const TRANSACTION_DONE = 'td';
+const TRANSACTION = 't';
+const TRANSFORM_DISCARDS = "tD";
+const TRANSFORM_NEWCARDS = "tNC";
+const DEATH_IS_COMING = "dic";
+const PRISON_ENDED = "pe";
+const PROGRESS_PRISON = "pp";
 const BIRTH = "birth";
 const SHORT_CODE_EMIT = "sce";
 const SHORT_CODE_CONFIRMED = "scc";
 const SHORT_CODE_BROADCAST = "scbc";
-const REFRESH_FORCE = "refresh-force";
+const REFRESH_FORCE = "rf";
 
 if (typeof module !== 'undefined' && module.exports) {
     // Export the constants for use in other scripts if needed (for ES6 and later).
@@ -71,25 +84,21 @@ if (typeof module !== 'undefined' && module.exports) {
         BANK:   BANK,
         DEATH:  DEATH,
 
-        CREATE_GAME:        CREATE_GAME,
-        NEW_PLAYER:         NEW_PLAYER,
-        COPY_PLAYER:        COPY_PLAYER,
-        UPDATED_PLAYER:     UPDATED_PLAYER,
-        UPDATE_GAME_OPTION: UPDATE_GAME_OPTION,
-        DEAD:               DEAD,
-        DEATH_IS_COMING:    DEATH_IS_COMING,
-        REMIND_DEAD:        REMIND_DEAD,
-        ALIVE:              ALIVE,
-        NEED_ANSWER:        NEED_ANSWER,
-        BIRTH:              BIRTH,
+        // CREATE_GAME: this.CREATE_GAME, // NEW_PLAYER: NEW_PLAYER,
+        // UPDATED_PLAYER: UPDATED_PLAYER,
+        // UPDATE_GAME_OPTION: UPDATE_GAME_OPTION,
+        DEAD:            DEAD,
+        DEATH_IS_COMING: DEATH_IS_COMING,
+        REMIND_DEAD:     REMIND_DEAD,
+        ALIVE:           ALIVE,
+        NEED_ANSWER:     NEED_ANSWER,
+        BIRTH:           BIRTH,
 
-        START_GAME:  START_GAME,
-        END_GAME:    END_GAME,
-        START_ROUND: START_ROUND,
-        PLAYING:     PLAYING,
-        INTER_ROUND: INTER_ROUND,
-        STOP_ROUND:  STOP_ROUND,
-        WAITING:     WAITING,
+        // START_GAME: START_GAME,
+        STARTED: STARTED,
+        PLAYING: PLAYING,
+        PAUSING: PAUSING,
+        ENDED:   ENDED,
 
         NEW_CREDIT:      NEW_CREDIT,
         CREDITS_STARTED: CREDITS_STARTED,
@@ -107,14 +116,15 @@ if (typeof module !== 'undefined' && module.exports) {
         PRISON_ENDED:    PRISON_ENDED,
         PRISON:          PRISON,
         SEIZURE:         SEIZURE,
+        DECOTE:          DECOTE,
+        FEES:            FEES,
         SEIZED_DEAD:     SEIZED_DEAD,
 
         DISTRIB_DU:           DISTRIB_DU,
         FIRST_DU:             FIRST_DU,
         NEW_FEEDBACK:         NEW_FEEDBACK,
         TIMER_LEFT:           TIMER_LEFT,
-        INIT_DISTRIB:         INIT_DISTRIB,
-        RESET_GAME:           RESET_GAME,
+        INIT_DISTRIB:         INIT_DISTRIB, // RESET_GAME:           RESET_GAME,
         TRANSACTION:          TRANSACTION,
         TRANSACTION_DONE:     TRANSACTION_DONE,
         TRANSFORM_DISCARDS:   TRANSFORM_DISCARDS,

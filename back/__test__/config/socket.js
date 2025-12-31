@@ -1,17 +1,19 @@
+import {jest} from '@jest/globals';
+
 const mockIoInstance = {
-	to: jest.fn().mockReturnThis(),
-	emit: jest.fn()
+    to:   jest.fn().mockReturnThis(),
+    emit: jest.fn()
 };
 
 function initIo() {
-	return mockIoInstance;
+    return mockIoInstance;
 }
 
 function io() {
-	return mockIoInstance;
+    return mockIoInstance;
 }
 
 export default {
-	initIo,
-	io
+    initIo,
+    io
 };

@@ -2,26 +2,18 @@ import express from 'express';
 import env from './../config/env.js';
 import morgan from 'morgan';
 import cors from 'cors';
-import socket from '../config/socket.js';
-import http from 'http';
 import log from '../config/log.js';
 
 // IMPORT ROUTES
-// import gameRoutes from './game/game.routes.js';
+import legacyGameRoutes from './legacy/game/game.routes.js';
+import legacyBankRoutes from './legacy/bank/bank.routes.js';
+import legacyPlayerRoutes from './legacy/player/player.routes.js';
 import sessionRoutes from './session/session.routes.js';
 import eventRoutes from './event/event.routes.js';
 import surveyRoutes from './survey/survey.routes.js';
 import gameStateRoutes from './gameState/game.state.routes.js';
-import bankRoutes from "./gameState/bank/bank.routes.js";
+import bankStateRoutes from "./gameState/bank/bank.routes.js";
 import avatarRoutes from './session/avatar/avatar.routes.js';
-
-import * as db from "../config/database.js";
-// import {connect} from "../config/database2.js";
-
-if (env.environment !== "test") {
-    db.connect();
-    // connect();
-}
 
 const app = express();
 // Enable trust proxy for correct client IP detection
@@ -75,9 +67,11 @@ app.use('/survey', surveyRoutes);
 app.use('/event', eventRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/gameState', gameStateRoutes);
-app.use('/bank', bankRoutes);
-// app.use('/game', gameRoutes);
-// app.use('/player', playerRoutes);
+app.use('/bankState', bankStateRoutes);
+//legacy routes for old version of the app
+app.use('/bank', legacyBankRoutes);
+app.use('/game', legacyGameRoutes);
+app.use('/player', legacyPlayerRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
@@ -106,18 +100,6 @@ app.use((req, res, next) => {
     return res.status(404).json({ "not": "Found" });
 });
 
-// Add to your main app.js or server startup
-setInterval(() => {
-    const used = process.memoryUsage();
-    const memoryUsage = {
-        rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
-        heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-        heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-        external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
-    };
-    log.info('Memory usage:', memoryUsage);
-}, 3600000); // Log every hours
-
 // handle errors
 app.use((err, req, res) => {
     log.error(err);
@@ -127,29 +109,5 @@ app.use((err, req, res) => {
         message: err.message || err || "Something looks wrong :(",
     });
 });
-if (env.environment !== "test") {
-    const server = http.createServer(app);
-    // Timeout settings
-    server.keepAliveTimeout = 70000;     // 70 secondes
-    server.headersTimeout = 75000;       // Doit être > keepAliveTimeout
 
-    let io = socket.initIo(server);
-    // Verify initialization
-    if (!io) {
-        log.error('Socket.IO failed to initialize');
-    }
-
-    server.listen(env.port, '0.0.0.0', () => console.log(
-        "\n" + "   ____                                      _                \n" + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
-        + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"
-        + "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" + "                                                              \n"
-        + env.version + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
-    try {
-        socket.getIo(); // This should not throw an error if initialized correctly
-        log.info('Socket.IO successfully initialized');
-    }
-    catch (error) {
-        log.error('Socket.IO initialization failed:', error);
-    }
-}
 export default app;

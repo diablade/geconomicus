@@ -1,14 +1,17 @@
+import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+jest.mock('../config/socket.js', () => ({
+    initIo: jest.fn(),
+    getIo: jest.fn()
+}));
+
 import request from 'supertest';
 import app from '../src/app';
 import db from '../__test__/config/database';
-import * as C from "../../config/constantes.js";
-import socket from '../config/socket.js';
-import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+// import socket from '../__test__/config/socket.js';
 
 const agent = request.agent(app);
-let ioServer = socket.initIo(agent);
+// let ioServer = socket.initIo(agent);
 
-jest.mock('../config/socket.js');
 
 let sessionId;
 let shortId;
@@ -17,7 +20,7 @@ beforeAll(async () => await db.connect());
 // afterEach(async () => await db.clear());
 beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
-    // io.mockClear();
+    // ioServer.mockClear();
 });
 afterAll(async () => {
     await db.clear();
@@ -50,9 +53,7 @@ describe("SESSION controller tests", () => {
     describe("SESSION GET BY SHORT ID", () => {
         test("should get session by short id successfully", async () => {
             const res = await agent.get("/session/short/" + shortId).send();
-            console.log(res.body);
             expect(res.body).toBeTruthy();
-            expect(res.body._id).toBeTruthy();
             expect(res.body._id).toBe(sessionId);
             expect(res.body.shortId).toBe(shortId);
         });

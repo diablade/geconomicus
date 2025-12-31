@@ -1,15 +1,15 @@
 import request from 'supertest';
-import app from '../../src/app.js';
-import db from '../config/database.js';
+import app from '../../../src/app.js';
+import db from '../../../__test__/config/database.js';
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
-import bankTimerManager from "../../src/bank/BankTimerManager.js";
-import bankService from "../../src/bank/bank.service.js";
-import Timer from "../../src/misc/Timer.js";
+import bankTimerManager from "../../../src/legacy/bank/BankTimerManager.js";
+import bankService from "../../../src/legacy/bank/bank.service.js";
+import Timer from "../../../src/misc/Timer.js";
 
 // Mock dependencies
 jest.mock("../../config/socket.js");
-jest.mock("../../src/bank/BankTimerManager.js");
-jest.mock("../../src/bank/bank.service.js");
+jest.mock("../../../src/legacy/bank/BankTimerManager.js");
+jest.mock("../../../src/legacy/bank/bank.service.js");
 
 const agent = request.agent(app);
 let idGame;

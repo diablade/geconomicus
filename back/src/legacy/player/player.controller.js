@@ -1,13 +1,13 @@
 import GameModel, {constructor} from '../game/game.model.js';
-import log from '../../config/log.js';
+import log from '../../../config/log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
-import socket from '../../config/socket.js';
-import * as C from '../../../config/constantes.js';
+import socket from '../../../config/socket.js';
+import * as C from '../../../../config/constantes.js';
 import gameService from "../game/game.service.js";
-import decksService from "../misc/decks.service.js";
+import decksService from "../legacy.decks.service.js";
 import playerService from "./player.service.js";
-import activeTransactions from './../misc/activeTransactions.js';
+import activeTransactions from './../../misc/activeTransactions.js';
 
 function waitForProductionToClear(activeTransactions, idGame, maxChecks = 5) {
     return new Promise((resolve, reject) => {
@@ -143,8 +143,8 @@ const produce = async (req, res, next) => {
         activeTransactions.delete(idPlayer);
         log.error('Production error:', err);
         return next({
-            status:     400,
-            message:    err.message || err || "Production error"
+            status:  400,
+            message: err.message || err || "Production error"
         });
     }
 };

@@ -1,12 +1,12 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
-import * as C from "../../../config/constantes.js";
+import * as C from "../../../../config/constantes.js";
 import bankTimerManager from "./BankTimerManager.js";
-import socket from "../../config/socket.js";
-import log from "../../config/log.js";
-import decksService from "../misc/decks.service.js";
+import socket from "../../../config/socket.js";
+import log from "../../../config/log.js";
+import decksService from "../legacy.decks.service.js";
 import playerService from "../player/player.service.js";
-import Timer from "../misc/Timer.js";
+import Timer from "../../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
 import mongoose from 'mongoose';
 
@@ -343,8 +343,8 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
             let creditUpdated = updatedGame.credits.find(c => c._id.toString() === credit._id.toString());
             await bankTimerManager.stopAndRemoveTimer(credit._id.toString());
             socket.emitTo(idGame + C.EVENT, C.EVENT, newEvent);
-            socket.emitAckTo(idPlayer, C.CREDIT_DONE, {credit:creditUpdated});
-            socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, {credit:creditUpdated});
+            socket.emitAckTo(idPlayer, C.CREDIT_DONE, {credit: creditUpdated});
+            socket.emitTo(idGame + C.BANK, C.CREDIT_DONE, {credit: creditUpdated});
             return creditUpdated;
         }
         else {
