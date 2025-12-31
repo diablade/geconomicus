@@ -1,6 +1,6 @@
 import SurveyService from './survey.service.js';
 import socket from '../../config/socket.js';
-import * as C from '../../../config/constantes.js';
+import { C } from '../../../config/constantes.js';
 
 const SurveyController = {};
 

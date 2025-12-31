@@ -1,8 +1,8 @@
 import log from '../../../config/log.js';
 import socket from '../../../config/socket.js';
-import * as C from '../../../../config/constantes.js';
+import { C } from '../../../../config/constantes.js';
 import AvatarService from "./avatar.service.js";
-import nanoId4 from '../../misc/misc.tool.js';
+import { nanoId4 } from '../../misc/misc.tool.js';
 import EventService from '../../event/event.service.js';
 
 const AvatarController = {};
@@ -18,7 +18,7 @@ AvatarController.join = async (req, res, next) => {
         if (!session) {
             return res.status(404).json({ message: "Session not found" });
         }
-        let joinEvent = await EventService.create(C.NEW_AVATAR, sessionId, null, nanoId, C.MASTER, { name: name });
+        let joinEvent = await EventService.create(C.NEW_AVATAR, sessionId, "inLobby", nanoId, C.MASTER, { name: name });
         socket.emitTo(sessionId, C.NEW_AVATAR, joinEvent);
         return res.status(200).json({ avatarId: nanoId });
     }

@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Card, Credit, Player} from "../../models/game";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 // @ts-ignore
-import * as C from "../../../../../config/constantes";
+import { C } from "../../../../../config/constantes";
 import {BackService} from "../../services/back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";

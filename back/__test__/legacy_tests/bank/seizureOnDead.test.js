@@ -2,7 +2,7 @@ import {beforeEach, describe, expect, it, jest} from "@jest/globals";
 import playerService from './../../../src/legacy/player/player.service.js';
 import GameModel from './../../../src/legacy/game/game.model.js';
 import decksService from './../../../src/legacy/legacy.decks.service.js';
-import * as C from "../../config/constantes.js";
+import { C } from "../../config/constantes.js";
 import bankService from './../../../src/legacy/bank/bank.service.js';
 import mongoose from "mongoose";
 

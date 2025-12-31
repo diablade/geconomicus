@@ -9,10 +9,7 @@ SessionService.create = async (sessionObject) => {
         name: sessionObject.name || '',
         animator: sessionObject.animator || '',
         location: sessionObject.location || '',
-        shortId: nanoId4(), // devMode: sessionObject.devMode || false,
-        // theme: sessionObject.theme || 'CLASSIC',
-        // gamesRules: sessionObject.gamesRules || [],
-        // players: sessionObject.players || [],
+        shortId: nanoId4()
     });
     return await newSession.save();
 };

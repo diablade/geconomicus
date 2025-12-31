@@ -6,7 +6,7 @@ import {BackService} from "../services/back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import { C } from "../../../../config/constantes";
 import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";

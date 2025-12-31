@@ -8,7 +8,7 @@ import {environment} from "../../environments/environment";
 import {getRandomColor, hexToRgb} from "../services/tools";
 import {firstValueFrom, Subject, takeUntil} from 'rxjs';
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import { C } from "../../../../config/constantes";
 
 import {ChartConfiguration, ChartDataset} from 'chart.js';
 import 'chartjs-adapter-date-fns';

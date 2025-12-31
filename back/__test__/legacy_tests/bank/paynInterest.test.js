@@ -4,7 +4,7 @@ import getCreditOnActionPayment from '../../../src/legacy/bank/bank.service';
 import GameModel from '../../../src/legacy/game/game.model';
 import socket from '../../../config/socket';
 import BankTimerManager from '../../../src/legacy/bank/BankTimerManager.js';
-import * as C from '../../../../config/constantes';
+import { C } from '../../../../config/constantes';
 
 describe('payInterest', () => {
     const mockCredit = {

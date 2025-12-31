@@ -14,7 +14,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {SnackbarService} from "../services/snackbar.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import { C } from "../../../../config/constantes";
 import * as _ from 'lodash-es';
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
 import {SessionStorageService} from "../services/local-storage/session-storage.service";

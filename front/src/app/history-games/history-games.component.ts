@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackService } from "../services/back.service";
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import { C } from "../../../../config/constantes";
 import * as _ from 'lodash-es';
 import { faTrashCan, faArrowUpWideShort, faArrowDownShortWide } from "@fortawesome/free-solid-svg-icons";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";

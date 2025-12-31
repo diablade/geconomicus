@@ -19,7 +19,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 // @ts-ignore
-import * as C from "../../../../config/constantes";
+import { C } from "../../../../config/constantes";
 import {ShortCode} from "../models/shortCode";
 import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
