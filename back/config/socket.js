@@ -1,5 +1,5 @@
 import {Server} from 'socket.io';
-import { C } from "../../config/constantes.js";
+import { C } from "../../config/constantes.mjs";
 import log from "./log.js";
 
 // Constants

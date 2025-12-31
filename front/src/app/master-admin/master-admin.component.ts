@@ -10,7 +10,7 @@ import {schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {createAvatar, Options as Opt} from '@dicebear/core';
 // @ts-ignore
-import { C } from '../../../../config/constantes.js';
+import { C } from '../../../../config/constantes.mjs';
 
 @Component({
 	selector: 'app-master-admin',

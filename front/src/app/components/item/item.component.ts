@@ -3,7 +3,7 @@ import {Card} from "../../models/game";
 import {ShortCode} from "../../models/shortCode";
 import {AudioService} from 'src/app/services/audio.service';
 // @ts-ignore
-import { C } from "../../../../../config/constantes.js";
+import { C } from "../../../../../config/constantes.mjs";
 import {animations} from "../../services/animations";
 import {ThemesService} from "../../services/themes.service";
 

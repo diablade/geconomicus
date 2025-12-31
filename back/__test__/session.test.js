@@ -1,13 +1,16 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
-jest.mock('../config/socket.js', () => ({
-    initIo: jest.fn(),
-    getIo: jest.fn()
+
+await jest.unstable_mockModule('../config/socket.js', () => ({
+    default: {
+        initIo: jest.fn(),
+        getIo: jest.fn(),
+        emitTo: jest.fn(),
+    }
 }));
 
 import request from 'supertest';
 import app from '../src/app';
 import db from '../__test__/config/database';
-// import socket from '../__test__/config/socket.js';
 
 const agent = request.agent(app);
 // let ioServer = socket.initIo(agent);
@@ -25,6 +28,8 @@ beforeEach(() => {
 afterAll(async () => {
     await db.clear();
     await db.close();
+    jest.clearAllMocks();
+    agent.app?.close?.();
 });
 
 describe("SESSION controller tests", () => {
@@ -36,6 +41,7 @@ describe("SESSION controller tests", () => {
                 location: "test-session-location",
                 theme: "test-session-theme",
             });
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body._id).toBeTruthy();
             sessionId = res.body._id;
@@ -44,6 +50,7 @@ describe("SESSION controller tests", () => {
     describe("SESSION GET BY ID", () => {
         test("should get session by id successfully", async () => {
             const res = await agent.get("/session/" + sessionId).send();
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body._id).toBeTruthy();
             expect(res.body._id).toBe(sessionId);
@@ -53,6 +60,7 @@ describe("SESSION controller tests", () => {
     describe("SESSION GET BY SHORT ID", () => {
         test("should get session by short id successfully", async () => {
             const res = await agent.get("/session/short/" + shortId).send();
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body._id).toBe(sessionId);
             expect(res.body.shortId).toBe(shortId);
@@ -61,6 +69,7 @@ describe("SESSION controller tests", () => {
     describe("SESSION GET ALL", () => {
         test("should get all sessions successfully", async () => {
             const res = await agent.get("/session/all").send();
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.length).toBe(1);
         });
@@ -75,6 +84,7 @@ describe("SESSION controller tests", () => {
                     location: "test-session-location-updated",
                 },
             });
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.acknowledged).toBeTruthy();
             expect(res.body.modifiedCount).toBe(1);
@@ -83,6 +93,7 @@ describe("SESSION controller tests", () => {
     describe("SESSION DELETE", () => {
         test("should delete session successfully", async () => {
             const res = await agent.delete("/session/" + sessionId).send();
+            expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.name).toBe("test-name-session-updated");
             expect(res.body.animator).toBe("test-session-animator-updated");

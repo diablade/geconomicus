@@ -3,7 +3,7 @@ import log from '../../../config/log.js';
 import _ from 'lodash';
 import mongoose from "mongoose";
 import socket from '../../../config/socket.js';
-import { C } from '../../../../config/constantes.js';
+import { C } from '../../../../config/constantes.mjs';
 import gameService from "../game/game.service.js";
 import decksService from "../legacy.decks.service.js";
 import playerService from "./player.service.js";

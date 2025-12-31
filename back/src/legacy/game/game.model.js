@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { C } from "../../../../config/constantes.js";
+import { C } from "../../../../config/constantes.mjs";
 
 const Schema = mongoose.Schema;
 

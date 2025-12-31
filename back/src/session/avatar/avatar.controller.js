@@ -1,6 +1,6 @@
 import log from '../../../config/log.js';
 import socket from '../../../config/socket.js';
-import { C } from '../../../../config/constantes.js';
+import { C } from '../../../../config/constantes.mjs';
 import AvatarService from "./avatar.service.js";
 import { nanoId4 } from '../../misc/misc.tool.js';
 import EventService from '../../event/event.service.js';

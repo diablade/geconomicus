@@ -80,6 +80,7 @@ app.get('/status', (req, res) => {
         version: env.version
     })
 });
+
 //api memory routes
 app.get('/debug/memory', (req, res) => {
     const used = process.memoryUsage();

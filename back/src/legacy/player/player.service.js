@@ -1,5 +1,5 @@
 import GameModel, {constructor} from "../game/game.model.js";
-import { C } from "../../../../config/constantes.js";
+import { C } from "../../../../config/constantes.mjs";
 import log from "../../../config/log.js";
 import decksService from "../legacy.decks.service.js";
 import socket from "../../../config/socket.js";

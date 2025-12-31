@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../../src/app';
 import db from '../../__test__/config/database';
-import { C } from "../../../config/constantes.js";
+import { C } from "../../../config/constantes.mjs";
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import socket from "../config/socket.js";
 

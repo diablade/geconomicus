@@ -2,7 +2,7 @@
 FROM node:22.14.0-alpine
 MAINTAINER Nicolas Markovic
 COPY ./config/.env ./back/.env
-COPY ./config/constantes.js ./config/constantes.js
+COPY config/constantes.mjs ./config/constantes.mjs
 COPY ./back ./back
 VOLUME /logs
 
