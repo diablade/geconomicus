@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { isValidObjectId } from '../../misc/validate.tool.js';
+import { isValidObjectId, isValidNanoId4 } from '../../misc/validate.tool.js';
 
 export const sanitize = {
     getById: Joi.object({
@@ -8,7 +8,7 @@ export const sanitize = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
-        avatarId: Joi.string().custom(isValidObjectId).required()
+        avatarId: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid avatar ID format',
                 'any.required': 'Avatar ID is required'
@@ -20,6 +20,10 @@ export const sanitize = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
+        name: Joi.string().required()
+            .messages({
+                'any.required': 'Avatar name is required'
+            }),
     }).required(),
     update: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
@@ -27,7 +31,7 @@ export const sanitize = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
-        avatarId: Joi.string().custom(isValidObjectId).required()
+        avatarId: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid avatar ID format',
                 'any.required': 'Avatar ID is required'
@@ -57,7 +61,7 @@ export const sanitize = {
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
             }),
-        avatarId: Joi.string().custom(isValidObjectId).required()
+        avatarId: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid avatar ID format',
                 'any.required': 'Avatar ID is required'

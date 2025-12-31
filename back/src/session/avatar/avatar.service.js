@@ -1,8 +1,7 @@
-import SessionModel from './../session.schema.js';
+import SessionModel from './../session.model.js';
 
 const AvatarService = {};
 
-/* Create */
 AvatarService.create = async (sessionId, nanoId, name) => {
     let newAvatar = {
         id: nanoId,
@@ -23,37 +22,38 @@ AvatarService.create = async (sessionId, nanoId, name) => {
         boardConf: "",
         boardColor: "",
     };
-    return await SessionModel.updateOne({ _id: sessionId }, { $push: { avatars: newAvatar } }, { runValidators: true }).exec();
+    return SessionModel.updateOne({ _id: sessionId }, { $push: { players: newAvatar } }, { runValidators: true }).exec();
 };
 
-/* Retrieve */
 AvatarService.getById = async (sessionId, avatarId) => {
-    return await SessionModel.findOne({
+    const session = await SessionModel.findOne({
         _id: sessionId,
-        'avatars.id': avatarId
-    }).exec();
+        'players.id': avatarId
+    }, { 'players.$': 1 }).exec();
+    return session?.players?.[0] ?? null;
 };
 
-/* Update */
 AvatarService.update = async (sessionId, avatarId, updates) => {
-    return await SessionModel.updateOne({
+    const set = {};
+    for (const [key, value] of Object.entries(updates)) {
+        set[`players.$.${key}`] = value;
+    }
+    const session = await SessionModel.findOneAndUpdate({
         _id: sessionId,
-        'avatars.id': avatarId
-    }, { $set: { 'avatars.$': updates } }, { runValidators: true }).exec();
+        'players.id': avatarId
+    }, { $set: set }, {
+        runValidators: true,
+        new: true
+    });
+    return session?.players?.[0] ?? null;
 };
 
-/* Remove */
-AvatarService.removeById = async (sessionId, avatarId) => {
-    return await SessionModel.findOneAndUpdate({
+AvatarService.delete = async (sessionId, avatarId) => {
+    return SessionModel.updateOne({
         _id: sessionId,
-        "avatars.id": avatarId,
+        "players.id": avatarId,
         gamesRules: { $size: 0 }
-    }, {
-        $pull: { avatars: { id: avatarId } }
-    }, { new: true });
-};
-AvatarService.removeAllBySessionId = async (sessionId) => {
-    return await SessionModel.updateOne({ _id: sessionId }, { $pull: { avatars: { id: avatarId } } }).exec();
+    }, { $pull: { players: { id: avatarId } } });
 };
 
 export default AvatarService;

@@ -18,8 +18,7 @@ AvatarController.join = async (req, res, next) => {
         if (!session) {
             return res.status(404).json({ message: "Session not found" });
         }
-        let joinEvent = await EventService.create(C.NEW_AVATAR, sessionId, "inLobby", nanoId, C.MASTER, { name: name });
-        socket.emitTo(sessionId, C.NEW_AVATAR, joinEvent);
+        socket.emitTo(sessionId, C.NEW_AVATAR, { name: name, id: nanoId });
         return res.status(200).json({ avatarId: nanoId });
     }
     catch (err) {
@@ -52,7 +51,7 @@ AvatarController.update = async (req, res, next) => {
         } = req.body;
         const updatedAvatar = await AvatarService.update(sessionId, avatarId, updates);
         socket.emitTo(sessionId, C.UPDATED_AVATAR, updatedAvatar);
-        return res.status(200).json({ "status": "updated" });
+        return res.status(200).json(updatedAvatar);
     }
     catch (err) {
         log.error(err);
@@ -65,13 +64,12 @@ AvatarController.delete = async (req, res, next) => {
             sessionId,
             avatarId
         } = req.body;
-        const session = await AvatarService.removeById(sessionId, avatarId);
-        if (!session) {
+        const ack = await AvatarService.delete(sessionId, avatarId);
+        if (!ack) {
             return res.status(404).json({ message: "Cannot delete avatar" });
         }
-        let deleteEvent = await EventService.create(C.DELETED_AVATAR, sessionId, null, avatarId, C.MASTER, {});
-        socket.emitTo(sessionId, C.DELETED_AVATAR, deleteEvent);
-        return res.status(200).json({ "status": "deleted" });
+        socket.emitTo(sessionId, C.DELETED_AVATAR, { avatarId });
+        return res.status(200).json({ ...ack, avatarId });
     }
     catch (error) {
         log.error("delete avatar error:", error);

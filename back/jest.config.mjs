@@ -1,6 +1,7 @@
 export default {
-    testEnvironment: 'node', // extensionsToTreatAsEsm: ['.js'],
+    testEnvironment: 'node',
     // transform: {},
+    // extensionsToTreatAsEsm: ['.js'],
 };
 // transform: {
 // 	'^.+\\.jsx?$': 'babel-jest', // For JavaScript and JSX files

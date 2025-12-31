@@ -11,20 +11,20 @@ SessionService.create = async (sessionObject) => {
         location: sessionObject.location || '',
         shortId: nanoId4()
     });
-    return await newSession.save();
+    return newSession.save();
 };
 
 /* Retrieve */
 SessionService.getById = async (id) => {
-    return await SessionModel.findById(id).exec();
+    return SessionModel.findById(id).exec();
 };
 SessionService.getByShortId = async (shortId) => {
-    return await SessionModel.findOne({ shortId }).exec();
+    return SessionModel.findOne({ shortId }).exec();
 };
 SessionService.getAll = async () => {
     //TODO pagination  one day and with filters in req
     //and aggregate with status of gamesState
-    return await SessionModel.aggregate([
+    return SessionModel.aggregate([
         {
             $project: {
                 name: 1,
@@ -40,21 +40,23 @@ SessionService.getAll = async () => {
                 },
             },
         },
-    ])
-        .exec();
-    // return await SessionModel.find({}).sort({ createdAt: 1 }).exec();
+    ]).sort({ createdAt: 1 });
 };
 
 /* Update */
 SessionService.update = async (sessionId, updates) => {
     delete updates.gamesRules;
     delete updates.players;
-    return await SessionModel.updateOne({ _id: sessionId }, { $set: updates }).exec();
+    const set = {};
+    for (const [key, value] of Object.entries(updates)) {
+        set[key] = value;
+    }
+    return SessionModel.updateOne({ _id: sessionId }, { $set: set }, { runValidators: true }).exec();
 };
 
 /* Remove */
 SessionService.delete = async (sessionId) => {
-    return await SessionModel.findByIdAndDelete(sessionId).exec();
+    return SessionModel.findByIdAndDelete(sessionId).exec();
 };
 
 export default SessionService;
