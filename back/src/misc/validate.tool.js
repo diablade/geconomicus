@@ -17,7 +17,7 @@ export const isValidNanoId4 = (value, helpers) => {
 
 export const validate = (schema, params = false) => {
     return (req, res, next) => {
-        const { error } = schema.validate(params ? req.params : req.body, { abortEarly: false });
+        const { value, error } = schema.validate(params ? req.params : req.body, { abortEarly: false, stripUnknown: true });
 
         if (error) {
             const errors = error.details.map(detail => ({
@@ -30,6 +30,7 @@ export const validate = (schema, params = false) => {
                 errors
             });
         }
+        params ? req.params = value : req.body = value; //update req.body with validated data
         next();
     };
 };

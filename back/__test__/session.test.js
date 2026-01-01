@@ -1,29 +1,26 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
-
+import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
+/* ================= MOCK SOCKET (ESM SAFE) ================= */
 await jest.unstable_mockModule('../config/socket.js', () => ({
     default: {
         initIo: jest.fn(),
-        getIo: jest.fn(),
+        getIo:  jest.fn(),
         emitTo: jest.fn(),
     }
 }));
 
+/* ================= IMPORTS AFTER MOCK ================= */
 import request from 'supertest';
 import app from '../src/app';
 import db from '../__test__/config/database';
 
+/* ================= SETUP ================= */
 const agent = request.agent(app);
-// let ioServer = socket.initIo(agent);
-
-
 let sessionId;
 let shortId;
 
+/* ================= HOOKS ================= */
 beforeAll(async () => await db.connect());
-// afterEach(async () => await db.clear());
 beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    // ioServer.mockClear();
 });
 afterAll(async () => {
     await db.clear();
@@ -32,14 +29,15 @@ afterAll(async () => {
     agent.app?.close?.();
 });
 
+/* ================= TESTS ================= */
 describe("SESSION controller tests", () => {
     describe("SESSION CREATE", () => {
         test("should create session successfully", async () => {
             const res = await agent.post("/session/create").send({
-                name: "test-name-session",
+                name:     "test-name-session",
                 animator: "test-session-animator",
                 location: "test-session-location",
-                theme: "test-session-theme",
+                theme:    "test-session-theme",
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
@@ -78,8 +76,8 @@ describe("SESSION controller tests", () => {
         test("should update session successfully", async () => {
             const res = await agent.put("/session/update").send({
                 sessionId: sessionId,
-                updates: {
-                    name: "test-name-session-updated",
+                updates:   {
+                    name:     "test-name-session-updated",
                     animator: "test-session-animator-updated",
                     location: "test-session-location-updated",
                 },

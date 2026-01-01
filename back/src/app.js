@@ -14,6 +14,7 @@ import surveyRoutes from './survey/survey.routes.js';
 import gameStateRoutes from './gameState/game.state.routes.js';
 import bankStateRoutes from "./gameState/bank/bank.routes.js";
 import avatarRoutes from './session/avatar/avatar.routes.js';
+import rulesRoutes from './session/rules/rules.routes.js';
 
 const app = express();
 // Enable trust proxy for correct client IP detection
@@ -63,6 +64,7 @@ app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" 
 
 // MAIN ROUTES middleware
 app.use('/session', sessionRoutes);
+app.use('/rules', rulesRoutes);
 app.use('/survey', surveyRoutes);
 app.use('/event', eventRoutes);
 app.use('/avatar', avatarRoutes);

@@ -1,9 +1,11 @@
-import SessionModel from './../session.schema.js';
+import SessionModel from './../session.model.js';
 import { nanoId4 } from './../../misc/misc.tool.js';
+
+const RulesService = {};
 
 RulesService.create = async (sessionId, rules) => {
     let newGameRules = {
-        id: nanoId4(), // gameStateId: "", to be populated once created in game state as game laodded ready to start
+        id: nanoId4(), // gameStateId, to be populated once created in game state as game laodded ready to start
         ...rules
     };
 
