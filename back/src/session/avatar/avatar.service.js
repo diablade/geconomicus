@@ -49,11 +49,20 @@ AvatarService.update = async (sessionId, avatarId, updates) => {
 };
 
 AvatarService.delete = async (sessionId, avatarId) => {
-    return SessionModel.updateOne({
-        _id: sessionId,
-        "players.id": avatarId,
-        gamesRules: { $size: 0 }
-    }, { $pull: { players: { id: avatarId } } });
+    return SessionModel.updateOne(
+        {
+            _id: sessionId,
+            "players.id": avatarId,
+            $or: [
+                { gamesRules: { $size: 0 } },
+                { "gamesRules.gameStateId": { $exists: false } }
+            ]
+        },
+        {
+            $pull: { players: { id: avatarId } }
+        }
+    );
 };
+
 
 export default AvatarService;

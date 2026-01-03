@@ -9,6 +9,8 @@ SessionService.create = async (sessionObject) => {
         name: sessionObject.name || '',
         animator: sessionObject.animator || '',
         location: sessionObject.location || '',
+        devMode: sessionObject.devMode || false,
+        theme: sessionObject.theme || 'CLASSIC',
         shortId: nanoId4()
     });
     return newSession.save();
@@ -30,6 +32,7 @@ SessionService.getAll = async () => {
                 name: 1,
                 animator: 1,
                 location: 1,
+                theme: 1,
                 modifiedAt: 1,
                 createdAt: 1,
                 gamesRulesCount: {

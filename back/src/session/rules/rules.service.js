@@ -15,16 +15,21 @@ RulesService.create = async (sessionId, rules) => {
     return newGameRules;
 };
 RulesService.update = async (sessionId, ruleId, updates) => {
+    const set = {};
+    for (const [key, value] of Object.entries(updates)) {
+        set[`gamesRules.$.${key}`] = value;
+    }
     return await SessionModel.updateOne({
         _id: sessionId,
         'gamesRules.id': ruleId
-    }, { $set: { 'gamesRules.$': updates } }, { runValidators: true }).exec();
+    }, { $set: set }, { runValidators: true }).exec();
 };
 RulesService.getById = async (sessionId, ruleId) => {
-    return await SessionModel.findOne({
+    const session = await SessionModel.findOne({
         _id: sessionId,
         'gamesRules.id': ruleId
-    }).exec();
+    }, { 'gamesRules.$': 1 }).exec();
+    return session?.gamesRules?.[0] ?? null;
 };
 RulesService.updateGameStateId = async (sessionId, ruleId, gameStateId) => {
     return await SessionModel.updateOne({ _id: sessionId }, { $set: { 'gamesRules.$[rule].gameStateId': gameStateId } }, { arrayFilters: [{ 'rule.id': ruleId }], runValidators: true }).exec();

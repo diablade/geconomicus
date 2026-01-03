@@ -9,7 +9,7 @@ const SessionController = {};
 SessionController.getById = async (req, res, next) => {
     try {
         const session = await SessionService.getById(req.params.sessionId);
-        return res.status(200).send(session);
+        return res.status(200).json(session);
     }
     catch (err) {
         log.error("Session get by id error:", err);
@@ -21,7 +21,7 @@ SessionController.getById = async (req, res, next) => {
 SessionController.getByShortId = async (req, res, next) => {
     try {
         const session = await SessionService.getByShortId(req.params.shortId);
-        return res.status(200).send(session);
+        return res.status(200).json(session);
     }
     catch (err) {
         log.error("Session get by short id error:", err);
@@ -33,7 +33,7 @@ SessionController.getByShortId = async (req, res, next) => {
 SessionController.create = async (req, res, next) => {
     try {
         const session = await SessionService.create(req.body);
-        return res.status(200).send(session);
+        return res.status(200).json(session);
     }
     catch (err) {
         log.error("Session creation error:", err);
@@ -45,7 +45,7 @@ SessionController.create = async (req, res, next) => {
 SessionController.update = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.update(req.body.sessionId, req.body.updates);
-        return res.status(200).send(sessionUpdated);
+        return res.status(200).json(sessionUpdated);
     }
     catch (err) {
         log.error("Session update error:", err);
@@ -59,7 +59,7 @@ SessionController.getAll = async (req, res, next) => {
     try {
         //TODO pagination  one day and with filters in req
         const sessions = await SessionService.getAll();
-        return res.status(200).send(sessions);
+        return res.status(200).json(sessions);
     }
     catch (err) {
         log.error("get all sessions error:", err);
@@ -75,7 +75,7 @@ SessionController.delete = async (req, res, next) => {
         await SurveyService.removeAllBySessionId(req.params.sessionId);
         await GameStateService.removeAllBySessionId(req.params.sessionId);
         const deletedSession = await SessionService.delete(req.params.sessionId);
-        return res.status(200).send(deletedSession);
+        return res.status(200).json(deletedSession);
     }
     catch (err) {
         log.error("try remove session with error:", err);

@@ -32,8 +32,8 @@ export const C = {
     NEW_GAMES_RULES: "ngr",
     GAME_STATE_CREATED: "gsc",
     PLAYER_JOIN: "pj",
-    PLAYER_UPDATED: "pu",
-    RULES_UPDATED: "ru",
+    UPDATED_RULES: "ru",
+    DELETED_RULES: "dr",
 
     //CREDITS
     NEW_CREDIT: "new-credit",
