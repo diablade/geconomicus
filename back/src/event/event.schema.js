@@ -10,4 +10,7 @@ const EventSchema = new Schema({
     payload: { type: Object, required: true },
 }, { timestamps: true });
 
+EventSchema.index({ sessionId: 1, createdAt: 1 });
+EventSchema.index({ gameStateId: 1, createdAt: 1 });
+
 export default EventSchema;

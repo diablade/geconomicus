@@ -1,13 +1,13 @@
-import {Server} from 'socket.io';
-import { C } from "../../config/constantes.mjs";
-import log from "./log.js";
+import { Server } from 'socket.io';
+import { C } from "#constantes";
+import log from "#config/log";
 
 // Constants
 const CLEANUP_INTERVAL = 300000; // 30 minutes
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECTION_DELAY = 5000; // 5 seconds
 
-class SocketManager {
+export class SocketManager {
     static #instance = null;
 
     constructor() {
@@ -24,7 +24,11 @@ class SocketManager {
         this.cleanupInterval = setInterval(() => {
             const now = Date.now();
             for (const [idPlayer, data] of this.connections.entries()) {
-                const { socket, lastActive, reconnectAttempts } = data;
+                const {
+                    socket,
+                    lastActive,
+                    reconnectAttempts
+                } = data;
 
                 // Clean up if socket is disconnected and exceeded max reconnection attempts
                 if (!socket.connected && reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
@@ -57,25 +61,26 @@ class SocketManager {
     }
 
     initIo(server) {
+        log.info("Socket.IO initialization...");
         this.ioInstance = new Server(server, {
-            cors:                    {
-                origin:      "*",
+            cors: {
+                origin: "*",
                 credentials: false,
-                methods:     ["GET", "POST"]
+                methods: ["GET", "POST"]
             },
-            pingInterval:            3000,      // Send a ping every 3 seconds
-            pingTimeout:             6000,       // Wait 6 seconds before considering the connection closed
+            pingInterval: 3000,      // Send a ping every 3 seconds
+            pingTimeout: 6000,       // Wait 6 seconds before considering the connection closed
             connectionStateRecovery: {
                 maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
-                skipMiddlewares:          true
+                skipMiddlewares: true
             },
-            maxHttpBufferSize:       1e8,   // 100MB max buffer size
-            allowEIO3:               true,          // For older clients
-            ackTimeout:              6000,        // 6 seconds timeout for acknowledgements
-            logFailure:              true,         // Log failed emissions
-            transports:              ["websocket"], // 🚫 no fallback polling => missing packets
-            allowUpgrades:           true,
-            perMessageDeflate:       {
+            maxHttpBufferSize: 1e8,   // 100MB max buffer size
+            allowEIO3: true,          // For older clients
+            ackTimeout: 6000,        // 6 seconds timeout for acknowledgements
+            logFailure: true,         // Log failed emissions
+            transports: ["websocket"], // 🚫 no fallback polling => missing packets
+            allowUpgrades: true,
+            perMessageDeflate: {
                 threshold: 1024, // Only compress messages larger than 1KB
             },
         });
@@ -88,7 +93,6 @@ class SocketManager {
         }
 
         this.setupConnectionHandlers();
-        log.info("Socket.IO initialized.");
         return this.ioInstance;
     }
 
@@ -123,11 +127,11 @@ class SocketManager {
         // Store connection data with timestamp and reconnect attempts
         const connectionData = {
             socket,
-            lastActive:        Date.now(),
+            lastActive: Date.now(),
             reconnectAttempts: 0,
             idGame,
             disconnectHandler: null,
-            errorHandler:      null,
+            errorHandler: null,
         };
 
         // Handle previous connection if exists
@@ -137,9 +141,9 @@ class SocketManager {
             try {
                 log.info(`Replacing previous socket for player ${idPlayer}`);
                 previousConnection.socket.emit('kicked', {
-                    reason:    'another_connection',
+                    reason: 'another_connection',
                     timestamp: Date.now(),
-                    idPlayer:  idPlayer
+                    idPlayer: idPlayer
                 });
             }
             catch (e) {
@@ -161,15 +165,15 @@ class SocketManager {
 
         // Send connection confirmation with server timestamp
         socket.emit('connected', {
-            timestamp:  Date.now(),
-            sessionId:  socket.id,
-            idPlayer:   idPlayer,
-            idGame:     idGame,
+            timestamp: Date.now(),
+            sessionId: socket.id,
+            idPlayer: idPlayer,
+            idGame: idGame,
             serverTime: new Date().toISOString(),
-            config:     {
+            config: {
                 // heartbeatInterval: HEARTBEAT_INTERVAL,
                 maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
-                reconnectionDelay:    RECONNECTION_DELAY
+                reconnectionDelay: RECONNECTION_DELAY
             }
         });
 
@@ -322,14 +326,17 @@ class SocketManager {
     }
 
     emitTo(roomId, event, data) {
+        if (!this.ioInstance) return;
         this.getIo().to(roomId).emit(event, data);
     }
 
     broadcastTo(roomId, event, data) {
+        if (!this.ioInstance) return;
         this.getIo().broadcast().to(roomId).emit(event, data);
     }
 
     emitAckTo(roomId, event, data) {
+        if (!this.ioInstance) return;
         // Generate a unique ID for this event if not provided
         const eventId = data?.eventId || `${event}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -344,13 +351,17 @@ class SocketManager {
                     this.addToAckPool(idPlayer, eventId, event, data);
 
                     // Emit with the eventId included
-                    const eventData = { ...data, _ackId: eventId };
+                    const eventData = {
+                        ...data,
+                        _ackId: eventId
+                    };
 
                     socket.emit(event, eventData, (ack) => {
                         if (ack && ack.status === 'ok') {
                             log.info(`Ack received from socket ${socket.id} for event ${ack._ackId}`);
                             this.removeFromAckPool(ack.idPlayer, ack._ackId);
-                        } else {
+                        }
+                        else {
                             log.error(`Ack failed from socket ${socket.id} for event ${ack._ackId}`);
                         }
                     });
@@ -397,7 +408,9 @@ class SocketManager {
      * @returns {boolean} - True if event was found and removed
      */
     removeFromAckPool(idPlayer, eventId) {
-        if (!this.ackPool.has(idPlayer)) return false;
+        if (!this.ackPool.has(idPlayer)) {
+            return false;
+        }
 
         const playerAcks = this.ackPool.get(idPlayer);
         const wasRemoved = playerAcks.delete(eventId);
@@ -420,7 +433,9 @@ class SocketManager {
      * @returns {Array} - Array of unacknowledged events
      */
     getUnacknowledgedEvents(idPlayer) {
-        if (!this.ackPool.has(idPlayer)) return [];
+        if (!this.ackPool.has(idPlayer)) {
+            return [];
+        }
         return Array.from(this.ackPool.get(idPlayer).values());
     }
 
@@ -458,12 +473,20 @@ class SocketManager {
                     if (wasRemoved) {
                         log.info(`Received explicit ack for event ${eventId} from player ${playerData.idPlayer}`);
                         callback({ status: 'ok' });
-                    } else {
-                        log.warn(`Received ack for unknown event ${eventId} from player ${playerData.idPlayer}`);
-                        callback({ status: 'error', message: 'Event not found' });
                     }
-                } else {
-                    callback({ status: 'error', message: 'Invalid ack data' });
+                    else {
+                        log.warn(`Received ack for unknown event ${eventId} from player ${playerData.idPlayer}`);
+                        callback({
+                            status: 'error',
+                            message: 'Event not found'
+                        });
+                    }
+                }
+                else {
+                    callback({
+                        status: 'error',
+                        message: 'Invalid ack data'
+                    });
                 }
             });
         });

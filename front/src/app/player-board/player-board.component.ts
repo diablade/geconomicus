@@ -4,7 +4,7 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Card, Credit, Game, Player} from "../models/game";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {MatDialog} from "@angular/material/dialog";
 import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
@@ -19,7 +19,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import { C } from "../../../../back/shared/constantes.mjs";
 import {ShortCode} from "../models/shortCode";
 import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
@@ -82,7 +82,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				public dialog: MatDialog,
 				private router: Router,
 				private localStorageService: LocalStorageService,
-				private backService: BackService,
+				private backService: DeprecatedBackService,
 				private wsService: WebSocketService,
 				private i18nService: I18nService,
 				private themesService: ThemesService,

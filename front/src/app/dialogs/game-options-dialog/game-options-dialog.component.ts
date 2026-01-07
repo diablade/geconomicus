@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Game} from "../../models/game";
 // @ts-ignore
-import { C } from "../../../../../config/constantes";
+import { C } from "../../../../../back/shared/constantes.mjs";
 import {I18nService} from '../../services/i18n.service';
 import {ThemesService} from '../../services/themes.service';
 

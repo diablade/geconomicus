@@ -3,8 +3,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Card, Credit, Player} from "../../models/game";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 // @ts-ignore
-import { C } from "../../../../../config/constantes";
-import {BackService} from "../../services/back.service";
+import { C } from "../../../../../back/shared/constantes.mjs";
+import {DeprecatedBackService} from "../../services/deprecated-back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
 
@@ -31,7 +31,7 @@ export class SeizureDialogComponent implements OnInit {
 	seizureDecote: number;
 	timerPrisonMax = 5;
 
-	constructor(private backService: BackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(private backService: DeprecatedBackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 		this.credit = data.credit;
 		this.seizureType = data.seizureType;
 		this.seizureCost = data.seizureCosts;

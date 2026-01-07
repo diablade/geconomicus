@@ -1,9 +1,9 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
-import { C } from "../../../../config/constantes.mjs";
+import {C} from "#constantes";
 import bankTimerManager from "./BankTimerManager.js";
-import socket from "../../../config/socket.js";
-import log from "../../../config/log.js";
+import socket from "#config/socket";
+import log from "#config/log";
 import decksService from "../legacy.decks.service.js";
 import playerService from "../player/player.service.js";
 import Timer from "../../misc/Timer.js";

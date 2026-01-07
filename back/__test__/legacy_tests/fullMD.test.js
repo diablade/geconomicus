@@ -1,15 +1,12 @@
 import request from 'supertest';
 import app from '../src/app.js';
-import db from '../../__test__/config/database.js';
-import { C } from "../../config/constantes.mjs";
-import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
-import socket from "../../__test__/config/socket.js";
+import db from '#configTest/database';
+import { C } from "#constantes";
+import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
 import _ from 'lodash';
-
-jest.mock('../config/socket.js');
 
 let idGame;
 let currentGame;
@@ -31,10 +28,10 @@ let getPlayerCardsUpdate = async (idPlayer) => {
 
 let transaction = async (idBuyer, idSeller, idCard) => {
     const res = await agent.post("/player/transaction").send({
-        idGame:   idGame,
-        idBuyer:  idBuyer,
+        idGame: idGame,
+        idBuyer: idBuyer,
         idSeller: idSeller,
-        idCard:   idCard
+        idCard: idCard
     });
     expect(res.statusCode).toEqual(200);
     await getPlayerCardsUpdate(idBuyer);
@@ -43,9 +40,9 @@ let transaction = async (idBuyer, idSeller, idCard) => {
 
 let produce = async (idPlayer, cards) => {
     const res = await agent.post("/player/produce").send({
-        idGame:   idGame,
+        idGame: idGame,
         idPlayer: idPlayer,
-        cards:    cards
+        cards: cards
     });
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toEqual(5);
@@ -111,7 +108,7 @@ let createPlayers = async (nb) => {
     for (let i = 1; i <= nb; i++) {
         const res = await agent.post("/player/join").send({
             idGame: idGame,
-            name:   "player" + i
+            name: "player" + i
         });
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeTruthy();
@@ -151,7 +148,7 @@ afterAll(async () => {
 describe("FULL GAME simulation", () => {
     test("CREATE game", async () => {
         const res = await agent.post("/game/create").send({
-            name:     "test-full-simu",
+            name: "test-full-simu",
             animator: "animator",
             location: "ici",
         });
@@ -163,79 +160,79 @@ describe("FULL GAME simulation", () => {
         currentGame = res.body;
         //CHECK DEFAULT VALUES
         expect(res.body).toEqual({
-            __v:                       0,
-            name:                      "test-full-simu",
-            location:                  "ici",
-            animator:                  "animator",
-            _id:                       idGame,
-            status:                    C.OPEN,
-            typeMoney:                 "june",
-            events:                    [
+            __v: 0,
+            name: "test-full-simu",
+            location: "ici",
+            animator: "animator",
+            _id: idGame,
+            status: C.OPEN,
+            typeMoney: "june",
+            events: [
                 {
-                    "_id":       expect.any(String),
-                    "amount":    0,
-                    "date":      expect.any(String),
-                    "emitter":   "master",
-                    "receiver":  "master",
+                    "_id": expect.any(String),
+                    "amount": 0,
+                    "date": expect.any(String),
+                    "emitter": "master",
+                    "receiver": "master",
                     "resources": [],
                     "typeEvent": "create-game",
                 }
             ],
-            decks:                     [],
-            players:                   [],
-            amountCardsForProd:        4,
-            currentMassMonetary:       0,
+            decks: [],
+            players: [],
+            amountCardsForProd: 4,
+            currentMassMonetary: 0,
             generatedIdenticalLetters: 4,
-            distribInitCards:          4,
-            generateLettersAuto:       true,
-            generateLettersInDeck:     0,
+            distribInitCards: 4,
+            generateLettersAuto: true,
+            generateLettersInDeck: 0,
 
-            surveyEnabled:  true,
-            autoDeath:      true,
+            surveyEnabled: true,
+            autoDeath: true,
             deathPassTimer: 4,
-            devMode:        false,
-            priceWeight1:   1,
-            priceWeight2:   2,
-            priceWeight3:   4,
-            priceWeight4:   8,
-            round:          0,
-            roundMax:       1,
-            roundMinutes:   25,
+            devMode: false,
+            priceWeight1: 1,
+            priceWeight2: 2,
+            priceWeight3: 4,
+            priceWeight4: 8,
+            round: 0,
+            roundMax: 1,
+            roundMinutes: 25,
 
             //option june
-            currentDU:        0,
-            tauxCroissance:   5,
-            inequalityStart:  false,
+            currentDU: 0,
+            tauxCroissance: 5,
+            inequalityStart: false,
             startAmountCoins: 5,
-            pctPoor:          10,
-            pctRich:          10,
+            pctPoor: 10,
+            pctRich: 10,
 
             //option debt
-            credits:               [],
-            defaultCreditAmount:   3,
+            credits: [],
+            defaultCreditAmount: 3,
             defaultInterestAmount: 1,
-            bankInterestEarned:    0,
-            bankGoodsEarned:       0,
-            bankMoneyLost:         0,
-            timerCredit:           5,
-            timerPrison:           5,
-            manualBank:            true,
-            seizureType:           "decote",
-            seizureCosts:          2,
-            seizureDecote:         33,
+            bankInterestEarned: 0,
+            bankGoodsEarned: 0,
+            bankMoneyLost: 0,
+            timerCredit: 5,
+            timerPrison: 5,
+            manualBank: true,
+            seizureType: "decote",
+            seizureCosts: 2,
+            seizureDecote: 33,
 
             modified: modified,
-            created:  created,
+            created: created,
         });
     });
     test("UPDATE game", async () => {
         const res = await agent.put("/game/update").send({
-            typeMoney:     "debt",
-            name:          "test-full-md-simu",
-            idGame:        idGame,
+            typeMoney: "debt",
+            name: "test-full-md-simu",
+            idGame: idGame,
             surveyEnabled: false,
-            autoDeath:     false,
-            roundMinutes:  1,
+            autoDeath: false,
+            roundMinutes: 1,
         });
         expect(res.statusCode).toEqual(200);
         expect(res.body).toStrictEqual({
@@ -247,7 +244,7 @@ describe("FULL GAME simulation", () => {
     });
     test("START game", async () => {
         const resStart = await agent.put("/game/start").send({
-            idGame:    idGame,
+            idGame: idGame,
             typeMoney: C.DEBT
         });
         expect(resStart.statusCode).toEqual(200);
@@ -269,9 +266,9 @@ describe("FULL GAME simulation", () => {
         await updatePlayers();
         for (let player of players) {
             const resCredit = await agent.post("/bank/create-credit").send({
-                idGame:   idGame,
+                idGame: idGame,
                 idPlayer: player._id,
-                amount:   3,
+                amount: 3,
                 interest: 1,
             });
             expect(resCredit.statusCode).toEqual(200);
@@ -283,7 +280,7 @@ describe("FULL GAME simulation", () => {
     test("START round", async () => {
         const res = await agent.post("/game/start-round").send({
             idGame: idGame,
-            round:  0
+            round: 0
         });
         expect(res.statusCode).toEqual(200);
         expect(res.body.status).toEqual(C.START_ROUND);
@@ -304,29 +301,29 @@ describe("FULL GAME simulation", () => {
         const cardToSell = seller.cards[0];
 
         const p1 = agent.post("/player/transaction").send({
-            idGame:   idGame,
-            idBuyer:  buyer1._id,
+            idGame: idGame,
+            idBuyer: buyer1._id,
             idSeller: seller._id,
-            idCard:   cardToSell._id
+            idCard: cardToSell._id
         }).then(res => expect(res.statusCode).toEqual(200));
         const p2 = agent.post("/player/transaction").send({
-            idGame:   idGame,
-            idBuyer:  buyer2._id,
+            idGame: idGame,
+            idBuyer: buyer2._id,
             idSeller: seller._id,
-            idCard:   cardToSell._id
+            idCard: cardToSell._id
         }).then(res => expect(res.statusCode).toEqual(409));
         p1.then(() => agent.post("/player/transaction").send({
-            idGame:   idGame,
-            idBuyer:  seller._id,
+            idGame: idGame,
+            idBuyer: seller._id,
             idSeller: buyer1._id,
-            idCard:   cardToSell._id
+            idCard: cardToSell._id
         }).then(res => expect(res.statusCode).toEqual(200)));
     });
     test("CHECK pay interest and settle credits", async () => {
         const res1 = await agent.post("/bank/create-credit").send({
-            idGame:   idGame,
+            idGame: idGame,
             idPlayer: players[0]._id,
-            amount:   3,
+            amount: 3,
             interest: 0
         });
         expect(res1.statusCode).toEqual(200);
@@ -334,9 +331,9 @@ describe("FULL GAME simulation", () => {
         expect(res1.body._id).toBeTruthy();
         expect(res1.body.status).toEqual(C.RUNNING_CREDIT);
         const res2 = await agent.post("/bank/create-credit").send({
-            idGame:   idGame,
+            idGame: idGame,
             idPlayer: players[1]._id,
-            amount:   3,
+            amount: 3,
             interest: 0
         });
         expect(res2.statusCode).toEqual(200);
@@ -354,14 +351,14 @@ describe("FULL GAME simulation", () => {
         expect(credit2.status).toEqual(C.RUNNING_CREDIT);
 
         const credit1After = await agent.post("/bank/pay-interest").send({
-            idGame:   idGame,
+            idGame: idGame,
             idPlayer: credit1.idPlayer,
             idCredit: credit1._id
         });
         expect(credit1After.statusCode).toEqual(200);
         expect(credit1After.body.status).toEqual(C.RUNNING_CREDIT);
         const credit2After = await agent.post("/bank/settle-credit").send({
-            idGame:   idGame,
+            idGame: idGame,
             idPlayer: credit2.idPlayer,
             idCredit: credit2._id
         });
@@ -375,13 +372,13 @@ describe("FULL GAME simulation", () => {
         // await play(5);
         const res = await agent.post("/game/stop-round").send({
             idGame: idGame,
-            round:  0
+            round: 0
         });
         expect(res.statusCode).toEqual(200);
         expect(res.body.status).toEqual(C.STOP_ROUND);
     });
     test("END GAME", async () => {
-        const res = await agent.post("/game/end").send({idGame: idGame});
+        const res = await agent.post("/game/end").send({ idGame: idGame });
         expect(res.statusCode).toEqual(200);
         expect(res.body.status).toEqual(C.END_GAME);
     });

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import GameModel, {constructor} from "./game/game.model.js";
 import _ from "lodash";
-import log from "../../config/log.js";
+import log from "#config/log";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 const colors = ["red", "yellow", "green", "blue"];

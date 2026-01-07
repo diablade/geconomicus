@@ -1,7 +1,7 @@
 //Set up mongoose connection
 import mongoose from 'mongoose';
-import env from './env.js';
-import log from "./log.js";
+import env from '#config/env';
+import log from "#config/log";
 
 const hostname = env.db_config_hostname;
 const port = env.db_config_port;

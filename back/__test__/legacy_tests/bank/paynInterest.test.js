@@ -2,9 +2,9 @@ import {describe, it, expect, beforeEach, jest} from '@jest/globals';
 import payInterest from '../../../src/legacy/bank/bank.service';
 import getCreditOnActionPayment from '../../../src/legacy/bank/bank.service';
 import GameModel from '../../../src/legacy/game/game.model';
-import socket from '../../../config/socket';
+import socket from '#config/socket';
 import BankTimerManager from '../../../src/legacy/bank/BankTimerManager.js';
-import { C } from '../../../../config/constantes.mjs';
+import { C } from '#constantes';
 
 describe('payInterest', () => {
     const mockCredit = {

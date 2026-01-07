@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import io from "socket.io-client";
 import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
 import * as _ from 'lodash-es';
@@ -8,7 +8,7 @@ import {environment} from "../../environments/environment";
 import {getRandomColor, hexToRgb} from "../services/tools";
 import {firstValueFrom, Subject, takeUntil} from 'rxjs';
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import { C } from "../../../../back/shared/constantes.mjs";
 
 import {ChartConfiguration, ChartDataset} from 'chart.js';
 import 'chartjs-adapter-date-fns';
@@ -457,7 +457,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private platform: Platform,
 		private router: Router,
 		private sanitizer: DomSanitizer,
-		private backService: BackService,
+		private backService: DeprecatedBackService,
 		private i18nService: I18nService,
 		private wsService: WebSocketService,
 		private sessionStorageService: SessionStorageService,
@@ -647,7 +647,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	getMaster(){
+	getMaster() {
 		this.isMaster = this.sessionStorageService.getItem("master");
 	}
 

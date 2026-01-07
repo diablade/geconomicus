@@ -4,7 +4,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Player} from "../models/game";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
 
@@ -58,7 +58,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 
 	boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private localStorageService: LocalStorageService) {
+	constructor(private route: ActivatedRoute, private router: Router, private backService: DeprecatedBackService, private localStorageService: LocalStorageService) {
 
 	}
 

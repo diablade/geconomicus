@@ -1,7 +1,7 @@
-import log from "../../../config/log.js";
+import log from "#config/log";
 import RulesService from './rules.service.js';
-import socket from '../../../config/socket.js';
-import { C } from '../../../../config/constantes.mjs';
+import socket from '#config/socket';
+import { C } from '#constantes';
 
 const RulesController = {};
 
@@ -60,10 +60,10 @@ RulesController.getById = async (req, res, next) => {
 };
 RulesController.remove = async (req, res, next) => {
     try {
-        const ack = await RulesService.removeById(req.body.sessionId, req.body.ruleId);
+        const ack = await RulesService.removeById(req.params.sessionId, req.params.ruleId);
         if (ack.modifiedCount === 1) {
-            socket.emitTo(req.body.sessionId, C.DELETED_RULES, {
-                id: req.body.ruleId,
+            socket.emitTo(req.params.sessionId, C.DELETED_RULES, {
+                id: req.params.ruleId,
             });
             return res.status(200).json(ack);
         } else {

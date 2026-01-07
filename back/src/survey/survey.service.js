@@ -22,8 +22,8 @@ SurveyService.create = async (surveyObject) => {
 };
 
 /* Retrieve */
-SurveyService.getByGameStateIdAndAvatarId = async (gameStateId, avatarId) => {
-    return await SurveyModel.findOne({ gameStateId: gameStateId, avatarId: avatarId }).exec();
+SurveyService.getBySessionGameStateAvatarId = async (sessionId, gameStateId, avatarId) => {
+    return await SurveyModel.findOne({ sessionId: sessionId, gameStateId: gameStateId, avatarId: avatarId }).exec();
 };
 SurveyService.getByGameStateId = async (gameStateId) => {
     return await SurveyModel.find({ gameStateId }).exec();

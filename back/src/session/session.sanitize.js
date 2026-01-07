@@ -18,12 +18,10 @@ export const sanitize = {
     }),
     create: Joi.object({
         name: Joi.string().required(),
-        animator: Joi.string(),
-        location: Joi.string(),
-        devMode: Joi.boolean(),
-        theme: Joi.string(),
-        games: Joi.array(),
-        players: Joi.array()
+        animator: Joi.string().default("-"),
+        location: Joi.string().default("-"),
+        devMode: Joi.boolean().default(false),
+        theme: Joi.string().default("CLASSIC")
     }).required(),
     update: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()

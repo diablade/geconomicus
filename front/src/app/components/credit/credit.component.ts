@@ -3,7 +3,7 @@ import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-so
 import {Credit} from "../../models/game";
 
 // @ts-ignore
-import { C } from "../../../../../config/constantes";
+import { C } from "../../../../../back/shared/constantes.mjs";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({

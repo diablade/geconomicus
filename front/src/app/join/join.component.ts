@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {Subscription} from "rxjs";
 import {AudioService} from '../services/audio.service';
 
@@ -15,7 +15,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 	name = "";
 	private subscription: Subscription | undefined;
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private audioService: AudioService) {
+	constructor(private route: ActivatedRoute, private router: Router, private backService: DeprecatedBackService, private audioService: AudioService) {
 	}
 
 	ngOnInit(): void {

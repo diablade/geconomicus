@@ -1,9 +1,9 @@
 import GameModel, {constructor} from '../game/game.model.js';
-import log from '../../../config/log.js';
+import log from '#config/log';
 import _ from 'lodash';
 import mongoose from "mongoose";
-import socket from '../../../config/socket.js';
-import { C } from '../../../../config/constantes.mjs';
+import socket from '#config/socket';
+import { C } from '#constantes';
 import gameService from "../game/game.service.js";
 import decksService from "../legacy.decks.service.js";
 import playerService from "./player.service.js";

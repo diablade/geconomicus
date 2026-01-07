@@ -1,8 +1,8 @@
 import GameModel, {constructor} from "./game.model.js";
-import {C} from "../../../../config/constantes.mjs";
+import {C} from "#constantes";
 import bcrypt from "bcrypt";
-import log from "../../../config/log.js";
-import socket from "../../../config/socket.js";
+import log from "#config/log";
+import socket from "#config/socket";
 import gameService from "./game.service.js";
 import playerService from "../player/player.service.js";
 
@@ -10,7 +10,7 @@ export default {
     create:                 async (req, res, next) => {
         try {
             const savedGame = await gameService.createGame(req.body);
-            return res.status(200).send(savedGame);
+            return res.status(200).json(savedGame);
         }
         catch (err) {
             log.error("Game creation error:", err);
@@ -23,7 +23,7 @@ export default {
     update:                 async (req, res, next) => {
         try {
             const savedGame = await gameService.updateGame(req.body);
-            return res.status(200).send({
+            return res.status(200).json({
                 status: "updated",
             });
         }
@@ -61,7 +61,7 @@ export default {
                     },
                 })
                     .then((updatedGame) => {
-                        return res.status(200).send({
+                        return res.status(200).json({
                             status:      C.START_GAME,
                             timerCredit: gameUpdated.timerCredit,
                             typeMoney:   gameUpdated.typeMoney,
@@ -87,7 +87,7 @@ export default {
             round
         } = req.body;
         await gameService.startRound(idGame, round, next);
-        return res.status(200).send({
+        return res.status(200).json({
             status: C.START_ROUND,
         });
     },
@@ -105,7 +105,7 @@ export default {
             },
         })
             .then((updatedGame) => {
-                return res.status(200).send({
+                return res.status(200).json({
                     status: C.INTER_ROUND,
                 });
             })
@@ -123,7 +123,7 @@ export default {
             round
         } = req.body;
         await gameService.stopRound(idGame, round);
-        return res.status(200).send({
+        return res.status(200).json({
             status: C.STOP_ROUND,
         });
     },
@@ -148,7 +148,7 @@ export default {
                     redirect: "survey",
                 } : {});
                 socket.emitTo(id + C.EVENT, C.EVENT, stopGameEvent);
-                return res.status(200).send({
+                return res.status(200).json({
                     status: C.END_GAME,
                 });
             })

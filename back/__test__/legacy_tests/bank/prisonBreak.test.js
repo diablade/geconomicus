@@ -1,13 +1,13 @@
 import request from 'supertest';
 import app from '../../../src/app.js';
-import db from '../../../__test__/config/database.js';
+import db from '#configTest/database';
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import bankTimerManager from "../../../src/legacy/bank/BankTimerManager.js";
 import bankService from "../../../src/legacy/bank/bank.service.js";
 import Timer from "../../../src/misc/Timer.js";
 
 // Mock dependencies
-jest.mock("../../config/socket.js");
+jest.mock("#config/socket");
 jest.mock("../../../src/legacy/bank/BankTimerManager.js");
 jest.mock("../../../src/legacy/bank/bank.service.js");
 

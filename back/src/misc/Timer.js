@@ -1,5 +1,5 @@
 import {addMilliseconds} from 'date-fns';
-import log from "../../config/log.js";
+import log from "#config/log";
 
 export default class Timer {
     /**

@@ -30,7 +30,7 @@ export const validate = (schema, params = false) => {
                 errors
             });
         }
-        params ? req.params = value : req.body = value; //update req.body with validated data
+        params ? req.params = value : req.body = value; //update req.body or req.params with validated data
         next();
     };
 };

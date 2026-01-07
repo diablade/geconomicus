@@ -10,7 +10,8 @@ import {I18nService} from "./i18n.service";
 @Injectable({
 	providedIn: 'root'
 })
-export class BackService {
+//deprecated service to communicate with the backend API
+export class DeprecatedBackService {
 
 	REDIRECT_HOME = "redirectHome";
 	NOTIF = "notif";
@@ -299,6 +300,7 @@ export class BackService {
 	}
 
 	getGames(): Observable<any> {
+		console.log("YOOOOOOOOOOOOOOOOOOOO")
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
 			.pipe(
 				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GAME_UNAVAILABLE"))

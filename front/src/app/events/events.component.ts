@@ -5,7 +5,7 @@ import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import { C } from "../../../../back/shared/constantes.mjs";
 
 Chart.register(zoomPlugin);
 

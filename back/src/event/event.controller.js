@@ -1,5 +1,5 @@
 import EventService from './event.service.js';
-import log from '../../config/log.js';
+import log from '#config/log';
 
 const EventController = {};
 /**

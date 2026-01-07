@@ -1,15 +1,15 @@
 import request from 'supertest';
 import app from '../../src/app';
-import db from '../../__test__/config/database';
-import { C } from "../../../config/constantes.mjs";
+import db from '#configTest/database';
+import { C } from "#constantes";
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
-import socket from "../config/socket.js";
+import socket from "#config/socket";
 
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
 import _ from 'lodash';
 
-jest.mock('../config/socket.js');
+jest.mock('#config/socket');
 
 let idGame;
 let currentGame;

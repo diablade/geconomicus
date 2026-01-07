@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Card, Game, Player} from "../models/game";
 import {ActivatedRoute} from "@angular/router";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import * as _ from "lodash-es";
 import {SnackbarService} from "../services/snackbar.service";
@@ -10,7 +10,7 @@ import {schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {createAvatar, Options as Opt} from '@dicebear/core';
 // @ts-ignore
-import { C } from '../../../../config/constantes.mjs';
+import { C } from '../../../../back/shared/constantes.mjs';
 
 @Component({
 	selector: 'app-master-admin',
@@ -58,7 +58,7 @@ export class MasterAdminComponent implements OnInit {
 		];
 
 	constructor(private route: ActivatedRoute,
-	            private backService: BackService,
+	            private backService: DeprecatedBackService,
 	            private sanitizer: DomSanitizer,
 	            private snackbarService: SnackbarService) {
 	}

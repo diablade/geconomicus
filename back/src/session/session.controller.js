@@ -1,4 +1,4 @@
-import log from "../../config/log.js";
+import log from "#config/log";
 import SessionService from "./session.service.js";
 import EventService from "../event/event.service.js";
 import SurveyService from "../survey/survey.service.js";

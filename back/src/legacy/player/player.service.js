@@ -1,8 +1,8 @@
 import GameModel, {constructor} from "../game/game.model.js";
-import { C } from "../../../../config/constantes.mjs";
-import log from "../../../config/log.js";
+import { C } from "#constantes";
+import log from "#config/log";
 import decksService from "../legacy.decks.service.js";
-import socket from "../../../config/socket.js";
+import socket from "#config/socket";
 import bankService from "../bank/bank.service.js";
 import bankTimerManager from "../bank/BankTimerManager.js";
 import mongoose from 'mongoose';

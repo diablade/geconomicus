@@ -38,5 +38,10 @@
         "nodemon": "^3.1.9",
         "cross-env": "^7.0.3",
         "supertest": "^6.3.4"
+    },
+    "imports": {
+        "#config/*": "./config/*.js",
+        "#configTest/*": "./__test__/config/*.js",
+        "#constantes": "./shared/constantes.mjs"
     }
 }

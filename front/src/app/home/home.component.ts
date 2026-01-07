@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { BackService } from "../services/back.service";
+import { DeprecatedBackService } from "../services/deprecated-back.service";
 import { Router } from "@angular/router";
 import { faCamera, faChevronDown, faKeyboard } from "@fortawesome/free-solid-svg-icons";
 import { JoinQrDialog } from "../master-board/master-board.component";
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	constructor(private router: Router,
 		private i18nService: I18nService,
 		private platform: Platform,
-		private backService: BackService,
+		private backService: DeprecatedBackService,
 		private localStorageService: LocalStorageService,
 		private audioService: AudioService,
 		public dialog: MatDialog) {
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {
 		this.loadModalPwa();
 	}
-	
+
 	ngAfterViewInit(): void {
 		const session: any = this.localStorageService.getItem("session");
 		if (session && session.idGame && session.idPlayer) {
@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 			dialogRef.afterClosed().subscribe();
 		}
 	}
-	
+
 	beep() {
 		this.audioService.playSound("coins");
 	}

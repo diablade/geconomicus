@@ -2,11 +2,11 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {Credit, Game, Player} from "../models/game";
 import {ActivatedRoute} from "@angular/router";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import { C } from "../../../../back/shared/constantes";
 import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
@@ -38,7 +38,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	iWantToBreakFree = false;
 
 	constructor(private route: ActivatedRoute,
-				private backService: BackService,
+				private backService: DeprecatedBackService,
 				private snackbarService: SnackbarService,
 				private sanitizer: DomSanitizer,
 				public dialog: MatDialog,

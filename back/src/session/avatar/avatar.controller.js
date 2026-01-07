@@ -1,9 +1,8 @@
-import log from '../../../config/log.js';
-import socket from '../../../config/socket.js';
-import { C } from '../../../../config/constantes.mjs';
+import log from '#config/log';
+import socket from '#config/socket';
+import { C } from '#constantes';
 import AvatarService from "./avatar.service.js";
 import { nanoId4 } from '../../misc/misc.tool.js';
-import EventService from '../../event/event.service.js';
 
 const AvatarController = {};
 
@@ -63,7 +62,7 @@ AvatarController.delete = async (req, res, next) => {
         const {
             sessionId,
             avatarId
-        } = req.body;
+        } = req.params;
         const ack = await AvatarService.delete(sessionId, avatarId);
         if (!ack) {
             return res.status(404).json({ message: "Cannot delete avatar" });

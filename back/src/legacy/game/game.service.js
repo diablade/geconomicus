@@ -1,10 +1,10 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
 import gameTimerManager from "./GameTimerManager.js";
-import { C } from "../../../../config/constantes.mjs";
+import { C } from "#constantes";
 import bankTimerManager from "../bank/BankTimerManager.js";
-import socket from "../../../config/socket.js";
-import log from "../../../config/log.js";
+import socket from "#config/socket";
+import log from "#config/log";
 import Timer from "../../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
 import playerService from "../player/player.service.js";

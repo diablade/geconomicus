@@ -1,7 +1,8 @@
 export default {
     testEnvironment: 'node',
-    // transform: {},
-    // extensionsToTreatAsEsm: ['.js'],
+    moduleNameMapper: {
+        '^#config/(.*\\.js)$': '<rootDir>/config/$1'
+    }
 };
 // transform: {
 // 	'^.+\\.jsx?$': 'babel-jest', // For JavaScript and JSX files

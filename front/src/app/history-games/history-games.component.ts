@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { BackService } from "../services/back.service";
+import {Component, OnInit} from '@angular/core';
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import {C} from "../../../../back/shared/constantes.mjs";
 import * as _ from 'lodash-es';
-import { faTrashCan, faArrowUpWideShort, faArrowDownShortWide } from "@fortawesome/free-solid-svg-icons";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { SnackbarService } from "../services/snackbar.service";
-import { I18nService } from '../services/i18n.service';
+import {faTrashCan, faArrowUpWideShort, faArrowDownShortWide} from "@fortawesome/free-solid-svg-icons";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {SnackbarService} from "../services/snackbar.service";
+import {I18nService} from '../services/i18n.service';
 
 @Component({
 	selector: 'app-history-games',
@@ -26,31 +26,34 @@ export class HistoryGamesComponent implements OnInit {
 
 	faArrowUpWideShort = faArrowUpWideShort;
 	faArrowDownShortWide = faArrowDownShortWide;
-	constructor(private backService: BackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
+
+	constructor(private backService: DeprecatedBackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
 
 	ngOnInit(): void {
 		this.backService.getGames().subscribe(async data => {
+			console.log('data', data);
 			this.games = _.orderBy(data.games, "created", "desc");
 		});
 	}
 
 	get filteredGames() {
-		let games= _.filter(this.games, (game: any) =>
+		let games = _.filter(this.games, (game: any) =>
 			(!this.gameName || game.name.includes(this.gameName)) &&
 			(!this.gameType || game.typeMoney === this.gameType) &&
 			(!this.gameStatus || game.status === this.gameStatus)
 		);
 		console.log(games);
-		console.log(this.gameSort);
-		console.log(this.gameSortOrder);
-		console.log(this.gameStatus);
-		console.log(this.gameType);
-		console.log(this.gameName);
+		// console.log(this.gameSort);
+		// console.log(this.gameSortOrder);
+		// console.log(this.gameStatus);
+		// console.log(this.gameType);
+		// console.log(this.gameName);
 		games = _.orderBy(games, this.gameSort, this.gameSortOrder);
 		return games;
 	}
+
 	getStatus(status: string): string {
 		switch (status) {
 			case C.END_GAME:

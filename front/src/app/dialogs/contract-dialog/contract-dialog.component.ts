@@ -3,7 +3,7 @@ import {Credit, Game, Player} from "../../models/game";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {faFileSignature} from "@fortawesome/free-solid-svg-icons";
 // @ts-ignore
-import { C } from "../../../../../config/constantes";
+import { C } from "../../../../../back/shared/constantes.mjs";
 import * as _ from 'lodash-es';
 import {MatRadioChange} from "@angular/material/radio";
 

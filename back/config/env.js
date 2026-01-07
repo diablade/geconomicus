@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-dotenv.config({path: './../config/.env'});
+dotenv.config({path: './.env'});
 
 const {
     NODE_ENV,

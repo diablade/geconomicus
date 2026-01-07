@@ -1,8 +1,8 @@
 import express from 'express';
-import env from './../config/env.js';
+import env from '#config/env';
 import morgan from 'morgan';
 import cors from 'cors';
-import log from '../config/log.js';
+import log from '#config/log';
 
 // IMPORT ROUTES
 import legacyGameRoutes from './legacy/game/game.routes.js';
@@ -20,7 +20,13 @@ const app = express();
 // Enable trust proxy for correct client IP detection
 app.set('trust proxy', true);
 // CORS POLICY
-app.use(cors())
+// app.use(cors())
+app.use(cors({
+    origin:      [
+        'http://localhost:4200', 'https://geconomicus.fr'
+    ],
+    credentials: false
+}));
 
 // USE MIDDLEWARE
 
@@ -41,7 +47,7 @@ const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
 app.use((req, res, next) => {
     if (botPattern.test(req.headers['user-agent'])) {
         // Respond with 403 Forbidden for bots
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({message: 'Forbidden'});
     }
     next();
 });
@@ -54,7 +60,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 // Morgan logger setup: Log only defined routes
 app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
     skip: (req, res) => {
@@ -63,6 +69,11 @@ app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" 
 }));
 
 // MAIN ROUTES middleware
+//legacy routes for old version of the app
+app.use('/bank', legacyBankRoutes);
+app.use('/game', legacyGameRoutes);
+app.use('/player', legacyPlayerRoutes);
+//new app routes
 app.use('/session', sessionRoutes);
 app.use('/rules', rulesRoutes);
 app.use('/survey', surveyRoutes);
@@ -70,15 +81,11 @@ app.use('/event', eventRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/gameState', gameStateRoutes);
 app.use('/bankState', bankStateRoutes);
-//legacy routes for old version of the app
-app.use('/bank', legacyBankRoutes);
-app.use('/game', legacyGameRoutes);
-app.use('/player', legacyPlayerRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
     return res.status(200).json({
-        status: 'running',
+        status:  'running',
         version: env.version
     })
 });
@@ -87,20 +94,20 @@ app.get('/status', (req, res) => {
 app.get('/debug/memory', (req, res) => {
     const used = process.memoryUsage();
     return res.status(200).json({
-        status: 'running',
-        version: env.version,
+        status:      'running',
+        version:     env.version,
         memoryUsage: {
-            rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+            rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
             heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-            heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-            external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
+            heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+            external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
         }
     })
 });
 
 // Catch-all for non-matching routes (404 handler)
 app.use((req, res, next) => {
-    return res.status(404).json({ "not": "Found" });
+    return res.status(404).json({"not": "Found"});
 });
 
 // handle errors

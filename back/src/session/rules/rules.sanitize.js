@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import {isValidObjectId, isValidNanoId4} from '../../misc/validate.tool.js';
-import {C} from '../../../../config/constantes.mjs';
+import {C} from '#constantes';
 
 export const sanitize = {
     create:  Joi.object({

@@ -1,14 +1,11 @@
 import request from 'supertest';
 import app from '../../src/app';
-import db from '../../__test__/config/database';
-import { C } from "../../../config/constantes.mjs";
-import socket from '../../__test__/config/socket.js';
+import db from '#configTest/database';
+import { C } from "#constantes";
 import {jest} from "@jest/globals";
 
 const agent = request.agent(app);
 let ioServer = socket.initIo(agent);
-
-jest.mock('../config/socket.js');
 
 let idGame;
 let idPlayer;

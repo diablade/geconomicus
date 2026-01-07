@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -25,7 +25,7 @@ export class SurveyComponent implements OnInit {
   agressiveAvenant = 0;
   insatisfiedAccomplished = 0;
 
-  constructor(private route: ActivatedRoute, private i18nService: I18nService, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
+  constructor(private route: ActivatedRoute, private i18nService: I18nService, private router: Router, private backService: DeprecatedBackService, private snackbarService: SnackbarService) {
   }
 
   ngOnInit(): void {

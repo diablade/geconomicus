@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {BackService} from "../services/back.service";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {Game, Player} from "../models/game";
 import {environment} from "../../environments/environment";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
@@ -14,7 +14,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {SnackbarService} from "../services/snackbar.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
-import { C } from "../../../../config/constantes";
+import { C } from "../../../../back/shared/constantes.mjs";
 import * as _ from 'lodash-es';
 import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
 import {SessionStorageService} from "../services/local-storage/session-storage.service";
@@ -78,7 +78,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(private route: ActivatedRoute,
 	            private sessionStorageService: SessionStorageService,
-	            private backService: BackService,
+	            private backService: DeprecatedBackService,
 	            private snackbarService: SnackbarService,
 	            private translate: TranslateService,
 	            private router: Router,

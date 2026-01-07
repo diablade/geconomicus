@@ -1,17 +1,23 @@
 import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
-await jest.unstable_mockModule('../config/socket.js', () => ({
-    default: {
-        initIo: jest.fn(),
-        getIo:  jest.fn(),
-        emitTo: jest.fn(),
-    }
-}));
+// const mockEmitTo = jest.fn();
+// const mockGetIo = jest.fn(() => ({
+//     to: jest.fn().mockReturnThis(),
+//     emit: jest.fn()
+// }));
+
+// jest.unstable_mockModule('#config/socket', () => ({
+//     default: {
+//         initIo: jest.fn(),
+//         getIo: mockGetIo,
+//         emitTo: mockEmitTo  // Use the same mock reference
+//     }
+// }));
 
 /* ================= IMPORTS AFTER MOCK ================= */
 import request from 'supertest';
 import app from '../src/app';
-import db from '../__test__/config/database';
+import db from '#configTest/database';
 
 /* ================= SETUP ================= */
 const agent = request.agent(app);

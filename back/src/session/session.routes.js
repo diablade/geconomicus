@@ -6,10 +6,10 @@ import { validate } from '../misc/validate.tool.js';
 const router = express.Router();
 
 router.get('/all', SessionController.getAll);
-router.get('/:sessionId', validate(sanitize.getById, 'params'), SessionController.getById);
-router.get('/short/:shortId', validate(sanitize.getByShortId, 'params'), SessionController.getByShortId);
+router.get('/:sessionId', validate(sanitize.getById, true), SessionController.getById);
+router.get('/short/:shortId', validate(sanitize.getByShortId, true), SessionController.getByShortId);
 router.post('/create', validate(sanitize.create), SessionController.create);
 router.put('/update', validate(sanitize.update), SessionController.update);
-router.delete('/:sessionId', validate(sanitize.deleteSession, 'params'), SessionController.delete);
+router.delete('/:sessionId', validate(sanitize.deleteSession, true), SessionController.delete);
 
 export default router;
