@@ -4,6 +4,23 @@ export const environment = {
 	API_HOST: `http://${window.location.hostname}:8085/`,
 	WEB_HOST: `http://${window.location.hostname}:4200/`,
 
+	SESSION: {
+		GET_ALL: 'session/all',
+		GET_BY_ID: 'session/',
+		GET_BY_SHORT_ID: 'session/short/',
+		CREATE: 'session/create',
+		UPDATE: 'session/update',
+		DELETE: 'session/delete',
+	},
+
+	AVATAR: {
+		JOIN: 'avatar/join',
+		GET: 'avatar/',
+		UPDATE: 'avatar/update',
+		DELETE: 'avatar/delete',
+	},
+
+	//LEGACY
 	PLAYER: {
 		JOIN: 'player/join/',
 		IS_REINCARNATED: 'player/isReincarnated/',
