@@ -641,7 +641,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.getFeedbacks();
 		});
 		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
-			await this.router.navigate(["game", payload.idGame, "player", payload.idPlayer]).then(() => {
+			await this.router.navigate(["ogame", payload.idGame, "player", payload.idPlayer]).then(() => {
 				window.location.reload();
 			});
 		});
@@ -652,9 +652,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	newGameFromCopy() {
-		this.backService.newGameFromCopy(this.idGame).subscribe((payload: any) => {
-			this.router.navigate(["game", payload.idGame, "master"]);
-		});
 	}
 
 	updateCharts() {

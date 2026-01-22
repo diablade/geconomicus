@@ -1,100 +1,177 @@
-<div class="d-flex flex-column align-items-center">
-	<h1 mat-dialog-title>{{ "HISTORY.TITLE" | translate }}</h1>
-	<!-- filtering -->
-	<div class="d-flex flex-row">
-		<div class="form-group">
-			<label for="gameName">{{ "HISTORY.NAME_PARTY" | translate }}</label>
-			<input type="text" class="form-control" id="gameName" [(ngModel)]="gameName">
+<div class="container">
+	<h1 class="text-center" mat-dialog-title>{{ "HISTORY.TITLE" | translate }}</h1>
+	<div class="d-flex flex-row flex-wrap">
+		<div class="d-flex flex-column" style="max-width: 400px;">
+			<div class="text-center">
+				<mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteGames">
+					{{ "HISTORY.DELETE_CONFIRM" | translate }}
+				</mat-slide-toggle>
+			</div>
+			<div>
+				{{ "HISTORY.AUTO_DELETE" | translate }}
+			</div>
+			<div>
+				{{ "HISTORY.IMPORT_EXPORT" | translate }}
+			</div>
+
+			<!--  GUNY  -->
+			<div class="mt-1 col-md-12 text-center m-auto">
+				<img class="guny" src="./assets/images/guny.png" alt="">
+			</div>
 		</div>
-		<div class="form-group">
-			<label for="gameType">{{ "HISTORY.TYPE_MONEY" | translate }}</label>
-			<select class="form-select" id="gameType" [(ngModel)]="gameType">
-				<option value="">{{ "ALL" | translate }}</option>
-				<option value="{{C.JUNE}}">{{ "FREE_MONEY" | translate }}</option>
-				<option value="{{C.DEBT}}">{{ "DEBT_MONEY" | translate }}</option>
-			</select>
-		</div>
-		<div class="form-group">
-			<label for="gameStatus">{{ "HISTORY.STATUS_TEXT" | translate }}</label>
-			<select class="form-select" id="gameStatus" [(ngModel)]="gameStatus">
-				<option value="">{{ "ALL" | translate }}</option>
-				<option value="{{C.OPEN}}">{{ "HISTORY.STATUS.OPEN" | translate }}</option>
-				<option value="{{C.PLAYING}}">{{ "HISTORY.STATUS.IN_PROGRESS" | translate }}</option>
-				<option value="{{C.START_GAME}}">{{ "HISTORY.STATUS.START_GAME" | translate }}</option>
-				<option value="{{C.STOP_ROUND}}">{{ "HISTORY.STATUS.STOP_ROUND" | translate }}</option>
-				<option value="{{C.END_GAME}}">{{ "HISTORY.STATUS.ENDED" | translate }}</option>
-			</select>
-		</div>
-	</div>
-	<div class="d-flex flex-row justify-content-between align-items-center">
-		<label class="me-2" for="gameSort">{{ "HISTORY.SORT" | translate }}</label>
-		<select class="form-select" id="gameSort" [(ngModel)]="gameSort">
-			<option value="created">{{ "HISTORY.BY_DATE" | translate }}</option>
-			<option value="playersCount">{{ "HISTORY.BY_PLAYERS" | translate }}</option>
-			<option value="typeMoney">{{ "HISTORY.BY_TYPE" | translate }}</option>
-			<option value="location">{{ "HISTORY.BY_LOCATION" | translate }}</option>
-			<option value="animator">{{ "HISTORY.BY_ANIMATOR" | translate }}</option>
-			<option value="status">{{ "HISTORY.BY_STATUS" | translate }}</option>
-		</select>
-		<button mat-icon-button id="gameSortOrder" (click)="gameSortOrder = gameSortOrder === 'asc' ? 'desc' : 'asc'">
-			<fa-icon [icon]="gameSortOrder === 'asc' ? faArrowUpWideShort : faArrowDownShortWide"></fa-icon>
-		</button>
-	</div>
-	<div class="items">
-		<div class="item" *ngFor="let game of filteredGames">
+
+		<div class="d-flex flex-column align-items-center">
 			<div class="d-flex flex-row">
-				<div class="d-flex flex-column">
-					<div class="d-flex flex-row justify-content-between">
-						<div class="name">• {{ game.name }}</div>
-						<div class="status" [ngClass]="getStatusClass(game.status)">{{ getStatus(game.status) | translate }}</div>
-					</div>
-					<div class="ms-2">
-						<div>{{ "HISTORY.CREATED_ON" | translate }} {{ game.created | date: ("DATE_FORMAT.DATETIME" | translate) }}</div>
-						<div>
-						<span class="fw-bold">👥 {{ game.playersCount }}</span> {{ "HISTORY.PLAYERS" | translate }}
-							, {{ "HISTORY.TYPE" | translate }}
-							<span class="fw-bold">{{ game.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" | translate) }}
-								<img *ngIf="game.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
-								<img *ngIf="game.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
-							</span>
+				<div class="form-group">
+					<label for="filterByName">{{ "HISTORY.NAME_PARTY" | translate }}</label>
+					<input type="text" class="form-control" id="filterByName" [(ngModel)]="filterByName">
+				</div>
+				<div class="form-group">
+					<label for="filterByStatus">{{ "HISTORY.STATUS_TEXT" | translate }}</label>
+					<select class="form-select" id="filterByStatus" [(ngModel)]="filterByStatus">
+						<option value="">{{ "ALL" | translate }}</option>
+						<option value="{{C.OPEN}}">{{ "HISTORY.STATUS.OPEN" | translate }}</option>
+						<option value="{{C.IN_PROGRESS}}">{{ "HISTORY.STATUS.IN_PROGRESS" | translate }}</option>
+						<option value="{{C.ENDED}}">{{ "HISTORY.STATUS.ENDED" | translate }}</option>
+					</select>
+				</div>
+			</div>
+			<div class="d-flex flex-row justify-content-between align-items-center">
+				<label class="me-2" for="sortBy">{{ "HISTORY.SORT" | translate }}</label>
+				<select class="form-select" id="sortBy" [(ngModel)]="sortBy">
+					<option value="created">{{ "HISTORY.BY_DATE" | translate }}</option>
+					<option value="playersCount">{{ "HISTORY.BY_PLAYERS" | translate }}</option>
+					<option value="location">{{ "HISTORY.BY_LOCATION" | translate }}</option>
+					<option value="animator">{{ "HISTORY.BY_ANIMATOR" | translate }}</option>
+					<option value="status">{{ "HISTORY.BY_STATUS" | translate }}</option>
+				</select>
+				<button mat-icon-button id="sortOrder" (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'">
+					<fa-icon [icon]="sortOrder === 'asc' ? faArrowUpWideShort : faArrowDownShortWide"></fa-icon>
+				</button>
+			</div>
+			<div class="items">
+				<div class="item" *ngFor="let session of filteredSessions">
+					<div class="d-flex flex-row">
+						<div class="d-flex flex-column">
+							<div class="d-flex flex-row justify-content-between">
+								<div class="name">• {{ session.name }}</div>
+								<div class="status" [ngClass]="getStatusClass(session.status)">{{
+                                        getStatus(session.status) |
+                                            translate
+									}}
+								</div>
+							</div>
+							<div class="ms-2">
+								<div>
+									📅 {{ "HISTORY.CREATED_ON" | translate }} {{
+                                        session.createdAt | date: ("DATE_FORMAT.DATETIME"
+                                            | translate)
+									}}
+								</div>
+								<div>
+									👤 <span class="fw-bold">{{ session.animator ? session.animator : "-" }}</span>
+								</div>
+								<div>
+									👥 <span class="fw-bold">{{ session.playersCount }}</span> {{
+                                        "HISTORY.PLAYERS" |
+                                            translate
+									}}
+								</div>
+								<div>
+									🎰 <span class="fw-bold">{{ session.gamesRulesCount }}</span> {{
+                                        "HISTORY.GAMES" |
+                                            translate
+									}}
+								</div>
+								<div>
+									📍 <span class="fw-bold">{{ session.location ? session.location : "-" }}</span>
+								</div>
+							</div>
 						</div>
-						<div class="">
-						</div>
-						<div>{{ "HISTORY.LOCATION" | translate }} <span class="fw-bold">{{ game.location ? game.location : "-" }}</span>, {{ "HISTORY.ANIMATOR" | translate }} <span
-							class="fw-bold"> {{ game.animator ? game.animator : "-" }}</span></div>
-						<div class="d-flex flex-row">
+						<div class="d-flex flex-column gap-2">
+							<button *ngIf="session.status === C.OPEN" class="ms-2" mat-raised-button
+							        [routerLink]="['/join',session._id]" color="primary"> {{
+                                    "HISTORY.JOIN_AS_NEW_PLAYER" | translate
+								}}
+							</button>
+							<button *ngIf="session.status === C.IN_PROGRESS||session.status === C.OPEN" class="ms-2"
+							        mat-raised-button [routerLink]="['/session',session._id]" color="accent"> {{
+                                    "HISTORY.JOIN_AS_MASTER" | translate
+								}}
+							</button>
+							<button *ngIf="session.status === C.ENDED||session.status === C.IN_PROGRESS" class="ms-2"
+							        mat-raised-button [routerLink]="['/results',session._id]" color="accent"> {{
+                                    "HISTORY.VIEW_RESULTS" | translate
+								}}
+							</button>
+							<button *ngIf="deleteGames" class="ms-2" mat-raised-button color="warn">
+								<fa-icon class="delete" (click)="onDeleteSession(session)" [icon]="faTrashCan"></fa-icon>
+							</button>
 						</div>
 					</div>
 				</div>
-				<button class="ms-2" mat-raised-button
-								[routerLink]="game.status === C.END_GAME ?['/game',game._id,'results']: ['/game',game._id,'master']"
-								color="accent">
-					{{ game.status === C.END_GAME ? ("HISTORY.VIEW_RESULTS" | translate) : ("HISTORY.VIEW" | translate) }}
-				</button>
-				<button *ngIf="deleteGames" class="ms-2" mat-raised-button color="warn">
-					<fa-icon class="delete" (click)="onDeleteGame(game)"
-									 [icon]="faTrashCan"></fa-icon>
-				</button>
+			</div>
+			<!-- filtering -->
+			<h1>Old V1 games</h1>
+			<div class="items">
+				<div class="item" *ngFor="let game of games">
+					<div class="d-flex flex-row">
+						<div class="d-flex flex-column">
+							<div class="d-flex flex-row justify-content-between">
+								<div class="name">• {{ game.name }}</div>
+								<div class="status" [ngClass]="getStatusClass(game.status)">{{
+                                        getStatus(game.status) |
+                                            translate
+									}}
+								</div>
+							</div>
+							<div class="ms-2">
+								<div>{{ "HISTORY.CREATED_ON" | translate }} {{
+                                        game.created | date: ("DATE_FORMAT.DATETIME" |
+                                            translate)
+									}}
+								</div>
+								<div>
+									<span class="fw-bold">👥 {{ game.playersCount }}</span> {{
+                                        "HISTORY.PLAYERS" |
+                                            translate
+									}}
+									, {{ "HISTORY.TYPE" | translate }}
+									<span class="fw-bold">{{
+                                            game.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" |
+                                                translate)
+										}}
+										<img *ngIf="game.typeMoney === C.DEBT" class="icon"
+										     [src]="'/assets/images/eurocoin.png'"/>
+										<img *ngIf="game.typeMoney === C.JUNE" class="icon"
+										     [src]="'/assets/images/g1coin.png'"/>
+									</span>
+								</div>
+								<div class="">
+								</div>
+								<div>{{ "HISTORY.LOCATION" | translate }} <span class="fw-bold">{{
+                                        game.location ? game.location : "-"
+									}}</span>, {{ "HISTORY.ANIMATOR" | translate }} <span class="fw-bold"> {{
+                                        game.animator ? game.animator : "-"
+									}}</span></div>
+								<div class="d-flex flex-row">
+								</div>
+							</div>
+						</div>
+						<button class="ms-2" mat-raised-button
+						        [routerLink]="game.status === C.END_GAME ?['/ogame',game._id,'results']: ['/ogame',game._id,'master']"
+						        color="accent">
+							{{
+                                game.status === C.END_GAME ? ("HISTORY.VIEW_RESULTS" | translate) : ("HISTORY.VIEW" |
+                                    translate)
+							}}
+						</button>
+						<button *ngIf="deleteGames" class="ms-2" mat-raised-button color="warn">
+							<fa-icon class="delete" (click)="onDeleteGame(game)" [icon]="faTrashCan"></fa-icon>
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="text-center">
-		<mat-slide-toggle
-			class=""
-			[color]="'warn'"
-			[(ngModel)]="deleteGames">
-			{{ "HISTORY.DELETE_CONFIRM" | translate }}
-		</mat-slide-toggle>
-	</div>
-	<div>
-		{{ "HISTORY.AUTO_DELETE" | translate }}
-	</div>
-	<div>
-		{{ "HISTORY.IMPORT_EXPORT" | translate }}
-	</div>
-
-	<!--  GUNY  -->
-	<div class="mt-1 col-md-12 text-center m-auto">
-		<img class="guny" src="./assets/images/guny.png" alt="">
 	</div>
 </div>

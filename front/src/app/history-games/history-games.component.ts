@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {DeprecatedBackService} from "../services/deprecated-back.service";
-// @ts-ignore
-import {C} from "../../../../back/shared/constantes.mjs";
+import C from "../../../../back/shared/constantes.mjs";
 import * as _ from 'lodash-es';
 import {faTrashCan, faArrowUpWideShort, faArrowDownShortWide} from "@fortawesome/free-solid-svg-icons";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
 import {I18nService} from '../services/i18n.service';
+import {SessionService} from '../services/api/session.service';
+import {Session} from '../models/session';
 
 @Component({
 	selector: 'app-history-games',
@@ -15,43 +16,40 @@ import {I18nService} from '../services/i18n.service';
 })
 export class HistoryGamesComponent implements OnInit {
 	faTrashCan = faTrashCan;
-	deleteGames = false;
-	games: any;
-	C = C;
-	gameName = "";
-	gameType = "";
-	gameStatus = "";
-	gameSort = "created";
-	gameSortOrder: "asc" | "desc" = "desc";
-
 	faArrowUpWideShort = faArrowUpWideShort;
 	faArrowDownShortWide = faArrowDownShortWide;
+	deleteGames = false;
+	games: any;
+	sessions: Session[] = [];
+	C = C;
+	filterByName = "";
+	filterByStatus = "";
+	sortBy = "createdAt";
+	sortOrder: "asc" | "desc" = "desc";
 
-	constructor(private backService: DeprecatedBackService, public dialog: MatDialog, private snackbarService: SnackbarService, private i18nService: I18nService) {
+	constructor(private backService: DeprecatedBackService,
+	            public dialog: MatDialog,
+	            private snackbarService: SnackbarService,
+	            private i18nService: I18nService,
+	            private sessionService: SessionService) {
+		this.i18nService.loadNamespace("history");
 	}
 
+	get filteredSessions(): Session[] {
+		return _.orderBy(_.filter(this.sessions, (session: any) =>
+			(!this.filterByName || session.name.includes(this.filterByName)) &&
+			(!this.filterByStatus || session.status === this.filterByStatus)
+		), this.sortBy, this.sortOrder) as Session[];
+	}
 
-	ngOnInit(): void {
+	ngOnInit() {
 		this.backService.getGames().subscribe(async data => {
-			console.log('data', data);
 			this.games = _.orderBy(data.games, "created", "desc");
 		});
-	}
-
-	get filteredGames() {
-		let games = _.filter(this.games, (game: any) =>
-			(!this.gameName || game.name.includes(this.gameName)) &&
-			(!this.gameType || game.typeMoney === this.gameType) &&
-			(!this.gameStatus || game.status === this.gameStatus)
-		);
-		console.log(games);
-		// console.log(this.gameSort);
-		// console.log(this.gameSortOrder);
-		// console.log(this.gameStatus);
-		// console.log(this.gameType);
-		// console.log(this.gameName);
-		games = _.orderBy(games, this.gameSort, this.gameSortOrder);
-		return games;
+		this.sessionService.getAll().subscribe(async data => {
+			this.sessions = data;
+			this.sessions = _.orderBy(data, "createdAt", "desc");
+		});
 	}
 
 	getStatus(status: string): string {
@@ -60,12 +58,10 @@ export class HistoryGamesComponent implements OnInit {
 				return "HISTORY.STATUS.ENDED";
 			case C.OPEN:
 				return "HISTORY.STATUS.OPEN";
-			case C.START_GAME:
-				return "HISTORY.STATUS.START_GAME";
-			case C.STOP_ROUND:
-				return "HISTORY.STATUS.STOP_ROUND";
-			default:
+			case C.IN_PROGRESS:
 				return "HISTORY.STATUS.IN_PROGRESS";
+			default:
+				return "-";
 		}
 	}
 
@@ -75,10 +71,13 @@ export class HistoryGamesComponent implements OnInit {
 				return "statusClosed";
 			case C.OPEN:
 				return "statusOpen";
-			default:
+			case C.IN_PROGRESS:
 				return "statusOnGoing";
+			default:
+				return "";
 		}
 	}
+
 
 	onDeleteGame(game: any) {
 		const dialogRef = this.dialog.open(GameDeleteDialog, {});
@@ -87,6 +86,18 @@ export class HistoryGamesComponent implements OnInit {
 				this.backService.deleteGame(game._id, dataRaw).subscribe(async data => {
 					this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DELETE_GAME"));
 					this.games = _.filter(this.games, g => g._id !== game._id);
+				});
+			}
+		});
+	}
+
+	onDeleteSession(session: Session) {
+		const dialogRef = this.dialog.open(GameDeleteDialog, {});
+		dialogRef.afterClosed().subscribe(dataRaw => {
+			if (dataRaw) {
+				this.sessionService.delete(session._id, dataRaw).subscribe(async _data => {
+					this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DELETE_GAME"));
+					this.sessions = _.filter(this.sessions, s => s._id !== session._id);
 				});
 			}
 		});

@@ -1,20 +1,14 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { catchError, Observable } from "rxjs";
-import { Avatar } from "../../models/avatar";
-import { environment } from "../../../environments/environment";
-import { ERROR_RELOAD, ErrorService, REDIRECT_HOME } from "../error.service";
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {catchError, Observable} from "rxjs";
+import {Avatar} from "../../models/avatar";
+import {environment} from "../../../environments/environment";
+import {ERROR_RELOAD, ErrorService, REDIRECT_HOME} from "../error.service";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class AvatarService {
-	httpOptions = {
-		headers: new HttpHeaders({
-			'Content-Type': 'application/json'
-		})
-	};
-
 	constructor(public http: HttpClient, private errorService: ErrorService) {
 	}
 
@@ -25,9 +19,10 @@ export class AvatarService {
 			);
 	}
 
-	createAvatar(name: string): Observable<Avatar> {
+	join(sessionId: string, name: string): Observable<Avatar> {
 		return this.http.post<any>(environment.API_HOST + environment.AVATAR.JOIN, {
 			name,
+			sessionId
 		})
 			.pipe(
 				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.CREATE'))

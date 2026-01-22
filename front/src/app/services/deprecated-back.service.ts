@@ -18,11 +18,6 @@ export class DeprecatedBackService {
 	ERROR = "error";
 	ERROR_RELOAD = "errorReload";
 	ERROR_FORCE_RELOAD = "errorForceReload";
-	httpOptions = {
-		headers: new HttpHeaders({
-			'Content-Type': 'application/json'
-		})
-	};
 
 	constructor(public http: HttpClient, private router: Router, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
@@ -62,20 +57,6 @@ export class DeprecatedBackService {
 			);
 	}
 
-	getIdGameByShortId(shortId: string): Observable<any> {
-		return this.http.get<any>(environment.API_HOST + environment.GAME.GET_BY_SHORT_ID + shortId)
-			.pipe(
-				catchError(err => this.handleError(err, this.ERROR, "ERROR.GAME_UNAVAILABLE"))
-			);
-	}
-
-	joinReincarnate(idGame: string, name: string, fromId: string | undefined): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_REINCARNATE, {idGame, name, fromId})
-			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.JOIN_REINCARNATE"))
-			);
-	}
-
 	isReincarnated(idGame: string | undefined, fromId: string | undefined): Observable<any> {
 		return this.http.post<any>(environment.API_HOST + environment.PLAYER.IS_REINCARNATED, {idGame, fromId})
 			.pipe(
@@ -83,31 +64,10 @@ export class DeprecatedBackService {
 			);
 	}
 
-	joinInGame(idGame: string, name: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.PLAYER.JOIN_IN_GAME, {idGame: idGame, name: name})
-			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.JOIN"))
-			);
-	}
-
-	createGame(body: any): Observable<Game> {
-		return this.http.post<Game>(environment.API_HOST + environment.GAME.CREATE, body)
-			.pipe(
-				catchError(err => this.handleError(err, this.REDIRECT_HOME, "ERROR.CREATE"))
-			);
-	}
-
 	getGame(idGame: string): Observable<Game> {
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GET + idGame)
 			.pipe(
 				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GAME_UNAVAILABLE"))
-			);
-	}
-
-	newGameFromCopy(idGame: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.GAME.COPY_GAME, {idGame: idGame})
-			.pipe(
-				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.NEW_GAME_FROM_COPY"))
 			);
 	}
 
@@ -300,7 +260,6 @@ export class DeprecatedBackService {
 	}
 
 	getGames(): Observable<any> {
-		console.log("YOOOOOOOOOOOOOOOOOOOO")
 		return this.http.get<any>(environment.API_HOST + environment.GAME.GETALL)
 			.pipe(
 				catchError(err => this.handleError(err, this.ERROR_RELOAD, "ERROR.GAME_UNAVAILABLE"))

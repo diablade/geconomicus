@@ -7,7 +7,7 @@ import {
 	JoinQrDialog,
 	MasterBoardComponent
 } from './master-board/master-board.component';
-import {CreateGameDialog, HomeComponent, InstallAppDialog} from './home/home.component';
+import {CreateSessionDialog, HomeComponent, InstallAppDialog} from './home/home.component';
 import {AppRoutingModule} from "./app-routing.module";
 import {MatRadioModule} from "@angular/material/radio";
 import {MatButtonModule} from "@angular/material/button";
@@ -78,6 +78,9 @@ import {JoinShortDialogComponent} from './dialogs/join-short-dialog/join-short-d
 import {ResumeSessionPromptComponent} from './dialogs/resume-session-prompt/resume-session-prompt.component';
 import {ItemComponent} from './components/item/item.component';
 import {RecipeComponent} from './components/recipe/recipe.component';
+import {LobbyMasterComponent} from './lobby-master/lobby-master.component';
+import {LobbyPlayerComponent} from './lobby-player/lobby-player.component';
+import {JoinQrDialogComponent} from './dialogs/join-qr-dialog/join-qr-dialog.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -100,7 +103,7 @@ LOAD_WASM().subscribe();
 		ResultsComponent,
 		VersionComponent,
 		EventsComponent,
-		CreateGameDialog,
+		CreateSessionDialog,
 		InstallAppDialog,
 		JoinQrDialog,
 		GameInfosDialog,
@@ -132,7 +135,10 @@ LOAD_WASM().subscribe();
 		JoinShortDialogComponent,
 		ResumeSessionPromptComponent,
 		ItemComponent,
-		RecipeComponent
+		RecipeComponent,
+		LobbyMasterComponent,
+		LobbyPlayerComponent,
+		JoinQrDialogComponent
 	],
 	imports: [
 		HttpClientModule,

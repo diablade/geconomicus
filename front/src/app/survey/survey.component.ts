@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {DeprecatedBackService} from "../services/deprecated-back.service";
-import {SnackbarService} from "../services/snackbar.service";
-import {Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
-import {I18nService} from "../services/i18n.service";
+import { Component, OnInit } from '@angular/core';
+import { DeprecatedBackService } from "../services/deprecated-back.service";
+import { SnackbarService } from "../services/snackbar.service";
+import { Subscription } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
+import { I18nService } from "../services/i18n.service";
 
 @Component({
   selector: 'app-survey',
@@ -46,11 +46,11 @@ export class SurveyComponent implements OnInit {
       +this.anxiousConfident,
       +this.insatisfiedAccomplished,
       +this.agressiveAvenant).subscribe(async () => {
-      this.snackbarService.showSuccess(this.i18nService.instant("SURVEY.THANK_YOU"));
+        this.snackbarService.showSuccess(this.i18nService.instant("SURVEY.THANK_YOU"));
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      this.router.navigate(['game', this.idGame, 'results']);
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        this.router.navigate(['ogame', this.idGame, 'results']);
 
-    });
+      });
   }
 }

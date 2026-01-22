@@ -36,28 +36,6 @@
         "INTER_ROUND": "Inter tour",
         "START_GAME": "Partie démarrée"
     },
-    "MASTER": {
-        "SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
-        "JOIN": "Rejoins la partie {{name}}",
-        "GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la partie.",
-        "TYPE_OF_MONEY": "Type de monnaie",
-        "GAME_OPTION": "Options du jeu",
-        "START": "Distribuer les cartes",
-        "ROUND": "tour",
-        "LIVE_EVENT_BTN": "Ouvrir la page des résultats en temps réel",
-        "RESET": "RÉINITIALISATION",
-        "WAITING": "Encore {{count}} joueur(s) avant de distribuer les cartes",
-        "START_ROUND": "Lancer la manche",
-        "STOP_ROUND": "Stop",
-        "NEXT_ROUND": "Tour suivant",
-        "SEND_SURVEY": "Lancer le questionnaire et afficher les résultats",
-        "SHOW_RESULTS": "Afficher les résultats",
-        "BANK_BTN": "Voir la banque",
-        "DELETE_USER": "Supprimer un joueur ?",
-        "USERS_CONNECTED": "Joueurs connectés",
-        "PLAYERS": "Joueurs",
-        "KILL_USERS": "Faire passer la mort ?"
-    },
     "NOTICE": {
         "TITLE": "Notice d'utilisation",
         "INTRO_1": "Une expérience ludique et immersive où vous simulez une économie et constatez les effets de la monnaie choisie.",
@@ -246,37 +224,6 @@
         "PLAYERS_6+": "(6 joueurs et plus)",
         "START_DISTRIB_CARDS": "Nombre de cartes distribuées aux joueurs en début de manche",
         "BUILD_AMOUNT": "Nombre de cartes identiques attendues pour obtenir une carte de valeur supérieure :"
-    },
-    "HISTORY": {
-        "TITLE": "Historique des parties créées",
-        "DELETE_CONFIRM": "Supprimer une partie ?",
-        "AUTO_DELETE": "Les parties de plus de 2 mois seront bientôt automatiquement supprimées.",
-        "IMPORT_EXPORT": "(L'importation et l'exportation de partie seront bientôt possibles).",
-        "CREATED_ON": "Créé le",
-        "PLAYERS": "joueurs",
-        "TYPE": "type :",
-        "LOCATION": "Lieu :",
-        "ANIMATOR": "Animateur :",
-        "VIEW_RESULTS": "Voir les résultats",
-        "VIEW": "Voir",
-        "NAME_PARTY": "Nom de la partie",
-        "TYPE_MONEY": "Type de monnaie",
-        "STATUS_TEXT": "Statut",
-        "SORT": "Trier par",
-        "BY_DATE": "Date",
-        "BY_PLAYERS": "Nombre de joueurs",
-        "BY_TYPE": "Type",
-        "BY_LOCATION": "Lieu",
-        "BY_ANIMATOR": "Animateur",
-        "BY_STATUS": "Statut",
-        "STATUS": {
-            "ENDED": "Terminé",
-            "OPEN": "Ouvert",
-            "IN_PROGRESS": "En cours",
-            "START_GAME": "Jeu démarré",
-            "INTER_ROUND": "Manche en cours",
-            "STOP_ROUND": "Manche terminée"
-        }
     },
     "EVENTS": {
         "TITLE": "Évènements",
@@ -568,18 +515,6 @@
         "SAVE": "Sauvegarder",
         "DELETE": "Supprimer",
         "OK": "OK"
-    },
-    "JOIN": {
-        "TITLE": "Rejoindre la partie !",
-        "SHORT_ID_TITLE": "Pour rejoindre la partie, entre le code à 4 lettres",
-        "SHORT_ID_DESC": "Le code se trouve au centre du QR code de la partie en cours",
-        "NAME_PROMPT": "Votre petit nom ?",
-        "GO_BUTTON": "Ğo !",
-        "SEARCH": "Rechercher",
-        "GO_NEW_LIFE": "Ğo pour ma nouvelle vie !",
-        "REINCARNATED": "Hey ! Tu as été réincarné !",
-        "GAME_STARTED": "Hey ! La partie a commencé. Bon courage.",
-        "GUNY_INTRO": "Hey ! J'm'appelle Ğuny."
     },
     "DATE_FORMAT": {
         "DATETIME": "dd-MM-YYYY à HH:mm"

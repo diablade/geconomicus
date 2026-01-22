@@ -1,17 +1,18 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { DeprecatedBackService } from "../services/deprecated-back.service";
-import { Router } from "@angular/router";
-import { faCamera, faChevronDown, faKeyboard } from "@fortawesome/free-solid-svg-icons";
-import { JoinQrDialog } from "../master-board/master-board.component";
-import { Platform } from "@angular/cdk/platform";
-import { ScannerDialogV3Component } from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
-import { I18nService } from "../services/i18n.service";
-import { ContributionsComponent } from "../components/contributions/contributions.component";
-import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
-import { LocalStorageService } from '../services/local-storage/local-storage.service';
-import { ResumeSessionPromptComponent } from '../dialogs/resume-session-prompt/resume-session-prompt.component';
-import { AudioService } from '../services/audio.service';
+import {Component, AfterViewInit, OnInit} from '@angular/core';
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {Router} from "@angular/router";
+import {faCamera, faChevronDown, faKeyboard} from "@fortawesome/free-solid-svg-icons";
+import {JoinQrDialog} from "../master-board/master-board.component";
+import {Platform} from "@angular/cdk/platform";
+import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+import {I18nService} from "../services/i18n.service";
+import {ContributionsComponent} from "../components/contributions/contributions.component";
+import {JoinShortDialogComponent} from '../dialogs/join-short-dialog/join-short-dialog.component';
+import {LocalStorageService} from '../services/local-storage/local-storage.service';
+import {ResumeSessionPromptComponent} from '../dialogs/resume-session-prompt/resume-session-prompt.component';
+import {AudioService} from '../services/audio.service';
+import {ThemesService} from "../services/themes.service";
+import {SessionService} from "../services/api/session.service";
 
 @Component({
 	selector: 'app-home',
@@ -26,12 +27,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	modalPwaPlatform: string | undefined;
 
 	constructor(private router: Router,
-		private i18nService: I18nService,
-		private platform: Platform,
-		private backService: DeprecatedBackService,
-		private localStorageService: LocalStorageService,
-		private audioService: AudioService,
-		public dialog: MatDialog) {
+	            private i18nService: I18nService,
+	            private platform: Platform,
+	            private sessionService: SessionService,
+	            private localStorageService: LocalStorageService,
+	            private audioService: AudioService,
+	            public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -54,14 +55,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	}
 
 	create() {
-		const dialogRef = this.dialog.open(CreateGameDialog, {});
+		const dialogRef = this.dialog.open(CreateSessionDialog, {});
 
 		dialogRef.afterClosed().subscribe(data => {
 			if (data.name) {
-				this.backService.createGame(data)
+				this.sessionService.create(data.name, data.location, data.animator, data.theme)
 					.subscribe(
-						game => {
-							this.router.navigate(['game', game._id, 'master']);
+						session => {
+							this.router.navigate(['s', session._id]);
 						},
 					);
 			}
@@ -86,10 +87,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		const dialogRef = this.dialog.open(JoinShortDialogComponent, {});
 		dialogRef.afterClosed().subscribe(shortCode => {
 			if (shortCode) {
-				this.backService.getIdGameByShortId(shortCode)
+				this.sessionService.getByShortId(shortCode)
 					.subscribe(
-						idGame => {
-							this.router.navigate(['game', idGame, 'join']);
+						sessionId => {
+							this.router.navigate(['join', sessionId]);
 						}
 					);
 			}
@@ -136,15 +137,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
 }
 
 @Component({
-	selector: 'create-game-dialog',
-	templateUrl: './../dialogs/create-game-dialog.html',
+	selector: 'create-session-dialog',
+	templateUrl: '../dialogs/create-session-dialog.html',
 })
-export class CreateGameDialog {
+export class CreateSessionDialog {
 	name = "";
 	animator = "";
 	location = "";
+	theme = "classic";
+	themes: string[];
 
-	constructor(public dialogRef: MatDialogRef<CreateGameDialog>) {
+	constructor(public dialogRef: MatDialogRef<CreateSessionDialog>, private themesService: ThemesService) {
+		this.themes = this.themesService.getThemesKeys();
 	}
 
 	onNoClick(): void {

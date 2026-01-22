@@ -1,21 +1,18 @@
 <div class="join sunyBg h-100">
-  <h1 class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
-  <div>
-    <p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
-    <mat-form-field appearance="fill">
-      <input matInput [disabled]="!!fromId" [(ngModel)]="name" (keydown.enter)="join()">
-    </mat-form-field>
-  </div>
-  <div>
-    <button-timer *ngIf="fromId" [secondsTimer]="5" (timerEnd)="joinReincarnate()" [label]="'JOIN.GO_NEW_LIFE' | translate"></button-timer>
-<!--    <button *ngIf="fromId==='false'" mat-raised-button color="primary" (click)="joinInGame()">{{ "JOIN.GO_BUTTON" | translate }}</button>-->
-    <button *ngIf="fromId===undefined" mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
-  </div>
-  <div *ngIf="fromId" class="mt-4 text-center gecoFont bulle">{{ "JOIN.REINCARNATED" | translate }}</div>
-<!--  <div *ngIf="fromId==='false'" class="mt-4 text-center bulle gecoFont">{{ "JOIN.GAME_STARTED" | translate }}</div>-->
-  <div *ngIf="fromId===undefined" class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }}</div>
-  <!--  GUNY  -->
-  <div class="mt-1 col-md-12 text-center m-auto">
-    <img class="guny" src="./assets/images/guny.png" alt="">
-  </div>
+	<h1 class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
+	<!--  GUNY  -->
+	<div class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }} <br> {{ "JOIN.GUNY_INTRO2" |
+		translate }}</div>
+	<div class="mt-1 col-md-12 text-center">
+		<img class="guny" src="./assets/images/guny.png" alt="">
+	</div>
+	<div>
+		<p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
+		<mat-form-field appearance="fill">
+			<input matInput [(ngModel)]="name" (keydown.enter)="join()">
+		</mat-form-field>
+	</div>
+	<div>
+		<button mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
+	</div>
 </div>

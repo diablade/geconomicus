@@ -216,7 +216,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	close() {
-		this.router.navigate(["game", this.idGame, "player", this.idPlayer]);
+		this.router.navigate(["ogame", this.idGame, "player", this.idPlayer]);
 	}
 
 	saveAndClose() {

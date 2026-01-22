@@ -1,0 +1,25 @@
+{
+    "MASTER": {
+        "GAME": "Jeu",
+        "SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
+        "JOIN": "Rejoins la partie {{name}}",
+        "GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la partie.",
+        "TYPE_OF_MONEY": "Type de monnaie",
+        "GAME_OPTION": "Options du jeu",
+        "START": "Distribuer les cartes",
+        "ROUND": "tour",
+        "LIVE_EVENT_BTN": "Ouvrir la page des résultats en temps réel",
+        "RESET": "RÉINITIALISATION",
+        "WAITING": "Encore {{count}} joueur(s) avant de distribuer les cartes",
+        "START_ROUND": "Lancer la manche",
+        "STOP_ROUND": "Stop",
+        "NEXT_ROUND": "Tour suivant",
+        "SEND_SURVEY": "Lancer le questionnaire et afficher les résultats",
+        "SHOW_RESULTS": "Afficher les résultats",
+        "BANK_BTN": "Voir la banque",
+        "DELETE_USER": "Supprimer un joueur ?",
+        "USERS_CONNECTED": "Joueurs connectés",
+        "PLAYERS": "Joueurs",
+        "KILL_USERS": "Faire passer la mort ?"
+    }
+}

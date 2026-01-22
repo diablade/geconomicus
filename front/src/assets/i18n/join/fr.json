@@ -1,0 +1,15 @@
+{
+    "JOIN": {
+        "TITLE": "Rejoindre la partie !",
+        "SHORT_ID_TITLE": "Pour rejoindre la partie, entre le code à 4 lettres",
+        "SHORT_ID_DESC": "Le code se trouve au centre du QR code de la partie en cours",
+        "NAME_PROMPT": "Votre petit nom ?",
+        "GO_BUTTON": "Ğo !",
+        "SEARCH": "Rechercher",
+        "GO_NEW_LIFE": "Ğo pour ma nouvelle vie !",
+        "REINCARNATED": "Hey ! Tu as été réincarné !",
+        "GAME_STARTED": "Hey ! La partie a commencé. Bon courage.",
+        "GUNY_INTRO": "Hey Bienvenue ! J'm'appelle Ğuny",
+        "GUNY_INTRO2": "et toi tu t'appelles comment ?"
+    }
+}

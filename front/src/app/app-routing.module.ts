@@ -12,29 +12,39 @@ import {BankBoardComponent} from "./bank-board/bank-board.component";
 import {MasterAdminComponent} from "./master-admin/master-admin.component";
 import {ModuleGalileoComponent} from "./components/module-galileo/module-galileo.component";
 import {ModuleWealthDistribComponent} from "./components/module-wealth-distrib/module-wealth-distrib.component";
+import {LobbyMasterComponent} from "./lobby-master/lobby-master.component";
+import {LobbyPlayerComponent} from "./lobby-player/lobby-player.component";
 
 const routes: Routes = [
-    {path: '', component: HomeComponent},
-    {path: 'results/:idGame', component: ResultsComponent},
-    {path: 'games', component: HistoryGamesComponent},
-    {path: 'game/:idGame/admin', component: MasterAdminComponent},
-    {path: 'game/:idGame/master', component: MasterBoardComponent},
-    {path: 'game/:idGame/reset', component: MasterBoardComponent},
-    {path: 'game/:idGame/bank', component: BankBoardComponent},
-    {path: 'game/:idGame/join/:fromId/:name', component: JoinComponent},
-    {path: 'game/:idGame/join', component: JoinComponent},
-    {path: 'game/:idGame/results', component: ResultsComponent},
-    {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},
-    {path: 'game/:idGame/player/:idPlayer/survey', component: SurveyComponent},
-    {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
-    {path: 'module/galileo', component: ModuleGalileoComponent},
-    {path: 'module/gini', component: ModuleWealthDistribComponent},
-    {path: '**', redirectTo: '/'},
+	{path: '', component: HomeComponent},
+	{path: 'history', component: HistoryGamesComponent},
+	{path: 'results/:sessionId', component: ResultsComponent},
+	{path: 'session/:sessionId', component: LobbyMasterComponent},
+	{path: 'join/:sessionId', component: JoinComponent},
+	{path: 'avatar/:sessionId/:avatarId', component: LobbyPlayerComponent},
+	{path: 'avatar/:sessionId/:avatarId/settings', component: PlayerSettingsComponent},
+	{path: 'survey/:sessionId/:gameStateId/:avatarId', component: SurveyComponent},
+	{path: 'game/:gameStateId', component: MasterAdminComponent},
+	{path: 'game/:gameStateId/admin', component: MasterAdminComponent},
+	{path: 'play/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
+	{path: 'module/galileo', component: ModuleGalileoComponent},
+	{path: 'module/gini', component: ModuleWealthDistribComponent},
+	//deprecated routes below
+	{path: 'ogame/:idGame/admin', component: MasterAdminComponent},
+	{path: 'ogame/:idGame/master', component: MasterBoardComponent},
+	{path: 'ogame/:idGame/reset', component: MasterBoardComponent},
+	{path: 'ogame/:idGame/bank', component: BankBoardComponent},
+	{path: 'ogame/:idGame/join/:fromId/:name', component: JoinComponent},
+	{path: 'ogame/:idGame/join', component: JoinComponent},
+	{path: 'ogame/:idGame/results', component: ResultsComponent},
+	{path: 'ogame/:idGame/player/:idPlayer', component: PlayerBoardComponent},
+	{path: 'ogame/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
+	{path: '**', redirectTo: '/'},
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule]
 })
 export class AppRoutingModule {
 }

@@ -1,0 +1,33 @@
+{
+    "HISTORY": {
+        "TITLE": "Historique des parties créées",
+        "DELETE_CONFIRM": "Supprimer une partie ?",
+        "AUTO_DELETE": "Les parties de plus de 2 mois seront bientôt automatiquement supprimées.",
+        "IMPORT_EXPORT": "(L'importation et l'exportation de partie seront bientôt possibles).",
+        "JOIN_AS_NEW_PLAYER": "Rejoindre (nouveau joueur)",
+        "JOIN_AS_MASTER": "Rejoindre en tant qu'animateur",
+        "CREATED_ON": "Créé le",
+        "PLAYERS": "joueurs",
+        "GAMES": "jeux",
+        "TYPE": "type :",
+        "LOCATION": "Lieu :",
+        "ANIMATOR": "Animateur :",
+        "VIEW_RESULTS": "Voir les résultats",
+        "VIEW": "Voir",
+        "NAME_PARTY": "Nom de la partie",
+        "TYPE_MONEY": "Type de monnaie",
+        "STATUS_TEXT": "Statut",
+        "SORT": "Trier par",
+        "BY_DATE": "Date",
+        "BY_PLAYERS": "Nombre de joueurs",
+        "BY_TYPE": "Type",
+        "BY_LOCATION": "Lieu",
+        "BY_ANIMATOR": "Animateur",
+        "BY_STATUS": "Statut",
+        "STATUS": {
+            "ENDED": "Terminé",
+            "OPEN": "Ouvert",
+            "IN_PROGRESS": "En cours"
+        }
+    }
+}
