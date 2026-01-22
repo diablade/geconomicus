@@ -1,8 +1,7 @@
 import log from '#config/log';
 import socket from '#config/socket';
-import { C } from '#constantes';
+import {C} from '#constantes';
 import AvatarService from "./avatar.service.js";
-// import { nanoId4 } from '../../misc/misc.tool.js';
 // import { generateToken, hashToken } from '../../misc/token.service.js';
 
 const AvatarController = {};
@@ -18,14 +17,17 @@ AvatarController.join = async (req, res, next) => {
         // const tokenHash = await hashToken(token);
         let avatar = await AvatarService.create(sessionId, name);
         if (!avatar) {
-            return res.status(404).json({ message: "Session not found" });
+            return res.status(404).json({message: "Session not found"});
         }
-        socket.emitTo(sessionId, C.NEW_AVATAR, { name: name, avatarIdx: avatar.idx });
-        return res.status(200).json({ avatarIdx: avatar.idx });
+        socket.emitTo(sessionId, C.NEW_AVATAR, {
+            name:   name,
+            avatar: avatar
+        });
+        return res.status(200).json({avatarIdx: avatar.idx});
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({ message: "Game not found" });
+        return res.status(404).json({message: "Game not found"});
     }
 };
 AvatarController.getByIdx = async (req, res, next) => {
@@ -57,7 +59,7 @@ AvatarController.update = async (req, res, next) => {
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({ message: err });
+        return res.status(404).json({message: err});
     }
 };
 AvatarController.delete = async (req, res, next) => {
@@ -68,10 +70,13 @@ AvatarController.delete = async (req, res, next) => {
         } = req.params;
         const ack = await AvatarService.delete(sessionId, avatarIdx);
         if (!ack) {
-            return res.status(404).json({ message: "Cannot delete avatar" });
+            return res.status(404).json({message: "Cannot delete avatar"});
         }
-        socket.emitTo(sessionId, C.DELETED_AVATAR, { avatarIdx });
-        return res.status(200).json({ ...ack, avatarIdx });
+        socket.emitTo(sessionId, C.DELETED_AVATAR, {avatarIdx});
+        return res.status(200).json({
+            ...ack,
+            avatarIdx
+        });
     }
     catch (error) {
         log.error("delete avatar error:", error);

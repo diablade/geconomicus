@@ -1,26 +1,25 @@
-import { jest, describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import { C } from "#constantes";
+import {jest, describe, test, expect, beforeAll, afterAll} from '@jest/globals';
+import {C} from "#constantes";
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
 const mockGetIo = jest.fn(() => ({
-    to: jest.fn().mockReturnThis(),
+    to:   jest.fn().mockReturnThis(),
     emit: jest.fn()
 }));
 
 jest.unstable_mockModule('#config/socket', () => ({
     default: {
         initIo: jest.fn(),
-        getIo: mockGetIo,
+        getIo:  mockGetIo,
         emitTo: mockEmitTo  // Use the same mock reference
     }
 }));
 
 /* ================= IMPORTS AFTER MOCK ================= */
-const { default: app } = await import('../src/app.js');
+const {default: app} = await import('../src/app.js');
 import request from 'supertest';
 import db from '#configTest/database';
-import { Console } from 'winston/lib/winston/transports/index.js';
 
 /* ================= SETUP ================= */
 const agent = request.agent(app);
@@ -31,7 +30,7 @@ let avatarIdx;
 beforeAll(async () => {
     await db.connect();
     const res = await agent.post('/session/create').send({
-        name: 'test-avatar-session',
+        name:     'test-avatar-session',
         animator: 'test-avatar-animator',
         location: 'test-avatar-location'
     });
@@ -48,11 +47,11 @@ afterAll(async () => {
 
 /* ================= TESTS ================= */
 describe('AVATAR controller', () => {
-    describe("AVATAR CREATE", () => {
+    describe("AVATAR JOIN", () => {
         test('should create avatar and emit socket event', async () => {
             const res = await agent.post('/avatar/join').send({
                 sessionId: session._id,
-                name: 'test-avatar-name'
+                name:      'test-avatar-name'
             });
             expect(res.status).toBe(200);
             expect(res.body.avatarIdx).toBeTruthy();
@@ -61,8 +60,26 @@ describe('AVATAR controller', () => {
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(1);
             expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.NEW_AVATAR), expect.objectContaining({
-                name: 'test-avatar-name',
-                avatarIdx: avatarIdx,
+                name:   'test-avatar-name',
+                avatar: {
+                    idx:                 avatarIdx,
+                    name:                'test-avatar-name',
+                    image:               "",
+                    eyes:                1,
+                    earrings:            1,
+                    eyebrows:            1,
+                    features:            1,
+                    hair:                1,
+                    glasses:             1,
+                    mouth:               1,
+                    skinColor:           "",
+                    hairColor:           "",
+                    earringsProbability: 100,
+                    glassesProbability:  100,
+                    featuresProbability: 100,
+                    boardConf:           "",
+                    boardColor:          "",
+                },
             }));
         });
     });
@@ -71,25 +88,26 @@ describe('AVATAR controller', () => {
             const res = await agent.put("/avatar/update").send({
                 sessionId: session._id,
                 avatarIdx: avatarIdx,
-                updates: {
-                    name: "test-avatar-name-updated",
-                    eyes: 2,
+                updates:   {
+                    name:     "test-avatar-name-updated",
+                    eyes:     2,
                     earrings: 2,
                     eyebrows: 2,
                     features: 2,
                 },
             });
+            console.log(res.body);
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.name).toBe("test-avatar-name-updated");
-            expect(res.body.avatarIdx).toBe(avatarIdx);
+            expect(res.body.idx).toBe(avatarIdx);
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(2);
             expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.UPDATED_AVATAR), expect.objectContaining({
-                name: 'test-avatar-name-updated',
-                idx: avatarIdx,
-                eyes: 2,
+                name:     'test-avatar-name-updated',
+                idx:      avatarIdx,
+                eyes:     2,
                 earrings: 2,
                 eyebrows: 2,
                 features: 2,
