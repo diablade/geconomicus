@@ -1,8 +1,10 @@
+import env from '#config/env';
 import log from "#config/log";
 import SessionService from "./session.service.js";
 import EventService from "../event/event.service.js";
 import SurveyService from "../survey/survey.service.js";
 import GameStateService from "../gameState/game.state.service.js";
+import bcrypt from "bcrypt";
 
 const SessionController = {};
 
@@ -71,11 +73,21 @@ SessionController.getAll = async (req, res, next) => {
 SessionController.delete = async (req, res, next) => {
     try {
         //todo rules manager to delete all rules associated
-        await EventService.removeAllBySessionId(req.params.sessionId);
-        await SurveyService.removeAllBySessionId(req.params.sessionId);
-        await GameStateService.removeAllBySessionId(req.params.sessionId);
-        const deletedSession = await SessionService.delete(req.params.sessionId);
-        return res.status(200).json(deletedSession);
+        const password = req.body.password;
+        const sessionId = req.body.sessionId;
+        if ((env.environment === "production" && bcrypt.compareSync(password, env.admin_password)) || (env.environment !== "production" && password
+            === "admin")) {
+            await EventService.removeAllBySessionId(sessionId);
+            await SurveyService.removeAllBySessionId(sessionId);
+            await GameStateService.removeAllBySessionId(sessionId);
+            const deletedSession = await SessionService.delete(sessionId);
+            return res.status(200).json(deletedSession);
+        }
+        else {
+            return res.status(500).json({
+                message: "ERROR.SESSION_REMOVE_BY_ID",
+            });
+        }
     }
     catch (err) {
         log.error("try remove session with error:", err);

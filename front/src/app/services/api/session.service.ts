@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {catchError, Observable} from "rxjs";
-import {Session} from "../../models/session";
-import {environment} from "../../../environments/environment";
-import {ERROR, ErrorService, REDIRECT_HOME} from "../error.service";
+import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { catchError, Observable } from "rxjs";
+import { Session } from "../../models/session";
+import { environment } from "../../../environments/environment";
+import { ERROR, ErrorService } from "../error.service";
 
 @Injectable({
 	providedIn: 'root'
@@ -22,14 +22,14 @@ export class SessionService {
 	getById(sessionId: string): Observable<Session> {
 		return this.http.get<any>(environment.API_HOST + environment.SESSION.GET_BY_ID + sessionId)
 			.pipe(
-				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.SESSION_NOT_FOUND'))
+				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND'))
 			);
 	}
 
 	getByShortId(shortId: string): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)
 			.pipe(
-				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.SESSION_NOT_FOUND'))
+				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND'))
 			);
 	}
 
@@ -41,7 +41,7 @@ export class SessionService {
 			theme,
 		})
 			.pipe(
-				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.CREATE'))
+				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.CREATE'))
 			);
 	}
 
@@ -51,7 +51,7 @@ export class SessionService {
 			updates
 		})
 			.pipe(
-				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.UPDATE'))
+				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.UPDATE'))
 			);
 	}
 
@@ -59,7 +59,7 @@ export class SessionService {
 		return this.http.post<any>(environment.API_HOST + environment.SESSION.DELETE, {
 			idSession, password
 		}).pipe(
-			catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.DELETE'))
+			catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.DELETE'))
 		)
 	}
 }

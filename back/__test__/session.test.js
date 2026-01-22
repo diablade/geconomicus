@@ -1,4 +1,4 @@
-import {afterAll, beforeAll, beforeEach, describe, expect, jest, test} from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 // const mockEmitTo = jest.fn();
 // const mockGetIo = jest.fn(() => ({
@@ -40,10 +40,10 @@ describe("SESSION controller tests", () => {
     describe("SESSION CREATE", () => {
         test("should create session successfully", async () => {
             const res = await agent.post("/session/create").send({
-                name:     "test-name-session",
+                name: "test-name-session",
                 animator: "test-session-animator",
                 location: "test-session-location",
-                theme:    "test-session-theme",
+                theme: "test-session-theme",
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
@@ -82,8 +82,8 @@ describe("SESSION controller tests", () => {
         test("should update session successfully", async () => {
             const res = await agent.put("/session/update").send({
                 sessionId: sessionId,
-                updates:   {
-                    name:     "test-name-session-updated",
+                updates: {
+                    name: "test-name-session-updated",
                     animator: "test-session-animator-updated",
                     location: "test-session-location-updated",
                 },
@@ -96,7 +96,10 @@ describe("SESSION controller tests", () => {
     });
     describe("SESSION DELETE", () => {
         test("should delete session successfully", async () => {
-            const res = await agent.delete("/session/" + sessionId).send();
+            const res = await agent.delete("/session/").send({
+                sessionId: sessionId,
+                password: "admin",
+            });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.name).toBe("test-name-session-updated");

@@ -1,17 +1,17 @@
 import SessionModel from './session.model.js';
-import { nanoId4 } from "../misc/misc.tool.js";
+import {nanoId4} from "../misc/misc.tool.js";
 
 const SessionService = {};
 
 /* Create */
 SessionService.create = async (sessionObject) => {
     const newSession = new SessionModel({
-        name: sessionObject.name || '',
+        name:     sessionObject.name || '',
         animator: sessionObject.animator || '',
         location: sessionObject.location || '',
-        devMode: sessionObject.devMode || false,
-        theme: sessionObject.theme || 'CLASSIC',
-        shortId: nanoId4()
+        devMode:  sessionObject.devMode || false,
+        theme:    sessionObject.theme || 'CLASSIC',
+        shortId:  nanoId4()
     });
     return newSession.save();
 };
@@ -21,7 +21,7 @@ SessionService.getById = async (id) => {
     return SessionModel.findById(id).exec();
 };
 SessionService.getByShortId = async (shortId) => {
-    return SessionModel.findOne({ shortId }).exec();
+    return SessionModel.findOne({shortId}).exec();
 };
 SessionService.getAll = async () => {
     //TODO pagination  one day and with filters in req
@@ -29,24 +29,24 @@ SessionService.getAll = async () => {
     return SessionModel.aggregate([
         {
             $project: {
-                name: 1,
-                animator: 1,
-                location: 1,
-                theme: 1,
-                devMode: 1,
-                shortId: 1,
-                status: 1,
-                modifiedAt: 1,
-                createdAt: 1,
+                name:            1,
+                animator:        1,
+                location:        1,
+                theme:           1,
+                devMode:         1,
+                shortId:         1,
+                status:          1,
+                modifiedAt:      1,
+                createdAt:       1,
                 gamesRulesCount: {
                     $size: "$gamesRules"
                 },
-                playersCount: {
+                playersCount:    {
                     $size: "$players"
                 },
             },
         },
-    ]).sort({ createdAt: 1 });
+    ]).sort({createdAt: 1});
 };
 
 /* Update */
@@ -57,7 +57,7 @@ SessionService.update = async (sessionId, updates) => {
     for (const [key, value] of Object.entries(updates)) {
         set[key] = value;
     }
-    return SessionModel.updateOne({ _id: sessionId }, { $set: set }, { runValidators: true }).exec();
+    return SessionModel.updateOne({_id: sessionId}, {$set: set}, {runValidators: true}).exec();
 };
 
 /* Remove */

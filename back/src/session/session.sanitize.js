@@ -42,6 +42,11 @@ export const sanitize = {
             .messages({
                 'any.invalid': 'Invalid session ID format',
                 'any.required': 'Session ID is required'
-            })
+            }),
+        password: Joi.string().required().min(5)
+            .messages({
+                'any.required': 'Password is required',
+                'string.min': 'Password must be at least 5 characters long'
+            }),
     }),
 };
