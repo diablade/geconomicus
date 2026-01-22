@@ -4,7 +4,7 @@ import { C } from '#constantes';
 const Schema = mongoose.Schema;
 
 let RulesSchema = new Schema({
-	id: { type: String, required: true },
+	idx: { type: Number, required: true },
 	gameStateId: { type: String, required: false },
 
 	//common
@@ -42,7 +42,7 @@ let RulesSchema = new Schema({
 	seizureType: { type: String, required: true, enum: [C.DECOTE, C.FEES], default: C.DECOTE },
 	seizureCosts: { type: Number, required: true, default: 2 },
 	seizureDecote: { type: Number, required: true, default: 33 },
-});
+}, { _id: false });
 
 
 export default RulesSchema;

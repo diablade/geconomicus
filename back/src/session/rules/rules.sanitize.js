@@ -86,19 +86,19 @@ export const sanitize = {
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleId:    Joi.string().custom(isValidNanoId4).required()
+        ruleIdx:    Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'
                        })
     }),
-    getById: Joi.object({
+    getByIdx: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
                        .messages({
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleId:    Joi.string().custom(isValidNanoId4).required()
+        ruleIdx:    Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'
@@ -110,7 +110,7 @@ export const sanitize = {
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleId:    Joi.string().custom(isValidNanoId4).required()
+        ruleIdx:    Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'

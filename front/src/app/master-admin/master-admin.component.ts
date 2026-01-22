@@ -1,14 +1,14 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Card, Game, Player} from "../models/game";
-import {ActivatedRoute} from "@angular/router";
-import {DeprecatedBackService} from "../services/deprecated-back.service";
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Card, Game, Player } from "../models/game";
+import { ActivatedRoute } from "@angular/router";
+import { DeprecatedBackService } from "../services/deprecated-back.service";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import * as _ from "lodash-es";
-import {SnackbarService} from "../services/snackbar.service";
-import {environment} from 'src/environments/environment';
-import {schema} from '@dicebear/core';
-import {adventurer} from '@dicebear/collection';
-import {createAvatar, Options as Opt} from '@dicebear/core';
+import { SnackbarService } from "../services/snackbar.service";
+import { environment } from 'src/environments/environment';
+import { schema } from '@dicebear/core';
+import { adventurer } from '@dicebear/collection';
+import { createAvatar, Options as Opt } from '@dicebear/core';
 // @ts-ignore
 import { C } from '../../../../back/shared/constantes.mjs';
 
@@ -58,9 +58,9 @@ export class MasterAdminComponent implements OnInit {
 		];
 
 	constructor(private route: ActivatedRoute,
-	            private backService: DeprecatedBackService,
-	            private sanitizer: DomSanitizer,
-	            private snackbarService: SnackbarService) {
+		private backService: DeprecatedBackService,
+		private sanitizer: DomSanitizer,
+		private snackbarService: SnackbarService) {
 	}
 
 	ngOnInit(): void {
@@ -83,12 +83,12 @@ export class MasterAdminComponent implements OnInit {
 	getBackgroundStyle(player: Player) {
 		switch (player.boardConf) {
 			case "green":
-				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
+				return { "background-image": "url('/assets/images/green-carpet.jpg')" };
 			case "custom":
-				return {"background-color": "" + player.boardColor};
+				return { "background-color": "" + player.boardColor };
 			case "wood":
 			default:
-				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
+				return { "background-image": "url('/assets/images/woodJapAlt.jpg')" };
 		}
 	}
 
@@ -211,6 +211,6 @@ export class MasterAdminComponent implements OnInit {
 	}
 
 	getUserUrl(idPlayer: string) {
-		return environment.WEB_HOST + environment.GAME.GET + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
+		return environment.WEB_HOST + '/ogame/' + this.idGame + '/player/' + idPlayer;
 	}
 }

@@ -5,10 +5,10 @@ import { validate } from '../../misc/validate.tool.js';
 
 const router = express.Router();
 
-router.get('/:sessionId/:avatarId', validate(sanitize.getById, true), AvatarController.getById);
+router.get('/:sessionId/:avatarIdx', validate(sanitize.getByIdx, true), AvatarController.getByIdx);
 // router.get('/:sessionId/:avatarId/rules', validate(sanitize.getById, true), AvatarController.getAvatarWithRules);
 router.post('/join', validate(sanitize.join), AvatarController.join);
 router.put('/update', validate(sanitize.update), AvatarController.update);
-router.delete('/:sessionId/:avatarId', validate(sanitize.delete, true), AvatarController.delete);
+router.delete('/:sessionId/:avatarIdx', validate(sanitize.delete, true), AvatarController.delete);
 
 export default router;

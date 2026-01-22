@@ -288,46 +288,46 @@ export default {
         }
     },
     all:                    async (req, res, next) => {
-        GameModel.aggregate([
-            {
-                $project: {
-                    name:         1,
-                    animator:     1,
-                    location:     1,
-                    status:       1,
-                    typeMoney:    1,
-                    modified:     1,
-                    created:      1,
-                    playersCount: {
-                        $size: {
-                            $filter: {
-                                input: "$players",
-                                as:    "player",
-                                cond:  {
-                                    $eq: [
-                                        {
-                                            $ifNull: ["$$player.reincarnateFromId", null],
-                                        }, null,
-                                    ],
+        try {
+            let games = await GameModel.aggregate([
+                {
+                    $project: {
+                        name:         1,
+                        animator:     1,
+                        location:     1,
+                        status:       1,
+                        typeMoney:    1,
+                        modified:     1,
+                        created:      1,
+                        playersCount: {
+                            $size: {
+                                $filter: {
+                                    input: "$players",
+                                    as:    "player",
+                                    cond:  {
+                                        $eq: [
+                                            {
+                                                $ifNull: ["$$player.reincarnateFromId", null],
+                                            }, null,
+                                        ],
+                                    },
                                 },
                             },
                         },
                     },
                 },
-            },
-        ])
-            .exec()
-            .then((games) => {
-                return res.status(200).json({
-                    games: games,
-                });
-            })
-            .catch((err) => {
-                log.error("all games error:", err);
-                return res.status(500).json({
-                    message: "Get Games error",
-                });
+            ]).exec();
+            return res.status(200).json({
+                games: games,
             });
+        }
+        catch (err) {
+            log.error("all games error:", err);
+            return res.status(500).json({
+                message: "Get Games error",
+            });
+
+        }
     },
     delete:                 async (req, res, next) => {
         const {

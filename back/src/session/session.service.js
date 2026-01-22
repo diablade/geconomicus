@@ -33,6 +33,9 @@ SessionService.getAll = async () => {
                 animator: 1,
                 location: 1,
                 theme: 1,
+                devMode: 1,
+                shortId: 1,
+                status: 1,
                 modifiedAt: 1,
                 createdAt: 1,
                 gamesRulesCount: {

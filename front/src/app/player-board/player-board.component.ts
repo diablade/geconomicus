@@ -236,9 +236,9 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
 			this.game.status = C.END_GAME;
 			if (data && data.redirect == 'survey') {
-				this.router.navigate(['game', this.idGame, 'player', this.idPlayer, 'survey']);
+				this.router.navigate(['ogame', this.idGame, 'player', this.idPlayer, 'survey']);
 			} else {
-				this.router.navigate(['game', this.idGame, 'results']);
+				this.router.navigate(['ogame', this.idGame, 'results']);
 			}
 		});
 		this.socket.on(C.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
@@ -256,7 +256,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.panelCreditOpenState = false;
 			this.localStorageService.setItem("panelCredit", false);
 			if (this.player.reincarnateFromId) {
-				this.router.navigate(['game', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
+				this.router.navigate(['ogame', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
 					this.refresh();
 				});
 			} else {
@@ -363,7 +363,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
 			console.log(payload);
-			this.router.navigate(['game', payload.idGame, 'player', payload.idPlayer]).then(() => {
+			this.router.navigate(['ogame', payload.idGame, 'player', payload.idPlayer]).then(() => {
 				// window.location.reload();
 			});
 		});
@@ -488,11 +488,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	updatePlayer() {
-		this.router.navigate(["game", this.idGame, "player", this.idPlayer, "settings"]);
+		this.router.navigate(["ogame", this.idGame, "player", this.idPlayer, "settings"]);
 	}
 
 	resurrection() {
-		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
+		this.router.navigate(['ogame', this.idGame, 'join', this.player._id, this.player.name]);
 	}
 
 	formatNewCards(newCards: Card[]) {
@@ -716,7 +716,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	tryReincarnate() {
 		this.backService.isReincarnated(this.idGame, this.idPlayer).subscribe(data => {
 			if (data?.playerReIncarnated) {
-				this.router.navigate(['game', this.idGame, 'player', data.playerReIncarnated]);
+				this.router.navigate(['ogame', this.idGame, 'player', data.playerReIncarnated]);
 			} else {
 				this.resurrection();
 			}

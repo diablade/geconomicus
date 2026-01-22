@@ -1,30 +1,30 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {Subscription} from "rxjs";
-import {DeprecatedBackService} from "../services/deprecated-back.service";
-import {Game, Player} from "../models/game";
-import {environment} from "../../environments/environment";
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subscription } from "rxjs";
+import { DeprecatedBackService } from "../services/deprecated-back.service";
+import { Game, Player } from "../models/game";
+import { environment } from "../../environments/environment";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import {
 	faFlagCheckered, faQrcode, faCogs, faTrashCan,
 	faCircleInfo, faWarning, faBuildingColumns,
 	faRightToBracket, faEye
 } from '@fortawesome/free-solid-svg-icons';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {SnackbarService} from "../services/snackbar.service";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { SnackbarService } from "../services/snackbar.service";
 import createCountdown from "../services/countDown";
 // @ts-ignore
 import { C } from "../../../../back/shared/constantes.mjs";
 import * as _ from 'lodash-es';
-import {GameOptionsDialogComponent} from "../dialogs/game-options-dialog/game-options-dialog.component";
-import {SessionStorageService} from "../services/local-storage/session-storage.service";
-import {StorageKey} from "../services/local-storage/storage-key.const";
-import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
-import {WebSocketService} from "../services/web-socket.service";
-import {TranslateService} from "@ngx-translate/core";
-import {I18nService} from "../services/i18n.service";
-import {AudioService} from '../services/audio.service';
+import { GameOptionsDialogComponent } from "../dialogs/game-options-dialog/game-options-dialog.component";
+import { SessionStorageService } from "../services/local-storage/session-storage.service";
+import { StorageKey } from "../services/local-storage/storage-key.const";
+import { InformationDialogComponent } from "../dialogs/information-dialog/information-dialog.component";
+import { ConfirmDialogComponent } from "../dialogs/confirm-dialog/confirm-dialog.component";
+import { WebSocketService } from "../services/web-socket.service";
+import { TranslateService } from "@ngx-translate/core";
+import { I18nService } from "../services/i18n.service";
+import { AudioService } from '../services/audio.service';
 
 @Component({
 	selector: 'app-master-board',
@@ -58,13 +58,13 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	timerProgress = 100;
 
 	options = [
-		{value: C.JUNE, label: "FREE_MONEY", isDisabled: false},
-		{value: C.DEBT, label: "DEBT_MONEY", isDisabled: false},
+		{ value: C.JUNE, label: "FREE_MONEY", isDisabled: false },
+		{ value: C.DEBT, label: "DEBT_MONEY", isDisabled: false },
 	];
 	minutes = "00";
 	seconds = "00";
-	timer = createCountdown({h: 0, m: 0, s: 0}, {
-		listen: ({hh, mm, ss, s, h, m}) => {
+	timer = createCountdown({ h: 0, m: 0, s: 0 }, {
+		listen: ({ hh, mm, ss, s, h, m }) => {
 			this.minutes = mm;
 			this.seconds = ss;
 			const secondsRemaining = s + (m * 60);
@@ -77,16 +77,16 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-	            private sessionStorageService: SessionStorageService,
-	            private backService: DeprecatedBackService,
-	            private snackbarService: SnackbarService,
-	            private translate: TranslateService,
-	            private router: Router,
-	            private sanitizer: DomSanitizer,
-	            private wsService: WebSocketService,
-	            private i18nService: I18nService,
-	            private audioService: AudioService,
-	            public dialog: MatDialog) {
+		private sessionStorageService: SessionStorageService,
+		private backService: DeprecatedBackService,
+		private snackbarService: SnackbarService,
+		private translate: TranslateService,
+		private router: Router,
+		private sanitizer: DomSanitizer,
+		private wsService: WebSocketService,
+		private i18nService: I18nService,
+		private audioService: AudioService,
+		public dialog: MatDialog) {
 	}
 
 	ngOnInit(): void {
@@ -104,10 +104,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
 			if (timerRemaining && game.status == C.PLAYING) {
-				this.timer.set({h: 0, m: 0, s: timerRemaining});
+				this.timer.set({ h: 0, m: 0, s: timerRemaining });
 				this.timer.start();
 			} else {
-				this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
+				this.timer.set({ h: 0, m: this.game.roundMinutes, s: 0 });
 			}
 			this.joinLink = environment.WEB_HOST + environment.GAME.GET + this.idGame + '/join';
 		});
@@ -134,7 +134,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (minutesRemaining && this.game.status == C.PLAYING) {
 				this.timer.stop();
 				this.timer.reset();
-				this.timer.set({h: 0, m: minutesRemaining, s: 0});
+				this.timer.set({ h: 0, m: minutesRemaining, s: 0 });
 				this.timer.start();
 			}
 		});
@@ -202,7 +202,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	startRound() {
 		this.backService.startRound(this.idGame, this.game.round).subscribe(() => {
-			this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
+			this.timer.set({ h: 0, m: this.game.roundMinutes, s: 0 });
 			this.timer.start();
 			this.game.status = C.PLAYING;
 			this.audioService.playSound("start");
@@ -214,13 +214,13 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	stopRound() {
 		this.timer.stop();
 		this.timer.reset();
-		this.timer.set({h: 0, m: 0, s: 0});
+		this.timer.set({ h: 0, m: 0, s: 0 });
 		this.game.status = C.STOP_ROUND;
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_END"));
 		this.dialog.open(InformationDialogComponent, {
-			data: {text: this.i18nService.instant("EVENTS.ROUND_END"), sound: "end"},
+			data: { text: this.i18nService.instant("EVENTS.ROUND_END"), sound: "end" },
 		});
 	}
 
@@ -239,7 +239,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	doIntertour() {
 		this.timer.reset();
-		this.timer.set({h: 0, m: this.game.roundMinutes, s: 0});
+		this.timer.set({ h: 0, m: this.game.roundMinutes, s: 0 });
 		this.backService.interRound(this.idGame).subscribe((data) => {
 			if (data.status == C.INTER_ROUND) {
 				this.game.status = data.status;
@@ -258,7 +258,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	resetGameFromUrl() {
 		this.backService.resetGame(this.idGame).subscribe(() => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.RESET_GAME"));
-			this.router.navigate(['game', this.idGame, 'master']);
+			this.router.navigate(['ogame', this.idGame, 'master']);
 		});
 	}
 
@@ -270,11 +270,11 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	goToResults() {
-		this.router.navigate(['game', this.idGame, 'results']);
+		this.router.navigate(['ogame', this.idGame, 'results']);
 	}
 
 	getUserUrl(idPlayer: string) {
-		return environment.WEB_HOST + environment.GAME.GET + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
+		return environment.WEB_HOST + '/ogame/' + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
 	}
 
 	reJoin(idPlayer: string, username: string): void {
@@ -303,7 +303,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(JoinQrDialog, {
 			data: {
 				text: username,
-				url: environment.WEB_HOST + environment.GAME.GET + this.idGame + '/bank'
+				url: environment.WEB_HOST + '/ogame/' + this.idGame + '/bank'
 			},
 		});
 		dialogRef.afterClosed().subscribe(() => {
@@ -311,20 +311,20 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	showEvents() {
-		window.open('game/' + this.idGame + '/results', '_blank');
+		window.open('ogame/' + this.idGame + '/results', '_blank');
 	}
 
 	showBank() {
-		window.open('game/' + this.idGame + '/bank', '_blank');
+		window.open('ogame/' + this.idGame + '/bank', '_blank');
 	}
 
 	goToAdmin() {
-		window.open('game/' + this.idGame + '/admin', '_blank');
+		window.open('ogame/' + this.idGame + '/admin', '_blank');
 	}
 
 	showOptions() {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-			data: {game: _.clone(this.game)},
+			data: { game: _.clone(this.game) },
 		});
 		dialogRef.afterClosed().subscribe(results => {
 			if (results === "reset") {
@@ -335,7 +335,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.snackbarService.showSuccess(this.i18nService.instant("OPTION.SAVED"));
 				});
 				this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
-				this.game = {...results};
+				this.game = { ...results };
 			}
 		});
 	}
@@ -366,7 +366,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 @Component({
 	selector: 'join-qr-dialog',
-	templateUrl: '../dialogs/join-qr-dialog.html',
+	template: 'deprecated',
 })
 export class JoinQrDialog {
 	constructor(public dialogRef: MatDialogRef<JoinQrDialog>, @Inject(MAT_DIALOG_DATA) public data: any) {

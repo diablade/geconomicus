@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const AvatarSchema = new Schema({
-    id: { type: String, required: true },
+    idx: { type: String, required: true },
     name: { type: String, required: true },
     image: String,
     eyes: Number,
@@ -19,6 +19,6 @@ const AvatarSchema = new Schema({
     featuresProbability: Number,
     boardConf: String,
     boardColor: String,
-});
+}, { _id: false });
 
 export default AvatarSchema;

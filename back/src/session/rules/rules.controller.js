@@ -9,7 +9,7 @@ RulesController.create = async (req, res, next) => {
     try {
         const rulesCreated = await RulesService.create(req.body.sessionId, req.body.rules);
         socket.emitTo(req.body.sessionId, C.NEW_GAMES_RULES, {
-            id: rulesCreated.id,
+            idx: rulesCreated.idx,
             typeMoney: rulesCreated.typeMoney
         });
         return res.status(200).json(rulesCreated);
@@ -24,14 +24,14 @@ RulesController.create = async (req, res, next) => {
 }
 RulesController.update = async (req, res, next) => {
     try {
-        const rulesUpdatedAck = await RulesService.update(req.body.sessionId, req.body.ruleId, req.body.updates);
+        const rulesUpdatedAck = await RulesService.update(req.body.sessionId, req.body.ruleIdx, req.body.updates);
         if (rulesUpdatedAck.modifiedCount === 0) {
             return res.status(200).json({
                 status: "not modified",
             });
         } else {
             socket.emitTo(req.body.sessionId, C.UPDATED_RULES, {
-                id: req.body.ruleId,
+                idx: req.body.ruleIdx,
                 typeMoney: req.body.updates.typeMoney
             });
         }
@@ -46,24 +46,24 @@ RulesController.update = async (req, res, next) => {
         });
     }
 };
-RulesController.getById = async (req, res, next) => {
+RulesController.getByIdx = async (req, res, next) => {
     try {
-        const session = await RulesService.getById(req.params.sessionId, req.params.ruleId);
+        const session = await RulesService.getByIdx(req.params.sessionId, req.params.ruleIdx);
         return res.status(200).json(session);
     }
     catch (err) {
-        log.error("Rules get by id error:", err);
+        log.error("Rules get by idx error:", err);
         return res.status(500).json({
-            message: "ERROR.GET_BY_ID",
+            message: "ERROR.GET_BY_IDX",
         });
     }
 };
 RulesController.remove = async (req, res, next) => {
     try {
-        const ack = await RulesService.removeById(req.params.sessionId, req.params.ruleId);
+        const ack = await RulesService.removeByIdx(req.params.sessionId, req.params.ruleIdx);
         if (ack.modifiedCount === 1) {
             socket.emitTo(req.params.sessionId, C.DELETED_RULES, {
-                id: req.params.ruleId,
+                idx: req.params.ruleIdx,
             });
             return res.status(200).json(ack);
         } else {
@@ -73,9 +73,9 @@ RulesController.remove = async (req, res, next) => {
         }
     }
     catch (err) {
-        log.error("Rules remove by id error:", err);
+        log.error("Rules remove by idx error:", err);
         return res.status(500).json({
-            message: "ERROR.REMOVE_BY_ID",
+            message: "ERROR.REMOVE_BY_IDX",
         });
     }
 };

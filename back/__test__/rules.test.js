@@ -24,7 +24,7 @@ import db from '#configTest/database';
 /* ================= SETUP ================= */
 const agent = request.agent(app);
 let session;
-let ruleId;
+let ruleIdx;
 
 /* ================= HOOKS ================= */
 beforeAll(async () => {
@@ -60,13 +60,13 @@ describe('RULES controller', () => {
                 }
             });
             expect(res.status).toBe(200);
-            expect(res.body.id).toBeTruthy();
-            ruleId = res.body.id;
+            expect(res.body.idx).toBeTruthy();
+            ruleIdx = res.body.idx;
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(1);
             expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.NEW_GAMES_RULES), expect.objectContaining({
-                id: ruleId,
+                idx: ruleIdx,
                 typeMoney: C.DEBT,
             }));
         });
@@ -77,7 +77,7 @@ describe('RULES controller', () => {
                 updates: {
                     typeMoney: C.JUNE,
                 },
-                ruleId: ruleId,
+                ruleIdx: ruleIdx,
                 sessionId: session._id,
             });
             expect(res.status).toBe(200);
@@ -87,14 +87,14 @@ describe('RULES controller', () => {
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(2);
             expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.UPDATED_RULES), expect.objectContaining({
-                id: ruleId,
+                idx: ruleIdx,
                 typeMoney: C.JUNE,
             }));
         });
     });
     describe("RULES GET BY ID", () => {
         test("should get rules by id successfully", async () => {
-            const res = await agent.get("/rules/" + session._id + "/" + ruleId).send();
+            const res = await agent.get("/rules/" + session._id + "/" + ruleIdx).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.typeMoney).toBe(C.JUNE);
@@ -102,8 +102,7 @@ describe('RULES controller', () => {
     });
     describe("RULES REMOVE", () => {
         test("should remove rules successfully", async () => {
-            const res = await agent.delete("/rules/" + session._id + "/" + ruleId).send();
-            console.log("rules : ", res.body);
+            const res = await agent.delete("/rules/" + session._id + "/" + ruleIdx).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.acknowledged).toBeTruthy();
@@ -111,7 +110,7 @@ describe('RULES controller', () => {
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(3);
             expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.DELETED_RULES), expect.objectContaining({
-                id: ruleId,
+                idx: ruleIdx,
             }));
         });
     });
