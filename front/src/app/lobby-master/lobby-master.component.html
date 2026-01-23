@@ -1,0 +1,85 @@
+<div class="d-flex flex-column h-100">
+	<div class="d-flex flex-row justify-content-between">
+		<img class="geco" src="./assets/images/geconomicus.png" alt="">
+		<div class="d-flex flex-row align-items-center">
+			<app-tasklist-btn [stroked]="true"></app-tasklist-btn>
+			<app-notice-btn [amountCardsForProd]="4" [timerCredit]="5" [stroked]="true"></app-notice-btn>
+			<app-language-btn [short]="true"></app-language-btn>
+		</div>
+	</div>
+	<div class="fs-1 text-center pt-4 pb-4 shadowed gecoFont" *ngIf="session && session.status==='open'">
+		{{ "MASTER.JOIN"| translate: {name: session.name} }}
+		<button class="ms-2" mat-icon-button (click)="copyJoinLink()">
+			<fa-icon [icon]="faRightToBracket"></fa-icon>
+		</button>
+	</div>
+	<div class="text text-center" *ngIf="session && session.status==='open'">
+		{{ "MASTER.SCAN_QR" | translate: {webHost: environment.WEB_HOST} }}
+	</div>
+	<div class="row g-0" *ngIf="session && session.status==='open'">
+		<!-- QR CODE    -->
+		<div class="col-md-12 col-lg-4">
+			<div class="templateQrCode">
+				<div class="qrcodeImage">
+					<ngx-kjua
+							[size]="230"
+							[text]="joinLink"
+							[render]="'svg'"
+							[fontcolor]="'#FF9818'"
+							[fontname]="'arial'"
+							[mode]="'label'"
+							[mSize]="14"
+							[ecLevel]="'H'"
+							[crisp]="true"
+							[label]="session.shortId"
+					></ngx-kjua>
+				</div>
+			</div>
+		</div>
+		<!--  GUNY  -->
+		<div class="col-md-12 col-lg-4 text-center m-auto">
+			<div class="mt-4 text-center bulle gecoFont bienvenue">{{ "MASTER.GUNY_WELCOME"| translate }}</div>
+			<img class="guny" src="./assets/images/guny.png" alt="">
+		</div>
+		<!--  OPTIONS  -->
+		<div class="col-md-12 col-lg-4 text-center m-auto">
+			<div class="gecoFont shadowed">{{ "ANIMATOR"| translate }}: {{ session.animator }}</div>
+			<div class="gecoFont shadowed">{{ "GAME"| translate }}</div>
+			<div class="">
+
+			</div>
+			<!--			<div class="d-flex flex-row justify-content-center align-items-center m-4">-->
+			<!--				<button class="ms-2" mat-raised-button (click)="showOptions()">{{ "MASTER.GAME_OPTION"|translate }}-->
+			<!--					<fa-icon [icon]="faCogs"></fa-icon>-->
+			<!--				</button>-->
+			<!--			</div>-->
+		</div>
+	</div>
+
+	<div class="text-center" *ngIf="session && session.status===C.OPEN">
+		<h2 class="fs-3 shadowed gecoFont">{{ "MASTER.USERS_CONNECTED"|translate }}</h2>
+		<mat-slide-toggle
+				class=""
+				[color]="'warn'"
+				[(ngModel)]="deleteUser">
+			{{ "MASTER.DELETE_USER" |translate }}
+		</mat-slide-toggle>
+	</div>
+	<div class="p-3 sunyBg" [ngClass]="session.status === C.OPEN ?'backgroundPlayers':'backgroundPlayers-Small'">
+		<div class="d-flex flex-row justify-content-center flex-wrap">
+			<div *ngFor="let player of session?.players"
+			     class="player d-flex flex-column">
+				<div class="d-flex flex-row justify-content-center player-action">
+					<a href="{{getUserUrl(player.idx)}}" target="_blank">{{ player.name }} </a>
+					<fa-icon class="joinQr" (click)="reJoin(player.idx, player.name)" [icon]="faQrcode"></fa-icon>
+					<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
+					         [icon]="faTrashCan"></fa-icon>
+				</div>
+				<div class="player-frame" [ngClass]="session && session.status===C.OPEN ?'player-svg':'player-svgSmall'"
+				     [ngStyle]="{'border-color':'#'+player.hairColor}"
+				     [innerHTML]="getSanitizedSvgFromString(player.image)">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
