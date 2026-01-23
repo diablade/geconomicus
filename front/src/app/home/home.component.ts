@@ -1,18 +1,18 @@
-import {Component, AfterViewInit, OnInit} from '@angular/core';
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {Router} from "@angular/router";
-import {faCamera, faChevronDown, faKeyboard} from "@fortawesome/free-solid-svg-icons";
-import {JoinQrDialog} from "../master-board/master-board.component";
-import {Platform} from "@angular/cdk/platform";
-import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
-import {I18nService} from "../services/i18n.service";
-import {ContributionsComponent} from "../components/contributions/contributions.component";
-import {JoinShortDialogComponent} from '../dialogs/join-short-dialog/join-short-dialog.component';
-import {LocalStorageService} from '../services/local-storage/local-storage.service';
-import {ResumeSessionPromptComponent} from '../dialogs/resume-session-prompt/resume-session-prompt.component';
-import {AudioService} from '../services/audio.service';
-import {ThemesService} from "../services/themes.service";
-import {SessionService} from "../services/api/session.service";
+import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { Router } from "@angular/router";
+import { faCamera, faChevronDown, faKeyboard } from "@fortawesome/free-solid-svg-icons";
+import { JoinQrDialog } from "../master-board/master-board.component";
+import { Platform } from "@angular/cdk/platform";
+import { ScannerQrCode } from "../dialogs/scanner-qr-code/scanner-qr-code.component";
+import { I18nService } from "../services/i18n.service";
+import { ContributionsComponent } from "../components/contributions/contributions.component";
+import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
+import { LocalStorageService } from '../services/local-storage/local-storage.service';
+import { ResumeSessionPromptComponent } from '../dialogs/resume-session-prompt/resume-session-prompt.component';
+import { AudioService } from '../services/audio.service';
+import { ThemesService } from "../services/themes.service";
+import { SessionService } from "../services/api/session.service";
 
 @Component({
 	selector: 'app-home',
@@ -27,12 +27,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	modalPwaPlatform: string | undefined;
 
 	constructor(private router: Router,
-	            private i18nService: I18nService,
-	            private platform: Platform,
-	            private sessionService: SessionService,
-	            private localStorageService: LocalStorageService,
-	            private audioService: AudioService,
-	            public dialog: MatDialog) {
+		private i18nService: I18nService,
+		private platform: Platform,
+		private sessionService: SessionService,
+		private localStorageService: LocalStorageService,
+		private audioService: AudioService,
+		public dialog: MatDialog) {
+		this.i18nService.loadNamespace("home");
 	}
 
 	ngOnInit(): void {
@@ -62,7 +63,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 				this.sessionService.create(data.name, data.location, data.animator, data.theme)
 					.subscribe(
 						session => {
-							this.router.navigate(['s', session._id]);
+							this.router.navigate(['session', session._id]);
 						},
 					);
 			}
@@ -74,8 +75,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		dialogRef.afterClosed().subscribe();
 	}
 
-	join() {
-		const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
+	joinWithCamera() {
+		const dialogRef = this.dialog.open(ScannerQrCode, {});
 		dialogRef.afterClosed().subscribe(url => {
 			const u = new URL(url);
 			const paths = u.pathname.split('/').filter(Boolean);
@@ -138,16 +139,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 @Component({
 	selector: 'create-session-dialog',
-	templateUrl: '../dialogs/create-session-dialog.html',
+	templateUrl: './create-session-dialog.html',
 })
 export class CreateSessionDialog {
 	name = "";
 	animator = "";
 	location = "";
-	theme = "classic";
+	theme = "";
 	themes: string[];
 
-	constructor(public dialogRef: MatDialogRef<CreateSessionDialog>, private themesService: ThemesService) {
+	constructor(public dialogRef: MatDialogRef<CreateSessionDialog>, private themesService: ThemesService, private i18nService: I18nService) {
 		this.themes = this.themesService.getThemesKeys();
 	}
 
@@ -158,7 +159,7 @@ export class CreateSessionDialog {
 
 @Component({
 	selector: 'install-app-dialog',
-	templateUrl: './../dialogs/install-app-dialog.html',
+	templateUrl: './install-app-dialog.html',
 })
 export class InstallAppDialog {
 	constructor(public dialogRef: MatDialogRef<InstallAppDialog>) {

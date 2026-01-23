@@ -1,0 +1,16 @@
+{
+    "AVATAR": {
+        "NAME": "Prénom ou pseudo",
+        "YOUR_AVATAR": "Votre avatar",
+        "SYS_SCAN": "Achat par camera et QRCode",
+        "EYES": "Yeux",
+        "EYEBROWS": "Sourcils",
+        "MOUTH": "Bouche",
+        "GLASSES": "Lunettes",
+        "EARRINGS": "Oreilles",
+        "FEATURES": "Divers",
+        "GAME_TABLE": "Table de jeu",
+        "SKIN": "Peau",
+        "HAIR": "Cheveux"
+    }
+}

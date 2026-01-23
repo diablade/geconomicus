@@ -1,18 +1,21 @@
 <div class="join sunyBg h-100">
 	<h1 class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
 	<!--  GUNY  -->
-	<div class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }} <br> {{ "JOIN.GUNY_INTRO2" |
-		translate }}</div>
+	<div class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }} <br> {{
+            "JOIN.GUNY_INTRO2" |
+                translate
+		}}
+	</div>
 	<div class="mt-1 col-md-12 text-center">
 		<img class="guny" src="./assets/images/guny.png" alt="">
 	</div>
 	<div>
-		<p>{{ "JOIN.NAME_PROMPT" | translate }}</p>
 		<mat-form-field appearance="fill">
-			<input matInput [(ngModel)]="name" (keydown.enter)="join()">
+			<mat-label>{{ "JOIN.NAME_PROMPT" | translate }}</mat-label>
+			<input matInput required [(ngModel)]="name" (keydown.enter)="join()">
 		</mat-form-field>
 	</div>
 	<div>
-		<button mat-raised-button color="primary" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
+		<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
 	</div>
 </div>

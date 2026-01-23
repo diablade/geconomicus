@@ -78,13 +78,12 @@ export class HistoryGamesComponent implements OnInit {
 		}
 	}
 
-
 	onDeleteGame(game: any) {
 		const dialogRef = this.dialog.open(GameDeleteDialog, {});
 		dialogRef.afterClosed().subscribe(dataRaw => {
 			if (dataRaw) {
 				this.backService.deleteGame(game._id, dataRaw).subscribe(async data => {
-					this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DELETE_GAME"));
+					this.snackbarService.showSuccess(this.i18nService.instant("HISTORY.DELETE_GAME"));
 					this.games = _.filter(this.games, g => g._id !== game._id);
 				});
 			}
@@ -96,7 +95,7 @@ export class HistoryGamesComponent implements OnInit {
 		dialogRef.afterClosed().subscribe(dataRaw => {
 			if (dataRaw) {
 				this.sessionService.delete(session._id, dataRaw).subscribe(async _data => {
-					this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.DELETE_GAME"));
+					this.snackbarService.showSuccess(this.i18nService.instant("HISTORY.DELETE_SESSION"));
 					this.sessions = _.filter(this.sessions, s => s._id !== session._id);
 				});
 			}
@@ -106,7 +105,7 @@ export class HistoryGamesComponent implements OnInit {
 
 @Component({
 	selector: 'game-delete-dialog',
-	templateUrl: '../dialogs/game-delete-dialog.html',
+	templateUrl: './game-delete-dialog.html',
 })
 export class GameDeleteDialog {
 	value = "";

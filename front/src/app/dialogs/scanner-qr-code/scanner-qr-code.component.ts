@@ -6,10 +6,10 @@ import {LocalStorageService} from "../../services/local-storage/local-storage.se
 
 @Component({
 	selector: 'app-scanner-dialog-v3',
-	templateUrl: './scanner-dialog-v3.component.html',
-	styleUrls: ['./scanner-dialog-v3.component.scss']
+	templateUrl: './scanner-qr-code.component.html',
+	styleUrls: ['./scanner-qr-code.component.scss']
 })
-export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
+export class ScannerQrCode implements AfterViewInit, OnDestroy {
 	@ViewChild('action') scanner!: NgxScannerQrcodeComponent;
 
 	config: ScannerQRCodeConfig = {
@@ -21,7 +21,7 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
 	cameraSelected: any | undefined;
 	itemCamera = "preferedCameraId";
 
-	constructor(public dialogRef: MatDialogRef<ScannerDialogV3Component>, private localStorageService: LocalStorageService,) {
+	constructor(public dialogRef: MatDialogRef<ScannerQrCode>, private localStorageService: LocalStorageService,) {
 		this.cameraSelected = this.localStorageService.getItem(this.itemCamera);
 	}
 
@@ -83,7 +83,7 @@ export class ScannerDialogV3Component implements AfterViewInit, OnDestroy {
 		});
 	}
 
-	async ngOnDestroy(){
+	async ngOnDestroy() {
 		this.stream.getTracks().forEach((track: { stop: () => any; }) => track.stop());
 		this.scanner.stop();
 		this.scanner.ngOnDestroy();

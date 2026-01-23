@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { AvatarService } from "../services/api/avatar.service";
-import { Subscription } from "rxjs";
-import { AudioService } from '../services/audio.service';
-import { I18nService } from '../services/i18n.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {AvatarService} from "../services/api/avatar.service";
+import {Subscription} from "rxjs";
+import {I18nService} from '../services/i18n.service';
 
 @Component({
 	selector: 'app-join',
@@ -32,8 +31,10 @@ export class JoinComponent implements OnInit, OnDestroy {
 	}
 
 	join() {
-		this.avatarService.join(this.sessionId, this.name).subscribe(avatarIdx => {
-			this.router.navigate(['avatar', this.sessionId, avatarIdx, 'settings']);
-		});
+		if (this.name) {
+			this.avatarService.join(this.sessionId, this.name).subscribe(avatarIdx => {
+				this.router.navigate(['avatar', this.sessionId, avatarIdx, 'settings']);
+			});
+		}
 	}
 }

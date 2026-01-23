@@ -29,9 +29,9 @@ export class AvatarService {
 			);
 	}
 
-	updateAvatar(sessionId: string, avatarId: string, updates: Partial<Avatar>): Observable<Avatar> {
+	updateAvatar(sessionId: string, avatarIdx: string, updates: Partial<Avatar>): Observable<Avatar> {
 		return this.http.post<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
-			avatarId,
+			avatarIdx,
 			sessionId,
 			updates
 		})
@@ -40,10 +40,10 @@ export class AvatarService {
 			);
 	}
 
-	deleteAvatar(avatarId: string, sessionId: string): Observable<any> {
+	deleteAvatar(avatarIdx: string, sessionId: string): Observable<any> {
 		return this.http.delete<any>(environment.API_HOST + environment.AVATAR.DELETE, {
 			body: {
-				avatarId,
+				avatarIdx,
 				sessionId
 			}
 		})

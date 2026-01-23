@@ -41,7 +41,7 @@ import {ZXingScannerModule} from "@zxing/ngx-scanner";
 import {NgxKjuaComponent} from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
-import {ScannerDialogV3Component} from './dialogs/scanner-dialog-v3/scanner-dialog-v3.component';
+import {ScannerQrCode} from './dialogs/scanner-qr-code/scanner-qr-code.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
 import {GameDeleteDialog, HistoryGamesComponent} from './history-games/history-games.component';
@@ -80,7 +80,7 @@ import {ItemComponent} from './components/item/item.component';
 import {RecipeComponent} from './components/recipe/recipe.component';
 import {LobbyMasterComponent} from './lobby-master/lobby-master.component';
 import {LobbyPlayerComponent} from './lobby-player/lobby-player.component';
-import {JoinQrDialogComponent} from './dialogs/join-qr-dialog/join-qr-dialog.component';
+import {ReJoinQrDialogComponent} from './dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -110,7 +110,7 @@ LOAD_WASM().subscribe();
 		GameOptionsDialogComponent,
 		InformationDialogComponent,
 		NgxKjuaComponent,
-		ScannerDialogV3Component,
+		ScannerQrCode,
 		HistoryGamesComponent,
 		SurveyComponent,
 		BankBoardComponent,
@@ -138,7 +138,7 @@ LOAD_WASM().subscribe();
 		RecipeComponent,
 		LobbyMasterComponent,
 		LobbyPlayerComponent,
-		JoinQrDialogComponent
+		ReJoinQrDialogComponent
 	],
 	imports: [
 		HttpClientModule,
@@ -195,7 +195,6 @@ LOAD_WASM().subscribe();
 })
 
 export class AppModule {
-	constructor(private i18nService: I18nService) {
-		// Language initialization is handled by I18nService.initializeLanguage()
+	constructor() {
 	}
 }

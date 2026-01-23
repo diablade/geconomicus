@@ -2,12 +2,12 @@
 	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
 	<div class="text-center">
 		<mat-form-field appearance="fill">
-			<mat-label>{{ "PLAYER.NAME" | translate }}</mat-label>
-			<input matInput [disabled]="!!player.reincarnateFromId" [(ngModel)]="player.name" (keydown.enter)="saveAndClose()">
+			<mat-label>{{ "AVATAR.NAME" | translate }}</mat-label>
+			<input matInput [(ngModel)]="avatar.name" (keydown.enter)="saveAndClose()">
 		</mat-form-field>
 	</div>
 	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
-	<p class="text-center">{{ "PLAYER.YOUR_AVATAR" | translate }}</p>
+	<p class="text-center">{{ "AVATAR.YOUR_AVATAR" | translate }}</p>
 	<div class="d-flex mt-2 justify-content-evenly">
 		<button (click)="close()" mat-raised-button color="accent">{{ "COMMON.CANCEL" | translate }}</button>
 		<button (click)="randomize()" mat-raised-button color="warn">
@@ -18,9 +18,9 @@
 	<div class="items-wrap">
 		<div class="items">
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.GAME_TABLE" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.GAME_TABLE" | translate }}</div>
 				<div class="d-flex flex-row">
-					<mat-radio-group class="" [(ngModel)]="player.boardConf">
+					<mat-radio-group class="" [(ngModel)]="avatar.boardConf">
 						<mat-radio-button value="wood">
 							<img class="img-thumbnail imgSmall" src="assets/images/wood.png">
 						</mat-radio-button>
@@ -29,90 +29,90 @@
 						</mat-radio-button>
 						<mat-radio-button value="custom">
 							<ngx-colors class="color-box" [palette]="boardPalette" ngx-colors-trigger
-													[(ngModel)]="player.boardColor"></ngx-colors>
+							            [(ngModel)]="avatar.boardColor"></ngx-colors>
 						</mat-radio-button>
 					</mat-radio-group>
 				</div>
 			</div>
 			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">{{ "PLAYER_SETTINGS.SKIN" | translate }}</div>
+				<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.SKIN" | translate }}</div>
 				<ngx-colors class="" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
-										[(ngModel)]="skin"></ngx-colors>
+				            [(ngModel)]="skin"></ngx-colors>
 			</div>
 			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">{{ "PLAYER_SETTINGS.HAIR" | translate }}</div>
+				<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.HAIR" | translate }}</div>
 				<ngx-colors [palette]="hairPalette" class="" ngx-colors-trigger (change)="changeHairColor()"
-										[(ngModel)]="hairColor"></ngx-colors>
+				            [(ngModel)]="hairColor"></ngx-colors>
 				<button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.hair + 1 }}/{{ properties.hair.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.hair + 1 }}/{{ properties.hair.default.length }}</div>
 				<button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EYES" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYES" | translate }}</div>
 				<button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.eyes + 1 }}/{{ properties.eyes.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyes + 1 }}/{{ properties.eyes.default.length }}</div>
 				<button (click)="changeEyes(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EYEBROWS" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYEBROWS" | translate }}</div>
 				<button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}</div>
 				<button (click)="changeEyeBrows(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.MOUTH" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.MOUTH" | translate }}</div>
 				<button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.mouth + 1 }}/{{ properties.mouth.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.mouth + 1 }}/{{ properties.mouth.default.length }}</div>
 				<button (click)="changeMouth(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.GLASSES" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.GLASSES" | translate }}</div>
 				<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
 				<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.EARRINGS" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EARRINGS" | translate }}</div>
 				<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.earrings + 1 }}/{{ properties.earrings.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.earrings + 1 }}/{{ properties.earrings.default.length }}</div>
 				<button (click)="changeEarrings(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.FEATURES" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.FEATURES" | translate }}</div>
 				<button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
 					<fa-icon [icon]="faChevronLeft"></fa-icon>
 				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ player.features + 1 }}/{{ properties.features.default.length }}</div>
+				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.features + 1 }}/{{ properties.features.default.length }}</div>
 				<button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
 					<fa-icon [icon]="faChevronRight"></fa-icon>
 				</button>
 			</div>
 			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "PLAYER_SETTINGS.SYS_SCAN" | translate }}</div>
+				<div class="optionsLabel img-thumbnail">{{ "AVATAR.SYS_SCAN" | translate }}</div>
 				<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3">
 					<fa-icon [icon]="faCamera"></fa-icon>
 				</mat-slide-toggle>

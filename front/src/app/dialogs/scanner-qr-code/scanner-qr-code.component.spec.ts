@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JoinQrDialogComponent } from './join-qr-dialog.component';
+import { ScannerQrCode } from './scanner-qr-code.component';
 
-describe('JoinQrDialogComponent', () => {
-  let component: JoinQrDialogComponent;
-  let fixture: ComponentFixture<JoinQrDialogComponent>;
+describe('ScannerDialogV3Component', () => {
+  let component: ScannerQrCode;
+  let fixture: ComponentFixture<ScannerQrCode>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ JoinQrDialogComponent ]
+      declarations: [ ScannerQrCode ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(JoinQrDialogComponent);
+    fixture = TestBed.createComponent(ScannerQrCode);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

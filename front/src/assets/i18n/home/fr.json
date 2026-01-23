@@ -1,0 +1,44 @@
+{
+    "HOME": {
+        "PAGE": "Page d'accueil",
+        "CONTRIBUTION": "Contributions",
+        "WELCOME": "Découvrez la monnaie libre par le jeu !",
+        "INSTALL": "Installer l'app (optionnel)",
+        "CREATE_GAME": "Créer une partie",
+        "JOIN_GAME": "Rejoindre une partie",
+        "JOIN_VIA_SHORT_ID": "Via le code court",
+        "JOIN_VIA_CAM": "Via la caméra",
+        "HOW_TO_PLAY": "Comment ça marche ?",
+        "FUND_RAISE": "Une cagnotte pour me soutenir, ",
+        "IN": "en",
+        "OR_IN": " ou en",
+        "SAY_HI": "Tu as besoin d'aide, une idée, un bug, ou simplement envie de faire coucou ?",
+        "LINK_SAY_HI": "C'est par ici",
+        "LOOKING_FOR_PAPER_GAME": "Le jeu original en version papier ?",
+        "CLOSE": "Fermer",
+        "YES": "Oui",
+        "NO": "Non",
+        "CANCEL": "Annuler",
+        "CONTINUE_GAME": "Continuer votre partie",
+        "ACTIVE_GAME": "Vous avez une partie active :",
+        "DISMISS": "Fermer",
+        "RESUME": "Continuer",
+        "DIALOG_CREATE_GAME": {
+            "TITLE": "Créer une partie",
+            "NAME": "Nommer la partie",
+            "ANIMATOR": "Nom de l'animateur",
+            "LOCATION": "Lieu",
+            "THEME": "Thème",
+            "BTN1": "Créer",
+            "BTN2": "Annuler"
+        },
+        "DIALOG_INSTALL": {
+            "MESSAGE1": "Dans Safari, ouvrez le menu de partage avec le bouton",
+            "MESSAGE2": "puis choisissez \"sur l'écran d'accueil\""
+        },
+        "DIALOG_SHORT_CODE": {
+            "PLACEHOLDER": "Entrez le code...",
+            "BUY": "Acheter"
+        }
+    }
+}

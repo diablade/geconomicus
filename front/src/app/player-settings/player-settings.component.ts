@@ -3,10 +3,11 @@ import {adventurer} from '@dicebear/collection';
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Player} from "../models/game";
-import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
+import {AvatarService} from "../services/api/avatar.service";
+import {Avatar} from "../models/avatar";
+import {I18nService} from "../services/i18n.service";
 
 @Component({
 	selector: 'app-player-settings',
@@ -15,9 +16,9 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 })
 export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	idGame: string | undefined;
-	idPlayer: string | undefined;
-	player: Player = new Player();
+	sessionId: string = "";
+	avatarIdx: string = "";
+	avatar: Avatar = new Avatar();
 	private subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Opt> = {};
 	faChevronLeft = faChevronLeft;
@@ -58,25 +59,29 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 
 	boardPalette: Array<any> = ['#d34b4b', '#b09946', '#36a746', '#3382ac', '#a86ccb', '#ffd89b', '#d56f15', '#0019aa64'];
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: DeprecatedBackService, private localStorageService: LocalStorageService) {
-
+	constructor(private route: ActivatedRoute, private router: Router, private avatarService: AvatarService, private localStorageService: LocalStorageService, private i18nService: I18nService) {
+		this.i18nService.loadNamespace("avatar");
 	}
 
 	ngOnInit(): void {
 		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.subscription = this.route.params.subscribe(params => {
-			this.idGame = params['idGame'];
-			this.idPlayer = params['idPlayer'];
-			this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(data => {
-				this.player = data.player;
-				if (this.player.image === "" || this.player.image === undefined) {
-					this.randomize();
-				} else {
-					this.skin = "#" + this.player.skinColor;
-					this.hairColor = "#" + this.player.hairColor;
-					this.svgContainer.nativeElement.innerHTML = this.player.image;
-				}
-			});
+			this.sessionId = params['sessionId'];
+			this.avatarIdx = params['avatarIdx'];
+			this.loadAvatar();
+		});
+	}
+
+	loadAvatar() {
+		this.avatarService.getAvatar(this.sessionId, this.avatarIdx).subscribe(data => {
+			this.avatar = data;
+			if (this.avatar.image === "" || this.avatar.image === undefined) {
+				this.randomize();
+			} else {
+				this.skin = "#" + this.avatar.skinColor;
+				this.hairColor = "#" + this.avatar.hairColor;
+				this.svgContainer.nativeElement.innerHTML = this.avatar.image;
+			}
 		});
 	}
 
@@ -85,11 +90,11 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	getBackgroundStyle() {
-		switch (this.player.boardConf) {
+		switch (this.avatar.boardConf) {
 			case "green":
 				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
 			case "custom":
-				return {"background-color": "" + this.player.boardColor};
+				return {"background-color": "" + this.avatar.boardColor};
 			case "wood":
 			default:
 				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
@@ -97,130 +102,130 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	changeEyes(increment: boolean) {
-		if (increment && this.player.eyes < this.properties.eyes.default.length - 1) {
-			this.player.eyes++;
-		} else if (!increment && this.player.eyes > 0) {
-			this.player.eyes--;
-		} else if (increment && this.player.eyes == this.properties.eyes.default.length - 1) {
-			this.player.eyes = 0;
-		} else if (!increment && this.player.eyes == 0) {
-			this.player.eyes = this.properties.eyes.default.length - 1;
+		if (increment && this.avatar.eyes < this.properties.eyes.default.length - 1) {
+			this.avatar.eyes++;
+		} else if (!increment && this.avatar.eyes > 0) {
+			this.avatar.eyes--;
+		} else if (increment && this.avatar.eyes == this.properties.eyes.default.length - 1) {
+			this.avatar.eyes = 0;
+		} else if (!increment && this.avatar.eyes == 0) {
+			this.avatar.eyes = this.properties.eyes.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeEarrings(increment: boolean) {
-		if (increment && this.player.earrings < this.properties.earrings.default.length - 1) {
-			this.player.earrings++;
-		} else if (!increment && this.player.earrings > -1) {
-			this.player.earrings--;
-		} else if (increment && this.player.earrings == this.properties.earrings.default.length - 1) {
-			this.player.earrings = -1;
-		} else if (!increment && this.player.earrings == -1) {
-			this.player.earrings = this.properties.earrings.default.length - 1;
+		if (increment && this.avatar.earrings < this.properties.earrings.default.length - 1) {
+			this.avatar.earrings++;
+		} else if (!increment && this.avatar.earrings > -1) {
+			this.avatar.earrings--;
+		} else if (increment && this.avatar.earrings == this.properties.earrings.default.length - 1) {
+			this.avatar.earrings = -1;
+		} else if (!increment && this.avatar.earrings == -1) {
+			this.avatar.earrings = this.properties.earrings.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeEyeBrows(increment: boolean) {
-		if (increment && this.player.eyebrows < this.properties.eyebrows.default.length - 1) {
-			this.player.eyebrows++;
-		} else if (!increment && this.player.eyebrows > 0) {
-			this.player.eyebrows--;
-		} else if (increment && this.player.eyebrows == this.properties.eyebrows.default.length - 1) {
-			this.player.eyebrows = 0;
-		} else if (!increment && this.player.eyebrows == 0) {
-			this.player.eyebrows = this.properties.eyebrows.default.length - 1;
+		if (increment && this.avatar.eyebrows < this.properties.eyebrows.default.length - 1) {
+			this.avatar.eyebrows++;
+		} else if (!increment && this.avatar.eyebrows > 0) {
+			this.avatar.eyebrows--;
+		} else if (increment && this.avatar.eyebrows == this.properties.eyebrows.default.length - 1) {
+			this.avatar.eyebrows = 0;
+		} else if (!increment && this.avatar.eyebrows == 0) {
+			this.avatar.eyebrows = this.properties.eyebrows.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeFeature(increment: boolean) {
-		if (increment && this.player.features < this.properties.features.default.length - 1) {
-			this.player.features++;
-		} else if (!increment && this.player.features > -1) {
-			this.player.features--;
-		} else if (increment && this.player.features == this.properties.features.default.length - 1) {
-			this.player.features = -1;
-		} else if (!increment && this.player.features == -1) {
-			this.player.features = this.properties.features.default.length - 1;
+		if (increment && this.avatar.features < this.properties.features.default.length - 1) {
+			this.avatar.features++;
+		} else if (!increment && this.avatar.features > -1) {
+			this.avatar.features--;
+		} else if (increment && this.avatar.features == this.properties.features.default.length - 1) {
+			this.avatar.features = -1;
+		} else if (!increment && this.avatar.features == -1) {
+			this.avatar.features = this.properties.features.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeHair(increment: boolean) {
-		if (increment && this.player.hair < this.properties.hair.default.length - 1) {
-			this.player.hair++;
-		} else if (!increment && this.player.hair > 0) {
-			this.player.hair--;
-		} else if (increment && this.player.hair == this.properties.hair.default.length - 1) {
-			this.player.hair = 0;
-		} else if (!increment && this.player.hair == 0) {
-			this.player.hair = this.properties.hair.default.length - 1;
+		if (increment && this.avatar.hair < this.properties.hair.default.length - 1) {
+			this.avatar.hair++;
+		} else if (!increment && this.avatar.hair > 0) {
+			this.avatar.hair--;
+		} else if (increment && this.avatar.hair == this.properties.hair.default.length - 1) {
+			this.avatar.hair = 0;
+		} else if (!increment && this.avatar.hair == 0) {
+			this.avatar.hair = this.properties.hair.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeGlasses(increment: boolean) {
-		if (increment && this.player.glasses < this.properties.glasses.default.length - 1) {
-			this.player.glasses++;
-		} else if (!increment && this.player.glasses > -1) {
-			this.player.glasses--;
-		} else if (increment && this.player.glasses == this.properties.glasses.default.length - 1) {
-			this.player.glasses = -1;
-		} else if (!increment && this.player.glasses == -1) {
-			this.player.glasses = this.properties.glasses.default.length - 1;
+		if (increment && this.avatar.glasses < this.properties.glasses.default.length - 1) {
+			this.avatar.glasses++;
+		} else if (!increment && this.avatar.glasses > -1) {
+			this.avatar.glasses--;
+		} else if (increment && this.avatar.glasses == this.properties.glasses.default.length - 1) {
+			this.avatar.glasses = -1;
+		} else if (!increment && this.avatar.glasses == -1) {
+			this.avatar.glasses = this.properties.glasses.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeMouth(increment: boolean) {
-		if (increment && this.player.mouth < this.properties.mouth.default.length - 1) {
-			this.player.mouth++;
-		} else if (!increment && this.player.mouth > 0) {
-			this.player.mouth--;
-		} else if (increment && this.player.mouth == this.properties.mouth.default.length - 1) {
-			this.player.mouth = 0;
-		} else if (!increment && this.player.mouth == 0) {
-			this.player.mouth = this.properties.mouth.default.length - 1;
+		if (increment && this.avatar.mouth < this.properties.mouth.default.length - 1) {
+			this.avatar.mouth++;
+		} else if (!increment && this.avatar.mouth > 0) {
+			this.avatar.mouth--;
+		} else if (increment && this.avatar.mouth == this.properties.mouth.default.length - 1) {
+			this.avatar.mouth = 0;
+		} else if (!increment && this.avatar.mouth == 0) {
+			this.avatar.mouth = this.properties.mouth.default.length - 1;
 		}
 		this.updateSvg();
 	}
 
 	changeSkin() {
-		this.player.skinColor = this.skin.replace("#", "");
+		this.avatar.skinColor = this.skin.replace("#", "");
 		this.updateSvg();
 	}
 
 	changeHairColor() {
-		this.player.hairColor = this.hairColor.replace("#", "");
+		this.avatar.hairColor = this.hairColor.replace("#", "");
 		this.updateSvg();
 	}
 
 	updateSvg() {
-		this.options.hairColor = [this.player.hairColor];
-		this.options.skinColor = [this.player.skinColor];
-		this.options.mouth = [this.properties.mouth.default[this.player.mouth]];
-		this.options.hair = [this.properties.hair.default[this.player.hair]];
-		this.options.eyebrows = [this.properties.eyebrows.default[this.player.eyebrows]];
-		this.options.eyes = [this.properties.eyes.default[this.player.eyes]];
-		this.options.earrings = [this.properties.earrings.default[this.player.earrings]];
-		this.options.glasses = [this.properties.glasses.default[this.player.glasses]];
-		this.options.features = [this.properties.features.default[this.player.features]];
+		this.options.hairColor = [this.avatar.hairColor];
+		this.options.skinColor = [this.avatar.skinColor];
+		this.options.mouth = [this.properties.mouth.default[this.avatar.mouth]];
+		this.options.hair = [this.properties.hair.default[this.avatar.hair]];
+		this.options.eyebrows = [this.properties.eyebrows.default[this.avatar.eyebrows]];
+		this.options.eyes = [this.properties.eyes.default[this.avatar.eyes]];
+		this.options.earrings = [this.properties.earrings.default[this.avatar.earrings]];
+		this.options.glasses = [this.properties.glasses.default[this.avatar.glasses]];
+		this.options.features = [this.properties.features.default[this.avatar.features]];
 		this.options.glassesProbability = 100;
 		this.options.featuresProbability = 100;
 		this.options.earringsProbability = 100;
 		this.options.hairProbability = 100;
-		this.player.image = createAvatar(adventurer, this.options).toString();
-		this.svgContainer.nativeElement.innerHTML = this.player.image;
+		this.avatar.image = createAvatar(adventurer, this.options).toString();
+		this.svgContainer.nativeElement.innerHTML = this.avatar.image;
 	}
 
 	close() {
-		this.router.navigate(["ogame", this.idGame, "player", this.idPlayer]);
+		this.router.navigate(["avatar", this.sessionId, this.avatarIdx]);
 	}
 
 	saveAndClose() {
-		this.backService.updatePlayer(this.idGame, this.player).subscribe(() => {
+		this.avatarService.updateAvatar(this.sessionId, this.avatarIdx, this.avatar).subscribe(() => {
 			this.close();
 		});
 	}
@@ -236,17 +241,17 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	randomize() {
-		this.player.earrings = this.getRandomInt(-1, this.properties.earrings.default.length - 1);
-		this.player.glasses = this.getRandomInt(-1, this.properties.glasses.default.length - 1);
-		this.player.features = this.getRandomInt(-1, this.properties.features.default.length - 1);
-		this.player.eyes = this.getRandomInt(0, this.properties.eyes.default.length - 1);
-		this.player.eyebrows = this.getRandomInt(0, this.properties.eyebrows.default.length - 1);
-		this.player.hair = this.getRandomInt(0, this.properties.hair.default.length - 1);
-		this.player.mouth = this.getRandomInt(0, this.properties.mouth.default.length - 1);
+		this.avatar.earrings = this.getRandomInt(-1, this.properties.earrings.default.length - 1);
+		this.avatar.glasses = this.getRandomInt(-1, this.properties.glasses.default.length - 1);
+		this.avatar.features = this.getRandomInt(-1, this.properties.features.default.length - 1);
+		this.avatar.eyes = this.getRandomInt(0, this.properties.eyes.default.length - 1);
+		this.avatar.eyebrows = this.getRandomInt(0, this.properties.eyebrows.default.length - 1);
+		this.avatar.hair = this.getRandomInt(0, this.properties.hair.default.length - 1);
+		this.avatar.mouth = this.getRandomInt(0, this.properties.mouth.default.length - 1);
 		this.hairColor = this.hairPalette[this.getRandomInt(0, 13)];
 		this.skin = this.skinPalette[this.getRandomInt(0, 3)];
-		this.player.skinColor = this.skin.replace("#", "");
-		this.player.hairColor = this.hairColor.replace("#", "");
+		this.avatar.skinColor = this.skin.replace("#", "");
+		this.avatar.hairColor = this.hairColor.replace("#", "");
 		this.updateSvg();
 	}
 

@@ -9,6 +9,7 @@
         "CREATED_ON": "Créé le",
         "PLAYERS": "joueurs",
         "GAMES": "jeux",
+        "SESSION": "Session",
         "TYPE": "type :",
         "LOCATION": "Lieu :",
         "ANIMATOR": "Animateur :",
@@ -28,6 +29,12 @@
             "ENDED": "Terminé",
             "OPEN": "Ouvert",
             "IN_PROGRESS": "En cours"
+        },
+        "DELETE_SESSION": "La session est supprimée",
+        "DELETE_GAME": "la partie est supprimée",
+        "DELETE_DIALOG": {
+            "TITLE": "Confirmez-vous ?",
+            "MESSAGE": "Cette action est irréversible."
         }
     }
 }

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{ "HISTORY.DELETE_DIALOG.TITLE" | translate }}</h1>
+<div mat-dialog-content>
+	<p>{{ "HISTORY.DELETE_DIALOG.MESSAGE" | translate }}</p>
+	<mat-form-field appearance="fill">
+		<input matInput [(ngModel)]="value">
+	</mat-form-field>
+
+</div>
+<div mat-dialog-actions>
+	<button mat-button [mat-dialog-close]="false">{{ "CANCEL" | translate }}</button>
+	<button mat-button [mat-dialog-close]="value">{{ "DELETE" | translate }}</button>
+</div>

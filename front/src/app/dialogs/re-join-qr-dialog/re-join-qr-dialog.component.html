@@ -1,10 +1,6 @@
 <div class="d-flex flex-column justify-content-center align-items-center m-2">
 	<div style="width: 200px; height: 200px;">
-		<ngx-kjua
-				[text]="data.url"
-				[size]="200"
-				[render]="'svg'"
-		></ngx-kjua>
+		<ngx-kjua [text]="data.url" [size]="200" [render]="'svg'"></ngx-kjua>
 	</div>
 	<div [ngStyle]="{'font-size': data.textSize}">
 		{{ data.text }}

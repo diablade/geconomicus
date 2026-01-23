@@ -17,7 +17,7 @@ import {SnackbarService} from "../services/snackbar.service";
 import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
-import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
+import {ScannerQrCode} from "../dialogs/scanner-qr-code/scanner-qr-code.component";
 // @ts-ignore
 import { C } from "../../../../back/shared/constantes.mjs";
 import {ShortCode} from "../models/shortCode";
@@ -539,7 +539,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	scan() {
-		const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
+		const dialogRef = this.dialog.open(ScannerQrCode, {});
 		dialogRef.afterClosed().subscribe(dataRaw => {
 			if (dataRaw) {
 				this.buy(dataRaw);
