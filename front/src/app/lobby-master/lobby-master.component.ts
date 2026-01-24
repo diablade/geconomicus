@@ -92,10 +92,6 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.subscription.unsubscribe()
 	}
 
-	getSanitizedSvgFromString(svgString: string): SafeHtml {
-		return this.sanitizer.bypassSecurityTrustHtml(svgString);
-	}
-
 	onDeleteUser(player: Avatar) {
 		this.avatarService.deleteAvatar(player.idx, this.sessionId).subscribe((res: any) => {
 			if (res.acknowledged) {
@@ -113,15 +109,15 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.router.navigate(['results', this.sessionId]);
 	}
 
-	getUserUrl(avatarIdx: string) {
-		return environment.WEB_HOST + "/s/" + this.sessionId + '/' + avatarIdx;
+	getAvatarUrl(avatarIdx: string) {
+		return environment.WEB_HOST + "avatar/" + this.sessionId + '/' + avatarIdx;
 	}
 
 	reJoin(avatarId: string, username: string): void {
 		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				text: username,
-				url: this.getUserUrl(avatarId)
+				url: this.getAvatarUrl(avatarId)
 			},
 		});
 		dialogRef.afterClosed().subscribe(() => {

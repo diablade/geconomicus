@@ -51,8 +51,8 @@ export const sanitize = {
             earringsProbability: Joi.number(),
             glassesProbability:  Joi.number(),
             featuresProbability: Joi.number(),
-            boardConf:           Joi.string(),
-            boardColor:          Joi.string(),
+            boardConf:           Joi.string().allow('').optional(),
+            boardColor:          Joi.string().allow('').optional(),
         }).required(),
     }).required(),
     delete:   Joi.object({

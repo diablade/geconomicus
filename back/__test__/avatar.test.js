@@ -77,7 +77,7 @@ describe('AVATAR controller', () => {
                     earringsProbability: 100,
                     glassesProbability:  100,
                     featuresProbability: 100,
-                    boardConf:           "",
+                    boardConf:           "wood",
                     boardColor:          "",
                 },
             }));

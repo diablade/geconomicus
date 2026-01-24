@@ -15,27 +15,26 @@ export const C = {
     NEED_ANSWER: "needAnswer",
     REMIND_DEAD: "rd",
 
-    //GAME STATUS
-    OPEN:        'open',
-    IN_PROGRESS: 'progress',
-    ENDED:       'ended',
-    END_GAME:    'end-game',
-    STARTED:     'started',
-    PLAYING:     'playing',
-    PAUSING:     'pausing',
-    WAITING:     'waiting',
-    STOPED:      'stoped',
+    //SESSION STATUS
+    OPEN:            'open',
+    UPDATED_SESSION: "us",
+    IN_PROGRESS:     'progress',
+    ENDED:           'ended',
+    END_GAME:        'end-game',
+    STARTED:         'started',
+    PLAYING:         'playing',
+    PAUSING:         'pausing',
+    WAITING:         'waiting',
+    STOPED:          'stoped',
 
-    //GAME EVENTS & SOCKETS
     NEW_AVATAR:         "na",
     UPDATED_AVATAR:     "ua",
     DELETED_AVATAR:     "da",
-    SESSION_CREATED:    "sc",
     NEW_GAMES_RULES:    "ngr",
-    GAME_STATE_CREATED: "gsc",
-    PLAYER_JOIN:        "pj",
     UPDATED_RULES:      "ru",
     DELETED_RULES:      "dr",
+    GAME_STATE_CREATED: "gsc",
+    PLAYER_JOIN:        "pj",
 
     //CREDITS
     NEW_CREDIT:      "new-credit",
@@ -55,7 +54,7 @@ export const C = {
     DEFAULT_CREDIT:  "default-credit",
     CREDIT_DONE:     "credit-done",
 
-    //PUR SOCKET EVENTS :
+    //GAME STATE SOCKET EVENTS :
     EVENT:                'event',
     RESET:                'reset',
     TIMER_LEFT:           'tl',

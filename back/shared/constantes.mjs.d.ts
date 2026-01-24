@@ -18,6 +18,7 @@ declare const C: {
 
 	//GAME & session STATUS
 	OPEN: string,
+	UPDATED_SESSION: string;
 	IN_PROGRESS: string,
 	ENDED: string,
 	END_GAME: string,

@@ -30,9 +30,9 @@ export class AvatarService {
 	}
 
 	updateAvatar(sessionId: string, avatarIdx: string, updates: Partial<Avatar>): Observable<Avatar> {
-		return this.http.post<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
-			avatarIdx,
+		return this.http.put<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
 			sessionId,
+			avatarIdx,
 			updates
 		})
 			.pipe(

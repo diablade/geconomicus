@@ -1,5 +1,6 @@
 {
     "AVATAR": {
+        "LOBBY": "Salle d'attente",
         "NAME": "Prénom ou pseudo",
         "YOUR_AVATAR": "Votre avatar",
         "SYS_SCAN": "Achat par camera et QRCode",

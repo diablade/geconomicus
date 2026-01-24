@@ -70,15 +70,15 @@
 			<div *ngFor="let player of session?.players"
 			     class="player d-flex flex-column">
 				<div class="d-flex flex-row justify-content-center player-action">
-					<a href="{{getUserUrl(player.idx)}}" target="_blank">{{ player.name }} </a>
+					<a href="{{getAvatarUrl(player.idx)}}" target="_blank">{{ player.name }} </a>
 					<fa-icon class="joinQr" (click)="reJoin(player.idx, player.name)" [icon]="faQrcode"></fa-icon>
 					<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
 					         [icon]="faTrashCan"></fa-icon>
 				</div>
-				<div class="player-frame" [ngClass]="session && session.status===C.OPEN ?'player-svg':'player-svgSmall'"
-				     [ngStyle]="{'border-color':'#'+player.hairColor}"
-				     [innerHTML]="getSanitizedSvgFromString(player.image)">
-				</div>
+				<avatar [avatar]="player"
+				        [width]="session && session.status===C.OPEN ?'120px':'70px'"
+				        [height]="session && session.status===C.OPEN ?'120px':'70px'">
+				</avatar>
 			</div>
 		</div>
 	</div>

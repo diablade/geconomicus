@@ -81,6 +81,7 @@ import {RecipeComponent} from './components/recipe/recipe.component';
 import {LobbyMasterComponent} from './lobby-master/lobby-master.component';
 import {LobbyPlayerComponent} from './lobby-player/lobby-player.component';
 import {ReJoinQrDialogComponent} from './dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -138,7 +139,8 @@ LOAD_WASM().subscribe();
 		RecipeComponent,
 		LobbyMasterComponent,
 		LobbyPlayerComponent,
-		ReJoinQrDialogComponent
+		ReJoinQrDialogComponent,
+  AvatarComponent
 	],
 	imports: [
 		HttpClientModule,

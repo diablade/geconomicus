@@ -1,1 +1,20 @@
-<p>lobby-player works!</p>
+<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
+	<div class="m-4 gecoFont shadowed text-center fs-2" (click)="refresh()">{{ "AVATAR.LOBBY" | translate }}</div>
+	<div class="m-4 gecoFont shadowed text-center fs-2" (click)="refresh()">{{ avatar.name }}</div>
+	<div class="d-flex flex-row flex-wrap gap-1 justify-content-center">
+		<div (click)="goToAvatarSettings()">
+			<avatar [avatar]="avatar" [width]="'150px'" [height]="'150px'">
+			</avatar>
+		</div>
+		<ng-container *ngFor="let game of games">
+			<div class="coin-container" [ngSwitch]="game.typeMoney">
+				<ng-container *ngSwitchCase="C.JUNE">
+					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"/>
+				</ng-container>
+				<ng-container *ngSwitchCase="C.DEBT">
+					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"/>
+				</ng-container>
+			</div>
+		</ng-container>
+	</div>
+</div>

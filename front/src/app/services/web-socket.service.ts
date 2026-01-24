@@ -141,6 +141,12 @@ export class WebSocketService {
 			this.handleTimeout();
 			// this.socket?.io?.reconnection();
 		});
+		this.socket.on('error', (error: any) => {
+			console.error('Socket error:', error);
+			if (error && error.message && error.message.includes('timeout')) {
+				this.handleTimeout();
+			}
+		});
 		this.socket.on('reconnect_attempt', (attempt) => {
 			console.log('Reconnection attempt:', attempt);
 		});
@@ -207,7 +213,11 @@ export class WebSocketService {
 
 	private handleTimeout() {
 		this.snackbarService.showError(this.i18nService.instant("SOCKET.TIMEOUT"));
-		this.socket?.connect();
+		// this.socket?.connect();
+		setTimeout(() => {
+			// Force a complete page reload
+			window.location.reload();
+		}, 2000);
 	}
 
 	private saveLastConnectedTime(): void {
