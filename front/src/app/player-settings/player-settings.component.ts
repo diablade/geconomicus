@@ -36,8 +36,8 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	hairPalette: Array<any> =
 		[
 			'#000000', // noir intense
-			'#808080', // gris (argent)
-			'#ffffff', // blanc (albinos/âgé)
+			'#5e5e5e', // gris (argent)
+			'#bdbdbd', // blanc (albinos/âgé)
 			'#5a3e2b', // brun chaud
 			'#a9745a', // brun clair
 			'#e2b77b', // blond foncé
