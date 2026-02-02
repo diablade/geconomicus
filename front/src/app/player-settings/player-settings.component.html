@@ -1,23 +1,104 @@
-<div class="settings w-100 h-100 p-4" [ngStyle]="getBackgroundStyle()">
+<div class="settings w-100 h-100 p-2" [ngStyle]="getBackgroundStyle()">
 	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
-	<div class="text-center">
-		<mat-form-field appearance="fill">
+	<!--	<p class="text-center">{{ "AVATAR.YOUR_AVATAR" | translate }}</p>-->
+	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
+	<div class="text-center mt-2">
+		<mat-form-field appearance="fill" *ngIf="avatar">
 			<mat-label>{{ "AVATAR.NAME" | translate }}</mat-label>
 			<input matInput [(ngModel)]="avatar.name" (keydown.enter)="saveAndClose()">
 		</mat-form-field>
 	</div>
-	<div [ngStyle]="{'border-color':hairColor}" class="svgContainer" #svgContainer></div>
-	<p class="text-center">{{ "AVATAR.YOUR_AVATAR" | translate }}</p>
-	<div class="d-flex mt-2 justify-content-evenly">
-		<button (click)="close()" mat-raised-button color="accent">{{ "COMMON.CANCEL" | translate }}</button>
-		<button (click)="randomize()" mat-raised-button color="warn">
-			<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
-		</button>
-		<button (click)="saveAndClose()" mat-raised-button color="primary">{{ "COMMON.SAVE" | translate }}</button>
+	<div class="items-box-container" *ngIf="avatar">
+		<div class="items-box" [ngStyle]="{'border-color':hairColor}">
+			<div class="items p-1">
+				<div class="item w-100 mt-2">
+					<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.SKIN" | translate }}</div>
+					<ngx-colors class="" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
+					            [(ngModel)]="skin"></ngx-colors>
+					<div class="flex-grow-1 text-center">
+						<button (click)="randomize()" mat-raised-button color="warn">
+							<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
+						</button>
+					</div>
+				</div>
+				<div class="item">
+					<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.HAIR" | translate }}</div>
+					<ngx-colors [palette]="hairPalette" class="" ngx-colors-trigger (change)="changeHairColor()"
+					            [(ngModel)]="hairColor"></ngx-colors>
+					<button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.hair + 1 }}/{{ properties.hair.default.length }}</div>
+					<button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYES" | translate }}</div>
+					<button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyes + 1 }}/{{ properties.eyes.default.length }}</div>
+					<button (click)="changeEyes(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYEBROWS" | translate }}</div>
+					<button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}</div>
+					<button (click)="changeEyeBrows(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.MOUTH" | translate }}</div>
+					<button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.mouth + 1 }}/{{ properties.mouth.default.length }}</div>
+					<button (click)="changeMouth(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.GLASSES" | translate }}</div>
+					<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
+					<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.EARRINGS" | translate }}</div>
+					<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.earrings + 1 }}/{{ properties.earrings.default.length }}</div>
+					<button (click)="changeEarrings(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+				<div class="item">
+					<div class="optionsLabel img-thumbnail">{{ "AVATAR.FEATURES" | translate }}</div>
+					<button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
+						<fa-icon [icon]="faChevronLeft"></fa-icon>
+					</button>
+					<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.features + 1 }}/{{ properties.features.default.length }}</div>
+					<button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
+						<fa-icon [icon]="faChevronRight"></fa-icon>
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="items-wrap">
-		<div class="items">
-			<div class="item">
+	<div class="d-flex align-items-center flex-column" *ngIf="avatar">
+		<div class="d-flex align-items-start flex-column">
+			<div class="d-flex justify-content-center align-items-center mt-2">
 				<div class="optionsLabel img-thumbnail">{{ "AVATAR.GAME_TABLE" | translate }}</div>
 				<div class="d-flex flex-row">
 					<mat-radio-group class="" [(ngModel)]="avatar.boardConf">
@@ -34,90 +115,17 @@
 					</mat-radio-group>
 				</div>
 			</div>
-			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.SKIN" | translate }}</div>
-				<ngx-colors class="" [palette]="skinPalette" ngx-colors-trigger (change)="changeSkin()"
-				            [(ngModel)]="skin"></ngx-colors>
-			</div>
-			<div class="item">
-				<div class="optionsLabel-withColor img-thumbnail">{{ "AVATAR.HAIR" | translate }}</div>
-				<ngx-colors [palette]="hairPalette" class="" ngx-colors-trigger (change)="changeHairColor()"
-				            [(ngModel)]="hairColor"></ngx-colors>
-				<button (click)="changeHair(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.hair + 1 }}/{{ properties.hair.default.length }}</div>
-				<button (click)="changeHair(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYES" | translate }}</div>
-				<button (click)="changeEyes(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyes + 1 }}/{{ properties.eyes.default.length }}</div>
-				<button (click)="changeEyes(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EYEBROWS" | translate }}</div>
-				<button (click)="changeEyeBrows(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}</div>
-				<button (click)="changeEyeBrows(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.MOUTH" | translate }}</div>
-				<button (click)="changeMouth(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.mouth + 1 }}/{{ properties.mouth.default.length }}</div>
-				<button (click)="changeMouth(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.GLASSES" | translate }}</div>
-				<button (click)="changeGlasses(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.glasses + 1 }}/{{ properties.glasses.default.length }}</div>
-				<button (click)="changeGlasses(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.EARRINGS" | translate }}</div>
-				<button (click)="changeEarrings(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.earrings + 1 }}/{{ properties.earrings.default.length }}</div>
-				<button (click)="changeEarrings(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
-				<div class="optionsLabel img-thumbnail">{{ "AVATAR.FEATURES" | translate }}</div>
-				<button (click)="changeFeature(false)" mat-mini-fab color="accent" aria-label="previous">
-					<fa-icon [icon]="faChevronLeft"></fa-icon>
-				</button>
-				<div class="img-thumbnail m-2 optionsLabelNumber">{{ avatar.features + 1 }}/{{ properties.features.default.length }}</div>
-				<button (click)="changeFeature(true)" mat-mini-fab color="accent" aria-label="next">
-					<fa-icon [icon]="faChevronRight"></fa-icon>
-				</button>
-			</div>
-			<div class="item">
+			<div class="d-flex justify-content-center align-items-center mt-2">
 				<div class="optionsLabel img-thumbnail">{{ "AVATAR.SYS_SCAN" | translate }}</div>
 				<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3">
 					<fa-icon [icon]="faCamera"></fa-icon>
 				</mat-slide-toggle>
 			</div>
 		</div>
+	</div>
+	<div class="d-flex mt-2 mb-2 justify-content-evenly">
+		<button (click)="close()" mat-raised-button color="accent">{{ "CANCEL" | translate }}</button>
+		<button (click)="saveAndClose()" mat-raised-button color="primary">{{ "SAVE" | translate }}</button>
 	</div>
 </div>
 <app-version></app-version>

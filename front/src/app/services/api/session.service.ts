@@ -45,8 +45,17 @@ export class SessionService {
 			);
 	}
 
+	start(sessionId: string): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.SESSION.START, {
+			sessionId,
+		})
+			.pipe(
+				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.START'))
+			);
+	}
+
 	update(sessionId: string, updates: Partial<Session>) {
-		return this.http.post<any>(environment.API_HOST + environment.SESSION.UPDATE, {
+		return this.http.put<any>(environment.API_HOST + environment.SESSION.UPDATE, {
 			sessionId,
 			updates
 		})

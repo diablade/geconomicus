@@ -1,27 +1,29 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {Session} from "../models/session";
-import {Avatar} from "../models/avatar";
-import {SessionService} from "../services/api/session.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Subscription} from "rxjs";
-import {environment} from "../../environments/environment";
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Session } from "../models/session";
+import { Avatar } from "../models/avatar";
+import { SessionService } from "../services/api/session.service";
+import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
+import { environment } from "../../environments/environment";
 import {
-	faFlagCheckered, faQrcode, faCogs, faTrashCan,
-	faCircleInfo, faWarning, faBuildingColumns,
-	faRightToBracket, faEye
+	faQrcode, faCogs, faTrashCan, faEye,
+	faRightToBracket, faPencil, faPeopleRoof
 } from '@fortawesome/free-solid-svg-icons';
-import {MatDialog} from "@angular/material/dialog";
-import {SnackbarService} from "../services/snackbar.service";
+import { MatDialog } from "@angular/material/dialog";
+import { SnackbarService } from "../services/snackbar.service";
 // @ts-ignore
 import C from "../../../../back/shared/constantes.mjs";
-import {WebSocketService} from "../services/web-socket.service";
-import {TranslateService} from "@ngx-translate/core";
-import {I18nService} from "../services/i18n.service";
-import {AudioService} from '../services/audio.service';
+import { WebSocketService } from "../services/web-socket.service";
+import { I18nService } from "../services/i18n.service";
+import { AudioService } from '../services/audio.service';
 import * as _ from 'lodash-es';
-import {ReJoinQrDialogComponent} from "../dialogs/re-join-qr-dialog/re-join-qr-dialog.component";
-import {AvatarService} from "../services/api/avatar.service";
+import { ReJoinQrDialogComponent } from "../dialogs/re-join-qr-dialog/re-join-qr-dialog.component";
+import { AvatarService } from "../services/api/avatar.service";
+import { SessionEditDialogComponent } from "../dialogs/session-edit/session-edit-dialog.component";
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { GameStateService } from "../services/api/game-state.service";
+import { GameOptionsDialogComponent } from '../dialogs/game-options-dialog/game-options-dialog.component';
+import { Rules } from '../models/rules';
 
 @Component({
 	selector: 'app-lobby-master',
@@ -39,26 +41,22 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	C = C;
 
 	faTrashCan = faTrashCan;
-	faFlagCheckered = faFlagCheckered;
 	faQrcode = faQrcode;
 	faCogs = faCogs;
-	faInfo = faCircleInfo;
 	faRightToBracket = faRightToBracket;
-	faWarning = faWarning;
-	faBuildingColumns = faBuildingColumns;
+	faPencil = faPencil;
 	faEye = faEye;
+	faPeopleRoof = faPeopleRoof;
 
 	constructor(private route: ActivatedRoute,
-	            private sessionService: SessionService,
-	            private avatarService: AvatarService,
-	            private snackbarService: SnackbarService,
-	            private translate: TranslateService,
-	            private router: Router,
-	            private sanitizer: DomSanitizer,
-	            private wsService: WebSocketService,
-	            private i18nService: I18nService,
-	            private audioService: AudioService,
-	            public dialog: MatDialog) {
+		private sessionService: SessionService,
+		private avatarService: AvatarService,
+		private gameStateService: GameStateService,
+		private snackbarService: SnackbarService,
+		private wsService: WebSocketService,
+		private i18nService: I18nService,
+		private audioService: AudioService,
+		public dialog: MatDialog) {
 		this.i18nService.loadNamespace("master");
 	}
 
@@ -95,21 +93,13 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	onDeleteUser(player: Avatar) {
 		this.avatarService.deleteAvatar(player.idx, this.sessionId).subscribe((res: any) => {
 			if (res.acknowledged) {
-				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LOBBY.DELETE_PLAYER_SUCCESS", {player: player.name}));
+				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LOBBY.DELETE_PLAYER_SUCCESS", { player: player.name }));
 				this.session.players = this.session.players.filter(p => p.idx !== res.avatarIdx);
 			}
 		});
 	}
 
-	enterGame() {
-
-	}
-
-	goToResults() {
-		this.router.navigate(['results', this.sessionId]);
-	}
-
-	getAvatarUrl(avatarIdx: string) {
+	createAvatarUrl(avatarIdx: string) {
 		return environment.WEB_HOST + "avatar/" + this.sessionId + '/' + avatarIdx;
 	}
 
@@ -117,7 +107,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				text: username,
-				url: this.getAvatarUrl(avatarId)
+				url: this.createAvatarUrl(avatarId)
 			},
 		});
 		dialogRef.afterClosed().subscribe(() => {
@@ -130,21 +120,69 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			.catch(err => console.error('Error copying: ', err));
 	}
 
-	showOptions() {
-		// const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-		// 	data: {game: _.clone(this.game)},
-		// });
-		// dialogRef.afterClosed().subscribe(results => {
-		// 	if (results === "reset") {
-		// 		this.resetGameFromBtn();
-		// 	} else if (results === "cancel") {
-		// 	} else {
-		// 		this.backService.updateGame(this.idGame, results).subscribe(() => {
-		// 			this.snackbarService.showSuccess(this.i18nService.instant("OPTION.SAVED"));
-		// 		});
-		// 		this.minutes = results.roundMinutes > 9 ? results.roundMinutes.toString() : "0" + results.roundMinutes.toString();
-		// 		this.game = {...results};
-		// 	}
+	editSession() {
+		const dialogRef = this.dialog.open(SessionEditDialogComponent, {
+			data: { session: _.clone(this.session) },
+		});
+		dialogRef.afterClosed().subscribe(results => {
+			if (results) {
+				this.sessionService.update(this.sessionId, results).subscribe(() => {
+					this.snackbarService.showSuccess(this.i18nService.instant("MASTER.SAVED"));
+				});
+				this.session = { ...results };
+			}
+		});
+	}
+
+	startSession() {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant("MASTER.START_CONFIRM"),
+				message: this.i18nService.instant("MASTER.START_CONFIRM_2"),
+				labelBtnConfirm: this.i18nService.instant("MASTER.START"),
+				styleBtnConfirm: "warn"
+			},
+		});
+		dialogRef.afterClosed().subscribe(results => {
+			if (results === "btnConfirm") {
+				this.sessionService.start(this.sessionId).subscribe((data: Session) => {
+					this.snackbarService.showSuccess(this.i18nService.instant("MASTER.STARTED"));
+					this.session = data
+				});
+			}
+		});
+	}
+
+	editRules(rules: Rules) {
+		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
+			data: { rules: _.clone(rules), playersLength: this.session.players.length },
+		});
+		dialogRef.afterClosed().subscribe(results => {
+			if (results) {
+				this.sessionService.update(this.sessionId, results).subscribe(() => {
+					this.snackbarService.showSuccess(this.i18nService.instant("MASTER.SAVED"));
+				});
+				this.session = { ...results };
+			}
+		});
+	}
+
+	launchGame() {
+		// this.sessionService.launchGame(this.sessionId).subscribe((data: Session) => {
+		//update session
+		//update gameStateId and status
+
+		// this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LAUNCH"));
+		//and redirect to masterBoard ...
 		// });
 	}
+
+	enterGame() {
+
+	}
+
+	showResults() {
+
+	}
+
 }

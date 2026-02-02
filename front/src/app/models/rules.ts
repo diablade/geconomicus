@@ -1,6 +1,8 @@
 export class Rules {
 	id: string = "";
 	gameStateId: string = "";
+	gameStatus: string = "created";
+	rotate: boolean = false;
 
 	//common
 	amountCardsForProd: number = 0;

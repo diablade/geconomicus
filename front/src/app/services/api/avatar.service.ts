@@ -12,8 +12,8 @@ export class AvatarService {
 	constructor(public http: HttpClient, private errorService: ErrorService) {
 	}
 
-	getAvatar(sessionId: string, avatarId: string): Observable<Avatar> {
-		return this.http.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarId)
+	getAvatar(sessionId: string, avatarIdx: string, fetchSession: boolean = false): Observable<any> {
+		return this.http.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
 			.pipe(
 				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.PLAYER_NOT_FOUND"))
 			);

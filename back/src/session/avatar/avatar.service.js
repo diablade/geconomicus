@@ -40,12 +40,22 @@ AvatarService.create = async (sessionId, name) => {
 
 };
 
-AvatarService.getByIdx = async (sessionId, avatarIdx) => {
+AvatarService.getByIdx = async (sessionId, avatarIdx, fetchSession) => {
     const session = await SessionModel.findOne({
         _id:           sessionId,
         'players.idx': Number(avatarIdx)
-    }, {'players.$': 1}).lean();
-    return session?.players?.[0] ?? null;
+    }).lean();
+    const avatar = session?.players?.find(p => p.idx === Number(avatarIdx)) ?? null;
+    delete session.players;
+    if (fetchSession) {
+        return {
+            avatar:  avatar,
+            session: session
+        };
+    }
+    return {
+        avatar: avatar
+    };
 };
 
 AvatarService.update = async (sessionId, avatarIdx, updates) => {

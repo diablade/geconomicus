@@ -33,11 +33,12 @@ AvatarController.join = async (req, res, next) => {
 AvatarController.getByIdx = async (req, res, next) => {
     const {
         sessionId,
-        avatarIdx
+        avatarIdx,
+        fetchSession
     } = req.params;
     try {
-        const avatar = await AvatarService.getByIdx(sessionId, avatarIdx);
-        return res.status(200).json(avatar);
+        const obj = await AvatarService.getByIdx(sessionId, avatarIdx, fetchSession);
+        return res.status(200).json(obj);
     }
     catch (err) {
         log.error(err);

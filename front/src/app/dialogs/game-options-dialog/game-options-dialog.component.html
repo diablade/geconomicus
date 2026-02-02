@@ -4,49 +4,17 @@
 			{{ "OPTION.TITLE"|translate }}
 		</div>
 		<div class="text-center">
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.PARTY_NAME"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.name">
-			</mat-form-field>
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.PARTY_ANIM"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.animator">
-			</mat-form-field>
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.LOCALIZATION"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.location">
-			</mat-form-field>
-			<mat-form-field>
-				<mat-label>{{ "THEME.TITLE"|translate }}</mat-label>
-				<mat-select class="m-auto" [(ngModel)]="game.theme">
-					<mat-option *ngFor="let theme of themes" [value]="theme">
-						{{ theme | translate }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
 			<div>
 				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
 					{{ "OPTION.SURVEY_Q"|translate }}
 				</mat-checkbox>
 			</div>
-			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="game.devMode">
-					{{ "OPTION.DEVMODE"|translate }}
-				</mat-checkbox>
-			</div>
-			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
-				{{ "OPTION.MONEY"|translate: {money: game.typeMoney === C.JUNE ? "libre" : "dette"} }}
-			</div>
 			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]='"OPTION.WARNING"|translate'>
 			</div>
-			<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
-			<!--				<mat-label>nombre de tours</mat-label>-->
-			<!--				<input type="number" min="1" matInput placeholder="'10 '+getTranslate('BY_DEFAULT')'" [(ngModel)]="game.roundMax">-->
-			<!--			</mat-form-field>-->
 			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 				<mat-label>{{ "OPTION.DURATION"|translate }}</mat-label>
 				<input type="number" min="1" matInput [placeholder]="'25 '+getTranslate('BY_DEFAULT')"
-				       [(ngModel)]="game.roundMinutes">
+					[(ngModel)]="game.roundMinutes">
 			</mat-form-field>
 			<div class="d-inline-flex">
 				<div class="imgText">
@@ -56,8 +24,8 @@
 				<mat-form-field *ngIf="game" class="input" appearance="fill">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
 					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'3 ':'1 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight1">
+						[placeholder]="(game.typeMoney === 'june' ?'3 ':'1 ')+getTranslate('BY_DEFAULT')"
+						[(ngModel)]="game.priceWeight1">
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
@@ -68,8 +36,8 @@
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
 					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'6 ':'2 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight2">
+						[placeholder]="(game.typeMoney === 'june' ?'6 ':'2 ')+getTranslate('BY_DEFAULT')"
+						[(ngModel)]="game.priceWeight2">
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
@@ -79,8 +47,8 @@
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
 					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'9 ':'4 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight3">
+						[placeholder]="(game.typeMoney === 'june' ?'9 ':'4 ')+getTranslate('BY_DEFAULT')"
+						[(ngModel)]="game.priceWeight3">
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
@@ -89,26 +57,26 @@
 				</div>
 				<mat-form-field *ngIf="game" class="input">
 					<mat-label>{{
-                            (game.typeMoney === 'june' ? "OPTION.PRICE_DU" : "OPTION.PRICE_NET")|translate
+						(game.typeMoney === 'june' ? "OPTION.PRICE_DU" : "OPTION.PRICE_NET")|translate
 						}}
 					</mat-label>
 					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'12 ':'8 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight4">
+						[placeholder]="(game.typeMoney === 'june' ?'12 ':'8 ')+getTranslate('BY_DEFAULT')"
+						[(ngModel)]="game.priceWeight4">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.DU_RATES"|translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.tauxCroissance">
+						[(ngModel)]="game.tauxCroissance">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.JUNE">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.START_MONEY_AMOUNT"|translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.startAmountCoins">
+						[(ngModel)]="game.startAmountCoins">
 				</mat-form-field>
 			</div>
 			<div class="d-flex flex-column">
@@ -116,9 +84,9 @@
 					{{ "OPTION.DEATH"|translate }}
 				</mat-checkbox>
 				<p>{{
-                        "OPTION.DEATH_MINUTES"|translate : {
-                            deathMinute: (Math.round(game.roundMinutes / game.players.length))
-                        }
+					"OPTION.DEATH_MINUTES"|translate : {
+					deathMinute: (Math.round(game.roundMinutes / playersLength))
+					}
 					}}
 				</p>
 				<p>{{ "OPTION.DEATH_MINUTES_FORMULA"|translate }}
@@ -131,14 +99,14 @@
 				<div class="infoLabel">
 					<div>
 						•<input class="smallInput" type="number" [disabled]="!game.inequalityStart"
-						        [(ngModel)]="game.pctRich">{{ "OPTION.RICH"|translate }}
+							[(ngModel)]="game.pctRich">{{ "OPTION.RICH"|translate }}
 					</div>
 					<div>
 						•{{ 100 - (game.pctPoor + game.pctRich) }}{{ "OPTION.MIDDLE"|translate }}
 					</div>
 					<div>
 						•<input class="smallInput" type="number" [disabled]="!game.inequalityStart"
-						        [(ngModel)]="game.pctPoor">{{ "OPTION.POOR"|translate }}
+							[(ngModel)]="game.pctPoor">{{ "OPTION.POOR"|translate }}
 					</div>
 				</div>
 			</div>
@@ -146,21 +114,21 @@
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.DEFAULT_CREDIT"|translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'3 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.defaultCreditAmount">
+						[(ngModel)]="game.defaultCreditAmount">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.DEBT">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.DEFAULT_INTEREST"|translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'1 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.defaultInterestAmount">
+						[(ngModel)]="game.defaultInterestAmount">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.DEBT">
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.INTEREST_FREQ"|translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.timerCredit">
+						[(ngModel)]="game.timerCredit">
 				</mat-form-field>
 			</div>
 			<div *ngIf="game.typeMoney===C.DEBT" class="w-100">
@@ -173,7 +141,7 @@
 								<div>{{ "OPTION.SEIZURE_FIX2"|translate }}</div>
 							</div>
 							<input type="number" min="0" class="smallInput" placeholder="2"
-							       [(ngModel)]="game.seizureCosts">
+								[(ngModel)]="game.seizureCosts">
 						</div>
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="'decote'">
@@ -189,7 +157,7 @@
 				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
 					<mat-label>{{ "OPTION.PRISON_TIMER"| translate }}</mat-label>
 					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.timerPrison">
+						[(ngModel)]="game.timerPrison">
 				</mat-form-field>
 			</div>
 			<!--			<div *ngIf="game.typeMoney===C.DEBT" class="mb-4 d-flex flex-column">-->
@@ -210,12 +178,12 @@
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=false>
 						{{ "OPTION.GEN_LETTERS_MANU"|translate }} <input class="smallInput" type="number"
-						                                                 [disabled]="game.generateLettersAuto" [(ngModel)]="game.generateLettersInDeck">
+							[disabled]="game.generateLettersAuto" [(ngModel)]="game.generateLettersInDeck">
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ "OPTION.GEN_LETTERS_IDENTICAL"|translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="game.generatedIdenticalLetters">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
+					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️ EXPERIMENTAL
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=4>
@@ -227,7 +195,7 @@
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ "OPTION.START_DISTRIB_CARDS"|translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="game.distribInitCards">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
+					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️ EXPERIMENTAL
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=4>
@@ -236,7 +204,7 @@
 				</mat-radio-group>
 				<mat-label class="mt-2fw-bold">{{ "OPTION.BUILD_AMOUNT"|translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="game.amountCardsForProd">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
+					<mat-radio-button class="d-flex ms-3" [value]=3>
 						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️EXPERIMENTAL
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]=4>
@@ -247,10 +215,10 @@
 		</div>
 	</div>
 	<div mat-dialog-actions>
-		<button mat-button (click)="onNoClick()">{{ "COMMON.CANCEL"|translate }}</button>
+		<button mat-button (click)="onNoClick()">{{ "CANCEL"|translate }}</button>
 		<button mat-button [color]="'warn'" (click)="onReset()">{{ "VALUES_BY_DEFAULT"|translate }}</button>
 		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="game" cdkFocusInitial>{{
-                "OK"|translate
+			"OK"|translate
 			}}
 		</button>
 	</div>

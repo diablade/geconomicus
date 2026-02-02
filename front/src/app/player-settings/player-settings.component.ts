@@ -1,6 +1,6 @@
 import {createAvatar, Options as Opt, schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles} from "@fortawesome/free-solid-svg-icons";
@@ -14,16 +14,17 @@ import {I18nService} from "../services/i18n.service";
 	templateUrl: './player-settings.component.html',
 	styleUrls: ['./player-settings.component.scss']
 })
-export class PlayerSettingsComponent implements OnInit, OnDestroy {
+export class PlayerSettingsComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	sessionId: string = "";
 	avatarIdx: string = "";
-	avatar: Avatar = new Avatar();
-	private subscription: Subscription | undefined;
+	avatar!: Avatar;
+	subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Opt> = {};
 	faChevronLeft = faChevronLeft;
 	faChevronRight = faChevronRight;
 	faWandMagicSparkles = faWandMagicSparkles;
+	faCamera = faCamera;
 	scanV3 = true;
 
 	skin = "#f2d3b1";
@@ -63,6 +64,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 		this.i18nService.loadNamespace("avatar");
 	}
 
+
 	ngOnInit(): void {
 		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.subscription = this.route.params.subscribe(params => {
@@ -72,15 +74,20 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	ngAfterViewInit(): void {
+		if (this.avatar) {
+			this.svgContainer.nativeElement.innerHTML = this.avatar.image;
+		}
+	}
+
 	loadAvatar() {
 		this.avatarService.getAvatar(this.sessionId, this.avatarIdx).subscribe(data => {
-			this.avatar = data;
-			if (this.avatar.image === "" || this.avatar.image === undefined) {
-				this.randomize();
+			this.avatar = data.avatar;
+			if (this.avatar.image === '' || this.avatar.image === undefined) {
+				// this.randomize();
 			} else {
 				this.skin = "#" + this.avatar.skinColor;
 				this.hairColor = "#" + this.avatar.hairColor;
-				this.svgContainer.nativeElement.innerHTML = this.avatar.image;
 			}
 		});
 	}
@@ -90,7 +97,7 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	getBackgroundStyle() {
-		switch (this.avatar.boardConf) {
+		switch (this.avatar?.boardConf) {
 			case "green":
 				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
 			case "custom":
@@ -254,6 +261,4 @@ export class PlayerSettingsComponent implements OnInit, OnDestroy {
 		this.avatar.hairColor = this.hairColor.replace("#", "");
 		this.updateSvg();
 	}
-
-	protected readonly faCamera = faCamera;
 }

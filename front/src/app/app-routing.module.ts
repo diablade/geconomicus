@@ -24,9 +24,9 @@ const routes: Routes = [
 	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
 	{path: 'avatar/:sessionId/:avatarIdx/settings', component: PlayerSettingsComponent},
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
-	{path: 'game/:gameStateId', component: MasterAdminComponent},
-	{path: 'game/:gameStateId/admin', component: MasterAdminComponent},
-	{path: 'play/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
+	{path: 'master/:gameStateId', component: MasterBoardComponent},
+	{path: 'board/:gameStateId', component: MasterAdminComponent},
+	{path: 'player/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
 	{path: 'module/galileo', component: ModuleGalileoComponent},
 	{path: 'module/gini', component: ModuleWealthDistribComponent},
 	//deprecated routes below

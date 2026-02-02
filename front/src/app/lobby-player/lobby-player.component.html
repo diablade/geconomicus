@@ -1,20 +1,29 @@
-<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
-	<div class="m-4 gecoFont shadowed text-center fs-2" (click)="refresh()">{{ "AVATAR.LOBBY" | translate }}</div>
-	<div class="m-4 gecoFont shadowed text-center fs-2" (click)="refresh()">{{ avatar.name }}</div>
-	<div class="d-flex flex-row flex-wrap gap-1 justify-content-center">
-		<div (click)="goToAvatarSettings()">
+<div class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
+	<div class="m-4 gecoFont shadowed text-center fs-1" (click)="refresh()">{{ "AVATAR.LOBBY" | translate }}</div>
+	<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
+		<div class="gecoFont shadowed text-center fs-6" (click)="refresh()">{{ session.name }}</div>
+		-
+		<div class="gecoFont shadowed text-center fs-6" (click)="refresh()">{{ "AVATAR.ANIMATOR" | translate :{name: session.animator} }}</div>
+	</div>
+	<div class="mt-4 d-flex flex-row flex-wrap gap-4 justify-content-evenly">
+		<div class="d-flex flex-column align-items-center" (click)="goToAvatarSettings()">
 			<avatar [avatar]="avatar" [width]="'150px'" [height]="'150px'">
 			</avatar>
-		</div>
-		<ng-container *ngFor="let game of games">
-			<div class="coin-container" [ngSwitch]="game.typeMoney">
-				<ng-container *ngSwitchCase="C.JUNE">
-					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"/>
-				</ng-container>
-				<ng-container *ngSwitchCase="C.DEBT">
-					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"/>
-				</ng-container>
+			<div class="m-4 d-flex flex-row">
+				<div class="gecoFont shadowed fs-3" (click)="refresh()">{{ avatar.name }}</div>
+				<fa-icon [icon]="faPencil" class="ms-3 fs-4"></fa-icon>
 			</div>
-		</ng-container>
+		</div>
+		<div class="d-flex flex-row gap-1">
+			<div class="d-flex flex-column align-items-center" *ngFor="let game of session.gamesRules">
+				<coin [coinImage]="'./assets/images/'+game.typeMoney+'.png'"
+				      [label]="(game.typeMoney === C.JUNE ? 'FREE_MONEY' :'DEBT_MONEY') | translate">
+				</coin>
+				<button class="" mat-button (click)="joinGame(game)">
+					{{ "AVATAR.PLAY" | translate }}
+					<fa-icon [icon]="faRightToBracket"></fa-icon>
+				</button>
+			</div>
+		</div>
 	</div>
 </div>

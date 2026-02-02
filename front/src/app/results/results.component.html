@@ -48,8 +48,8 @@
                             game?.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" |
                                 translate)
 						}}
-						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/eurocoin.png'"/>
-						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/g1coin.png'"/>
+						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/debt.png'"/>
+						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/june.png'"/>
 					</span>
 				</div>
 				<div><span class="fw-bold">{{ "RESULTS.ANIMATOR" | translate }}: </span>{{ game?.animator }}</div>

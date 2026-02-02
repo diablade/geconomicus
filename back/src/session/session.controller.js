@@ -44,6 +44,18 @@ SessionController.create = async (req, res, next) => {
         });
     }
 };
+SessionController.start = async (req, res, next) => {
+    try {
+        const sessionUpdated = await SessionService.start(req.body.sessionId);
+        return res.status(200).json(sessionUpdated);
+    }
+    catch (err) {
+        log.error("Session start error:", err);
+        return res.status(500).json({
+            message: "ERROR.START",
+        });
+    }
+};
 SessionController.update = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.update(req.body.sessionId, req.body.updates);

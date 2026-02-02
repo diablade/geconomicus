@@ -1,11 +1,13 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {Avatar} from "../models/avatar";
-import {AvatarService} from "../services/api/avatar.service";
-import {Subscription} from "rxjs";
-import {WebSocketService} from "../services/web-socket.service";
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { Avatar } from "../models/avatar";
+import { AvatarService } from "../services/api/avatar.service";
+import { Subscription } from "rxjs";
+import { WebSocketService } from "../services/web-socket.service";
 import C from "../../../../back/shared/constantes.mjs";
-import {I18nService} from "../services/i18n.service";
+import { I18nService } from "../services/i18n.service";
+import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+import { Session } from "../models/session";
 
 @Component({
 	selector: 'app-lobby-player',
@@ -19,16 +21,18 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	skin: string = "#f2d3b1";
 	hairColor: string = "#ac6511";
 	private subscription: Subscription | undefined;
-	games: any;
+	session = new Session();
 	socket: any;
 	C = C;
-	private options: any;
+	faRightToBracket = faRightToBracket;
+
+	faPencil = faPencil;
 
 	constructor(private avatarService: AvatarService,
-	            private route: ActivatedRoute,
-	            private router: Router,
-	            private i18n: I18nService,
-	            private ws: WebSocketService) {
+		private route: ActivatedRoute,
+		private router: Router,
+		private i18n: I18nService,
+		private ws: WebSocketService) {
 		this.i18n.loadNamespace("avatar");
 	}
 
@@ -49,12 +53,12 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngAfterViewInit() {
 		this.socket.on(C.NEW_GAMES_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
-			this.games = this.games.push(data.game);
+			cb({ status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			// this.session.gamesRules = this.session.gamesRules.push(data.game);
 		});
 		this.socket.on(C.UPDATED_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
-			this.games = this.games.map((game: any) => {
+			cb({ status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			this.session.gamesRules = this.session.gamesRules.map((game: any) => {
 				if (game.id === data.game.id) {
 					return data.game;
 				}
@@ -75,10 +79,10 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	loadAvatar() {
-		this.avatarService.getAvatar(this.sessionId, this.avatarIdx).subscribe(data => {
-			this.avatar = data;
-			// console.log("Loaded avatar:", this.avatar);
-			// this.themesService.loadTheme(this.game.theme);
+		this.avatarService.getAvatar(this.sessionId, this.avatarIdx, true).subscribe(data => {
+			this.avatar = data.avatar;
+			this.session = data.session;
+			console.log("Loaded avatar:", data);
 
 			// this.localStorageService.setItem("session",
 			// 	{
@@ -88,6 +92,9 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 			// 		avatar: this.avatar
 			// 	});
 		});
+	}
+
+	joinGame(game: any) {
 	}
 
 	//To prevent memory leak
@@ -102,12 +109,12 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	getBackgroundStyle() {
 		switch (this.avatar.boardConf) {
 			case "green":
-				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
+				return { "background-image": "url('/assets/images/green-carpet.jpg')" };
 			case "custom":
-				return {"background-color": "" + this.avatar.boardColor};
+				return { "background-color": "" + this.avatar.boardColor };
 			case "wood":
 			default:
-				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
+				return { "background-image": "url('/assets/images/woodJapAlt.jpg')" };
 		}
 	}
 

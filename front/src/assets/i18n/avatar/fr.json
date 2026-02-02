@@ -1,6 +1,7 @@
 {
     "AVATAR": {
         "LOBBY": "Salle d'attente",
+        "ANIMATOR": "Animateur: {{name}}",
         "NAME": "Prénom ou pseudo",
         "YOUR_AVATAR": "Votre avatar",
         "SYS_SCAN": "Achat par camera et QRCode",
@@ -12,6 +13,7 @@
         "FEATURES": "Divers",
         "GAME_TABLE": "Table de jeu",
         "SKIN": "Peau",
-        "HAIR": "Cheveux"
+        "HAIR": "Cheveux",
+        "PLAY": "Acceder au jeu"
     }
 }

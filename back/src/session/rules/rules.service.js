@@ -6,19 +6,20 @@ RulesService.create = async (sessionId, rules) => {
     const session = await SessionModel.findOneAndUpdate(
         { _id: sessionId },
         [
+            { $set: { rulesIndexSeq: { $ifNull: ['$rulesIndexSeq', 0] } } },
             { $set: { rulesIndexSeq: { $add: ['$rulesIndexSeq', 1] } } },
             {
                 $set: {
                     gamesRules: {
                         $concatArrays: [
-                            '$gamesRules',
+                            { $ifNull: ['$gamesRules', []] },
                             [{ idx: '$rulesIndexSeq', ...rules }]
                         ]
                     }
                 }
             }
         ],
-        { returnDocument: 'after' }
+        { new: true, runValidators: true }
     )
 
     const idx = session.rulesIndexSeq

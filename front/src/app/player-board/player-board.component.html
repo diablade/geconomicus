@@ -33,11 +33,11 @@
 		<div class="position-relative" (click)="refresh()">
 			<div class="coin-container" [ngSwitch]="game.typeMoney">
 				<ng-container *ngSwitchCase="C.JUNE">
-					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"
+					<img [src]="'/assets/images/june.png'" class="imgCoin free"
 					     [@coinFlip]="flipCoin"/>
 				</ng-container>
 				<ng-container *ngSwitchCase="C.DEBT">
-					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"
+					<img [src]="'/assets/images/debt.png'" class="imgCoin debt"
 					     [@coinFlip]="flipCoin"/>
 				</ng-container>
 			</div>

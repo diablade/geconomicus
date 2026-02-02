@@ -1,0 +1,89 @@
+.coin-wrapper {
+  display: inline-block;
+  perspective: 1000px;
+  margin: 10px;
+}
+
+.coinRing {
+  border-radius: 50%;
+  border: 3px solid black;
+}
+
+.coin {
+  border: 1px solid white;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.coin:hover {
+  transform: rotateY(180deg);
+}
+
+.coin img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Version avec animation continue */
+.coin-spinning {
+  animation: spin 2s linear infinite;
+}
+
+// @keyframes spin {
+//     from {
+//         transform: rotateY(0deg);
+//     }
+
+//     to {
+//         transform: rotateY(360deg);
+//     }
+// }
+
+// /* Exemple avec deux faces */
+// .coin-double-face {
+//     width: 150px;
+//     height: 150px;
+//     position: relative;
+//     transform-style: preserve-3d;
+//     transition: transform 0.8s ease-in-out;
+//     cursor: pointer;
+// }
+
+// .coin-double-face:hover {
+// transform: rotateY(180deg);
+// }
+
+// .coin-face {
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     backface-visibility: hidden;
+//     border-radius: 50%;
+//     border: 5px solid #FFD700;
+//     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-size: 48px;
+//     font-weight: bold;
+// }
+
+// .coin-face.front {
+//     background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+//     color: #8B4513;
+// }
+
+// .coin-face.back {
+//     background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+//     transform: rotateY(180deg);
+//     color: #4A4A4A;
+// }

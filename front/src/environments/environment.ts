@@ -11,13 +11,16 @@ export const environment = {
 		CREATE: 'session/create',
 		UPDATE: 'session/update',
 		DELETE: 'session/delete',
+		START: 'session/start',
 	},
-
 	AVATAR: {
 		JOIN: 'avatar/join',
 		GET: 'avatar/',
 		UPDATE: 'avatar/update',
 		DELETE: 'avatar/delete',
+	},
+	GAME_STATE: {
+		GET: 'gameState/',
 	},
 
 	//LEGACY

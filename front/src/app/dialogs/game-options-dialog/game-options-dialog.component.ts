@@ -1,10 +1,9 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Game} from "../../models/game";
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 // @ts-ignore
 import { C } from "../../../../../back/shared/constantes.mjs";
-import {I18nService} from '../../services/i18n.service';
-import {ThemesService} from '../../services/themes.service';
+import { I18nService } from '../../services/i18n.service';
+import { Rules } from 'src/app/models/rules';
 
 @Component({
 	selector: 'app-game-options-dialog',
@@ -12,18 +11,19 @@ import {ThemesService} from '../../services/themes.service';
 	styleUrls: ['./game-options-dialog.component.scss']
 })
 export class GameOptionsDialogComponent {
-	game: Game;
-	themes: string[];
+	game: Rules;
 	C = C;
+	protected readonly Math = Math;
+	playersLength: any;
 
 	constructor(
-		private i18nService: I18nService,
-		private themesService: ThemesService,
+		private i18n: I18nService,
 		public dialogRef: MatDialogRef<GameOptionsDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
-		this.game = data.game;
-		this.themes = this.themesService.getThemesKeys();
+		this.i18n.loadNamespace("option");
+		this.game = data.rules;
+		this.playersLength = data.playersLength;
 	}
 
 	onNoClick() {
@@ -35,8 +35,7 @@ export class GameOptionsDialogComponent {
 	}
 
 	getTranslate(key: string): string {
-		return this.i18nService.instant(key);
+		return this.i18n.instant(key);
 	}
 
-	protected readonly Math = Math;
 }

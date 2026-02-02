@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 let RulesSchema = new Schema({
 	idx: { type: Number, required: true },
 	gameStateId: { type: String, required: false },
+	gameStatus: { type: String, required: true, default: C.CREATED },
 
 	//common
 	amountCardsForProd: { type: Number, required: true, default: 4 },
@@ -14,7 +15,6 @@ let RulesSchema = new Schema({
 	generateLettersInDeck: { type: Number, required: false },
 	distribInitCards: { type: Number, required: true, default: 4 },
 	surveyEnabled: { type: Boolean, required: true, default: true },
-	roundMax: { type: Number, required: true, default: 1 },
 	roundMinutes: { type: Number, required: true, default: 20 },
 	autoDeath: { type: Boolean, required: true, default: true },
 	deathPassTimer: { type: Number, required: true, default: 5 },

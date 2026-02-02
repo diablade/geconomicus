@@ -5,7 +5,7 @@ import { validate } from '../../misc/validate.tool.js';
 
 const router = express.Router();
 
-router.get('/:sessionId/:avatarIdx', validate(sanitize.getByIdx, true), AvatarController.getByIdx);
+router.get('/:sessionId/:avatarIdx/:fetchSession', validate(sanitize.getByIdx, true), AvatarController.getByIdx);
 // router.get('/:sessionId/:avatarId/rules', validate(sanitize.getById, true), AvatarController.getAvatarWithRules);
 router.post('/join', validate(sanitize.join), AvatarController.join);
 router.put('/update', validate(sanitize.update), AvatarController.update);

@@ -16,16 +16,19 @@ export const C = {
     REMIND_DEAD: "rd",
 
     //SESSION STATUS
+    CREATED:         "created",
     OPEN:            'open',
     UPDATED_SESSION: "us",
-    IN_PROGRESS:     'progress',
+    IN_PROGRESS:     'in_progress',
     ENDED:           'ended',
-    END_GAME:        'end-game',
-    STARTED:         'started',
-    PLAYING:         'playing',
-    PAUSING:         'pausing',
-    WAITING:         'waiting',
-    STOPED:          'stoped',
+
+    //legacy
+    END_GAME: 'end_game',
+    STARTED:  'started',
+    PLAYING:  'playing',
+    PAUSING:  'pausing',
+    WAITING:  'waiting',
+    STOPED:   'stoped',
 
     NEW_AVATAR:         "na",
     UPDATED_AVATAR:     "ua",
@@ -54,7 +57,7 @@ export const C = {
     DEFAULT_CREDIT:  "default-credit",
     CREDIT_DONE:     "credit-done",
 
-    //GAME STATE SOCKET EVENTS :
+    //SOCKET events :
     EVENT:                'event',
     RESET:                'reset',
     TIMER_LEFT:           'tl',

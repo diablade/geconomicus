@@ -1,3 +1,46 @@
+:host * {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Pour les éléments qui apparaissent/disparaissent */
+.fade-enter {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-leave {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.lobby-master {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 .geco {
   width: 200px;
   margin-top: 10px;
@@ -5,7 +48,7 @@
 }
 
 .templateQrCode {
-  margin: auto;
+  //margin: auto;
   text-align: center;
   background-image: url("/assets/images/templateJoinQrCode.svg");
   background-size: cover;
@@ -14,26 +57,24 @@
 }
 
 .guny {
-  width: 300px;
+  width: 250px;
 }
 
-.bienvenue {
-  position: relative;
-  top: 25px;
-  left: 25%;
+.bulleGuny {
+  z-index: 2;
+  position: absolute;
+  top: -65px;
+  text-align: center;
+  width: 350px;
 }
 
-.svg {
-  left: 6px;
-  top: 76px;
-  position: relative;
-}
+.content-item {
+  width: 400px;
+  height: 400px;
 
-.partyLeft {
-  padding: 10px;
-
-  .text {
-    height: 20px;
+  .inner-item {
+    height: 240px;
+    position: relative;
   }
 }
 
@@ -51,107 +92,33 @@
   }
 }
 
-.innerQr {
-  display: flex;
-  flex-grow: 1;
-  justify-content: center;
+.joinQr {
+  margin-left: 5px;
 }
 
-.input {
-  width: 135px;
-}
-
-.imgText {
-  width: 200px;
-}
-
-.itemRight {
-  justify-content: start;
-}
-
-.itemLeft {
-  justify-content: end;
-}
-
-.videoCard {
-  object-fit: cover;
-  width: 200px;
-  height: 200px;
-  border-radius: 200px;
-  margin: 10px;
-  box-shadow: 2px 2px 10px -2px black;
-}
-
-.countDownContainer {
-  display: block;
-  position: relative;
-
-  .time {
-    font-size: 65px;
-    position: absolute;
-    display: flex;
-    top: 46%;
-    left: 23%;
-  }
-}
-
-.deuxpoints {
-  line-height: 10px;
-}
-
-.imgCardValeur {
-  height: 50px;
-  border-radius: 4px;
-}
-
-.player {
-  margin: 5px;
-  justify-content: space-between;
-
-  &-frame {
-    background: white;
-  }
-
-  &-action {
-    height: 20px;
-  }
-
-  .joinQr {
-    margin-left: 5px;
-  }
-
-  .delete {
-    padding: 2px;
-    margin-left: 5px;
-    cursor: pointer;
-    z-index: 10;
-    color: #f44336;
-  }
-}
-
-.backgroundPlayers {
-  padding: 5px;
-  overflow: auto;
-  height: 100%;
-  min-height: 400px;
-
-  &-Small {
-    padding: 5px;
-    max-height: 350px;
-  }
-}
-
-.dead {
-  position: relative;
-  left: 15%;
-  top: 43%;
-  font-size: 50px;
-}
-
-.deadprompt {
-  position: relative;
+.delete {
+  padding: 2px;
+  margin-left: 5px;
   cursor: pointer;
-  left: 15%;
-  top: 43%;
-  font-size: 50px;
+  z-index: 10;
+  color: #f44336;
+}
+
+.games {
+  animation: fade 2s;
+}
+
+.game {
+  width: 200px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &-empty {
+    border: 4px dashed #333;
+  }
+}
+
+.hide {
+  opacity: 0;
+  display: none;
 }

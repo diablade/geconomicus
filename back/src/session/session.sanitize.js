@@ -23,6 +23,13 @@ export const sanitize = {
         devMode: Joi.boolean().default(false),
         theme: Joi.string().default("CLASSIC")
     }).required(),
+    start: Joi.object({
+        sessionId: Joi.string().custom(isValidObjectId).required()
+            .messages({
+                'any.invalid': 'Invalid session ID format',
+                'any.required': 'Session ID is required'
+            }),
+    }).required(),
     update: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
             .messages({
