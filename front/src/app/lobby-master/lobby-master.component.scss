@@ -60,14 +60,6 @@
   width: 250px;
 }
 
-.bulleGuny {
-  z-index: 2;
-  position: absolute;
-  top: -65px;
-  text-align: center;
-  width: 350px;
-}
-
 .content-item {
   width: 400px;
   height: 400px;
@@ -106,10 +98,12 @@
 
 .games {
   animation: fade 2s;
+  display: flex;
+  align-items: center;
 }
 
 .game {
-  width: 200px;
+  width: 180px;
   border-radius: 50%;
   cursor: pointer;
 

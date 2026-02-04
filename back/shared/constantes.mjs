@@ -77,6 +77,7 @@ export const C = {
     SHORT_CODE_CONFIRMED: "scc",
     SHORT_CODE_BROADCAST: "scbc",
     REFRESH_FORCE:        "rf",
+    CREATED_GAME_STATE:   "cgs",
 };
 
 export default C;

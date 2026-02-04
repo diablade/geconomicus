@@ -1,7 +1,7 @@
 <div class="join sunyBg h-100">
 	<h1 class="shadowed gecoFont">{{ "JOIN.TITLE" | translate }}</h1>
 	<!--  GUNY  -->
-	<div class="mt-4 text-center bulle gecoFont">{{ "JOIN.GUNY_INTRO" | translate }} <br> {{
+	<div class="mt-4 text-center bulle bulle-point gecoFont">{{ "JOIN.GUNY_INTRO" | translate }} <br> {{
             "JOIN.GUNY_INTRO2" |
                 translate
 		}}
@@ -15,7 +15,5 @@
 			<input matInput required [(ngModel)]="name" (keydown.enter)="join()">
 		</mat-form-field>
 	</div>
-	<div>
-		<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
-	</div>
+	<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">{{ "JOIN.GO_BUTTON" | translate }}</button>
 </div>

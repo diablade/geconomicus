@@ -78,6 +78,7 @@ declare const C: {
 	SHORT_CODE_CONFIRMED: string,
 	SHORT_CODE_BROADCAST: string,
 	REFRESH_FORCE: string,
+	CREATED_GAME_STATE: string,
 };
 
 export default C;

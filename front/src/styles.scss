@@ -26,21 +26,21 @@ body {
   font-weight: bold;
 
   text-shadow: //TOP
-    0px -1.5px 0px black,
-    //TOP RIGHT
-    1.5px -1.5px 0px black,
-    //RIGHT
-    1.5px 0px 0px black,
-    //BOTTOM
-    0px 1.5px 0px black,
-    //BOTTOM RIGHT
-    1.5px 1.5px 0px black,
-    //BOTTOM LEFT
-    -1.5px 1.5px 0px black,
-    //LEFT
-    -1.5px 0px 0px black,
-    //TOP LEFT
-    -1.5px -1.5px 0px black,
+          0px -1.5px 0px black,
+            //TOP RIGHT
+          1.5px -1.5px 0px black,
+            //RIGHT
+          1.5px 0px 0px black,
+            //BOTTOM
+          0px 1.5px 0px black,
+            //BOTTOM RIGHT
+          1.5px 1.5px 0px black,
+            //BOTTOM LEFT
+          -1.5px 1.5px 0px black,
+            //LEFT
+          -1.5px 0px 0px black,
+            //TOP LEFT
+          -1.5px -1.5px 0px black,
 }
 
 .sunyBg {
@@ -53,30 +53,30 @@ body {
 .shadowed {
   color: white;
   text-shadow: //TOP
-    0px -1.5px 0px black,
-    //TOP RIGHT
-    1.5px -1.5px 0px black,
-    //RIGHT
-    1.5px 0px 0px black,
-    //BOTTOM
-    0px 1.5px 0px black,
-    //BOTTOM RIGHT
-    1.5px 1.5px 0px black,
-    //BOTTOM LEFT
-    -1.5px 1.5px 0px black,
-    //LEFT
-    -1.5px 0px 0px black,
-    //TOP LEFT
-    -1.5px -1.5px 0px black,
-    //la trainé vers en bas à droite
-    1px 1px 0px black,
-    2px 2px 0px black,
-    3px 3px 0px black,
-    4px 4px 0px black,
-    1px 1px 1px black,
-    2px 2px 1px black,
-    3px 3px 1px black,
-    4px 4px 1px black;
+          0px -1.5px 0px black,
+            //TOP RIGHT
+          1.5px -1.5px 0px black,
+            //RIGHT
+          1.5px 0px 0px black,
+            //BOTTOM
+          0px 1.5px 0px black,
+            //BOTTOM RIGHT
+          1.5px 1.5px 0px black,
+            //BOTTOM LEFT
+          -1.5px 1.5px 0px black,
+            //LEFT
+          -1.5px 0px 0px black,
+            //TOP LEFT
+          -1.5px -1.5px 0px black,
+            //la trainé vers en bas à droite
+          1px 1px 0px black,
+          2px 2px 0px black,
+          3px 3px 0px black,
+          4px 4px 0px black,
+          1px 1px 1px black,
+          2px 2px 1px black,
+          3px 3px 1px black,
+          4px 4px 1px black;
 }
 
 .gecoFont {
@@ -99,6 +99,10 @@ body {
   padding: 12px;
   border-radius: 200px;
   z-index: 2;
+
+  &-point {
+    position: relative;
+  }
 }
 
 .bulle::after {
@@ -213,8 +217,8 @@ body {
 /* twemoji */
 .twemoji {
   font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
-    'EmojiOne Color', 'Android Emoji', sans-serif;
+  'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+  'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
 /* Target landscape mode */

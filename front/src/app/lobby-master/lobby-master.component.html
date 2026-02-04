@@ -1,8 +1,8 @@
-<div class="d-flex flex-column lobby-master">
+<div class="h-100 d-flex flex-column lobby-master">
 	<!-- HEADER  -->
-	<div class="d-flex flex-row justify-content-between">
+	<div class="d-flex flex-row justify-content-between flex-wrap">
 		<img class="geco" src="./assets/images/geconomicus.png" alt="">
-		<div class="d-flex flex-row align-items-center">
+		<div class="d-flex flex-row align-items-center flex-wrap gap-2">
 			<app-tasklist-btn [stroked]="true"></app-tasklist-btn>
 			<app-notice-btn [amountCardsForProd]="4" [timerCredit]="5" [stroked]="true"></app-notice-btn>
 			<app-language-btn [short]="true"></app-language-btn>
@@ -19,25 +19,25 @@
 	</div>
 	<!-- CONTENT  -->
 	<div class="d-flex flex-row flex-wrap gap-4 "
-		[ngClass]="session.status==='open' ? 'justify-content-center' : 'justify-content-evenly mt-5'">
+	     [ngClass]="session.status==='open' ? 'justify-content-center' : 'justify-content-evenly'">
 		<!-- QR CODE    -->
 		<div [ngClass]="session.status==='open' ? 'content-item' : 'hide'">
 			<div class="templateQrCode">
 				<div class="qrcodeImage">
 					<ngx-kjua [size]="230" [text]="joinLink" [render]="'svg'" [fontcolor]="'#FF9818'"
-						[fontname]="'arial'" [mode]="'label'" [mSize]="14" [ecLevel]="'H'" [crisp]="true"
-						[label]="session.shortId"></ngx-kjua>
+					          [fontname]="'arial'" [mode]="'label'" [mSize]="14" [ecLevel]="'H'" [crisp]="true"
+					          [label]="session.shortId"></ngx-kjua>
 				</div>
 			</div>
 		</div>
 		<!--  GUNY  -->
 		<div class="content-item d-flex flex-column justify-content-center align-items-center">
 			<div class=" inner-item d-flex flex-column justify-content-center align-items-center">
-				<div *ngIf="session.status==='open'" class="bulle bulleGuny">
+				<div *ngIf="session.status==='open'" class="bulle bulle-point">
 					{{ "MASTER.GUNY_WELCOME"| translate }}
 					{{ "MASTER.SCAN_QR" | translate: {webHost: environment.WEB_HOST} }}
 				</div>
-				<div *ngIf="session.status!=='open'" class="bulle bulleGuny">
+				<div *ngIf="session.status!=='open'" class="bulle bulle-point">
 					{{ "MASTER.GUNY_ENJOY"| translate }}
 				</div>
 				<img class="guny" src="./assets/images/guny.png" alt="">
@@ -45,38 +45,42 @@
 		</div>
 		<!--  OPTIONS  -->
 		<div *ngIf="session.status==='open'"
-			class="content-item d-flex flex-column justify-content-center align-items-center">
+		     class="content-item d-flex flex-column justify-content-center align-items-center">
 			<div class="inner-item d-flex flex-column">
 				<button class="mb-2" [color]="'accent'" mat-raised-button (click)="editSession()">{{
-					"MASTER.EDIT"|translate }}
+                        "MASTER.EDIT"|translate
+					}}
 					<fa-icon [icon]="faCogs"></fa-icon>
 				</button>
 				<div class="gecoFont fs-5">{{ "ANIMATOR"| translate }}: {{ session.animator }}</div>
 				<div class="gecoFont fs-5 mt-4">{{
-					"MASTER.LOCATION"|
-					translate
+                        "MASTER.LOCATION"|
+                            translate
 					}}:{{ session.location|translate }}
 				</div>
 				<div class="gecoFont fs-5 mt-4">{{ "MASTER.THEME"| translate }}: {{ session.theme |translate }}
 				</div>
 				<div class="flex-grow-1"></div>
 				<button class="" [color]="'primary'" [disabled]="session.players.length < 6 && !session.devMode"
-					mat-raised-button (click)="startSession()">
+				        mat-raised-button (click)="startSession()">
 					{{
-					session.players.length < 6 && !session.devMode ? ("MASTER.WAITING" | translate: { count: 6 -
-						session.players.length }) : ("MASTER.START" | translate) }} <fa-icon [icon]="faPeopleRoof">
-						</fa-icon>
+                        session.players.length < 6 && !session.devMode ? ("MASTER.WAITING" | translate: {
+                            count: 6 - session.players.length
+                        }) : ("MASTER.START" | translate)
+					}}
+					<fa-icon [icon]="faPeopleRoof">
+					</fa-icon>
 				</button>
 			</div>
 		</div>
 		<div *ngIf="session.status!=='open'" class="content-item games">
 			<div class="inner-item ">
-				<div class="d-flex flex-row gap-2">
+				<div class="d-flex flex-row gap-1">
 					<div *ngFor="let rule of session.gamesRules" class="game flex-wrap ">
 						<div class="d-flex flex-column align-items-center">
 							<coin [coinImage]="'./assets/images/'+rule.typeMoney+'.png'"
-								[label]="(rule.typeMoney === C.JUNE ? 'FREE_MONEY' :'DEBT_MONEY') | translate"
-								(click)="rule.rotate = !rule.rotate" [forceRotate]="rule.rotate">
+							      [label]="(rule.typeMoney === C.JUNE ? 'FREE_MONEY' :'DEBT_MONEY') | translate"
+							      (click)="rule.rotate = !rule.rotate" [forceRotate]="rule.rotate">
 							</coin>
 							<div class="fs-7 text-center">
 								{{ rule.gameStatus === C.CREATED ? ("MASTER.GAME_NOT_PLAYED" | translate) : '' }}
@@ -84,22 +88,22 @@
 								{{ rule.gameStatus === C.ENDED ? ("MASTER.GAME_ENDED" | translate) : '' }}
 							</div>
 							<button *ngIf="session.devMode && rule.gameStatus===C.CREATED" class="m-2"
-								mat-stroked-button color="warn" (click)="editRules(rule)">
+							        mat-stroked-button color="warn" (click)="editRules(rule)">
 								{{ "MASTER.EDIT_RULES" | translate }}
 								<fa-icon [icon]="faCogs"></fa-icon>
 							</button>
 							<button *ngIf="rule.gameStatus===C.CREATED" class="m-2" mat-stroked-button
-								(click)="launchGame()">
+							        (click)="launchGame()">
 								{{ "MASTER.LAUNCH" | translate }}
 								<fa-icon [icon]="faRightToBracket"></fa-icon>
 							</button>
 							<button *ngIf="rule.gameStatus===C.OPEN" class="m-2" mat-stroked-button
-								(click)="enterGame()">
+							        (click)="enterGame()">
 								{{ "MASTER.ENTER_GAME" | translate }}
 								<fa-icon [icon]="faRightToBracket"></fa-icon>
 							</button>
 							<button *ngIf="rule.gameStatus===C.ENDED" class="m-2" mat-stroked-button
-								(click)="showResults()">
+							        (click)="showResults()">
 								{{ "MASTER.SHOW_RESULTS" | translate }}
 								<fa-icon [icon]="faEye"></fa-icon>
 							</button>
@@ -115,8 +119,8 @@
 		</div>
 	</div>
 	<!-- FOOTER and PLAYERS  -->
-	<div class="flex-grow-1" [ngClass]="session.status===C.OPEN ? '' : 'mt-5'">
-		<div class="h-100 d-flex flex-column mt-5">
+	<div class="flex-grow-1 mt-5" [ngClass]="session.status===C.OPEN ? '' : ''">
+		<div class="d-flex flex-column h-100">
 			<div class="text-center">
 				<h2 class="fs-3 shadowed gecoFont">{{ "MASTER.USERS_CONNECTED"|translate }}</h2>
 				<div class="text-center" [ngClass]="session.status===C.OPEN ? '' : 'hide'">
@@ -131,9 +135,9 @@
 						<div class="d-flex flex-row justify-content-center player-action">
 							<a href="{{createAvatarUrl(player.idx)}}" target="_blank">{{ player.name }} </a>
 							<fa-icon class="joinQr" (click)="reJoin(player.idx, player.name)"
-								[icon]="faQrcode"></fa-icon>
+							         [icon]="faQrcode"></fa-icon>
 							<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"
-								[icon]="faTrashCan"></fa-icon>
+							         [icon]="faTrashCan"></fa-icon>
 						</div>
 						<avatar [avatar]="player" [width]="'120px'" [height]="'120px'"></avatar>
 					</div>
