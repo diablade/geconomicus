@@ -1,9 +1,9 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {Component, Inject} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 // @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
-import { I18nService } from '../../services/i18n.service';
-import { Rules } from 'src/app/models/rules';
+import {C} from "../../../../../back/shared/constantes.mjs";
+import {I18nService} from '../../services/i18n.service';
+import {Rules} from 'src/app/models/rules';
 
 @Component({
 	selector: 'app-game-options-dialog',
@@ -24,18 +24,11 @@ export class GameOptionsDialogComponent {
 		this.i18n.loadNamespace("option");
 		this.game = data.rules;
 		this.playersLength = data.playersLength;
-	}
 
-	onNoClick() {
-		this.dialogRef.close("cancel");
-	}
-
-	onReset() {
-		this.dialogRef.close("reset");
+		//TODO return object should be only modified Partial rules, not all rules
 	}
 
 	getTranslate(key: string): string {
 		return this.i18n.instant(key);
 	}
-
 }

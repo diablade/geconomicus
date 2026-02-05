@@ -7,6 +7,7 @@ import { C } from "../../../../../back/shared/constantes.mjs";
 import {DeprecatedBackService} from "../../services/deprecated-back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import {getBackgroundStyle} from "../../services/tools";
 
 @Component({
 	selector: 'app-seizure-dialog',
@@ -52,22 +53,6 @@ export class SeizureDialogComponent implements OnInit {
 			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 		} else {
 			transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
-		}
-	}
-
-	getBackgroundStyle(bank: string) {
-		if (bank) {
-			return {"background-color": "#ffd89b"};
-		} else {
-			switch (this.player?.boardConf) {
-				case "green":
-					return {"background-image": "url('/assets/images/green-carpet.jpg')"};
-				case "custom":
-					return {"background-color": "" + this.player.boardColor};
-				case "wood":
-				default:
-					return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
-			}
 		}
 	}
 
@@ -124,4 +109,6 @@ export class SeizureDialogComponent implements OnInit {
 		}
 		return this.playerCards.length > 0 ? 0 : 1;
 	}
+
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

@@ -1,13 +1,14 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from "@angular/router";
-import { Avatar } from "../models/avatar";
-import { AvatarService } from "../services/api/avatar.service";
-import { Subscription } from "rxjs";
-import { WebSocketService } from "../services/web-socket.service";
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {Avatar} from "../models/avatar";
+import {AvatarService} from "../services/api/avatar.service";
+import {Subscription} from "rxjs";
+import {WebSocketService} from "../services/web-socket.service";
 import C from "../../../../back/shared/constantes.mjs";
-import { I18nService } from "../services/i18n.service";
-import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
-import { Session } from "../models/session";
+import {I18nService} from "../services/i18n.service";
+import {faPencil, faRightToBracket} from '@fortawesome/free-solid-svg-icons';
+import {Session} from "../models/session";
+import {getBackgroundStyle} from "../services/tools";
 
 @Component({
 	selector: 'app-lobby-player',
@@ -29,10 +30,10 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	faPencil = faPencil;
 
 	constructor(private avatarService: AvatarService,
-		private route: ActivatedRoute,
-		private router: Router,
-		private i18n: I18nService,
-		private ws: WebSocketService) {
+	            private route: ActivatedRoute,
+	            private router: Router,
+	            private i18n: I18nService,
+	            private ws: WebSocketService) {
 		this.i18n.loadNamespace("avatar");
 	}
 
@@ -53,11 +54,11 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngAfterViewInit() {
 		this.socket.on(C.NEW_GAMES_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({ status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
 			// this.session.gamesRules = this.session.gamesRules.push(data.game);
 		});
 		this.socket.on(C.UPDATED_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({ status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
 			this.session.gamesRules = this.session.gamesRules.map((game: any) => {
 				if (game.id === data.game.id) {
 					return data.game;
@@ -106,19 +107,9 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 		window.location.reload();
 	}
 
-	getBackgroundStyle() {
-		switch (this.avatar.boardConf) {
-			case "green":
-				return { "background-image": "url('/assets/images/green-carpet.jpg')" };
-			case "custom":
-				return { "background-color": "" + this.avatar.boardColor };
-			case "wood":
-			default:
-				return { "background-image": "url('/assets/images/woodJapAlt.jpg')" };
-		}
-	}
-
 	goToAvatarSettings() {
 		this.router.navigate(['avatar', this.sessionId, this.avatarIdx, 'settings']);
 	}
+
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

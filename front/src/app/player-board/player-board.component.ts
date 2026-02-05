@@ -30,6 +30,7 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
 import {ThemesService} from '../services/themes.service';
+import {getBackgroundStyle} from "../services/tools";
 
 @Component({
 	selector: 'app-player-board',
@@ -594,18 +595,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	getBackgroundStyle() {
-		switch (this.player.boardConf) {
-			case "green":
-				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
-			case "custom":
-				return {"background-color": "" + this.player.boardColor};
-			case "wood":
-			default:
-				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
-		}
-	}
-
 	requestingWhenCreditEnds(credit: Credit, beep: boolean) {
 		this.player.status = "needAnswer";
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -777,4 +766,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.produceLevelUp({letter: recipe.letter, weight: recipe.weight});
 		}
 	}
+
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

@@ -1,29 +1,29 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { Session } from "../models/session";
-import { Avatar } from "../models/avatar";
-import { SessionService } from "../services/api/session.service";
-import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
-import { environment } from "../../environments/environment";
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {Session} from "../models/session";
+import {Avatar} from "../models/avatar";
+import {SessionService} from "../services/api/session.service";
+import {ActivatedRoute} from "@angular/router";
+import {Subscription} from "rxjs";
+import {environment} from "../../environments/environment";
 import {
 	faQrcode, faCogs, faTrashCan, faEye,
 	faRightToBracket, faPencil, faPeopleRoof
 } from '@fortawesome/free-solid-svg-icons';
-import { MatDialog } from "@angular/material/dialog";
-import { SnackbarService } from "../services/snackbar.service";
+import {MatDialog} from "@angular/material/dialog";
+import {SnackbarService} from "../services/snackbar.service";
 // @ts-ignore
 import C from "../../../../back/shared/constantes.mjs";
-import { WebSocketService } from "../services/web-socket.service";
-import { I18nService } from "../services/i18n.service";
-import { AudioService } from '../services/audio.service';
+import {WebSocketService} from "../services/web-socket.service";
+import {I18nService} from "../services/i18n.service";
+import {AudioService} from '../services/audio.service';
 import * as _ from 'lodash-es';
-import { ReJoinQrDialogComponent } from "../dialogs/re-join-qr-dialog/re-join-qr-dialog.component";
-import { AvatarService } from "../services/api/avatar.service";
-import { SessionEditDialogComponent } from "../dialogs/session-edit/session-edit-dialog.component";
-import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
-import { GameStateService } from "../services/api/game-state.service";
-import { GameOptionsDialogComponent } from '../dialogs/game-options-dialog/game-options-dialog.component';
-import { Rules } from '../models/rules';
+import {ReJoinQrDialogComponent} from "../dialogs/re-join-qr-dialog/re-join-qr-dialog.component";
+import {AvatarService} from "../services/api/avatar.service";
+import {SessionEditDialogComponent} from "../dialogs/session-edit/session-edit-dialog.component";
+import {ConfirmDialogComponent} from '../dialogs/confirm-dialog/confirm-dialog.component';
+import {GameStateService} from "../services/api/game-state.service";
+import {GameOptionsDialogComponent} from '../dialogs/game-options-dialog/game-options-dialog.component';
+import {Rules} from '../models/rules';
 
 @Component({
 	selector: 'app-lobby-master',
@@ -49,14 +49,14 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	faPeopleRoof = faPeopleRoof;
 
 	constructor(private route: ActivatedRoute,
-		private sessionService: SessionService,
-		private avatarService: AvatarService,
-		private gameStateService: GameStateService,
-		private snackbarService: SnackbarService,
-		private wsService: WebSocketService,
-		private i18nService: I18nService,
-		private audioService: AudioService,
-		public dialog: MatDialog) {
+	            private sessionService: SessionService,
+	            private avatarService: AvatarService,
+	            private gameStateService: GameStateService,
+	            private snackbarService: SnackbarService,
+	            private wsService: WebSocketService,
+	            private i18nService: I18nService,
+	            private audioService: AudioService,
+	            public dialog: MatDialog) {
 		this.i18nService.loadNamespace("master");
 	}
 
@@ -93,7 +93,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	onDeleteUser(player: Avatar) {
 		this.avatarService.deleteAvatar(player.idx, this.sessionId).subscribe((res: any) => {
 			if (res.acknowledged) {
-				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LOBBY.DELETE_PLAYER_SUCCESS", { player: player.name }));
+				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LOBBY.DELETE_PLAYER_SUCCESS", {player: player.name}));
 				this.session.players = this.session.players.filter(p => p.idx !== res.avatarIdx);
 			}
 		});
@@ -122,14 +122,14 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	editSession() {
 		const dialogRef = this.dialog.open(SessionEditDialogComponent, {
-			data: { session: _.clone(this.session) },
+			data: {session: _.clone(this.session)},
 		});
 		dialogRef.afterClosed().subscribe(results => {
 			if (results) {
 				this.sessionService.update(this.sessionId, results).subscribe(() => {
 					this.snackbarService.showSuccess(this.i18nService.instant("MASTER.SAVED"));
 				});
-				this.session = { ...results };
+				this.session = {...results};
 			}
 		});
 	}
@@ -155,14 +155,16 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	editRules(rules: Rules) {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-			data: { rules: _.clone(rules), playersLength: this.session.players.length },
+			data: {rules: _.clone(rules), playersLength: this.session.players.length},
 		});
 		dialogRef.afterClosed().subscribe(results => {
-			if (results) {
+			if (results === "reset") {
+
+			} else if (results) {
 				this.sessionService.update(this.sessionId, results).subscribe(() => {
 					this.snackbarService.showSuccess(this.i18nService.instant("MASTER.SAVED"));
 				});
-				this.session = { ...results };
+				this.session = {...results};
 			}
 		});
 	}

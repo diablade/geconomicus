@@ -8,6 +8,7 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 import {AvatarService} from "../services/api/avatar.service";
 import {Avatar} from "../models/avatar";
 import {I18nService} from "../services/i18n.service";
+import {getBackgroundStyle} from "../services/tools";
 
 @Component({
 	selector: 'app-player-settings',
@@ -26,6 +27,7 @@ export class PlayerSettingsComponent implements OnInit, AfterViewInit, OnDestroy
 	faWandMagicSparkles = faWandMagicSparkles;
 	faCamera = faCamera;
 	scanV3 = true;
+	getBackgroundStyle = getBackgroundStyle;
 
 	skin = "#f2d3b1";
 	hairColor = "#ac6511";
@@ -92,20 +94,14 @@ export class PlayerSettingsComponent implements OnInit, AfterViewInit, OnDestroy
 		});
 	}
 
-	onChangeSysScan() {
-		this.localStorageService.setItem('scanV3', this.scanV3);
+	changeBoardColor(color: string) {
+		console.log(color);
+		this.avatar.boardColor = color;
+		// this.updateSvg();
 	}
 
-	getBackgroundStyle() {
-		switch (this.avatar?.boardConf) {
-			case "green":
-				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
-			case "custom":
-				return {"background-color": "" + this.avatar.boardColor};
-			case "wood":
-			default:
-				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
-		}
+	onChangeSysScan() {
+		this.localStorageService.setItem('scanV3', this.scanV3);
 	}
 
 	changeEyes(increment: boolean) {

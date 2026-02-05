@@ -11,6 +11,7 @@ import { adventurer } from '@dicebear/collection';
 import { createAvatar, Options as Opt } from '@dicebear/core';
 // @ts-ignore
 import { C } from '../../../../back/shared/constantes.mjs';
+import {getBackgroundStyle} from "../services/tools";
 
 @Component({
 	selector: 'app-master-admin',
@@ -78,18 +79,6 @@ export class MasterAdminComponent implements OnInit {
 				}
 			});
 		});
-	}
-
-	getBackgroundStyle(player: Player) {
-		switch (player.boardConf) {
-			case "green":
-				return { "background-image": "url('/assets/images/green-carpet.jpg')" };
-			case "custom":
-				return { "background-color": "" + player.boardColor };
-			case "wood":
-			default:
-				return { "background-image": "url('/assets/images/woodJapAlt.jpg')" };
-		}
 	}
 
 	getSanitizedSvgFromString(svgString: string): SafeHtml {
@@ -213,4 +202,6 @@ export class MasterAdminComponent implements OnInit {
 	getUserUrl(idPlayer: string) {
 		return environment.WEB_HOST + '/ogame/' + this.idGame + '/player/' + idPlayer;
 	}
+
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

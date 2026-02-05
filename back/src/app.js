@@ -42,7 +42,9 @@ app.use(cors({
 // 	next();
 // });
 const botPattern = /bot|crawler|spider|crawling/i;
-const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
+// const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
+const acceptedPathToBeLogged = /^\/(bank|game|player|session|rules|survey|event|avatar|gameState|bankState|status)(\/|$)/;
+
 // Middleware to block bots
 app.use((req, res, next) => {
     if (botPattern.test(req.headers['user-agent'])) {

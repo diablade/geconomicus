@@ -38,8 +38,8 @@ if (env.environment !== "test") {
         };
         log.info('Memory usage:', memoryUsage);
     }, 3600000); // Log every hours
-
 }
+
 server.listen(env.port, '0.0.0.0', () => {
     log.info("\n" + "   ____                                      _                \n" + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
         + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"

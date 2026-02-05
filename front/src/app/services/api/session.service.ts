@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { catchError, Observable } from "rxjs";
-import { Session } from "../../models/session";
-import { environment } from "../../../environments/environment";
-import { ERROR, ErrorService } from "../error.service";
+import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+import {catchError, Observable} from "rxjs";
+import {Session} from "../../models/session";
+import {environment} from "../../../environments/environment";
+import {ERROR, ErrorService} from "../error.service";
+import {Rules} from "../../models/rules";
 
 @Injectable({
 	providedIn: 'root'
@@ -54,9 +55,10 @@ export class SessionService {
 			);
 	}
 
-	update(sessionId: string, updates: Partial<Session>) {
+	update(sessionId: string, updates: Partial<Rules>) {
 		return this.http.put<any>(environment.API_HOST + environment.SESSION.UPDATE, {
 			sessionId,
+			ruleIdx: updates.idx,
 			updates
 		})
 			.pipe(

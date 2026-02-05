@@ -1,6 +1,7 @@
 {
     "OPTION": {
         "TITLE": "Options avancées",
+        "SURVEY_Q": "Sondage de fin de partie ?",
         "WARNING": "⚠️ Attention ⚠️, modifiez uniquement si vous savez ce que vous faites !!!!\nSinon, en cas d'erreur, cliquez sur <span class=\"red\"> \"valeur par défaut\"</span> !",
         "DURATION": "Durée de la manche en minutes",
         "DEATH": "Mort automatique",

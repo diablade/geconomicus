@@ -209,7 +209,7 @@
 	<h2 class="mt-5">Players alive</h2>
 	<div class="d-flex flex-row flex-wrap">
 		<div *ngFor="let player of getAlivePlayers()" class="">
-			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player)">
+			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
 				<button mat-button class="relod" (click)="forceRefreshPlayer(player)">🔄️ send refresh</button>
 				<div class="header-board d-flex flex-row p-2">
 					<a href="{{getUserUrl(player._id)}}" target="_blank" style="text-decoration: none; color: inherit;">
@@ -246,7 +246,7 @@
 	<h2 class="mt-5">Players dead (as reminder of their cards and money) (the cards were back in decks)</h2>
 	<div class="d-flex flex-row flex-wrap">
 		<div *ngFor="let player of getDeadPlayers()" class="">
-			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player)">
+			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
 				<div [ngClass]="player.status==='dead'?'dead':'alive'"></div>
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">

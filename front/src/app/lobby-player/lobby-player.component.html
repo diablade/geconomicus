@@ -1,4 +1,4 @@
-<div class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
+<div class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle(avatar.boardConf, avatar.boardColor)">
 	<div class="m-4 gecoFont shadowed text-center fs-1" (click)="refresh()">{{ "AVATAR.LOBBY" | translate }}</div>
 	<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
 		<div class="gecoFont shadowed text-center fs-6" (click)="refresh()">{{ session.name }}</div>

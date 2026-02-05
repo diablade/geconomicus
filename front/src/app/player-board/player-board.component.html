@@ -28,7 +28,7 @@
 		</button>
 	</div>
 </div>
-<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
+<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
 	<div class="titleBar d-flex flex-row">
 		<div class="position-relative" (click)="refresh()">
 			<div class="coin-container" [ngSwitch]="game.typeMoney">

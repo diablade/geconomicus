@@ -18,8 +18,16 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.imgSmall {
-  height: 42px;
+.thumbnail-bg {
+  height: 40px;
+  width: 40px;
+  border-radius: 15%;
+  border: solid white 4px;
+  box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.4);
+}
+
+.boardConf {
+  max-width: 300px;
 }
 
 .optionsLabel {

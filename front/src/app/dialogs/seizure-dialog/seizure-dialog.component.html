@@ -6,7 +6,7 @@
 			     id="player-cards"
 			     (cdkDropListDropped)="onDrop($event)"
 			     [cdkDropListData]="playerCards"
-			     [ngStyle]="getBackgroundStyle('')"
+			     [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)"
 			     class="d-flex flex-column player-board m-2">
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">
@@ -43,7 +43,7 @@
 			</div>
 			<div cdkDropList
 			     id="bank-cards"
-			     [ngStyle]="getBackgroundStyle('bank')"
+			     [ngStyle]="getBackgroundStyle('bank', undefined)"
 			     (cdkDropListDropped)="onDrop($event)"
 			     [cdkDropListData]="seizureCards" class="bank-board m-2">
 				<div class="header-board d-flex flex-column">
