@@ -66,9 +66,9 @@ export class SessionService {
 			);
 	}
 
-	delete(idSession: string, password: string) {
+	delete(sessionId: string, password: string) {
 		return this.http.post<any>(environment.API_HOST + environment.SESSION.DELETE, {
-			idSession, password
+			sessionId, password
 		}).pipe(
 			catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.DELETE'))
 		)

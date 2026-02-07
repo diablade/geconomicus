@@ -11,6 +11,6 @@ router.get('/short/:shortId', validate(sanitize.getByShortId, true), SessionCont
 router.post('/create', validate(sanitize.create), SessionController.create);
 router.post('/start', validate(sanitize.start), SessionController.start);
 router.put('/update', validate(sanitize.update), SessionController.update);
-router.delete('/', validate(sanitize.deleteSession), SessionController.delete);
+router.post('/delete', validate(sanitize.deleteSession), SessionController.delete);
 
 export default router;

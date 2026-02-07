@@ -96,7 +96,7 @@ describe("SESSION controller tests", () => {
     });
     describe("SESSION DELETE", () => {
         test("should delete session successfully", async () => {
-            const res = await agent.delete("/session/").send({
+            const res = await agent.post("/session/delete").send({
                 sessionId: sessionId,
                 password: "admin",
             });
