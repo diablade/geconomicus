@@ -54,9 +54,7 @@ export function createSvg(avatar: Avatar): string {
 	return createAvatar(adventurer, options).toString();
 }
 
-export function fixDuplicateHairColors(players: Avatar[]) {
-	const colorsUsed = new Set(players.map((player: Avatar) => player.hairColor));
-
+export function groupeDuplicatedHairColor(players: Avatar[]) {
 	// check player with same hair color
 	const grouped = Object.values(players.reduce((acc: any, player: Avatar) => {
 		const color = player.hairColor;
@@ -67,13 +65,18 @@ export function fixDuplicateHairColors(players: Avatar[]) {
 
 	//remove not grouped avatar
 	const groupedOnly = grouped.filter((group: any) => group.length > 1);
+	return groupedOnly;
+}
 
+export function fixDuplicateHairColors(players: Avatar[]) {
+	const colorsUsed = new Set(players.map((player: Avatar) => player.hairColor));
+	const grouped = groupeDuplicatedHairColor(players);
 	//then change one of those duplicate
 	let playersWithChangedColor: Avatar[] = [];
-	groupedOnly.forEach((group: any) => {
+	grouped.forEach((group: any) => {
 		for (let i = 1; i < group.length; i++) {
-			const paletteAvailable = _.filter(hairPalette, color => !colorsUsed.has(color));
-			const randomIndex = _.random(0, (paletteAvailable.length - 1), false)
+			const paletteAvailable = _.filter(hairPalette.map(c => c.replace("#", "")), color => !colorsUsed.has(color));
+			const randomIndex = _.random(0, (paletteAvailable.length - 1), false);
 			const nextColor = paletteAvailable[randomIndex];
 			colorsUsed.add(nextColor);
 			let player = group[i];
@@ -82,7 +85,6 @@ export function fixDuplicateHairColors(players: Avatar[]) {
 			playersWithChangedColor.push(player);
 		}
 	});
-
 	return playersWithChangedColor;
 }
 

@@ -41,7 +41,7 @@ export class AvatarService {
 	}
 
 	refreshForceAvatar(sessionId: string, avatarIdx: number): Observable<Avatar> {
-		return this.http.put<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
+		return this.http.post<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
 			sessionId,
 			avatarIdx
 		})

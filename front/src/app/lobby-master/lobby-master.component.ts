@@ -23,7 +23,7 @@ import {ConfirmDialogComponent} from '../dialogs/confirm-dialog/confirm-dialog.c
 import {GameStateService} from "../services/api/game-state.service";
 import {GameOptionsDialogComponent} from '../dialogs/game-options-dialog/game-options-dialog.component';
 import {Rules} from '../models/rules';
-import {fixDuplicateHairColors} from "../services/avatarTools";
+import {fixDuplicateHairColors, groupeDuplicatedHairColor} from "../services/avatarTools";
 
 @Component({
 	selector: 'app-lobby-master',
@@ -37,6 +37,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	joinLink = "";
 	private socket: any;
 	deleteUser = false;
+	warningHairColorDuplicate = false;
 	protected readonly environment = environment;
 	C = C;
 
@@ -64,9 +65,14 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.sessionId = params['sessionId'];
 			this.socket = this.wsService.getSocket(this.sessionId, "lobby-master");
+			this.getSession();
 		});
+	}
+
+	getSession() {
 		this.sessionService.getById(this.sessionId).subscribe(session => {
 			this.session = session;
+			this.checkDuplicateHairColors();
 			this.joinLink = environment.WEB_HOST + "join/" + this.sessionId;
 		});
 	}
@@ -79,6 +85,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 				return p;
 			});
+			this.checkDuplicateHairColors();
 		});
 		this.socket.on(C.NEW_AVATAR, (data: any) => {
 			this.session.players.push(data.avatar);
@@ -170,9 +177,23 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 				});
 			}
 		});
+		// this.audioService.play("start");
+		this.checkDuplicateHairColors();
 	}
 
-	async fixHairColor() {
+	checkDuplicateHairColors() {
+		if (this.session.status == C.IN_PROGRESS) {
+			const groupes = groupeDuplicatedHairColor(this.session.players);
+			if (groupes.length > 0) {
+				this.warningHairColorDuplicate = true;
+				this.snackbarService.showError(this.i18nService.instant("WARNING.DUPLICATE_COLOR"));
+			} else {
+				this.warningHairColorDuplicate = false;
+			}
+		}
+	}
+
+	async fixDuplicateHairColor() {
 		const playersWithChangedColor: Avatar[] = fixDuplicateHairColors(this.session.players);
 
 		// update players
@@ -180,17 +201,11 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.avatarService.updateAvatar(this.sessionId, playersWithChangedColor[i].idx, playersWithChangedColor[i]).subscribe(
 				data => {
 					if (data) {
-						this.snackbarService.showSuccess("color applied for player: " + playersWithChangedColor[i].name);
-						this.forceRefreshAvatar(playersWithChangedColor[i]);
+						this.avatarService.refreshForceAvatar(this.sessionId, playersWithChangedColor[i].idx).subscribe();
 					}
 				}
 			);
 		}
-	}
-
-	forceRefreshAvatar(avatar: Avatar) {
-		this.snackbarService.showSuccess("Refresh Sended for player: " + avatar.name);
-		this.avatarService.refreshForceAvatar(this.sessionId, avatar.idx).subscribe();
 	}
 
 	editRules(rules: Rules) {

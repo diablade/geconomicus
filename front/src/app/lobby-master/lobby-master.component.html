@@ -122,7 +122,10 @@
 	<div class="flex-grow-1 mt-5" [ngClass]="session.status===C.OPEN ? '' : ''">
 		<div class="d-flex flex-column h-100">
 			<div class="text-center">
-				<h2 class="fs-3 shadowed gecoFont">{{ "MASTER.USERS_CONNECTED"|translate }}</h2>
+				<h2 class="fs-3 shadowed gecoFont">{{ "MASTER.USERS_CONNECTED"|translate }} <span *ngIf="warningHairColorDuplicate"
+				                                                                                  (click)="fixDuplicateHairColor()" class="mousePointer"
+				                                                                                  [matTooltip]="'WARNING.FIX_DUPLICATE_COLOR'|translate">⚠️</span>
+				</h2>
 				<div class="text-center" [ngClass]="session.status===C.OPEN ? '' : 'hide'">
 					<mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteUser">
 						{{ "MASTER.DELETE_USER" |translate }}

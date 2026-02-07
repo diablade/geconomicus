@@ -65,6 +65,9 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 				return game;
 			});
 		});
+		this.socket.on(C.REFRESH_FORCE, async (data: any) => {
+			this.refresh();
+		});
 		this.socket.on(C.CREATED_GAME_STATE, async (data: any) => {
 			// change status of gameRules
 		});

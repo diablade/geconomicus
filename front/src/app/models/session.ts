@@ -8,7 +8,7 @@ export class Session {
 	location: string = "";
 	shortId: string = "";
 	devMode: boolean = false;
-	status: string = "open";
+	status: string = "open";    //open, in_progress, closed
 	theme: string = "classic";
 	gamesRules: Rules[] = [];
 	gamesRulesCount: number = 0;
