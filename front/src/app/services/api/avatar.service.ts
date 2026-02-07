@@ -12,7 +12,7 @@ export class AvatarService {
 	constructor(public http: HttpClient, private errorService: ErrorService) {
 	}
 
-	getAvatar(sessionId: string, avatarIdx: string, fetchSession: boolean = false): Observable<any> {
+	getAvatar(sessionId: string, avatarIdx: number, fetchSession: boolean = false): Observable<any> {
 		return this.http.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
 			.pipe(
 				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.PLAYER_NOT_FOUND"))
@@ -29,7 +29,7 @@ export class AvatarService {
 			);
 	}
 
-	updateAvatar(sessionId: string, avatarIdx: string, updates: Partial<Avatar>): Observable<Avatar> {
+	updateAvatar(sessionId: string, avatarIdx: number, updates: Partial<Avatar>): Observable<Avatar> {
 		return this.http.put<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
 			sessionId,
 			avatarIdx,
@@ -40,13 +40,18 @@ export class AvatarService {
 			);
 	}
 
-	deleteAvatar(avatarIdx: string, sessionId: string): Observable<any> {
-		return this.http.delete<any>(environment.API_HOST + environment.AVATAR.DELETE, {
-			body: {
-				avatarIdx,
-				sessionId
-			}
+	refreshForceAvatar(sessionId: string, avatarIdx: number): Observable<Avatar> {
+		return this.http.put<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
+			sessionId,
+			avatarIdx
 		})
+			.pipe(
+				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.REFRESH"))
+			);
+	}
+
+	deleteAvatar(sessionId: string, avatarIdx: number): Observable<any> {
+		return this.http.delete<any>(environment.API_HOST + environment.AVATAR.DELETE + '/' + sessionId + '/' + avatarIdx)
 			.pipe(
 				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.DELETE"))
 			);

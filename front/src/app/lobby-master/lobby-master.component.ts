@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {MatDialog} from "@angular/material/dialog";
 import {SnackbarService} from "../services/snackbar.service";
-// @ts-ignore
 import C from "../../../../back/shared/constantes.mjs";
 import {WebSocketService} from "../services/web-socket.service";
 import {I18nService} from "../services/i18n.service";
@@ -24,6 +23,7 @@ import {ConfirmDialogComponent} from '../dialogs/confirm-dialog/confirm-dialog.c
 import {GameStateService} from "../services/api/game-state.service";
 import {GameOptionsDialogComponent} from '../dialogs/game-options-dialog/game-options-dialog.component';
 import {Rules} from '../models/rules';
+import {fixDuplicateHairColors} from "../services/avatarTools";
 
 @Component({
 	selector: 'app-lobby-master',
@@ -72,16 +72,19 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.socket.on(C.UPDATED_AVATAR, (player: Avatar) => {
+		this.socket.on(C.UPDATED_AVATAR, (data: any) => {
 			this.session.players = this.session.players.map(p => {
-				if (p.idx == player.idx) {
-					p = player;
+				if (p.idx == data.updatedAvatar.idx) {
+					p = data.updatedAvatar;
 				}
 				return p;
 			});
 		});
-		this.socket.on(C.NEW_AVATAR, (player: Avatar) => {
-			this.session.players.push(player);
+		this.socket.on(C.NEW_AVATAR, (data: any) => {
+			this.session.players.push(data.avatar);
+		});
+		this.socket.on(C.DELETED_AVATAR, (data: any) => {
+			this.session.players = this.session.players.filter(p => p.idx !== data.avatarIdx);
 		});
 	}
 
@@ -91,23 +94,39 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	onDeleteUser(player: Avatar) {
-		this.avatarService.deleteAvatar(player.idx, this.sessionId).subscribe((res: any) => {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant("MASTER.DELETE_USER"),
+				message: this.i18nService.instant("MASTER.DELETE_USER_CONFIRM", {player: player.name}),
+				labelBtnConfirm: this.i18nService.instant("DELETE"),
+				styleBtnConfirm: "warn"
+			},
+		});
+		dialogRef.afterClosed().subscribe(results => {
+			if (results === "btnConfirm") {
+				this.deletePlayer(player);
+			}
+		});
+	}
+
+	deletePlayer(player: Avatar) {
+		this.avatarService.deleteAvatar(this.sessionId, player.idx).subscribe((res: any) => {
 			if (res.acknowledged) {
-				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LOBBY.DELETE_PLAYER_SUCCESS", {player: player.name}));
+				this.snackbarService.showSuccess(this.i18nService.instant("MASTER.DELETE_PLAYER_SUCCESS", {player: player.name}));
 				this.session.players = this.session.players.filter(p => p.idx !== res.avatarIdx);
 			}
 		});
 	}
 
-	createAvatarUrl(avatarIdx: string) {
+	createAvatarUrl(avatarIdx: number) {
 		return environment.WEB_HOST + "avatar/" + this.sessionId + '/' + avatarIdx;
 	}
 
-	reJoin(avatarId: string, username: string): void {
+	reJoin(avatarIdx: number, username: string): void {
 		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				text: username,
-				url: this.createAvatarUrl(avatarId)
+				url: this.createAvatarUrl(avatarIdx)
 			},
 		});
 		dialogRef.afterClosed().subscribe(() => {
@@ -153,6 +172,27 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
+	async fixHairColor() {
+		const playersWithChangedColor: Avatar[] = fixDuplicateHairColors(this.session.players);
+
+		// update players
+		for (let i = 0; i < playersWithChangedColor.length; i++) {
+			this.avatarService.updateAvatar(this.sessionId, playersWithChangedColor[i].idx, playersWithChangedColor[i]).subscribe(
+				data => {
+					if (data) {
+						this.snackbarService.showSuccess("color applied for player: " + playersWithChangedColor[i].name);
+						this.forceRefreshAvatar(playersWithChangedColor[i]);
+					}
+				}
+			);
+		}
+	}
+
+	forceRefreshAvatar(avatar: Avatar) {
+		this.snackbarService.showSuccess("Refresh Sended for player: " + avatar.name);
+		this.avatarService.refreshForceAvatar(this.sessionId, avatar.idx).subscribe();
+	}
+
 	editRules(rules: Rules) {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
 			data: {rules: _.clone(rules), playersLength: this.session.players.length},
@@ -169,14 +209,21 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	launchGame() {
-		// this.sessionService.launchGame(this.sessionId).subscribe((data: Session) => {
-		//update session
-		//update gameStateId and status
+	launchGame(ruleIdx: number) {
+		this.gameStateService.launch(this.sessionId, ruleIdx).subscribe((data: any) => {
+			this.session.gamesRules = this.session.gamesRules.map((rules) => {
+				if (rules.idx == ruleIdx) {
+					rules.gameStatus = C.CREATED_GAME_STATE;
+					rules.gameStateId = data.gameStateId;
+				}
+				return rules;
+			});
+			// update session
+			//update gameStateId and status
 
-		// this.snackbarService.showSuccess(this.i18nService.instant("MASTER.LAUNCH"));
-		//and redirect to masterBoard ...
-		// });
+			this.snackbarService.showSuccess(this.i18nService.instant("MASTER.GAME_LAUNCHED"));
+			//and redirect to masterBoard ...
+		});
 	}
 
 	enterGame() {

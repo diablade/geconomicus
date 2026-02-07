@@ -55,7 +55,7 @@ AvatarController.update = async (req, res, next) => {
             updates
         } = req.body;
         const updatedAvatar = await AvatarService.update(sessionId, avatarIdx, updates);
-        socket.emitTo(sessionId, C.UPDATED_AVATAR, updatedAvatar);
+        socket.emitTo(sessionId, C.UPDATED_AVATAR, {updatedAvatar});
         return res.status(200).json(updatedAvatar);
     }
     catch (err) {
@@ -71,7 +71,7 @@ AvatarController.delete = async (req, res, next) => {
         } = req.params;
         const ack = await AvatarService.delete(sessionId, avatarIdx);
         if (!ack) {
-            return res.status(404).json({message: "Cannot delete avatar"});
+            return res.status(404).json({message: "ERROR.DELETE_AVATAR"});
         }
         socket.emitTo(sessionId, C.DELETED_AVATAR, {avatarIdx});
         return res.status(200).json({

@@ -1,32 +1,28 @@
 import SessionModel from './../session.model.js';
+import {C} from "#constantes";
 
 const RulesService = {};
 
 RulesService.create = async (sessionId, rules) => {
-    const session = await SessionModel.findOneAndUpdate(
-        { _id: sessionId },
-        [
-            { $set: { rulesIndexSeq: { $ifNull: ['$rulesIndexSeq', 0] } } },
-            { $set: { rulesIndexSeq: { $add: ['$rulesIndexSeq', 1] } } },
-            {
-                $set: {
-                    gamesRules: {
-                        $concatArrays: [
-                            { $ifNull: ['$gamesRules', []] },
-                            [{ idx: '$rulesIndexSeq', ...rules }]
-                        ]
-                    }
+    const session = await SessionModel.findOneAndUpdate({_id: sessionId}, [
+        {$set: {rulesIndexSeq: {$ifNull: ['$rulesIndexSeq', 0]}}}, {$set: {rulesIndexSeq: {$add: ['$rulesIndexSeq', 1]}}}, {
+            $set: {
+                gamesRules: {
+                    $concatArrays: [
+                        {$ifNull: ['$gamesRules', []]}, [{idx: '$rulesIndexSeq', ...rules}]
+                    ]
                 }
             }
-        ],
-        { new: true, runValidators: true }
-    )
+        }
+    ], {
+        new:           true,
+        runValidators: true
+    })
 
     const idx = session.rulesIndexSeq
 
     return {
-        idx,
-        ...rules
+        idx, ...rules
     };
 };
 RulesService.update = async (sessionId, ruleIdx, updates) => {
@@ -35,25 +31,34 @@ RulesService.update = async (sessionId, ruleIdx, updates) => {
         set[`gamesRules.$.${key}`] = value;
     }
     return await SessionModel.updateOne({
-        _id: sessionId,
+        _id:              sessionId,
         'gamesRules.idx': ruleIdx
-    }, { $set: set }, { runValidators: true }).exec();
+    }, {$set: set}, {runValidators: true}).exec();
 };
 RulesService.getByIdx = async (sessionId, ruleIdx) => {
     const session = await SessionModel.findOne({
-        _id: sessionId,
+        _id:              sessionId,
         'gamesRules.idx': ruleIdx
-    }, { 'gamesRules.$': 1 }).exec();
+    }, {'gamesRules.$': 1}).exec();
     return session?.gamesRules?.[0] ?? null;
 };
-RulesService.updateGameStateId = async (sessionId, ruleIdx, gameStateId) => {
-    return await SessionModel.updateOne({ _id: sessionId }, { $set: { 'gamesRules.$[rule].gameStateId': gameStateId } }, { arrayFilters: [{ 'rule.idx': ruleIdx }], runValidators: true }).exec();
+RulesService.updateFromCreatedGameStateId = async (sessionId, ruleIdx, gameStateId) => {
+    const result = await SessionModel.updateOne({_id: sessionId}, {
+        $set: {
+            'gamesRules.$[rule].gameStateId': gameStateId,
+            'gamesRules.$[rule].gameStatus':  C.OPEN
+        }
+    }, {
+        arrayFilters:  [{'rule.idx': ruleIdx}],
+        runValidators: true
+    }).exec();
+    return result;
 };
 RulesService.removeByIdx = async (sessionId, ruleIdx) => {
-    return await SessionModel.updateOne({ _id: sessionId }, { $pull: { gamesRules: { idx: ruleIdx } } }).exec();
+    return await SessionModel.updateOne({_id: sessionId}, {$pull: {gamesRules: {idx: ruleIdx}}}).exec();
 };
 RulesService.removeAllBySessionId = async (sessionId) => {
-    return await SessionModel.updateOne({ _id: sessionId }, { $pull: { gamesRules: {} } }).exec();
+    return await SessionModel.updateOne({_id: sessionId}, {$pull: {gamesRules: {}}}).exec();
 };
 
 export default RulesService;

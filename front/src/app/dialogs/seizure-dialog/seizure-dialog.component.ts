@@ -7,7 +7,7 @@ import { C } from "../../../../../back/shared/constantes.mjs";
 import {DeprecatedBackService} from "../../services/deprecated-back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {getBackgroundStyle} from "../../services/tools";
+import {getBackgroundStyle} from "../../services/avatarTools";
 
 @Component({
 	selector: 'app-seizure-dialog',
@@ -15,6 +15,7 @@ import {getBackgroundStyle} from "../../services/tools";
 	styleUrls: ['./seizure-dialog.component.scss']
 })
 export class SeizureDialogComponent implements OnInit {
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 	credit: Credit | undefined;
 	player: Player = new Player();
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
@@ -109,6 +110,4 @@ export class SeizureDialogComponent implements OnInit {
 		}
 		return this.playerCards.length > 0 ? 0 : 1;
 	}
-
-	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

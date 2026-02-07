@@ -1,7 +1,7 @@
 import express from 'express';
 import AvatarController from './avatar.controller.js';
-import { sanitize } from './avatar.sanitize.js';
-import { validate } from '../../misc/validate.tool.js';
+import {sanitize} from './avatar.sanitize.js';
+import {validate} from '../../misc/validate.tool.js';
 
 const router = express.Router();
 

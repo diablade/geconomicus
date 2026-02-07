@@ -8,7 +8,7 @@ import C from "../../../../back/shared/constantes.mjs";
 import {I18nService} from "../services/i18n.service";
 import {faPencil, faRightToBracket} from '@fortawesome/free-solid-svg-icons';
 import {Session} from "../models/session";
-import {getBackgroundStyle} from "../services/tools";
+import {getBackgroundStyle} from "../services/avatarTools";
 
 @Component({
 	selector: 'app-lobby-player',
@@ -16,9 +16,9 @@ import {getBackgroundStyle} from "../services/tools";
 	styleUrls: ['./lobby-player.component.scss']
 })
 export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 	avatar: Avatar = new Avatar();
 	sessionId: string = "";
-	avatarIdx: string = "";
 	skin: string = "#f2d3b1";
 	hairColor: string = "#ac6511";
 	private subscription: Subscription | undefined;
@@ -26,7 +26,6 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	socket: any;
 	C = C;
 	faRightToBracket = faRightToBracket;
-
 	faPencil = faPencil;
 
 	constructor(private avatarService: AvatarService,
@@ -40,25 +39,25 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit() {
 		this.subscription = this.route.params.subscribe(params => {
 			this.sessionId = params['sessionId'];
-			this.avatarIdx = params['avatarIdx'];
+			const avatarIdx = params['avatarIdx'];
+			this.loadAvatar(this.sessionId, avatarIdx);
 			this.subscription = this.ws.getReConnectionStatus().subscribe(data => {
 				//TODO: handle reconnection status
 				if (data) {
 					this.refresh();
 				}
 			});
-			this.socket = this.ws.getSocket(this.sessionId, "lobby-player");
-			this.loadAvatar();
+			this.socket = this.ws.getSocket(this.sessionId, "avatar" + avatarIdx);
 		});
 	}
 
 	ngAfterViewInit() {
 		this.socket.on(C.NEW_GAMES_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
+			cb({status: "ok", avatarIdx: this.avatar.idx, _ackId: data._ackId});
 			// this.session.gamesRules = this.session.gamesRules.push(data.game);
 		});
 		this.socket.on(C.UPDATED_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatarIdx, _ackId: data._ackId});
+			cb({status: "ok", avatarIdx: this.avatar.idx, _ackId: data._ackId});
 			this.session.gamesRules = this.session.gamesRules.map((game: any) => {
 				if (game.id === data.game.id) {
 					return data.game;
@@ -66,11 +65,11 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 				return game;
 			});
 		});
-		this.socket.on(C.GAME_STATE_CREATED, async (data: any) => {
+		this.socket.on(C.CREATED_GAME_STATE, async (data: any) => {
 			// change status of gameRules
 		});
 		this.socket.on(C.UPDATED_AVATAR, (data: any) => {
-			if (data.id == this.avatarIdx) {
+			if (data.idx == this.avatar.idx) {
 				this.avatar = data;
 			}
 		});
@@ -79,8 +78,8 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	loadAvatar() {
-		this.avatarService.getAvatar(this.sessionId, this.avatarIdx, true).subscribe(data => {
+	loadAvatar(sessionId: string, avatarIdx: number) {
+		this.avatarService.getAvatar(sessionId, avatarIdx, true).subscribe(data => {
 			this.avatar = data.avatar;
 			this.session = data.session;
 			console.log("Loaded avatar:", data);
@@ -108,8 +107,6 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	goToAvatarSettings() {
-		this.router.navigate(['avatar', this.sessionId, this.avatarIdx, 'settings']);
+		this.router.navigate(['avatar', this.sessionId, this.avatar.idx, 'settings']);
 	}
-
-	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

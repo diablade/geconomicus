@@ -17,6 +17,7 @@ declare const C: {
 	REMIND_DEAD: string,
 
 	//GAME & session STATUS
+	NONE: string;
 	OPEN: string,
 	CREATED: string,
 	UPDATED_SESSION: string;
@@ -35,7 +36,6 @@ declare const C: {
 	DELETED_AVATAR: string,
 	SESSION_CREATED: string,
 	NEW_GAMES_RULES: string,
-	GAME_STATE_CREATED: string,
 	PLAYER_JOIN: string,
 	UPDATED_RULES: string,
 	DELETED_RULES: string,

@@ -30,13 +30,19 @@
         "PARTY_NAME": "Nom de la partie",
         "PARTY_ANIM": "Nom de l'animateur",
         "LOCATION": "Lieu",
+        "DELETE_USER_CONFIRM": "Voulez-vous vraiment supprimer {{player}} ?",
+        "DELETE_PLAYER_SUCCESS": "Le joueur a été supprimé avec succès.",
         "START_CONFIRM": "Voulez-vous vraiment démarrer la session ?",
         "START_CONFIRM_2": "Une fois démarré, il sera impossible pour des nouveaux joueurs de rejoindre la partie.",
         "STARTED": "Session démarrée !",
         "LAUNCH": "Lancer",
         "GAME_NOT_PLAYED": "Pas encore joué.",
-        "GAME_OPEN": "La partie est ouverte, les joueurs peuvent la rejoindre.",
+        "GAME_LAUNCHED": "La partie est ouverte, les joueurs peuvent la rejoindre.",
+        "GAME_OPEN": "La partie est ouverte.",
         "GAME_ONGOING": "La partie est en cours.",
         "GAME_ENDED": "La partie est terminée."
+    },
+    "ERROR": {
+        "GAME_ALREADY_LAUNCHED": "La partie est déjà ouverte, les joueurs peuvent la rejoindre."
     }
 }

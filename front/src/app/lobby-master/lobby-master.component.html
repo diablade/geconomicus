@@ -18,7 +18,7 @@
 		</div>
 	</div>
 	<!-- CONTENT  -->
-	<div class="d-flex flex-row flex-wrap gap-4 "
+	<div class="d-flex flex-row flex-wrap gap-2"
 	     [ngClass]="session.status==='open' ? 'justify-content-center' : 'justify-content-evenly'">
 		<!-- QR CODE    -->
 		<div [ngClass]="session.status==='open' ? 'content-item' : 'hide'">
@@ -83,22 +83,22 @@
 							      (click)="rule.rotate = !rule.rotate" [forceRotate]="rule.rotate">
 							</coin>
 							<div class="fs-7 text-center">
-								{{ rule.gameStatus === C.CREATED ? ("MASTER.GAME_NOT_PLAYED" | translate) : '' }}
+								{{ rule.gameStatus === C.NONE || rule.gameStatus === C.CREATED ? ("MASTER.GAME_NOT_PLAYED" | translate) : '' }}
 								{{ rule.gameStatus === C.OPEN ? ("MASTER.GAME_OPEN" | translate) : '' }}
 								{{ rule.gameStatus === C.ENDED ? ("MASTER.GAME_ENDED" | translate) : '' }}
 							</div>
-							<button *ngIf="session.devMode && rule.gameStatus===C.CREATED" class="m-2"
+							<button *ngIf="session.devMode && rule.gameStatus===C.NONE" class="m-2"
 							        mat-stroked-button color="warn" (click)="editRules(rule)">
 								{{ "MASTER.EDIT_RULES" | translate }}
 								<fa-icon [icon]="faCogs"></fa-icon>
 							</button>
-							<button *ngIf="rule.gameStatus===C.CREATED" class="m-2" mat-stroked-button
-							        (click)="launchGame()">
+							<button *ngIf="rule.gameStatus===C.NONE" class="m-2" mat-stroked-button
+							        (click)="launchGame(rule.idx)">
 								{{ "MASTER.LAUNCH" | translate }}
 								<fa-icon [icon]="faRightToBracket"></fa-icon>
 							</button>
 							<button *ngIf="rule.gameStatus===C.OPEN" class="m-2" mat-stroked-button
-							        (click)="enterGame()">
+							        [routerLink]="['/master', rule.gameStateId]" color="primary">
 								{{ "MASTER.ENTER_GAME" | translate }}
 								<fa-icon [icon]="faRightToBracket"></fa-icon>
 							</button>
@@ -133,7 +133,7 @@
 				<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
 					<div *ngFor="let player of session?.players" class="player d-flex flex-column">
 						<div class="d-flex flex-row justify-content-center player-action">
-							<a href="{{createAvatarUrl(player.idx)}}" target="_blank">{{ player.name }} </a>
+							<a [href]="createAvatarUrl(player.idx)" target="_blank">{{ player.name }} </a>
 							<fa-icon class="joinQr" (click)="reJoin(player.idx, player.name)"
 							         [icon]="faQrcode"></fa-icon>
 							<fa-icon *ngIf="deleteUser" class="delete" (click)="onDeleteUser(player)"

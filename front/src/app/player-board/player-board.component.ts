@@ -19,7 +19,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 import {ScannerQrCode} from "../dialogs/scanner-qr-code/scanner-qr-code.component";
 // @ts-ignore
-import { C } from "../../../../back/shared/constantes.mjs";
+import {C} from "../../../../back/shared/constantes.mjs";
 import {ShortCode} from "../models/shortCode";
 import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
@@ -30,7 +30,7 @@ import {LocalStorageService} from "../services/local-storage/local-storage.servi
 import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
 import {ThemesService} from '../services/themes.service';
-import {getBackgroundStyle} from "../services/tools";
+import {getBackgroundStyle} from "../services/avatarTools";
 
 @Component({
 	selector: 'app-player-board',
@@ -40,6 +40,7 @@ import {getBackgroundStyle} from "../services/tools";
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 	private socket: any;
 	screenWidth = 0;
 	screenHeight = 0;
@@ -80,15 +81,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	constructor(private route: ActivatedRoute,
-				public dialog: MatDialog,
-				private router: Router,
-				private localStorageService: LocalStorageService,
-				private backService: DeprecatedBackService,
-				private wsService: WebSocketService,
-				private i18nService: I18nService,
-				private themesService: ThemesService,
-				private audioService: AudioService,
-				private snackbarService: SnackbarService) {
+	            public dialog: MatDialog,
+	            private router: Router,
+	            private localStorageService: LocalStorageService,
+	            private backService: DeprecatedBackService,
+	            private wsService: WebSocketService,
+	            private i18nService: I18nService,
+	            private themesService: ThemesService,
+	            private audioService: AudioService,
+	            private snackbarService: SnackbarService) {
 	}
 
 	updateScreenSize() {
@@ -548,11 +549,10 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	buyWith(){
-		if(this.scanV3){
+	buyWith() {
+		if (this.scanV3) {
 			this.scan();
-		}
-		else{
+		} else {
 			this.openDialogShorCode();
 		}
 	}
@@ -767,5 +767,4 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

@@ -1,7 +1,7 @@
 import log from "#config/log";
 import RulesService from './rules.service.js';
 import socket from '#config/socket';
-import { C } from '#constantes';
+import {C} from '#constantes';
 
 const RulesController = {};
 
@@ -9,7 +9,7 @@ RulesController.create = async (req, res, next) => {
     try {
         const rulesCreated = await RulesService.create(req.body.sessionId, req.body.rules);
         socket.emitTo(req.body.sessionId, C.NEW_GAMES_RULES, {
-            idx: rulesCreated.idx,
+            idx:       rulesCreated.idx,
             typeMoney: rulesCreated.typeMoney
         });
         return res.status(200).json(rulesCreated);
@@ -29,9 +29,10 @@ RulesController.update = async (req, res, next) => {
             return res.status(200).json({
                 status: "not modified",
             });
-        } else {
+        }
+        else {
             socket.emitTo(req.body.sessionId, C.UPDATED_RULES, {
-                idx: req.body.ruleIdx,
+                idx:       req.body.ruleIdx,
                 typeMoney: req.body.updates.typeMoney
             });
         }
@@ -66,7 +67,8 @@ RulesController.remove = async (req, res, next) => {
                 idx: req.params.ruleIdx,
             });
             return res.status(200).json(ack);
-        } else {
+        }
+        else {
             return res.status(400).send({
                 status: "not removed",
             });

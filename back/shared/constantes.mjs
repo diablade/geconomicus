@@ -22,6 +22,9 @@ export const C = {
     IN_PROGRESS:     'in_progress',
     ENDED:           'ended',
 
+    //GAME STATE STATUS //none, open, in_progress, ended
+    NONE: "none",
+
     //legacy
     END_GAME: 'end_game',
     STARTED:  'started',
@@ -30,14 +33,13 @@ export const C = {
     WAITING:  'waiting',
     STOPED:   'stoped',
 
-    NEW_AVATAR:         "na",
-    UPDATED_AVATAR:     "ua",
-    DELETED_AVATAR:     "da",
-    NEW_GAMES_RULES:    "ngr",
-    UPDATED_RULES:      "ru",
-    DELETED_RULES:      "dr",
-    GAME_STATE_CREATED: "gsc",
-    PLAYER_JOIN:        "pj",
+    NEW_AVATAR:      "na",
+    UPDATED_AVATAR:  "ua",
+    DELETED_AVATAR:  "da",
+    NEW_GAMES_RULES: "ngr",
+    UPDATED_RULES:   "ru",
+    DELETED_RULES:   "dr",
+    PLAYER_JOIN:     "pj",
 
     //CREDITS
     NEW_CREDIT:      "new-credit",

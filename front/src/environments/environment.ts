@@ -17,10 +17,12 @@ export const environment = {
 		JOIN: 'avatar/join',
 		GET: 'avatar/',
 		UPDATE: 'avatar/update',
-		DELETE: 'avatar/delete',
+		DELETE: 'avatar/',
+		REFRESH: 'avatar/refresh',
 	},
 	GAME_STATE: {
-		GET: 'gameState/',
+		GET: 'game-state/',
+		LAUNCH: 'game-state/launch/',
 	},
 
 	//LEGACY

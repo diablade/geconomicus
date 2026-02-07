@@ -309,14 +309,13 @@
         "VERYNOT": "(Négatif 😒)  Très"
     },
     "ERROR": {
-        "IN_PROGRESS": "déjà en cours",
+        "GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
         "GAME_NOT_FOUND": "Jeu introuvable",
-        "PLAYER_NOT_FOUND": "Joueur introuvable",
+        "IN_PROGRESS": "déjà en cours",
         "CARDS_NOT_UNIQUE": "Cartes non uniques",
         "NOT_ENOUGH_CARDS": "Pas assez de cartes",
         "NOT_ENOUGH_CARDS_IN_DECK": "Pas assez de cartes dans le deck",
         "NOT_ENOUGH_MONEY": "Fonds insuffisant.",
-        "GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
         "JOIN_REINCARNATE": "Impossible de rejoindre",
         "REINCARNATE": "Échec de la résurrection",
         "JOIN": "Impossible de rejoindre",

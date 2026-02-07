@@ -1,7 +1,7 @@
 export class Rules {
-	id: string = "";
+	idx = 0;
 	gameStateId: string = "";
-	gameStatus: string = "created";
+	gameStatus: string = "open";
 	rotate: boolean = false;
 
 	//common

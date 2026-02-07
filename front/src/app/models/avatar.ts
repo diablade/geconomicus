@@ -1,5 +1,5 @@
 export class Avatar {
-	idx = "";
+	idx = 0;
 	name = "";
 	image = "";
 	eyes = 3;

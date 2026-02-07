@@ -1,17 +1,17 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Card, Game, Player } from "../models/game";
-import { ActivatedRoute } from "@angular/router";
-import { DeprecatedBackService } from "../services/deprecated-back.service";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Card, Game, Player} from "../models/game";
+import {ActivatedRoute} from "@angular/router";
+import {DeprecatedBackService} from "../services/deprecated-back.service";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import * as _ from "lodash-es";
-import { SnackbarService } from "../services/snackbar.service";
-import { environment } from 'src/environments/environment';
-import { schema } from '@dicebear/core';
-import { adventurer } from '@dicebear/collection';
-import { createAvatar, Options as Opt } from '@dicebear/core';
+import {SnackbarService} from "../services/snackbar.service";
+import {environment} from 'src/environments/environment';
+import {schema} from '@dicebear/core';
+import {adventurer} from '@dicebear/collection';
+import {createAvatar, Options as Opt} from '@dicebear/core';
 // @ts-ignore
-import { C } from '../../../../back/shared/constantes.mjs';
-import {getBackgroundStyle} from "../services/tools";
+import {C} from '../../../../back/shared/constantes.mjs';
+import {getBackgroundStyle, hairPalette} from "../services/avatarTools";
 
 @Component({
 	selector: 'app-master-admin',
@@ -19,6 +19,7 @@ import {getBackgroundStyle} from "../services/tools";
 	styleUrls: ['./master-admin.component.scss']
 })
 export class MasterAdminComponent implements OnInit {
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	C = C;
 	idGame = "";
@@ -29,39 +30,10 @@ export class MasterAdminComponent implements OnInit {
 	deck3: Card[] = [];
 	deck4: Card[] = [];
 
-	options: Partial<adventurer.Options & Opt> = {};
-	properties: any = {
-		...schema.properties,
-		...adventurer.schema.properties,
-	};
-	hairPalette: Array<any> =
-		[
-			'000000', // noir intense
-			'808080', // gris (argent)
-			'ffffff', // blanc (albinos/âgé)
-			'5a3e2b', // brun chaud
-			'a9745a', // brun clair
-			'e2b77b', // blond foncé
-			'fff0b3', // blond très clair
-			'ffff00', // super sayian
-			'aeff00', // broly
-			'd8bfd8', // lavande pastel (fantaisie)
-			'ff69b4', // rose flashy
-			'c71585', // magenta foncé
-			'6a5acd', // violet électrique
-			'7fa0ff', // bleu stylisé
-			'0033e5', // bleu foncé
-			'00ced1', // turquoise
-			'32cd32', // vert lime
-			'900000', // rouge foncé
-			'ff6e6e', // saumon
-			'd2691e', // roux foncé
-		];
-
 	constructor(private route: ActivatedRoute,
-		private backService: DeprecatedBackService,
-		private sanitizer: DomSanitizer,
-		private snackbarService: SnackbarService) {
+	            private backService: DeprecatedBackService,
+	            private sanitizer: DomSanitizer,
+	            private snackbarService: SnackbarService) {
 	}
 
 	ngOnInit(): void {
@@ -145,7 +117,7 @@ export class MasterAdminComponent implements OnInit {
 		let playersWithChangedColor: Player[] = [];
 		groupedWithoutAlone.forEach((group: any) => {
 			for (let i = 1; i < group.length; i++) {
-				const paletteAvailable = _.filter(this.hairPalette, color => !colorsUsed.has(color));
+				const paletteAvailable = _.filter(hairPalette, color => !colorsUsed.has(color));
 				const randomIndex = _.random(0, (paletteAvailable.length - 1), false)
 				const nextColor = paletteAvailable[randomIndex];
 				colorsUsed.add(nextColor);
@@ -202,6 +174,4 @@ export class MasterAdminComponent implements OnInit {
 	getUserUrl(idPlayer: string) {
 		return environment.WEB_HOST + '/ogame/' + this.idGame + '/player/' + idPlayer;
 	}
-
-	protected readonly getBackgroundStyle = getBackgroundStyle;
 }

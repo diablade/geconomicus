@@ -71,7 +71,7 @@ AvatarService.update = async (sessionId, avatarIdx, updates) => {
         runValidators: true,
         new:           true
     });
-    return session?.players?.[0] ?? null;
+    return session?.players?.find(p => p.idx === Number(avatarIdx)) ?? null;
 };
 
 AvatarService.delete = async (sessionId, avatarIdx) => {

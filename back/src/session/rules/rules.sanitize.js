@@ -3,7 +3,7 @@ import {isValidObjectId, isValidNanoId4} from '../../misc/validate.tool.js';
 import {C} from '#constantes';
 
 export const sanitize = {
-    create:  Joi.object({
+    create:   Joi.object({
         rules:     Joi.object({
             //not commun
             typeMoney:    Joi.string().default(C.DEBT),
@@ -32,8 +32,8 @@ export const sanitize = {
             pctRich:          Joi.number().default(10),
 
             //option debt
-            defaultCreditAmount:   Joi.number().default(5),
-            defaultInterestAmount: Joi.number().default(5),
+            defaultCreditAmount:   Joi.number().default(3),
+            defaultInterestAmount: Joi.number().default(1),
             timerCredit:           Joi.number().default(5),
             timerPrison:           Joi.number().default(5),
             manualBank:            Joi.boolean().default(false),
@@ -47,7 +47,7 @@ export const sanitize = {
                            'any.required': 'Session ID is required'
                        })
     }),
-    update:  Joi.object({
+    update:   Joi.object({
         updates:   Joi.object({
             typeMoney:    Joi.string(),
             priceWeight1: Joi.number(),
@@ -86,7 +86,7 @@ export const sanitize = {
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleIdx:    Joi.number().required()
+        ruleIdx:   Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'
@@ -98,19 +98,19 @@ export const sanitize = {
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleIdx:    Joi.number().required()
+        ruleIdx:   Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'
                        })
     }),
-    remove:  Joi.object({
+    remove:   Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
                        .messages({
                            'any.invalid':  'Invalid session ID format',
                            'any.required': 'Session ID is required'
                        }),
-        ruleIdx:    Joi.number().required()
+        ruleIdx:   Joi.number().required()
                        .messages({
                            'any.invalid':  'Invalid rule ID format',
                            'any.required': 'Rule ID is required'

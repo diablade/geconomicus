@@ -15,5 +15,8 @@
         "SKIN": "Peau",
         "HAIR": "Cheveux",
         "PLAY": "Acceder au jeu"
+    },
+    "ERROR": {
+        "DELETE_AVATAR": "Erreur suppression avatar."
     }
 }

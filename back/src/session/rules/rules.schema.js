@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 let RulesSchema = new Schema({
 	idx: { type: Number, required: true },
 	gameStateId: { type: String, required: false },
-	gameStatus: { type: String, required: true, default: C.CREATED },
+	gameStatus: { type: String, required: true, default: C.NONE },
 
 	//common
 	amountCardsForProd: { type: Number, required: true, default: 4 },
@@ -34,8 +34,8 @@ let RulesSchema = new Schema({
 	pctRich: { type: Number, required: true, default: 10 },
 
 	//option debt
-	defaultCreditAmount: { type: Number, required: true, default: 5 },
-	defaultInterestAmount: { type: Number, required: true, default: 5 },
+	defaultCreditAmount: { type: Number, required: true, default: 3 },
+	defaultInterestAmount: { type: Number, required: true, default: 1 },
 	timerCredit: { type: Number, required: true, default: 5 },
 	timerPrison: { type: Number, required: true, default: 5 },
 	manualBank: { type: Boolean, required: true, default: false },

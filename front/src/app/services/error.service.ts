@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { HttpErrorResponse } from "@angular/common/http";
-import { throwError } from "rxjs";
-import { SnackbarService } from "./snackbar.service";
-import { Router } from "@angular/router";
-import { I18nService } from "./i18n.service";
+import {Injectable} from '@angular/core';
+import {HttpErrorResponse} from "@angular/common/http";
+import {throwError} from "rxjs";
+import {SnackbarService} from "./snackbar.service";
+import {Router} from "@angular/router";
+import {I18nService} from "./i18n.service";
 
 export const REDIRECT_HOME = "redirectHome";
 export const NOTIF = "notif";
@@ -19,24 +19,25 @@ export class ErrorService {
 	constructor(private router: Router, private snackbarService: SnackbarService, private i18nService: I18nService) {
 	}
 
-	public handleError(error: HttpErrorResponse, whatToDo: string, whatToSay: string) {
+	public handleError(error: HttpErrorResponse, whatToDo: string, whatToSayDefault: string) {
 		// Try to get the error message from the response
-		const errorMessage = error.error?.message || error.message || whatToSay;
+		const errorMessage = error.error?.message || error.message || whatToSayDefault;
+		const message = this.i18nService.instant(errorMessage);
 
 		if (whatToDo == REDIRECT_HOME) {
-			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
+			this.snackbarService.showNotif(message);
 			setTimeout(() => {
 				// Delay for 3 seconds before proceeding
 			}, 3000);
 			this.router.navigate([""]);
 		} else if (whatToDo == NOTIF) {
-			this.snackbarService.showNotif(this.i18nService.instant(whatToSay));
+			this.snackbarService.showNotif(message);
 		} else if (whatToDo == ERROR_RELOAD) {
-			this.snackbarService.showReload(this.i18nService.instant(whatToSay));
+			this.snackbarService.showReload(message);
 		} else if (whatToDo == ERROR_FORCE_RELOAD) {
-			this.snackbarService.showForceReload(this.i18nService.instant(whatToSay));
+			this.snackbarService.showForceReload(message);
 		} else if (whatToDo == ERROR) {
-			this.snackbarService.showError(this.i18nService.instant(whatToSay));
+			this.snackbarService.showError(message);
 		}
 		// Return an observable with a user-facing error message.
 		return throwError(() => new Error(this.i18nService.instant("ERROR.GENERIC")));
