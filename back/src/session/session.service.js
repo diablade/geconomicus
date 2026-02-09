@@ -2,6 +2,7 @@ import SessionModel from './session.model.js';
 import {nanoId4} from "../misc/misc.tool.js";
 import C from "../../shared/constantes.mjs";
 import log from "#config/log";
+import {defaultDebtRules, defaultJuneRules} from './rules/rules.service.js';
 
 const SessionService = {};
 
@@ -52,31 +53,17 @@ SessionService.getAll = async () => {
 };
 SessionService.start = async (sessionId) => {
     log.info("Session.start:", sessionId);
-    const rulesDebt = {
-        typeMoney:    C.DEBT,
-        gameStatus:   C.CREATED,
-        priceWeight1: 1,
-        priceWeight2: 2,
-        priceWeight3: 4,
-        priceWeight4: 8,
-    };
-    const rulesJune = {
-        typeMoney:    C.JUNE,
-        gameStatus:   C.CREATED,
-        priceWeight1: 3,
-        priceWeight2: 6,
-        priceWeight3: 9,
-        priceWeight4: 12,
-    };
+
     const session = await SessionModel.findOneAndUpdate({_id: sessionId}, [
         {$set: {status: C.IN_PROGRESS}}, {$set: {rulesIndexSeq: {$ifNull: ['$rulesIndexSeq', 0]}}},
 
         // Debt
         {$set: {rulesIndexSeq: {$add: ['$rulesIndexSeq', 1]}}},
-        {$set: {gamesRules: {$concatArrays: [{$ifNull: ['$gamesRules', []]}, [{idx: '$rulesIndexSeq', ...rulesDebt}]]}}},
+        {$set: {gamesRules: {$concatArrays: [{$ifNull: ['$gamesRules', []]}, [{idx: '$rulesIndexSeq', ...defaultDebtRules}]]}}},
 
         // June
-        {$set: {rulesIndexSeq: {$add: ['$rulesIndexSeq', 1]}}}, {$set: {gamesRules: {$concatArrays: ['$gamesRules', [{idx: '$rulesIndexSeq', ...rulesJune}]]}}}
+        {$set: {rulesIndexSeq: {$add: ['$rulesIndexSeq', 1]}}},
+        {$set: {gamesRules: {$concatArrays: ['$gamesRules', [{idx: '$rulesIndexSeq', ...defaultJuneRules}]]}}}
     ], {
         new:           true,
         runValidators: true

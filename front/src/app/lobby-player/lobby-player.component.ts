@@ -1,26 +1,26 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {Avatar} from "../models/avatar";
-import {AvatarService} from "../services/api/avatar.service";
-import {Subscription} from "rxjs";
-import {WebSocketService} from "../services/web-socket.service";
-import C from "../../../../back/shared/constantes.mjs";
-import {I18nService} from "../services/i18n.service";
-import {faPencil, faRightToBracket} from '@fortawesome/free-solid-svg-icons';
-import {Session} from "../models/session";
-import {getBackgroundStyle} from "../services/avatarTools";
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Avatar } from '../models/avatar';
+import { AvatarService } from '../services/api/avatar.service';
+import { Subscription } from 'rxjs';
+import { WebSocketService } from '../services/web-socket.service';
+import C from '../../../../back/shared/constantes.mjs';
+import { I18nService } from '../services/i18n.service';
+import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+import { Session } from '../models/session';
+import { getBackgroundStyle } from '../services/avatarTools';
 
 @Component({
 	selector: 'app-lobby-player',
 	templateUrl: './lobby-player.component.html',
-	styleUrls: ['./lobby-player.component.scss']
+	styleUrls: ['./lobby-player.component.scss'],
 })
 export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	avatar: Avatar = new Avatar();
-	sessionId: string = "";
-	skin: string = "#f2d3b1";
-	hairColor: string = "#ac6511";
+	sessionId: string = '';
+	skin: string = '#f2d3b1';
+	hairColor: string = '#ac6511';
 	private subscription: Subscription | undefined;
 	session = new Session();
 	socket: any;
@@ -28,36 +28,38 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;
 
-	constructor(private avatarService: AvatarService,
-	            private route: ActivatedRoute,
-	            private router: Router,
-	            private i18n: I18nService,
-	            private ws: WebSocketService) {
-		this.i18n.loadNamespace("avatar");
+	constructor(
+		private avatarService: AvatarService,
+		private route: ActivatedRoute,
+		private router: Router,
+		private i18n: I18nService,
+		private ws: WebSocketService
+	) {
+		this.i18n.loadNamespace('avatar');
 	}
 
 	ngOnInit() {
-		this.subscription = this.route.params.subscribe(params => {
+		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			const avatarIdx = params['avatarIdx'];
 			this.loadAvatar(this.sessionId, avatarIdx);
-			this.subscription = this.ws.getReConnectionStatus().subscribe(data => {
+			this.subscription = this.ws.getReConnectionStatus().subscribe((data) => {
 				//TODO: handle reconnection status
 				if (data) {
 					this.refresh();
 				}
 			});
-			this.socket = this.ws.getSocket(this.sessionId, "avatar" + avatarIdx);
+			this.socket = this.ws.getSocket(this.sessionId, 'avatar' + avatarIdx);
 		});
 	}
 
 	ngAfterViewInit() {
 		this.socket.on(C.NEW_GAMES_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatar.idx, _ackId: data._ackId});
+			cb({ status: 'ok', avatarIdx: this.avatar.idx, _ackId: data._ackId });
 			// this.session.gamesRules = this.session.gamesRules.push(data.game);
 		});
 		this.socket.on(C.UPDATED_RULES, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", avatarIdx: this.avatar.idx, _ackId: data._ackId});
+			cb({ status: 'ok', avatarIdx: this.avatar.idx, _ackId: data._ackId });
 			this.session.gamesRules = this.session.gamesRules.map((game: any) => {
 				if (game.id === data.game.id) {
 					return data.game;
@@ -82,10 +84,10 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	loadAvatar(sessionId: string, avatarIdx: number) {
-		this.avatarService.getAvatar(sessionId, avatarIdx, true).subscribe(data => {
+		this.avatarService.getAvatar(sessionId, avatarIdx, true).subscribe((data) => {
 			this.avatar = data.avatar;
 			this.session = data.session;
-			console.log("Loaded avatar:", data);
+			console.log('Loaded avatar:', data);
 
 			// this.localStorageService.setItem("session",
 			// 	{
@@ -97,8 +99,7 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	joinGame(game: any) {
-	}
+	joinGame(game: any) {}
 
 	//To prevent memory leak
 	ngOnDestroy(): void {

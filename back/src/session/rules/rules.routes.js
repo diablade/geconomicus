@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/:sessionId/:ruleIdx', validate(sanitize.getByIdx, true), RulesController.getByIdx);
 router.post('/create', validate(sanitize.create), RulesController.create);
 router.put('/update', validate(sanitize.update), RulesController.update);
+router.put('/default', validate(sanitize.default), RulesController.resetDefault);
 router.delete('/:sessionId/:ruleIdx', validate(sanitize.remove, true), RulesController.remove);
 
 export default router;

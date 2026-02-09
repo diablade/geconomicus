@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/:sessionId/:avatarIdx/:fetchSession', validate(sanitize.getByIdx, true), AvatarController.getByIdx);
 // router.get('/:sessionId/:avatarId/rules', validate(sanitize.getById, true), AvatarController.getAvatarWithRules);
 router.post('/join', validate(sanitize.join), AvatarController.join);
+router.post('/refresh', validate(sanitize.refresh), AvatarController.refresh);
 router.put('/update', validate(sanitize.update), AvatarController.update);
 router.delete('/:sessionId/:avatarIdx', validate(sanitize.delete, true), AvatarController.delete);
 

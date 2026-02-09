@@ -1,71 +1,83 @@
 import Joi from 'joi';
-import { isValidObjectId } from '../../misc/validate.tool.js';
+import {isValidObjectId} from '../../misc/validate.tool.js';
 
 export const sanitize = {
-    getByIdx: Joi.object({
-        sessionId: Joi.string().custom(isValidObjectId).required()
-            .messages({
-                'any.invalid': 'Invalid session ID format',
-                'any.required': 'Session ID is required'
-            }),
-        avatarIdx: Joi.number().required()
-            .messages({
-                'any.invalid': 'Invalid avatar ID format',
-                'any.required': 'Avatar ID is required'
-            }),
-        fetchSession: Joi.boolean().optional(),
-    }).required(),
-    join: Joi.object({
-        sessionId: Joi.string().custom(isValidObjectId).required()
-            .messages({
-                'any.invalid': 'Invalid session ID format',
-                'any.required': 'Session ID is required'
-            }),
-        name: Joi.string().required()
-            .messages({
-                'any.required': 'Avatar name is required'
-            }),
-    }).required(),
-    update: Joi.object({
-        sessionId: Joi.string().custom(isValidObjectId).required()
-            .messages({
-                'any.invalid': 'Invalid session ID format',
-                'any.required': 'Session ID is required'
-            }),
-        avatarIdx: Joi.number().required()
-            .messages({
-                'any.invalid': 'Invalid avatar ID format',
-                'any.required': 'Avatar ID is required'
-            }),
-        updates: Joi.object({
-            name: Joi.string(),
-            image: Joi.string(),
-            eyes: Joi.number(),
-            earrings: Joi.number(),
-            eyebrows: Joi.number(),
-            features: Joi.number(),
-            hair: Joi.number(),
-            glasses: Joi.number(),
-            mouth: Joi.number(),
-            skinColor: Joi.string(),
-            hairColor: Joi.string(),
-            earringsProbability: Joi.number(),
-            glassesProbability: Joi.number(),
-            featuresProbability: Joi.number(),
-            boardConf: Joi.string().allow('').optional(),
-            boardColor: Joi.string().allow('').optional(),
-        }).required(),
-    }).required(),
-    delete: Joi.object({
-        sessionId: Joi.string().custom(isValidObjectId).required()
-            .messages({
-                'any.invalid': 'Invalid session ID format',
-                'any.required': 'Session ID is required'
-            }),
-        avatarIdx: Joi.number().required()
-            .messages({
-                'any.invalid': 'Invalid avatar ID format',
-                'any.required': 'Avatar ID is required'
-            }),
-    }).required()
+	getByIdx: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required()
+			.messages({
+				'any.invalid': 'Invalid session ID format',
+				'any.required': 'Session ID is required'
+			}),
+		avatarIdx: Joi.number().required()
+			.messages({
+				'any.invalid': 'Invalid avatar ID format',
+				'any.required': 'Avatar ID is required'
+			}),
+		fetchSession: Joi.boolean().optional(),
+	}).required(),
+	join: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required()
+			.messages({
+				'any.invalid': 'Invalid session ID format',
+				'any.required': 'Session ID is required'
+			}),
+		name: Joi.string().required()
+			.messages({
+				'any.required': 'Avatar name is required'
+			}),
+	}).required(),
+	refresh: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required()
+			.messages({
+				'any.invalid': 'Invalid session ID format',
+				'any.required': 'Session ID is required'
+			}),
+		avatarIdx: Joi.number().required()
+			.messages({
+				'any.invalid': 'Invalid avatar ID format',
+				'any.required': 'Avatar ID is required'
+			}),
+	}).required(),
+	update: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required()
+			.messages({
+				'any.invalid': 'Invalid session ID format',
+				'any.required': 'Session ID is required'
+			}),
+		avatarIdx: Joi.number().required()
+			.messages({
+				'any.invalid': 'Invalid avatar ID format',
+				'any.required': 'Avatar ID is required'
+			}),
+		updates: Joi.object({
+			name: Joi.string(),
+			image: Joi.string(),
+			eyes: Joi.number(),
+			earrings: Joi.number(),
+			eyebrows: Joi.number(),
+			features: Joi.number(),
+			hair: Joi.number(),
+			glasses: Joi.number(),
+			mouth: Joi.number(),
+			skinColor: Joi.string(),
+			hairColor: Joi.string(),
+			earringsProbability: Joi.number(),
+			glassesProbability: Joi.number(),
+			featuresProbability: Joi.number(),
+			boardConf: Joi.string().allow('').optional(),
+			boardColor: Joi.string().allow('').optional(),
+		}).required(),
+	}).required(),
+	delete: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required()
+			.messages({
+				'any.invalid': 'Invalid session ID format',
+				'any.required': 'Session ID is required'
+			}),
+		avatarIdx: Joi.number().required()
+			.messages({
+				'any.invalid': 'Invalid avatar ID format',
+				'any.required': 'Avatar ID is required'
+			}),
+	}).required()
 };

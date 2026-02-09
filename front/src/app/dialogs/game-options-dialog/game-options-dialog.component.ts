@@ -1,17 +1,17 @@
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 // @ts-ignore
-import {C} from "../../../../../back/shared/constantes.mjs";
-import {I18nService} from '../../services/i18n.service';
-import {Rules} from 'src/app/models/rules';
+import { C } from '../../../../../back/shared/constantes.mjs';
+import { I18nService } from '../../services/i18n.service';
+import { Rules } from 'src/app/models/rules';
 
 @Component({
 	selector: 'app-game-options-dialog',
 	templateUrl: './game-options-dialog.component.html',
-	styleUrls: ['./game-options-dialog.component.scss']
+	styleUrls: ['./game-options-dialog.component.scss'],
 })
 export class GameOptionsDialogComponent {
-	game: Rules;
+	rules: Rules;
 	C = C;
 	protected readonly Math = Math;
 	playersLength: any;
@@ -21,8 +21,8 @@ export class GameOptionsDialogComponent {
 		public dialogRef: MatDialogRef<GameOptionsDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
-		this.i18n.loadNamespace("option");
-		this.game = data.rules;
+		this.i18n.loadNamespace('option');
+		this.rules = data.rules;
 		this.playersLength = data.playersLength;
 
 		//TODO return object should be only modified Partial rules, not all rules

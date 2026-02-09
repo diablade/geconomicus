@@ -55,10 +55,9 @@ export class SessionService {
 			);
 	}
 
-	update(sessionId: string, updates: Partial<Rules>) {
+	update(sessionId: string, updates: Partial<Session>) {
 		return this.http.put<any>(environment.API_HOST + environment.SESSION.UPDATE, {
 			sessionId,
-			ruleIdx: updates.idx,
 			updates
 		})
 			.pipe(

@@ -2,18 +2,26 @@
 	<h1 mat-dialog-title>{{ title | translate }}</h1>
 	<div mat-dialog-content>{{ message | translate }}</div>
 	<div *ngIf="btn1Enable" class="d-flex justify-content-between">
-		<button mat-button [mat-dialog-close]="'btn1'">{{ labelBtnCancel | translate }}</button>
+		<button mat-button [mat-dialog-close]="'btn1'">
+			{{ labelBtnCancel | translate }}
+		</button>
 		<button [color]="styleBtnConfirm" *ngIf="!autoClickBtnConfirm" mat-button [mat-dialog-close]="'btnConfirm'">
 			{{ labelBtnConfirm | translate }}
 		</button>
-		<button-timer *ngIf="autoClickBtnConfirm" [secondsTimer]="timerBtnConfirm" [label]="labelBtnConfirm"
-		              (timerEnd)="timerEnd()"></button-timer>
+		<button-timer
+			*ngIf="autoClickBtnConfirm"
+			[secondsTimer]="timerBtnConfirm"
+			[label]="labelBtnConfirm"
+			(timerEnd)="timerEnd()"></button-timer>
 	</div>
 	<div *ngIf="!btn1Enable" class="d-flex justify-content-end">
 		<button [color]="styleBtnConfirm" *ngIf="!autoClickBtnConfirm" mat-button [mat-dialog-close]="'btnConfirm'">
 			{{ labelBtnConfirm | translate }}
 		</button>
-		<button-timer *ngIf="autoClickBtnConfirm" [secondsTimer]="timerBtnConfirm" [label]="labelBtnConfirm"
-		              (timerEnd)="timerEnd()"></button-timer>
+		<button-timer
+			*ngIf="autoClickBtnConfirm"
+			[secondsTimer]="timerBtnConfirm"
+			[label]="labelBtnConfirm"
+			(timerEnd)="timerEnd()"></button-timer>
 	</div>
 </div>

@@ -63,6 +63,20 @@ AvatarController.update = async (req, res, next) => {
         return res.status(404).json({message: err});
     }
 };
+AvatarController.refresh = async (req, res, next) => {
+    try {
+        const {
+            sessionId,
+            avatarIdx
+        } = req.body;
+        socket.emitTo('avatar' + avatarIdx, C.REFRESH_FORCE);
+        return res.status(200).json({status: 'ok'});
+    }
+    catch (err) {
+        log.error(err);
+        return res.status(404).json({message: err});
+    }
+};
 AvatarController.delete = async (req, res, next) => {
     try {
         const {

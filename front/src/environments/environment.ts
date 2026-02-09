@@ -13,6 +13,10 @@ export const environment = {
 		DELETE: 'session/delete',
 		START: 'session/start',
 	},
+	RULES: {
+		UPDATE: 'rules/update',
+		DEFAULT: 'rules/default',
+	},
 	AVATAR: {
 		JOIN: 'avatar/join',
 		GET: 'avatar/',
