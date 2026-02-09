@@ -1,0 +1,24 @@
+{
+	"editor.formatOnSave": false,
+	//    "editor.defaultFormatter": null,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	// Désactive les paramètres VS Code au profit d'EditorConfig
+	"editor.detectIndentation": false,
+	"files.insertFinalNewline": true,
+	"files.trimTrailingWhitespace": true,
+	"editor.hover.delay": 3000,
+	// Si vous utilisez aussi Prettier
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
+}
