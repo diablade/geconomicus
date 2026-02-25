@@ -1,19 +1,19 @@
-<h1 mat-dialog-title>{{ "HOME.DIALOG_CREATE_GAME.TITLE" | translate }}</h1>
+<h1 mat-dialog-title>{{ 'DIALOG_CREATE_SESSION.TITLE' | translate }}</h1>
 <div mat-dialog-content class="d-flex flex-column gap-1">
 	<mat-form-field appearance="fill">
-		<mat-label>{{ "HOME.DIALOG_CREATE_GAME.NAME"|translate }}</mat-label>
-		<input matInput required [(ngModel)]="name">
+		<mat-label>{{ 'DIALOG_CREATE_SESSION.NAME' | translate }}</mat-label>
+		<input matInput required [(ngModel)]="name" />
 	</mat-form-field>
 	<mat-form-field appearance="fill">
-		<mat-label>{{ "HOME.DIALOG_CREATE_GAME.ANIMATOR"|translate }}</mat-label>
-		<input matInput required [(ngModel)]="animator">
+		<mat-label>{{ 'DIALOG_CREATE_SESSION.ANIMATOR' | translate }}</mat-label>
+		<input matInput required [(ngModel)]="animator" />
 	</mat-form-field>
 	<mat-form-field appearance="fill">
-		<mat-label>{{ "HOME.DIALOG_CREATE_GAME.LOCATION"|translate }}</mat-label>
-		<input matInput required [(ngModel)]="location">
+		<mat-label>{{ 'DIALOG_CREATE_SESSION.LOCATION' | translate }}</mat-label>
+		<input matInput required [(ngModel)]="location" />
 	</mat-form-field>
 	<mat-form-field>
-		<mat-label>{{ "HOME.DIALOG_CREATE_GAME.THEME"|translate }}</mat-label>
+		<mat-label>{{ 'DIALOG_CREATE_SESSION.THEME' | translate }}</mat-label>
 		<mat-select class="m-auto" required [(ngModel)]="theme">
 			<mat-option *ngFor="let theme of themes" [value]="theme">
 				{{ theme | translate }}
@@ -22,9 +22,12 @@
 	</mat-form-field>
 </div>
 <div mat-dialog-actions align="end">
-	<button mat-button (click)="onNoClick()">{{
-		"HOME.DIALOG_CREATE_GAME.BTN2"|translate }}</button>
-	<button mat-button [disabled]="!name || !animator || !location || !theme"
-		[mat-dialog-close]="{ name, location, animator, theme }" cdkFocusInitial>{{
-		"HOME.DIALOG_CREATE_GAME.BTN1"|translate }}</button>
+	<button mat-button (click)="onNoClick()">{{ 'DIALOG_CREATE_SESSION.BTN2' | translate }}</button>
+	<button
+		mat-button
+		[disabled]="!name || !animator || !location || !theme"
+		[mat-dialog-close]="{ name, location, animator, theme }"
+		cdkFocusInitial>
+		{{ 'DIALOG_CREATE_SESSION.BTN1' | translate }}
+	</button>
 </div>

@@ -1,43 +1,74 @@
 .geco {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px;
+	width: 100%;
+	max-width: 400px;
+	padding: 10px;
+}
+
+// background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899, #f59e0b);
+// background: linear-gradient(135deg, #0004ff, #8400ff, #ff0080, #ffa200);
+.bulleHome {
+	font-size: 18px;
 }
 
 .img-top {
-  width: 150px;
+	width: 150px;
 }
 
 .img-bottom {
-  text-align: center;
-  max-width: 500px;
-  width: 100%;
+	text-align: center;
+	max-width: 500px;
+	width: 100%;
 }
 
 .home {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	// justify-content: space-evenly;
+	// flex-wrap: wrap;
+	align-items: center;
+	// background-image: url('/assets/images/texture.png');
+
+	// background-image: radial-gradient(circle, #333 1px, transparent 1px);
+	// background-size: 20px 20px; /* spacing between dots */
+
+	// height: inherit;
+
+	/* Bigger dots, tighter spacing */
+
+	/* Colored dots on dark background */
+	// background-color: #1a1a2e;
+	// background-image: radial-gradient(circle, #e94560 2px, transparent 2px);
+	// background-size: 24px 24px;
+
+	/* Offset every other row (honeycomb) */
+	// background-image:
+	// radial-gradient(circle, #333 2px, transparent 2px), radial-gradient(circle, #333 2px, transparent 2px);
+	// background-size: 20px 20px;
+	// background-position:
+	// 0 0,
+	// 10px 10px;
 }
 
 .bg {
-  background: #ffd89b; /* fallback for old browsers */
-  background: -webkit-linear-gradient(111.9deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(111.9deg, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  //background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  /* https://grabient.com/IwOgDA7AzANCBswCccCsEBMMC0JhlhAwnhyPTNWFlwBYxgz4JHQxm4kMwZRh8gA?angle=45&steps=3 */
+	background: #ffd89b; /* fallback for old browsers */
+	background: -webkit-linear-gradient(111.9deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(
+		111.9deg,
+		#19547b,
+		#ffd89b
+	); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	//background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	/* https://grabient.com/IwOgDA7AzANCBswCccCsEBMMC0JhlhAwnhyPTNWFlwBYxgz4JHQxm4kMwZRh8gA?angle=45&steps=3 */
 
-  /* https://grabient.com/HQVgDAjANKDMAcMwCYCcMDsA2MMvOlABYMZYtYYJVTgDTlgxUiojgJ51cmxEJeuAWBFQwQA?angle=135&steps=3 */
+	/* https://grabient.com/HQVgDAjANKDMAcMwCYCcMDsA2MMvOlABYMZYtYYJVTgDTlgxUiojgJ51cmxEJeuAWBFQwQA?angle=135&steps=3 */
 
-  //background: linear-gradient(to top, #ffc695 0.000%, #636676 50.000%, #001426 100.000%);
-  //background-image: linear-gradient(109.6deg, rgba(83, 94, 161, 1) 44.5%, rgba(188, 14, 107, 1) 100.2%);
-  //background-image: linear-gradient(111.1deg, rgba(0,40,70,1) -4.8%, rgba(255, 115, 115, 1) 82.7%, rgba(255, 175, 123, 1) 97.2%);
-  //background-image: linear-gradient(to top, rgba(255, 242, 239, 1) 2.1%, rgba(255, 219, 182, 1) 25.5%, rgba(247, 165, 165, 1) 40.3%, rgba(26, 42, 79, 1) 85.3%);
+	//background: linear-gradient(to top, #ffc695 0.000%, #636676 50.000%, #001426 100.000%);
+	//background-image: linear-gradient(109.6deg, rgba(83, 94, 161, 1) 44.5%, rgba(188, 14, 107, 1) 100.2%);
+	//background-image: linear-gradient(111.1deg, rgba(0,40,70,1) -4.8%, rgba(255, 115, 115, 1) 82.7%, rgba(255, 175, 123, 1) 97.2%);
+	//background-image: linear-gradient(to top, rgba(255, 242, 239, 1) 2.1%, rgba(255, 219, 182, 1) 25.5%, rgba(247, 165, 165, 1) 40.3%, rgba(26, 42, 79, 1) 85.3%);
 
-  //background: linear-gradient(to bottom, #ffd89b 0.000%, #fc9088 50.000%, #090152 100.000%);
-  //background: linear-gradient(to bottom, #fddf62 0.000%, #fc9088 50.000%, #ff59d1 100.000%);
-  //background-image: linear-gradient(111.9deg, rgba(255, 255, 169, 1) 0.2%, rgba(255, 208, 120, 1) 14.1%, rgba(255, 156, 94, 1) 27.4%, rgba(251, 99, 95, 1) 41.4%, rgba(226, 28, 114, 1) 55.8%, rgba(176, 0, 140, 1) 65.2%, rgba(83, 0, 166, 1) 88.1%);
+	//background: linear-gradient(to bottom, #ffd89b 0.000%, #fc9088 50.000%, #090152 100.000%);
+	//background: linear-gradient(to bottom, #fddf62 0.000%, #fc9088 50.000%, #ff59d1 100.000%);
+	//background-image: linear-gradient(111.9deg, rgba(255, 255, 169, 1) 0.2%, rgba(255, 208, 120, 1) 14.1%, rgba(255, 156, 94, 1) 27.4%, rgba(251, 99, 95, 1) 41.4%, rgba(226, 28, 114, 1) 55.8%, rgba(176, 0, 140, 1) 65.2%, rgba(83, 0, 166, 1) 88.1%);
 }

@@ -1,5 +1,5 @@
 <div class="seizure p-4 d-flex flex-column">
-	<div class="fs-3 gecoFont mb-3">{{ "DIALOG.SEIZURE.TITLE"|translate }}</div>
+	<div class="fs-3 geconomicusFont mb-3">{{ "DIALOG.SEIZURE.TITLE"|translate }}</div>
 	<div class="flex-grow-1">
 		<div class="d-flex flex-row flex-wrap justify-content-between" cdkDropListGroup>
 			<div cdkDropList
@@ -14,7 +14,7 @@
                              #svgContainer></div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
-						<div class="fs-6 gecoFont shadowed"> {{ player.name }}</div>
+						<div class="fs-6 shadowed"> {{ player.name }}</div>
 						<div class="sold">{{ "DIALOG.SEIZURE.SOLD"|translate: {amount: player.coins| number : '1.2-2'} }}</div>
 						<button *ngIf="player.coins>0" mat-raised-button color="primary" (click)="seizeCoins()">{{ "DIALOG.SEIZURE.SEIZE"|translate }}
 							<fa-icon [icon]="faSackDollar"></fa-icon>
@@ -47,7 +47,7 @@
 			     (cdkDropListDropped)="onDrop($event)"
 			     [cdkDropListData]="seizureCards" class="bank-board m-2">
 				<div class="header-board d-flex flex-column">
-					<div class="ms-2 fs-5 justify-content-between d-flex gecoFont shadowed m-2">
+					<div class="ms-2 fs-5 justify-content-between d-flex shadowed m-2">
 						<fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>
 						{{ "BANK.TITLE"|translate }}
 						<fa-icon class="ms-2" [icon]="faLandMark"></fa-icon>

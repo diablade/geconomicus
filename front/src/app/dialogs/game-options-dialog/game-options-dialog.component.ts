@@ -15,6 +15,7 @@ export class GameOptionsDialogComponent {
 	C = C;
 	protected readonly Math = Math;
 	playersLength: any;
+	devMode= false;
 
 	constructor(
 		private i18n: I18nService,
@@ -24,7 +25,7 @@ export class GameOptionsDialogComponent {
 		this.i18n.loadNamespace('option');
 		this.rules = data.rules;
 		this.playersLength = data.playersLength;
-
+		this.devMode = data.devMode;
 		//TODO return object should be only modified Partial rules, not all rules
 	}
 

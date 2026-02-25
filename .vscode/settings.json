@@ -6,7 +6,7 @@
 	"editor.detectIndentation": false,
 	"files.insertFinalNewline": true,
 	"files.trimTrailingWhitespace": true,
-	"editor.hover.delay": 3000,
+	"editor.hover.delay": 2000,
 	// Si vous utilisez aussi Prettier
 	"[javascript]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"

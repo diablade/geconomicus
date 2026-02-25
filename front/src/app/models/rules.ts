@@ -1,8 +1,9 @@
 export class Rules {
 	idx = 0;
-	gameStateId: string = "";
-	gameStatus: string = "none";
+	gameStateId: string = '';
+	gameStatus: string = 'none';
 	rotate: boolean = false;
+	typeMoney: string = 'june';
 
 	//common
 	amountCardsForProd: number = 0;
@@ -17,7 +18,6 @@ export class Rules {
 	deathPassTimer: number = 0;
 
 	//not commun
-	typeMoney: string = "";
 	priceWeight1: number = 0;
 	priceWeight2: number = 0;
 	priceWeight3: number = 0;
@@ -36,7 +36,7 @@ export class Rules {
 	timerCredit: number = 0;
 	timerPrison: number = 0;
 	manualBank: boolean = false;
-	seizureType: string = "";
+	seizureType: string = '';
 	seizureCosts: number = 0;
 	seizureDecote: number = 0;
 	modifiedAt: Date = new Date();

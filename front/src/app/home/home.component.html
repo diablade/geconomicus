@@ -1,72 +1,88 @@
-<div class="w-100 h-100 bg overflow-auto">
-	<div class="home">
-		<div class="">
-			<img class="geco" src="./assets/images/geconomicus.png" alt="">
-		</div>
-		<!--  GUNY  -->
-		<div class="mt-4 d-flex flex-column align-items-center">
-			<div class="text-center bulle bulle-point gecoFont bienvenue">{{ "HOME.WELCOME" | translate }}</div>
-			<img class="guny" src="./assets/images/guny.png" alt="" (click)="beep()">
-		</div>
-		<div *ngIf="modalPwaPlatform === 'ANDROID' || modalPwaPlatform === 'IOS'" class="mt-4 d-flex flex-row">
-			<button class="m-2" mat-raised-button (click)="installApp()">{{ "HOME.INSTALL" | translate }}</button>
-		</div>
-		<div class="d-flex flex-row">
-			<button class="ms-2" mat-raised-button color="accent" (click)="create()">{{ "HOME.CREATE_GAME"|translate }}
-			</button>
-			<button class="ms-2" mat-raised-button color="primary" [matMenuTriggerFor]="menu">{{ "HOME.JOIN_GAME"| translate }}
-				<fa-icon [icon]="faChevronDown"></fa-icon>
-			</button>
-			<mat-menu #menu="matMenu">
-				<button mat-menu-item class="align-items-center" (click)="joinWithCamera()">
-					<fa-icon [icon]="faCamera"></fa-icon>
-					{{ "HOME.JOIN_VIA_CAM" | translate }}
-				</button>
-				<button mat-menu-item class="align-items-center" (click)="joinShortId()">
-					<fa-icon [icon]="faKeyboard"></fa-icon>
-					{{ "HOME.JOIN_VIA_SHORT_ID" | translate }}
-				</button>
-			</mat-menu>
-		</div>
-		<div class="d-flex flex-row mt-2">
-			<app-notice-btn [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>
-			<app-language-btn class="ms-2"></app-language-btn>
-		</div>
-		<div class="mt-4">
-			<img class="img-bottom" src="./assets/images/cards.png" alt="">
-		</div>
-		<span class="d-flex flex-row align-items-center">{{ "RESSOURCES.LEARN_FORWARD"| translate }}
-			<pedago-btn></pedago-btn></span>
-		<div class="m-2 d-flex flex-row flex-wrap">
-			<div class="m-2">
-				Made with <span [routerLink]="['history']">❤️</span> by Nicolas Markovic.
+<div class="w-100 h-100 bg">
+	<div class="dots overflow-auto">
+		<div class="home">
+			<div class="glow">
+				<img class="geco" src="./assets/images/geconomicus.png" alt="" />
 			</div>
-			<span class="m-2">{{ "HOME.FUND_RAISE"|translate }}{{ "HOME.IN"|translate }} <a
-					href="https://www.leetchi.com/fr/c/aide-au-developpement-de-geconomicusfr-5541237?utm_source=copylink&utm_medium=social_sharing"
-					target="_blank"><img [src]="'/assets/images/debt.png'" alt=""
-			                             class="icon"/></a>{{ "HOME.OR_IN"|translate }} <img
-					class="icon" alt=""
-					[src]="'/assets/images/june.png'"
-					(click)="openKeyPub()"/>
+			<!-- <div class="fs-1 shadowed geconomicusFont">Géconomicus</div> -->
+			<!--  GUNY  -->
+			<div class="mt-4 d-flex flex-column align-items-center bulleHome">
+				<bulle [pointer]="true" [contents]="['HOME.WELCOME']"></bulle>
+				<img class="guny" src="./assets/images/guny.png" alt="" (click)="beep()" />
+			</div>
+			<div *ngIf="modalPwaPlatform === 'ANDROID' || modalPwaPlatform === 'IOS'" class="mt-4 d-flex flex-row">
+				<button class="m-2 box-shadowed" mat-raised-button (click)="installApp()">
+					{{ 'HOME.INSTALL' | translate }}
+				</button>
+			</div>
+			<div class="d-flex flex-row">
+				<button class="ms-2 box-shadowed" mat-raised-button color="accent" (click)="create()">
+					{{ 'HOME.CREATE_SESSION' | translate }}
+				</button>
+				<button class="ms-2 box-shadowed" mat-raised-button color="primary" [matMenuTriggerFor]="menu">
+					{{ 'HOME.JOIN_SESSION' | translate }}
+					<fa-icon [icon]="faChevronDown"></fa-icon>
+				</button>
+				<mat-menu #menu="matMenu">
+					<button mat-menu-item class="align-items-center" (click)="joinWithCamera()">
+						<fa-icon [icon]="faCamera"></fa-icon>
+						{{ 'HOME.JOIN_VIA_CAM' | translate }}
+					</button>
+					<button mat-menu-item class="align-items-center" (click)="joinShortId()">
+						<fa-icon [icon]="faKeyboard"></fa-icon>
+						{{ 'HOME.JOIN_VIA_SHORT_ID' | translate }}
+					</button>
+				</mat-menu>
+			</div>
+			<div class="d-flex flex-row mt-2">
+				<app-notice-btn class="contourText" [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>
+				<app-language-btn class="ms-2 contourText"></app-language-btn>
+			</div>
+			<div class="mt-4">
+				<img class="img-bottom" src="./assets/images/cards.png" alt="" />
+			</div>
+			<span class="d-flex flex-row align-items-center contourText">
+				{{ 'RESSOURCES.LEARN_FORWARD' | translate }}
 			</span>
-		</div>
-		<button class="ms-2" mat-stroked-button color="accent" (click)="contribution()">{{ "HOME.CONTRIBUTION"|translate }}
-		</button>
-		<div class="m-2">
-			{{ "HOME.SAY_HI"|translate }}
-			<a href="https://t.me/geconomicus" target="_blank">
-				{{ "HOME.LINK_SAY_HI"|translate }}
-				<svg xmlns="http://www.w3.org/2000/svg" height="25" width="25" viewBox="0 0 496 512">
-					<!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-					<path fill="#74C0FC"
-					      d="M248 8C111 8 0 119 0 256S111 504 248 504 496 393 496 256 385 8 248 8zM363 176.7c-3.7 39.2-19.9 134.4-28.1 178.3-3.5 18.6-10.3 24.8-16.9 25.4-14.4 1.3-25.3-9.5-39.3-18.7-21.8-14.3-34.2-23.2-55.3-37.2-24.5-16.1-8.6-25 5.3-39.5 3.7-3.8 67.1-61.5 68.3-66.7 .2-.7 .3-3.1-1.2-4.4s-3.6-.8-5.1-.5q-3.3 .7-104.6 69.1-14.8 10.2-26.9 9.9c-8.9-.2-25.9-5-38.6-9.1-15.5-5-27.9-7.7-26.8-16.3q.8-6.7 18.5-13.7 108.4-47.2 144.6-62.3c68.9-28.6 83.2-33.6 92.5-33.8 2.1 0 6.6 .5 9.6 2.9a10.5 10.5 0 0 1 3.5 6.7A43.8 43.8 0 0 1 363 176.7z"/>
-				</svg>
-			</a>
-		</div>
-		<div class="m-2">
-			<a href="https://geconomicus.glibre.org/" target="_blank">{{ "HOME.LOOKING_FOR_PAPER_GAME"|translate }}</a>
+			<pedago-btn></pedago-btn>
+			<div class="m-2 d-flex flex-row flex-wrap">
+				<div class="m-2 contourText">
+					Made with
+					<span [routerLink]="['history']">❤️</span>
+					by Nicolas Markovic.
+				</div>
+				<span class="m-2 contourText">
+					{{ 'HOME.FUND_RAISE' | translate }}{{ 'HOME.IN' | translate }}
+					<a
+						href="https://www.leetchi.com/fr/c/aide-au-developpement-de-geconomicusfr-5541237?utm_source=copylink&utm_medium=social_sharing"
+						target="_blank">
+						<img [src]="'/assets/images/debt.png'" alt="" class="icon" />
+					</a>
+					{{ 'HOME.OR_IN' | translate }}
+					<img class="icon" alt="" [src]="'/assets/images/june.png'" (click)="openKeyPub()" />
+				</span>
+			</div>
+			<button class="ms-2 contourText" mat-stroked-button color="accent" (click)="contribution()">
+				{{ 'HOME.CONTRIBUTION' | translate }}
+			</button>
+			<div class="m-2 contourText">
+				{{ 'HOME.SAY_HI' | translate }}
+				<a href="https://t.me/geconomicus" target="_blank">
+					{{ 'HOME.LINK_SAY_HI' | translate }}
+					<svg xmlns="http://www.w3.org/2000/svg" height="25" width="25" viewBox="0 0 496 512">
+						<!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+						<path
+							fill="#74C0FC"
+							d="M248 8C111 8 0 119 0 256S111 504 248 504 496 393 496 256 385 8 248 8zM363 176.7c-3.7 39.2-19.9 134.4-28.1 178.3-3.5 18.6-10.3 24.8-16.9 25.4-14.4 1.3-25.3-9.5-39.3-18.7-21.8-14.3-34.2-23.2-55.3-37.2-24.5-16.1-8.6-25 5.3-39.5 3.7-3.8 67.1-61.5 68.3-66.7 .2-.7 .3-3.1-1.2-4.4s-3.6-.8-5.1-.5q-3.3 .7-104.6 69.1-14.8 10.2-26.9 9.9c-8.9-.2-25.9-5-38.6-9.1-15.5-5-27.9-7.7-26.8-16.3q.8-6.7 18.5-13.7 108.4-47.2 144.6-62.3c68.9-28.6 83.2-33.6 92.5-33.8 2.1 0 6.6 .5 9.6 2.9a10.5 10.5 0 0 1 3.5 6.7A43.8 43.8 0 0 1 363 176.7z" />
+					</svg>
+				</a>
+			</div>
+			<div class="m-2">
+				<a href="https://geconomicus.glibre.org/" target="_blank">
+					{{ 'HOME.LOOKING_FOR_PAPER_GAME' | translate }}
+				</a>
+			</div>
 		</div>
 	</div>
 </div>
 <app-version></app-version>
-

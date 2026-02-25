@@ -1,10 +1,10 @@
 <div class="coin-wrapper">
-    <div class="coin" [ngClass]="{ 'coin-spinning': forceRotate }">
-        <div class="coinRing">
-            <img [src]="coinImage" alt="coin" />
-        </div>
-    </div>
-    <ng-container *ngIf="label">
-        <div class="text-center mt-4 gecoFont shadowed fs-5">{{label}}</div>
-    </ng-container>
+	<div class="coin" [ngClass]="{ 'coin-spinning': forceRotate }" [ngStyle]="{ width: width, height: height }">
+		<div class="coinRing">
+			<img [src]="coinImage" alt="coin"/>
+		</div>
+	</div>
+	<ng-container *ngIf="label">
+		<div class="text-center mt-4 shadowed fs-5">{{ label }}</div>
+	</ng-container>
 </div>

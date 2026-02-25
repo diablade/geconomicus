@@ -222,7 +222,11 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	editRules(rules: Rules) {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
-			data: { rules: _.clone(rules), playersLength: this.session.players.length },
+			data: {
+				rules: _.clone(rules),
+				playersLength: this.session.players.length,
+				devMode: this.session.devMode,
+			},
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results === 'default') {
@@ -249,24 +253,35 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	launchGame(ruleIdx: number) {
-		this.gameStateService.launch(this.sessionId, ruleIdx).subscribe((data: any) => {
-			this.session.gamesRules = this.session.gamesRules.map((rules) => {
-				if (rules.idx == ruleIdx) {
-					rules.gameStatus = C.CREATED_GAME_STATE;
-					rules.gameStateId = data.gameStateId;
-				}
-				return rules;
-			});
-			// update session
-			//update gameStateId and status
+	openGame(ruleIdx: number) {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('MASTER.OPEN_GAME_CONFIRM'),
+				message: this.i18nService.instant('MASTER.OPEN_GAME_CONFIRM_2'),
+				labelBtnConfirm: this.i18nService.instant('MASTER.OPEN_GAME'),
+				styleBtnConfirm: 'warn',
+			},
+		});
+		dialogRef.afterClosed().subscribe((results) => {
+			if (results === 'btnConfirm') {
+				this.gameStateService.launch(this.sessionId, ruleIdx).subscribe((data: any) => {
+					this.session.gamesRules = this.session.gamesRules.map((rules) => {
+						if (rules.idx == ruleIdx) {
+							rules.gameStatus = C.OPEN;
+							rules.gameStateId = data.gameStateId;
+						}
+						return rules;
+					});
 
-			this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_LAUNCHED'));
-			//and redirect to masterBoard ...
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_LAUNCHED'));
+				});
+			}
 		});
 	}
 
-	enterGame() {}
+	enterGame(gameStateId: string) {
+		// this.router.navigate(['/master', gameStateId]);
+	}
 
 	showResults() {}
 }

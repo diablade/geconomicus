@@ -21,7 +21,7 @@
 </div>
 <div class="blocked" *ngIf="player.status === C.DEAD">
 	<div class="default-credit d-flex flex-column">
-		<div class="shadowed gecoFont fs-3">{{ "PLAYER.THIS_LIFE_IS_GONE" | translate }}</div>
+		<div class="shadowed fs-3">{{ "PLAYER.THIS_LIFE_IS_GONE" | translate }}</div>
 		<button (click)="tryReincarnate()" mat-raised-button
 		        color="accent">
 			{{ "PLAYER.GO_TO_SECOND_LIFE" | translate }}
@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	<div class="" *ngIf="game.status!==C.PLAYING">
-		<div class="text-center gecoFont shadowed fs-1 m-4">
+		<div class="text-center shadowed fs-1 m-4">
 			{{
                 game.status !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
 			}}

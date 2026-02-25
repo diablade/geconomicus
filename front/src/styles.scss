@@ -2,261 +2,420 @@
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import 'simple-keyboard/build/css/index.css';
 
-html,
 body {
-  height: 100%;
-  background: #ffd89b !important;
-  font-family: Arial, "Roboto", "Helvetica", sans-serif;
-}
-
-body {
-  margin: 0;
+	margin: 0;
 }
 
 * {
-  touch-action: manipulation;
+	touch-action: manipulation;
 }
 
-.guny {
-  width: 300px;
+body,
+html {
+	height: 100%;
+	background: #ffd89b !important;
+	// font-family: 'GecoFont5', 'Roboto', 'Helvetica', sans-serif !important;
 }
 
-.contour {
-  color: white !important;
-  font-weight: bold;
-
-  text-shadow: //TOP
-          0px -1.5px 0px black,
-            //TOP RIGHT
-          1.5px -1.5px 0px black,
-            //RIGHT
-          1.5px 0px 0px black,
-            //BOTTOM
-          0px 1.5px 0px black,
-            //BOTTOM RIGHT
-          1.5px 1.5px 0px black,
-            //BOTTOM LEFT
-          -1.5px 1.5px 0px black,
-            //LEFT
-          -1.5px 0px 0px black,
-            //TOP LEFT
-          -1.5px -1.5px 0px black,
+.bulleFont {
+	// font-family: 'GecoFont5', 'Roboto', sans-serif !important;
 }
 
-.sunyBg {
-  background: -webkit-linear-gradient(to top, #19547b, #ffd89b);
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #19547b, #ffd89b);
-  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+*:not(.bulleFont, .geconomicusFont) {
+	font-family: 'GecoFont10', 'Roboto', 'Helvetica', sans-serif;
 }
 
-.shadowed {
-  color: white;
-  text-shadow: //TOP
-          0px -1.5px 0px black,
-            //TOP RIGHT
-          1.5px -1.5px 0px black,
-            //RIGHT
-          1.5px 0px 0px black,
-            //BOTTOM
-          0px 1.5px 0px black,
-            //BOTTOM RIGHT
-          1.5px 1.5px 0px black,
-            //BOTTOM LEFT
-          -1.5px 1.5px 0px black,
-            //LEFT
-          -1.5px 0px 0px black,
-            //TOP LEFT
-          -1.5px -1.5px 0px black,
-            //la trainé vers en bas à droite
-          1px 1px 0px black,
-          2px 2px 0px black,
-          3px 3px 0px black,
-          4px 4px 0px black,
-          1px 1px 1px black,
-          2px 2px 1px black,
-          3px 3px 1px black,
-          4px 4px 1px black;
-}
-
-.gecoFont {
-  font-family: GecoFont, 'Roboto', sans-serif !important;
+.geconomicusFont {
+	font-family: 'Geconomicus', 'Roboto', sans-serif !important;
 }
 
 @font-face {
-  font-family: 'GecoFont';
-  src: url('/assets/Retrow Mentho.woff') format('woff');
+	font-family: 'Geconomicus';
+	src: url('/assets/fonts/Retrow Mentho.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GecoFont1';
+	src: url('/assets/fonts/Rondouillard.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont1.2';
+	src: url('/assets/fonts/Rondouillard Gras.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont2';
+	src: url('/assets/fonts/Stanberry.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont3';
+	src: url('/assets/fonts/HVD_Comic_Serif_Pro.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont4';
+	src: url('/assets/fonts/Homer_Simpson_Revised.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont5';
+	src: url('/assets/fonts/KRONIKA_.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont6';
+	src: url('/assets/fonts/MulledWineSeason-Medium.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont7';
+	src: url('/assets/fonts/ComicHelvetic_Medium.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont8';
+	src: url('/assets/fonts/ComickBook_Simple.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont9';
+	src: url('/assets/fonts/Hey Comic.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont10';
+	src: url('/assets/fonts/BadComic-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.guny {
+	width: 300px;
+}
+
+.contour {
+	color: white !important;
+	font-weight: bold;
+
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black;
+}
+
+.sunyBg {
+	background: -webkit-linear-gradient(to top, #19547b, #ffd89b);
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to top, #19547b, #ffd89b);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.glow {
+	animation: shadow-rotate 2s linear infinite;
+	filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+		drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+}
+
+@keyframes shadow-rotate {
+	0% {
+		filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+	25% {
+		filter: drop-shadow(2px 0px 2px rgba(255, 208, 0, 0.77)) drop-shadow(0px -2px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(-2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px 2px 2px rgba(27, 31, 253, 0.77));
+	}
+	50% {
+		filter: drop-shadow(0px 2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px -2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(-2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+	75% {
+		filter: drop-shadow(-2px 0px 2px rgba(255, 208, 0, 0.77)) drop-shadow(0px 2px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px -2px 2px rgba(27, 31, 253, 0.77));
+	}
+	100% {
+		filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+}
+
+.dots {
+	width: 100vw;
+	height: 100vh;
+
+	// width: 100%;
+	// height: 100%;
+	// background-image: url('/assets/images/texture_s.png');
+	background-image: url('/assets/images/texture.png');
+	// object-fit: cover;
+	// background-size: cover;
+	background-size: 100% 100%; /* or "100% 100%" to stretch */
+	background-repeat: repeat;
+	background-position: center;
+
+	// background-size: 50% 100%;
+	// background-repeat: no-repeat;
+	// background-position: left center;
+	// position: relative;
+	// z-index: 1;
+}
+
+// .dots::after {
+// 	content: '';
+// 	z-index: 0;
+// 	position: absolute;
+// 	top: 0;
+// 	right: 0;
+// 	width: 50%;
+// 	height: 100%;
+// 	background-image: url('/assets/images/texture_s.png');
+// 	background-size: 100% 100%;
+// 	background-repeat: no-repeat;
+// 	background-position: center;
+// 	// transform: scaleX(-1); /* mirror horizontally */
+// 	transform: scale(-1, -1);
+// }
+
+.box-shadowed {
+	box-shadow: (4px 4px 0px rgba(0, 0, 0, 1)) !important;
+}
+
+.shadowed {
+	color: white;
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black,
+		//la trainé vers en bas à droite
+		1px 1px 0px black,
+		2px 2px 0px black,
+		3px 3px 0px black,
+		4px 4px 0px black,
+		1px 1px 1px black,
+		2px 2px 1px black,
+		3px 3px 1px black,
+		4px 4px 1px black;
+}
+
+.white {
+	color: white !important;
+}
+
+.contourText {
+	color: white;
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black;
+}
+.ombreText {
+	text-shadow:
+	//la trainé vers en bas à droite
+		1px 1px 0px black,
+		2px 2px 0px black,
+		3px 3px 0px black,
+		4px 4px 0px black,
+		1px 1px 1px black,
+		2px 2px 1px black,
+		3px 3px 1px black,
+		4px 4px 1px black;
 }
 
 .bgBlur {
-  backdrop-filter: blur(5px);
-  background-color: rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(5px);
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .mousePointer {
-  cursor: pointer;
-}
-
-
-.bulle {
-  background: #ffffff69;
-  padding: 12px;
-  border-radius: 200px;
-  z-index: 2;
-
-  &-point {
-    position: relative;
-  }
-}
-
-.bulle::after {
-  content: '';
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  left: 30px;
-  bottom: -30px;
-  background: #ffffff69;
-  clip-path: polygon(38% 0, 100% 100%, 100% 0);
-  z-index: 2;
+	cursor: pointer;
 }
 
 .bulleResult {
-  background: #ffffff69;
-  padding: 12px;
-  border-radius: 200px;
-  position: relative;
-  width: fit-content;
-  height: fit-content;
+	background: #ffffff69;
+	padding: 12px;
+	border-radius: 200px;
+	position: relative;
+	width: fit-content;
+	height: fit-content;
 }
 
 .bulleResult::after {
-  content: "";
-  position: absolute;
-  width: 17px;
-  height: 17px;
-  right: -16px;
-  bottom: 37%;
-  background: rgba(255, 255, 255, 0.4117647059);
-  clip-path: polygon(100% 0%, 0 0, 0 100%);
+	content: '';
+	position: absolute;
+	width: 17px;
+	height: 17px;
+	right: -16px;
+	bottom: 37%;
+	background: rgba(255, 255, 255, 0.4117647059);
+	clip-path: polygon(100% 0%, 0 0, 0 100%);
 }
 
 .hg-button {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .hg-button-buy {
-  background-color: green !important;
-  color: white;
-  /* Optional: Change text color for contrast */
+	background-color: green !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .hg-button-cancel {
-  background-color: red !important;
-  color: white;
-  /* Optional: Change text color for contrast */
+	background-color: red !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .hg-button-bksp {
-  background-color: orange !important;
-  color: white;
-  /* Optional: Change text color for contrast */
+	background-color: orange !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .notice {
-  max-height: 600px;
-  max-width: 400px;
-  padding: 10px;
+	max-height: 600px;
+	max-width: 400px;
+	padding: 10px;
 }
 
 .icon {
-  height: 20px;
-  width: 20px;
-  background-size: cover;
-  cursor: pointer;
+	height: 20px;
+	width: 20px;
+	background-size: cover;
+	cursor: pointer;
 }
 
 .red {
-  background-color: #E8A7A6;
+	background-color: #e8a7a6;
 
-  .mat-badge-content {
-    background: #ce1421;
-  }
+	.mat-badge-content {
+		background: #ce1421;
+	}
 }
 
 .yellow {
-  background-color: #F3EFAD;
+	background-color: #f3efad;
 
-  .mat-badge-content {
-    background: #c4bb13;
-  }
+	.mat-badge-content {
+		background: #c4bb13;
+	}
 }
 
 .green {
-  background-color: #A2CBA2;
+	background-color: #a2cba2;
 
-  .mat-badge-content {
-    background: #14a549;
-  }
+	.mat-badge-content {
+		background: #14a549;
+	}
 }
 
 .blue {
-  background-color: #BBDAE3;
+	background-color: #bbdae3;
 
-  .mat-badge-content {
-    background: #3c8fa2;
-  }
+	.mat-badge-content {
+		background: #3c8fa2;
+	}
 }
 
 /* emoji */
 .emoji {
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  line-height: 1;
-  vertical-align: -0.125em;
-  font-size: 1em;
+	font-weight: normal;
+	font-style: normal;
+	display: inline-block;
+	line-height: 1;
+	vertical-align: -0.125em;
+	font-size: 1em;
 }
 
 /* twemoji */
 .twemoji {
-  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-  'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
-  'EmojiOne Color', 'Android Emoji', sans-serif;
+	font-family:
+		'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+		'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
-  .keyboard-dialog {
-    transform: scale(0.85) !important;
-  }
+	.keyboard-dialog {
+		transform: scale(0.85) !important;
+	}
 
-  .keyboard-dialog input {
-    height: 57px !important;
-  }
+	.keyboard-dialog input {
+		height: 57px !important;
+	}
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1.5);
-  }
+	0% {
+		transform: scale(1.5);
+	}
 
-  50% {
-    transform: scale(2.5);
-  }
+	50% {
+		transform: scale(2.5);
+	}
 
-  100% {
-    transform: scale(1.5);
-  }
+	100% {
+		transform: scale(1.5);
+	}
 }
 
-
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
+	0% {
+		transform: rotate(0deg);
+	}
 
-  100% {
-    transform: rotate(360deg);
-  }
+	100% {
+		transform: rotate(360deg);
+	}
 }

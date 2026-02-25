@@ -11,7 +11,7 @@
 			<button mat-button mat-stroked-button color="primary" (click)="home()">{{ "HOME.PAGE" | translate }}
 			</button>
 			<div class="d-flex flex-row align-items-center">
-				<div class="text-center bulleResult gecoFont bienvenue">
+				<div class="text-center bulleResult bienvenue">
 					{{ "RESULTS.LEARN_MORE" | translate }}
 					<br>
 					<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
@@ -23,7 +23,7 @@
 			<div class="d-flex flex-row mb-2 justify-content-center">
 				<div class="d-flex flex-column">
 					<img class="geco" src="./assets/images/geconomicus.png" alt="">
-					<div class="mt-2 text-center bulleResult gecoFont bienvenue">
+					<div class="mt-2 text-center bulleResult bienvenue">
 						{{ "RESULTS.LEARN_MORE_MOBILE" | translate }}
 						<br>
 						<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
@@ -187,8 +187,8 @@
 						<div class="player-frame-second player-svg"
 						     [innerHTML]="getSanitizedSvgFromString(podium[1]?.image)">
 						</div>
-						<div class="step second shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">
+						<div class="step second shadowed d-flex flex-column align-items-center justify-content-between">
+							<div class="shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥈</span>
 							</div>
 							{{ podium[1]?.name }}
@@ -202,8 +202,8 @@
 						<div class="player-frame player-svg"
 						     [innerHTML]="getSanitizedSvgFromString(podium[0]?.image)">
 						</div>
-						<div class="step first shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">
+						<div class="step first shadowed d-flex flex-column align-items-center justify-content-between">
+							<div class="shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥇</span>
 							</div>
 							{{ podium[0]?.name }}
@@ -218,8 +218,8 @@
 						     [innerHTML]="getSanitizedSvgFromString(podium[2]?.image)">
 						</div>
 						<div
-								class="step third shadowed gecoFont d-flex flex-column align-items-center justify-content-between">
-							<div class="gecoFont shadowed fs-5 overflow-hidden">
+								class="step third shadowed d-flex flex-column align-items-center justify-content-between">
+							<div class="shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥉</span></div>
 							{{ podium[2]?.name }}
 							<div class="font-monospace fs-6">{{ podium[2]?.value }} {{
@@ -239,7 +239,7 @@
 							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
 							     [innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed overflow-hidden"> {{ player.name }}<span class="fs-6">{{
+							<div class="shadowed overflow-hidden"> {{ player.name }}<span class="fs-6">{{
                                     i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
 								}}  {{ podium[i].value }} {{
                                     (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
@@ -258,7 +258,7 @@
 							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
 							     [innerHTML]="getSanitizedSvgFromString(player.image)">
 							</div>
-							<div class="gecoFont shadowed"> {{ player.name }}
+							<div class="shadowed"> {{ player.name }}
 								<span class="fs-6 font-monospace">{{ i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉" }} {{ podiumTransac[i].value }}x</span></div>
 						</div>
 					</ng-container>

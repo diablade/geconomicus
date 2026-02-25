@@ -84,6 +84,7 @@ import {ReJoinQrDialogComponent} from './dialogs/re-join-qr-dialog/re-join-qr-di
 import {AvatarComponent} from './components/avatar/avatar.component';
 import {SessionEditDialogComponent} from "./dialogs/session-edit/session-edit-dialog.component";
 import { CoinComponent } from './components/coin/coin.component';
+import { BulleComponent } from './components/bulle/bulle.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -144,7 +145,8 @@ LOAD_WASM().subscribe();
 		LobbyPlayerComponent,
 		ReJoinQrDialogComponent,
 		AvatarComponent,
-  CoinComponent
+  CoinComponent,
+  BulleComponent
 	],
 	imports: [
 		HttpClientModule,

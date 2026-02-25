@@ -108,6 +108,8 @@ export function getBackgroundStyle(boardConf: string, boardColor: string | undef
 			return {"background": "linear-gradient(111.9deg, rgba(255, 255, 169, 1) 0.2%, rgba(255, 208, 120, 1) 14.1%, rgba(255, 156, 94, 1) 27.4%, rgba(251, 99, 95, 1) 41.4%, rgba(226, 28, 114, 1) 55.8%, rgba(176, 0, 140, 1) 65.2%, rgba(83, 0, 166, 1) 88.1%)"};
 		case "gradien6":
 			return {"background": "linear-gradient(20.5deg, #ffd89b 0.000%, #fc9088 50.000%, #090152 100.000%)"};
+		case "gradien7":
+			return {"background": "radial-gradient(ellipse at 20% 30%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%), #0a0a1a"};
 		case "wood":
 		default:
 			return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};

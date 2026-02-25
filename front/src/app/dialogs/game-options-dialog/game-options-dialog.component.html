@@ -1,15 +1,9 @@
 <div class="option">
 	<div class="w-100 d-flex flex-column overflow-auto">
-		<div class="text-center fs-4 m-4 gecoFont shadowed">
-			{{ 'OPTION.TITLE' | translate }}
-		</div>
 		<div class="text-center">
-			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="rules.surveyEnabled">
-					{{ 'OPTION.SURVEY_Q' | translate }}
-				</mat-checkbox>
+			<div class="fs-4 m-4 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE' | translate }}
 			</div>
-			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]="'OPTION.WARNING' | translate"></div>
 			<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 				<mat-label>{{ 'OPTION.DURATION' | translate }}</mat-label>
 				<input
@@ -19,6 +13,18 @@
 					[placeholder]="'25 ' + getTranslate('BY_DEFAULT')"
 					[(ngModel)]="rules.roundMinutes" />
 			</mat-form-field>
+		</div>
+		<div *ngIf="devMode" class="text-center">
+			<div class="fs-4 m-4 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE_ADV' | translate }}
+			</div>
+			<div>
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.surveyEnabled">
+					{{ 'OPTION.SURVEY_Q' | translate }}
+				</mat-checkbox>
+			</div>
+			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]="'OPTION.WARNING' | translate"></div>
+
 			<div class="d-inline-flex">
 				<div class="imgText">
 					<img class="imgCardValeur" src="assets/images/level1.png" />

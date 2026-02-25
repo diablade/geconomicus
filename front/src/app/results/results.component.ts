@@ -1,28 +1,28 @@
-import {AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {DeprecatedBackService} from "../services/deprecated-back.service";
-import io from "socket.io-client";
-import {Card, EventGeco, Feedback, Game, Player} from "../models/game";
+import { AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DeprecatedBackService } from '../services/deprecated-back.service';
+import io from 'socket.io-client';
+import { Card, EventGeco, Feedback, Game, Player } from '../models/game';
 import * as _ from 'lodash-es';
-import {environment} from "../../environments/environment";
-import {getRandomColor, hexToRgb} from "../services/tools";
-import {firstValueFrom, Subject, takeUntil} from 'rxjs';
+import { environment } from '../../environments/environment';
+import { getRandomColor, hexToRgb } from '../services/tools';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 // @ts-ignore
-import { C } from "../../../../back/shared/constantes.mjs";
+import { C } from '../../../../back/shared/constantes.mjs';
 
-import {ChartConfiguration, ChartDataset} from 'chart.js';
+import { ChartConfiguration, ChartDataset } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import {parseISO, subSeconds} from 'date-fns';
+import { parseISO, subSeconds } from 'date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
-import {BaseChartDirective} from "ng2-charts";
-import {Platform} from "@angular/cdk/platform";
-import {I18nService} from '../services/i18n.service';
-import {TranslateService} from '@ngx-translate/core';
-import {faCircleInfo, faCopy} from "@fortawesome/free-solid-svg-icons";
-import {WebSocketService} from "../services/web-socket.service";
-import {SessionStorageService} from "../services/local-storage/session-storage.service";
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { BaseChartDirective } from 'ng2-charts';
+import { Platform } from '@angular/cdk/platform';
+import { I18nService } from '../services/i18n.service';
+import { TranslateService } from '@ngx-translate/core';
+import { faCircleInfo, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { WebSocketService } from '../services/web-socket.service';
+import { SessionStorageService } from '../services/local-storage/session-storage.service';
 
 // import ChartDataLabels from "chartjs-plugin-datalabels";
 // Chart.register(ChartDataLabels);
@@ -35,7 +35,7 @@ interface LastPointValue {
 }
 
 interface TooltipPoint {
-	label: string
+	label: string;
 	date: Date;
 	value: number;
 	color: string;
@@ -44,7 +44,7 @@ interface TooltipPoint {
 function filterMostRecent(data: any[]): TooltipPoint[] {
 	const map = new Map<string, TooltipPoint>();
 
-	data.forEach(item => {
+	data.forEach((item) => {
 		const existing = map.get(item.label);
 		if (!existing || new Date(item.date) > new Date(existing.date)) {
 			map.set(item.label, item);
@@ -66,11 +66,11 @@ function positionTooltip(context: any, tooltipEl: HTMLElement, tooltipModel: any
 	const windowHeight = window.innerHeight;
 
 	// Vérifie si le tooltip dépasse à droite et ajuste
-	if ((left + tooltipWidth) > windowWidth) {
+	if (left + tooltipWidth > windowWidth) {
 		left -= tooltipWidth;
 	}
 	// Vérifie si le tooltip dépasse en bas et ajuste
-	if ((top + tooltipHeight) > windowHeight) {
+	if (top + tooltipHeight > windowHeight) {
 		top -= tooltipHeight;
 	}
 
@@ -125,23 +125,26 @@ function externalTooltip(context: any) {
 	// Récupération des valeurs du dataset
 	if (tooltipModel.dataPoints) {
 		const dataRaw = tooltipModel.dataPoints.filter((p: any) => {
-			return !(p.raw.toIgnore);
+			return !p.raw.toIgnore;
 		});
-		const points = _.map(dataRaw, (item: any): TooltipPoint => ({
-			value: item.raw.y,
-			label: item.dataset.label,
-			color: item.dataset.backgroundColor,
-			date: item.raw.x,
-		}));
+		const points = _.map(
+			dataRaw,
+			(item: any): TooltipPoint => ({
+				value: item.raw.y,
+				label: item.dataset.label,
+				color: item.dataset.backgroundColor,
+				date: item.raw.x,
+			})
+		);
 		const pointsMostRecent = filterMostRecent(points);
 		const pointsNoMM = pointsMostRecent.filter((p: any) => {
-			return !(p.label == "Masse monétaire");
+			return !(p.label == 'Masse monétaire');
 		});
 
 		// @ts-ignore
-		const values = pointsNoMM.map(item => item.value);
+		const values = pointsNoMM.map((item) => item.value);
 		// @ts-ignore
-		const colors = pointsNoMM.map(item => item.color);
+		const colors = pointsNoMM.map((item) => item.color);
 		drawPieChart(values, colors);
 		addValues(pointsMostRecent);
 	}
@@ -163,19 +166,21 @@ function drawPieChart(values: number[], colors: any[]) {
 		type: 'pie',
 		data: {
 			labels: values.map((_, i) => `Valeur ${i + 1}`),
-			datasets: [{
-				data: values,
-				backgroundColor: colors,
-			}]
+			datasets: [
+				{
+					data: values,
+					backgroundColor: colors,
+				},
+			],
 		},
 		options: {
 			responsive: false,
 			animation: false,
 			maintainAspectRatio: false,
 			plugins: {
-				legend: {display: false},
-			}
-		}
+				legend: { display: false },
+			},
+		},
 	});
 }
 
@@ -185,7 +190,7 @@ function addValues(points: TooltipPoint[]) {
 	if (!div) return;
 
 	div.innerHTML = '';
-	points.forEach(point => {
+	points.forEach((point) => {
 		const entry = document.createElement('div');
 		entry.style.display = 'flex';
 		entry.style.alignItems = 'center';
@@ -209,11 +214,11 @@ function addValues(points: TooltipPoint[]) {
 @Component({
 	selector: 'app-results',
 	templateUrl: './results.component.html',
-	styleUrls: ['./results.component.scss']
+	styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	private socket: any;
-	idGame = "";
+	idGame = '';
 
 	private destroy$ = new Subject<void>();
 
@@ -225,8 +230,8 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	datasetsRelatif: Map<string, ChartDataset> = new Map<string, ChartDataset>();
 	datasetsResources: Map<string, ChartDataset> = new Map<string, ChartDataset>();
 	datasetsFeedback: ChartDataset[] = [];
-	massMonetaryName = "Masse monétaire";
-	bankName = "Banque";
+	massMonetaryName = 'Masse monétaire';
+	bankName = 'Banque';
 	currentDU = 0;
 	initialDU = 0;
 	initialMM = 0;
@@ -260,35 +265,38 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	leftLabels: string[] = [];
 
 	topLabelKeys = [
-		"SURVEY.HAPPY",
-		"SURVEY.COLLECTIVE",
-		"SURVEY.ACCOMPLISHED",
-		"SURVEY.GENEROUS",
-		"SURVEY.COOPERATIVE",
-		"SURVEY.CONFIDENT",
-		"SURVEY.PLEASANT",
-		"SURVEY.TOLERANT",
-		"SURVEY.AUTONOMOUS"];
+		'SURVEY.HAPPY',
+		'SURVEY.COLLECTIVE',
+		'SURVEY.ACCOMPLISHED',
+		'SURVEY.GENEROUS',
+		'SURVEY.COOPERATIVE',
+		'SURVEY.CONFIDENT',
+		'SURVEY.PLEASANT',
+		'SURVEY.TOLERANT',
+		'SURVEY.AUTONOMOUS',
+	];
 
 	bottomLabelKeys = [
-		"SURVEY.DEPRESSED",
-		"SURVEY.INDIVIDUAL",
-		"SURVEY.INSATISFIED",
-		"SURVEY.GREEDY",
-		"SURVEY.COMPETITIVE",
-		"SURVEY.ANXIOUS",
-		"SURVEY.AGGRESSIVE",
-		"SURVEY.IRRITABLE",
-		"SURVEY.DEPENDENT"];
+		'SURVEY.DEPRESSED',
+		'SURVEY.INDIVIDUAL',
+		'SURVEY.INSATISFIED',
+		'SURVEY.GREEDY',
+		'SURVEY.COMPETITIVE',
+		'SURVEY.ANXIOUS',
+		'SURVEY.AGGRESSIVE',
+		'SURVEY.IRRITABLE',
+		'SURVEY.DEPENDENT',
+	];
 
 	leftLabelKeys = [
-		"SURVEY.VERY",
-		"SURVEY.ENOUGH",
-		"SURVEY.LITTLE",
-		"SURVEY.NUTRAL",
-		"SURVEY.LITTLE",
-		"SURVEY.ENOUGH",
-		"SURVEY.VERYNOT"];
+		'SURVEY.VERY',
+		'SURVEY.ENOUGH',
+		'SURVEY.LITTLE',
+		'SURVEY.NUTRAL',
+		'SURVEY.LITTLE',
+		'SURVEY.ENOUGH',
+		'SURVEY.VERYNOT',
+	];
 
 	public lineChartData: ChartConfiguration['data'] | undefined;
 	public lineChartOptions: ChartConfiguration['options'] = {
@@ -303,11 +311,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: 'auto' },
 				time: {
 					unit: 'minute',
 					displayFormats: {
-						minute: 'HH:mm'
+						minute: 'HH:mm',
 					},
 				},
 			},
@@ -330,7 +338,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
@@ -340,7 +348,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					wheel: {
 						enabled: true,
 						modifierKey: 'ctrl',
-
 					},
 					pinch: {
 						enabled: true,
@@ -367,11 +374,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: 'auto' },
 				time: {
 					unit: 'minute',
 					displayFormats: {
-						minute: 'HH:mm'
+						minute: 'HH:mm',
 					},
 				},
 			},
@@ -382,11 +389,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		plugins: {
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
-					mode: 'xy'
+					mode: 'xy',
 				},
 				zoom: {
 					wheel: {
@@ -394,12 +401,12 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 						modifierKey: 'ctrl',
 					},
 					pinch: {
-						enabled: true
+						enabled: true,
 					},
-					mode: 'xy'
-				}
-			}
-		}
+					mode: 'xy',
+				},
+			},
+		},
 	};
 
 	public lineChartDataResources: ChartConfiguration['data'] | undefined;
@@ -414,11 +421,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		scales: {
 			x: {
 				type: 'time',
-				ticks: {source: "auto"},
+				ticks: { source: 'auto' },
 				time: {
 					unit: 'minute',
 					displayFormats: {
-						minute: 'HH:mm'
+						minute: 'HH:mm',
 					},
 				},
 			},
@@ -429,11 +436,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		plugins: {
 			zoom: {
 				limits: {
-					y: {min: 0},
+					y: { min: 0 },
 				},
 				pan: {
 					enabled: true,
-					mode: 'xy'
+					mode: 'xy',
 				},
 				zoom: {
 					wheel: {
@@ -441,12 +448,12 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 						enabled: true,
 					},
 					pinch: {
-						enabled: true
+						enabled: true,
 					},
-					mode: 'xy'
-				}
-			}
-		}
+					mode: 'xy',
+				},
+			},
+		},
 	};
 
 	public feedbacksData: ChartConfiguration['data'] | undefined;
@@ -461,14 +468,14 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private i18nService: I18nService,
 		private wsService: WebSocketService,
 		private sessionStorageService: SessionStorageService,
-		private translate: TranslateService) {
-	}
+		private translate: TranslateService
+	) {}
 
 	ngOnInit(): void {
 		this.getMaster();
-		this.route.params.subscribe(params => {
+		this.route.params.subscribe((params) => {
 			this.idGame = params['idGame'];
-			this.backService.getGame(this.idGame).subscribe(async game => {
+			this.backService.getGame(this.idGame).subscribe(async (game) => {
 				this.game = game;
 				this.events = game.events;
 				this.players = game.players;
@@ -476,11 +483,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
 					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
 				}
-				this.nbPlayer = _.partition(this.players, p => p.status === C.ALIVE).length;
+				this.nbPlayer = _.partition(this.players, (p) => p.status === C.ALIVE).length;
 				this.initDatasets();
 				if (this.game?.typeMoney == C.JUNE) {
-					const firstDu = _.find(this.events, e => {
-						return e.typeEvent == C.FIRST_DU || e.typeEvent == "first_DU";
+					const firstDu = _.find(this.events, (e) => {
+						return e.typeEvent == C.FIRST_DU || e.typeEvent == 'first_DU';
 					});
 					if (firstDu) {
 						this.currentDU = firstDu.amount;
@@ -497,10 +504,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.waitForTranslationsReady().then(() => {
 			this.loadTranslations();
 
-			this.i18nService.onLangChange()
+			this.i18nService
+				.onLangChange()
 				.pipe(takeUntil(this.destroy$))
 				.subscribe(async (langEvent) => {
-					console.log("🌐 Language changed to:", langEvent.lang);
+					console.log('🌐 Language changed to:', langEvent.lang);
 					// Wait for new translations to load
 					await this.waitForTranslationsReady();
 					this.loadTranslations();
@@ -523,7 +531,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 						setTimeout(checkTranslations, 50);
 					}
 				} catch (err) {
-					console.error("Error checking translations:", err);
+					console.error('Error checking translations:', err);
 					setTimeout(checkTranslations, 50);
 				}
 			};
@@ -538,16 +546,16 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			const end = new Date(this.stopGameDate);
 			const durationInMilliseconds = end.getTime() - start.getTime();
 			const durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
-			return durationInMinutes + " minutes";
+			return durationInMinutes + ' minutes';
 		}
-		return "-";
+		return '-';
 	}
 
 	getDebts() {
 		let debt = 0;
-		_.forEach(this.game?.credits, c => {
+		_.forEach(this.game?.credits, (c) => {
 			if (c.status != C.CREDIT_DONE) {
-				debt += (c.amount + c.interest)
+				debt += c.amount + c.interest;
 			}
 		});
 		return debt;
@@ -556,19 +564,19 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	getStatus() {
 		switch (this.game?.status) {
 			case C.OPEN:
-				return this.i18nService.instant("GAME.OPEN");
+				return this.i18nService.instant('GAME.OPEN');
 			case C.PLAYING:
-				return this.i18nService.instant("GAME.PLAYING");
+				return this.i18nService.instant('GAME.PLAYING');
 			case C.END_GAME:
-				return this.i18nService.instant("GAME.END_GAME");
+				return this.i18nService.instant('GAME.END_GAME');
 			case C.STOP_ROUND:
-				return this.i18nService.instant("GAME.STOP_ROUND");
+				return this.i18nService.instant('GAME.STOP_ROUND');
 			case C.INTER_ROUND:
-				return this.i18nService.instant("GAME.INTER_ROUND");
+				return this.i18nService.instant('GAME.INTER_ROUND');
 			case C.START_GAME:
-				return this.i18nService.instant("GAME.START_GAME");
+				return this.i18nService.instant('GAME.START_GAME');
 			default:
-				return "-";
+				return '-';
 		}
 	}
 
@@ -585,18 +593,20 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	async convertLabelsAsync(): Promise<void> {
-		const getTranslations = (keys: string[]) =>
-			keys.map(key => firstValueFrom(this.translate.get(key)));
+		const getTranslations = (keys: string[]) => keys.map((key) => firstValueFrom(this.translate.get(key)));
 
 		const labels = await Promise.all([
 			...getTranslations(this.topLabelKeys),
 			...getTranslations(this.bottomLabelKeys),
-			...getTranslations(this.leftLabelKeys)
+			...getTranslations(this.leftLabelKeys),
 		]);
 
 		// Split the results into their respective arrays
 		this.feedbacksLabelsTop = labels.slice(0, this.topLabelKeys.length);
-		this.feedbacksLabelsBottom = labels.slice(this.topLabelKeys.length, this.topLabelKeys.length + this.bottomLabelKeys.length);
+		this.feedbacksLabelsBottom = labels.slice(
+			this.topLabelKeys.length,
+			this.topLabelKeys.length + this.bottomLabelKeys.length
+		);
 		this.leftLabels = labels.slice(this.topLabelKeys.length + this.bottomLabelKeys.length);
 	}
 
@@ -617,11 +627,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			},
 			scales: {
-				x: {display: false, ticks: {stepSize: 1}},
-				y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3},
-				x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop},
-				x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom},
-				y2: {position: "left", type: "category", labels: this.leftLabels},
+				x: { display: false, ticks: { stepSize: 1 } },
+				y: { display: false, ticks: { stepSize: 1 }, type: 'linear', min: -3, max: 3 },
+				x2: { position: 'top', type: 'category', labels: this.feedbacksLabelsTop },
+				x3: { position: 'bottom', type: 'category', labels: this.feedbacksLabelsBottom },
+				y2: { position: 'left', type: 'category', labels: this.leftLabels },
 			},
 		};
 	}
@@ -641,28 +651,27 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.getFeedbacks();
 		});
 		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
-			await this.router.navigate(["ogame", payload.idGame, "player", payload.idPlayer]).then(() => {
+			await this.router.navigate(['ogame', payload.idGame, 'player', payload.idPlayer]).then(() => {
 				window.location.reload();
 			});
 		});
 	}
 
 	getMaster() {
-		this.isMaster = this.sessionStorageService.getItem("master");
+		this.isMaster = this.sessionStorageService.getItem('master');
 	}
 
-	newGameFromCopy() {
-	}
+	newGameFromCopy() {}
 
 	updateCharts() {
-		this.charts?.forEach(chart => {
+		this.charts?.forEach((chart) => {
 			chart.render();
 			chart.update('none');
 		});
 	}
 
 	getFeedbacks() {
-		this.backService.getFeedbacks(this.idGame).subscribe(data => {
+		this.backService.getFeedbacks(this.idGame).subscribe((data) => {
 			this.initFeedbacks(data.feedbacks);
 		});
 	}
@@ -670,144 +679,146 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	initDatasets() {
 		// Initialize empty dataset for each player with a running total
 		const players = _.sortBy(this.players, 'name');
-		_.forEach(players, player => {
-			this.datasets.set(
-				player._id,
-				{
-					data: [],
-					label: player.name,
-					backgroundColor: hexToRgb(player.hairColor),
-					borderColor: hexToRgb(player.hairColor),
-					pointBackgroundColor: hexToRgb(player.hairColor),
-					// pointBackgroundColor: hexToRgb("#ffffff"),
-					pointBorderColor: hexToRgb(player.hairColor),
-					pointStyle: "circle",
-					hoverBorderWidth: 4,
-					borderWidth: 2, // Line thickness
-					pointRadius: 1, // Point thickness
-					// pointRadius: 0.8, // Point thickness
-					// @ts-ignore
-					total: 0,
-				});
-
-			this.datasetsRelatif.set(
-				player._id,
-				{
-					data: [],
-					label: player.name,
-					backgroundColor: hexToRgb(player.hairColor),
-					borderColor: hexToRgb(player.hairColor),
-					pointBackgroundColor: hexToRgb(player.hairColor),
-					pointBorderColor: hexToRgb(player.hairColor),
-					pointStyle: "circle",
-					hoverBorderWidth: 4,
-					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
-					// @ts-ignore
-					total: 0,
-				});
-			this.datasetsResources.set(
-				player._id,
-				{
-					data: [],
-					label: player.name,
-					backgroundColor: hexToRgb(player.hairColor),
-					borderColor: hexToRgb(player.hairColor),
-					pointBackgroundColor: hexToRgb(player.hairColor),
-					pointBorderColor: hexToRgb(player.hairColor),
-					borderWidth: 2, // Line thickness
-					pointRadius: 0.8, // Point thickness
-					stepped: "before",
-					// @ts-ignore
-					total: 0,
-				});
-		});
-		if (this.game?.typeMoney == C.DEBT) {
-			this.datasets.set(
-				C.BANK,
-				{
-					data: [],
-					label: this.bankName,
-					backgroundColor: hexToRgb("#ffffff"),
-					borderColor: hexToRgb("#000000"),
-					pointBackgroundColor: hexToRgb("#ffffff"),
-					pointBorderColor: hexToRgb("#000000"),
-					borderWidth: 4, // Line thickness
-					pointRadius: 1, // Point thickness
-					// @ts-ignore
-					total: 0,
-				});
-			this.datasetsResources.set(
-				C.BANK,
-				{
-					data: [],
-					label: this.bankName,
-					backgroundColor: hexToRgb("#ffffff"),
-					borderColor: hexToRgb("#000000"),
-					pointBackgroundColor: hexToRgb("#ffffff"),
-					pointBorderColor: hexToRgb("#000000"),
-					borderWidth: 4, // Line thickness
-					pointRadius: 1, // Point thickness
-					stepped: "before",
-					// @ts-ignore
-					total: 0,
-				});
-		}
-		this.datasets.set(
-			"masseMoney",
-			{
+		_.forEach(players, (player) => {
+			this.datasets.set(player._id, {
 				data: [],
-				label: this.massMonetaryName,
-				backgroundColor: hexToRgb("#000000"),
-				borderColor: hexToRgb("#000000"),
-				borderDash: [1, 0, 1],
-				pointBackgroundColor: hexToRgb("#000000"),
-				pointBorderColor: hexToRgb("#000000"),
+				label: player.name,
+				backgroundColor: hexToRgb(player.hairColor),
+				borderColor: hexToRgb(player.hairColor),
+				pointBackgroundColor: hexToRgb(player.hairColor),
+				// pointBackgroundColor: hexToRgb("#ffffff"),
+				pointBorderColor: hexToRgb(player.hairColor),
+				pointStyle: 'circle',
+				hoverBorderWidth: 4,
+				borderWidth: 2, // Line thickness
+				pointRadius: 1, // Point thickness
+				// pointRadius: 0.8, // Point thickness
+				// @ts-ignore
+				total: 0,
+			});
+
+			this.datasetsRelatif.set(player._id, {
+				data: [],
+				label: player.name,
+				backgroundColor: hexToRgb(player.hairColor),
+				borderColor: hexToRgb(player.hairColor),
+				pointBackgroundColor: hexToRgb(player.hairColor),
+				pointBorderColor: hexToRgb(player.hairColor),
+				pointStyle: 'circle',
+				hoverBorderWidth: 4,
 				borderWidth: 2, // Line thickness
 				pointRadius: 0.8, // Point thickness
 				// @ts-ignore
 				total: 0,
 			});
+			this.datasetsResources.set(player._id, {
+				data: [],
+				label: player.name,
+				backgroundColor: hexToRgb(player.hairColor),
+				borderColor: hexToRgb(player.hairColor),
+				pointBackgroundColor: hexToRgb(player.hairColor),
+				pointBorderColor: hexToRgb(player.hairColor),
+				borderWidth: 2, // Line thickness
+				pointRadius: 0.8, // Point thickness
+				stepped: 'before',
+				// @ts-ignore
+				total: 0,
+			});
+		});
+		if (this.game?.typeMoney == C.DEBT) {
+			this.datasets.set(C.BANK, {
+				data: [],
+				label: this.bankName,
+				backgroundColor: hexToRgb('#ffffff'),
+				borderColor: hexToRgb('#000000'),
+				pointBackgroundColor: hexToRgb('#ffffff'),
+				pointBorderColor: hexToRgb('#000000'),
+				borderWidth: 4, // Line thickness
+				pointRadius: 1, // Point thickness
+				// @ts-ignore
+				total: 0,
+			});
+			this.datasetsResources.set(C.BANK, {
+				data: [],
+				label: this.bankName,
+				backgroundColor: hexToRgb('#ffffff'),
+				borderColor: hexToRgb('#000000'),
+				pointBackgroundColor: hexToRgb('#ffffff'),
+				pointBorderColor: hexToRgb('#000000'),
+				borderWidth: 4, // Line thickness
+				pointRadius: 1, // Point thickness
+				stepped: 'before',
+				// @ts-ignore
+				total: 0,
+			});
+		}
+		this.datasets.set('masseMoney', {
+			data: [],
+			label: this.massMonetaryName,
+			backgroundColor: hexToRgb('#000000'),
+			borderColor: hexToRgb('#000000'),
+			borderDash: [1, 0, 1],
+			pointBackgroundColor: hexToRgb('#000000'),
+			pointBorderColor: hexToRgb('#000000'),
+			borderWidth: 2, // Line thickness
+			pointRadius: 0.8, // Point thickness
+			// @ts-ignore
+			total: 0,
+		});
 
-		const playersWithFeedbacks = _.filter(this.players, p => p.survey != undefined);
-		const feedbacks = _.map(playersWithFeedbacks, p => p.survey);
+		const playersWithFeedbacks = _.filter(this.players, (p) => p.survey != undefined);
+		const feedbacks = _.map(playersWithFeedbacks, (p) => p.survey);
 		this.initFeedbacks(feedbacks);
 	}
 
 	initFeedbacks(feedbacks: (Feedback | undefined)[]) {
-		const feedbacksCounts1 = _.countBy(feedbacks, "depressedHappy");
-		const feedbacksCounts2 = _.countBy(feedbacks, "individualCollective");
-		const feedbacksCounts3 = _.countBy(feedbacks, "insatisfiedAccomplished");
-		const feedbacksCounts4 = _.countBy(feedbacks, "greedyGenerous");
-		const feedbacksCounts5 = _.countBy(feedbacks, "competitiveCooperative");
-		const feedbacksCounts6 = _.countBy(feedbacks, "anxiousConfident");
-		const feedbacksCounts7 = _.countBy(feedbacks, "agressiveAvenant");
-		const feedbacksCounts8 = _.countBy(feedbacks, "irritableTolerant");
-		const feedbacksCounts9 = _.countBy(feedbacks, "dependantAutonomous");
-		const feedbacksCounted = [feedbacksCounts1, feedbacksCounts2, feedbacksCounts3, feedbacksCounts4, feedbacksCounts5, feedbacksCounts6, feedbacksCounts7, feedbacksCounts8, feedbacksCounts9];
+		const feedbacksCounts1 = _.countBy(feedbacks, 'depressedHappy');
+		const feedbacksCounts2 = _.countBy(feedbacks, 'individualCollective');
+		const feedbacksCounts3 = _.countBy(feedbacks, 'insatisfiedAccomplished');
+		const feedbacksCounts4 = _.countBy(feedbacks, 'greedyGenerous');
+		const feedbacksCounts5 = _.countBy(feedbacks, 'competitiveCooperative');
+		const feedbacksCounts6 = _.countBy(feedbacks, 'anxiousConfident');
+		const feedbacksCounts7 = _.countBy(feedbacks, 'agressiveAvenant');
+		const feedbacksCounts8 = _.countBy(feedbacks, 'irritableTolerant');
+		const feedbacksCounts9 = _.countBy(feedbacks, 'dependantAutonomous');
+		const feedbacksCounted = [
+			feedbacksCounts1,
+			feedbacksCounts2,
+			feedbacksCounts3,
+			feedbacksCounts4,
+			feedbacksCounts5,
+			feedbacksCounts6,
+			feedbacksCounts7,
+			feedbacksCounts8,
+			feedbacksCounts9,
+		];
 
 		// @ts-ignore
 		this.datasetsFeedback = _.map(feedbacksCounted, (feedback, index) => {
 			const data = _.map(feedback, (count, key) => {
-				return {x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count}
+				return { x: index, y: parseInt(key), r: Math.log(count * 2) * 6, count: count };
 			});
 			return {
 				data: data,
 				type: 'bubble',
-				backgroundColor: getRandomColor()
-			}
+				backgroundColor: getRandomColor(),
+			};
 		});
 
 		this.feedbacksData = {
 			// @ts-ignore
-			datasets: this.datasetsFeedback
+			datasets: this.datasetsFeedback,
 		};
 	}
 
 	getValueCardsFromEvent(cards: Card[]) {
-		return _.reduce(cards, (sum, card) => {
-			return card ? sum + card.price : sum // € or DU
-		}, 0);
+		return _.reduce(
+			cards,
+			(sum, card) => {
+				return card ? sum + card.price : sum; // € or DU
+			},
+			0
+		);
 	}
 
 	addEventsToDatasets(unsortedEvents: EventGeco[]) {
@@ -816,7 +827,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		// Iterate over each event
 		for (const event of events) {
 			let totalResourcesEvent = 0; //here only because of switch case don't want same name many places
-			const mmDataset = this.datasets.get("masseMoney");
+			const mmDataset = this.datasets.get('masseMoney');
 			// let mmDatasetRelatif = this.datasetsRelatif.get("masseMoney");
 			const emitterDataset = this.datasets.get(event.emitter);
 			const emitterDatasetRelatif = this.datasetsRelatif.get(event.emitter);
@@ -826,34 +837,48 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 			const receiverDatasetResources = this.datasetsResources.get(event.receiver);
 
 			// update all data in dataset quantitatif
-			const updateAllDatas = (exceptKeyDataset: string[], date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
+			const updateAllDatas = (
+				exceptKeyDataset: string[],
+				date: string | Date,
+				operator: 'add' | 'sub' | 'new' | 'prev',
+				value: number,
+				relatif: boolean,
+				beforePoint: boolean
+			) => {
 				for (const [key, dataset] of this.datasets) {
-					if (!exceptKeyDataset.some(k => k === key)) {
+					if (!exceptKeyDataset.some((k) => k === key)) {
 						updateData(dataset, date, operator, value, relatif, beforePoint);
 					}
 				}
-			}
+			};
 
-			const updateData = (dataset: any, date: string | Date, operator: "add" | "sub" | "new" | "prev", value: number, relatif: boolean, beforePoint: boolean) => {
+			const updateData = (
+				dataset: any,
+				date: string | Date,
+				operator: 'add' | 'sub' | 'new' | 'prev',
+				value: number,
+				relatif: boolean,
+				beforePoint: boolean
+			) => {
 				if (dataset) {
 					const previousTotal = dataset.total;
 					let newTotal = 0;
-					if (operator == "add") {
+					if (operator == 'add') {
 						newTotal = previousTotal + value;
-					} else if (operator == "sub") {
+					} else if (operator == 'sub') {
 						newTotal = previousTotal - value;
-					} else if (operator == "prev") {
+					} else if (operator == 'prev') {
 						newTotal = previousTotal;
 					} else {
 						newTotal = value;
 					}
 					if (beforePoint) {
-						addPointBefore1second(dataset, date, relatif ? (previousTotal / this.currentDU) : previousTotal);
+						addPointBefore1second(dataset, date, relatif ? previousTotal / this.currentDU : previousTotal);
 					}
-					addPointAtEvent(dataset, date, relatif ? (newTotal / this.currentDU) : newTotal);
+					addPointAtEvent(dataset, date, relatif ? newTotal / this.currentDU : newTotal);
 					dataset.total = newTotal;
 				}
-			}
+			};
 			const addPointBefore1second = (dataset: any, date: string | Date, value: number) => {
 				// @ts-ignore
 				dataset.data.push({
@@ -863,11 +888,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					y: value,
 					toIgnore: true,
 				});
-			}
+			};
 			const addPointAtEvent = (dataset: any, date: string | Date, value: any) => {
 				// @ts-ignore
-				dataset.data.push({x: date, y: value});
-			}
+				dataset.data.push({ x: date, y: value });
+			};
 
 			switch (event.typeEvent) {
 				case C.NEW_PLAYER:
@@ -894,29 +919,29 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.initialMM += event.amount;
 					this.initialResources += totalResourcesEvent;
 					this.initialCards += event.resources.length;
-					updateData(mmDataset, event.date, "add", event.amount, false, false);
-					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
+					updateData(mmDataset, event.date, 'add', event.amount, false, false);
+					updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
 					if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
-						updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
+						updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
 					}
 					continue;
 				case C.DISTRIB_DU:
 					this.currentDU = event.amount;
-					updateData(mmDataset, event.date, "add", event.amount, false, false);
-					updateData(receiverDataset, event.date, "add", event.amount, false, false);
-					updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, false);
+					updateData(mmDataset, event.date, 'add', event.amount, false, false);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, false);
+					updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
 					continue;
 				case C.TRANSACTION:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
-					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetRelatif, event.date, "sub", event.amount, true, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "add", totalResourcesEvent, false, false);
+					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(emitterDatasetRelatif, event.date, 'sub', event.amount, true, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
 
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDatasetRelatif, event.date, "add", event.amount, true, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, "sub", totalResourcesEvent, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, this.pointsBefore1second);
+					updateData(receiverDatasetResources, event.date, 'sub', totalResourcesEvent, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.TRANSFORM_DISCARDS:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
@@ -930,73 +955,80 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				case C.TRANSFORM_NEWCARDS:
 					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
 					// no before point , same reason as transform_discards
-					updateData(receiverDatasetResources, event.date, "add", totalResourcesEvent, false, false);
+					updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
 					this.finalCards += event.resources.length;
 					this.productionTotal += 1;
 					continue;
 				case C.DEAD:
 					this.deads++;
 					const deadRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(receiverDatasetResources, event.date, "new", deadRessources, false, false);
-					updateData(receiverDataset, event.date, "prev", 0, false, false);
-					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(receiverDatasetResources, event.date, 'new', deadRessources, false, false);
+					updateData(receiverDataset, event.date, 'prev', 0, false, false);
+					updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.REMIND_DEAD:
 					// @ts-ignore
-					updateData(receiverDataset, event.date, "prev", 0, false, false);
-					updateData(receiverDatasetRelatif, event.date, "prev", 0, true, false);
-					updateData(receiverDatasetResources, event.date, "prev", 0, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(receiverDataset, event.date, 'prev', 0, false, false);
+					updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
+					updateData(receiverDatasetResources, event.date, 'prev', 0, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.NEW_CREDIT:
 					if (!this.roundStarted) {
 						this.initialMM += event.amount;
-						this.initialDebts += (event.amount + event.resources[0].interest);
+						this.initialDebts += event.amount + event.resources[0].interest;
 					}
-					updateData(mmDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(mmDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.SETTLE_CREDIT:
 					const interest = event.resources[0].interest;
 					this.moneyDestroyed += event.amount;
-					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", interest, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, 'add', interest, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.PAYED_INTEREST:
-					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.SEIZURE:
 					const seizureRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizureRessources, false, false);
-					updateData(receiverDatasetResources, event.date, "add", seizureRessources, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateData(emitterDatasetResources, event.date, 'sub', seizureRessources, false, false);
+					updateData(receiverDatasetResources, event.date, 'add', seizureRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.SEIZED_DEAD:
 					const seizedItems = event.resources[0];
 					const seizedRessources = this.getValueCardsFromEvent(seizedItems.cards);
-					updateData(mmDataset, event.date, "sub", event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, "add", event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, "sub", seizedItems.interest, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, "sub", seizedRessources, false, false);
-					updateData(receiverDatasetResources, event.date, "add", seizedRessources, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, "prev", 0, false, false);
+					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+					updateData(
+						emitterDataset,
+						event.date,
+						'sub',
+						seizedItems.interest,
+						false,
+						this.pointsBefore1second
+					);
+					updateData(emitterDatasetResources, event.date, 'sub', seizedRessources, false, false);
+					updateData(receiverDatasetResources, event.date, 'add', seizedRessources, false, false);
+					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
 					continue;
 				case C.PRISON_ENDED:
 					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
 					if (!outOfPrisonRessources) {
 						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
 					}
-					updateData(receiverDatasetResources, event.date, "add", outOfPrisonRessources, false, false);
+					updateData(receiverDatasetResources, event.date, 'add', outOfPrisonRessources, false, false);
 					continue;
 				default:
 					continue;
@@ -1005,13 +1037,13 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		// Remove the 'total' property from each dataset ? datasets.forEach(dataset => delete dataset.total);
 		this.lineChartData = {
-			datasets: [...this.datasets.values()]
+			datasets: [...this.datasets.values()],
 		};
 		this.lineChartDataRelatif = {
-			datasets: [...this.datasetsRelatif.values()]
+			datasets: [...this.datasetsRelatif.values()],
 		};
 		this.lineChartDataResources = {
-			datasets: [...this.datasetsResources.values()]
+			datasets: [...this.datasetsResources.values()],
 		};
 	}
 
@@ -1028,7 +1060,7 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				// @ts-ignore
 				if (lastPointValue && lastPointValue.y) {
 					// @ts-ignore
-					allLastPointsMoney.push({key: key, value: lastPointValue.y, label: dataset.label});
+					allLastPointsMoney.push({ key: key, value: lastPointValue.y, label: dataset.label });
 				}
 			}
 		});
@@ -1041,73 +1073,81 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 					// @ts-ignore
 					this.finalResources += lastPointValue.y;
 					// @ts-ignore
-					allLastPointsRessources.push({key: key, value: lastPointValue.y, label: dataset.label});
+					allLastPointsRessources.push({ key: key, value: lastPointValue.y, label: dataset.label });
 				}
 			}
 		});
 
-		const merged = this.mergedReincarnatePlayers(allLastPointsMoney.concat(allLastPointsRessources))
+		const merged = this.mergedReincarnatePlayers(allLastPointsMoney.concat(allLastPointsRessources));
 		const podiumm = _.orderBy(merged, 'value', 'desc');
 
-		this.podium = _.map(podiumm, p => {
-			let playerFound = _.find(this.players, {_id: p.key});
+		this.podium = _.map(podiumm, (p) => {
+			let playerFound = _.find(this.players, { _id: p.key });
 			if (playerFound) {
-				return {...playerFound, value: p.value.toFixed(2)};
+				return { ...playerFound, value: p.value.toFixed(2) };
 			}
 			return new Player();
 		});
 	}
 
 	getBestPlayersTransactions() {
-		const transactionEvents = _.filter(this.events, e => e.typeEvent == C.TRANSACTION);
+		const transactionEvents = _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION);
 		if (transactionEvents.length > 0) {
-			const transactionPlayers = _.countBy(transactionEvents, e => e.emitter);
+			const transactionPlayers = _.countBy(transactionEvents, (e) => e.emitter);
 
 			const transactionPlayersArray = _.toPairs(transactionPlayers);
 			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
 			this.podiumTransac = _.map(sortedPlayers, ([playerId, value]) => {
-				let playerFound = _.find(this.players, {_id: playerId});
-				return {...playerFound, value} || new Player();  // Return player object or a default Player if not found
+				let playerFound = _.find(this.players, { _id: playerId });
+				return { ...playerFound, value } || new Player(); // Return player object or a default Player if not found
 			});
 		}
 	}
 
 	mergedReincarnatePlayers(allLastPoints: LastPointValue[]): LastPointValue[] {
-		return _.reduce(allLastPoints, (cumul: LastPointValue[], current) => {
-			const currentPlayer = _.find(this.players, p => p._id === current.key);
-			if (currentPlayer && currentPlayer.reincarnateFromId) {
-				// If current player is reincarnated,
-				const cumulPlayer = _.find(cumul, p => p.key === currentPlayer.reincarnateFromId);
-				if (cumulPlayer) {
-					// if value already exist update it
-					cumulPlayer.value += current.value;
-				} else {
-					cumul.push({key: currentPlayer.reincarnateFromId, value: current.value, label: currentPlayer.name});
+		return _.reduce(
+			allLastPoints,
+			(cumul: LastPointValue[], current) => {
+				const currentPlayer = _.find(this.players, (p) => p._id === current.key);
+				if (currentPlayer && currentPlayer.reincarnateFromId) {
+					// If current player is reincarnated,
+					const cumulPlayer = _.find(cumul, (p) => p.key === currentPlayer.reincarnateFromId);
+					if (cumulPlayer) {
+						// if value already exist update it
+						cumulPlayer.value += current.value;
+					} else {
+						cumul.push({
+							key: currentPlayer.reincarnateFromId,
+							value: current.value,
+							label: currentPlayer.name,
+						});
+					}
+				} else if (currentPlayer && !currentPlayer.reincarnateFromId) {
+					// If current player is NOT reincarnate,
+					const cumulPlayer = _.find(cumul, (p) => p.key === currentPlayer._id);
+					if (cumulPlayer) {
+						// if value already exist update it
+						cumulPlayer.value += current.value;
+					} else {
+						cumul.push({ ...current });
+					}
 				}
-			} else if (currentPlayer && !currentPlayer.reincarnateFromId) {
-				// If current player is NOT reincarnate,
-				const cumulPlayer = _.find(cumul, p => p.key === currentPlayer._id);
-				if (cumulPlayer) {
-					// if value already exist update it
-					cumulPlayer.value += current.value;
-				} else {
-					cumul.push({...current});
-				}
-			}
-			return cumul;
-		}, []);
+				return cumul;
+			},
+			[]
+		);
 	}
 
 	getSanitizedSvgFromString(svgString: string | undefined): SafeHtml {
-		return svgString ? this.sanitizer.bypassSecurityTrustHtml(svgString) : "";
+		return svgString ? this.sanitizer.bypassSecurityTrustHtml(svgString) : '';
 	}
 
 	getTransactionsTotal() {
-		return _.filter(this.events, e => e.typeEvent == C.TRANSACTION).length;
+		return _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION).length;
 	}
 
 	getCurrency() {
-		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? "CURRENCY.EURO" : "CURRENCY.DU");
+		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU');
 	}
 
 	home() {

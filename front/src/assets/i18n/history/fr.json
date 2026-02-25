@@ -1,9 +1,9 @@
 {
     "HISTORY": {
-        "TITLE": "Historique des parties créées",
-        "DELETE_CONFIRM": "Supprimer une partie ?",
-        "AUTO_DELETE": "Les parties de plus de 2 mois seront bientôt automatiquement supprimées.",
-        "IMPORT_EXPORT": "(L'importation et l'exportation de partie seront bientôt possibles).",
+        "TITLE": "Historique des sessions créées",
+        "DELETE_CONFIRM": "Supprimer une session ?",
+        "AUTO_DELETE": "Les sessions de plus de 2 mois seront bientôt automatiquement supprimées.",
+        "IMPORT_EXPORT": "(L'importation et l'exportation de session seront bientôt possibles).",
         "JOIN_AS_NEW_PLAYER": "Rejoindre (nouveau joueur)",
         "JOIN_AS_MASTER": "Rejoindre en tant qu'animateur",
         "CREATED_ON": "Créé le",
@@ -31,7 +31,7 @@
             "IN_PROGRESS": "En cours"
         },
         "DELETE_SESSION": "La session est supprimée",
-        "DELETE_GAME": "la partie est supprimée",
+        "DELETE_GAME": "la session est supprimée",
         "DELETE_DIALOG": {
             "TITLE": "Confirmez-vous ?",
             "MESSAGE": "Cette action est irréversible."

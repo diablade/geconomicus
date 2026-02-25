@@ -1,23 +1,23 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Router } from "@angular/router";
-import { faCamera, faChevronDown, faKeyboard } from "@fortawesome/free-solid-svg-icons";
-import { JoinQrDialog } from "../master-board/master-board.component";
-import { Platform } from "@angular/cdk/platform";
-import { ScannerQrCode } from "../dialogs/scanner-qr-code/scanner-qr-code.component";
-import { I18nService } from "../services/i18n.service";
-import { ContributionsComponent } from "../components/contributions/contributions.component";
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { faCamera, faChevronDown, faKeyboard } from '@fortawesome/free-solid-svg-icons';
+import { JoinQrDialog } from '../master-board/master-board.component';
+import { Platform } from '@angular/cdk/platform';
+import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
+import { I18nService } from '../services/i18n.service';
+import { ContributionsComponent } from '../components/contributions/contributions.component';
 import { JoinShortDialogComponent } from '../dialogs/join-short-dialog/join-short-dialog.component';
 import { LocalStorageService } from '../services/local-storage/local-storage.service';
 import { ResumeSessionPromptComponent } from '../dialogs/resume-session-prompt/resume-session-prompt.component';
 import { AudioService } from '../services/audio.service';
-import { ThemesService } from "../services/themes.service";
-import { SessionService } from "../services/api/session.service";
+import { ThemesService } from '../services/themes.service';
+import { SessionService } from '../services/api/session.service';
 
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.scss']
+	styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 	faCamera = faCamera;
@@ -26,14 +26,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	modalPwaEvent: any;
 	modalPwaPlatform: string | undefined;
 
-	constructor(private router: Router,
+	constructor(
+		private router: Router,
 		private i18nService: I18nService,
 		private platform: Platform,
 		private sessionService: SessionService,
 		private localStorageService: LocalStorageService,
 		private audioService: AudioService,
-		public dialog: MatDialog) {
-		this.i18nService.loadNamespace("home");
+		public dialog: MatDialog
+	) {
+		this.i18nService.loadNamespace('home');
 	}
 
 	ngOnInit(): void {
@@ -41,31 +43,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	}
 
 	ngAfterViewInit(): void {
-		const session: any = this.localStorageService.getItem("session");
+		const session: any = this.localStorageService.getItem('session');
 		if (session && session.idGame && session.idPlayer) {
 			const dialogRef = this.dialog.open(ResumeSessionPromptComponent, {
 				disableClose: true,
-				data: session
+				data: session,
 			});
 			dialogRef.afterClosed().subscribe();
 		}
 	}
 
 	beep() {
-		this.audioService.playSound("coins");
+		this.audioService.playSound('coins');
 	}
 
 	create() {
 		const dialogRef = this.dialog.open(CreateSessionDialog, {});
 
-		dialogRef.afterClosed().subscribe(data => {
+		dialogRef.afterClosed().subscribe((data) => {
 			if (data.name) {
-				this.sessionService.create(data.name, data.location, data.animator, data.theme)
-					.subscribe(
-						session => {
-							this.router.navigate(['session', session._id]);
-						},
-					);
+				this.sessionService.create(data.name, data.location, data.animator, data.theme).subscribe((session) => {
+					this.router.navigate(['session', session._id]);
+				});
 			}
 		});
 	}
@@ -77,7 +76,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 	joinWithCamera() {
 		const dialogRef = this.dialog.open(ScannerQrCode, {});
-		dialogRef.afterClosed().subscribe(url => {
+		dialogRef.afterClosed().subscribe((url) => {
 			const u = new URL(url);
 			const paths = u.pathname.split('/').filter(Boolean);
 			this.router.navigate(paths);
@@ -86,26 +85,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 	joinShortId() {
 		const dialogRef = this.dialog.open(JoinShortDialogComponent, {});
-		dialogRef.afterClosed().subscribe(shortCode => {
+		dialogRef.afterClosed().subscribe((shortCode) => {
 			if (shortCode) {
-				this.sessionService.getByShortId(shortCode)
-					.subscribe(
-						sessionId => {
-							this.router.navigate(['join', sessionId]);
-						}
-					);
+				this.sessionService.getByShortId(shortCode).subscribe((payload) => {
+					this.router.navigate(['/join', payload._id]);
+				});
 			}
 		});
 	}
 
 	openKeyPub() {
-		const gunyKeyPub = "4JfewkSqRFpzdJsKnxrSBLgQcjBaopVs9ct4Qc32B8kf:jrw"
-		const keyText = this.i18nService.instant("PUBLIC_KEY");
+		const gunyKeyPub = '4JfewkSqRFpzdJsKnxrSBLgQcjBaopVs9ct4Qc32B8kf:jrw';
+		const keyText = this.i18nService.instant('PUBLIC_KEY');
 		this.dialog.open(JoinQrDialog, {
 			data: {
 				url: gunyKeyPub,
 				text: keyText + gunyKeyPub,
-				textSize: "10px"
+				textSize: '10px',
 			},
 		});
 	}
@@ -119,7 +115,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 			});
 		}
 		if (this.platform.IOS) {
-			const isInStandaloneMode = ('standalone' in window.navigator) && ((<any>window.navigator)['standalone']);
+			const isInStandaloneMode = 'standalone' in window.navigator && (<any>window.navigator)['standalone'];
 			if (!isInStandaloneMode) {
 				this.modalPwaPlatform = 'IOS';
 			}
@@ -134,7 +130,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 			this.dialog.open(InstallAppDialog);
 		}
 	}
-
 }
 
 @Component({
@@ -142,13 +137,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	templateUrl: './create-session-dialog.html',
 })
 export class CreateSessionDialog {
-	name = "";
-	animator = "";
-	location = "";
-	theme = "";
+	name = '';
+	animator = '';
+	location = '';
+	theme = '';
 	themes: string[];
 
-	constructor(public dialogRef: MatDialogRef<CreateSessionDialog>, private themesService: ThemesService, private i18nService: I18nService) {
+	constructor(
+		public dialogRef: MatDialogRef<CreateSessionDialog>,
+		private themesService: ThemesService,
+		private i18nService: I18nService
+	) {
 		this.themes = this.themesService.getThemesKeys();
 	}
 
@@ -162,8 +161,7 @@ export class CreateSessionDialog {
 	templateUrl: './install-app-dialog.html',
 })
 export class InstallAppDialog {
-	constructor(public dialogRef: MatDialogRef<InstallAppDialog>) {
-	}
+	constructor(public dialogRef: MatDialogRef<InstallAppDialog>) {}
 
 	onNoClick(): void {
 		this.dialogRef.close();
