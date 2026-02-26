@@ -17,7 +17,7 @@ export class CongratsDialogComponent implements AfterViewInit {
 	constructor(public dialogRef: MatDialogRef<CongratsDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService, private themesService: ThemesService) {
 		this.text = data.text;
 		this.card = data.card;
-		this.typeTheme = this.themesService.getTypeTheme();
+		// this.typeTheme = this.themesService.getTypeTheme();
 	}
 
 	ngAfterViewInit(): void {

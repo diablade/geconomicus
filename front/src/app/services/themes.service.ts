@@ -16,14 +16,19 @@ export class ThemesService {
 		"THEME.CUSTOM1": "custom1"
 	};
 
-	private _typeTheme$ = new BehaviorSubject<string>("CARD");
-	readonly typeTheme$ = this._typeTheme$.asObservable();
+	private _themeConfig$ = new BehaviorSubject<Record<string, string>>({
+		type: "CARD",
+		by: "level",
+		folder: "classic",
+		prefixFileName: "classic_"
+	});
+	readonly themeConfig$ = this._themeConfig$.asObservable();
 
-	setTypeTheme(typeTheme: string) {
-		this._typeTheme$.next(typeTheme);
+	setThemeConfig(themeConfig: Record<string, string>) {
+		this._themeConfig$.next(themeConfig);
 	}
-	getTypeTheme(): any {
-		return this._typeTheme$.getValue();
+	getThemeConfig(): any {
+		return this._themeConfig$.getValue();
 	}
 
 	constructor(private i18nService: I18nService, private http: HttpClient) {
@@ -32,7 +37,12 @@ export class ThemesService {
 	loadTheme(themeKey: string): void {
 		//load language translations for the theme
 		if (themeKey === "THEME.CLASSIC") {
-			this.setTypeTheme("CARD");
+			this.setThemeConfig({
+				type: "CARD",
+				by: "level",
+				folder: "classic",
+				prefixFileName: "classic_"
+			});
 		} else {
 			this.namespace = this.themes[themeKey];
 			//load icons for the theme
@@ -48,9 +58,19 @@ export class ThemesService {
 			this.http.get<Record<string, string>>(path).subscribe((icons: Record<string, string>) => {
 				this.icons = icons;
 				if (this.themes[themeKey] === "twemojis") {
-					this.setTypeTheme("TWEMOJI");
+					this.setThemeConfig({
+						type: "TWEMOJI",
+						by: "level",
+						folder: "twemojis",
+						prefixFileName: "twemojis_"
+					});
 				} else {
-					this.setTypeTheme(icons["type"] as "CARD" | "EMOJI" | "TWEMOJI" | "SVG" | "PNG");
+					this.setThemeConfig({
+						type: icons["type"] as "CARD" | "EMOJI" | "TWEMOJI" | "SVG" | "PNG",
+						by: "level",
+						folder: this.namespace,
+						prefixFileName: icons["prefixFileName"] as string
+					});
 				}
 			});
 		}

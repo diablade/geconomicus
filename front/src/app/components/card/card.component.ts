@@ -34,6 +34,7 @@ export class CardComponent {
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
 	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
 	@Input() flippable = true;
+	@Input() themeConfig: any;
 	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(6vw * 0.2)' : 'calc(6vh * 0.2)';
 	state = "default";
 	translateX = 0;
@@ -123,5 +124,15 @@ export class CardComponent {
 				return "blue";
 		}
 		return "red";
+	}
+
+	getImagePath() {
+		console.log(this.themeConfig);
+		if (this.themeConfig['by'] === "levelAndLetter") {
+			return '/assets/i18n/themes/' + this.themeConfig['folder'] + '/images/' + this.themeConfig['prefixFileName'] + this.card.letter + (this.card.weight + 1) + '.png';
+		} else if (this.themeConfig['by'] === "level") {
+			return '/assets/i18n/themes/' + this.themeConfig['folder'] + '/images/' + this.themeConfig['prefixFileName'] + (this.card.weight + 1) + '.png';
+		}
+		return '/assets/i18n/themes/classic/images/classic_' + (this.card.weight + 1);
 	}
 }

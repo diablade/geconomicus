@@ -4,7 +4,7 @@
 <div class="card" [style.width]="width" [style.height]="height"
      [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
 	<div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
-		<img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
+		<img [src]="getImagePath()"/>
 		<div class="containerLetter topLeft" [ngClass]="state==='flipped' ? 'hide' : 'show'">
 			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
 		</div>

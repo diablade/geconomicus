@@ -48,7 +48,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscription: Subscription | undefined;
 	options: Partial<adventurer.Options & Options> = {};
 	game: Game = new Game();
-	typeTheme$ = this.themesService.typeTheme$;
+	themeConfig$ = this.themesService.themeConfig$;
 	cards: Card[] = [];
 	credits: Credit[] = [];
 	recipes: Recipe[] = [];
@@ -85,7 +85,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				private backService: BackService,
 				private wsService: WebSocketService,
 				private i18nService: I18nService,
-				private themesService: ThemesService,
+				protected themesService: ThemesService,
 				private audioService: AudioService,
 				private snackbarService: SnackbarService) {
 	}

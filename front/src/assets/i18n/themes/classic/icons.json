@@ -1,0 +1,6 @@
+{
+	"type": "CARD",
+	"by": "level", // level or levelAndLetter
+	"name": "Classic",
+	"prefixFileName": "classic_"
+}
