@@ -35,6 +35,7 @@ declare const C: {
 	UPDATED_AVATAR: string,
 	DELETED_AVATAR: string,
 	SESSION_CREATED: string,
+	SESSION_STARTED: string,
 	NEW_GAMES_RULES: string,
 	PLAYER_JOIN: string,
 	UPDATED_RULES: string,

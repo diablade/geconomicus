@@ -139,52 +139,60 @@ html {
 
 .glow {
 	animation: shadow-rotate 2s linear infinite;
-	filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+	filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
 		drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
 }
 
 @keyframes shadow-rotate {
 	0% {
-		filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
 	}
 	25% {
-		filter: drop-shadow(2px 0px 2px rgba(255, 208, 0, 0.77)) drop-shadow(0px -2px 2px rgba(255, 28, 141, 0.77))
+		filter: drop-shadow(2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px -2px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(-2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px 2px 2px rgba(27, 31, 253, 0.77));
 	}
 	50% {
-		filter: drop-shadow(0px 2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(2px 0px 2px rgba(255, 28, 141, 0.77))
+		filter: drop-shadow(0px 2px 2px rgb(255, 230, 0)) drop-shadow(2px 0px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(0px -2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(-2px 0px 2px rgba(27, 31, 253, 0.77));
 	}
 	75% {
-		filter: drop-shadow(-2px 0px 2px rgba(255, 208, 0, 0.77)) drop-shadow(0px 2px 2px rgba(255, 28, 141, 0.77))
+		filter: drop-shadow(-2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px 2px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px -2px 2px rgba(27, 31, 253, 0.77));
 	}
 	100% {
-		filter: drop-shadow(0px -2px 2px rgba(255, 208, 0, 0.77)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
 	}
 }
 
+
+.clouds {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/assets/images/texture_cloud.svg');
+    background-size: cover;
+}
+
 .dots {
-	width: 100vw;
-	height: 100vh;
+    width: 100vw;
+    height: 100vh;
 
-	// width: 100%;
-	// height: 100%;
-	// background-image: url('/assets/images/texture_s.png');
-	background-image: url('/assets/images/texture.png');
-	// object-fit: cover;
-	// background-size: cover;
-	background-size: 100% 100%; /* or "100% 100%" to stretch */
-	background-repeat: repeat;
-	background-position: center;
+    // width: 100%;
+    // height: 100%;
+    // background-image: url('/assets/images/texture_s.png');
+    background-image: url('/assets/images/texture.svg');
+    // object-fit: cover;
+    // background-size: cover;
+    background-size: 100% 100%; /* or "100% 100%" to stretch */
+    background-repeat: repeat;
+    background-position: center;
 
-	// background-size: 50% 100%;
-	// background-repeat: no-repeat;
-	// background-position: left center;
-	// position: relative;
-	// z-index: 1;
+    // background-size: 50% 100%;
+    // background-repeat: no-repeat;
+    // background-position: left center;
+    // position: relative;
+    // z-index: 1;
 }
 
 // .dots::after {

@@ -1,5 +1,8 @@
 import env from '#config/env';
 import log from "#config/log";
+import socket from '#config/socket';
+import { C } from '#constantes';
+
 import SessionService from "./session.service.js";
 import EventService from "../event/event.service.js";
 import SurveyService from "../survey/survey.service.js";
@@ -47,6 +50,8 @@ SessionController.create = async (req, res, next) => {
 SessionController.start = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.start(req.body.sessionId);
+        await EventService.create(C.START_SESSION, sessionUpdated._id, "", C.MASTER, '-', {gamesRules_idx: sessionUpdated.gamesRules.map(rule => rule.idx)});
+        socket.emitToAck(sessionUpdated._id, C.START_SESSION, sessionUpdated.gamesRules);
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {

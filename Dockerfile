@@ -1,5 +1,5 @@
 #docker build -t geco:1.0 .
-FROM node:22.14.0-alpine
+FROM node:22.22.1-alpine
 MAINTAINER Nicolas Markovic
 COPY ./back ./back
 VOLUME /logs

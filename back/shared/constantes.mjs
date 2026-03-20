@@ -32,6 +32,7 @@ export const C = {
     NEW_AVATAR: "na",
     UPDATED_AVATAR: "ua",
     DELETED_AVATAR: "da",
+    SESSION_STARTED: "st",
     NEW_GAMES_RULES: "ngr",
     UPDATED_RULES: "ru",
     DELETED_RULES: "dr",

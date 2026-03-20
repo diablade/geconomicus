@@ -88,6 +88,9 @@ describe("FULL SESSION GAME simulation", () => {
         });
         expect(resStart.status).toBe(200);
         expect(resStart.body).toBeTruthy();
+        expect(mockEmitTo).toHaveBeenCalledWith(sessionId, expect.stringContaining(C.SESSION_STARTED), expect.objectContaining({
+            gamesRules: expect.arrayContaining(resStart.body.gamesRules)
+        }));
     });
     test("CHECK SESSION with 2 rules and " + numberOfPlayers + " players", async () => {
         const res = await agent.get("/session/" + sessionId).send();

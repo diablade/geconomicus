@@ -54,9 +54,9 @@ export class LobbyPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		this.socket.on(C.NEW_GAMES_RULES, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(C.SESSION_STARTED, async (data: any, cb: (response: any) => void) => {
 			cb({status: 'ok', avatarIdx: this.avatar.idx, _ackId: data._ackId});
-			// this.session.gamesRules = this.session.gamesRules.push(data.game);
+			this.session.gamesRules = data.gamesRules;
 		});
 		this.socket.on(C.CREATED_GAME_STATE, async (data: any, cb: (response: any) => void) => {
 			cb({status: 'ok', avatarIdx: this.avatar.idx, _ackId: data._ackId});

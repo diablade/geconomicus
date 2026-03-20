@@ -2,7 +2,7 @@
     "name": "back",
     "version": "1.8.8",
     "dependencies": {
-        "bcrypt": "^5.1.1",
+        "bcrypt": "^6.0.0",
         "cors": "^2.8.5",
         "date-fns": "^2.30.0",
         "dotenv": "^16.4.5",
@@ -33,10 +33,10 @@
         "@babel/preset-env": "^7.24.5",
         "@jest/globals": "^29.7.0",
         "babel-jest": "^29.7.0",
+        "cross-env": "^7.0.3",
         "jest": "^30.2.0",
         "mongodb-memory-server": "^9.1.8",
         "nodemon": "^3.1.9",
-        "cross-env": "^7.0.3",
         "supertest": "^6.3.4"
     },
     "imports": {

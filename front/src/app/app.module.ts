@@ -37,7 +37,6 @@ import {NgChartsModule} from 'ng2-charts';
 import {GameOptionsDialogComponent} from './dialogs/game-options-dialog/game-options-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatTooltipModule} from "@angular/material/tooltip";
-import {ZXingScannerModule} from "@zxing/ngx-scanner";
 import {NgxKjuaComponent} from "./qrcodeTool/ngx-kjua.component";
 import 'hammerjs';
 import 'chartjs-plugin-zoom';
@@ -170,7 +169,6 @@ LOAD_WASM().subscribe();
 		NgChartsModule,
 		MatCheckboxModule,
 		MatTooltipModule,
-		ZXingScannerModule,
 		MatListModule,
 		MatMenuModule,
 		MatSliderModule,
