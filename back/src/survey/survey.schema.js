@@ -14,7 +14,7 @@ const SurveySchema = new Schema({
     agressiveAvenant: { type: Number, required: true, default: 0 },
     irritableTolerant: { type: Number, required: true, default: 0 },
     dependantAutonomous: { type: Number, required: true, default: 0 },
-});
+}, { timestamps: true });
 
 SurveySchema.index(
     { sessionId: 1, gameStateId: 1, avatarId: 1 },

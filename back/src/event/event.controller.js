@@ -9,8 +9,8 @@ const EventController = {};
  */
 EventController.getBySessionId = async (req, res) => {
     try {
-        const { id } = req.params;
-        const event = await EventService.getBySessionId(id);
+        const { sessionId } = req.params;
+        const event = await EventService.getBySessionId(sessionId);
 
         if (!event) {
             return res.status(404).json({
