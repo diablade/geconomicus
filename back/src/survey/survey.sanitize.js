@@ -26,7 +26,8 @@ export const sanitize = {
         anxiousConfident: Joi.number().min(-3).max(3).default(0),
         agressiveAvenant: Joi.number().min(-3).max(3).default(0),
         irritableTolerant: Joi.number().min(-3).max(3).default(0),
-        dependantAutonomous: Joi.number().min(-3).max(3).default(0)
+        dependantAutonomous: Joi.number().min(-3).max(3).default(0),
+        poorRich: Joi.number().min(-3).max(3).default(0)
     }).required(),
     getBySessionGameStateAvatarId: Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
