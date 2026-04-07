@@ -1,8 +1,8 @@
 import Joi from 'joi';
-import {isValidNanoId4, isValidObjectId} from '../misc/validate.tool.js';
+import {isValidNanoId4, isValidObjectId} from '../../misc/validate.tool.js';
 
-export const sanitize = {
-    launch:      Joi.object({
+export const stateSanitize = {
+    create:      Joi.object({
         sessionId: Joi.string().custom(isValidObjectId).required()
                        .messages({
                            'any.invalid':  'Invalid session ID format',

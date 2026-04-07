@@ -3,7 +3,7 @@ import {Card} from "../../models/game";
 import {ShortCode} from "../../models/shortCode";
 import {AudioService} from 'src/app/services/audio.service';
 // @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
+import { GAME_TYPE } from '@geco/shared';
 import {animations} from "../../services/animations";
 import {ThemesService} from "../../services/themes.service";
 
@@ -14,7 +14,7 @@ import {ThemesService} from "../../services/themes.service";
 	animations
 })
 export class ItemComponent {
-	C = C;
+	protected readonly JUNE = GAME_TYPE.JUNE;
 	@Input() card: Card = {
 		_id: "",
 		key: "",

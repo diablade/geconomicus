@@ -30,7 +30,7 @@ BankController.createCredit = async (req, res, next) => {
 //     try {
 //         const game = await GameModel.findById(idGame)
 //         if (game) {
-//             let credits = game.credits.filter(c => c.idPlayer === idPlayer);
+//             let credits = game.credits.filter(c => idPlayer === idPlayer);
 //             return res.status(200).json(credits);
 //         }
 //         log.error("Cannot get credits, Game not found");

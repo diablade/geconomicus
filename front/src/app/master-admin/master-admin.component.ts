@@ -10,7 +10,7 @@ import {schema} from '@dicebear/core';
 import {adventurer} from '@dicebear/collection';
 import {createAvatar, Options as Opt} from '@dicebear/core';
 // @ts-ignore
-import {C} from '../../../../back/shared/constantes.mjs';
+import * as C from '../../../../back/config/constantes_deprecated.cjs';
 import {getBackgroundStyle, hairPalette} from "../services/avatarTools";
 
 @Component({

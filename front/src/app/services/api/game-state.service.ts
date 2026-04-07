@@ -14,9 +14,9 @@ export class GameStateService {
 		private errorService: ErrorService
 	) {}
 
-	launch(sessionId: string, ruleIdx: number): Observable<any> {
+	create(sessionId: string, ruleIdx: number): Observable<any> {
 		return this.http
-			.post<any>(environment.API_HOST + environment.GAME_STATE.LAUNCH, { sessionId, ruleIdx })
+			.post<any>(environment.API_HOST + environment.GAME_STATE.CREATE, { sessionId, ruleIdx })
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
 	}
 
@@ -25,6 +25,12 @@ export class GameStateService {
 			.get<any>(environment.API_HOST + environment.GAME_STATE.GET + gameStateId + '?enriched=' + enriched)
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')));
 	}
+
+    resetGame(gameStateId: string, sessionId: string, ruleIdx: number): Observable<any> {
+        return this.http
+            .post<any>(environment.API_HOST + environment.GAME_STATE.RESET, { gameStateId, sessionId, ruleIdx })
+            .pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
+    }
 
 	//enter
 

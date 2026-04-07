@@ -1,192 +1,228 @@
 <div class="w-100 h-100 d-flex flex-row results">
 	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
-	<div class="d-none d-md-block events">
-		<app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
+	<div class="d-none d-md-block events" *ngIf="game">
+		<app-events [typeMoney]="game.typeMoney" [events]="events" [players]="players"></app-events>
 	</div>
 	<div class="flex-grow-1 d-flex flex-column overflow-auto h-100 p-4">
 		<div class="resultsHeader flex-row d-none d-md-flex justify-content-between align-items-center">
 			<div class="d-flex flex-column">
-				<img class="geco" src="./assets/images/geconomicus.png" alt="">
+				<img class="geco" src="./assets/images/geconomicus.png" alt="" />
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="home()">{{ "HOME.PAGE" | translate }}
+			<button mat-button mat-stroked-button color="primary" (click)="home()">
+				{{ 'HOME.PAGE' | translate }}
 			</button>
 			<div class="d-flex flex-row align-items-center">
 				<div class="text-center bulleResult bienvenue">
-					{{ "RESULTS.LEARN_MORE" | translate }}
-					<br>
+					{{ 'RESULTS.LEARN_MORE' | translate }}
+					<br />
 					<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
 				</div>
-				<img class="gunyResults" src="./assets/images/guny.png">
+				<img class="gunyResults" src="./assets/images/guny.png" />
 			</div>
 		</div>
 		<div class="d-flex flex-column d-md-none">
 			<div class="d-flex flex-row mb-2 justify-content-center">
 				<div class="d-flex flex-column">
-					<img class="geco" src="./assets/images/geconomicus.png" alt="">
+					<img class="geco" src="./assets/images/geconomicus.png" alt="" />
 					<div class="mt-2 text-center bulleResult bienvenue">
-						{{ "RESULTS.LEARN_MORE_MOBILE" | translate }}
-						<br>
+						{{ 'RESULTS.LEARN_MORE_MOBILE' | translate }}
+						<br />
 						<a href="https://monnaie-libre.fr" target="_blank">https://monnaie-libre.fr</a>
 					</div>
 				</div>
-				<img class="gunyResults" src="./assets/images/guny.png">
+				<img class="gunyResults" src="./assets/images/guny.png" />
 			</div>
-			<button mat-button mat-stroked-button color="primary" (click)="home()">{{
-                    "HOME.PAGE" | translate
-				}}
+			<button mat-button mat-stroked-button color="primary" (click)="home()">
+				{{ 'HOME.PAGE' | translate }}
 			</button>
 		</div>
 		<div class="d-flex flex-row justify-content-between align-items-end">
-			<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>
+			<h1 class="m-2 mt-4 contour">{{ 'RESULTS.SUMMARY' | translate: { name: game?.name } }}</h1>
 		</div>
 		<!--		<h1 class="m-2 mt-4 contour">{{ "RESULTS.SUMMARY" | translate: {name: game?.name} }}</h1>-->
 		<div class="row g-0 p-2 bg-white rounded shadow">
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.STATUS" | translate }}: </span>{{ getStatus() }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.MONEY_TYPE" | translate }}: </span>
-					<span class="fw-bold">{{
-                            game?.typeMoney === C.JUNE ? ("FREE_MONEY" | translate) : ("DEBT_MONEY" |
-                                translate)
-						}}
-						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/debt.png'"/>
-						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/june.png'"/>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.STATUS' | translate }}:</span>
+					{{ getStatus() }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.MONEY_TYPE' | translate }}:</span>
+					<span class="fw-bold">
+						{{ game?.typeMoney === C.JUNE ? ('FREE_MONEY' | translate) : ('DEBT_MONEY' | translate) }}
+						<img *ngIf="game?.typeMoney === C.DEBT" class="icon" [src]="'/assets/images/debt.png'" />
+						<img *ngIf="game?.typeMoney === C.JUNE" class="icon" [src]="'/assets/images/june.png'" />
 					</span>
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.ANIMATOR" | translate }}: </span>{{ game?.animator }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.LOCATION" | translate }}: </span>{{ game?.location }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.PLAYERS" | translate }}: </span>{{
-                        playersAtStart > 0 ? playersAtStart : "-"
-					}}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.ANIMATOR' | translate }}:</span>
+					{{ game?.animator }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.DEAD_REINCARNATED" | translate }}: </span>{{ deads }}</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.LOCATION' | translate }}:</span>
+					{{ game?.location }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.PLAYERS' | translate }}:</span>
+					{{ playersAtStart > 0 ? playersAtStart : '-' }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.DEAD_REINCARNATED' | translate }}:</span>
+					{{ deads }}
+				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.JUNE" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.GROWTH_RATE" | translate }}: </span>{{ game?.tauxCroissance }}%
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.GROWTH_RATE' | translate }}:</span>
+					{{ game?.tauxCroissance }}%
 				</div>
-				<div><span class="fw-bold" [matTooltip]="'RESULTS.DU_FORMULA_TOOLTIP' | translate">
-						{{ "RESULTS.DU_FORMULA" | translate }}:
-					</span>{{ "RESULTS.DU_FORMULA_TEXT" | translate }}
+				<div>
+					<span class="fw-bold" [matTooltip]="'RESULTS.DU_FORMULA_TOOLTIP' | translate">
+						{{ 'RESULTS.DU_FORMULA' | translate }}:
+					</span>
+					{{ 'RESULTS.DU_FORMULA_TEXT' | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DU" | translate }}: </span>({{ initialMM }}
-					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
-					x {{ game?.tauxCroissance | number:'1.2-2' }})
-					= {{ initialDU }} {{ "CURRENCY.JUNE" | translate }}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_DU' | translate }}:</span>
+					({{ initialMM }} /
+					{{ playersAtStart > 0 ? playersAtStart : ('RESULTS.PLAYERS_WORD' | translate) }} x
+					{{ game?.tauxCroissance | number: '1.2-2' }}) = {{ initialDU }} {{ 'CURRENCY.JUNE' | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_DU" | translate }}: </span>({{
-                        game?.currentMassMonetary|
-                            number:'1.2-2'
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_DU' | translate }}:</span>
+					({{ game?.currentMassMonetary | number: '1.2-2' }} /
+					{{ playersAtStart > 0 ? playersAtStart : ('RESULTS.PLAYERS_WORD' | translate) }} x
+					{{ game?.tauxCroissance | number: '1.2-2' }}) = {{ game?.currentDU }}
+					{{ 'CURRENCY.JUNE' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_MASS' | translate }}:</span>
+					{{ initialMM | number: '1.2-2' }} {{ 'CURRENCY.JUNE' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_MASS' | translate }}:</span>
+					{{ game?.currentMassMonetary | number: '1.2-2' }}{{ 'CURRENCY.JUNE' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_RESOURCES' | translate }}:</span>
+					{{
+						'RESULTS.RESOURCES_VALUE'
+							| translate
+								: {
+										currency: getCurrency(),
+										cards: initialCards,
+										resources: initialResources,
+								  }
 					}}
-					/ {{ playersAtStart > 0 ? playersAtStart : ("RESULTS.PLAYERS_WORD" | translate) }}
-					x {{ game?.tauxCroissance | number:'1.2-2' }}) = {{ game?.currentDU }} {{
-                        "CURRENCY.JUNE" |
-                            translate
-					}}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{
-                        initialMM |
-                            number:'1.2-2'
-					}} {{ "CURRENCY.JUNE" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{
-                        game?.currentMassMonetary |
-                            number:'1.2-2'
-					}}{{ "CURRENCY.JUNE" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{
-                        "RESULTS.RESOURCES_VALUE" | translate: {
-                            currency: getCurrency(), cards: initialCards, resources: initialResources
-                        }
-					}}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{
-                        "RESULTS.RESOURCES_FINAL_VALUE" | translate: {
-                            currency: getCurrency(),
-                            cards: finalCards,
-                            resources: finalResources,
-                            multiplier: finalResources / initialResources | number:'1.2-2'
-                        }
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_RESOURCES' | translate }}:</span>
+					{{
+						'RESULTS.RESOURCES_FINAL_VALUE'
+							| translate
+								: {
+										currency: getCurrency(),
+										cards: finalCards,
+										resources: finalResources,
+										multiplier: finalResources / initialResources | number: '1.2-2',
+								  }
 					}}
 				</div>
 			</div>
 			<div *ngIf="game?.typeMoney === C.DEBT" class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_MASS" | translate }}: </span>{{
-                        initialMM |
-                            number:'1.2-2'
-					}} {{ "CURRENCY.EURO" | translate }}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_MASS' | translate }}:</span>
+					{{ initialMM | number: '1.2-2' }} {{ 'CURRENCY.EURO' | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_MASS" | translate }}: </span>{{
-                        game?.currentMassMonetary |
-                            number:'1.2-2'
-					}} {{ "CURRENCY.EURO" | translate }}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_MASS' | translate }}:</span>
+					{{ game?.currentMassMonetary | number: '1.2-2' }} {{ 'CURRENCY.EURO' | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_DEBTS" | translate }}: </span> {{ initialDebts }} {{
-                        "CURRENCY.EURO" | translate
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_DEBTS' | translate }}:</span>
+					{{ initialDebts }} {{ 'CURRENCY.EURO' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_DEBTS' | translate }}:</span>
+					{{ getDebts() }} {{ 'CURRENCY.EURO' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.BANK_INTEREST' | translate }}:</span>
+					{{ game?.bankInterestEarned }} {{ 'CURRENCY.EURO' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.DESTROYED_MONEY' | translate }}:</span>
+					{{ moneyDestroyed }} {{ 'CURRENCY.EURO' | translate }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.INITIAL_RESOURCES' | translate }}:</span>
+					{{
+						'RESULTS.RESOURCES_VALUE'
+							| translate
+								: {
+										currency: getCurrency(),
+										cards: initialCards,
+										resources: initialResources,
+								  }
 					}}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_DEBTS" | translate }}: </span>{{ getDebts() }} {{
-                        "CURRENCY.EURO" | translate
-					}}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.BANK_INTEREST" | translate }}: </span>{{
-                        game?.bankInterestEarned
-					}} {{ "CURRENCY.EURO" | translate }}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.DESTROYED_MONEY" | translate }}: </span>{{ moneyDestroyed }} {{
-                        "CURRENCY.EURO" | translate
-					}}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.INITIAL_RESOURCES" | translate }}: </span> {{
-                        "RESULTS.RESOURCES_VALUE" | translate: {
-                            currency: getCurrency(), cards: initialCards, resources: initialResources
-                        }
-					}}
-				</div>
-				<div><span class="fw-bold">{{ "RESULTS.FINAL_RESOURCES" | translate }}: </span>{{
-                        "RESULTS.RESOURCES_FINAL_VALUE" | translate: {
-                            currency: getCurrency(),
-                            cards: finalCards,
-                            resources: finalResources,
-                            multiplier: finalResources / initialResources | number:'1.2-2'
-                        }
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.FINAL_RESOURCES' | translate }}:</span>
+					{{
+						'RESULTS.RESOURCES_FINAL_VALUE'
+							| translate
+								: {
+										currency: getCurrency(),
+										cards: finalCards,
+										resources: finalResources,
+										multiplier: finalResources / initialResources | number: '1.2-2',
+								  }
 					}}
 				</div>
 			</div>
 			<div class="col-sm-12 col-md-4">
-				<div><span class="fw-bold">{{ "RESULTS.START_DATE" | translate }}: </span>{{
-                        startGameDate|
-                            date:"YYYY-MMM-dd HH:mm"
-					}}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.START_DATE' | translate }}:</span>
+					{{ startGameDate | date: 'YYYY-MMM-dd HH:mm' }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.END_DATE" | translate }}: </span>{{
-                        stopGameDate|
-                            date:"YYYY-MMM-dd HH:mm"
-					}}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.END_DATE' | translate }}:</span>
+					{{ stopGameDate | date: 'YYYY-MMM-dd HH:mm' }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.TOTAL_DURATION" | translate }}: </span>{{ durationGame() }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.ROUND_DURATION" | translate }}: </span>{{ game?.roundMinutes }}
-					{{
-                        "RESULTS.MINUTES" | translate
-					}}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.TOTAL_DURATION' | translate }}:</span>
+					{{ durationGame() }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.ROUNDS_PLAYED" | translate }}: </span>{{ game?.round }}</div>
-				<div><span class="fw-bold">{{ "RESULTS.TOTAL_TRANSACTIONS" | translate }}: </span>{{
-                        getTransactionsTotal()
-					}}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.ROUND_DURATION' | translate }}:</span>
+					{{ game?.roundMinutes }}
+					{{ 'RESULTS.MINUTES' | translate }}
 				</div>
-				<div><span class="fw-bold">{{ "RESULTS.TOTAL_PRODUCTIONS" | translate }}: </span>{{ productionTotal }}
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.ROUNDS_PLAYED' | translate }}:</span>
+					{{ game?.round }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.TOTAL_TRANSACTIONS' | translate }}:</span>
+					{{ getTransactionsTotal() }}
+				</div>
+				<div>
+					<span class="fw-bold">{{ 'RESULTS.TOTAL_PRODUCTIONS' | translate }}:</span>
+					{{ productionTotal }}
 				</div>
 			</div>
 		</div>
-		<h1 class="m-2 mt-4 contour">{{ "RESULTS.PODIUM" | translate }}
+		<h1 class="m-2 mt-4 contour">
+			{{ 'RESULTS.PODIUM' | translate }}
 			<fa-icon class="fs-6" [icon]="faCircleInfo" [matTooltip]="'RESULTS.RICHER' | translate"></fa-icon>
 		</h1>
 		<div class="row g-0">
 			<div class="d-flex flex-row justify-content-evenly flex-wrap align-items-end">
 				<div class="podium d-none d-md-flex">
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-second player-svg"
-						     [innerHTML]="getSanitizedSvgFromString(podium[1]?.image)">
-						</div>
+						<div
+							class="player-frame-second player-svg"
+							[innerHTML]="getSanitizedSvgFromString(podium[1]?.image)"></div>
 						<div class="step second shadowed d-flex flex-column align-items-center justify-content-between">
 							<div class="shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥈</span>
@@ -194,14 +230,14 @@
 							{{ podium[1]?.name }}
 							<div class="font-monospace fs-6">
 								{{ podium[1]?.value }}
-								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
+								{{ (game?.typeMoney == C.JUNE ? 'CURRENCY.JUNE' : 'CURRENCY.EURO') | translate }}
 							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame player-svg"
-						     [innerHTML]="getSanitizedSvgFromString(podium[0]?.image)">
-						</div>
+						<div
+							class="player-frame player-svg"
+							[innerHTML]="getSanitizedSvgFromString(podium[0]?.image)"></div>
 						<div class="step first shadowed d-flex flex-column align-items-center justify-content-between">
 							<div class="shadowed fs-5 overflow-hidden">
 								<span class="fs-3">🥇</span>
@@ -209,57 +245,64 @@
 							{{ podium[0]?.name }}
 							<div class="font-monospace fs-6">
 								{{ podium[0]?.value }}
-								{{ (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate }}
+								{{ (game?.typeMoney == C.JUNE ? 'CURRENCY.JUNE' : 'CURRENCY.EURO') | translate }}
 							</div>
 						</div>
 					</div>
 					<div class="wrapperStep text-center align-items-center justify-content-center d-flex flex-column">
-						<div class="player-frame-third player-svg"
-						     [innerHTML]="getSanitizedSvgFromString(podium[2]?.image)">
-						</div>
 						<div
-								class="step third shadowed d-flex flex-column align-items-center justify-content-between">
+							class="player-frame-third player-svg"
+							[innerHTML]="getSanitizedSvgFromString(podium[2]?.image)"></div>
+						<div class="step third shadowed d-flex flex-column align-items-center justify-content-between">
 							<div class="shadowed fs-5 overflow-hidden">
-								<span class="fs-3">🥉</span></div>
+								<span class="fs-3">🥉</span>
+							</div>
 							{{ podium[2]?.name }}
-							<div class="font-monospace fs-6">{{ podium[2]?.value }} {{
-                                    (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
-								}}
+							<div class="font-monospace fs-6">
+								{{ podium[2]?.value }}
+								{{ (game?.typeMoney == C.JUNE ? 'CURRENCY.JUNE' : 'CURRENCY.EURO') | translate }}
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="d-block d-md-none p-2 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
-					<div class="fw-bold" [matTooltip]="'RESULTS.RICHER' | translate">{{ "RESULTS.RICHER" | translate }}
+					<div class="fw-bold" [matTooltip]="'RESULTS.RICHER' | translate">
+						{{ 'RESULTS.RICHER' | translate }}
 					</div>
-					<div *ngIf="podium.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
-					<ng-container *ngFor="let player of podium, let i=index">
+					<div *ngIf="podium.length === 0">{{ 'RESULTS.NO_PLAYERS' | translate }}</div>
+					<ng-container *ngFor="let player of podium; let i = index">
 						<div *ngIf="i === 0 || i === 1 || i === 2" class="d-flex flex-row align-items-center">
-							<div class="player-svg"
-							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
-							     [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div
+								class="player-svg"
+								[ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
+								[innerHTML]="getSanitizedSvgFromString(player.image)"></div>
+							<div class="shadowed overflow-hidden">
+								{{ player.name }}
+								<span class="fs-6">
+									{{ i === 0 ? ' 🥇' : i === 1 ? ' 🥈' : ' 🥉' }} {{ podium[i].value }}
+									{{ (game?.typeMoney == C.JUNE ? 'CURRENCY.JUNE' : 'CURRENCY.EURO') | translate }}
+								</span>
 							</div>
-							<div class="shadowed overflow-hidden"> {{ player.name }}<span class="fs-6">{{
-                                    i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉"
-								}}  {{ podium[i].value }} {{
-                                    (game?.typeMoney == C.JUNE ? "CURRENCY.JUNE" : "CURRENCY.EURO") |translate
-								}}</span></div>
 						</div>
 					</ng-container>
 				</div>
 				<div class="p-1 mb-2 bg-white rounded shadow d-flex flex-column align-items-center">
 					<div class="fw-bold" [matTooltip]="'RESULTS.MOST_ACTIVE_TOOLTIP' | translate">
-						{{ "RESULTS.MOST_ACTIVE" | translate }}
+						{{ 'RESULTS.MOST_ACTIVE' | translate }}
 					</div>
-					<div *ngIf="podiumTransac.length === 0">{{ "RESULTS.NO_PLAYERS" | translate }}</div>
-					<ng-container *ngFor="let player of podiumTransac, let i=index">
+					<div *ngIf="podiumTransac.length === 0">{{ 'RESULTS.NO_PLAYERS' | translate }}</div>
+					<ng-container *ngFor="let player of podiumTransac; let i = index">
 						<div *ngIf="i === 0 || i === 1 || i === 2" class="d-flex flex-row align-items-center">
-							<div class="player-svg"
-							     [ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
-							     [innerHTML]="getSanitizedSvgFromString(player.image)">
+							<div
+								class="player-svg"
+								[ngClass]="i === 0 ? 'player-frame-mini' : 'player-frame-mini-second-third'"
+								[innerHTML]="getSanitizedSvgFromString(player.image)"></div>
+							<div class="shadowed">
+								{{ player.name }}
+								<span class="fs-6 font-monospace">
+									{{ i === 0 ? ' 🥇' : i === 1 ? ' 🥈' : ' 🥉' }} {{ podiumTransac[i].value }}x
+								</span>
 							</div>
-							<div class="shadowed"> {{ player.name }}
-								<span class="fs-6 font-monospace">{{ i === 0 ? " 🥇" : i === 1 ? " 🥈" : " 🥉" }} {{ podiumTransac[i].value }}x</span></div>
 						</div>
 					</ng-container>
 				</div>
@@ -267,52 +310,69 @@
 		</div>
 
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
-			<h1 class="m-2 mt-4 contour">{{ "RESULTS.QUANTITATIVE_ACCOUNTS" | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">{{
-                    "MODULE.GALILEO.LEGEND"| translate
-				}}
+			<h1 class="m-2 mt-4 contour">{{ 'RESULTS.QUANTITATIVE_ACCOUNTS' | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">
+				{{ 'MODULE.GALILEO.LEGEND' | translate }}
 			</mat-slide-toggle>
 		</div>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart id="chartQuant" [legend]="legendQuantitative" class="chart" height="500"
-			        [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
-			</canvas>
+			<canvas
+				baseChart
+				id="chartQuant"
+				[legend]="legendQuantitative"
+				class="chart"
+				height="500"
+				[data]="lineChartData"
+				[options]="lineChartOptions"
+				[type]="'line'"></canvas>
 		</div>
-		<div *ngIf="game?.typeMoney===C.JUNE" class="mt-4 d-flex flex-row justify-content-between align-items-end">
-			<h1 class="contour">{{ "RESULTS.RELATIVE_ACCOUNTS" | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">{{
-                    "MODULE.GALILEO.LEGEND"|
-                        translate
-				}}
+		<div *ngIf="game?.typeMoney === C.JUNE" class="mt-4 d-flex flex-row justify-content-between align-items-end">
+			<h1 class="contour">{{ 'RESULTS.RELATIVE_ACCOUNTS' | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">
+				{{ 'MODULE.GALILEO.LEGEND' | translate }}
 			</mat-slide-toggle>
 		</div>
-		<div *ngIf="game?.typeMoney===C.JUNE" class="graph bg-white rounded shadow">
-			<canvas baseChart class="chart" height="500" [data]="lineChartDataRelatif"
-			        [options]="lineChartOptionsRelatif" [legend]="legendRelative" [type]="'line'">
-			</canvas>
+		<div *ngIf="game?.typeMoney === C.JUNE" class="graph bg-white rounded shadow">
+			<canvas
+				baseChart
+				class="chart"
+				height="500"
+				[data]="lineChartDataRelatif"
+				[options]="lineChartOptionsRelatif"
+				[legend]="legendRelative"
+				[type]="'line'"></canvas>
 		</div>
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
-			<h1 class="contour">{{ "RESULTS.RESOURCES" | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">{{
-                    "MODULE.GALILEO.LEGEND"| translate
-				}}
+			<h1 class="contour">{{ 'RESULTS.RESOURCES' | translate }}</h1>
+			<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">
+				{{ 'MODULE.GALILEO.LEGEND' | translate }}
 			</mat-slide-toggle>
 		</div>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart class="chart" height="500" [data]="lineChartDataResources"
-			        [options]="lineChartOptionsResources" [legend]="legendResources" [type]="'line'">
-			</canvas>
+			<canvas
+				baseChart
+				class="chart"
+				height="500"
+				[data]="lineChartDataResources"
+				[options]="lineChartOptionsResources"
+				[legend]="legendResources"
+				[type]="'line'"></canvas>
 		</div>
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
-			<h1 class="contour">{{ "RESULTS.SURVEY_RESULTS" | translate }}</h1>
+			<h1 class="contour">{{ 'RESULTS.SURVEY_RESULTS' | translate }}</h1>
 		</div>
 		<div class="graph bg-white rounded shadow">
-			<canvas baseChart class="chart" height="300" [data]="feedbacksData" [options]="feedbacksOptions"
-			        [legend]="false" [type]="'bubble'">
-			</canvas>
+			<canvas
+				baseChart
+				class="chart"
+				height="300"
+				[data]="feedbacksData"
+				[options]="feedbacksOptions"
+				[legend]="false"
+				[type]="'bubble'"></canvas>
 		</div>
-		<div class="d-block d-md-none eventsSmall">
-			<app-events [typeMoney]="game?.typeMoney" [events]="events" [players]="players"></app-events>
+		<div class="d-block d-md-none eventsSmall" *ngIf="game">
+			<app-events [typeMoney]="game.typeMoney" [events]="events" [players]="players"></app-events>
 		</div>
 	</div>
 </div>

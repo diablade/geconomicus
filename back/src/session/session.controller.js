@@ -1,13 +1,15 @@
 import env from '#config/env';
 import log from "#config/log";
 import socket from '#config/socket';
-import { C } from '#constantes';
+import { IO, DB_EVENTS, PLAYER_TYPE } from '@geco/shared';
 
 import SessionService from "./session.service.js";
+import RulesService from "./rules/rules.service.js";
 import EventService from "../event/event.service.js";
 import SurveyService from "../survey/survey.service.js";
-import GameStateService from "../gameState/game.state.service.js";
+import GameStateService from "../gameState/services/game.state.service.js";
 import bcrypt from "bcrypt";
+import { defaultDebtRules, defaultJuneRules } from "./rules/rules.service.js";
 
 const SessionController = {};
 
@@ -50,20 +52,27 @@ SessionController.create = async (req, res, next) => {
 SessionController.start = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.start(req.body.sessionId);
-        await EventService.create(C.START_SESSION, sessionUpdated._id, "", C.MASTER, '-', {gamesRules_idx: sessionUpdated.gamesRules.map(rule => rule.idx)});
-        socket.emitToAck(sessionUpdated._id, C.START_SESSION, sessionUpdated.gamesRules);
+        await EventService.postNow(DB_EVENTS.SESSION_STARTED, sessionUpdated._id, "-", PLAYER_TYPE.MASTER, '-', {gamesRules_idx: sessionUpdated.gamesRules});//.map(rule => rule.idx)}
+        socket.emitAckTo(req.body.sessionId, IO.SESSION.STARTED, {gamesRules: sessionUpdated.gamesRules});
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
         log.error("Session start error:", err);
-        return res.status(500).json({
-            message: "ERROR.START",
-        });
+        return res.status(500).json({message: "ERROR.START"});
     }
 };
 SessionController.update = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.update(req.body.sessionId, req.body.updates);
+        const sessionLight = {
+            _id: sessionUpdated._id,
+            name: sessionUpdated.name,
+            animator: sessionUpdated.animator,
+            status: sessionUpdated.status,
+            theme: sessionUpdated.theme
+        };
+        console.log("Session updated:", sessionLight);
+        socket.emitTo(req.body.sessionId, IO.SESSION.UPDATED, sessionLight);
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
@@ -113,4 +122,26 @@ SessionController.delete = async (req, res, next) => {
         });
     }
 };
+
+SessionController.killGame = async (req, res, next) => {
+    try {
+        const sessionUpdated = await RulesService.resetDefault(req.body.sessionId, req.body.ruleIdx);
+        await GameStateService.delete(req.body.gameStateId);
+        delete sessionUpdated.players;
+        let response = {
+            gameStatus: sessionUpdated.gameStatus,
+            gameStateId: "",
+            idx: req.body.ruleIdx
+        }
+        socket.emitTo(req.body.sessionId, IO.GAME.KILLED, response);
+        return res.status(200).json(response);
+    }
+    catch (err) {
+        log.error("Session kill game error:", err);
+        return res.status(500).json({
+            message: "ERROR.KILL_GAME",
+        });
+    }
+};
+
 export default SessionController;

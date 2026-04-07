@@ -18,8 +18,7 @@ import {InformationDialogComponent} from "../dialogs/information-dialog/informat
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
 import {ScannerQrCode} from "../dialogs/scanner-qr-code/scanner-qr-code.component";
-// @ts-ignore
-import {C} from "../../../../back/shared/constantes.mjs";
+import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, IO, PLAYER_STATUS } from '@geco/shared';
 import {ShortCode} from "../models/shortCode";
 import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
@@ -39,6 +38,11 @@ import {getBackgroundStyle} from "../services/avatarTools";
 	styleUrls: ['./player-board.component.scss']
 })
 export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
+    protected readonly PLAYING = GAME_STATUS.PLAYING;
+    protected readonly DEAD = PLAYER_STATUS.DEAD;
+    protected readonly JUNE = GAME_TYPE.JUNE;
+    protected readonly DEBT = GAME_TYPE.DEBT;
+    protected readonly FINISHED = GAME_STATUS.FINISHED;
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	private socket: any;
@@ -61,7 +65,6 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
-	C = C;
 	prison = false;
 	defaultCredit = false;
 	prisonProgress = 0;
@@ -142,7 +145,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const panelR = this.localStorageService.getItem("panelRecipe");
 		this.panelCreditOpenState = panelC == undefined ? false : panelC;
 		this.panelRecipeOpenState = panelR == undefined ? false : panelR;
-		if (this.game.typeMoney === C.JUNE) {
+		if (this.game.typeMoney === GAME_TYPE.JUNE) {
 			this.localStorageService.setItem('panelCredit', false);
 			if (this.game.theme === "THEME.CLASSIC") {
 				this.localStorageService.setItem('panelRecipe', false);
@@ -179,11 +182,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (data.player.status == "prison") {
 				this.prison = true;
 			}
-			if (this.game.typeMoney === C.DEBT) {
+			if (this.game.typeMoney === GAME_TYPE.DEBT) {
 				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
 					this.credits = data;
 					_.forEach(data, d => {
-						if (d.status == C.DEFAULT_CREDIT) {
+						if (d.status == CREDIT_STATUS.DEFAULT) {
 							this.defaultCredit = true;
 						} else if (d.status == "requesting") {
 							this.requestingWhenCreditEnds(d, true);
@@ -207,43 +210,43 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.getPlayerInfos();
 			}
 		});
-		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
+        this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
+            if (data.id == this.idPlayer) {
+                this.player = data;
+            }
+        });
+		this.socket.on(IO.GAME.DISTRIB, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.player.coins = data.coins;
 			this.game = {...this.game, ...data.game};
 			await this.receiveCards(data.cards);
 		});
-		this.socket.on(C.START_ROUND, async () => {
-			this.game.status = C.PLAYING;
+		this.socket.on(IO.GAME.STARTED, async () => {
+			this.game.status = GAME_STATUS.PLAYING;
 			this.credits.forEach(c => {
-				if (c.status == C.PAUSED_CREDIT) {
-					c.status = C.RUNNING_CREDIT;
+				if (c.status == CREDIT_STATUS.PAUSED) {
+					c.status = CREDIT_STATUS.RUNNING;
 				}
 			});
 			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
-		this.socket.on(C.STOP_ROUND, async () => {
+		this.socket.on(IO.GAME.STOPPED, async () => {
 			this.dialog.closeAll();
-			this.game.status = C.WAITING;
+			this.game.status = GAME_STATUS.STOPPED;
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
-		this.socket.on(C.UPDATED_PLAYER, (data: any) => {
-			if (data.id == this.idPlayer) {
-				this.player = data;
-			}
-		});
-		this.socket.on(C.END_GAME, (data: any) => {
+		this.socket.on(IO.GAME.FINISHED, (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
-			this.game.status = C.END_GAME;
+			this.game.status = GAME_STATUS.FINISHED;
 			if (data && data.redirect == 'survey') {
 				this.router.navigate(['ogame', this.idGame, 'player', this.idPlayer, 'survey']);
 			} else {
 				this.router.navigate(['ogame', this.idGame, 'results']);
 			}
 		});
-		this.socket.on(C.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.GAME.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
 			if (cb) {
 				cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			}
@@ -252,7 +255,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.game.currentDU = data.du;
 			this.flipCoins();
 		});
-		this.socket.on(C.RESET_GAME, async (data: any) => {
+		this.socket.on(IO.GAME.RESET, async (data: any) => {
 			this.dialog.closeAll();
 			await new Promise(resolve => setTimeout(resolve, 2000));
 			this.panelCreditOpenState = false;
@@ -265,11 +268,11 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.refresh();
 			}
 		});
-		this.socket.on(C.FIRST_DU, async (data: any) => {
+		this.socket.on(IO.GAME.FIRST_DU, async (data: any) => {
 			this.game.currentDU = data.du;
 		});
-		this.socket.on(C.DEAD, async () => {
-			this.player.status = C.DEAD;
+		this.socket.on(IO.PLAYER.DIED, async () => {
+			this.player.status = PLAYER_STATUS.DEAD;
 			this.dialog.closeAll();
 			this.dialog.open(InformationDialogComponent, {
 				data: {
@@ -278,23 +281,23 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			});
 			this.cards = [];
-			if (this.game.typeMoney === C.DEBT) {
+			if (this.game.typeMoney === GAME_TYPE.DEBT) {
 				this.player.coins = 0;
 			}
 			await new Promise(resolve => setTimeout(resolve, 4000));
 			this.resurrection();
 		});
-		this.socket.on(C.SHORT_CODE_BROADCAST, async (data: any) => {
+		this.socket.on(IO.SHORT_CODE.BROADCAST, async (data: any) => {
 			if (this.shortCode && this.shortCode.code === data.code) {
-				this.socket.emit(C.SHORT_CODE_CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
+				this.socket.emit(IO.SHORT_CODE.CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
 			}
 		});
-		this.socket.on(C.SHORT_CODE_CONFIRMED, async (data: any) => {
+		this.socket.on(IO.SHORT_CODE.CONFIRMED, async (data: any) => {
 			if (data && data.payload) {
 				this.buy(data.payload);
 			}
 		});
-		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
+		this.socket.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
 			if (data) {
 				//this.game = {...this.game, ...data};
 				//this.themesService.loadTheme(this.game.theme);
@@ -303,17 +306,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.refresh();
 			}
 		});
-		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.refresh();
 		});
-		this.socket.on(C.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			if (data.cost > 0) {
 				this.audioService.playSound("coin");
 				this.flipCoins();
 				this.snackbarService.showNotif(this.i18nService.instant("EVENTS.RECEIVED_COINS", {amount: data.cost}) +
-					this.i18nService.instant(this.game.typeMoney == C.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
+					this.i18nService.instant(this.game.typeMoney == GAME_TYPE.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
 			}
 			this.player.coins = data.coins;
 			const cardSold = _.find(this.cards, {_id: data.idCardSold});
@@ -331,7 +334,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 			}
 		});
-		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.dialog.open(InformationDialogComponent, {
 				data: {
@@ -345,7 +348,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.panelCreditOpenState = true;
 			this.localStorageService.setItem("panelCredit", true);
 		});
-		this.socket.on(C.TIMEOUT_CREDIT, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
 				if (c._id == data.credit._id) {
@@ -356,28 +359,22 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.localStorageService.setItem('panelCredit', true);
 			this.requestingWhenCreditEnds(data, true);
 		});
-		this.socket.on(C.CREDITS_STARTED, async () => {
+		this.socket.on(IO.CREDIT.STARTED, async () => {
 			_.forEach(this.credits, c => {
-				if (c.status == C.PAUSED_CREDIT) {
-					c.status = C.RUNNING_CREDIT;
+				if (c.status == CREDIT_STATUS.PAUSED) {
+					c.status = CREDIT_STATUS.RUNNING;
 				}
 			});
 		});
-		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
-			console.log(payload);
-			this.router.navigate(['ogame', payload.idGame, 'player', payload.idPlayer]).then(() => {
-				// window.location.reload();
-			});
-		});
-		this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
+		this.socket.on(IO.CREDIT.PROGRESS, async (data: any) => {
 			_.forEach(this.credits, c => {
 				if (c._id == data.id) {
-					c.status = C.RUNNING_CREDIT;
+					c.status = CREDIT_STATUS.RUNNING;
 					c.progress = data.progress;
 				}
 			});
 		});
-		this.socket.on(C.DEFAULT_CREDIT, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.CREDIT.DEFAULT, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
 				if (c._id == data.credit._id) {
@@ -391,15 +388,15 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.defaultCredit = true;
 			this.audioService.playSound("police");
 		});
-		this.socket.on(C.CREDIT_DONE, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(this.credits, c => {
 				if (c._id == data.credit._id) {
-					c.status = C.CREDIT_DONE;
+					c.status = CREDIT_STATUS.DONE;
 				}
 			});
 		});
-		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
+		this.socket.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			this.prisonProgress = data.progress;
 			const minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
 			const seconds = Math.floor((data.remainingTime / 1000) % 60);
@@ -408,7 +405,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
 			this.prisonTimer.start();
 		});
-		this.socket.on(C.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			this.prison = false;
 			if (data && data.cards) {
@@ -421,7 +418,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				},
 			});
 		});
-		this.socket.on(C.SEIZURE, async (data: any, cb: (response: any) => void) => {
+		this.socket.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
 			_.forEach(data.seizure.cards, c => {
 				_.remove(this.cards, {_id: c._id});
@@ -431,7 +428,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			this.credits = _.map(this.credits, c => {
 				if (c._id == data.credit._id) {
-					c.status = C.CREDIT_DONE;
+					c.status = CREDIT_STATUS.DONE;
 				}
 				return c;
 			});
@@ -558,7 +555,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buyWithCode(code: string) {
-		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
+		this.socket.emit(IO.SHORT_CODE.EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
 			console.log(ack)
 		});
 		this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.SHORT_CODE_SEND"));
@@ -571,7 +568,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.isBuying = true;
 
 		const data = JSON.parse(dataRaw);
-		const cost = this.game.typeMoney == C.JUNE ? (data.p * this.game.currentDU).toFixed(2) : data.p;
+		const cost = this.game.typeMoney == GAME_TYPE.JUNE ? (data.p * this.game.currentDU).toFixed(2) : data.p;
 		if (this.idGame && data.g && this.idGame != data.g) {
 			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
 			this.isBuying = false; // Reset flag
@@ -624,7 +621,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 								}
 							});
 							this.player.coins -= credit.interest;
-							this.player.status = C.ALIVE;
+							this.player.status = PLAYER_STATUS.ALIVE;
 							this.audioService.playSound("interest");
 						}
 					});
@@ -646,7 +643,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	getDebts() {
 		let debts = 0;
 		_.forEach(this.credits, c => {
-			if (c.status != C.CREDIT_DONE) {
+			if (c.status != CREDIT_STATUS.DONE) {
 				debts += c.amount;
 				debts += c.interest;
 			}
@@ -678,7 +675,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 							c.status = data.status;
 							c.endDate = data.endDate;
 							this.player.coins -= (data.amount + data.interest);
-							this.player.status = C.ALIVE;
+							this.player.status = PLAYER_STATUS.ALIVE;
 						}
 						return c;
 					});
@@ -693,7 +690,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
-		if (this.game.status == C.PLAYING && this.player.status != C.DEAD) {
+		if (this.game.status == GAME_STATUS.PLAYING && this.player.status != PLAYER_STATUS.DEAD) {
 			if ($event == 'settle') {
 				this.settleDebt(credit);
 			} else if ($event == 'answer') {

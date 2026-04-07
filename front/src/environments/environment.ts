@@ -12,6 +12,7 @@ export const environment = {
 		UPDATE: 'session/update',
 		DELETE: 'session/delete',
 		START: 'session/start',
+		KILL_GAME: 'session/kill-game',
 	},
 	RULES: {
 		UPDATE: 'rules/update',
@@ -26,7 +27,8 @@ export const environment = {
 	},
 	GAME_STATE: {
 		GET: 'game-state/',
-		LAUNCH: 'game-state/launch/',
+		CREATE: 'game-state/create/',
+		RESET: 'game-state/reset/',
 	},
 
 	//LEGACY

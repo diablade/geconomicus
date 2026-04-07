@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { C } from '#constantes';
+import { NEW_FEEDBACK } from '#constantes';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import db from '#configTest/database';
@@ -66,7 +66,7 @@ describe('SURVEY controller tests', () => {
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
 				gameStateId1,
-				expect.stringContaining(C.NEW_FEEDBACK),
+				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarId: avatarId1,
 					depressedHappy: 0,
@@ -98,7 +98,7 @@ describe('SURVEY controller tests', () => {
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
 				gameStateId1,
-				expect.stringContaining(C.NEW_FEEDBACK),
+				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarId: avatarId2,
 					depressedHappy: 1,
@@ -130,7 +130,7 @@ describe('SURVEY controller tests', () => {
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
 				gameStateId2,
-				expect.stringContaining(C.NEW_FEEDBACK),
+				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarId: avatarId1,
 					depressedHappy: 2,
@@ -162,7 +162,7 @@ describe('SURVEY controller tests', () => {
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
 				gameStateId2,
-				expect.stringContaining(C.NEW_FEEDBACK),
+				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarId: avatarId2,
 					depressedHappy: 3,

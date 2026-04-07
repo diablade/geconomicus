@@ -72,4 +72,10 @@ export class SessionService {
 			catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.DELETE'))
 		)
 	}
+
+    killGame(sessionId: string, gameStateId: string, ruleIdx: number): Observable<any> {
+        return this.http
+            .post<any>(environment.API_HOST + environment.SESSION.KILL_GAME, { gameStateId, sessionId, ruleIdx })
+            .pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
+    }
 }

@@ -1,23 +1,23 @@
 <div class="option">
 	<div class="w-100 d-flex flex-column overflow-auto">
 		<div class="text-center fs-4 m-4 shadowed">
-			{{ "MASTER.EDIT"| translate }}
+			{{ 'MASTER.EDIT' | translate }}
 		</div>
 		<div class="text-center">
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ "MASTER.PARTY_NAME"| translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="session.name">
+				<mat-label>{{ 'MASTER.SESSION_NAME' | translate }}</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="session.name" />
 			</mat-form-field>
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ "MASTER.PARTY_ANIM"| translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="session.animator">
+				<mat-label>{{ 'MASTER.ANIMATOR' | translate }}</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="session.animator" />
 			</mat-form-field>
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ "MASTER.LOCATION"| translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="session.location">
+				<mat-label>{{ 'MASTER.LOCATION' | translate }}</mat-label>
+				<input type="text" matInput placeholder="" [(ngModel)]="session.location" />
 			</mat-form-field>
 			<mat-form-field>
-				<mat-label>{{ "THEME.TITLE"| translate }}</mat-label>
+				<mat-label>{{ 'THEME.TITLE' | translate }}</mat-label>
 				<mat-select class="m-auto" [(ngModel)]="session.theme">
 					<mat-option *ngFor="let theme of themes" [value]="theme">
 						{{ theme | translate }}
@@ -25,18 +25,14 @@
 				</mat-select>
 			</mat-form-field>
 			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="session.devMode">
-					Dev Mode
-				</mat-checkbox>
+				<mat-checkbox class="m-auto" [(ngModel)]="session.devMode">Dev Mode</mat-checkbox>
 			</div>
 		</div>
 	</div>
 	<div mat-dialog-actions>
-		<button mat-button [mat-dialog-close]="null">{{ "CANCEL"| translate }}</button>
-		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="session" cdkFocusInitial>{{
-                "SAVE"|
-                    translate
-			}}
+		<button mat-button [mat-dialog-close]="null">{{ 'CANCEL' | translate }}</button>
+		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="session" cdkFocusInitial>
+			{{ 'SAVE' | translate }}
 		</button>
 	</div>
 </div>

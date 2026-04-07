@@ -23,10 +23,10 @@ const routes: Routes = [
 	{path: 'join/:sessionId', component: JoinComponent},
 	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
 	{path: 'avatar/:sessionId/:avatarIdx/settings', component: PlayerSettingsComponent},
+	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
 	{path: 'master/:gameStateId', component: MasterBoardComponent},
 	{path: 'table/:gameStateId', component: MasterAdminComponent},
-	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
 	{path: 'module/galileo', component: ModuleGalileoComponent},
 	{path: 'module/gini', component: ModuleWealthDistribComponent},
 	//deprecated routes below

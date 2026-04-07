@@ -1,9 +1,12 @@
 import log from "#config/log";
+import GameStateService from '../game.state.service.js';
 
 class GameTimerManager {
     constructor() {
         if (!GameTimerManager.instance) {
             this.timers = new Map();
+            // Map<gameStateId, intervalId> for periodic DB persistence
+            this._persistenceIntervals = new Map();
             GameTimerManager.instance = this;
         }
         return GameTimerManager.instance;
@@ -40,6 +43,40 @@ class GameTimerManager {
         } catch (err) {
             log.error(`Unexpected error in stopAndRemoveTimer for ${id}:`, err);
             return false;
+        }
+    }
+
+    /**
+     * Start a periodic persistence timer for a game (every 60s).
+     * Fires GameStateService.saveGameStateToDB to flush in-memory state to MongoDB.
+     * @param {string} gameStateId
+     * @param {number} [intervalMs=60000]
+     */
+    addPersistenceTimer(gameStateId, intervalMs = 60_000) {
+        this.stopPersistenceTimer(gameStateId); // clear any existing
+        const id = setInterval(async () => {
+            try {
+                await GameStateService.saveGameStateToDB(gameStateId);
+                log.debug(`[GameTimerManager] Persisted game ${gameStateId} to DB`);
+            } catch (err) {
+                log.error(`[GameTimerManager] Failed to persist game ${gameStateId}:`, err);
+            }
+        }, intervalMs);
+        this._persistenceIntervals.set(gameStateId, id);
+        log.debug(`[GameTimerManager] Persistence timer started for game ${gameStateId} (every ${intervalMs}ms)`);
+    }
+
+    /**
+     * Stop and remove the persistence timer for a game.
+     * Call this on game end / delete (after the final manual save).
+     * @param {string} gameStateId
+     */
+    stopPersistenceTimer(gameStateId) {
+        const id = this._persistenceIntervals.get(gameStateId);
+        if (id !== undefined) {
+            clearInterval(id);
+            this._persistenceIntervals.delete(gameStateId);
+            log.debug(`[GameTimerManager] Persistence timer stopped for game ${gameStateId}`);
         }
     }
 }

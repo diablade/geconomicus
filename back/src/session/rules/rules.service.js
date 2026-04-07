@@ -1,15 +1,17 @@
 import SessionModel from './../session.model.js';
-import { C } from '#constantes';
+import { GAME_TYPE, GAME_STATUS } from '@geco/shared';
 
 export const defaultDebtRules = {
-	typeMoney: C.DEBT,
+	typeMoney: GAME_TYPE.DEBT,
+    status: GAME_STATUS.NONE,
 	priceWeight1: 1,
 	priceWeight2: 2,
 	priceWeight3: 4,
 	priceWeight4: 8,
 };
 export const defaultJuneRules = {
-	typeMoney: C.JUNE,
+	typeMoney: GAME_TYPE.JUNE,
+    status: GAME_STATUS.NONE,
 	priceWeight1: 3,
 	priceWeight2: 6,
 	priceWeight3: 9,
@@ -77,7 +79,7 @@ RulesService.resetDefault = async (sessionId, ruleIdx) => {
 									if: { $eq: ['$$rule.idx', ruleIdx] },
 									then: {
 										$cond: {
-											if: { $eq: ['$$rule.typeMoney', C.JUNE] },
+											if: { $eq: ['$$rule.typeMoney', GAME_TYPE.JUNE] },
 											then: { ...defaultJuneRules, idx: ruleIdx },
 											else: { ...defaultDebtRules, idx: ruleIdx },
 										},
@@ -113,7 +115,7 @@ RulesService.updateFromCreatedGameStateId = async (sessionId, ruleIdx, gameState
 		{
 			$set: {
 				'gamesRules.$[rule].gameStateId': gameStateId,
-				'gamesRules.$[rule].gameStatus': C.OPEN,
+				'gamesRules.$[rule].gameStatus': GAME_STATUS.CREATED,
 			},
 		},
 		{

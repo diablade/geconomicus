@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import { C } from '#constantes';
+import { GAME_TYPE, GAME_STATUS, CREDIT_STATUS } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
 let RulesSchema = new Schema({
 	idx: { type: Number, required: true },
 	gameStateId: { type: String, required: false },
-	gameStatus: { type: String, required: true, default: C.NONE },
+	gameStatus: { type: String, required: true, default: GAME_STATUS.NONE },
 
 	//common
 	amountCardsForProd: { type: Number, required: true, default: 4 },
@@ -20,7 +20,7 @@ let RulesSchema = new Schema({
 	deathPassTimer: { type: Number, required: true, default: 5 },
 
 	//not commun
-	typeMoney: { type: String, required: true, default: C.DEBT },
+	typeMoney: { type: String, required: true, default: GAME_TYPE.DEBT },
 	priceWeight1: { type: Number, required: true, default: 1 },
 	priceWeight2: { type: Number, required: true, default: 2 },
 	priceWeight3: { type: Number, required: true, default: 4 },
@@ -39,7 +39,7 @@ let RulesSchema = new Schema({
 	timerCredit: { type: Number, required: true, default: 5 },
 	timerPrison: { type: Number, required: true, default: 5 },
 	manualBank: { type: Boolean, required: true, default: false },
-	seizureType: { type: String, required: true, enum: [C.DECOTE, C.FEES], default: C.DECOTE },
+	seizureType: { type: String, required: true, enum: [CREDIT_STATUS.DECOTE, CREDIT_STATUS.FEES], default: CREDIT_STATUS.DECOTE },
 	seizureCosts: { type: Number, required: true, default: 2 },
 	seizureDecote: { type: Number, required: true, default: 33 },
 }, { _id: false });

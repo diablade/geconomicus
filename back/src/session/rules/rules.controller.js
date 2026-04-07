@@ -1,14 +1,14 @@
 import log from '#config/log';
 import RulesService from './rules.service.js';
 import socket from '#config/socket';
-import { C } from '#constantes';
+import { IO } from '@geco/shared';
 
 const RulesController = {};
 
 RulesController.create = async (req, res, next) => {
 	try {
 		const rulesCreated = await RulesService.create(req.body.sessionId, req.body.rules);
-		socket.emitTo(req.body.sessionId, C.NEW_GAMES_RULES, {
+		socket.emitTo(req.body.sessionId, IO.SESSION.NEW_RULES, {
 			idx: rulesCreated.idx,
 			typeMoney: rulesCreated.typeMoney,
 		});
@@ -28,7 +28,7 @@ RulesController.update = async (req, res, next) => {
 				status: 'not modified',
 			});
 		} else {
-			socket.emitTo(req.body.sessionId, C.UPDATED_RULES, {
+			socket.emitTo(req.body.sessionId, IO.SESSION.UPDATED_RULES, {
 				idx: req.body.ruleIdx,
 				typeMoney: req.body.updates.typeMoney,
 			});
@@ -46,13 +46,6 @@ RulesController.update = async (req, res, next) => {
 RulesController.resetDefault = async (req, res, next) => {
 	try {
 		const rulesReset = await RulesService.resetDefault(req.body.sessionId, req.body.ruleIdx);
-		if (rulesReset.modifiedCount === 0) {
-			return res.status(200).json({
-				status: 'not modified',
-			});
-		} else {
-			socket.emitTo(req.body.sessionId, C.RESET_RULES, rulesReset);
-		}
 		return res.status(200).json(rulesReset);
 	} catch (err) {
 		log.error('Rules default error:', err);
@@ -76,7 +69,7 @@ RulesController.remove = async (req, res, next) => {
 	try {
 		const ack = await RulesService.removeByIdx(req.params.sessionId, req.params.ruleIdx);
 		if (ack.modifiedCount === 1) {
-			socket.emitTo(req.params.sessionId, C.DELETED_RULES, {
+			socket.emitTo(req.params.sessionId, SOCKET_EVENTS.DELETED_RULES, {
 				idx: req.params.ruleIdx,
 			});
 			return res.status(200).json(ack);

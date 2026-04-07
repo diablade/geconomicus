@@ -1,14 +1,14 @@
 import { AfterViewInit, Component, OnInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeprecatedBackService } from '../services/deprecated-back.service';
-import io from 'socket.io-client';
 import { Card, EventGeco, Feedback, Game, Player } from '../models/game';
 import * as _ from 'lodash-es';
 import { environment } from '../../environments/environment';
 import { getRandomColor, hexToRgb } from '../services/tools';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 // @ts-ignore
-import { C } from '../../../../back/shared/constantes.mjs';
+import * as C from '../../../../back/config/constantes_deprecated.cjs';
+
 
 import { ChartConfiguration, ChartDataset } from 'chart.js';
 import 'chartjs-adapter-date-fns';
@@ -480,23 +480,23 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.events = game.events;
 				this.players = game.players;
 				this.podium = [];
-				if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
-					this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
-				}
-				this.nbPlayer = _.partition(this.players, (p) => p.status === C.ALIVE).length;
+				// if (this.lineChartOptions && this.lineChartOptions.scales && this.lineChartOptions.scales['y']) {
+				// 	this.lineChartOptions.scales['y'].type = this.game.typeMoney == C.JUNE ? 'logarithmic' : 'linear';
+				// }
+				// this.nbPlayer = _.partition(this.players, (p) => p.status === C.ALIVE).length;
 				this.initDatasets();
-				if (this.game?.typeMoney == C.JUNE) {
-					const firstDu = _.find(this.events, (e) => {
-						return e.typeEvent == C.FIRST_DU || e.typeEvent == 'first_DU';
-					});
-					if (firstDu) {
-						this.currentDU = firstDu.amount;
-					}
-				}
+				// if (this.game?.typeMoney == C.JUNE) {
+				// 	const firstDu = _.find(this.events, (e) => {
+				// 		return e.typeEvent == C.FIRST_DU || e.typeEvent == 'first_DU';
+				// 	});
+				// 	if (firstDu) {
+				// 		this.currentDU = firstDu.amount;
+				// 	}
+				// }
 				this.addEventsToDatasets(this.events);
 				this.getBestPlayers();
 			});
-			this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.EVENT);
+			// this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.EVENT);
 			this.initChartOptions();
 		});
 
@@ -553,28 +553,28 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getDebts() {
 		let debt = 0;
-		_.forEach(this.game?.credits, (c) => {
-			if (c.status != C.CREDIT_DONE) {
-				debt += c.amount + c.interest;
-			}
-		});
+		// _.forEach(this.game?.credits, (c) => {
+			// if (c.status != C.CREDIT_DONE) {
+				// debt += c.amount + c.interest;
+			// }
+		// });
 		return debt;
 	}
 
 	getStatus() {
 		switch (this.game?.status) {
-			case C.OPEN:
-				return this.i18nService.instant('GAME.OPEN');
-			case C.PLAYING:
-				return this.i18nService.instant('GAME.PLAYING');
-			case C.END_GAME:
-				return this.i18nService.instant('GAME.END_GAME');
-			case C.STOP_ROUND:
-				return this.i18nService.instant('GAME.STOP_ROUND');
-			case C.INTER_ROUND:
-				return this.i18nService.instant('GAME.INTER_ROUND');
-			case C.START_GAME:
-				return this.i18nService.instant('GAME.START_GAME');
+			// case C.OPEN:
+			// 	return this.i18nService.instant('GAME.OPEN');
+			// case C.PLAYING:
+			// 	return this.i18nService.instant('GAME.PLAYING');
+			// case C.END_GAME:
+			// 	return this.i18nService.instant('GAME.END_GAME');
+			// case C.STOP_ROUND:
+			// 	return this.i18nService.instant('GAME.STOP_ROUND');
+			// case C.INTER_ROUND:
+			// 	return this.i18nService.instant('GAME.INTER_ROUND');
+			// case C.START_GAME:
+				// return this.i18nService.instant('GAME.START_GAME');
 			default:
 				return '-';
 		}
@@ -642,19 +642,14 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		this.socket.on(C.EVENT, async (event: EventGeco) => {
-			this.events.push(event);
-			this.addEventsToDatasets([event]);
-			this.updateCharts();
-		});
-		this.socket.on(C.NEW_FEEDBACK, async () => {
-			this.getFeedbacks();
-		});
-		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
-			await this.router.navigate(['ogame', payload.idGame, 'player', payload.idPlayer]).then(() => {
-				window.location.reload();
-			});
-		});
+		// this.socket.on(C.EVENT, async (event: EventGeco) => {
+		// 	this.events.push(event);
+		// 	this.addEventsToDatasets([event]);
+		// 	this.updateCharts();
+		// });
+		// this.socket.on(C.NEW_FEEDBACK, async () => {
+		// 	this.getFeedbacks();
+		// });
 	}
 
 	getMaster() {
@@ -725,33 +720,33 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				total: 0,
 			});
 		});
-		if (this.game?.typeMoney == C.DEBT) {
-			this.datasets.set(C.BANK, {
-				data: [],
-				label: this.bankName,
-				backgroundColor: hexToRgb('#ffffff'),
-				borderColor: hexToRgb('#000000'),
-				pointBackgroundColor: hexToRgb('#ffffff'),
-				pointBorderColor: hexToRgb('#000000'),
-				borderWidth: 4, // Line thickness
-				pointRadius: 1, // Point thickness
-				// @ts-ignore
-				total: 0,
-			});
-			this.datasetsResources.set(C.BANK, {
-				data: [],
-				label: this.bankName,
-				backgroundColor: hexToRgb('#ffffff'),
-				borderColor: hexToRgb('#000000'),
-				pointBackgroundColor: hexToRgb('#ffffff'),
-				pointBorderColor: hexToRgb('#000000'),
-				borderWidth: 4, // Line thickness
-				pointRadius: 1, // Point thickness
-				stepped: 'before',
-				// @ts-ignore
-				total: 0,
-			});
-		}
+		// if (this.game?.typeMoney == C.DEBT) {
+		// 	this.datasets.set(C.BANK, {
+		// 		data: [],
+		// 		label: this.bankName,
+		// 		backgroundColor: hexToRgb('#ffffff'),
+		// 		borderColor: hexToRgb('#000000'),
+		// 		pointBackgroundColor: hexToRgb('#ffffff'),
+		// 		pointBorderColor: hexToRgb('#000000'),
+		// 		borderWidth: 4, // Line thickness
+		// 		pointRadius: 1, // Point thickness
+		// 		// @ts-ignore
+		// 		total: 0,
+		// 	});
+		// 	this.datasetsResources.set(C.BANK, {
+		// 		data: [],
+		// 		label: this.bankName,
+		// 		backgroundColor: hexToRgb('#ffffff'),
+		// 		borderColor: hexToRgb('#000000'),
+		// 		pointBackgroundColor: hexToRgb('#ffffff'),
+		// 		pointBorderColor: hexToRgb('#000000'),
+		// 		borderWidth: 4, // Line thickness
+		// 		pointRadius: 1, // Point thickness
+		// 		stepped: 'before',
+		// 		// @ts-ignore
+		// 		total: 0,
+		// 	});
+		// }
 		this.datasets.set('masseMoney', {
 			data: [],
 			label: this.massMonetaryName,
@@ -894,145 +889,145 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				dataset.data.push({ x: date, y: value });
 			};
 
-			switch (event.typeEvent) {
-				case C.NEW_PLAYER:
-					this.playersAtStart++;
-					continue;
-				case C.START_GAME:
-					this.startGameDate = event.date;
-					continue;
-				case C.END_GAME:
-					this.stopGameDate = event.date;
-					continue;
-				case C.START_ROUND:
-					this.roundStarted = true;
-					this.finalCards += this.initialCards;
-					continue;
-				case C.STOP_ROUND:
-					continue;
-				case C.FIRST_DU:
-					this.currentDU = event.amount;
-					this.initialDU = event.amount;
-					continue;
-				case C.INIT_DISTRIB:
-					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
-					this.initialMM += event.amount;
-					this.initialResources += totalResourcesEvent;
-					this.initialCards += event.resources.length;
-					updateData(mmDataset, event.date, 'add', event.amount, false, false);
-					updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
-						updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
-					}
-					continue;
-				case C.DISTRIB_DU:
-					this.currentDU = event.amount;
-					updateData(mmDataset, event.date, 'add', event.amount, false, false);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, false);
-					updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
-					continue;
-				case C.TRANSACTION:
-					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
-					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetRelatif, event.date, 'sub', event.amount, true, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
+			// switch (event.typeEvent) {
+			// 	case C.NEW_PLAYER:
+			// 		this.playersAtStart++;
+			// 		continue;
+			// 	case C.START_GAME:
+			// 		this.startGameDate = event.date;
+			// 		continue;
+			// 	case C.END_GAME:
+			// 		this.stopGameDate = event.date;
+			// 		continue;
+			// 	case C.START_ROUND:
+			// 		this.roundStarted = true;
+			// 		this.finalCards += this.initialCards;
+			// 		continue;
+			// 	case C.STOP_ROUND:
+			// 		continue;
+			// 	case C.FIRST_DU:
+			// 		this.currentDU = event.amount;
+			// 		this.initialDU = event.amount;
+			// 		continue;
+			// 	case C.INIT_DISTRIB:
+			// 		totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
+			// 		this.initialMM += event.amount;
+			// 		this.initialResources += totalResourcesEvent;
+			// 		this.initialCards += event.resources.length;
+			// 		updateData(mmDataset, event.date, 'add', event.amount, false, false);
+			// 		updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		if (this.game?.typeMoney == C.JUNE && receiverDatasetRelatif) {
+			// 			updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
+			// 		}
+			// 		continue;
+			// 	case C.DISTRIB_DU:
+			// 		this.currentDU = event.amount;
+			// 		updateData(mmDataset, event.date, 'add', event.amount, false, false);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, false);
+			// 		updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, false);
+			// 		continue;
+			// 	case C.TRANSACTION:
+			// 		totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
+			// 		updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(emitterDatasetRelatif, event.date, 'sub', event.amount, true, this.pointsBefore1second);
+			// 		updateData(emitterDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
 
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, this.pointsBefore1second);
-					updateData(receiverDatasetResources, event.date, 'sub', totalResourcesEvent, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.TRANSFORM_DISCARDS:
-					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
-					if (emitterDatasetResources) {
-						// @ts-ignore
-						emitterDatasetResources.total -= totalResourcesEvent;
-					}
-					this.finalCards -= event.resources.length;
-					// no update data to avoid weird graph up and down too quickly
-					continue;
-				case C.TRANSFORM_NEWCARDS:
-					totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
-					// no before point , same reason as transform_discards
-					updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
-					this.finalCards += event.resources.length;
-					this.productionTotal += 1;
-					continue;
-				case C.DEAD:
-					this.deads++;
-					const deadRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(receiverDatasetResources, event.date, 'new', deadRessources, false, false);
-					updateData(receiverDataset, event.date, 'prev', 0, false, false);
-					updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.REMIND_DEAD:
-					// @ts-ignore
-					updateData(receiverDataset, event.date, 'prev', 0, false, false);
-					updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
-					updateData(receiverDatasetResources, event.date, 'prev', 0, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.NEW_CREDIT:
-					if (!this.roundStarted) {
-						this.initialMM += event.amount;
-						this.initialDebts += event.amount + event.resources[0].interest;
-					}
-					updateData(mmDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.SETTLE_CREDIT:
-					const interest = event.resources[0].interest;
-					this.moneyDestroyed += event.amount;
-					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, 'add', interest, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.PAYED_INTEREST:
-					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.SEIZURE:
-					const seizureRessources = this.getValueCardsFromEvent(event.resources);
-					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateData(emitterDatasetResources, event.date, 'sub', seizureRessources, false, false);
-					updateData(receiverDatasetResources, event.date, 'add', seizureRessources, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.SEIZED_DEAD:
-					const seizedItems = event.resources[0];
-					const seizedRessources = this.getValueCardsFromEvent(seizedItems.cards);
-					updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
-					updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
-					updateData(
-						emitterDataset,
-						event.date,
-						'sub',
-						seizedItems.interest,
-						false,
-						this.pointsBefore1second
-					);
-					updateData(emitterDatasetResources, event.date, 'sub', seizedRessources, false, false);
-					updateData(receiverDatasetResources, event.date, 'add', seizedRessources, false, false);
-					updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
-					continue;
-				case C.PRISON_ENDED:
-					let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
-					if (!outOfPrisonRessources) {
-						outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
-					}
-					updateData(receiverDatasetResources, event.date, 'add', outOfPrisonRessources, false, false);
-					continue;
-				default:
-					continue;
-			}
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDatasetRelatif, event.date, 'add', event.amount, true, this.pointsBefore1second);
+			// 		updateData(receiverDatasetResources, event.date, 'sub', totalResourcesEvent, false, false);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.TRANSFORM_DISCARDS:
+			// 		totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
+			// 		if (emitterDatasetResources) {
+			// 			// @ts-ignore
+			// 			emitterDatasetResources.total -= totalResourcesEvent;
+			// 		}
+			// 		this.finalCards -= event.resources.length;
+			// 		// no update data to avoid weird graph up and down too quickly
+			// 		continue;
+			// 	case C.TRANSFORM_NEWCARDS:
+			// 		totalResourcesEvent = this.getValueCardsFromEvent(event.resources);
+			// 		// no before point , same reason as transform_discards
+			// 		updateData(receiverDatasetResources, event.date, 'add', totalResourcesEvent, false, false);
+			// 		this.finalCards += event.resources.length;
+			// 		this.productionTotal += 1;
+			// 		continue;
+			// 	case C.DEAD:
+			// 		this.deads++;
+			// 		const deadRessources = this.getValueCardsFromEvent(event.resources);
+			// 		updateData(receiverDatasetResources, event.date, 'new', deadRessources, false, false);
+			// 		updateData(receiverDataset, event.date, 'prev', 0, false, false);
+			// 		updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.REMIND_DEAD:
+			// 		// @ts-ignore
+			// 		updateData(receiverDataset, event.date, 'prev', 0, false, false);
+			// 		updateData(receiverDatasetRelatif, event.date, 'prev', 0, true, false);
+			// 		updateData(receiverDatasetResources, event.date, 'prev', 0, false, false);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.NEW_CREDIT:
+			// 		if (!this.roundStarted) {
+			// 			this.initialMM += event.amount;
+			// 			this.initialDebts += event.amount + event.resources[0].interest;
+			// 		}
+			// 		updateData(mmDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.SETTLE_CREDIT:
+			// 		const interest = event.resources[0].interest;
+			// 		this.moneyDestroyed += event.amount;
+			// 		updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDataset, event.date, 'add', interest, false, this.pointsBefore1second);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.PAYED_INTEREST:
+			// 		updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.SEIZURE:
+			// 		const seizureRessources = this.getValueCardsFromEvent(event.resources);
+			// 		updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(emitterDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateData(emitterDatasetResources, event.date, 'sub', seizureRessources, false, false);
+			// 		updateData(receiverDatasetResources, event.date, 'add', seizureRessources, false, false);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.SEIZED_DEAD:
+			// 		const seizedItems = event.resources[0];
+			// 		const seizedRessources = this.getValueCardsFromEvent(seizedItems.cards);
+			// 		updateData(mmDataset, event.date, 'sub', event.amount, false, this.pointsBefore1second);
+			// 		updateData(receiverDataset, event.date, 'add', event.amount, false, this.pointsBefore1second);
+			// 		updateData(
+			// 			emitterDataset,
+			// 			event.date,
+			// 			'sub',
+			// 			seizedItems.interest,
+			// 			false,
+			// 			this.pointsBefore1second
+			// 		);
+			// 		updateData(emitterDatasetResources, event.date, 'sub', seizedRessources, false, false);
+			// 		updateData(receiverDatasetResources, event.date, 'add', seizedRessources, false, false);
+			// 		updateAllDatas([event.emitter, event.receiver], event.date, 'prev', 0, false, false);
+			// 		continue;
+			// 	case C.PRISON_ENDED:
+			// 		let outOfPrisonRessources = this.getValueCardsFromEvent(event.resources);
+			// 		if (!outOfPrisonRessources) {
+			// 			outOfPrisonRessources = this.getValueCardsFromEvent(event.resources[0]);
+			// 		}
+			// 		updateData(receiverDatasetResources, event.date, 'add', outOfPrisonRessources, false, false);
+			// 		continue;
+			// 	default:
+			// 		continue;
+			// }
 		}
 
 		// Remove the 'total' property from each dataset ? datasets.forEach(dataset => delete dataset.total);
@@ -1091,17 +1086,17 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	getBestPlayersTransactions() {
-		const transactionEvents = _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION);
-		if (transactionEvents.length > 0) {
-			const transactionPlayers = _.countBy(transactionEvents, (e) => e.emitter);
+		// const transactionEvents = _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION);
+		// if (transactionEvents.length > 0) {
+		// 	const transactionPlayers = _.countBy(transactionEvents, (e) => e.emitter);
 
-			const transactionPlayersArray = _.toPairs(transactionPlayers);
-			const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
-			this.podiumTransac = _.map(sortedPlayers, ([playerId, value]) => {
-				let playerFound = _.find(this.players, { _id: playerId });
-				return { ...playerFound, value } || new Player(); // Return player object or a default Player if not found
-			});
-		}
+		// 	const transactionPlayersArray = _.toPairs(transactionPlayers);
+		// 	const sortedPlayers = _.orderBy(transactionPlayersArray, [1], ['desc']);
+		// 	this.podiumTransac = _.map(sortedPlayers, ([playerId, value]) => {
+		// 		let playerFound = _.find(this.players, { _id: playerId });
+		// 		return { ...playerFound, value } || new Player(); // Return player object or a default Player if not found
+		// 	});
+		// }
 	}
 
 	mergedReincarnatePlayers(allLastPoints: LastPointValue[]): LastPointValue[] {
@@ -1143,11 +1138,11 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	getTransactionsTotal() {
-		return _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION).length;
+		// return _.filter(this.events, (e) => e.typeEvent == C.TRANSACTION).length;
 	}
 
 	getCurrency() {
-		return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU');
+		// return this.i18nService.instant(this.game?.typeMoney === C.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU');
 	}
 
 	home() {

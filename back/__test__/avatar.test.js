@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import { C } from "#constantes";
+import { DELETED_AVATAR, NEW_AVATAR, UPDATED_AVATAR } from '#constantes';
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
@@ -59,7 +59,7 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(1);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.NEW_AVATAR), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(NEW_AVATAR), expect.objectContaining({
                 name: 'test-avatar-name',
                 avatar: {
                     idx: avatarIdx,
@@ -104,7 +104,7 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(2);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.UPDATED_AVATAR), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(UPDATED_AVATAR), expect.objectContaining({
                 name: 'test-avatar-name-updated',
                 idx: avatarIdx,
                 eyes: 2,
@@ -141,7 +141,7 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(3);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(C.DELETED_AVATAR), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(DELETED_AVATAR), expect.objectContaining({
                 avatarIdx: avatarIdx,
             }));
         });

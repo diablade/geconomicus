@@ -1,7 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-// @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
 import { ThemesService } from '../../services/themes.service';
 import { Session } from "../../models/session";
 
@@ -13,7 +11,6 @@ import { Session } from "../../models/session";
 export class SessionEditDialogComponent {
 	session: Session;
 	themes: string[];
-	C = C;
 	Math = Math;
 
 	constructor(

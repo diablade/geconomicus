@@ -62,7 +62,7 @@
 				<fa-icon [icon]="faWarning"></fa-icon>
 			</button>
 			<button
-				*ngIf="gameState.status === C.OPEN || gameState.status == C.PAUSED"
+				*ngIf="gameState.status === STARTED || gameState.status === PAUSED"
 				class="ms-2"
 				mat-raised-button
 				color="warn"
@@ -71,7 +71,7 @@
 				{{ 'MASTER.START' | translate }}
 			</button>
 			<button
-				*ngIf="gameState.status === C.PLAYING"
+				*ngIf="gameState.status === PLAYING"
 				mat-raised-button
 				color="warn"
 				class="ms-2"
@@ -80,7 +80,7 @@
 				{{ 'MASTER.PAUSE_ROUND' | translate }}
 			</button>
 			<button
-				*ngIf="gameState.status === C.PLAYING || gameState.status === C.PAUSED"
+				*ngIf="gameState.status === PLAYING || gameState.status === PAUSED"
 				mat-raised-button
 				color="warn"
 				class="ms-2"
@@ -89,7 +89,7 @@
 				{{ 'MASTER.END_ROUND' | translate }}
 			</button>
 			<button
-				*ngIf="gameState.status === C.ENDED"
+				*ngIf="gameState.status === STOPPED"
 				class="ms-2"
 				mat-raised-button
 				color="accent"
@@ -105,7 +105,7 @@
 				</button>
 			</div>
 			<button
-				*ngIf="gameState.typeMoney === C.DEBT"
+				*ngIf="gameState.typeMoney === DEBT"
 				class="m-2"
 				mat-raised-button
 				color="accent"
@@ -114,19 +114,19 @@
 				<fa-icon [icon]="faBuildingColumns"></fa-icon>
 			</button>
 			<fa-icon
-				*ngIf="gameState.typeMoney === C.DEBT"
+				*ngIf="gameState.typeMoney === DEBT"
 				class="joinQr"
 				(click)="qrCodeBank()"
 				[icon]="faQrcode"></fa-icon>
 		</div>
 	</div>
-	<!-- <div class="text-center" *ngIf="game && game.status === C.OPEN"> -->
+	<!-- <div class="text-center" *ngIf="game && game.status === OPEN"> -->
 	<!-- <h2 class="fs-3 shadowed ">{{ 'MASTER.USERS_CONNECTED' | translate }}</h2> -->
 	<!-- <mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteUser"> -->
 	<!-- {{ 'MASTER.DELETE_USER' | translate }} -->
 	<!-- </mat-slide-toggle> -->
 	<!-- </div> -->
-	<div class="text-center" *ngIf="gameState && gameState.status !== C.OPEN">
+	<div class="text-center" *ngIf="gameState && gameState.status !== CREATED">
 		<h2 class="fs-3 shadowed">{{ 'MASTER.PLAYERS' | translate }}</h2>
 		<mat-slide-toggle *ngIf="!rules.autoDeath || session.devMode" class="" [color]="'warn'" [(ngModel)]="killUser">
 			{{ 'MASTER.KILL_USERS' | translate }} ☠️

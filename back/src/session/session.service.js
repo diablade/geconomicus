@@ -1,8 +1,8 @@
 import SessionModel from './session.model.js';
 import { nanoId4, numbersId4 } from '../misc/misc.tool.js';
-import C from '../../shared/constantes.mjs';
+import { SESSION_STATUS } from '@geco/shared';
 import log from '#config/log';
-import { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
+import RulesService, { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
 
 const SessionService = {};
 
@@ -24,7 +24,7 @@ SessionService.getById = async (id) => {
 	return SessionModel.findById(id).exec();
 };
 SessionService.getByShortId = async (shortId) => {
-	return SessionModel.findOne({ shortId, status: C.OPEN }).exec();
+	return SessionModel.findOne({ shortId, status: SESSION_STATUS.OPEN }).exec();
 };
 SessionService.getAll = async () => {
 	//TODO pagination  one day and with filters in req
@@ -57,7 +57,7 @@ SessionService.start = async (sessionId) => {
 	const session = await SessionModel.findOneAndUpdate(
 		{ _id: sessionId },
 		[
-			{ $set: { status: C.IN_PROGRESS } },
+			{ $set: { status: SESSION_STATUS.IN_PROGRESS } },
 			{ $set: { rulesIndexSeq: { $ifNull: ['$rulesIndexSeq', 0] } } },
 
 			// Debt
@@ -97,7 +97,7 @@ SessionService.update = async (sessionId, updates) => {
 	for (const [key, value] of Object.entries(updates)) {
 		set[key] = value;
 	}
-	return SessionModel.updateOne({ _id: sessionId }, { $set: set }, { runValidators: true }).exec();
+	return SessionModel.findOneAndUpdate({ _id: sessionId }, { $set: set }, { new: true, runValidators: true }).lean();
 };
 
 /* Remove */

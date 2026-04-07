@@ -25,7 +25,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { SnackbarService } from '../services/snackbar.service';
 import createCountdown from '../services/countDown';
 // @ts-ignore
-import { C } from '../../../../back/shared/constantes.mjs';
+import { PLAYER_STATUS, GAME_STATUS, GAME_TYPE, IO } from '@geco/shared';
 import * as _ from 'lodash-es';
 import { GameOptionsDialogComponent } from '../dialogs/game-options-dialog/game-options-dialog.component';
 import { SessionStorageService } from '../services/local-storage/session-storage.service';
@@ -44,6 +44,14 @@ import { AudioService } from '../services/audio.service';
 })
 export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscription: Subscription | undefined;
+	protected readonly CREATED = GAME_STATUS.CREATED;
+	protected readonly STARTED = GAME_STATUS.STARTED;
+	protected readonly PLAYING = GAME_STATUS.PLAYING;
+	protected readonly PAUSED = GAME_STATUS.PAUSED;
+	protected readonly STOPPED = GAME_STATUS.STOPPED;
+	protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly JUNE = GAME_TYPE.JUNE;
+
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
@@ -69,12 +77,11 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	faPause = faPause;
 	faStop = faStop;
 
-	C = C;
 	timerProgress = 100;
 
 	options = [
-		{ value: C.JUNE, label: 'FREE_MONEY', isDisabled: false },
-		{ value: C.DEBT, label: 'DEBT_MONEY', isDisabled: false },
+		{ value: this.JUNE, label: 'FREE_MONEY', isDisabled: false },
+		{ value: this.DEBT, label: 'DEBT_MONEY', isDisabled: false },
 	];
 	minutes = '00';
 	seconds = '00';
@@ -129,7 +136,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 					: '0' + this.rules.roundMinutes.toString();
 			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
-			if (timerRemaining && this.gameState.status == C.PLAYING) {
+			if (timerRemaining && this.gameState.status == GAME_STATUS.PLAYING) {
 				this.timer.set({ h: 0, m: 0, s: timerRemaining });
 				this.timer.start();
 			} else {
@@ -139,7 +146,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.socket.on(C.UPDATED_PLAYER, (player: PlayerLife) => {
+		this.socket.on(IO.AVATAR.UPDATED, (player: PlayerLife) => {
 			// this.gameState.players = _.map(this.gameState.players, (p) => {
 			// if (p._id == player._id) {
 			// p = player;
@@ -147,26 +154,26 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			// return p;
 			// });
 		});
-		this.socket.on(C.NEW_PLAYER, (player: PlayerLife) => {
+		this.socket.on(IO.PLAYER.JOINED, (player: PlayerLife) => {
 			// this.gameState.players.push(player);
 		});
 		this.socket.on('connected', (player: any) => {
 			console.log('connected', player);
 		});
-		this.socket.on(C.TIMER_LEFT, (minutesRemaining: number) => {
+		this.socket.on(IO.TIMER_LEFT, (minutesRemaining: number) => {
 			this.startVideos();
 			this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
-			if (minutesRemaining && this.gameState.status == C.PLAYING) {
+			if (minutesRemaining && this.gameState.status == GAME_STATUS.PLAYING) {
 				this.timer.stop();
 				this.timer.reset();
 				this.timer.set({ h: 0, m: minutesRemaining, s: 0 });
 				this.timer.start();
 			}
 		});
-		this.socket.on(C.STOP_ROUND, async () => {
+		this.socket.on(IO.GAME.STOPPED, async () => {
 			this.stopRound();
 		});
-		this.socket.on(C.DEATH_IS_COMING, async () => {
+		this.socket.on(IO.GAME.DEATH_IS_COMING, async () => {
 			if (this.rules.autoDeath) {
 				this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.DEATH_PASS'));
 			} else {
@@ -178,10 +185,10 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 				});
 			}
 		});
-		this.socket.on(C.DEAD, async (event: any) => {
+		this.socket.on(IO.PLAYER.DIED, async (event: any) => {
 			_.forEach(this.gameState.playersLifes, (p) => {
 				if (p.idx == event.receiver) {
-					p.status = C.DEAD;
+					p.status = PLAYER_STATUS.DEAD;
 				}
 			});
 		});
@@ -212,7 +219,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	startGame() {
 		// if (this.gameState) {
 		// 	this.backService.startGame(this.gameState).subscribe((data: any) => {
-		// 		if (data.status == C.START_GAME) {
+		// 		if (data.status == START_GAME) {
 		// 			this.gameState.status = data.status;
 		// 			this.gameState.round += 1;
 		// 		}
@@ -224,7 +231,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		// this.backService.startRound(this.idGame, this.gameState.round).subscribe(() => {
 		// 	this.timer.set({ h: 0, m: this.gameState.roundMinutes, s: 0 });
 		// 	this.timer.start();
-		// 	this.gameState.status = C.PLAYING;
+		// 	this.gameState.status = PLAYING;
 		// 	this.audioService.playSound('start');
 		// 	this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.ROUND_START'));
 		// });
@@ -234,7 +241,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.timer.stop();
 		this.timer.reset();
 		this.timer.set({ h: 0, m: 0, s: 0 });
-		this.gameState.status = C.STOP_ROUND;
+		this.gameState.status = GAME_STATUS.STOPPED;
 		this.timerProgress = 0;
 		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
@@ -253,6 +260,18 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			// if (result && result == 'btn2') {
 			// 	this.backService.stopRound(this.idGame, this.gameState.round).subscribe();
 			// }
+		});
+	}
+
+    resetGame(rulesIdx: number) {
+		this.gameStateService.resetGame(this.gameStateId, this.session._id, rulesIdx).subscribe((data) => {
+			this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
+			this.session.gamesRules = this.session.gamesRules.map((rules) => {
+				if (rules.idx == rulesIdx) {
+					rules = { ...rules, ...data };
+				}
+				return rules;
+			});
 		});
 	}
 
@@ -320,7 +339,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onKillUser(player: PlayerLife) {
 		// this.backService.killUser(player._id, this.idGame).subscribe(() => {
-		// player.status = C.DEAD;
+		// player.status = DEAD;
 		// });
 	}
 }

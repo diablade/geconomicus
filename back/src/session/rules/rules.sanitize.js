@@ -1,12 +1,12 @@
 import Joi from 'joi';
 import {isValidObjectId, isValidNanoId4} from '../../misc/validate.tool.js';
-import {C} from '#constantes';
+import { GAME_TYPE,CREDIT_STATUS } from '@geco/shared';
 
 export const sanitize = {
 	create: Joi.object({
 		rules: Joi.object({
 			//not commun
-			typeMoney: Joi.string().default(C.DEBT),
+			typeMoney: Joi.string().default(GAME_TYPE.DEBT),
 			priceWeight1: Joi.number().default(1),
 			priceWeight2: Joi.number().default(2),
 			priceWeight3: Joi.number().default(4),
@@ -37,7 +37,7 @@ export const sanitize = {
 			timerCredit: Joi.number().default(5),
 			timerPrison: Joi.number().default(5),
 			manualBank: Joi.boolean().default(false),
-			seizureType: Joi.string().default(C.DECOTE),
+			seizureType: Joi.string().default(CREDIT_STATUS.DECOTE),
 			seizureCosts: Joi.number().default(2),
 			seizureDecote: Joi.number().default(33),
 		}).required(),
@@ -58,7 +58,7 @@ export const sanitize = {
 	}),
 	update: Joi.object({
 		updates: Joi.object({
-			typeMoney: Joi.string().valid(C.JUNE, C.DEBT),
+			typeMoney: Joi.string().valid(GAME_TYPE.JUNE, GAME_TYPE.DEBT),
 			priceWeight1: Joi.number().optional(),
 			priceWeight2: Joi.number().optional(),
 			priceWeight3: Joi.number().optional(),

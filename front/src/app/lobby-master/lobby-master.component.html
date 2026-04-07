@@ -93,16 +93,16 @@
 							<div class="d-flex flex-column align-items-center">
 								<coin
 									[coinImage]="'./assets/images/' + rule.typeMoney + '.png'"
-									[label]="(rule.typeMoney === C.JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"
+									[label]="(rule.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"
 									(click)="rule.rotate = !rule.rotate"
 									[forceRotate]="rule.rotate"></coin>
 								<div class="fs-7 text-center">
-									{{ rule.gameStatus === C.NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
-									{{ rule.gameStatus === C.OPEN ? ('MASTER.GAME_OPEN' | translate) : '' }}
-									{{ rule.gameStatus === C.ENDED ? ('MASTER.GAME_ENDED' | translate) : '' }}
+									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
+									{{ rule.gameStatus === STARTED ? ('MASTER.GAME_OPEN' | translate) : '' }}
+									{{ rule.gameStatus === FINISHED ? ('MASTER.GAME_FINISHED' | translate) : '' }}
 								</div>
 								<button
-									*ngIf="rule.gameStatus === C.NONE"
+									*ngIf="rule.gameStatus === NONE"
 									class="contourText"
 									mat-button
 									[color]="session.devMode ? 'warn' : ''"
@@ -115,25 +115,45 @@
 									<fa-icon *ngIf="session.devMode" [icon]="faCogs"></fa-icon>
 								</button>
 								<button
-									*ngIf="rule.gameStatus === C.NONE"
+									*ngIf="rule.gameStatus === NONE"
 									class="mt-1 box-shadowed"
 									mat-raised-button
 									color="primary"
-									(click)="openGame(rule.idx)">
-									{{ 'MASTER.OPEN_GAME' | translate }}
+									(click)="createGame(rule.idx)">
+									{{ 'MASTER.CREATE_GAME' | translate }}
 									<fa-icon [icon]="faRightToBracket"></fa-icon>
 								</button>
 								<button
-									*ngIf="rule.gameStatus === C.OPEN"
+									*ngIf="
+										session.devMode &&
+										(rule.gameStatus === CREATED ||
+											rule.gameStatus === STARTED ||
+											rule.gameStatus === PLAYING ||
+											rule.gameStatus === PAUSED)
+									"
+									class="mt-1 box-shadowed"
+									mat-raised-button
+									color="warn"
+									(click)="killGame(rule.idx, rule.gameStateId)">
+									{{ 'MASTER.KILL_GAME' | translate }}
+									<fa-icon [icon]="faTrashCan"></fa-icon>
+								</button>
+								<button
+									*ngIf="
+										rule.gameStatus === CREATED ||
+										rule.gameStatus === STARTED ||
+										rule.gameStatus === PLAYING ||
+										rule.gameStatus === PAUSED
+									"
 									class="m-2 box-shadowed"
 									mat-raised-button
-									[routerLink]="['/master', rule.gameStateId]"
-									color="primary">
+									color="primary"
+									[routerLink]="['/master', rule.gameStateId]">
 									{{ 'MASTER.ENTER_GAME' | translate }}
 									<fa-icon [icon]="faRightToBracket"></fa-icon>
 								</button>
 								<button
-									*ngIf="rule.gameStatus === C.ENDED"
+									*ngIf="rule.gameStatus === ENDED"
 									class="m-2 box-shadowed"
 									mat-raised-button
 									(click)="showResults()">
@@ -152,7 +172,7 @@
 			</div>
 		</div>
 		<!-- FOOTER and PLAYERS  -->
-		<div class="flex-grow-1" [ngClass]="session.status === C.OPEN ? '' : ''">
+		<div class="flex-grow-1" [ngClass]="session.status === OPEN ? '' : ''">
 			<div class="d-flex flex-column h-100">
 				<div class="text-center">
 					<h2 class="fs-3 shadowed">
@@ -165,7 +185,7 @@
 							⚠️
 						</span>
 					</h2>
-					<div class="text-center" [ngClass]="session.status === C.OPEN ? '' : 'hide'">
+					<div class="text-center" [ngClass]="session.status === OPEN ? '' : 'hide'">
 						<mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteUser">
 							{{ 'MASTER.DELETE_USER' | translate }}
 						</mat-slide-toggle>

@@ -15,9 +15,9 @@ EventService.getByGameStateId = async (gameStateId) => {
 };
 
 
-/* Create */
+/* Post */
 /**
- * @description Create an event
+ * @description Post an event
  * @param {string} typeEvent - The type of the event
  * @param {string} sessionId - The ID of the session
  * @param {string} gameStateId - The ID of the game state
@@ -26,7 +26,7 @@ EventService.getByGameStateId = async (gameStateId) => {
  * @param {object} payload - The payload of the event
  * @returns {Promise<EventModel>} The created event
  */
-EventService.create = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
+EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
     const newEvent = new EventModel({
         typeEvent: typeEvent,
         sessionId: sessionId,

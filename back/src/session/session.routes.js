@@ -12,5 +12,6 @@ router.post('/create', validate(sanitize.create), SessionController.create);
 router.post('/start', validate(sanitize.start), SessionController.start);
 router.put('/update', validate(sanitize.update), SessionController.update);
 router.post('/delete', validate(sanitize.deleteSession), SessionController.delete);
+router.post('/kill-game', validate(sanitize.killGame), SessionController.killGame);
 
 export default router;

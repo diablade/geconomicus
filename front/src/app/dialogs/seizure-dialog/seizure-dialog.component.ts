@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Card, Credit, Player} from "../../models/game";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 // @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
+import { CREDIT_STATUS } from '@geco/shared';
 import {DeprecatedBackService} from "../../services/deprecated-back.service";
 import * as _ from 'lodash-es';
 import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
@@ -19,7 +19,6 @@ export class SeizureDialogComponent implements OnInit {
 	credit: Credit | undefined;
 	player: Player = new Player();
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	C = C;
 	playerCards: Card[] = [];
 	seizureCards: Card[] = [];
 	seizureCoins = 0;
@@ -65,7 +64,7 @@ export class SeizureDialogComponent implements OnInit {
 	getSeizure() {
 		let seize = 0;
 		_.forEach(this.seizureCards, c => {
-			if (this.seizureType == "decote") {
+			if (this.seizureType == CREDIT_STATUS.DECOTE) {
 				seize += (c.price - (c.price * this.seizureDecote / 100));
 			} else {
 				seize += c.price;
@@ -76,7 +75,7 @@ export class SeizureDialogComponent implements OnInit {
 
 	getSeizureObjective() {
 		if (this.credit) {
-			if (this.seizureType === "decote") {
+			if (this.seizureType === CREDIT_STATUS.DECOTE) {
 				return this.credit.amount + this.credit.interest - this.seizureCoins;
 			} else {
 				return this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;

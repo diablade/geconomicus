@@ -3,7 +3,7 @@ import log from '#config/log';
 import _ from 'lodash';
 import mongoose from "mongoose";
 import socket from '#config/socket';
-import { C } from '#constantes';
+import { DEAD, EVENT, JUNE, TRANSACTION, TRANSACTION_DONE } from '#constantes';
 import gameService from "../game/game.service.js";
 import decksService from "../misc/legacy.decks.service.js";
 import playerService from "./player.service.js";
@@ -105,21 +105,21 @@ PlayerLifeController.transaction = async (req, res, next) => {
         if (!buyer || !seller) {
             return res.status(404).json({ message: "Transaction error, Buyer or seller not found" });
         }
-        if (buyer.status === C.DEAD || seller.status === C.DEAD) {
+        if (buyer.status === DEAD || seller.status === DEAD) {
             return res.status(400).json({ message: "Transaction cannot involves a dead player, fool !" });
         }
 
-        const card = seller.cards.find(c => c.id === idCard);
+        const card = seller.cards.find(c => id === idCard);
         if (!card) {
             return res.status(404).json({ message: "Transaction error, card not found" });
         }
 
-        const cost = game.typeMoney === C.JUNE ? Number((card.price * game.currentDU).toFixed(2)) : card.price;
+        const cost = game.typeMoney === JUNE ? Number((card.price * game.currentDU).toFixed(2)) : card.price;
         if (buyer.coins < cost) {
             return res.status(400).json({ message: "Transaction error, Insufficient funds" });
         }
 
-        const eventTransaction = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
+        const eventTransaction = constructor.event(TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
 
         const updatedGame = await GameModel.findByIdAndUpdate({
             _id: idGame,
@@ -129,13 +129,13 @@ PlayerLifeController.transaction = async (req, res, next) => {
                         $elemMatch: {
                             _id: idSeller,
                             'cards._id': idCard,
-                            status: { $ne: C.DEAD }
+                            status: { $ne: DEAD }
                         }
                     }, {
                         $elemMatch: {
                             _id: idBuyer,
                             coins: { $gte: cost },
-                            status: { $ne: C.DEAD }
+                            status: { $ne: DEAD }
                         }
                     }
                 ]
@@ -164,8 +164,8 @@ PlayerLifeController.transaction = async (req, res, next) => {
         buyer.coins = Number((buyer.coins - cost).toFixed(2));
         seller.coins = Number((seller.coins + cost).toFixed(2));
 
-        socket.emitTo(idGame + C.EVENT, C.EVENT, eventTransaction);
-        socket.emitAckTo(idSeller, C.TRANSACTION_DONE, {
+        socket.emitTo(idGame + EVENT, EVENT, eventTransaction);
+        socket.emitAckTo(idSeller, TRANSACTION_DONE, {
             idCardSold: idCard,
             coins: seller.coins,
             cost: cost.toFixed(2)

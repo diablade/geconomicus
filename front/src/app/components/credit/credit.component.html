@@ -31,20 +31,20 @@
 			</fa-icon>
 		</mat-chip>
 	</div>
-	<div *ngIf="credit.status===C.CREDIT_DONE" class="fontName m-1"><span
+	<div *ngIf="credit.status===CREDIT_DONE" class="fontName m-1"><span
 			class="fw-bold">{{ "CREDIT.DONE_AT"|translate }} :</span>{{ credit.endDate | date:"YY-MM-dd HH:mm" }}
 	</div>
 	<div class="fontName m-1"><span class="fw-bold">{{ "CREDIT.EXTENDED"|translate }} :</span>{{ credit.extended }}</div>
-	<button *ngIf="!bankOption && credit.status===C.RUNNING_CREDIT" class="buttonContrat" mat-raised-button
+	<button *ngIf="!bankOption && credit.status===RUNNING_CREDIT" class="buttonContrat" mat-raised-button
 	        color="primary"
 	        (click)="actionBtnClick('settle')">{{ "CREDIT.SETTLE"|translate }}
 		<fa-icon [icon]="faSackDollar"></fa-icon>
 	</button>
-	<button *ngIf="!bankOption && credit.status===C.REQUEST_CREDIT" class="buttonContrat" mat-raised-button color="accent"
+	<button *ngIf="!bankOption && credit.status===REQUEST_CREDIT" class="buttonContrat" mat-raised-button color="accent"
 	        (click)="actionBtnClick('answer')">{{ "CREDIT.ANSWER"|translate }}
 		<fa-icon [icon]="faCommentsDollar"></fa-icon>
 	</button>
-	<button *ngIf="bankOption && credit.status===C.DEFAULT_CREDIT" class="buttonContrat" mat-raised-button color="warn"
+	<button *ngIf="bankOption && credit.status===DEFAULT_CREDIT" class="buttonContrat" mat-raised-button color="warn"
 	        (click)="actionBtnClick('seizure')">{{ "CREDIT.SEIZE"|translate }}
 		<fa-icon [icon]="faSackDollar"></fa-icon>
 	</button>

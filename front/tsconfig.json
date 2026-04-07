@@ -17,9 +17,9 @@
         "downlevelIteration": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
+        "module": "ES2022",
         "importHelpers": true,
         "target": "ES2022",
-        "module": "ES2022",
         "useDefineForClassFields": false,
         "lib": [
             "ES2022",

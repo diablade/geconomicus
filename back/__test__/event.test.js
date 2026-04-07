@@ -15,7 +15,7 @@ jest.unstable_mockModule('#config/socket', () => ({
         initIo: jest.fn(),
         getIo: mockGetIo,
         emitTo: mockEmitTo,
-        emitToAck: jest.fn()
+        emitAckTo: jest.fn()
     }
 }));
 

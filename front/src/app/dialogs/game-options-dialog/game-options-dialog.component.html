@@ -87,7 +87,7 @@
 						[(ngModel)]="rules.priceWeight4" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="rules.typeMoney === C.JUNE">
+			<div *ngIf="rules.typeMoney === JUNE">
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.DU_RATES' | translate }}</mat-label>
 					<input
@@ -98,7 +98,7 @@
 						[(ngModel)]="rules.tauxCroissance" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="rules.typeMoney === C.JUNE">
+			<div *ngIf="rules.typeMoney === JUNE">
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.START_MONEY_AMOUNT' | translate }}</mat-label>
 					<input
@@ -124,7 +124,7 @@
 				</p>
 				<p>{{ 'OPTION.DEATH_MINUTES_FORMULA' | translate }}</p>
 			</div>
-			<div *ngIf="rules.typeMoney === C.JUNE" class="mb-4 d-flex flex-column">
+			<div *ngIf="rules.typeMoney === JUNE" class="mb-4 d-flex flex-column">
 				<mat-checkbox class="m-auto" [(ngModel)]="rules.inequalityStart">
 					{{ 'OPTION.START_MONEY_INEQUALITY' | translate }}
 				</mat-checkbox>
@@ -150,7 +150,7 @@
 					</div>
 				</div>
 			</div>
-			<div *ngIf="rules.typeMoney === C.DEBT">
+			<div *ngIf="rules.typeMoney === DEBT">
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.DEFAULT_CREDIT' | translate }}</mat-label>
 					<input
@@ -161,7 +161,7 @@
 						[(ngModel)]="rules.defaultCreditAmount" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="rules.typeMoney === C.DEBT">
+			<div *ngIf="rules.typeMoney === DEBT">
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.DEFAULT_INTEREST' | translate }}</mat-label>
 					<input
@@ -172,7 +172,7 @@
 						[(ngModel)]="rules.defaultInterestAmount" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="rules.typeMoney === C.DEBT">
+			<div *ngIf="rules.typeMoney === DEBT">
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.INTEREST_FREQ' | translate }}</mat-label>
 					<input
@@ -183,7 +183,7 @@
 						[(ngModel)]="rules.timerCredit" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="rules.typeMoney === C.DEBT" class="w-100">
+			<div *ngIf="rules.typeMoney === DEBT" class="w-100">
 				<mat-label>{{ 'OPTION.BANKROUTE_WTD' | translate }}</mat-label>
 				<mat-radio-group class="w-100" [(ngModel)]="rules.seizureType">
 					<mat-radio-button class="d-flex ms-3" [value]="'fees'">
@@ -214,7 +214,7 @@
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>
-			<div *ngIf="rules.typeMoney === C.DEBT">
+			<div *ngIf="rules.typeMoney === DEBT">
 				{{ 'OPTION.IF_PRISON' | translate }}
 				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.PRISON_TIMER' | translate }}</mat-label>
@@ -226,7 +226,7 @@
 						[(ngModel)]="rules.timerPrison" />
 				</mat-form-field>
 			</div>
-			<!--			<div *ngIf="game.typeMoney===C.DEBT" class="mb-4 d-flex flex-column">-->
+			<!--			<div *ngIf="game.typeMoney===DEBT" class="mb-4 d-flex flex-column">-->
 			<!--				<mat-checkbox class="m-auto" [disabled]="true">-->
 			<!--					Convertir un joueur en banquier d'affaire (comming soon)-->
 			<!--				</mat-checkbox>-->

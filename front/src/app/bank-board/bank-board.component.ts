@@ -6,7 +6,7 @@ import {DeprecatedBackService} from "../services/deprecated-back.service";
 import {SnackbarService} from "../services/snackbar.service";
 import {MatDialog} from "@angular/material/dialog";
 // @ts-ignore
-import { C } from "../../../../back/shared/constantes";
+import { IO, GAME_STATUS, GAME_TYPE, CREDIT_STATUS, PLAYER_TYPE, PLAYER_STATUS} from '@geco/shared';
 import * as _ from 'lodash-es';
 import {faCircleInfo, faSackDollar, faLandmark, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {ContractDialogComponent} from "../dialogs/contract-dialog/contract-dialog.component";
@@ -24,15 +24,18 @@ import {ConfirmDialogComponent} from '../dialogs/confirm-dialog/confirm-dialog.c
 	styleUrls: ['./bank-board.component.scss']
 })
 export class BankBoardComponent implements OnInit, AfterViewInit {
-	faSackDollar = faSackDollar;
-	faCircleInfo = faCircleInfo;
+	protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly FINISHED = GAME_STATUS.FINISHED;
+    protected readonly CREDIT_DONE = CREDIT_STATUS.DONE;
+	protected readonly JUNE = GAME_TYPE.JUNE;
 	faLandMark = faLandmark;
+    faSackDollar = faSackDollar;
+    faCircleInfo = faCircleInfo;
 	ioURl: string = environment.API_HOST;
 	subscription: Subscription | undefined;
 	idGame = "";
 	game: Game = new Game();
 	socket: any;
-	C = C;
 	faInfoCircle = faInfoCircle;
 	prisoners: Player[] = [];
 	iWantToBreakFree = false;
@@ -49,64 +52,66 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
-			this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.BANK);
+			this.socket = this.wsService.getSocket(this.idGame, this.idGame + PLAYER_TYPE.BANK);
 			this.getGame();
 		});
 	}
 
 	ngAfterViewInit() {
-		this.socket.on(C.RESET_GAME, async () => {
+		this.socket.on(IO.GAME.RESET, async () => {
 			window.location.reload();
 		});
-		this.socket.on(C.START_ROUND, async () => {
-			this.game.status = C.PLAYING;
+		this.socket.on(IO.GAME.STARTED, async () => {
+			this.game.status = GAME_STATUS.PLAYING;
 			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
-		this.socket.on(C.STOP_ROUND, async () => {
+		this.socket.on(IO.GAME.STOPPED, async () => {
 			this.dialog.closeAll();
-			this.game.status = C.WAITING;
+			this.game.status = GAME_STATUS.WAITING;
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
-		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
+		this.socket.on(IO.GAME.SETUP, async (data: any) => {
 			if (data) {
 				this.game = {...this.game, ...data};
 			}
 		});
-		this.socket.on(C.CREDITS_STARTED, async () => {
+		this.socket.on(IO.CREDIT.STARTED, async () => {
 			_.forEach(this.game.credits, c => {
-				if (c.status == C.PAUSED_CREDIT) {
-					c.status = C.RUNNING_CREDIT;
+				if (c.status == CREDIT_STATUS.PAUSED) {
+					c.status = CREDIT_STATUS.RUNNING;
 				}
 			});
 		});
-		this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
+		this.socket.on(IO.CREDIT.PROGRESS, async (data: any) => {
 			_.forEach(this.game.credits, c => {
 				if (c._id == data.id) {
-					c.status = C.RUNNING_CREDIT;
+					c.status = CREDIT_STATUS.RUNNING;
 					c.progress = data.progress;
 				}
 			});
 		});
-		this.socket.on(C.CREDIT_DONE, async (data: any) => {
+		this.socket.on(IO.CREDIT.DONE, async (data: any) => {
 			_.forEach(this.game.credits, c => {
 				if (c._id == data.credit._id) {
-					c.status = C.CREDIT_DONE;
-					this.game.currentMassMonetary -= c.interest;
-					this.game.currentMassMonetary -= c.amount;
+					c.status = CREDIT_STATUS.DONE;
+					this.game.currentMassMonetary = data.currentMassMonetary;
+					this.game.bankInterestEarned = data.bankInterestEarned;
+					this.game.bankMoneyLost = data.bankMoneyLost;
+					this.game.bankGoodsEarned = data.bankGoodsEarned;
 				}
 			});
 		});
-		this.socket.on(C.TIMEOUT_CREDIT, async (data: any) => {
+		this.socket.on(IO.CREDIT.TIMEOUT, async (data: any) => {
 			_.forEach(this.game.credits, c => {
 				if (c._id == data._id) {
 					c.status = data.status;
 				}
 			});
 		});
-		this.socket.on(C.PAYED_INTEREST, async (data: any) => {
-			_.forEach(this.game.credits, c => {
+		this.socket.on(IO.CREDIT.PAYED_INTEREST, async (data: any) => {
+			_.forEach(this.game.credits, (c) => {
 				if (c._id == data._id) {
 					c.status = data.status;
 					c.extended = data.extended;
@@ -115,57 +120,46 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(C.DEFAULT_CREDIT, async (data: any) => {
-			_.forEach(this.game.credits, c => {
+		this.socket.on(IO.CREDIT.DEFAULT, async (data: any) => {
+			_.forEach(this.game.credits, (c) => {
 				if (c._id == data._id) {
 					c.status = data.status;
 				}
 			});
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT_MESSAGE"));
 		});
-		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
+		this.socket.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			_.forEach(this.prisoners, p => {
 				if (p._id == data.id) {
 					p.progressPrison = data.progress;
 				}
 			});
 		});
-		this.socket.on(C.PRISON_ENDED, async (data: any) => {
+		this.socket.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.PRISON_ENDED"));
 			_.remove(this.prisoners, p => p._id == data.idPlayer);
 			_.forEach(this.game.players, p => {
 				if (p._id == data.idPlayer) {
-					p.status = C.ALIVE;
+					p.status = PLAYER_STATUS.ALIVE;
 				}
 			});
 		});
-		this.socket.on(C.DEAD, async (event: any) => {
+		this.socket.on(IO.PLAYER.DIED, async (event: any) => {
 			_.forEach(this.game.players, p => {
 				if (p._id == event.receiver) {
-					p.status = C.DEAD;
+					p.status = PLAYER_STATUS.DEAD;
 				}
 			});
 			_.forEach(this.game.credits, c => {
-				if (c.idPlayer === event.receiver && c.status === C.DEFAULT_CREDIT) {
+				if (c.idPlayer === event.receiver && c.status === CREDIT_STATUS.DEFAULT) {
 					this.dialog.closeAll();
 				}
 			});
 		});
-		this.socket.on(C.SEIZED_DEAD, async (event: any) => {
-			_.forEach(this.game.credits, c => {
-				if (c.idPlayer === event.emitter) {
-					c.status = C.CREDIT_DONE;
-				}
-			});
-			this.game.currentMassMonetary -= event.amount;
-			this.game.bankInterestEarned += event.resources[0].interest;
-			this.game.bankMoneyLost += event.resources[0].bankMoneyLost;
-			this.game.bankGoodsEarned += event.resources[0].bankGoodsEarned;
-		});
-		this.socket.on(C.NEW_PLAYER, (player: Player) => {
+		this.socket.on(IO.AVATAR.NEW, (player: Player) => {
 			this.game.players.push(player);
 		});
-		this.socket.on(C.UPDATED_PLAYER, (_data: any) => {
+		this.socket.on(IO.AVATAR.UPDATED, (_data: any) => {
 			this.getGame();
 		});
 	}
@@ -205,7 +199,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				this.backService.createCredit({
 					...contrat,
 					idGame: this.idGame,
-					startNow: this.game.status == C.PLAYING
+					startNow: this.game.status == GAME_STATUS.PLAYING
 				}).subscribe((credit: Credit) => {
 					this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
 					this.game.credits.push(credit);
@@ -225,13 +219,13 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
-				this.game.players.filter(p => p.status === C.ALIVE).forEach(p => {
+				this.game.players.filter(p => p.status === PLAYER_STATUS.ALIVE).forEach(p => {
 					this.backService.createCredit({
 						idPlayer: p._id,
 						amount: this.game.defaultCreditAmount,
 						interest: this.game.defaultInterestAmount,
 						idGame: this.idGame,
-						startNow: this.game.status == C.PLAYING
+						startNow: this.game.status == GAME_STATUS.PLAYING
 					}).subscribe((credit: Credit) => {
 						this.snackbarService.showSuccess(this.i18nService.instant("CONTRACT.CREDIT_SUCCESS", {player: this.getPlayerName(credit.idPlayer)}));
 						this.game.credits.push(credit);
@@ -246,7 +240,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 	getDebts() {
 		let debt = 0;
 		_.forEach(this.game.credits, c => {
-			if (c.status != C.CREDIT_DONE) {
+			if (c.status != CREDIT_STATUS.DONE) {
 				debt += (c.amount + c.interest)
 			}
 		});

@@ -1,7 +1,7 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
 import gameTimerManager from "./GameTimerManager.js";
-import { C } from "#constantes";
+import * as C from "#constantes_legacy";
 import bankTimerManager from "../bank/BankTimerManager.js";
 import socket from "#config/socket";
 import log from "#config/log";
@@ -546,7 +546,6 @@ async function newGameFromCopy(idGame) {
         if (player.status === C.ALIVE) {
             const newPlayerCreatedId = await playerService.join(newGame, player.name, player);
             //NOPE , you need to emit to maybe second life of player ...
-            console.log(player._id.toString());
             await socket.emitTo(player._id.toString(), C.COPY_PLAYER, {
                 // idPlayer: idGame,
                 idPlayer: newPlayerCreatedId, // idGame: idGame

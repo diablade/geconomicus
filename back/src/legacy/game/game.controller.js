@@ -1,5 +1,5 @@
 import GameModel, {constructor} from "./game.model.js";
-import {C} from "#constantes";
+import * as C from "#constantes_legacy";
 import bcrypt from "bcrypt";
 import log from "#config/log";
 import socket from "#config/socket";
@@ -20,6 +20,7 @@ export default {
             });
         }
     },
+
     update:                 async (req, res, next) => {
         try {
             const savedGame = await gameService.updateGame(req.body);

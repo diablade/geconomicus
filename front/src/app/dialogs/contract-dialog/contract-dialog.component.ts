@@ -3,7 +3,7 @@ import {Credit, Game, Player} from "../../models/game";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {faFileSignature} from "@fortawesome/free-solid-svg-icons";
 // @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
+import { GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
 import {MatRadioChange} from "@angular/material/radio";
 
@@ -14,10 +14,11 @@ import {MatRadioChange} from "@angular/material/radio";
 	styleUrls: ['./contract-dialog.component.scss']
 })
 export class ContractDialogComponent {
-
+    protected readonly DEBT = GAME_TYPE.DEBT;
+    protected readonly JUNE = GAME_TYPE.JUNE;
+    protected readonly ALIVE = PLAYER_STATUS.ALIVE;
 	faFileSignature = faFileSignature;
 	game: Game = new Game();
-	C = C;
 	idPlayer: Player | undefined;
 	selectedCreditOption: any;
 	amount = 3;
@@ -32,7 +33,7 @@ export class ContractDialogComponent {
 	}
 
 	getAlivePlayer(): Player[] {
-		return _.filter(this.game.players, p => p.status === C.ALIVE);
+		return _.filter(this.game.players, p => p.status === this.ALIVE);
 	}
 
 	saveUserCredit() {

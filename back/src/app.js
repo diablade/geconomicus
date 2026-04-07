@@ -11,10 +11,9 @@ import legacyPlayerRoutes from './legacy/player/player.routes.js';
 import sessionRoutes from './session/session.routes.js';
 import eventRoutes from './event/event.routes.js';
 import surveyRoutes from './survey/survey.routes.js';
-import gameStateRoutes from './gameState/game.state.routes.js';
-import bankStateRoutes from "./gameState/bank/bank.routes.js";
 import avatarRoutes from './session/avatar/avatar.routes.js';
 import rulesRoutes from './session/rules/rules.routes.js';
+import gameStateRoutes from './gameState/game.state.routes.js';
 
 const app = express();
 // Enable trust proxy for correct client IP detection
@@ -71,7 +70,6 @@ app.use('/survey', surveyRoutes);
 app.use('/event', eventRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/game-state', gameStateRoutes);
-app.use('/bank-state', bankStateRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {

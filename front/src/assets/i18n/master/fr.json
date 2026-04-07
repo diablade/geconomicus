@@ -2,9 +2,13 @@
 	"MASTER": {
 		"GAME": "Jeu",
 		"GAMES": "Jeux",
+		"SSSION_NAME": "Nom de la session",
+		"ANIMATOR": "Nom de l'animateur",
+		"LOCATION": "Lieu",
 		"EDIT_RULES": "Editer les règles",
 		"DURATION": "Durée: {{minutes}} minutes",
 		"THEME": "Thème",
+		"CREATE_GAME": "Créer la partie",
 		"ENTER_GAME": "Entrer dans la salle de jeu",
 		"SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
 		"JOIN": "Rejoins la session {{name}}",

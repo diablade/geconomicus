@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { C } from "#constantes";
+import { IO } from "@geco/shared";
 import log from "#config/log";
 
 // Constants
@@ -186,13 +186,13 @@ export class SocketManager {
                 connData.lastActive = Date.now();
             }
         });
-        socket.on(C.SHORT_CODE_EMIT, (data) => {
+        socket.on(IO.SHORT_CODE.EMIT, (data) => {
             log.info('ShortCodeEmitted:', data.code);
-            this.emitTo(idGame, C.SHORT_CODE_BROADCAST, data);
+            this.emitTo(idGame, IO.SHORT_CODE.BROADCAST, data);
         });
-        socket.on(C.SHORT_CODE_CONFIRMED, (data) => {
+        socket.on(IO.SHORT_CODE.CONFIRMED, (data) => {
             log.info('ShortCodeConfirmed');
-            this.emitTo(data.idBuyer, C.SHORT_CODE_CONFIRMED, data);
+            this.emitTo(data.idBuyer, IO.SHORT_CODE_CONFIRMED, data);
         });
         socket.on('connect_error', () => log.error('Connection error:', err.message));
         socket.on('connect_timeout', (data) => log.error('time out:', data));

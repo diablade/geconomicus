@@ -1,4 +1,4 @@
-import { C } from "#constantes";
+import { ALIVE } from '#constantes';
 
 //***************** DEFAULT VALUES *******//
 export const minute = 60 * 1000;
@@ -15,18 +15,13 @@ export const defaultPriceWeight4ML = 12;
 
 //***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 export async function generateDU(game) {
-    const nbPlayer = game.players.filter(p => p.status === C.ALIVE).length;
+    const nbPlayer = game.players.filter(p => p.status === ALIVE).length;
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
     const duRounded = Number(du.toFixed(2));
     return duRounded;
 }
-
 //******************************************************************************//
-
-// RulesManager.setRules(sessionId, gameId, rules);
-// const rules = RulesManager.getRules(sessionId, gameId);
-//
 
 //10% de riche = 2x le median
 //10% de pauvre = 1/2 le median

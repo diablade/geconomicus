@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DeprecatedBackService} from "../services/deprecated-back.service";
-import C from "../../../../back/shared/constantes.mjs";
+import { SESSION_STATUS, GAME_TYPE} from "@geco/shared";
+// @ts-ignore
+import * as C from "../../../../back/config/constantes_deprecated.cjs";
+
 import * as _ from 'lodash-es';
 import {faTrashCan, faArrowUpWideShort, faArrowDownShortWide} from "@fortawesome/free-solid-svg-icons";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -15,13 +18,18 @@ import {Session} from '../models/session';
 	styleUrls: ['./history-games.component.scss']
 })
 export class HistoryGamesComponent implements OnInit {
+    protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly OPEN = SESSION_STATUS.OPEN;
+	protected readonly IN_PROGRESS = SESSION_STATUS.IN_PROGRESS;
+    protected readonly ENDED = SESSION_STATUS.ENDED;
+	C = C;
 	faTrashCan = faTrashCan;
 	faArrowUpWideShort = faArrowUpWideShort;
 	faArrowDownShortWide = faArrowDownShortWide;
 	deleteGames = false;
 	games: any;
 	sessions: Session[] = [];
-	C = C;
 	filterByName = "";
 	filterByStatus = "";
 	sortBy = "createdAt";
@@ -54,7 +62,33 @@ export class HistoryGamesComponent implements OnInit {
 
 	getStatus(status: string): string {
 		switch (status) {
-			case C.END_GAME:
+			case this.ENDED:
+				return "HISTORY.STATUS.ENDED";
+			case this.OPEN:
+				return "HISTORY.STATUS.OPEN";
+			case this.IN_PROGRESS:
+				return "HISTORY.STATUS.IN_PROGRESS";
+			default:
+				return "-";
+		}
+	}
+
+	getStatusClass(status: string): string {
+		switch (status) {
+			case this.ENDED:
+				return "statusClosed";
+			case this.OPEN:
+				return "statusOpen";
+			case this.IN_PROGRESS:
+				return "statusOnGoing";
+			default:
+				return "";
+		}
+	}
+
+	getStatusLegacy(status: string): string {
+		switch (status) {
+			case C.ENDED:
 				return "HISTORY.STATUS.ENDED";
 			case C.OPEN:
 				return "HISTORY.STATUS.OPEN";
@@ -65,9 +99,9 @@ export class HistoryGamesComponent implements OnInit {
 		}
 	}
 
-	getStatusClass(status: string): string {
+	getStatusClassLegacy(status: string): string {
 		switch (status) {
-			case C.END_GAME:
+			case C.ENDED:
 				return "statusClosed";
 			case C.OPEN:
 				return "statusOpen";

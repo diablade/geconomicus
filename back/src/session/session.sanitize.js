@@ -50,4 +50,17 @@ export const sanitize = {
 			'string.min': 'Password must be at least 5 characters long',
 		}),
 	}),
+	killGame: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		ruleIdx: Joi.number().required().messages({
+			'any.required': 'Rule index is required',
+		}),
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+	}),
 };

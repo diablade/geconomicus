@@ -2,6 +2,7 @@
     "name": "back",
     "version": "1.8.8",
     "dependencies": {
+        "@geco/shared": "file:../shared",
         "bcrypt": "^6.0.0",
         "cors": "^2.8.5",
         "date-fns": "^2.30.0",
@@ -20,7 +21,7 @@
     "type": "module",
     "main": "./src/app.js",
     "scripts": {
-        "startMon": "nodemon ./src/server.js",
+        "startmon": "nodemon ./src/server.js",
         "run": "node ./src/server.js",
         "cleanProd": "npm ci --omit=dev && npm cache clean --force",
         "test": "cross-env NODE_ENV=test && node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand --detectOpenHandles"
@@ -42,6 +43,6 @@
     "imports": {
         "#config/*": "./config/*.js",
         "#configTest/*": "./__test__/config/*.js",
-        "#constantes": "./shared/constantes.mjs"
+        "#constantes_legacy": "./config/constantes_deprecated.cjs"
     }
 }

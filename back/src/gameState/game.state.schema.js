@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { C } from '#constantes';
+import { GAME_STATUS, GAME_TYPE } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
@@ -44,7 +44,7 @@ let GameStateSchema = new Schema(
 	{
 		typeMoney: {
 			type: String,
-			enum: [C.JUNE, C.DEBT],
+			enum: [GAME_TYPE.JUNE, GAME_TYPE.DEBT],
 			required: true,
 		},
 		sessionId: {
@@ -58,7 +58,7 @@ let GameStateSchema = new Schema(
 		status: {
 			type: String,
 			required: true,
-			default: C.OPEN,
+			default: GAME_STATUS.CREATED,
 		},
 		decks: {
 			type: [[CardSchema]],

@@ -3,7 +3,7 @@ import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-so
 import {Credit} from "../../models/game";
 
 // @ts-ignore
-import { C } from "../../../../../back/shared/constantes.mjs";
+import { CREDIT_STATUS } from '@geco/shared';
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
 @Component({
@@ -12,6 +12,11 @@ import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 	styleUrls: ['./credit.component.scss']
 })
 export class CreditComponent {
+    protected readonly CREDIT_DONE = CREDIT_STATUS.DONE;
+    protected readonly CREDIT_PAUSED = CREDIT_STATUS.PAUSED;
+    protected readonly DEFAULT_CREDIT = CREDIT_STATUS.DEFAULT;
+    protected readonly REQUEST_CREDIT = CREDIT_STATUS.REQUESTING;
+    protected readonly RUNNING_CREDIT = CREDIT_STATUS.RUNNING;
 	faSackDollar = faSackDollar;
 	faCommentsDollar = faCommentsDollar;
 	faCircleInfo = faCircleInfo;
@@ -27,8 +32,6 @@ export class CreditComponent {
 	@Output() actionBtn = new EventEmitter<string>();
 	@Input() small = false;
 
-	C = C;
-
 	constructor(private sanitizer: DomSanitizer) {
 	}
 
@@ -42,15 +45,15 @@ export class CreditComponent {
 
 	getStatus(status: string) {
 		switch (status) {
-			case C.PAUSED_CREDIT :
+			case this.CREDIT_PAUSED :
 				return "CREDIT.PAUSED_CREDIT";
-			case C.RUNNING_CREDIT:
+			case this.RUNNING_CREDIT:
 				return "CREDIT.RUNNING_CREDIT";
-			case C.REQUEST_CREDIT:
+			case this.REQUEST_CREDIT:
 				return "CREDIT.REQUEST_CREDIT";
-			case C.DEFAULT_CREDIT:
+			case this.DEFAULT_CREDIT:
 				return "CREDIT.DEFAULT_CREDIT";
-			case C.CREDIT_DONE:
+			case this.CREDIT_DONE:
 				return "CREDIT.CREDIT_DONE";
 			default :
 				return "error";

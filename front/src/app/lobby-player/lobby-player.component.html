@@ -26,9 +26,16 @@
 		<div class="d-flex flex-row gap-1">
 			<div class="d-flex flex-column align-items-center" *ngFor="let game of session.gamesRules">
 				<coin
+					(click)="logGameStatus(game)"
 					[coinImage]="'./assets/images/' + game.typeMoney + '.png'"
-					[label]="(game.typeMoney === C.JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
-				<button *ngIf="game.gameStatus === C.OPEN" mat-button (click)="joinGame(game)">
+					[label]="(game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
+				<button
+					*ngIf="game.gameStatus !== GAME_FINISHED"
+					[disabled]="game.gameStatus === GAME_NONE || game.gameStatus == undefined"
+					class="m-2 box-shadowed"
+					mat-raised-button
+					color="primary"
+					(click)="joinGame(game)">
 					{{ 'AVATAR.PLAY' | translate }}
 					<fa-icon [icon]="faRightToBracket"></fa-icon>
 				</button>

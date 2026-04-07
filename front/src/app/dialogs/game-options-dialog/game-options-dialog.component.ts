@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 // @ts-ignore
-import { C } from '../../../../../back/shared/constantes.mjs';
+import { GAME_TYPE } from '@geco/shared';
 import { I18nService } from '../../services/i18n.service';
 import { Rules } from 'src/app/models/rules';
 
@@ -10,9 +10,10 @@ import { Rules } from 'src/app/models/rules';
 	templateUrl: './game-options-dialog.component.html',
 	styleUrls: ['./game-options-dialog.component.scss'],
 })
-export class GameOptionsDialogComponent {
+	export class GameOptionsDialogComponent {
 	rules: Rules;
-	C = C;
+    protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly Math = Math;
 	playersLength: any;
 	devMode= false;

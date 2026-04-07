@@ -1,6 +1,6 @@
 
 import { jest, describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { C } from "#constantes";
+import { SESSION_STARTED } from '#constantes';
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
@@ -88,7 +88,7 @@ describe("FULL SESSION GAME simulation", () => {
         });
         expect(resStart.status).toBe(200);
         expect(resStart.body).toBeTruthy();
-        expect(mockEmitTo).toHaveBeenCalledWith(sessionId, expect.stringContaining(C.SESSION_STARTED), expect.objectContaining({
+        expect(mockEmitTo).toHaveBeenCalledWith(sessionId, expect.stringContaining(SESSION_STARTED), expect.objectContaining({
             gamesRules: expect.arrayContaining(resStart.body.gamesRules)
         }));
     });

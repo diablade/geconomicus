@@ -1,7 +1,7 @@
 import SurveyService from './survey.service.js';
 import socket from '#config/socket';
 import log from '#config/log';
-import { C } from '#constantes';
+import { IO } from '@geco/shared';
 
 const SurveyController = {};
 
@@ -16,7 +16,7 @@ SurveyController.addFeedback = async (req, res, next) => {
         if (!surveyFound) {
             let newFeedback = await SurveyService.create(req.body);
             if (newFeedback && newFeedback._id) {
-                socket.emitTo(gameStateId, C.NEW_FEEDBACK, newFeedback);
+                socket.emitTo(gameStateId, IO.SURVEY.NEW_FEEDBACK, newFeedback);
                 return res.status(200).json(newFeedback);
             }
             else {

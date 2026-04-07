@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { C } from "#constantes";
+import * as C from "#constantes_legacy";
 
 const Schema = mongoose.Schema;
 

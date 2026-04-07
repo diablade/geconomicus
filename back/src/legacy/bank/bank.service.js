@@ -1,6 +1,6 @@
 import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
-import {C} from "#constantes";
+import * as C from "#constantes_legacy";
 import bankTimerManager from "./BankTimerManager.js";
 import socket from "#config/socket";
 import log from "#config/log";

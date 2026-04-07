@@ -1,5 +1,5 @@
 import GameModel, {constructor} from "../game/game.model.js";
-import { C } from "#constantes";
+import { ALIVE, BANK, DEAD, DEBT, END_GAME, EVENT, MASTER, NEW_PLAYER, OPEN, SEIZED_DEAD, TRANSFORM_DISCARDS, TRANSFORM_NEWCARDS } from '#constantes';
 import log from "#config/log";
 import decksService from "../misc/legacy.decks.service.js";
 import socket from "#config/socket";
@@ -12,13 +12,13 @@ import gameService from '../game/game.service.js';
 const killPlayer = async (idGame, idPlayer) => {
     try {
         const game = await GameModel.findById(idGame);
-        if (game.typeMoney === C.DEBT) {
+        if (game.typeMoney === DEBT) {
             //stop timer of player's credits
             await bankTimerManager.stopAllPlayerDebtsTimer(idGame, idPlayer);
             //start seizure for any debt
             let event = await bankService.seizureOnDead(idGame, idPlayer);
-            socket.emitTo(idGame + C.EVENT, C.EVENT, event);
-            socket.emitTo(idGame + C.BANK, C.SEIZED_DEAD, event);
+            socket.emitTo(idGame + EVENT, EVENT, event);
+            socket.emitTo(idGame + BANK, SEIZED_DEAD, event);
         }
         // get updated player
         let player = await getPlayer(idGame, idPlayer);
@@ -26,18 +26,18 @@ const killPlayer = async (idGame, idPlayer) => {
         await decksService.pushCardsInDecks(idGame, player.cards);
 
         // create event & give status dead
-        let event = constructor.event(C.DEAD, "master", idPlayer, player.coins, player.cards, Date.now());
+        let event = constructor.event(DEAD, "master", idPlayer, player.coins, player.cards, Date.now());
         await GameModel.updateOne({
             _id:           idGame,
             'players._id': idPlayer
         }, {
-            $set:  {'players.$.status': C.DEAD},
+            $set:  {'players.$.status': DEAD},
             $push: {'events': event},
         },);
-        socket.emitTo(idPlayer, C.DEAD);
-        socket.emitTo(idGame + C.EVENT, C.EVENT, event);
-        socket.emitTo(idGame + C.BANK, C.DEAD, event);
-        socket.emitTo(idGame + C.MASTER, C.DEAD, event);
+        socket.emitTo(idPlayer, DEAD);
+        socket.emitTo(idGame + EVENT, EVENT, event);
+        socket.emitTo(idGame + BANK, DEAD, event);
+        socket.emitTo(idGame + MASTER, DEAD, event);
     }
     catch (err) {
         log.error('kill player error:', err);
@@ -86,10 +86,10 @@ const getPlayer = async (idGame, idPlayer, statusGame = false) => {
 }
 
 const join = async (game, name, copyPlayer) => {
-    if (game.status === C.END_GAME) {
+    if (game.status === END_GAME) {
         throw new Error("Game is finished");
     }
-    else if (game.status !== C.OPEN) {
+    else if (game.status !== OPEN) {
         throw new Error("Game is already started");
     }
     else if (game.players.length >= 25) {
@@ -105,7 +105,7 @@ const join = async (game, name, copyPlayer) => {
             coins:               0,
             credits:             [],
             cards:               [],
-            status:              C.ALIVE,
+            status:              ALIVE,
             earringsProbability: 100,
             glassesProbability:  100,
             featuresProbability: 100
@@ -130,7 +130,7 @@ const join = async (game, name, copyPlayer) => {
             player.boardColor = copyPlayer.boardColor;
         }
 
-        let joinEvent = constructor.event(C.NEW_PLAYER, idPlayer.toString(), C.MASTER, 0, [], Date.now());
+        let joinEvent = constructor.event(NEW_PLAYER, idPlayer.toString(), MASTER, 0, [], Date.now());
         let updatedGame = await GameModel.findByIdAndUpdate({_id: game._id}, {
             $push: {
                 players: player,
@@ -139,7 +139,7 @@ const join = async (game, name, copyPlayer) => {
         }, {new: true})
         if (updatedGame) {
             const newPlayer = updatedGame.players.find(p => p._id == idPlayer.toString());
-            socket.emitTo(game._id + C.MASTER, C.NEW_PLAYER, newPlayer);
+            socket.emitTo(game._id + MASTER, NEW_PLAYER, newPlayer);
             return player._id.toString();
         }
         else {
@@ -159,7 +159,7 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
         throw new Error("ERROR.PLAYER_NOT_FOUND");
     }
 
-    const idsToFilter = cards.map(c => c._id);
+    const idsToFilter = cards.map(c => _id);
     if (!decksService.areCardIdsUnique(idsToFilter, game.amountCardsForProd)) {
         throw new Error("ERROR.CARDS_NOT_UNIQUE");
     }
@@ -187,7 +187,7 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
     const shuffledDeck2 = _.shuffle(firstShuffledDeck2);
 
     const newCards = shuffledDeck1.splice(0, game.amountCardsForProd);
-    const newCardsIds = newCards.map(c => c._id);
+    const newCardsIds = newCards.map(c => _id);
     if (!decksService.areCardIdsUnique(newCardsIds, game.amountCardsForProd)) {
         throw new Error("ERROR.CARDS_NOT_UNIQUE");
     }
@@ -198,8 +198,8 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
         throw new Error("ERROR.NOT_ENOUGH_CARDS_IN_DECK");
     }
 
-    const discardEvent = constructor.event(C.TRANSFORM_DISCARDS, idPlayer, C.MASTER, 0, cardsToExchange, Date.now());
-    const newCardsEvent = constructor.event(C.TRANSFORM_NEWCARDS, C.MASTER, idPlayer, 0, cardsDraw, Date.now());
+    const discardEvent = constructor.event(TRANSFORM_DISCARDS, idPlayer, MASTER, 0, cardsToExchange, Date.now());
+    const newCardsEvent = constructor.event(TRANSFORM_NEWCARDS, MASTER, idPlayer, 0, cardsDraw, Date.now());
 
     const playerCardsUpdated = player.cards.concat(cardsDraw);
 
@@ -218,8 +218,8 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
         }
     }).lean();
 
-    socket.emitTo(idGame + C.EVENT, C.EVENT, discardEvent);
-    socket.emitTo(idGame + C.EVENT, C.EVENT, newCardsEvent);
+    socket.emitTo(idGame + EVENT, EVENT, discardEvent);
+    socket.emitTo(idGame + EVENT, EVENT, newCardsEvent);
 
     if (newCardSup.weight > 2) {
         await gameService.stopRound(idGame, game.round);

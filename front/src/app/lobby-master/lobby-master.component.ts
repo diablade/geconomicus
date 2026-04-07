@@ -13,10 +13,11 @@ import {
 	faRightToBracket,
 	faPencil,
 	faPeopleRoof,
+	faRotate,
 } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
-import C from '../../../../back/shared/constantes.mjs';
+import { IO, GAME_TYPE, SESSION_STATUS, GAME_STATUS } from '@geco/shared';
 import { WebSocketService } from '../services/web-socket.service';
 import { I18nService } from '../services/i18n.service';
 import { AudioService } from '../services/audio.service';
@@ -39,19 +40,29 @@ import { RulesService } from '../services/api/rules.service';
 export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	sessionId = '';
 	session: Session = new Session();
+	protected readonly OPEN = SESSION_STATUS.OPEN;
+	protected readonly IN_PROGRESS = SESSION_STATUS.IN_PROGRESS;
+	protected readonly ENDED = SESSION_STATUS.ENDED;
+	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly NONE = GAME_STATUS.NONE;
+	protected readonly CREATED = GAME_STATUS.CREATED;
+	protected readonly STARTED = GAME_STATUS.STARTED;
+	protected readonly PLAYING = GAME_STATUS.PLAYING;
+	protected readonly PAUSED = GAME_STATUS.PAUSED;
+	protected readonly FINISHED = GAME_STATUS.FINISHED;
+
 	private subscription: Subscription | undefined;
 	joinLink = '';
 	private socket: any;
 	deleteUser = false;
 	warningHairColorDuplicate = false;
 	protected readonly environment = environment;
-	C = C;
-
 	faTrashCan = faTrashCan;
 	faQrcode = faQrcode;
 	faCogs = faCogs;
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;
+	faRotate = faRotate;
 	faEye = faEye;
 	faPeopleRoof = faPeopleRoof;
 
@@ -87,7 +98,10 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.socket.on(C.UPDATED_AVATAR, (data: any) => {
+		this.socket.on(IO.AVATAR.NEW, (data: any) => {
+			this.session.players.push(data.avatar);
+		});
+		this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
 			this.session.players = this.session.players.map((p) => {
 				if (p.idx == data.updatedAvatar.idx) {
 					p = data.updatedAvatar;
@@ -96,10 +110,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.checkDuplicateHairColors();
 		});
-		this.socket.on(C.NEW_AVATAR, (data: any) => {
-			this.session.players.push(data.avatar);
-		});
-		this.socket.on(C.DELETED_AVATAR, (data: any) => {
+		this.socket.on(IO.AVATAR.DELETED, (data: any) => {
 			this.session.players = this.session.players.filter((p) => p.idx !== data.avatarIdx);
 		});
 	}
@@ -187,12 +198,11 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 				});
 			}
 		});
-		// this.audioService.play("start");
 		this.checkDuplicateHairColors();
 	}
 
 	checkDuplicateHairColors() {
-		if (this.session.status == C.IN_PROGRESS) {
+		if (this.session.status == SESSION_STATUS.IN_PROGRESS) {
 			const groupes = groupeDuplicatedHairColor(this.session.players);
 			if (groupes.length > 0) {
 				this.warningHairColorDuplicate = true;
@@ -253,7 +263,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	openGame(ruleIdx: number) {
+	createGame(ruleIdx: number) {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant('MASTER.OPEN_GAME_CONFIRM'),
@@ -264,10 +274,11 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results === 'btnConfirm') {
-				this.gameStateService.launch(this.sessionId, ruleIdx).subscribe((data: any) => {
+				this.gameStateService.create(this.sessionId, ruleIdx).subscribe((data: any) => {
 					this.session.gamesRules = this.session.gamesRules.map((rules) => {
+                        console.log('data', data);
 						if (rules.idx == ruleIdx) {
-							rules.gameStatus = C.OPEN;
+							rules.gameStatus = data.gameStatus;
 							rules.gameStateId = data.gameStateId;
 						}
 						return rules;
@@ -278,6 +289,33 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 	}
+
+    killGame(ruleIdx: number, gameStateId: string) {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('MASTER.KILL_GAME_CONFIRM'),
+				message: this.i18nService.instant('MASTER.KILL_GAME_CONFIRM_2'),
+				labelBtnConfirm: this.i18nService.instant('MASTER.KILL_GAME'),
+				styleBtnConfirm: 'warn',
+			},
+		});
+		dialogRef.afterClosed().subscribe((results) => {
+			if (results === 'btnConfirm') {
+                this.sessionService.killGame(this.sessionId, gameStateId, ruleIdx).subscribe((data: any) => {
+                    this.session.gamesRules = this.session.gamesRules.map((rules) => {
+                        if (rules.idx == ruleIdx) {
+                            rules.gameStatus = data.gameStatus;
+                            rules.gameStateId = data.gameStateId;
+                        }
+                        return rules;
+                    });
+
+                    this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_RESET'));
+                });
+			}
+		});
+
+    }
 
 	enterGame(gameStateId: string) {
 		// this.router.navigate(['/master', gameStateId]);

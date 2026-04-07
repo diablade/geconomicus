@@ -75,7 +75,7 @@ export function fixDuplicateHairColors(players: Avatar[]) {
 	let playersWithChangedColor: Avatar[] = [];
 	grouped.forEach((group: any) => {
 		for (let i = 1; i < group.length; i++) {
-			const paletteAvailable = _.filter(hairPalette.map(c => c.replace("#", "")), color => !colorsUsed.has(color));
+			const paletteAvailable = _.filter(hairPalette.map(color => color.replace("#", "")), color => !colorsUsed.has(color));
 			const randomIndex = _.random(0, (paletteAvailable.length - 1), false);
 			const nextColor = paletteAvailable[randomIndex];
 			colorsUsed.add(nextColor);

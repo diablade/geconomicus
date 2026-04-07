@@ -7,3 +7,5 @@
 /.qodo/history.sqlite
 /.qodo/indexes.sqlite
 .qodo
+shared/node_modules/*
+node_modules/*
