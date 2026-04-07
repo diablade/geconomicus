@@ -1,0 +1,23 @@
+{
+  "name": "@geco/shared",
+  "version": "1.0.1",
+  "description": "shared code for geconomicus",
+  "main": "./dist/constants.js",
+  "types": "./dist/constants.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/constants.js",
+      "types":  "./dist/constants.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}
