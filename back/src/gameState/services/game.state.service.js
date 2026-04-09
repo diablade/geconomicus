@@ -13,8 +13,8 @@ GameStateService.create = async (session, rules) => {
 		typeMoney: rules.typeMoney,
 		sessionId: session._id,
 		ruleIdx: rules.idx,
-		playerLifeIndexSeq: session.avatarIndexSeq+1,
-		playersLifes: session.players.map((p) => {
+		playerStateIndexSeq: session.avatarIndexSeq+1,
+		playersStates: session.avatars.map((p) => {
 			return {
 				idx: p.idx,
 				avatarIdx: p.idx,
@@ -25,7 +25,7 @@ GameStateService.create = async (session, rules) => {
 		}),
 	});
 	// create life for each player
-	// link to distribute to players ...
+	// link to distribute to avatars ...
 	return await newGameState.save();
 };
 
@@ -51,9 +51,9 @@ GameStateService.setupGame = async (gameStateId, socket) => {
     // then load into memory with rules
 	GameStateManager.setGame(gameStateId, initializedGame, rules);
 
-    // emit to players
+    // emit to avatars
     const session = await SessionService.getById(gameState.sessionId);
-    session.players.forEach((player) => {
+    session.avatars.forEach((player) => {
         socket.to(player.avatarIdx).emit(DB_EVENTS.TYPE.SETUP_GAME, {player});
     });
 
@@ -82,10 +82,22 @@ GameStateService.getById = async (id, enriched = true) => {
 	}
 	return { gameState };
 };
+
+GameStateService.getCurrentPlayerStateIdx = async (gameStateId, avatarIdx) => {
+    const gameState = GameStateManager.getGame(gameStateId);
+    if (gameState) {
+        const player = gameState.playersStates.find((player) => player.avatarIdx === avatarIdx);
+        if (player) {
+            return player.idx;
+        }
+    }
+    return -1;
+};
+
 GameStateService.whoHaveCard = async (gameStateId, cardKey) => {
     const gameState = GameStateManager.getGame(gameStateId);
 	if (gameState) {
-		const player = gameState.playersLifes
+		const player = gameState.playersStates
 			.filter((p) => p.status === 'alive')
 			.find((player) => player.cards.find((card) => card.key === cardKey));
 		if (player) {
@@ -104,7 +116,7 @@ GameStateService.whoHaveCard = async (gameStateId, cardKey) => {
 			return {
 				status: 'ko',
 				name: '',
-				reason: 'not found in deck and players hands',
+				reason: 'not found in deck and avatars hands',
 			};
 		}
 	} else {

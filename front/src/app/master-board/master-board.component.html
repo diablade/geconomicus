@@ -134,7 +134,7 @@
 	</div>
 	<div class="p-3 sunyBg backgroundPlayers-Small">
 		<div class="d-flex flex-row justify-content-center flex-wrap">
-			<div *ngFor="let player of gameState.playersLifes" class="player d-flex flex-column">
+			<div *ngFor="let player of gameState.playersStates" class="player d-flex flex-column">
 				<div class="d-flex flex-row justify-content-center player-action">
 					<a href="{{ getUserUrl(player.idx.toString()) }}" target="_blank">{{ player.name }}</a>
 					<fa-icon

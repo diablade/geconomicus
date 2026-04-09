@@ -13,7 +13,7 @@ export const sanitize = {
                 'any.invalid': 'Invalid game state ID format',
                 'any.required': 'Game state ID is required'
             }),
-        avatarId: Joi.string().custom(isValidNanoId4).required()
+        avatarIdx: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid avatar ID format',
                 'any.required': 'Avatar ID is required'
@@ -40,7 +40,7 @@ export const sanitize = {
                 'any.invalid': 'Invalid game state ID format',
                 'any.required': 'Game state ID is required'
             }),
-        avatarId: Joi.string().custom(isValidNanoId4).required()
+        avatarIdx: Joi.string().custom(isValidNanoId4).required()
             .messages({
                 'any.invalid': 'Invalid avatar ID format',
                 'any.required': 'Avatar ID is required'

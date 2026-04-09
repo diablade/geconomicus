@@ -15,7 +15,7 @@ export const defaultPriceWeight4ML = 12;
 
 //***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 export async function generateDU(game) {
-    const nbPlayer = game.players.filter(p => p.status === ALIVE).length;
+    const nbPlayer = game.avatars.filter(p => p.status === ALIVE).length;
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
     const duRounded = Number(du.toFixed(2));
@@ -41,9 +41,9 @@ export async function generateInequality(nbPlayer, pctRich, pctPoor) {
 export async function setupGameJune(gameState, rules) {
     let decks = await decksService.generateDecks(rules);
 
-    const classes = rules.inequalityStart ? await generateInequality(gameState.players.length, rules.pctRich, rules.pctPoor) : [];
+    const classes = rules.inequalityStart ? await generateInequality(gameState.avatars.length, rules.pctRich, rules.pctPoor) : [];
 
-    for await (let player of gameState.players) {
+    for await (let player of gameState.avatars) {
         // pull 4 cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], rules.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
         player.cards = cards;
@@ -82,7 +82,7 @@ export async function setupGameJune(gameState, rules) {
 export async function setupGameDebt(gameState, rules) {
     let decks = await decksService.generateDecks(rules);
 
-    for await (let player of gameState.playersLifes) {
+    for await (let player of gameState.playersStates) {
         // pull cards from the deck and distribute to the player
         const cards = _.pullAt(decks[0], rules.distribInitCards === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
         player.cards = cards;

@@ -12,6 +12,8 @@ router.post('/create', validate(stateSanitize.create), gameStateController.creat
 router.post('/setup-game', validate(stateSanitize.setupGame), gameStateController.setupGame);
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
+router.get('/player-state-idx/:sessionId/:gameStateId/:avatarIdx', validate(stateSanitize.getCurrentPlayerStateIdx, 'params'), gameStateController.getCurrentPlayerStateIdx);
+
 // router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
 // router.post('/start', validate(stateSanitize.start), gameStateController.start);
 // router.post('/pause', validate(sanitize.pause), gameStateController.pause);

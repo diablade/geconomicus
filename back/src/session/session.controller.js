@@ -9,7 +9,6 @@ import EventService from "../event/event.service.js";
 import SurveyService from "../survey/survey.service.js";
 import GameStateService from "../gameState/services/game.state.service.js";
 import bcrypt from "bcrypt";
-import { defaultDebtRules, defaultJuneRules } from "./rules/rules.service.js";
 
 const SessionController = {};
 
@@ -127,7 +126,7 @@ SessionController.killGame = async (req, res, next) => {
     try {
         const sessionUpdated = await RulesService.resetDefault(req.body.sessionId, req.body.ruleIdx);
         await GameStateService.delete(req.body.gameStateId);
-        delete sessionUpdated.players;
+        delete sessionUpdated.avatars;
         let response = {
             gameStatus: sessionUpdated.gameStatus,
             gameStateId: "",

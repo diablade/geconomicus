@@ -35,7 +35,7 @@
 				<label class="me-2" for="sortBy">{{ 'HISTORY.SORT' | translate }}</label>
 				<select class="form-select" id="sortBy" [(ngModel)]="sortBy">
 					<option value="created">{{ 'HISTORY.BY_DATE' | translate }}</option>
-					<option value="playersCount">{{ 'HISTORY.BY_PLAYERS' | translate }}</option>
+					<option value="avatarsCount">{{ 'HISTORY.BY_PLAYERS' | translate }}</option>
 					<option value="location">{{ 'HISTORY.BY_LOCATION' | translate }}</option>
 					<option value="animator">{{ 'HISTORY.BY_ANIMATOR' | translate }}</option>
 					<option value="status">{{ 'HISTORY.BY_STATUS' | translate }}</option>
@@ -70,7 +70,7 @@
 								</div>
 								<div>
 									👥
-									<span class="fw-bold">{{ session.playersCount }}</span>
+									<span class="fw-bold">{{ session.avatarsCount }}</span>
 									{{ 'HISTORY.PLAYERS' | translate }}
 								</div>
 								<div>

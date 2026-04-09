@@ -1,10 +1,7 @@
-import {createAvatar, Options} from '@dicebear/core';
-import {adventurer} from '@dicebear/collection';
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import {async, map, Subscription, withLatestFrom} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Card, Credit, Game, Player} from "../models/game";
-import {DeprecatedBackService} from "../services/deprecated-back.service";
+import {PlayerState, GameState, Card, Credit} from "../models/gameState";
 import {MatDialog} from "@angular/material/dialog";
 import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
@@ -22,7 +19,6 @@ import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, IO, PLAYER_STATUS } from '@geco/
 import {ShortCode} from "../models/shortCode";
 import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
 import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
-import {WebSocketService} from "../services/web-socket.service";
 import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
 import createCountdown from "../services/countDown";
 import {LocalStorageService} from "../services/local-storage/local-storage.service";
@@ -30,6 +26,9 @@ import {AudioService} from '../services/audio.service';
 import {animations} from "../services/animations";
 import {ThemesService} from '../services/themes.service';
 import {getBackgroundStyle} from "../services/avatarTools";
+import {AvatarService} from "../services/api/avatar.service";
+import {PlayerStateService} from "../services/api/playerState.service";
+import { DeckService } from '../services/api/deck.service';
 
 @Component({
 	selector: 'app-player-board',
@@ -37,30 +36,49 @@ import {getBackgroundStyle} from "../services/avatarTools";
 	animations,
 	styleUrls: ['./player-board.component.scss']
 })
-export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PlayerBoardComponent implements OnInit, OnDestroy {
+	@ViewChild('svgContainer') svgContainer!: ElementRef;
     protected readonly PLAYING = GAME_STATUS.PLAYING;
     protected readonly DEAD = PLAYER_STATUS.DEAD;
     protected readonly JUNE = GAME_TYPE.JUNE;
     protected readonly DEBT = GAME_TYPE.DEBT;
     protected readonly FINISHED = GAME_STATUS.FINISHED;
-	@ViewChild('svgContainer') svgContainer!: ElementRef;
+	protected readonly faFileContract = faFileContract;
+	protected readonly faClipboardCheck = faClipboardCheck;
+	protected readonly faCreditCardAlt = faCreditCardAlt;
 	protected readonly getBackgroundStyle = getBackgroundStyle;
-	private socket: any;
+	private subscription: Subscription | undefined;
+
 	screenWidth = 0;
 	screenHeight = 0;
-	idGame: string | undefined;
-	idPlayer: string | undefined;
-	player: Player = new Player();
-	private subscription: Subscription | undefined;
-	options: Partial<adventurer.Options & Options> = {};
-	game: Game = new Game();
+
+	sessionId: string | undefined;
+	gameStateId: string | undefined;
+	avatarIdx: number | undefined;
+	playerStateIdx: number | undefined;
+
 	typeTheme$ = this.themesService.typeTheme$;
-	cards: Card[] = [];
-	credits: Credit[] = [];
-	recipes: Recipe[] = [];
-	faFileContract = faFileContract;
-	faClipboardCheck = faClipboardCheck;
-	faCreditCardAlt = faCreditCardAlt;
+	theme: string = this.themesService.getCurrentTheme();
+    avatar$ = inject(AvatarService).avatar$;
+    playerState$ = inject(PlayerStateService).playerState$;
+    gameState$ = inject(PlayerStateService).gameState$;
+    rules$ = inject(PlayerStateService).rules$;
+    cards$ = inject(PlayerStateService).cards$;
+    credits$ = inject(PlayerStateService).credits$;
+    prison$ = inject(PlayerStateService).prison$;
+    defaultCredit$ = inject(PlayerStateService).defaultCredit$;
+
+    currentDebts = this.credits$.pipe(
+        map(credits => credits
+            .filter(c => c.status !== CREDIT_STATUS.DONE)
+            .reduce((total, c) => total + c.amount + c.interest, 0)
+        )
+    );
+    receipes = this.cards$.pipe(
+        withLatestFrom(this.rules$),
+        map(([cards, rules]) => getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters))
+    );
+
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
@@ -87,12 +105,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	            public dialog: MatDialog,
 	            private router: Router,
 	            private localStorageService: LocalStorageService,
-	            private backService: DeprecatedBackService,
-	            private wsService: WebSocketService,
+	            private deckService: DeckService,
 	            private i18nService: I18nService,
 	            private themesService: ThemesService,
 	            private audioService: AudioService,
-	            private snackbarService: SnackbarService) {
+	            private snackbarService: SnackbarService,
+	            private avatarService: AvatarService,
+	            private playerStateService: PlayerStateService) {
 	}
 
 	updateScreenSize() {
@@ -106,38 +125,17 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.route.params.subscribe(params => {
-			this.idGame = params['idGame'];
-			this.idPlayer = params['idPlayer'];
-			this.subscription = this.wsService.getReConnectionStatus().subscribe(data => {
-				if (data) {
-					this.refresh();
-				}
-			});
-			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
+			this.sessionId = params['sessionId'];
+			this.avatarIdx = params['avatarIdx'];
+			this.gameStateId = params['gameStateId'];
+			this.playerStateIdx = params['playerStateIdx'];
 
-			// Setup error handling for socket timeouts
-			this.socket.on('error', (error: any) => {
-				console.error('Socket error:', error);
-				if (error && error.message && error.message.includes('timeout')) {
-					this.handleSocketTimeout();
-				}
-			});
-
-			this.getPlayerInfos();
+			// Initialize socket in service
+			if (this.sessionId && this.gameStateId && this.avatarIdx && this.playerStateIdx) {
+                this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
+				this.playerStateService.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
+			}
 		});
-	}
-
-	/**
-	 * Handle socket timeout by forcing a complete page reload
-	 */
-	private handleSocketTimeout() {
-		this.snackbarService.showError(this.i18nService.instant("ERROR.CONNECTION_EXPIRED"));
-
-		// Set a short delay to allow the notification to be shown before reload
-		setTimeout(() => {
-			// Force a complete page reload
-			window.location.reload();
-		}, 2000);
 	}
 
 	initPanels() {
@@ -145,319 +143,25 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		const panelR = this.localStorageService.getItem("panelRecipe");
 		this.panelCreditOpenState = panelC == undefined ? false : panelC;
 		this.panelRecipeOpenState = panelR == undefined ? false : panelR;
-		if (this.game.typeMoney === GAME_TYPE.JUNE) {
-			this.localStorageService.setItem('panelCredit', false);
-			if (this.game.theme === "THEME.CLASSIC") {
-				this.localStorageService.setItem('panelRecipe', false);
-				this.panelRecipeOpenState = false;
+		this.gameState$.subscribe(gameState => {
+			if (gameState.typeMoney === GAME_TYPE.JUNE) {
+				this.localStorageService.setItem('panelCredit', false);
+				if (this.theme === "THEME.CLASSIC") {
+					this.localStorageService.setItem('panelRecipe', false);
+					this.panelRecipeOpenState = false;
+				} else {
+					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
+				}
 			} else {
-				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
-			}
-		} else {
-			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
-			if (this.game.theme === "THEME.CLASSIC") {
-				this.localStorageService.setItem('panelRecipe', false);
-				this.panelRecipeOpenState = false;
-			} else {
-				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
-			}
-		}
-	}
-
-	getPlayerInfos() {
-		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-			this.game = {...this.game, ...data.game};
-			this.themesService.loadTheme(this.game.theme);
-			this.initPanels();
-			this.cards = [];
-			this.player = data.player;
-			if (this.player.image === "") {
-				this.options.seed = data.player.name.toString();
-				const avatar = createAvatar(adventurer, this.options);
-				this.player.image = avatar.toString();
-			}
-			// @ts-ignore
-			this.svgContainer.nativeElement.innerHTML = this.player.image;
-			await this.receiveCards(this.player.cards);
-			if (data.player.status == "prison") {
-				this.prison = true;
-			}
-			if (this.game.typeMoney === GAME_TYPE.DEBT) {
-				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-					this.credits = data;
-					_.forEach(data, d => {
-						if (d.status == CREDIT_STATUS.DEFAULT) {
-							this.defaultCredit = true;
-						} else if (d.status == "requesting") {
-							this.requestingWhenCreditEnds(d, true);
-						}
-					});
-				});
-			}
-			this.localStorageService.setItem("session",
-				{
-					idGame: this.idGame,
-					idPlayer: this.idPlayer,
-					gameName: this.game.name,
-					player: this.player
-				});
-		});
-	}
-
-	ngAfterViewInit() {
-		this.socket.on('resync', (data: any) => {
-			if (data.needsResync) {
-				this.getPlayerInfos();
-			}
-		});
-        this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
-            if (data.id == this.idPlayer) {
-                this.player = data;
-            }
-        });
-		this.socket.on(IO.GAME.DISTRIB, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.player.coins = data.coins;
-			this.game = {...this.game, ...data.game};
-			await this.receiveCards(data.cards);
-		});
-		this.socket.on(IO.GAME.STARTED, async () => {
-			this.game.status = GAME_STATUS.PLAYING;
-			this.credits.forEach(c => {
-				if (c.status == CREDIT_STATUS.PAUSED) {
-					c.status = CREDIT_STATUS.RUNNING;
-				}
-			});
-			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
-		});
-		this.socket.on(IO.GAME.STOPPED, async () => {
-			this.dialog.closeAll();
-			this.game.status = GAME_STATUS.STOPPED;
-			this.dialog.open(InformationDialogComponent, {
-				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
-			});
-		});
-		this.socket.on(IO.GAME.FINISHED, (data: any) => {
-			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
-			this.game.status = GAME_STATUS.FINISHED;
-			if (data && data.redirect == 'survey') {
-				this.router.navigate(['ogame', this.idGame, 'player', this.idPlayer, 'survey']);
-			} else {
-				this.router.navigate(['ogame', this.idGame, 'results']);
-			}
-		});
-		this.socket.on(IO.GAME.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
-			if (cb) {
-				cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			}
-			this.audioService.playSound("audioDu");
-			this.player.coins += data.du;
-			this.game.currentDU = data.du;
-			this.flipCoins();
-		});
-		this.socket.on(IO.GAME.RESET, async (data: any) => {
-			this.dialog.closeAll();
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			this.panelCreditOpenState = false;
-			this.localStorageService.setItem("panelCredit", false);
-			if (this.player.reincarnateFromId) {
-				this.router.navigate(['ogame', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
-					this.refresh();
-				});
-			} else {
-				this.refresh();
-			}
-		});
-		this.socket.on(IO.GAME.FIRST_DU, async (data: any) => {
-			this.game.currentDU = data.du;
-		});
-		this.socket.on(IO.PLAYER.DIED, async () => {
-			this.player.status = PLAYER_STATUS.DEAD;
-			this.dialog.closeAll();
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
-					sound: "dead"
-				},
-			});
-			this.cards = [];
-			if (this.game.typeMoney === GAME_TYPE.DEBT) {
-				this.player.coins = 0;
-			}
-			await new Promise(resolve => setTimeout(resolve, 4000));
-			this.resurrection();
-		});
-		this.socket.on(IO.SHORT_CODE.BROADCAST, async (data: any) => {
-			if (this.shortCode && this.shortCode.code === data.code) {
-				this.socket.emit(IO.SHORT_CODE.CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
-			}
-		});
-		this.socket.on(IO.SHORT_CODE.CONFIRMED, async (data: any) => {
-			if (data && data.payload) {
-				this.buy(data.payload);
-			}
-		});
-		this.socket.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
-			if (data) {
-				//this.game = {...this.game, ...data};
-				//this.themesService.loadTheme(this.game.theme);
-				//this.initPanels(); // not working... in some cases
-				//refresh all
-				this.refresh();
-			}
-		});
-		this.socket.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.refresh();
-		});
-		this.socket.on(IO.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			if (data.cost > 0) {
-				this.audioService.playSound("coin");
-				this.flipCoins();
-				this.snackbarService.showNotif(this.i18nService.instant("EVENTS.RECEIVED_COINS", {amount: data.cost}) +
-					this.i18nService.instant(this.game.typeMoney == GAME_TYPE.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
-			}
-			this.player.coins = data.coins;
-			const cardSold = _.find(this.cards, {_id: data.idCardSold});
-			if (cardSold) {
-				_.remove(this.cards, {_id: data.idCardSold});
-				//display the card that was bellow (if stacked)
-				_.forEach(this.cards, c => {
-					if (!c.displayed && c.weight == cardSold.weight && c.letter == cardSold.letter) {
-						c.displayed = true;
-					}
-				});
-				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (this.game.theme == 'THEME.CLASSIC') {
-					this.countOccurrencesAndHideDuplicates();
+				this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+				if (this.theme === "THEME.CLASSIC") {
+					this.localStorageService.setItem('panelRecipe', false);
+					this.panelRecipeOpenState = false;
+				} else {
+					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
 				}
 			}
 		});
-		this.socket.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.credit.amount})
-				},
-			});
-			this.credits.push(data.credit);
-			this.player.coins += data.credit.amount;
-			this.flipCoins();
-			this.audioService.playSound("coins");
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem("panelCredit", true);
-		});
-		this.socket.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = data.credit.status;
-				}
-			});
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem('panelCredit', true);
-			this.requestingWhenCreditEnds(data, true);
-		});
-		this.socket.on(IO.CREDIT.STARTED, async () => {
-			_.forEach(this.credits, c => {
-				if (c.status == CREDIT_STATUS.PAUSED) {
-					c.status = CREDIT_STATUS.RUNNING;
-				}
-			});
-		});
-		this.socket.on(IO.CREDIT.PROGRESS, async (data: any) => {
-			_.forEach(this.credits, c => {
-				if (c._id == data.id) {
-					c.status = CREDIT_STATUS.RUNNING;
-					c.progress = data.progress;
-				}
-			});
-		});
-		this.socket.on(IO.CREDIT.DEFAULT, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = data.credit.status;
-				}
-			});
-
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem("panelCredit", true);
-			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
-			this.defaultCredit = true;
-			this.audioService.playSound("police");
-		});
-		this.socket.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = CREDIT_STATUS.DONE;
-				}
-			});
-		});
-		this.socket.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			this.prisonProgress = data.progress;
-			const minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
-			const seconds = Math.floor((data.remainingTime / 1000) % 60);
-			this.prisonTimer.stop();
-			this.prisonTimer.reset();
-			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
-			this.prisonTimer.start();
-		});
-		this.socket.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.prison = false;
-			if (data && data.cards) {
-				await this.receiveCards(data.cards);
-			}
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: this.i18nService.instant("EVENTS.PRISON_END_TEXT"),
-					sound: "./../../assets/audios/outPrison.mp3"
-				},
-			});
-		});
-		this.socket.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(data.seizure.cards, c => {
-				_.remove(this.cards, {_id: c._id});
-			});
-			if (this.game.theme == 'THEME.CLASSIC') {
-				this.countOccurrencesAndHideDuplicates();
-			}
-			this.credits = _.map(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = CREDIT_STATUS.DONE;
-				}
-				return c;
-			});
-			this.player.coins -= data.seizure.coins;
-			this.defaultCredit = false;
-			if (data.prisoner && data.prisoner._id == this.idPlayer) {
-				this.prison = true;
-				this.audioService.playSound("prison");
-			}
-		});
-	}
-
-	countOccurrencesAndHideDuplicates() {
-		this.cards = _.orderBy(this.cards, ["weight", "letter"]);
-		const countByResult = _.countBy(this.cards, (obj: any) => `${obj.weight}-${obj.letter}`);
-		const keyDuplicates: string[] = [];
-		for (const c of this.cards) {
-			const countKey = `${c.weight}-${c.letter}`;
-			c.count = countByResult[countKey] || 0;
-			const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
-			if (c.count > 1 && existCountKey) {
-				c.displayed = false;
-			}
-			if (c.count >= 1 && !existCountKey) {
-				keyDuplicates.push(countKey);
-				c.displayed = true;
-			}
-		}
-		this.cards = _.orderBy(this.cards, ["count"], "desc");
 	}
 
 	showGift(card: Card) {
@@ -467,7 +171,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			data: {
 				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
 				card: card,
-				theme: this.game.theme
+				theme: this.theme
 			},
 			width: '10px',
 			height: '10px'
@@ -486,55 +190,31 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (this.subscription) this.subscription.unsubscribe();
 	}
 
-	updatePlayer() {
-		this.router.navigate(["ogame", this.idGame, "player", this.idPlayer, "settings"]);
-	}
-
-	resurrection() {
-		this.router.navigate(['ogame', this.idGame, 'join', this.player._id, this.player.name]);
-	}
-
-	formatNewCards(newCards: Card[]) {
-		for (const c of newCards) {
-			c.displayed = true;
-			c.count = 1;
-		}
-		return newCards;
-	}
-
-	async receiveCards(newCards: Card[]) {
-		const cards = this.formatNewCards(newCards);
-		this.cards = _.concat(this.cards, cards);
-		this.cards = _.orderBy(this.cards, ["weight", "letter"],);
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		if (this.game.theme == 'THEME.CLASSIC') {
-			this.countOccurrencesAndHideDuplicates();
-		} else {
-			this.recipes = getAvailableRecipes(this.cards, this.game.amountCardsForProd, this.game.generatedIdenticalLetters);
-		}
-	}
-
 	produceLevelUp($event: any) {
 		if (this.isProducing) {
 			return; // Prevent double-clicks
 		}
 		this.isProducing = true;
-		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
-		if (identicalCards.length >= this.game.amountCardsForProd) {
-			const cardsForProd = identicalCards.slice(0, this.game.amountCardsForProd);
-			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
-				_.remove(this.cards, c => _.some(cardsForProd, c));
-				const cardGift = _.find(newCards, {weight: $event.weight + 1});
-				if (cardGift) {
-					this.showGift(cardGift);
+
+		this.playerStateService.produce($event.letter, $event.weight).subscribe({
+			next: (result) => {
+				if (result.success) {
+					if (result.data.cardGift) {
+						this.showGift(result.data.cardGift);
+					}
+					this.audioService.playSound("cardFlipBack");
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || "ERROR.UNKNOWN"));
+					this.audioService.playSound("error");
 				}
 				this.isProducing = false;
-				await this.receiveCards(newCards);
-			});
-		} else {
-			this.isProducing = false;
-			this.snackbarService.showError("are you trying to cheat???");
-		}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || "ERROR.UNKNOWN"));
+				this.audioService.playSound("error");
+				this.isProducing = false;
+			}
+		});
 	}
 
 	scan() {
@@ -555,10 +235,8 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	buyWithCode(code: string) {
-		this.socket.emit(IO.SHORT_CODE.EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
-			console.log(ack)
-		});
-		this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.SHORT_CODE_SEND"));
+        this.playerStateService.sendBuyingShortCode(this.gameStateId!, this.playerStateIdx!, code);
+        this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.SHORT_CODE_SEND"));
 	}
 
 	buy(dataRaw: any) {
@@ -567,33 +245,26 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 		this.isBuying = true;
 
-		const data = JSON.parse(dataRaw);
-		const cost = this.game.typeMoney == GAME_TYPE.JUNE ? (data.p * this.game.currentDU).toFixed(2) : data.p;
-		if (this.idGame && data.g && this.idGame != data.g) {
-			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
-			this.isBuying = false; // Reset flag
-		} else if (this.player.coins >= cost) {
-			this.backService.transaction(this.idGame, this.idPlayer, data.o, data.c).subscribe(async dataReceived => {
-				if (dataReceived?.buyedCard) {
-					await this.receiveCards([dataReceived.buyedCard]);
-					this.player.coins = dataReceived.coins;
+		this.playerStateService.buy(dataRaw).subscribe({
+			next: (result) => {
+				if (result.success) {
 					this.audioService.playSound("cardFlipBack");
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || "ERROR.UNKNOWN"));
+					this.audioService.playSound("error");
 				}
-				this.isBuying = false; // Reset flag on success
-			});
-		} else if (this.player.coins < cost) {
-			console.log(this.player.coins, cost);
-			this.snackbarService.showError("Fond insuffisant !");
-			this.audioService.playSound("error");
-			this.isBuying = false; // Reset flag
-		} else {
-			this.snackbarService.showError("Erreur scan, réessaye !");
-			this.isBuying = false; // Reset flag
-		}
+				this.isBuying = false;
+			},
+			error: () => {
+				this.snackbarService.showError(this.i18nService.instant("ERROR.UNKNOWN"));
+				this.audioService.playSound("error");
+				this.isBuying = false;
+			}
+		});
 	}
 
 	requestingWhenCreditEnds(credit: Credit, beep: boolean) {
-		this.player.status = "needAnswer";
+		// this.playerState$!.status = "needAnswer";
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
@@ -610,45 +281,24 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe(options => {
 			if (options == "btn2") {
-				if (this.player.coins >= credit.interest) {
-					this.backService.payInterest(credit).subscribe(data => {
-						if (data) {
-							_.forEach(this.credits, c => {
-								if (c._id == data._id) {
-									c.status = data.status;
-									c.extended = data.extended;
-									c.progress = 0;
-								}
-							});
-							this.player.coins -= credit.interest;
-							this.player.status = PLAYER_STATUS.ALIVE;
+				this.playerStateService.payInterest(credit).subscribe({
+					next: (result) => {
+						if (result.success) {
 							this.audioService.playSound("interest");
+						} else {
+							this.snackbarService.showError(this.i18nService.instant(result.error || "ERROR.UNKNOWN"));
+							this.audioService.playSound("error");
 						}
-					});
-				} else {
-					this.snackbarService.showError("Fond insuffisant ! allez voir la banque");
-				}
+					},
+					error: () => {
+						this.snackbarService.showError(this.i18nService.instant("ERROR.UNKNOWN"));
+						this.audioService.playSound("error");
+					}
+				});
 			} else if (options == "btn1") {
-				if (this.player.coins >= (credit.amount + credit.interest)) {
-					this.settleCredit(credit);
-				} else {
-					this.snackbarService.showError("Fond insuffisant !");
-					this.audioService.playSound("error");
-					this.requestingWhenCreditEnds(credit, false);
-				}
+				this.settleCredit(credit);
 			}
 		});
-	}
-
-	getDebts() {
-		let debts = 0;
-		_.forEach(this.credits, c => {
-			if (c.status != CREDIT_STATUS.DONE) {
-				debts += c.amount;
-				debts += c.interest;
-			}
-		});
-		return debts;
 	}
 
 	settleDebt(credit: Credit) {
@@ -667,46 +317,45 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	settleCredit(credit: Credit) {
-		if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
-			this.backService.settleCredit(credit).subscribe(data => {
-				if (data) {
-					this.credits = _.map(this.credits, c => {
-						if (c._id == data._id) {
-							c.status = data.status;
-							c.endDate = data.endDate;
-							this.player.coins -= (data.amount + data.interest);
-							this.player.status = PLAYER_STATUS.ALIVE;
-						}
-						return c;
-					});
+		this.playerStateService.settleCredit(credit).subscribe({
+			next: (result) => {
+				if (result.success) {
 					this.snackbarService.showSuccess(this.i18nService.instant("CREDIT.CREDIT_SETTLED"));
 					this.audioService.playSound("interest");
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || "ERROR.UNKNOWN"));
+					this.audioService.playSound("error");
 				}
-			});
-		} else {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.NOT_ENOUGH_MONEY"));
-			this.audioService.playSound("error");
-		}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || "ERROR.UNKNOWN"));
+				this.audioService.playSound("error");
+			}
+		});
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
-		if (this.game.status == GAME_STATUS.PLAYING && this.player.status != PLAYER_STATUS.DEAD) {
-			if ($event == 'settle') {
-				this.settleDebt(credit);
-			} else if ($event == 'answer') {
-				this.requestingWhenCreditEnds(credit, false);
-			}
-		}
+		this.gameState$.pipe(
+        withLatestFrom(this.playerState$),
+        map(([gameState, playerState]) => {
+				if (gameState.status == GAME_STATUS.PLAYING && playerState.status != PLAYER_STATUS.DEAD) {
+					if ($event == 'settle') {
+						this.settleDebt(credit);
+					} else if ($event == 'answer') {
+						this.requestingWhenCreditEnds(credit, false);
+					}
+				}
+			}));
 	}
 
 	tryReincarnate() {
-		this.backService.isReincarnated(this.idGame, this.idPlayer).subscribe(data => {
-			if (data?.playerReIncarnated) {
-				this.router.navigate(['ogame', this.idGame, 'player', data.playerReIncarnated]);
-			} else {
-				this.resurrection();
-			}
-		})
+		// this.backService.isReincarnated(this.gameStateId, this.playerStateIdx).subscribe(data => {
+		// 	if (data?.playerReIncarnated) {
+		// 		this.router.navigate(['ogame', this.gameStateId, 'player', data.playerReIncarnated]);
+		// 	} else {
+		// 		this.resurrection();
+		// 	}
+		// })
 	}
 
 	onCreateShortCode($event: ShortCode) {
@@ -746,7 +395,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	whoHaveCard(ingredient: Ingredient) {
 		const cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
-		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
+		this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
 			this.dialog.open(InformationDialogComponent, {
 				data: {
 					text: payload.status == "deck" ? this.i18nService.instant("CARD.IN_DECK", {cardName}) : this.i18nService.instant("CARD.IN_PLAYER", {

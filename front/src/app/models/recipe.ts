@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import {Card} from './game';
+import {Card} from './gameState';
 
 export class Ingredient {
 	key = "";
@@ -17,21 +17,21 @@ export class Recipe {
 		this.weight = weight;
 	}
 
-	generateIngredients(productionCards: number) {
-		for (let i = 1; i <= productionCards; i++) {
+	generateIngredients(amountCardsForProd: number) {
+		for (let i = 1; i <= amountCardsForProd; i++) {
 			this.ingredients.push({key: `${this.letter}${this.weight}${i}`, have: 0});
 		}
 	}
 }
 
-export function getAvailableRecipes(items: Card[], productionCards: number, identicalLetters: number) {
+export function getAvailableRecipes(items: Card[], amountCardsForProd: number, generatedIdenticalLetters: number) {
 	let recipes: Recipe[] = [];
 	_.forEach(items, item => {
 		//found recipe
 		let recipe = _.find(recipes, (recipe: Recipe) => recipe.letter == item.letter && recipe.weight == item.weight);
 		if (!recipe) {
 			let newRecipe = new Recipe(item.letter, item.weight);
-			newRecipe.generateIngredients(identicalLetters);
+			newRecipe.generateIngredients(generatedIdenticalLetters);
 			recipes.push(newRecipe);
 		}
 	});
@@ -46,7 +46,7 @@ export function getAvailableRecipes(items: Card[], productionCards: number, iden
 	//recipe check completed
 	recipes.forEach(recipe => {
 		let have = recipe.ingredients.filter(i => i.have).length;
-		recipe.completed = have >= productionCards;
+		recipe.completed = have >= amountCardsForProd;
 	});
 
 	//order by count ingredients

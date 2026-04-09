@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
-import { AvatarService } from "../services/api/avatar.service";
+import { SessionService } from "../services/api/session.service";
 import { Subscription } from "rxjs";
 import { I18nService } from '../services/i18n.service';
 
@@ -14,7 +14,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 	name = "";
 	private subscription: Subscription | undefined;
 
-	constructor(private route: ActivatedRoute, private router: Router, private avatarService: AvatarService, private i18n: I18nService) {
+	constructor(private route: ActivatedRoute, private router: Router, private sessionService: SessionService, private i18n: I18nService) {
 		this.i18n.loadNamespace('join');
 	}
 
@@ -32,7 +32,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 
 	join() {
 		if (this.name) {
-			this.avatarService.join(this.sessionId, this.name).subscribe((data: any) => {
+			this.sessionService.join(this.sessionId, this.name).subscribe((data: any) => {
 				this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings']);
 			});
 		}

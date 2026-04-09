@@ -2,6 +2,7 @@ import SessionModel from './../session.model.js';
 
 const AvatarService = {};
 
+
 AvatarService.create = async (sessionId, name) => {
     let newAvatar = {
         name,
@@ -25,9 +26,9 @@ AvatarService.create = async (sessionId, name) => {
     const session = await SessionModel.findOneAndUpdate({_id: sessionId}, [
         {$set: {avatarIndexSeq: {$add: ['$avatarIndexSeq', 1]}}}, {
             $set: {
-                players: {
+                avatars: {
                     $concatArrays: [
-                        '$players', [{idx: '$avatarIndexSeq', ...newAvatar}]
+                        '$avatars', [{idx: '$avatarIndexSeq', ...newAvatar}]
                     ]
                 }
             }
@@ -43,10 +44,10 @@ AvatarService.create = async (sessionId, name) => {
 AvatarService.getByIdx = async (sessionId, avatarIdx, fetchSession) => {
     const session = await SessionModel.findOne({
         _id:           sessionId,
-        'players.idx': Number(avatarIdx)
+        'avatars.idx': Number(avatarIdx)
     }).lean();
-    const avatar = session?.players?.find(p => p.idx === Number(avatarIdx)) ?? null;
-    delete session.players;
+    const avatar = session?.avatars?.find(p => p.idx === Number(avatarIdx)) ?? null;
+    delete session.avatars;
     if (fetchSession) {
         return {
             avatar:  avatar,
@@ -62,27 +63,27 @@ AvatarService.update = async (sessionId, avatarIdx, updates) => {
     const s = SessionModel.find({}).lean();
     const set = {};
     for (const [key, value] of Object.entries(updates)) {
-        set[`players.$.${key}`] = value;
+        set[`avatars.$.${key}`] = value;
     }
     const session = await SessionModel.findOneAndUpdate({
         _id:           sessionId,
-        'players.idx': Number(avatarIdx)
+        'avatars.idx': Number(avatarIdx)
     }, {$set: set}, {
         runValidators: true,
         new:           true
     });
-    return session?.players?.find(p => p.idx === Number(avatarIdx)) ?? null;
+    return session?.avatars?.find(p => p.idx === Number(avatarIdx)) ?? null;
 };
 
 AvatarService.delete = async (sessionId, avatarIdx) => {
     return SessionModel.updateOne({
         _id:           sessionId,
-        "players.idx": Number(avatarIdx),
+        "avatars.idx": Number(avatarIdx),
         $or:           [
             {gamesRules: {$size: 0}}, {"gamesRules.gameStateId": {$exists: false}}
         ]
     }, {
-        $pull: {players: {idx: avatarIdx}}
+        $pull: {avatars: {idx: avatarIdx}}
     });
 };
 

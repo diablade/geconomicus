@@ -4,7 +4,7 @@ import {PlayerBoardComponent} from './player-board/player-board.component';
 import {MasterBoardComponent} from './master-board/master-board.component';
 import {HomeComponent} from "./home/home.component";
 import {JoinComponent} from "./join/join.component";
-import {PlayerSettingsComponent} from "./player-settings/player-settings.component";
+import {AvatarSettingsComponent} from "./avatar-settings/avatar-settings.component";
 import {ResultsComponent} from "./results/results.component";
 import {HistoryGamesComponent} from "./history-games/history-games.component";
 import {SurveyComponent} from "./survey/survey.component";
@@ -22,11 +22,11 @@ const routes: Routes = [
 	{path: 'session/:sessionId', component: LobbyMasterComponent},
 	{path: 'join/:sessionId', component: JoinComponent},
 	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
-	{path: 'avatar/:sessionId/:avatarIdx/settings', component: PlayerSettingsComponent},
-	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerLifeId', component: PlayerBoardComponent},
+	{path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent},
+	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateId', component: PlayerBoardComponent},
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
-	{path: 'master/:gameStateId', component: MasterBoardComponent},
-	{path: 'table/:gameStateId', component: MasterAdminComponent},
+	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
+	{path: 'table/:sessionId/:gameStateId', component: MasterAdminComponent},
 	{path: 'module/galileo', component: ModuleGalileoComponent},
 	{path: 'module/gini', component: ModuleWealthDistribComponent},
 	//deprecated routes below
@@ -38,7 +38,7 @@ const routes: Routes = [
 	{path: 'ogame/:idGame/join', component: JoinComponent},
 	{path: 'ogame/:idGame/results', component: ResultsComponent},
 	{path: 'ogame/:idGame/player/:idPlayer', component: PlayerBoardComponent},
-	{path: 'ogame/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
+	{path: 'ogame/:idGame/player/:idPlayer/settings', component: AvatarSettingsComponent},
 	{path: '**', redirectTo: '/'},
 ];
 

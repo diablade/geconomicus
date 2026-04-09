@@ -12,8 +12,8 @@ export class Session {
 	theme: string = "classic";
 	gamesRules: Rules[] = [];
 	gamesRulesCount: number = 0;
-	players: Avatar[] = [];
-	playersCount: number = 0;
+	avatars: Avatar[] = [];
+	avatarsCount: number = 0;
 	createdAt: Date = new Date();
 	updatedAt: Date = new Date();
 }

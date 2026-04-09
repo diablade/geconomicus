@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faCircleInfo, faCommentsDollar, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {Credit} from "../../models/game";
+import {Credit} from "../../models/gameState";
 
 // @ts-ignore
 import { CREDIT_STATUS } from '@geco/shared';
-import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import { Avatar } from 'src/app/models/avatar';
 
 @Component({
 	selector: 'app-credit',
@@ -21,26 +21,18 @@ export class CreditComponent {
 	faCommentsDollar = faCommentsDollar;
 	faCircleInfo = faCircleInfo;
 
-
 	@Input() credit!: Credit;
-	@Input() contractor!: string | undefined;
-	@Input() contractorSvg!: string | "";
-	@Input() contractorColor!: string | "black";
+	@Input() contractor: Avatar = new Avatar();
 
-	@Input() interestMinutes = 5;
+	@Input() interestMinutes : number | undefined;
 	@Input() bankOption = false;
 	@Output() actionBtn = new EventEmitter<string>();
 	@Input() small = false;
 
-	constructor(private sanitizer: DomSanitizer) {
-	}
+	constructor() {	}
 
 	actionBtnClick(action: string) {
 		this.actionBtn.emit(action);
-	}
-
-	getSanitizedSvgFromString(svgString: string): SafeHtml {
-		return this.sanitizer.bypassSecurityTrustHtml(svgString);
 	}
 
 	getStatus(status: string) {

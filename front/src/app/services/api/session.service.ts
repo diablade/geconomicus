@@ -1,81 +1,108 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {catchError, Observable} from "rxjs";
-import {Session} from "../../models/session";
-import {environment} from "../../../environments/environment";
-import {ERROR, ErrorService} from "../error.service";
-import {Rules} from "../../models/rules";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { Session } from '../../models/session';
+import { environment } from '../../../environments/environment';
+import { ERROR, ErrorService, REDIRECT_HOME } from '../error.service';
+import { Avatar } from 'src/app/models/avatar';
 
 @Injectable({
-	providedIn: 'root'
+	providedIn: 'root',
 })
 export class SessionService {
-	constructor(public http: HttpClient, private errorService: ErrorService) {
+	private sessionSubject = new BehaviorSubject<Session | null>(null);
+	session$ = this.sessionSubject.asObservable();
+
+	setSession(session: Session) {
+		this.sessionSubject.next(session);
 	}
 
+	constructor(
+		public http: HttpClient,
+		private errorService: ErrorService
+	) {}
+
 	getAll(): Observable<any> {
-		return this.http.get<any>(environment.API_HOST + environment.SESSION.GET_ALL)
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND'))
-			);
+		return this.http
+			.get<any>(environment.API_HOST + environment.SESSION.GET_ALL)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
 	}
 
 	getById(sessionId: string): Observable<Session> {
-		return this.http.get<any>(environment.API_HOST + environment.SESSION.GET_BY_ID + sessionId)
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND'))
-			);
+		return this.http
+			.get<any>(environment.API_HOST + environment.SESSION.GET_BY_ID + sessionId)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
 	}
 
 	getByShortId(shortId: string): Observable<any> {
-		return this.http.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND'))
-			);
+		return this.http
+			.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
 	}
 
 	create(name: string, location: string, animator: string, theme: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.SESSION.CREATE, {
-			name,
-			location,
-			animator,
-			theme,
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.CREATE'))
-			);
+		return this.http
+			.post<any>(environment.API_HOST + environment.SESSION.CREATE, {
+				name,
+				location,
+				animator,
+				theme,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.CREATE')));
 	}
 
 	start(sessionId: string): Observable<any> {
-		return this.http.post<any>(environment.API_HOST + environment.SESSION.START, {
-			sessionId,
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.START'))
-			);
+		return this.http
+			.post<any>(environment.API_HOST + environment.SESSION.START, {
+				sessionId,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.START')));
 	}
 
 	update(sessionId: string, updates: Partial<Session>) {
-		return this.http.put<any>(environment.API_HOST + environment.SESSION.UPDATE, {
-			sessionId,
-			updates
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.UPDATE'))
-			);
+		return this.http
+			.put<any>(environment.API_HOST + environment.SESSION.UPDATE, {
+				sessionId,
+				updates,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.UPDATE')));
 	}
 
 	delete(sessionId: string, password: string) {
-		return this.http.post<any>(environment.API_HOST + environment.SESSION.DELETE, {
-			sessionId, password
-		}).pipe(
-			catchError(err => this.errorService.handleError(err, ERROR, 'ERROR.DELETE'))
-		)
+		return this.http
+			.post<any>(environment.API_HOST + environment.SESSION.DELETE, {
+				sessionId,
+				password,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.DELETE')));
 	}
 
-    killGame(sessionId: string, gameStateId: string, ruleIdx: number): Observable<any> {
-        return this.http
-            .post<any>(environment.API_HOST + environment.SESSION.KILL_GAME, { gameStateId, sessionId, ruleIdx })
-            .pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
-    }
+	join(sessionId: string, name: string): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.AVATAR.JOIN, {
+				name,
+				sessionId,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.CREATE')));
+	}
+
+	deleteAvatar(sessionId: string, avatarIdx: number): void {
+		this.http
+			.delete<any>(environment.API_HOST + environment.AVATAR.DELETE + '/' + sessionId + '/' + avatarIdx)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.DELETE')))
+			.subscribe(() => {
+				// Avatar deleted successfully
+				// TODO: Update session locally
+				// this.session.avatars = this.session.avatars.filter((p: Avatar) => p.idx !== player.idx);
+				// this.snackbarService.showSuccess(
+				//     this.i18nService.instant('MASTER.DELETE_PLAYER_SUCCESS', { player: player.name })
+				// );
+			});
+	}
+
+	killGame(sessionId: string, gameStateId: string, ruleIdx: number): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.SESSION.KILL_GAME, { gameStateId, sessionId, ruleIdx })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
+	}
 }

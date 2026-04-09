@@ -84,7 +84,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
-			this.socket = this.wsService.getSocket(this.sessionId, 'lobby-master');
+			this.socket = this.wsService.getSocket({publicChannel: this.sessionId, privateChannel: `${this.sessionId}:master`});
 			this.getSession();
 		});
 	}
@@ -99,10 +99,10 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		this.socket.on(IO.AVATAR.NEW, (data: any) => {
-			this.session.players.push(data.avatar);
+			this.session.avatars.push(data.avatar);
 		});
 		this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
-			this.session.players = this.session.players.map((p) => {
+			this.session.avatars = this.session.avatars.map((p) => {
 				if (p.idx == data.updatedAvatar.idx) {
 					p = data.updatedAvatar;
 				}
@@ -111,7 +111,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.checkDuplicateHairColors();
 		});
 		this.socket.on(IO.AVATAR.DELETED, (data: any) => {
-			this.session.players = this.session.players.filter((p) => p.idx !== data.avatarIdx);
+			this.session.avatars = this.session.avatars.filter((p) => p.idx !== data.avatarIdx);
 		});
 	}
 
@@ -136,14 +136,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	deletePlayer(player: Avatar) {
-		this.avatarService.deleteAvatar(this.sessionId, player.idx).subscribe((res: any) => {
-			if (res.acknowledged) {
-				this.snackbarService.showSuccess(
-					this.i18nService.instant('MASTER.DELETE_PLAYER_SUCCESS', { player: player.name })
-				);
-				this.session.players = this.session.players.filter((p) => p.idx !== res.avatarIdx);
-			}
-		});
+		this.sessionService.deleteAvatar(this.sessionId, player.idx);
 	}
 
 	createAvatarUrl(avatarIdx: number) {
@@ -203,7 +196,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	checkDuplicateHairColors() {
 		if (this.session.status == SESSION_STATUS.IN_PROGRESS) {
-			const groupes = groupeDuplicatedHairColor(this.session.players);
+			const groupes = groupeDuplicatedHairColor(this.session.avatars);
 			if (groupes.length > 0) {
 				this.warningHairColorDuplicate = true;
 				this.snackbarService.showError(this.i18nService.instant('WARNING.DUPLICATE_COLOR'));
@@ -214,19 +207,11 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	async fixDuplicateHairColor() {
-		const playersWithChangedColor: Avatar[] = fixDuplicateHairColors(this.session.players);
+		const playersWithChangedColor: Avatar[] = fixDuplicateHairColors(this.session.avatars);
 
-		// update players
+		// update avatars
 		for (let i = 0; i < playersWithChangedColor.length; i++) {
-			this.avatarService
-				.updateAvatar(this.sessionId, playersWithChangedColor[i].idx, playersWithChangedColor[i])
-				.subscribe((data) => {
-					if (data) {
-						this.avatarService
-							.refreshForceAvatar(this.sessionId, playersWithChangedColor[i].idx)
-							.subscribe();
-					}
-				});
+			this.avatarService.updateAvatar(this.sessionId, playersWithChangedColor[i].idx, playersWithChangedColor[i], true);
 		}
 	}
 
@@ -234,7 +219,7 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
 			data: {
 				rules: _.clone(rules),
-				playersLength: this.session.players.length,
+				playersLength: this.session.avatars.length,
 				devMode: this.session.devMode,
 			},
 		});

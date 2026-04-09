@@ -13,7 +13,7 @@ let SessionSchema = new Schema({
 	status: { type: String, required: true, default: "open" },
 	//open, in_progress, ended
 	gamesRules: { type: [RulesSchema], required: true, default: [] },
-	players: { type: [AvatarSchema], required: true, default: [] },
+	avatars: { type: [AvatarSchema], required: true, default: [] },
 	rulesIndexSeq: { type: Number, required: true, default: 0 },
 	avatarIndexSeq: { type: Number, required: true, default: 0 },
 }, { timestamps: true });

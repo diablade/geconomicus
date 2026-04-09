@@ -19,7 +19,7 @@ let Credit = new Schema(
 		idx: { type: Number, required: true }, //nanoId4
 		amount: { type: Number, required: true },
 		interest: { type: Number, required: true },
-		playerLifeId: { type: String, required: true },
+		playerStateIdx: { type: Number, required: true },
 		status: { type: String, required: true },
 		extended: { type: Number, required: true },
 		createDate: { type: Date, required: true },
@@ -29,7 +29,7 @@ let Credit = new Schema(
 	{ _id: false }
 );
 
-let PlayerLife = new Schema(
+let PlayerState = new Schema(
 	{
 		idx: { type: Number, required: true },
 		avatarIdx: { type: Number, required: true },
@@ -65,9 +65,9 @@ let GameStateSchema = new Schema(
 			required: true,
 			default: [],
 		},
-		playerLifeIndexSeq: { type: Number, required: true, default: 0 },
-		playersLifes: {
-			type: [PlayerLife],
+		playerStateIndexSeq: { type: Number, required: true, default: 0 },
+		playersStates: {
+			type: [PlayerState],
 			required: true,
 			default: [],
 		},

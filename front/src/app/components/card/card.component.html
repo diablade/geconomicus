@@ -1,53 +1,68 @@
-<ng-container *ngIf="state==='flipped'">
+<ng-container *ngIf="state === 'flipped'">
 	<div class="whenFlipped" (click)="closeCard()"></div>
 </ng-container>
-<div class="card" [style.width]="width" [style.height]="height"
-     [@cardFlip]="{value: state, params: { translateX: translateX, translateY: translateY }}">
+<div
+	class="card"
+	[style.width]="width"
+	[style.height]="height"
+	[@cardFlip]="{ value: state, params: { translateX: translateX, translateY: translateY } }">
 	<div class="face" (click)="cardClicked()" [ngClass]="[card.color]">
-		<img [src]="'/assets/images/lvl'+(card.weight+1)+'.png'"/>
-		<div class="containerLetter topLeft" [ngClass]="state==='flipped' ? 'hide' : 'show'">
-			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
+		<img [src]="'/assets/images/lvl' + (card.weight + 1) + '.png'" />
+		<div class="containerLetter topLeft" [ngClass]="state === 'flipped' ? 'hide' : 'show'">
+			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">
+				&nbsp;{{ card.letter }}&nbsp;
+			</span>
 		</div>
-		<div class="containerLetter bottomRight" [ngClass]="state==='flipped' ? 'hide' : 'show'">
-			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">&nbsp;{{ card.letter }}&nbsp;</span>
+		<div class="containerLetter bottomRight" [ngClass]="state === 'flipped' ? 'hide' : 'show'">
+			<span [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter">
+				&nbsp;{{ card.letter }}&nbsp;
+			</span>
 		</div>
-		<div *ngIf="card.count>1" [matBadge]="card.count" matBadgeSize="large" class="badge"
-		     [ngClass]="[card.color + 'Color', state === 'flipped' ? 'hide' : 'show']"></div>
-		<div *ngIf="card.count>=amountCardsForProd" [style.width]="height" [style.height]="height" class="wheel-container">
-			<div class="wheel">
-			</div>
+		<div
+			*ngIf="card.count > 1"
+			[matBadge]="card.count"
+			matBadgeSize="large"
+			class="badge"
+			[ngClass]="[card.color + 'Color', state === 'flipped' ? 'hide' : 'show']"></div>
+		<div
+			*ngIf="card.count && amountCardsForProd ? card.count >= amountCardsForProd : false"
+			[style.width]="height"
+			[style.height]="height"
+			class="wheel-container">
+			<div class="wheel"></div>
 		</div>
-		<button *ngIf="card.count>=amountCardsForProd" (click)="buildCardLvlUp()" mat-raised-button
-		        class="transform" [ngClass]="getBuildColor(card)">
-			<div class="giftBounce">
-				🛠️
-			</div>
-			<div class="buildText">
-				{{ getBuildText(card) | translate }}🎁
-			</div>
+		<button
+			*ngIf="card.count && amountCardsForProd ? card.count >= amountCardsForProd : false"
+			(click)="buildCardLvlUp()"
+			mat-raised-button
+			class="transform"
+			[ngClass]="getBuildColor(card)">
+			<div class="giftBounce">🛠️</div>
+			<div class="buildText">{{ getBuildText(card) | translate }}🎁</div>
 		</button>
 	</div>
 	<div class="face back text-center d-flex flex-column" (click)="cardClicked()" [ngClass]="card.color">
 		<div class="d-flex flex-row align-items-center">
-			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">&nbsp;{{ card.letter }}&nbsp;</div>
+			<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="letter m-2">
+				&nbsp;{{ card.letter }}&nbsp;
+			</div>
 			<div class="prices d-flex flex-column justify-content-between">
-				<div [style.font-size]="priceSize" [style.line-height]="priceSize"
-				     class="price">{{ card.price }} {{ typeMoney === "june" ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
+				<div [style.font-size]="priceSize" [style.line-height]="priceSize" class="price">
+					{{ card.price }}
+					{{ typeMoney === 'june' ? ('CURRENCY.DU' | translate) : ('CURRENCY.EURO' | translate) }}
 				</div>
-				<div [style.font-size]="smallPriceSize" [style.line-height]="smallPriceSize" class="price"
-				     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
+				<div
+					[style.font-size]="smallPriceSize"
+					[style.line-height]="smallPriceSize"
+					class="price"
+					*ngIf="typeMoney === 'june'">
+					({{ (currentDU ? currentDU * card.price : 0) | number: '1.2-2' }} {{ 'CURRENCY.JUNE' | translate }})
 				</div>
 			</div>
 		</div>
 		<div class="qrcodeWrapper flex-grow-1">
 			<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
-			<ngx-kjua
-					[text]="getData()"
-					[minVersion]="1"
-					[crisp]="true"
-					[ecLevel]="'Q'"
-					[render]="'svg'"
-			></ngx-kjua>
+			<ngx-kjua [text]="getData()" [minVersion]="1" [crisp]="true" [ecLevel]="'Q'" [render]="'svg'"></ngx-kjua>
 		</div>
 	</div>
 </div>

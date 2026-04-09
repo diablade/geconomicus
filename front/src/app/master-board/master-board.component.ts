@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewCh
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
-import { GameState, PlayerLife } from '../models/gameState';
+import { GameState, PlayerState } from '../models/gameState';
 import { Rules } from '../models/rules';
 import { Session } from '../models/session';
 import { environment } from '../../environments/environment';
@@ -51,31 +51,35 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
-
-	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
-	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
-	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
-	@ViewChild('videoPlayerRT') videoPlayerRT!: ElementRef;
-	gameStateId = '';
-	gameState: GameState = new GameState();
-	rules: Rules = new Rules();
-	session: Session = new Session();
-	private socket: any;
-	deleteUser = false;
-	killUser = false;
 	protected readonly environment = environment;
-	faTrashCan = faTrashCan;
-	faFlagCheckered = faFlagCheckered;
-	faQrcode = faQrcode;
-	faCogs = faCogs;
-	faInfo = faCircleInfo;
-	faRightToBracket = faRightToBracket;
-	faWarning = faWarning;
+	protected readonly faTrashCan = faTrashCan;
+	protected readonly faFlagCheckered = faFlagCheckered;
+	protected readonly faQrcode = faQrcode;
+	protected readonly faCogs = faCogs;
+	protected readonly faInfo = faCircleInfo;
+	protected readonly faRightToBracket = faRightToBracket;
+	protected readonly faWarning = faWarning;
 	faBuildingColumns = faBuildingColumns;
 	faEye = faEye;
 	faPlay = faPlay;
 	faPause = faPause;
 	faStop = faStop;
+
+	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
+	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
+	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
+	@ViewChild('videoPlayerRT') videoPlayerRT!: ElementRef;
+
+	sessionId: string = '';
+	gameStateId: string = '';
+
+	gameState: GameState = new GameState();
+	rules: Rules = new Rules();
+	session: Session = new Session();
+
+	private socket: any;
+	deleteUser = false;
+	killUser = false;
 
 	timerProgress = 100;
 
@@ -119,12 +123,12 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe((params) => {
+			this.sessionId = params['sessionId'];
 			this.gameStateId = params['gameStateId'];
 			this.setMaster();
 			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
 				this.resetGameFromUrl();
 			}
-			this.socket = this.wsService.getSocket(this.gameStateId, this.gameStateId + 'master');
 		});
 		this.gameStateService.get(this.gameStateId, true).subscribe((payload) => {
 			this.gameState = payload.gameState;
@@ -146,16 +150,16 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit(): void {
-		this.socket.on(IO.AVATAR.UPDATED, (player: PlayerLife) => {
-			// this.gameState.players = _.map(this.gameState.players, (p) => {
+		this.socket.on(IO.AVATAR.UPDATED, (player: PlayerState) => {
+			// this.gameState.avatars = _.map(this.gameState.avatars, (p) => {
 			// if (p._id == player._id) {
 			// p = player;
 			// }
 			// return p;
 			// });
 		});
-		this.socket.on(IO.PLAYER.JOINED, (player: PlayerLife) => {
-			// this.gameState.players.push(player);
+		this.socket.on(IO.PLAYER.JOINED, (player: PlayerState) => {
+			// this.gameState.avatars.push(player);
 		});
 		this.socket.on('connected', (player: any) => {
 			console.log('connected', player);
@@ -186,7 +190,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.socket.on(IO.PLAYER.DIED, async (event: any) => {
-			_.forEach(this.gameState.playersLifes, (p) => {
+			_.forEach(this.gameState.playersStates, (p) => {
 				if (p.idx == event.receiver) {
 					p.status = PLAYER_STATUS.DEAD;
 				}
@@ -210,7 +214,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (this.subscription) this.subscription.unsubscribe();
 	}
 
-	onDeleteUser(player: PlayerLife) {
+	onDeleteUser(player: PlayerState) {
 		// this.backService.deleteUser(player._id, this.idGame).subscribe((game: Game) => {
 		// 	this.gameState = game;
 		// });
@@ -337,7 +341,7 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		window.open('table/' + this.gameStateId, '_blank');
 	}
 
-	onKillUser(player: PlayerLife) {
+	onKillUser(player: PlayerState) {
 		// this.backService.killUser(player._id, this.idGame).subscribe(() => {
 		// player.status = DEAD;
 		// });

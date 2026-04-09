@@ -7,7 +7,7 @@ import SessionService from '../session/session.service.js';
 import RulesService from '../session/rules/rules.service.js';
 // import gameTimerManager from './managers/GameTimerManager.js';
 // import inMemoryGameStateManager from './managers/InMemoryGameStateManager.js';
-// import playerMemService from './playerLife/player.mem.service.js';
+// import playerMemService from './playersStates/player.mem.service.js';
 
 const GameStateController = {};
 
@@ -98,6 +98,19 @@ GameStateController.getById = async (req, res, next) => {
 	}
 };
 
+GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
+	try {
+		const idx = await GameStateService.getCurrentPlayerStateIdx(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
+		return res.status(200).json({idx});
+	} catch (err) {
+		log.error('Get game error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.NOT_FOUND',
+		});
+	}
+};
+
 
 // GameStateController.produce = async (req, res, next) => {
 // 	try {
@@ -170,7 +183,7 @@ GameStateController.getById = async (req, res, next) => {
 // 					status: START_GAME,
 // 					decks: gameUpdated.decks,
 // 					events: gameUpdated.events,
-// 					players: gameUpdated.players,
+// 					avatars: gameUpdated.avatars,
 // 					round: gameUpdated.round + 1,
 // 					currentDU: gameUpdated.currentDU,
 // 					currentMassMonetary: gameUpdated.currentMassMonetary,
@@ -293,9 +306,9 @@ GameStateController.getById = async (req, res, next) => {
 // 	}
 // };
 // GameStateController.killPlayer = async (req, res, next) => {
-// 	const {gameStateId, playerLifeId} = req.body;
+// 	const {gameStateId, playerStateId} = req.body;
 // 	try {
-// 		await playerMemService.killPlayer(gameStateId, playerLifeId);
+// 		await playerMemService.killPlayer(gameStateId, playerStateId);
 // 		return res.status(200).json({
 // 			status: 'done',
 // 		});

@@ -25,7 +25,7 @@ DeckService.generateDecks = async (rules) => {
         lettersInGame = rules.generateLettersInDeck;
     }
     else {
-        lettersInGame = Math.round(1.25 * rules.players.length);
+        lettersInGame = Math.round(1.25 * rules.avatars.length);
     }
 
     // genere cartes pour les 4 lots
@@ -74,7 +74,7 @@ DeckService.pushCardsInDecksInMemory = (state, cards) => {
  * @throws Error if validation fails
  */
 DeckService.produceCardLevelUp = (state, rules, playerLifeIdx, cards) => {
-    const player = state.playersLifes.find(p => p.idx === playerLifeIdx);
+    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
     if (!player) throw new Error('ERROR.PLAYER_NOT_FOUND');
 
     const amountCardsForProd = rules.amountCardsForProd;

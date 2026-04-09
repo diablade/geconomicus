@@ -10,9 +10,9 @@ SurveyController.addFeedback = async (req, res, next) => {
         const {
             sessionId,
             gameStateId,
-            avatarId
+            avatarIdx
         } = req.body;
-        let surveyFound = await SurveyService.getBySessionGameStateAvatarId(sessionId, gameStateId, avatarId);
+        let surveyFound = await SurveyService.getBySessionGameStateAvatarId(sessionId, gameStateId, avatarIdx);
         if (!surveyFound) {
             let newFeedback = await SurveyService.create(req.body);
             if (newFeedback && newFeedback._id) {
@@ -64,7 +64,7 @@ SurveyController.getByGameStateId = async (req, res, next) => {
 }
 SurveyController.getBySessionGameStateAvatarId = async (req, res, next) => {
     try {
-        let surveyFound = await SurveyService.getBySessionGameStateAvatarId(req.params.sessionId, req.params.gameStateId, req.params.avatarId);
+        let surveyFound = await SurveyService.getBySessionGameStateAvatarId(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
         if (!surveyFound) {
             return res.status(404).json({ message: "ERROR.NOT_FOUND" });
         }

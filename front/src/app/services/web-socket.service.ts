@@ -48,20 +48,13 @@ export class WebSocketService {
 		});
 	}
 
-	private connect(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
-
+	private connect(query: any): Socket | undefined {
 		this.socket?.disconnect();
 		this.socket?.removeAllListeners();
 
-		this.idGame = idGame;
-		this.idPlayer = idPlayer;
-
-		if (idGame && idPlayer) {
+		if (query) {
 			this.socket = io(this.ioUrl, {
-				query: {
-					idPlayer: this.idPlayer,
-					idGame: this.idGame
-				},
+				query,
 				ackTimeout: 4000,            // timeout to 4 seconds
 				// allowEIO3: true,
 				tryAllTransports: true,
@@ -165,16 +158,17 @@ export class WebSocketService {
 		});
 	}
 
-	getSocket(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
+	getSocket(query: any): Socket | undefined {
 		if (this.socket && this.socket.connected) {
 			this.disconnected = false;
 			return this.socket;
 		} else {
-			let sock = this.connect(idGame, idPlayer);
+			let sock = this.connect({idPlayer: query.privateChannel,  idGame: query.publicChannel});
 			if (sock) {
 				return sock;
 			} else {
-				throw Error("WebSocketService: idGame or idPlayer is undefined");
+				console.error("WebSocketService: query is wrong", query);
+				throw Error("WebSocketService: query is wrong");
 			}
 		}
 	}

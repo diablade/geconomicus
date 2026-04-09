@@ -1,8 +1,8 @@
 import SessionModel from './session.model.js';
-import { nanoId4, numbersId4 } from '../misc/misc.tool.js';
+import { numbersId4 } from '../misc/misc.tool.js';
 import { SESSION_STATUS } from '@geco/shared';
 import log from '#config/log';
-import RulesService, { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
+import { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
 
 const SessionService = {};
 
@@ -44,8 +44,8 @@ SessionService.getAll = async () => {
 				gamesRulesCount: {
 					$size: '$gamesRules',
 				},
-				playersCount: {
-					$size: '$players',
+				avatarsCount: {
+					$size: '$avatars',
 				},
 			},
 		},
@@ -92,7 +92,7 @@ SessionService.start = async (sessionId) => {
 /* Update */
 SessionService.update = async (sessionId, updates) => {
 	delete updates.gamesRules;
-	delete updates.players;
+	delete updates.avatars;
 	const set = {};
 	for (const [key, value] of Object.entries(updates)) {
 		set[key] = value;

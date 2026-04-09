@@ -1,166 +1,82 @@
 <div class="admin">
-	<h1>
-		Admin view of {{ game?.name }}
-	</h1>
+	<h1>Admin view of {{ game?.name }}</h1>
 	<div class="infos d-flex flex-row flex-wrap">
 		<ul>
-			<li>
-				shortId: {{ game?.shortId }}
-			</li>
-			<li>
-				animator: {{ game?.animator }}
-			</li>
-			<li>
-				location: {{ game?.location }}
-			</li>
-			<li>
-				typeMoney: {{ game?.typeMoney }}
-			</li>
-			<li>
-				status: {{ game?.status }}
-			</li>
-			<li>
-				devMode: {{ game?.devMode }}
-			</li>
-			<li>
-				surveyEnabled: {{ game?.surveyEnabled }}
-			</li>
-			<li>
-				players: {{ game?.players.length }}
-			</li>
-			<li>
-				events: {{ game?.events.length }}
-			</li>
+			<li>shortId: {{ game?.shortId }}</li>
+			<li>animator: {{ game?.animator }}</li>
+			<li>location: {{ game?.location }}</li>
+			<li>typeMoney: {{ game?.typeMoney }}</li>
+			<li>status: {{ game?.status }}</li>
+			<li>devMode: {{ game?.devMode }}</li>
+			<li>surveyEnabled: {{ game?.surveyEnabled }}</li>
+			<li>avatars: {{ game?.players.length }}</li>
+			<li>events: {{ game?.events.length }}</li>
 		</ul>
 		<ul>
-			<li>
-				round: {{ game?.round }}
-			</li>
-			<li>
-				roundMax: {{ game?.roundMax }}
-			</li>
-			<li>
-				roundMinutes: {{ game?.roundMinutes }}
-			</li>
-			<li>
-				autoDeath: {{ game?.autoDeath }}
-			</li>
-			<li>
-				deathPassTimer: {{ game?.deathPassTimer }}
-			</li>
+			<li>round: {{ game?.round }}</li>
+			<li>roundMax: {{ game?.roundMax }}</li>
+			<li>roundMinutes: {{ game?.roundMinutes }}</li>
+			<li>autoDeath: {{ game?.autoDeath }}</li>
+			<li>deathPassTimer: {{ game?.deathPassTimer }}</li>
 		</ul>
 		<ul>
-			<li>
-				priceWeight1: {{ game?.priceWeight1 }}
-			</li>
-			<li>
-				priceWeight2: {{ game?.priceWeight2 }}
-			</li>
-			<li>
-				priceWeight3: {{ game?.priceWeight3 }}
-			</li>
-			<li>
-				priceWeight4: {{ game?.priceWeight4 }}
-			</li>
+			<li>priceWeight1: {{ game?.priceWeight1 }}</li>
+			<li>priceWeight2: {{ game?.priceWeight2 }}</li>
+			<li>priceWeight3: {{ game?.priceWeight3 }}</li>
+			<li>priceWeight4: {{ game?.priceWeight4 }}</li>
 		</ul>
 		<ul>
-			<li>
-				gen letters auto: {{ game?.generateLettersAuto }}
-			</li>
-			<li *ngIf="!game?.generateLettersAuto">
-				lettersProd: {{ game?.generateLettersInDeck }}
-			</li>
-			<li>
-				identicalLetters: {{ game?.generatedIdenticalLetters }}
-			</li>
-			<li>
-				amountCardsForProd: {{ game?.amountCardsForProd }}
-			</li>
-			<li>
-				distribInitCards: {{ game?.distribInitCards }}
-			</li>
+			<li>gen letters auto: {{ game?.generateLettersAuto }}</li>
+			<li *ngIf="!game?.generateLettersAuto">lettersProd: {{ game?.generateLettersInDeck }}</li>
+			<li>identicalLetters: {{ game?.generatedIdenticalLetters }}</li>
+			<li>amountCardsForProd: {{ game?.amountCardsForProd }}</li>
+			<li>distribInitCards: {{ game?.distribInitCards }}</li>
 		</ul>
 		<ul>
-			<li>
-				tauxCroissance: {{ game?.tauxCroissance }}
-			</li>
-			<li>
-				startAmountCoins: {{ game?.startAmountCoins }}
-			</li>
-			<li>
-				inequalityStart: {{ game?.inequalityStart }}
-			</li>
-			<li>
-				pctPoor: {{ game?.pctPoor }}
-			</li>
-			<li>
-				pctRich: {{ game?.pctRich }}
-			</li>
+			<li>tauxCroissance: {{ game?.tauxCroissance }}</li>
+			<li>startAmountCoins: {{ game?.startAmountCoins }}</li>
+			<li>inequalityStart: {{ game?.inequalityStart }}</li>
+			<li>pctPoor: {{ game?.pctPoor }}</li>
+			<li>pctRich: {{ game?.pctRich }}</li>
 		</ul>
 		<ul>
-			<li>
-				currentMassMonetary: {{ game?.currentMassMonetary }}
-			</li>
-			<li>
-				currentDU: {{ game?.currentDU }}
-			</li>
+			<li>currentMassMonetary: {{ game?.currentMassMonetary }}</li>
+			<li>currentDU: {{ game?.currentDU }}</li>
 		</ul>
 		<ul>
-			<li>
-				manualBank: {{ game?.manualBank }}
-			</li>
-			<li>
-				credits: {{ game?.credits.length }}
-			</li>
-			<li>
-				bankInterestEarned: {{ game?.bankInterestEarned }}
-			</li>
-			<li>
-				bankGoodsEarned: {{ game?.bankGoodsEarned }}
-			</li>
-			<li>
-				bankMoneyLost: {{ game?.bankMoneyLost }}
-			</li>
-			<li>
-				defaultCreditAmount: {{ game?.defaultCreditAmount }}
-			</li>
-			<li>
-				defaultInterestAmount: {{ game?.defaultInterestAmount }}
-			</li>
+			<li>manualBank: {{ game?.manualBank }}</li>
+			<li>credits: {{ game?.credits.length }}</li>
+			<li>bankInterestEarned: {{ game?.bankInterestEarned }}</li>
+			<li>bankGoodsEarned: {{ game?.bankGoodsEarned }}</li>
+			<li>bankMoneyLost: {{ game?.bankMoneyLost }}</li>
+			<li>defaultCreditAmount: {{ game?.defaultCreditAmount }}</li>
+			<li>defaultInterestAmount: {{ game?.defaultInterestAmount }}</li>
 		</ul>
 		<ul>
-			<li>
-				timerCredit: {{ game?.timerCredit }}
-			</li>
-			<li>
-				timerPrison: {{ game?.timerPrison }}
-			</li>
-			<li>
-				seizureType: {{ game?.seizureType }}
-			</li>
-			<li>
-				seizureCosts: {{ game?.seizureCosts }}
-			</li>
-			<li>
-				seizureDecote: {{ game?.seizureDecote }}
-			</li>
+			<li>timerCredit: {{ game?.timerCredit }}</li>
+			<li>timerPrison: {{ game?.timerPrison }}</li>
+			<li>seizureType: {{ game?.seizureType }}</li>
+			<li>seizureCosts: {{ game?.seizureCosts }}</li>
+			<li>seizureDecote: {{ game?.seizureDecote }}</li>
 		</ul>
 		<ul>
-			<li>
-				modified: {{ game?.modified }}
-			</li>
-			<li>
-				created: {{ game?.created }}
-			</li>
+			<li>modified: {{ game?.modified }}</li>
+			<li>created: {{ game?.created }}</li>
 		</ul>
 	</div>
 	<h2 class="mt-1">Actions</h2>
 	<div class="d-flex flex-row">
 		<button class="m-1" mat-raised-button color="accent" (click)="refresh()">🔄️</button>
-		<button class="m-1" mat-raised-button color="accent" (click)="refreshForceAllPlayers()">Send refresh to all clients 🔄️👥</button>
-		<button class="m-1" mat-raised-button color="accent" [disabled]="!(game?.status == C.OPEN || game?.status == C.START_GAME)"
-		        (click)="nextColorForDuplicateColorHair()">Resolve duplicate
-			hair color
+		<button class="m-1" mat-raised-button color="accent" (click)="refreshForceAllPlayers()">
+			Send refresh to all clients 🔄️👥
+		</button>
+		<button
+			class="m-1"
+			mat-raised-button
+			color="accent"
+			[disabled]="!(game?.status == C.OPEN || game?.status == C.START_GAME)"
+			(click)="nextColorForDuplicateColorHair()">
+			Resolve duplicate hair color
 		</button>
 	</div>
 	<h2 class="mt-5">Decks</h2>
@@ -169,9 +85,16 @@
 			<h3>niveau 1</h3>
 			<div class="d-flex flex-wrap">
 				<div *ngFor="let card of deck1">
-					<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-					          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-					          [amountCardsForProd]="100" [flippable]="false"></app-card>
+					<app-card
+						*ngIf="card.displayed"
+						[card]="card"
+						[typeMoney]="''"
+						[height]="'60px'"
+						[width]="'35px'"
+						[priceSize]="'5px'"
+						[letterSize]="'15px'"
+						[amountCardsForProd]="100"
+						[flippable]="false"></app-card>
 				</div>
 			</div>
 		</div>
@@ -179,9 +102,16 @@
 			<h3>niveau 2</h3>
 			<div class="d-flex flex-wrap">
 				<div *ngFor="let card of deck2">
-					<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-					          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-					          [amountCardsForProd]="100" [flippable]="false"></app-card>
+					<app-card
+						*ngIf="card.displayed"
+						[card]="card"
+						[typeMoney]="''"
+						[height]="'60px'"
+						[width]="'35px'"
+						[priceSize]="'5px'"
+						[letterSize]="'15px'"
+						[amountCardsForProd]="100"
+						[flippable]="false"></app-card>
 				</div>
 			</div>
 		</div>
@@ -189,9 +119,16 @@
 			<h3>niveau 3</h3>
 			<div class="d-flex flex-wrap">
 				<div *ngFor="let card of deck3">
-					<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-					          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-					          [amountCardsForProd]="100" [flippable]="false"></app-card>
+					<app-card
+						*ngIf="card.displayed"
+						[card]="card"
+						[typeMoney]="''"
+						[height]="'60px'"
+						[width]="'35px'"
+						[priceSize]="'5px'"
+						[letterSize]="'15px'"
+						[amountCardsForProd]="100"
+						[flippable]="false"></app-card>
 				</div>
 			</div>
 		</div>
@@ -199,9 +136,16 @@
 			<h3>niveau 4</h3>
 			<div class="d-flex flex-wrap">
 				<div *ngFor="let card of deck4">
-					<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-					          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-					          [amountCardsForProd]="100" [flippable]="false"></app-card>
+					<app-card
+						*ngIf="card.displayed"
+						[card]="card"
+						[typeMoney]="''"
+						[height]="'60px'"
+						[width]="'35px'"
+						[priceSize]="'5px'"
+						[letterSize]="'15px'"
+						[amountCardsForProd]="100"
+						[flippable]="false"></app-card>
 				</div>
 			</div>
 		</div>
@@ -209,24 +153,29 @@
 	<h2 class="mt-5">Players alive</h2>
 	<div class="d-flex flex-row flex-wrap">
 		<div *ngFor="let player of getAlivePlayers()" class="">
-			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
+			<div
+				class="d-flex flex-column player-board m-2"
+				[ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
 				<button mat-button class="relod" (click)="forceRefreshPlayer(player)">🔄️ send refresh</button>
 				<div class="header-board d-flex flex-row p-2">
-					<a href="{{getUserUrl(player._id)}}" target="_blank" style="text-decoration: none; color: inherit;">
+					<a
+						href="{{ getUserUrl(player._id) }}"
+						target="_blank"
+						style="text-decoration: none; color: inherit">
 						<div class="d-flex flex-row">
 							<div class="user">
-								<div class="player-frame"
-								     [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
-								     [ngStyle]="{'border-color':'#'+player.hairColor}"
-								     [innerHTML]="getSanitizedSvgFromString(player.image)">
-								</div>
+								<div
+									class="player-frame"
+									[ngClass]="game && game.status === 'open' ? 'player-svg' : 'player-svgSmall'"
+									[ngStyle]="{ 'border-color': '#' + player.hairColor }"
+									[innerHTML]="getSanitizedSvgFromString(player.image)"></div>
 							</div>
 							<div class="d-flex flex-column align-items-center flex-grow-1">
-								{{ player.reincarnateFromId ? "🚼" : "" }}
+								{{ player.reincarnateFromId ? '🚼' : '' }}
 								<div class="fs-6 shadowed">
 									{{ player.name }}
 								</div>
-								<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
+								<div class="">Solde: {{ player.coins | number: '1.2-2' }}</div>
 							</div>
 						</div>
 					</a>
@@ -234,9 +183,16 @@
 				<div class="overflow-auto">
 					<div class="d-flex flex-row flex-wrap">
 						<div *ngFor="let card of player.cards">
-							<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-							          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-							          [amountCardsForProd]="100" [flippable]="false"></app-card>
+							<app-card
+								*ngIf="card.displayed"
+								[card]="card"
+								[typeMoney]="''"
+								[height]="'60px'"
+								[width]="'35px'"
+								[priceSize]="'5px'"
+								[letterSize]="'15px'"
+								[amountCardsForProd]="100"
+								[flippable]="false"></app-card>
 						</div>
 					</div>
 				</div>
@@ -246,31 +202,46 @@
 	<h2 class="mt-5">Players dead (as reminder of their cards and money) (the cards were back in decks)</h2>
 	<div class="d-flex flex-row flex-wrap">
 		<div *ngFor="let player of getDeadPlayers()" class="">
-			<div class="d-flex flex-column player-board m-2" [ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
-				<div [ngClass]="player.status==='dead'?'dead':'alive'"></div>
+			<div
+				class="d-flex flex-column player-board m-2"
+				[ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)">
+				<div [ngClass]="player.status === 'dead' ? 'dead' : 'alive'"></div>
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">
-						<div class="player-frame"
-						     [ngClass]="game && game.status==='open'?'player-svg':'player-svgSmall'"
-						     [ngStyle]="{'border-color':'#'+player.hairColor}"
-						     [innerHTML]="getSanitizedSvgFromString(player.image)">
-						</div>
-						<div style="font-size: 3rem; z-index: 10; position: absolute;" *ngIf="player.status==='dead'">
+						<div
+							class="player-frame"
+							[ngClass]="game && game.status === 'open' ? 'player-svg' : 'player-svgSmall'"
+							[ngStyle]="{ 'border-color': '#' + player.hairColor }"
+							[innerHTML]="getSanitizedSvgFromString(player.image)"></div>
+						<div style="font-size: 3rem; z-index: 10; position: absolute" *ngIf="player.status === 'dead'">
 							🪦
 						</div>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
-						<div class="fs-6 shadowed" style="z-index: 10"><a href="{{getUserUrl(player._id)}}" target="_blank"
-						                                                           style="text-decoration: none; color: inherit;">{{ player.name }}</a></div>
-						<div class="">Solde: {{ player.coins| number : '1.2-2' }}</div>
+						<div class="fs-6 shadowed" style="z-index: 10">
+							<a
+								href="{{ getUserUrl(player._id) }}"
+								target="_blank"
+								style="text-decoration: none; color: inherit">
+								{{ player.name }}
+							</a>
+						</div>
+						<div class="">Solde: {{ player.coins | number: '1.2-2' }}</div>
 					</div>
 				</div>
 				<div class="">
 					<div class="d-flex flex-row flex-wrap">
 						<div *ngFor="let card of player.cards">
-							<app-card *ngIf="card.displayed" [card]="card" [typeMoney]="''" [idOwner]="" [idGame]=""
-							          [height]="'60px'" [width]="'35px'" [priceSize]="'5px'" [letterSize]="'15px'"
-							          [amountCardsForProd]="100" [flippable]="false"></app-card>
+							<app-card
+								*ngIf="card.displayed"
+								[card]="card"
+								[typeMoney]="''"
+								[height]="'60px'"
+								[width]="'35px'"
+								[priceSize]="'5px'"
+								[letterSize]="'15px'"
+								[amountCardsForProd]="100"
+								[flippable]="false"></app-card>
 						</div>
 					</div>
 				</div>

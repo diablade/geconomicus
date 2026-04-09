@@ -1,32 +1,32 @@
 <div
 	class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto"
-	[ngStyle]="getBackgroundStyle(avatar.boardConf, avatar.boardColor)">
+	[ngStyle]="getBackgroundStyle((avatar$ | async)?.boardConf, (avatar$ | async)?.boardColor)">
 	<div class="m-4 shadowed text-center fs-1 glow" (click)="refresh()">
 		{{ 'AVATAR.LOBBY' | translate }}
 	</div>
 	<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
 		<div class="shadowed text-center fs-6" (click)="refresh()">
-			{{ session.name }}
+			{{ (session$ | async)?.name }}
 		</div>
 		-
 		<div class="shadowed text-center fs-6" (click)="refresh()">
-			{{ 'AVATAR.ANIMATOR' | translate: { name: session.animator } }}
+			{{ 'AVATAR.ANIMATOR' | translate: { name: (session$ | async)?.animator } }}
 		</div>
 	</div>
 	<div class="mt-4 d-flex flex-row flex-wrap gap-4 justify-content-center">
 		<div class="d-flex flex-column align-items-center avatar-item mousePointer" (click)="goToAvatarSettings()">
-			<avatar [avatar]="avatar" [width]="'150px'" [height]="'150px'"></avatar>
+			<avatar [avatar]="avatar$ | async" [width]="'150px'" [height]="'150px'"></avatar>
 			<div class="m-4 d-flex flex-row text-center">
 				<div class="shadowed fs-3" (click)="refresh()">
-					{{ avatar.name }}
+					{{ (avatar$ | async)?.name }}
 				</div>
 				<fa-icon [icon]="faPencil" class="ms-3 fs-4"></fa-icon>
 			</div>
 		</div>
 		<div class="d-flex flex-row gap-1">
-			<div class="d-flex flex-column align-items-center" *ngFor="let game of session.gamesRules">
+			<div class="d-flex flex-column align-items-center" *ngFor="let game of (session$ | async)?.gamesRules">
 				<coin
-					(click)="logGameStatus(game)"
+					(click)="coinClick()"
 					[coinImage]="'./assets/images/' + game.typeMoney + '.png'"
 					[label]="(game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
 				<button
@@ -35,7 +35,7 @@
 					class="m-2 box-shadowed"
 					mat-raised-button
 					color="primary"
-					(click)="joinGame(game)">
+					(click)="joinGame(game.gameStateId)">
 					{{ 'AVATAR.PLAY' | translate }}
 					<fa-icon [icon]="faRightToBracket"></fa-icon>
 				</button>

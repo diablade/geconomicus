@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlayerSettingsComponent } from './player-settings.component';
+import { AvatarSettingsComponent } from './avatar-settings.component';
 
 describe('PlayerSettingsComponent', () => {
-  let component: PlayerSettingsComponent;
-  let fixture: ComponentFixture<PlayerSettingsComponent>;
+  let component: AvatarSettingsComponent;
+  let fixture: ComponentFixture<AvatarSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlayerSettingsComponent ]
+      declarations: [ AvatarSettingsComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PlayerSettingsComponent);
+    fixture = TestBed.createComponent(AvatarSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

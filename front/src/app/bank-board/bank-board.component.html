@@ -1,4 +1,4 @@
-<div class="p-3 bank" *ngIf="game.typeMoney === DEBT">
+<div class="p-3 bank" *ngIf="gameState.typeMoney === DEBT">
 	<h1 class="d-flex justify-content-center">
 		<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
 		<div class="m-2 fs-4 shadowed geconomicusFont">{{ 'BANK.TITLE' | translate }}</div>
@@ -11,7 +11,7 @@
 			<div>
 				{{ 'BANK.MASS_MONEY' | translate }} :
 				<mat-chip>
-					{{ game.currentMassMonetary }}
+					{{ gameState.currentMassMonetary }}
 				</mat-chip>
 			</div>
 			<div>
@@ -30,13 +30,13 @@
 			<div>
 				{{ 'BANK.INTEREST_GAIN' | translate }} :
 				<mat-chip>
-					{{ game.bankInterestEarned }}
+					{{ gameState.bankInterestEarned }}
 				</mat-chip>
 			</div>
 			<div>
 				{{ 'BANK.RESSOURCES_GAIN' | translate }} :
 				<mat-chip>
-					{{ game.bankGoodsEarned }}
+					{{ gameState.bankGoodsEarned }}
 				</mat-chip>
 			</div>
 		</div>
@@ -50,11 +50,13 @@
 			<div class="prison">
 				<div *ngFor="let prisoner of prisoners">
 					<div class="player m-2 d-flex flex-column justify-content-center">
-						<div class="breakfree" (click)="breakFree(prisoner._id)" *ngIf="iWantToBreakFree">🆓</div>
-						<div
-							class="player-frame player-svg"
-							[ngStyle]="{ 'border-color': '#' + prisoner.hairColor }"
-							[innerHTML]="getSanitizedSvgFromString(prisoner.image)"></div>
+						<div class="breakfree" (click)="breakFree(prisoner.idx)" *ngIf="iWantToBreakFree">🆓</div>
+						<div class="player-frame player-svg">
+							<avatar
+								[avatar]="getAvatar(prisoner.avatarIdx)"
+								[width]="'150px'"
+								[height]="'150px'"></avatar>
+						</div>
 						<div class="shadowed">{{ prisoner.name }}</div>
 						<div
 							class="progress m-2"
@@ -76,14 +78,14 @@
 		<h2 class="fs-4 shadowed">{{ 'BANK.SUB_TITLE_CREDITS' | translate }}</h2>
 		<app-notice-btn
 			class="ms-2"
-			[amountCardsForProd]="game.amountCardsForProd"
-			[timerCredit]="game.timerCredit"
+			[amountCardsForProd]="rules.amountCardsForProd"
+			[timerCredit]="rules.timerCredit"
 			[stroked]="true"></app-notice-btn>
 		<button
 			class="ms-2"
 			mat-raised-button
 			color="accent"
-			[disabled]="game.status === FINISHED"
+			[disabled]="gameState.status === FINISHED"
 			(click)="showContract()">
 			{{ 'BANK.GIVE_CREDIT' | translate }}
 			<fa-icon [icon]="faSackDollar"></fa-icon>
@@ -95,7 +97,7 @@
 			class="ms-2"
 			mat-raised-button
 			color="accent"
-			[disabled]="game.status === FINISHED"
+			[disabled]="gameState.status === FINISHED"
 			(click)="creditForAll()">
 			{{ 'BANK.CREDIT_FOR_ALL' | translate }}
 			<fa-icon [icon]="faSackDollar"></fa-icon>
@@ -104,30 +106,26 @@
 		</button>
 	</div>
 	<h2 class="fs-4 shadowed">{{ 'CREDIT.RUNNING_CREDIT' | translate }}</h2>
-	<div class="d-inline-flex" *ngFor="let credit of game.credits">
+	<div class="d-inline-flex" *ngFor="let credit of gameState.credits">
 		<ng-container *ngIf="credit.status != CREDIT_DONE">
 			<app-credit
-				[interestMinutes]="game.timerCredit"
+				[interestMinutes]="rules.timerCredit"
 				[credit]="credit"
 				[bankOption]="true"
-				[contractor]="getPlayerName(credit.idPlayer)"
-				[contractorColor]="getContractorColor(credit.idPlayer)"
-				[contractorSvg]="getContractorSvg(credit.idPlayer)"
+				[contractor]="getAvatar(credit.playerStateIdx)"
 				(actionBtn)="actionBtn($event, credit)"></app-credit>
 		</ng-container>
 	</div>
 	<h2 class="fs-4 shadowed">{{ 'CREDIT.CREDIT_DONE' | translate }}</h2>
-	<div class="d-inline-flex" *ngFor="let credit of game.credits">
+	<div class="d-inline-flex" *ngFor="let credit of gameState.credits">
 		<ng-container *ngIf="credit.status == CREDIT_DONE">
 			<app-credit
-				[interestMinutes]="game.timerCredit"
+				[interestMinutes]="rules.timerCredit"
 				[credit]="credit"
 				[bankOption]="true"
-				[contractor]="getPlayerName(credit.idPlayer)"
-				[contractorColor]="getContractorColor(credit.idPlayer)"
-				[contractorSvg]="getContractorSvg(credit.idPlayer)"
+				[contractor]="getAvatar(credit.playerStateIdx)"
 				(actionBtn)="actionBtn($event, credit)"></app-credit>
 		</ng-container>
 	</div>
 </div>
-<div *ngIf="game.typeMoney === JUNE">{{ 'BANK.NO_BANK_FREE_MONEY' | translate }}</div>
+<div *ngIf="gameState.typeMoney === JUNE">{{ 'BANK.NO_BANK_FREE_MONEY' | translate }}</div>

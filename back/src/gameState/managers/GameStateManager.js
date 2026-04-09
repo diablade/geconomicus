@@ -6,7 +6,7 @@ import log from '#config/log';
  *
  * Singleton that holds all live game payloads in memory.
  * Each entry is { state, rules }:
- *   - state: the mutable game state (playersLifes, decks, credits, etc.)
+ *   - state: the mutable game state (playersStates, decks, credits, etc.)
  *   - rules: the immutable rules for the game (used for calculations, never persisted here)
  *
  * The periodic DB save (every 60s) persists state only — rules come from the session.

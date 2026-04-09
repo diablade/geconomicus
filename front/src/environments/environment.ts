@@ -29,6 +29,11 @@ export const environment = {
 		GET: 'game-state/',
 		CREATE: 'game-state/create/',
 		RESET: 'game-state/reset/',
+		BUY_WITH_CODE: 'game-state/buy-with-code/',
+	},
+	PLAYER_STATE: {
+		GET: 'player-state/',
+		GET_PLAYER_CURRENT_STATE_IDX: 'player-state/player-state-idx/',
 	},
 
 	//LEGACY

@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, Observable } from 'rxjs';
-import { Avatar } from '../../models/avatar';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ERROR, ERROR_RELOAD, ErrorService, REDIRECT_HOME } from '../error.service';
+import { ERROR, ERROR_RELOAD, ErrorService} from '../error.service';
+import { GameState } from '../../models/gameState';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class GameStateService {
+    gameStateSubject = new BehaviorSubject<GameState>(new GameState());
+    gameState$ = this.gameStateSubject.asObservable();
+
 	constructor(
 		public http: HttpClient,
 		private errorService: ErrorService

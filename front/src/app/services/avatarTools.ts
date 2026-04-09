@@ -54,9 +54,9 @@ export function createSvg(avatar: Avatar): string {
 	return createAvatar(adventurer, options).toString();
 }
 
-export function groupeDuplicatedHairColor(players: Avatar[]) {
+export function groupeDuplicatedHairColor(avatars: Avatar[]) {
 	// check player with same hair color
-	const grouped = Object.values(players.reduce((acc: any, player: Avatar) => {
+	const grouped = Object.values(avatars.reduce((acc: any, player: Avatar) => {
 		const color = player.hairColor;
 		acc[color] = acc[color] || [];
 		acc[color].push(player);
@@ -68,9 +68,9 @@ export function groupeDuplicatedHairColor(players: Avatar[]) {
 	return groupedOnly;
 }
 
-export function fixDuplicateHairColors(players: Avatar[]) {
-	const colorsUsed = new Set(players.map((player: Avatar) => player.hairColor));
-	const grouped = groupeDuplicatedHairColor(players);
+export function fixDuplicateHairColors(avatars: Avatar[]) {
+	const colorsUsed = new Set(avatars.map((player: Avatar) => player.hairColor));
+	const grouped = groupeDuplicatedHairColor(avatars);
 	//then change one of those duplicate
 	let playersWithChangedColor: Avatar[] = [];
 	grouped.forEach((group: any) => {
@@ -88,7 +88,7 @@ export function fixDuplicateHairColors(players: Avatar[]) {
 	return playersWithChangedColor;
 }
 
-export function getBackgroundStyle(boardConf: string, boardColor: string | undefined): {} {
+export function getBackgroundStyle(boardConf: string = "", boardColor: string = "#8e6beeab"): {} {
 	switch (boardConf) {
 		case "bank":
 			return {"background-color": "#ffd89b"};

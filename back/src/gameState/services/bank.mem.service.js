@@ -13,7 +13,7 @@ const fiveSeconds = 5 * 1000;
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const _findPlayer = (state, playerLifeIdx) => {
-    const player = state.playersLifes.find(p => p.idx === playerLifeIdx);
+    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
     if (!player) throw new Error(`Player idx ${playerLifeIdx} not found`);
     return player;
 };

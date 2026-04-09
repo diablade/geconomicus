@@ -1,6 +1,6 @@
-<div class="settings w-100 h-100 p-2" [ngStyle]="getBackgroundStyle(avatar.boardConf, avatar.boardColor)">
+<div class="settings w-100 h-100 p-2" [ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)">
 	<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
-	<div [ngStyle]="{ 'border-color': hairColor }" class="box-shadowed svgContainer" #svgContainer></div>
+	<avatar [avatar]="avatar!" [width]="'200px'" [height]="'200px'" class="mx-auto"></avatar>
 	<div class="text-center mt-2">
 		<mat-form-field appearance="fill" *ngIf="avatar">
 			<mat-label>{{ 'AVATAR.NAME' | translate }}</mat-label>
@@ -240,7 +240,6 @@
 								[palette]="boardPalette"
 								ngx-colors-trigger
 								[format]="'string'"
-								(change)="changeBoardColor($event)"
 								[(ngModel)]="avatar.boardColor"></ngx-colors>
 						</mat-radio-button>
 					</mat-radio-group>

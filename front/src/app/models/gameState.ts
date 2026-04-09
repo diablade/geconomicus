@@ -13,32 +13,33 @@ export class Credit {
 	idx: number = 0;
 	amount: number = 0;
 	interest: number = 0;
-	playerLifeId: string = '';
+	playerStateIdx: number = 0;
 	status: string = '';
 	extended: number = 0;
+	progress: number = 0;
 	createDate: Date = new Date();
 	startDate: Date = new Date();
 	endDate: Date = new Date();
 }
 
-export class PlayerLife {
+export class PlayerState {
 	idx: number = 0;
 	name: string = '';
-	avatarId: string = '';
-	idxLife: number = 0;
+	avatarIdx: number = 0;
 	status: string = '';
 	coins: number = 0;
 	cards: Card[] = [];
+	progressPrison: number = 0;
 }
 
 export class GameState {
 	typeMoney: string = '';
 	sessionId: string = '';
-	ruleId: string = '';
+	ruleIdx: number = 0;
 	status: string = '';
 	decks: Card[][] = [];
-	playerLifeIndexSeq: number = 0;
-	playersLifes: PlayerLife[] = [];
+	playerStateIndexSeq: number = 0;
+	playersStates: PlayerState[] = [];
 	currentMassMonetary: number = 0;
 
 	//state june

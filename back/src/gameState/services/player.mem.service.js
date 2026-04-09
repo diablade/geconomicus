@@ -9,7 +9,7 @@ import bankTimerManager from '../bank/BankTimerManager.js';
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const _findPlayer = (state, playerLifeIdx) => {
-    const player = state.playersLifes.find(p => p.idx === playerLifeIdx);
+    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
     if (!player) throw new Error(`Player idx ${playerLifeIdx} not found`);
     return player;
 };
@@ -80,7 +80,7 @@ const killPlayer = async (gameStateId, playerLifeIdx) => {
 };
 
 /**
- * Execute a trade transaction between two players.
+ * Execute a trade transaction between two avatars.
  * Moves coinsAmount from buyer to seller and transfers the card from seller to buyer.
  * @param {string} gameStateId
  * @param {number} buyerLifeIdx

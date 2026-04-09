@@ -15,7 +15,7 @@ export const defaultPriceWeight4ML = 12;
 
 //***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 export async function generateDU(game) {
-    const nbPlayer = game.players.filter(p => p.status === ALIVE).length;
+    const nbPlayer = game.avatars.filter(p => p.status === ALIVE).length;
     const moyenne = game.currentMassMonetary / nbPlayer;
     const du = moyenne * game.tauxCroissance / 100;
     const duRounded = Number(du.toFixed(2));

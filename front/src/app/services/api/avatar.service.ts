@@ -1,59 +1,203 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {catchError, Observable} from "rxjs";
-import {Avatar} from "../../models/avatar";
-import {environment} from "../../../environments/environment";
-import {ERROR_RELOAD, ErrorService, REDIRECT_HOME} from "../error.service";
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { Avatar } from '../../models/avatar';
+import { Session } from '../../models/session';
+import { environment } from '../../../environments/environment';
+import { ERROR_RELOAD, ErrorService, REDIRECT_HOME } from '../error.service';
+import { WebSocketService } from '../web-socket.service';
+import { IO } from '@geco/shared';
 
 @Injectable({
-	providedIn: 'root'
+	providedIn: 'root',
 })
 export class AvatarService {
-	constructor(public http: HttpClient, private errorService: ErrorService) {
+	private avatarSubject = new BehaviorSubject<Avatar|null>(null);
+	avatar$ = this.avatarSubject.asObservable();
+	private sessionSubject = new BehaviorSubject<Session | null>(null);
+	session$ = this.sessionSubject.asObservable();
+	private socket: any;
+	private currentSessionId: string | undefined;
+	private currentAvatarIdx: number | undefined;
+
+	setAvatar(avatar: Avatar) {
+		this.avatarSubject.next(avatar);
 	}
 
-	getAvatar(sessionId: string, avatarIdx: number, fetchSession: boolean = false): Observable<any> {
-		return this.http.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.PLAYER_NOT_FOUND"))
-			);
+	setSession(session: Session) {
+		this.sessionSubject.next(session);
 	}
 
-	join(sessionId: string, name: string): Observable<Avatar> {
-		return this.http.post<any>(environment.API_HOST + environment.AVATAR.JOIN, {
-			name,
-			sessionId
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, REDIRECT_HOME, 'ERROR.CREATE'))
-			);
+	constructor(
+		public http: HttpClient,
+		private errorService: ErrorService,
+		private wsService: WebSocketService
+	) {}
+
+	loadAvatar(sessionId: string, avatarIdx: number, fetchSession: boolean = false): Observable<any> {
+		return new Observable((observer: any) => {
+			this.http
+				.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
+				.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
+				.subscribe((data) => {
+					if (fetchSession && data.avatar) {
+						this.avatarSubject.next(data.avatar);
+						if (data.session) {
+							this.sessionSubject.next(data.session);
+						}
+					} else {
+						this.avatarSubject.next(data);
+					}
+					observer.next({ success: true, data: fetchSession ? data.avatar : data });
+					observer.complete();
+				});
+			if (sessionId !== this.currentSessionId || avatarIdx !== this.currentAvatarIdx) {
+				this.initializeSocket(sessionId, avatarIdx);
+			}
+		});
 	}
 
-	updateAvatar(sessionId: string, avatarIdx: number, updates: Partial<Avatar>): Observable<Avatar> {
-		return this.http.put<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
-			sessionId,
-			avatarIdx,
-			updates
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.UPDATE"))
-			);
+	updateAvatar(
+		sessionId: string,
+		avatarIdx: number,
+		updates: Partial<Avatar>,
+		sendRefresh: boolean = false
+	): Observable<any> {
+		return new Observable((observer: any) => {
+			try {
+				this.http
+					.put<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
+						sessionId,
+						avatarIdx,
+						updates,
+						sendRefresh,
+					})
+					.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.UPDATE')))
+					.subscribe((updatedAvatar) => {
+						this.avatarSubject.next(updatedAvatar);
+						if (sendRefresh) {
+							this.refreshForceAvatar(sessionId, avatarIdx);
+						}
+						observer.next({ success: true, data: updatedAvatar });
+						observer.complete();
+					});
+			} catch (e) {
+				observer.next({ success: false, error: 'parse_error' });
+				observer.complete();
+			}
+		});
 	}
 
-	refreshForceAvatar(sessionId: string, avatarIdx: number): Observable<Avatar> {
-		return this.http.post<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
-			sessionId,
-			avatarIdx
-		})
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.REFRESH"))
-			);
+	getCurrentPlayerStateIdx(sessionId: string, gameStateId: string, avatarIdx: number): Observable<any> {
+		return this.http
+			.get<any>(
+				environment.API_HOST +
+					environment.PLAYER_STATE.GET_PLAYER_CURRENT_STATE_IDX +
+					sessionId +
+					'/' +
+					gameStateId +
+					'/' +
+					avatarIdx
+			)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')));
 	}
 
-	deleteAvatar(sessionId: string, avatarIdx: number): Observable<any> {
-		return this.http.delete<any>(environment.API_HOST + environment.AVATAR.DELETE + '/' + sessionId + '/' + avatarIdx)
-			.pipe(
-				catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.DELETE"))
-			);
+	refreshForceAvatar(sessionId: string, avatarIdx: number): void {
+		this.http
+			.post<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
+				sessionId,
+				avatarIdx,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.REFRESH')))
+			.subscribe(() => {
+				// Refresh is successful, no need to update avatar subject
+				// The actual avatar update will come through WebSocket events
+			});
+	}
+
+	initializeSocket(sessionId: string, avatarIdx: number): void {
+		this.currentSessionId = sessionId;
+		this.currentAvatarIdx = avatarIdx;
+		this.socket = this.wsService.getSocket({
+			publicChannel: sessionId,
+			privateChannel: `${sessionId}:${avatarIdx}`,
+		});
+		this.setupSocketListeners();
+	}
+
+	private setupSocketListeners(): void {
+		if (!this.socket) return;
+
+		// Avatar events
+		this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
+			if (data.idx == this.currentAvatarIdx) {
+				this.avatarSubject.next(data);
+			}
+		});
+
+		// Session events
+		this.socket.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', avatarIdx: this.currentAvatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: data.gamesRules,
+				});
+			}
+		});
+
+		this.socket.on(IO.SESSION.UPDATED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					...data,
+				});
+			}
+		});
+
+		// Game events
+		this.socket.on(IO.GAME.KILLED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((rules: any) => {
+						if (rules.idx == data.idx) {
+							rules.gameStatus = data.gameStatus;
+							rules.gameStateId = '';
+						}
+						return rules;
+					}),
+				});
+			}
+		});
+
+		this.socket.on(IO.GAME.CREATED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', avatarIdx: this.currentAvatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((game: any) => {
+						if (game.idx === data.idx) {
+							game.gameStateId = data.gameStateId;
+							game.typeMoney = data.typeMoney;
+							game.gameStatus = data.gameStatus;
+						}
+						return game;
+					}),
+				});
+			}
+		});
+
+		this.socket.on(IO.GAME.SETUP, async (data: any) => {
+			// change status of gameRules
+		});
+
+		this.socket.on(IO.REFRESH_FORCE, async (data: any) => {
+			window.location.reload();
+		});
 	}
 }

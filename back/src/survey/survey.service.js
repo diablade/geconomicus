@@ -7,7 +7,7 @@ SurveyService.create = async (surveyObject) => {
 	const newSurvey = new SurveyModel({
 		sessionId: surveyObject.sessionId,
 		gameStateId: surveyObject.gameStateId,
-		avatarId: surveyObject.avatarId,
+		avatarIdx: surveyObject.avatarIdx,
 		depressedHappy: surveyObject.depressedHappy,
 		individualCollective: surveyObject.individualCollective,
 		insatisfiedAccomplished: surveyObject.insatisfiedAccomplished,
@@ -23,8 +23,8 @@ SurveyService.create = async (surveyObject) => {
 };
 
 /* Retrieve */
-SurveyService.getBySessionGameStateAvatarId = async (sessionId, gameStateId, avatarId) => {
-	return await SurveyModel.findOne({ sessionId: sessionId, gameStateId: gameStateId, avatarId: avatarId }).exec();
+SurveyService.getBySessionGameStateAvatarId = async (sessionId, gameStateId, avatarIdx) => {
+	return await SurveyModel.findOne({ sessionId: sessionId, gameStateId: gameStateId, avatarIdx: avatarIdx }).exec();
 };
 SurveyService.getByGameStateId = async (gameStateId) => {
 	return await SurveyModel.find({ gameStateId }).exec();

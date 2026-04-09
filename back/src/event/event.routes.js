@@ -7,5 +7,5 @@ const router = express.Router();
 
 router.get('/session/:sessionId', validate(sanitize.getBySessionId, true), event.getBySessionId);
 router.get('/game/:gameStateId', validate(sanitize.getByGameStateId, true), event.getByGameStateId);
-// router.get('/game/:gameStateId/:avatarId', validate(sanitize.getByGameStateIdAndAvatarId), event.getByGameStateIdAndAvatarId);
+// router.get('/game/:gameStateId/:avatarIdx', validate(sanitize.getByGameStateIdAndAvatarId), event.getByGameStateIdAndAvatarId);
 export default router;

@@ -39,7 +39,6 @@ export class MasterAdminComponent implements OnInit {
 	ngOnInit(): void {
 		this.route.params.subscribe(params => {
 			this.idGame = params['idGame'];
-			// this.socket = this.socket = this.wsService.getSocket(this.idGame, this.idGame + "master");
 			this.backService.getGame(this.idGame).subscribe(game => {
 				this.game = game;
 				this.deck1 = this.countOccurrencesAndHideDuplicates(game.decks[0]);

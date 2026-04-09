@@ -18,7 +18,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule, HttpClient} from "@angular/common/h
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {JoinComponent} from './join/join.component';
 import {MatIconModule} from "@angular/material/icon";
-import {PlayerSettingsComponent} from './player-settings/player-settings.component';
+import {AvatarSettingsComponent} from './avatar-settings/avatar-settings.component';
 import {NgxColorsModule} from "ngx-colors";
 import {CardComponent} from './components/card/card.component';
 import {NgOptimizedImage} from "@angular/common";
@@ -100,7 +100,7 @@ LOAD_WASM().subscribe();
 		MasterBoardComponent,
 		HomeComponent,
 		JoinComponent,
-		PlayerSettingsComponent,
+		AvatarSettingsComponent,
 		CardComponent,
 		LoadingComponent,
 		ResultsComponent,

@@ -496,7 +496,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.addEventsToDatasets(this.events);
 				this.getBestPlayers();
 			});
-			// this.socket = this.wsService.getSocket(this.idGame, this.idGame + C.EVENT);
 			this.initChartOptions();
 		});
 

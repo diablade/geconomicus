@@ -56,7 +56,7 @@ describe('SURVEY controller tests', () => {
 			const res = await agent.post('/survey/feedback').send({
 				sessionId,
 				gameStateId: gameStateId1,
-				avatarId: avatarId1,
+				avatarIdx: avatarId1,
 			});
 			expect(res.status).toBe(200);
 			expect(res.body).toBeTruthy();
@@ -68,7 +68,7 @@ describe('SURVEY controller tests', () => {
 				gameStateId1,
 				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
-					avatarId: avatarId1,
+					avatarIdx: avatarId1,
 					depressedHappy: 0,
 				})
 			);
@@ -78,7 +78,7 @@ describe('SURVEY controller tests', () => {
 			const res = await agent.post('/survey/feedback').send({
 				sessionId,
 				gameStateId: gameStateId1,
-				avatarId: avatarId2,
+				avatarIdx: avatarId2,
 				depressedHappy: 1,
 				individualCollective: 1,
 				insatisfiedAccomplished: 1,
@@ -100,7 +100,7 @@ describe('SURVEY controller tests', () => {
 				gameStateId1,
 				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
-					avatarId: avatarId2,
+					avatarIdx: avatarId2,
 					depressedHappy: 1,
 				})
 			);
@@ -110,7 +110,7 @@ describe('SURVEY controller tests', () => {
 			const res = await agent.post('/survey/feedback').send({
 				sessionId,
 				gameStateId: gameStateId2,
-				avatarId: avatarId1,
+				avatarIdx: avatarId1,
 				depressedHappy: 2,
 				individualCollective: 2,
 				insatisfiedAccomplished: 2,
@@ -132,7 +132,7 @@ describe('SURVEY controller tests', () => {
 				gameStateId2,
 				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
-					avatarId: avatarId1,
+					avatarIdx: avatarId1,
 					depressedHappy: 2,
 				})
 			);
@@ -142,7 +142,7 @@ describe('SURVEY controller tests', () => {
 			const res = await agent.post('/survey/feedback').send({
 				sessionId,
 				gameStateId: gameStateId2,
-				avatarId: avatarId2,
+				avatarIdx: avatarId2,
 				depressedHappy: 3,
 				individualCollective: 3,
 				insatisfiedAccomplished: 3,
@@ -164,7 +164,7 @@ describe('SURVEY controller tests', () => {
 				gameStateId2,
 				expect.stringContaining(NEW_FEEDBACK),
 				expect.objectContaining({
-					avatarId: avatarId2,
+					avatarIdx: avatarId2,
 					depressedHappy: 3,
 				})
 			);
@@ -187,7 +187,7 @@ describe('SURVEY controller tests', () => {
 		});
 	});
 	describe('SURVEYS GET BY all IDs', () => {
-		test('should get survey by sessionId, gameStateId and avatarId successfully', async () => {
+		test('should get survey by sessionId, gameStateId and avatarIdx successfully', async () => {
 			const res = await agent.get('/survey/' + sessionId + '/' + gameStateId1 + '/' + avatarId1).send();
 			expect(res.status).toBe(200);
 			expect(res.body).toBeTruthy();

@@ -130,6 +130,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
 			this.dialog.open(InstallAppDialog);
 		}
 	}
+
+    toggleFullscreen() {
+    const doc = window.document;
+    const docEl = doc.documentElement;
+
+    const requestFullScreen = docEl.requestFullscreen ||
+                              (docEl as any).webkitRequestFullscreen ||
+                              (docEl as any).mozRequestFullScreen ||
+                              (docEl as any).msRequestFullscreen;
+
+    const cancelFullScreen = doc.exitFullscreen ||
+                            (doc as any).webkitExitFullscreen ||
+                            (doc as any).mozCancelFullScreen ||
+                            (doc as any).msExitFullscreen;
+
+    if (!doc.fullscreenElement) {
+      requestFullScreen.call(docEl);
+    } else {
+      cancelFullScreen.call(doc);
+    }
+  }
 }
 
 @Component({

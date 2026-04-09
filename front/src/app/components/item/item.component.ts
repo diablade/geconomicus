@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {Card} from "../../models/game";
+import {Card} from "../../models/gameState";
 import {ShortCode} from "../../models/shortCode";
 import {AudioService} from 'src/app/services/audio.service';
 // @ts-ignore
@@ -16,7 +16,6 @@ import {ThemesService} from "../../services/themes.service";
 export class ItemComponent {
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	@Input() card: Card = {
-		_id: "",
 		key: "",
 		color: "",
 		letter: "",
@@ -25,11 +24,11 @@ export class ItemComponent {
 		displayed: true,
 		count: 1,
 	};
-	@Input() idOwner: string | undefined;
-	@Input() idGame: string | undefined;
+	@Input() ownerIdx: number | undefined;
+	@Input() gameStateId: string | undefined;
 	@Input() typeMoney: string | undefined;
 	@Input() suffixShortCode: string | undefined;
-	@Input() currentDU = 1;
+	@Input() currentDU: number | undefined;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
 	@Input() height = this.screenWidth < this.screenHeight ? '18vw' : '18vh';
@@ -72,9 +71,9 @@ export class ItemComponent {
 	}
 
 	getData() {
-		return '{ "c":"' + this.card._id
-			+ '", "o":"' + this.idOwner
-			+ '", "g":"' + this.idGame
+		return '{ "k":"' + this.card.key
+			+ '", "o":"' + this.ownerIdx
+			+ '", "g":"' + this.gameStateId
 			+ '", "p":' + this.card.price
 			+ '}';
 	}

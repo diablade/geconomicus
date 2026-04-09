@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {Card} from "../../models/game";
+import {Card} from "../../models/gameState";
 import {ShortCode} from "../../models/shortCode";
 import {AudioService} from '../../services/audio.service';
 import {animations} from "../../services/animations";
@@ -12,7 +12,6 @@ import {animations} from "../../services/animations";
 })
 export class CardComponent {
 	@Input() card: Card = {
-		_id: "",
 		key: "",
 		count: 1,
 		color: "",
@@ -21,14 +20,14 @@ export class CardComponent {
 		weight: 0,
 		displayed: false,
 	};
-	@Input() idOwner: string | undefined;
-	@Input() idGame: string | undefined;
+	@Input() ownerIdx: number | undefined;
+	@Input() gameStateId: string | undefined;
 	@Input() typeMoney: string | undefined;
+	@Input() amountCardsForProd: number | undefined;
+	@Input() currentDU: number | undefined;
 	@Input() suffixShortCode: string | undefined;
-	@Input() currentDU = 1;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() amountCardsForProd = 4;
 	@Input() width = this.screenWidth < this.screenHeight ? 'calc(28vw)' : 'calc(28vh)';
 	@Input() height = this.screenWidth < this.screenHeight ? 'calc(28vw * 1.5)' : 'calc(28vh * 1.5)';
 	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
@@ -66,9 +65,9 @@ export class CardComponent {
 	}
 
 	getData() {
-		return '{ "c":"' + this.card._id
-			+ '", "o":"' + this.idOwner
-			+ '", "g":"' + this.idGame
+		return '{ "k":"' + this.card.key
+			+ '", "o":"' + this.ownerIdx
+			+ '", "g":"' + this.gameStateId
 			+ '", "p":' + this.card.price
 			+ '}';
 	}

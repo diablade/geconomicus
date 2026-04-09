@@ -73,6 +73,23 @@ export const stateSanitize = {
                              'any.required': 'Session ID is required'
                          }),
     }).required(),
+    getCurrentPlayerStateIdx: Joi.object({
+        sessionId:   Joi.string().custom(isValidObjectId).required()
+                         .messages({
+                             'any.invalid':  'Invalid session ID format',
+                             'any.required': 'Session ID is required'
+                         }),
+        gameStateId: Joi.string().custom(isValidObjectId).required()
+                         .messages({
+                             'any.invalid':  'Invalid game state ID format',
+                             'any.required': 'Game state ID is required'
+                         }),
+        avatarIdx:   Joi.number().integer().min(0).required()
+                         .messages({
+                             'any.invalid':  'Invalid avatar index format',
+                             'any.required': 'Avatar index is required'
+                         }),
+    }).required(),
     whoHaveCard: Joi.object({
         gameStateId: Joi.string().custom(isValidObjectId).required()
                          .messages({
@@ -98,7 +115,7 @@ export const stateSanitize = {
                               'any.invalid':  'Invalid session ID format',
                               'any.required': 'Session ID is required'
                           }),
-        playerLifeId: Joi.string().custom(isValidObjectId).required()
+        playerStateId: Joi.string().custom(isValidObjectId).required()
                           .messages({
                               'any.invalid':  'Invalid player life ID format',
                               'any.required': 'Player life ID is required'

@@ -73,12 +73,12 @@
 					<button
 						class="box-shadowed"
 						[color]="'primary'"
-						[disabled]="session.players.length < 6 && !session.devMode"
+						[disabled]="session.avatars.length < 6 && !session.devMode"
 						mat-raised-button
 						(click)="startSession()">
 						{{
-							session.players.length < 6 && !session.devMode
-								? ('MASTER.WAITING' | translate: { count: 6 - session.players.length })
+							session.avatars.length < 6 && !session.devMode
+								? ('MASTER.WAITING' | translate: { count: 6 - session.avatars.length })
 								: ('MASTER.START' | translate)
 						}}
 						<fa-icon [icon]="faPeopleRoof"></fa-icon>
@@ -193,7 +193,7 @@
 				</div>
 				<div class="p-3 flex-grow-1">
 					<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
-						<div *ngFor="let player of session?.players" class="player d-flex flex-column">
+						<div *ngFor="let player of session.avatars" class="player d-flex flex-column">
 							<div class="d-flex flex-row justify-content-center player-action">
 								<a [href]="createAvatarUrl(player.idx)" target="_blank" class="avatarName shadowed">
 									{{ player.name }}
