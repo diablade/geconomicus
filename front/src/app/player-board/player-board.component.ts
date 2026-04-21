@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
-import {async, map, Subscription, withLatestFrom} from "rxjs";
+import {Component, OnDestroy, OnInit, inject} from '@angular/core';
+import {map, Subscription, withLatestFrom} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PlayerState, GameState, Card, Credit} from "../models/gameState";
 import {MatDialog} from "@angular/material/dialog";
@@ -29,6 +29,7 @@ import {getBackgroundStyle} from "../services/avatarTools";
 import {AvatarService} from "../services/api/avatar.service";
 import {PlayerStateService} from "../services/api/playerState.service";
 import { DeckService } from '../services/api/deck.service';
+import {WebSocketService} from "../services/web-socket.service";
 
 @Component({
 	selector: 'app-player-board',
@@ -37,7 +38,7 @@ import { DeckService } from '../services/api/deck.service';
 	styleUrls: ['./player-board.component.scss']
 })
 export class PlayerBoardComponent implements OnInit, OnDestroy {
-	@ViewChild('svgContainer') svgContainer!: ElementRef;
+
     protected readonly PLAYING = GAME_STATUS.PLAYING;
     protected readonly DEAD = PLAYER_STATUS.DEAD;
     protected readonly JUNE = GAME_TYPE.JUNE;
@@ -68,18 +69,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
     prison$ = inject(PlayerStateService).prison$;
     defaultCredit$ = inject(PlayerStateService).defaultCredit$;
 
-    currentDebts = this.credits$.pipe(
-        map(credits => credits
-            .filter(c => c.status !== CREDIT_STATUS.DONE)
-            .reduce((total, c) => total + c.amount + c.interest, 0)
-        )
-    );
-    receipes = this.cards$.pipe(
-        withLatestFrom(this.rules$),
-        map(([cards, rules]) => getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters))
-    );
-
-	scanV3 = true;
+    scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
@@ -91,6 +81,47 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	shortCode: ShortCode | undefined;
 	isBuying = false;
 	isProducing = false;
+
+    currentDebts = this.credits$.pipe(
+        map(credits => credits
+            .filter(c => c.status !== CREDIT_STATUS.DONE)
+            .reduce((total, c) => total + c.amount + c.interest, 0)
+        )
+    );
+
+    receipes = this.cards$.pipe(
+        withLatestFrom(this.rules$),
+        map(([cards, rules]) => {
+            console.log(cards);
+            return getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters);
+        })
+    );
+
+    legacyCards = this.cards$.pipe(
+        map(cards => {
+            if(this.theme !== 'CARD') {
+                return [];
+            }
+            cards = _.orderBy(cards, ['weight', 'letter']);
+            const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
+            const keyDuplicates: string[] = [];
+            for (const c of cards) {
+                const countKey = `${c.weight}-${c.letter}`;
+                c.count = countByResult[countKey] || 0;
+                const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
+                if (c.count > 1 && existCountKey) {
+                    c.displayed = false;
+                }
+                if (c.count >= 1 && !existCountKey) {
+                    keyDuplicates.push(countKey);
+                    c.displayed = true;
+                }
+            }
+            cards = _.orderBy(cards, ['count'], 'desc');
+            return cards;
+        })
+    );
+
 	prisonTimer = createCountdown({h: 0, m: 0, s: 0}, {
 		listen: ({hh, mm, ss, s, h, m}) => {
 			this.minutesPrison = m;
@@ -111,7 +142,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	            private audioService: AudioService,
 	            private snackbarService: SnackbarService,
 	            private avatarService: AvatarService,
-	            private playerStateService: PlayerStateService) {
+	            private playerStateService: PlayerStateService,
+	            private wsService: WebSocketService) {
+		this.i18nService.loadNamespace('player');
 	}
 
 	updateScreenSize() {
@@ -131,9 +164,11 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.playerStateIdx = params['playerStateIdx'];
 
 			// Initialize socket in service
-			if (this.sessionId && this.gameStateId && this.avatarIdx && this.playerStateIdx) {
-                this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
+			if (this.sessionId && this.gameStateId && this.avatarIdx != undefined && this.playerStateIdx != undefined) {
+                //first get state , prepare sockets
 				this.playerStateService.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
+                // then get avatar and connect to sockets
+                this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
 			}
 		});
 	}
@@ -187,7 +222,11 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	//To prevent memory leak
 	ngOnDestroy(): void {
-		if (this.subscription) this.subscription.unsubscribe();
+        // Quitter les rooms du jeu
+		if (this.gameStateId && this.avatarIdx != undefined && this.playerStateIdx != undefined) {
+            this.playerStateService.leaveRooms();
+		}
+        if (this.subscription) this.subscription.unsubscribe();
 	}
 
 	produceLevelUp($event: any) {
@@ -336,8 +375,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	creditActionBtn($event: string, credit: Credit) {
 		this.gameState$.pipe(
-        withLatestFrom(this.playerState$),
-        map(([gameState, playerState]) => {
+			withLatestFrom(this.playerState$),
+			map(([gameState, playerState]) => {
 				if (gameState.status == GAME_STATUS.PLAYING && playerState.status != PLAYER_STATUS.DEAD) {
 					if ($event == 'settle') {
 						this.settleDebt(credit);
@@ -345,17 +384,12 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 						this.requestingWhenCreditEnds(credit, false);
 					}
 				}
-			}));
+			})
+		).subscribe();
 	}
 
 	tryReincarnate() {
-		// this.backService.isReincarnated(this.gameStateId, this.playerStateIdx).subscribe(data => {
-		// 	if (data?.playerReIncarnated) {
-		// 		this.router.navigate(['ogame', this.gameStateId, 'player', data.playerReIncarnated]);
-		// 	} else {
-		// 		this.resurrection();
-		// 	}
-		// })
+		// TODO: Implement reincarnation flow
 	}
 
 	onCreateShortCode($event: ShortCode) {

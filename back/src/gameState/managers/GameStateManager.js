@@ -27,9 +27,18 @@ class GameStateManager {
      * @param {object} state — plain JS object matching GameStateSchema
      * @param {object} rules — plain JS rules object from the session
      */
-    setGame(gameStateId, state, rules) {
+    store(gameStateId, state, rules) {
         this._games.set(gameStateId, { state, rules });
         log.debug(`[InMemoryGameStateManager] Game ${gameStateId} loaded into memory`);
+    }
+
+    /**
+     * Check if a game is loaded in memory.
+     * @param {string} gameStateId
+     * @returns {boolean}
+     */
+    has(gameStateId) {
+        return this._games.has(gameStateId);
     }
 
     /**
@@ -37,8 +46,9 @@ class GameStateManager {
      * @param {string} gameStateId
      * @returns {{ state: object, rules: object } | null}
      */
-    getGame(gameStateId) {
+    get(gameStateId) {
         return this._games.get(gameStateId) || null;
+
     }
 
     /**
@@ -62,18 +72,10 @@ class GameStateManager {
     }
 
     /**
-     * @param {string} gameStateId
-     * @returns {boolean}
-     */
-    hasGame(gameStateId) {
-        return this._games.has(gameStateId);
-    }
-
-    /**
      * Remove a game from memory (call on end/delete after final DB save).
      * @param {string} gameStateId
      */
-    removeGame(gameStateId) {
+    remove(gameStateId) {
         this._games.delete(gameStateId);
         log.debug(`[InMemoryGameStateManager] Game ${gameStateId} removed from memory`);
     }
@@ -83,9 +85,9 @@ class GameStateManager {
      * @param {string} sessionId
      */
     clearSession(sessionId) {
-        for (const key of this.games.keys()) {
+        for (const key of this._games.keys()) {
             if (key.startsWith(`${sessionId}:`)) {
-                this.games.delete(key);
+                this.remove(key);
             }
         }
     }

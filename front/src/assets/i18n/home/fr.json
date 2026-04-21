@@ -7,7 +7,7 @@
 		"CREATE_SESSION": "Créer une session",
 		"JOIN_SESSION": "Rejoindre une session",
 		"JOIN_VIA_SHORT_ID": "Via le code court",
-		"JOIN_VIA_CAM": "Via la caméra",
+		"JOIN_VIA_QR_CODE": "Via le QR code",
 		"HOW_TO_PLAY": "Comment ça marche ?",
 		"FUND_RAISE": "Une cagnotte pour me soutenir, ",
 		"IN": "en",

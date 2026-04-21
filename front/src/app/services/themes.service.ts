@@ -77,6 +77,10 @@ export class ThemesService {
 		return this._typeTheme$.value!;
 	}
 
+	getThemeName(theme: string): string {
+		return this.themes[theme];
+	}
+
 	getCurrentTheme(): string {
 		return this.currentTheme;
 	}

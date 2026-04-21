@@ -45,12 +45,6 @@ GameStateController.create = async (req, res, next) => {
 				status: savedGameState.status,
 			}
 		);
-        console.log('Game created', {
-			gameStateId: savedGameState._id,
-			ruleIdx,
-			typeMoney: rules.typeMoney,
-			gameStatus: savedGameState.status
-		});
 		socket.emitAckTo(sessionId, IO.GAME.CREATED, {
 			gameStateId: savedGameState._id,
 			idx: ruleIdx,
@@ -68,13 +62,13 @@ GameStateController.create = async (req, res, next) => {
 };
 
 //prepare game stuff like cards coins etc and charge in memory the rules
-GameStateController.setupGame = async (req, res, next) => {
+GameStateController.init = async (req, res, next) => {
 	const body = req.body;
 	try {
-		const game = await GameStateService.setupGame(body.gameStateId);
+		const gameState = await GameStateService.initGame(body.gameStateId);
 		return res.status(200).json({
 			status: 'done',
-			game,
+			gameState,
 		});
 	} catch (err) {
 		log.error('init game error', err);
@@ -107,6 +101,41 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.NOT_FOUND',
+		});
+	}
+};
+
+GameStateController.getPlayerState = async (req, res, next) => {
+	try {
+		const { sessionId, gameStateId, avatarIdx, playerStateIdx } = req.params;
+		const payload = await GameStateService.getPlayerState(sessionId, gameStateId, parseInt(avatarIdx), parseInt(playerStateIdx));
+		if (!payload) {
+			return res.status(404).json({ status: 'ko', message: 'ERROR.PLAYER_NOT_FOUND' });
+		}
+		return res.status(200).json(payload);
+	} catch (err) {
+		log.error('Get player state error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.PLAYER_NOT_FOUND',
+		});
+	}
+};
+
+GameStateController.startRound = async (req, res, next) => {
+	try {
+		const { gameStateId } = req.body;
+		const result = await GameStateService.startRound(gameStateId);
+
+		// Emit socket event to notify clients (timer is started by the service)
+		socket.emitTo(gameStateId, IO.GAME.STARTED, result);
+
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('Start round error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.START_ROUND',
 		});
 	}
 };

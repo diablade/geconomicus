@@ -11,15 +11,7 @@ import {animations} from "../../services/animations";
 	animations
 })
 export class CardComponent {
-	@Input() card: Card = {
-		key: "",
-		count: 1,
-		color: "",
-		letter: "",
-		price: 0,
-		weight: 0,
-		displayed: false,
-	};
+	@Input() card!: Card;
 	@Input() ownerIdx: number | undefined;
 	@Input() gameStateId: string | undefined;
 	@Input() typeMoney: string | undefined;

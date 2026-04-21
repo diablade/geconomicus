@@ -1,5 +1,5 @@
 import log from "#config/log";
-import GameStateService from '../game.state.service.js';
+import GameStateService from '../services/game.state.service.js';
 
 class GameTimerManager {
     constructor() {

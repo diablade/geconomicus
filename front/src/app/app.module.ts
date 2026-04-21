@@ -4,7 +4,6 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {PlayerBoardComponent} from './player-board/player-board.component';
 import {
-	JoinQrDialog,
 	MasterBoardComponent
 } from './master-board/master-board.component';
 import {CreateSessionDialog, HomeComponent, InstallAppDialog} from './home/home.component';
@@ -25,7 +24,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {LoadingComponent} from './loading/loading.component';
+import {LoadingComponent} from './components/loading/loading.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {HttpRequestInterceptor} from "./services/http-request-interceptor.service";
 import {MatSelectModule} from "@angular/material/select";
@@ -108,7 +107,6 @@ LOAD_WASM().subscribe();
 		EventsComponent,
 		CreateSessionDialog,
 		InstallAppDialog,
-		JoinQrDialog,
 		GameInfosDialog,
 		GameOptionsDialogComponent,
 		SessionEditDialogComponent,

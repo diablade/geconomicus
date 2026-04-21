@@ -1,4 +1,4 @@
-<div class="lobby-master sunyBg h-100">
+<div class="lobby-master sunyBg h-100" *ngIf="session$ | async as session">
 	<div class="d-flex flex-column h-100 clouds overflow-auto">
 		<!-- HEADER  -->
 		<div class="d-flex flex-row justify-content-between flex-wrap">
@@ -62,9 +62,9 @@
 				*ngIf="session.status === 'open'"
 				class="content-item d-flex flex-column justify-content-center align-items-center">
 				<div class="inner-item d-flex flex-column">
-					<div class="fs-5">{{ 'ANIMATOR' | translate }}: {{ session.animator }}</div>
-					<div class="fs-5 mt-4">{{ 'LOCATION' | translate }}:{{ session.location | translate }}</div>
-					<div class="fs-5 mt-4">{{ 'MASTER.THEME' | translate }}: {{ session.theme | translate }}</div>
+					<div class="fs-5">👤 {{ 'ANIMATOR' | translate }} : {{ session.animator }}</div>
+					<div class="fs-5 mt-4">📍 {{ 'LOCATION' | translate }} : {{ session.location | translate }}</div>
+					<div class="fs-5 mt-4">🎨 {{ 'MASTER.THEME' | translate }} : {{ session.theme | translate }}</div>
 					<div class="flex-grow-1"></div>
 					<button class="mb-2" [color]="'warn'" mat-stroked-button (click)="editSession()">
 						{{ 'MASTER.EDIT' | translate }}
@@ -98,7 +98,7 @@
 									[forceRotate]="rule.rotate"></coin>
 								<div class="fs-7 text-center">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
-									{{ rule.gameStatus === STARTED ? ('MASTER.GAME_OPEN' | translate) : '' }}
+									{{ rule.gameStatus === INITIALIZED ? ('MASTER.GAME_OPEN' | translate) : '' }}
 									{{ rule.gameStatus === FINISHED ? ('MASTER.GAME_FINISHED' | translate) : '' }}
 								</div>
 								<button
@@ -107,12 +107,12 @@
 									mat-button
 									[color]="session.devMode ? 'warn' : ''"
 									(click)="editRules(rule)">
+									<mat-icon *ngIf="session.devMode">settings</mat-icon>
 									{{
 										session.devMode
 											? ('MASTER.EDIT_RULES' | translate)
 											: ('MASTER.DURATION' | translate: { minutes: rule.roundMinutes })
 									}}
-									<fa-icon *ngIf="session.devMode" [icon]="faCogs"></fa-icon>
 								</button>
 								<button
 									*ngIf="rule.gameStatus === NONE"
@@ -120,14 +120,14 @@
 									mat-raised-button
 									color="primary"
 									(click)="createGame(rule.idx)">
+									<mat-icon>add</mat-icon>
 									{{ 'MASTER.CREATE_GAME' | translate }}
-									<fa-icon [icon]="faRightToBracket"></fa-icon>
 								</button>
 								<button
 									*ngIf="
 										session.devMode &&
 										(rule.gameStatus === CREATED ||
-											rule.gameStatus === STARTED ||
+											rule.gameStatus === INITIALIZED ||
 											rule.gameStatus === PLAYING ||
 											rule.gameStatus === PAUSED)
 									"
@@ -135,30 +135,30 @@
 									mat-raised-button
 									color="warn"
 									(click)="killGame(rule.idx, rule.gameStateId)">
+									<mat-icon class="outlined">delete_forever</mat-icon>
 									{{ 'MASTER.KILL_GAME' | translate }}
-									<fa-icon [icon]="faTrashCan"></fa-icon>
 								</button>
 								<button
 									*ngIf="
 										rule.gameStatus === CREATED ||
-										rule.gameStatus === STARTED ||
+										rule.gameStatus === INITIALIZED ||
 										rule.gameStatus === PLAYING ||
 										rule.gameStatus === PAUSED
 									"
 									class="m-2 box-shadowed"
 									mat-raised-button
 									color="primary"
-									[routerLink]="['/master', rule.gameStateId]">
+									[routerLink]="['/master', sessionId, rule.gameStateId]">
+									<mat-icon>login</mat-icon>
 									{{ 'MASTER.ENTER_GAME' | translate }}
-									<fa-icon [icon]="faRightToBracket"></fa-icon>
 								</button>
 								<button
 									*ngIf="rule.gameStatus === ENDED"
 									class="m-2 box-shadowed"
 									mat-raised-button
 									(click)="showResults()">
+									<mat-icon>analytics</mat-icon>
 									{{ 'MASTER.SHOW_RESULTS' | translate }}
-									<fa-icon [icon]="faEye"></fa-icon>
 								</button>
 							</div>
 						</div>
@@ -185,30 +185,40 @@
 							⚠️
 						</span>
 					</h2>
-					<div class="text-center" [ngClass]="session.status === OPEN ? '' : 'hide'">
-						<mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteUser">
-							{{ 'MASTER.DELETE_USER' | translate }}
-						</mat-slide-toggle>
-					</div>
 				</div>
 				<div class="p-3 flex-grow-1">
 					<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
-						<div *ngFor="let player of session.avatars" class="player d-flex flex-column">
+						<div *ngFor="let avatar of session.avatars" class="player d-flex flex-column">
 							<div class="d-flex flex-row justify-content-center player-action">
-								<a [href]="createAvatarUrl(player.idx)" target="_blank" class="avatarName shadowed">
-									{{ player.name }}
-								</a>
-								<fa-icon
-									class="joinQr"
-									(click)="reJoin(player.idx, player.name)"
-									[icon]="faQrcode"></fa-icon>
-								<fa-icon
-									*ngIf="deleteUser"
-									class="delete"
-									(click)="onDeleteUser(player)"
-									[icon]="faTrashCan"></fa-icon>
+								<div class="avatarName shadowed">
+									{{ avatar.name }}
+								</div>
 							</div>
-							<avatar [avatar]="player" [width]="'120px'" [height]="'120px'"></avatar>
+							<avatar
+								[avatar]="avatar"
+								[width]="'120px'"
+								[height]="'120px'"
+								[matMenuTriggerFor]="aboveMenu"></avatar>
+							<mat-menu #aboveMenu="matMenu" yPosition="above">
+								<button mat-menu-item [routerLink]="['/avatar', sessionId, avatar.idx]">
+									<mat-icon>play_arrow</mat-icon>
+									<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+								</button>
+								<span>
+									<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
+										<mat-icon>link</mat-icon>
+										<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+									</button>
+									<button mat-menu-item (click)="reJoin(avatar.idx, avatar.name)">
+										<mat-icon>qr_code_2</mat-icon>
+										<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+									</button>
+								</span>
+								<button mat-color="warn" mat-menu-item (click)="onDeleteUser(avatar)">
+									<mat-icon [color]="'warn'">person_remove</mat-icon>
+									<span>{{ 'MASTER.DELETE_USER' | translate }}</span>
+								</button>
+							</mat-menu>
 						</div>
 					</div>
 				</div>

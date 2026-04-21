@@ -90,16 +90,9 @@
   z-index: 2;
 }
 
-.btnBuy {
-  position: fixed;
-  bottom: 0;
-  padding: 15px;
-  right: 0;
-  z-index: 2;
-}
-
 .buy {
   height: 50px;
+  width: 50px;
   //background-color: white
   backdrop-filter: blur(15px);
   border: solid gray 2px;

@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { faCircleInfo, faKeyboard, faQrcode } from "@fortawesome/free-solid-svg-icons";
+import { faKeyboard, faQrcode } from "@fortawesome/free-solid-svg-icons";
 
 @Component({
 	selector: 'app-notice-btn',
@@ -8,7 +8,6 @@ import { faCircleInfo, faKeyboard, faQrcode } from "@fortawesome/free-solid-svg-
 	styleUrls: ['./notice-btn.component.scss']
 })
 export class NoticeBtnComponent {
-	protected readonly faInfo = faCircleInfo;
 	@Input() labelBtn = "GAME_NOTICE";
 	@Input() icon = true;
 	@Input() stroked = false;

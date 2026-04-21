@@ -15,10 +15,10 @@ import {LocalStorageService} from "./local-storage/local-storage.service";
 export class WebSocketService {
 	private socket: Socket | undefined;
 	private ioUrl: string = environment.API_HOST;
-	private idGame: string | undefined;
-	private idPlayer: string | undefined;
 	private disconnected = false;
 	private isReConnected = new BehaviorSubject<boolean>(false);
+	private currentQuery: any = null;
+	private eventHandlers: Map<string, Function[]> = new Map();
 
 	constructor(
 		private snackbarService: SnackbarService,
@@ -48,7 +48,8 @@ export class WebSocketService {
 		});
 	}
 
-	private connect(query: any): Socket | undefined {
+	private connect(query: any): void {
+		this.currentQuery = query;
 		this.socket?.disconnect();
 		this.socket?.removeAllListeners();
 
@@ -69,10 +70,15 @@ export class WebSocketService {
 			});
 
 			this.setupConnectionListeners();
-			return this.socket;
+			this.reattachEventHandlers();
 		}
-		this.snackbarService.showError("SOCKET UNDEFINED");
-		return undefined;
+	}
+
+	private reattachEventHandlers(): void {
+		if (!this.socket) return;
+		this.eventHandlers.forEach((handlers, event) => {
+			handlers.forEach(handler => this.socket?.on(event, handler as any));
+		});
 	}
 
 	private setupConnectionListeners(): void {
@@ -103,7 +109,7 @@ export class WebSocketService {
 		});
 		//this.socket.io.on('ping', () => console.log('ping sent'));
 		this.socket.on("connected", (data: any) => {
-			console.log('Connected to the server');
+			console.log('Socket IO acknowledged connection');
 			if (this.disconnected) {
 				this.disconnected = false;
 				this.dialog.closeAll();
@@ -158,23 +164,49 @@ export class WebSocketService {
 		});
 	}
 
-	getSocket(query: any): Socket | undefined {
-		if (this.socket && this.socket.connected) {
+	initializeSocket(query: any): void {
+		// Check if we need to reconnect due to query parameter change
+		const queryChanged = this.currentQuery && (
+			this.currentQuery.publicChannel !== query.publicChannel ||
+			this.currentQuery.privateChannel !== query.privateChannel
+		);
+
+		if (this.socket && this.socket.connected && !queryChanged) {
 			this.disconnected = false;
-			return this.socket;
-		} else {
-			let sock = this.connect({idPlayer: query.privateChannel,  idGame: query.publicChannel});
-			if (sock) {
-				return sock;
-			} else {
-				console.error("WebSocketService: query is wrong", query);
-				throw Error("WebSocketService: query is wrong");
-			}
+			return;
 		}
+
+		// If query changed, disconnect old socket first
+		if (queryChanged) {
+			console.log('Query parameters changed, reconnecting socket');
+			this.socket?.disconnect();
+			this.socket?.removeAllListeners();
+			this.eventHandlers.clear();
+		}
+
+		this.connect({privateChannel: query.privateChannel, publicChannel: query.publicChannel});
 	}
 
-	getReConnectionStatus() {
-		return this.isReConnected.asObservable();
+	on(event: string, handler: (...args: any[]) => void): void {
+		if (!this.eventHandlers.has(event)) {
+			this.eventHandlers.set(event, []);
+		}
+		this.eventHandlers.get(event)!.push(handler);
+		this.socket?.on(event, handler as any);
+	}
+
+	off<T>(event: string, handler?: (data: T) => void): void {
+		if (handler) {
+			const handlers = this.eventHandlers.get(event);
+			if (handlers) {
+				const idx = handlers.indexOf(handler as Function);
+				if (idx > -1) handlers.splice(idx, 1);
+			}
+			this.socket?.off(event, handler as any);
+		} else {
+			this.eventHandlers.delete(event);
+			this.socket?.off(event);
+		}
 	}
 
 	private showDisconnectedDialog() {
@@ -221,6 +253,32 @@ export class WebSocketService {
 	private getLastConnectedTime(): number | null {
 		const val = this.localStorageService.getItem('lastSocketConnected');
 		return val ? parseInt(val, 10) : null;
+	}
+
+    emit(event: string, data?: any, callback?: (response: any) => void): void {
+		if (this.socket) {
+			this.socket.emit(event, data, callback);
+		}
+	}
+
+	getReConnectionStatus() {
+		return this.isReConnected.asObservable();
+	}
+
+	joinRoom(room: string): void {
+		if (this.socket && this.socket.connected) {
+			this.socket.emit('join', room);
+		}
+	}
+
+	leaveRoom(room: string): void {
+		if (this.socket && this.socket.connected) {
+			this.socket.emit('leave', room);
+		}
+	}
+
+	isConnected(): boolean {
+		return !!this.socket?.connected;
 	}
 
 }

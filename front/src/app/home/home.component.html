@@ -41,11 +41,11 @@
 				</button>
 				<mat-menu #menu="matMenu">
 					<button mat-menu-item class="align-items-center" (click)="joinWithCamera()">
-						<fa-icon [icon]="faCamera"></fa-icon>
-						{{ 'HOME.JOIN_VIA_CAM' | translate }}
+						<mat-icon>qr_code_scanner</mat-icon>
+						{{ 'HOME.JOIN_VIA_QR_CODE' | translate }}
 					</button>
 					<button mat-menu-item class="align-items-center" (click)="joinShortId()">
-						<fa-icon [icon]="faKeyboard"></fa-icon>
+						<mat-icon>dialpad</mat-icon>
 						{{ 'HOME.JOIN_VIA_SHORT_ID' | translate }}
 					</button>
 				</mat-menu>

@@ -51,7 +51,7 @@
 			</div>
 			<div class="items">
 				<div class="item" *ngFor="let session of filteredSessions">
-					<div class="d-flex flex-row">
+					<mat-card class="d-flex flex-row p-2">
 						<div class="d-flex flex-column">
 							<div class="d-flex flex-row justify-content-between">
 								<div class="name">• {{ session.name }}</div>
@@ -60,9 +60,10 @@
 								</div>
 							</div>
 							<div class="ms-2">
+								<div>📅 {{ session.createdAt | date: ('DATE_FORMAT.DATETIME' | translate) }}</div>
 								<div>
-									📅 {{ 'HISTORY.CREATED_ON' | translate }}
-									{{ session.createdAt | date: ('DATE_FORMAT.DATETIME' | translate) }}
+									📍
+									<span class="fw-bold">{{ session.location ? session.location : '-' }}</span>
 								</div>
 								<div>
 									👤
@@ -74,14 +75,14 @@
 									{{ 'HISTORY.PLAYERS' | translate }}
 								</div>
 								<div>
+									🎨
+									<span class="fw-bold">{{ getThemeName(session.theme) }}</span>
+								</div>
+								<!-- <div>
 									🎰
 									<span class="fw-bold">{{ session.gamesRulesCount }}</span>
 									{{ 'HISTORY.GAMES' | translate }}
-								</div>
-								<div>
-									📍
-									<span class="fw-bold">{{ session.location ? session.location : '-' }}</span>
-								</div>
+								</div> -->
 							</div>
 						</div>
 						<div class="d-flex flex-column gap-2">
@@ -118,7 +119,7 @@
 								<fa-icon class="delete" [icon]="faTrashCan"></fa-icon>
 							</button>
 						</div>
-					</div>
+					</mat-card>
 				</div>
 			</div>
 			<!-- filtering -->

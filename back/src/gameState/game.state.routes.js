@@ -9,10 +9,12 @@ import {validate} from '../misc/validate.tool.js';
 const router = express.Router();
 
 router.post('/create', validate(stateSanitize.create), gameStateController.create);
-router.post('/setup-game', validate(stateSanitize.setupGame), gameStateController.setupGame);
+router.post('/init', validate(stateSanitize.init), gameStateController.init);
+router.post('/start-round', validate(stateSanitize.startRound), gameStateController.startRound);
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
 router.get('/player-state-idx/:sessionId/:gameStateId/:avatarIdx', validate(stateSanitize.getCurrentPlayerStateIdx, 'params'), gameStateController.getCurrentPlayerStateIdx);
+router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', validate(stateSanitize.getPlayerState, 'params'), gameStateController.getPlayerState);
 
 // router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
 // router.post('/start', validate(stateSanitize.start), gameStateController.start);

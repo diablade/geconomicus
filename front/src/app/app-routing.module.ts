@@ -23,7 +23,7 @@ const routes: Routes = [
 	{path: 'join/:sessionId', component: JoinComponent},
 	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
 	{path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent},
-	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateId', component: PlayerBoardComponent},
+	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent},
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
 	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
 	{path: 'table/:sessionId/:gameStateId', component: MasterAdminComponent},

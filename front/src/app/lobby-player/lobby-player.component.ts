@@ -16,7 +16,7 @@ import { AudioService } from '../services/audio.service';
 export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	protected readonly JUNE = GAME_TYPE.JUNE;
-	protected readonly GAME_STARTED = GAME_STATUS.STARTED;
+	protected readonly GAME_INITIALIZED = GAME_STATUS.INITIALIZED;
 	protected readonly GAME_CREATED = GAME_STATUS.CREATED;
 	protected readonly GAME_PLAYING = GAME_STATUS.PLAYING;
 	protected readonly GAME_PAUSED = GAME_STATUS.PAUSED;

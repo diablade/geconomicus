@@ -1,12 +1,8 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { combineLatest, map, Subscription } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
-import { GameState, PlayerState } from '../models/gameState';
-import { Rules } from '../models/rules';
-import { Session } from '../models/session';
 import { environment } from '../../environments/environment';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import {
 	faFlagCheckered,
 	faQrcode,
@@ -20,32 +16,30 @@ import {
 	faPlay,
 	faPause,
 	faStop,
+	faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
-import createCountdown from '../services/countDown';
 // @ts-ignore
-import { PLAYER_STATUS, GAME_STATUS, GAME_TYPE, IO } from '@geco/shared';
-import * as _ from 'lodash-es';
-import { GameOptionsDialogComponent } from '../dialogs/game-options-dialog/game-options-dialog.component';
-import { SessionStorageService } from '../services/local-storage/session-storage.service';
-import { StorageKey } from '../services/local-storage/storage-key.const';
+import { GAME_STATUS, GAME_TYPE, IO } from '@geco/shared';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
-import { WebSocketService } from '../services/web-socket.service';
-import { TranslateService } from '@ngx-translate/core';
 import { I18nService } from '../services/i18n.service';
+import { WebSocketService } from '../services/web-socket.service';
 import { AudioService } from '../services/audio.service';
+import { SessionStorageService } from '../services/local-storage/session-storage.service';
+import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-master-board',
 	templateUrl: './master-board.component.html',
 	styleUrls: ['./master-board.component.scss'],
 })
-export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MasterBoardComponent implements OnInit, OnDestroy {
 	private subscription: Subscription | undefined;
 	protected readonly CREATED = GAME_STATUS.CREATED;
-	protected readonly STARTED = GAME_STATUS.STARTED;
+	protected readonly INITIALIZED = GAME_STATUS.INITIALIZED;
 	protected readonly PLAYING = GAME_STATUS.PLAYING;
 	protected readonly PAUSED = GAME_STATUS.PAUSED;
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
@@ -59,12 +53,13 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	protected readonly faInfo = faCircleInfo;
 	protected readonly faRightToBracket = faRightToBracket;
 	protected readonly faWarning = faWarning;
+
 	faBuildingColumns = faBuildingColumns;
 	faEye = faEye;
 	faPlay = faPlay;
 	faPause = faPause;
 	faStop = faStop;
-
+	faArrowLeft = faArrowLeft;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
@@ -73,181 +68,94 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	sessionId: string = '';
 	gameStateId: string = '';
 
-	gameState: GameState = new GameState();
-	rules: Rules = new Rules();
-	session: Session = new Session();
+	// Reactive state from service
+	gameState$ = this.gameStateService.gameState$;
+	rules$ = this.gameStateService.rules$;
+	session$ = this.gameStateService.session$;
+	playersStates$ = this.gameStateService.playersStates$;
 
-	private socket: any;
-	deleteUser = false;
-	killUser = false;
-
-	timerProgress = 100;
-
-	options = [
-		{ value: this.JUNE, label: 'FREE_MONEY', isDisabled: false },
-		{ value: this.DEBT, label: 'DEBT_MONEY', isDisabled: false },
-	];
-	minutes = '00';
-	seconds = '00';
-	timer = createCountdown(
-		{ h: 0, m: 0, s: 0 },
-		{
-			listen: ({ hh, mm, ss, s, h, m }) => {
-				this.minutes = mm;
-				this.seconds = ss;
-				const secondsRemaining = s + m * 60;
-				this.sessionStorageService.setItem(StorageKey.timerRemaining, secondsRemaining);
-				this.timerProgress = (secondsRemaining / (this.rules.roundMinutes * 60)) * 100;
-			},
-			done: () => {
-				this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.ROUND_END'));
-			},
-		}
+	playersWithAvatars$ = combineLatest([this.playersStates$, this.session$]).pipe(
+		map(([playerStates, session]) =>
+			playerStates.map(playerState => ({
+				...playerState,
+				avatar: session.avatars.find(a => a.idx === playerState.avatarIdx) ?? null,
+			}))
+		)
 	);
+
+	// Timer state from service
+	timerProgress$ = this.gameStateService.timerProgress$;
+	minutes$ = this.gameStateService.minutes$;
+	seconds$ = this.gameStateService.seconds$;
+
+	killUser = false;
+	coinRotate = false;
 
 	constructor(
 		private route: ActivatedRoute,
-		private sessionStorageService: SessionStorageService,
 		private gameStateService: GameStateService,
 		private snackbarService: SnackbarService,
 		private translate: TranslateService,
 		private router: Router,
-		private sanitizer: DomSanitizer,
-		private wsService: WebSocketService,
 		private i18nService: I18nService,
 		private audioService: AudioService,
+		private wsService: WebSocketService,
 		public dialog: MatDialog
 	) {
 		this.i18nService.loadNamespace('master');
+	}
+
+    ngOnDestroy(): void {
+		if (this.subscription) this.subscription.unsubscribe();
 	}
 
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			this.gameStateId = params['gameStateId'];
-			this.setMaster();
-			if (this.route.snapshot.routeConfig?.path === 'game/:idGame/reset') {
-				this.resetGameFromUrl();
-			}
-		});
-		this.gameStateService.get(this.gameStateId, true).subscribe((payload) => {
-			this.gameState = payload.gameState;
-			this.rules = payload.rules;
-			this.session = payload.session;
-			this.minutes =
-				this.rules.roundMinutes > 9
-					? this.rules.roundMinutes.toString()
-					: '0' + this.rules.roundMinutes.toString();
-			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
 
-			if (timerRemaining && this.gameState.status == GAME_STATUS.PLAYING) {
-				this.timer.set({ h: 0, m: 0, s: timerRemaining });
-				this.timer.start();
-			} else {
-				this.timer.set({ h: 0, m: this.rules.roundMinutes, s: 0 });
-			}
-		});
-	}
+			// Load game state through the service (fetches data + initializes socket)
+			this.gameStateService.loadForMaster(this.sessionId, this.gameStateId);
 
-	ngAfterViewInit(): void {
-		this.socket.on(IO.AVATAR.UPDATED, (player: PlayerState) => {
-			// this.gameState.avatars = _.map(this.gameState.avatars, (p) => {
-			// if (p._id == player._id) {
-			// p = player;
-			// }
-			// return p;
-			// });
-		});
-		this.socket.on(IO.PLAYER.JOINED, (player: PlayerState) => {
-			// this.gameState.avatars.push(player);
-		});
-		this.socket.on('connected', (player: any) => {
-			console.log('connected', player);
-		});
-		this.socket.on(IO.TIMER_LEFT, (minutesRemaining: number) => {
-			this.startVideos();
-			this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
-			if (minutesRemaining && this.gameState.status == GAME_STATUS.PLAYING) {
-				this.timer.stop();
-				this.timer.reset();
-				this.timer.set({ h: 0, m: minutesRemaining, s: 0 });
-				this.timer.start();
-			}
-		});
-		this.socket.on(IO.GAME.STOPPED, async () => {
-			this.stopRound();
-		});
-		this.socket.on(IO.GAME.DEATH_IS_COMING, async () => {
-			if (this.rules.autoDeath) {
-				this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.DEATH_PASS'));
-			} else {
-				this.dialog.open(InformationDialogComponent, {
-					data: {
-						text: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
-						sound: './assets/audios/iamdeath.mp3',
-					},
-				});
-			}
-		});
-		this.socket.on(IO.PLAYER.DIED, async (event: any) => {
-			_.forEach(this.gameState.playersStates, (p) => {
-				if (p.idx == event.receiver) {
-					p.status = PLAYER_STATUS.DEAD;
+			this.wsService.on(IO.TIMER_LEFT, () => {
+				this.playVideos();
+			});
+
+			this.wsService.on(IO.GAME.STOPPED, () => {
+				this.stopRound();
+			});
+
+			this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
+				const rules = this.gameStateService.getRulesSnapshot();
+				if (rules.autoDeath) {
+					this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.DEATH_PASS'));
+				} else {
+					this.dialog.open(InformationDialogComponent, {
+						data: {
+							text: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
+							sound: './assets/audios/iamdeath.mp3',
+						},
+					});
 				}
 			});
 		});
+
+		// Subscribe to rules to set initial timer
+		this.rules$.subscribe((rules) => {
+			if (rules && rules.roundMinutes > 0) {
+				this.gameStateService.setInitialTimer(rules.roundMinutes);
+			}
+		});
 	}
 
-	setMaster() {
-		this.sessionStorageService.setItem('master', this.gameStateId);
-	}
-
-	startVideos() {
-		this.videoPlayerL.nativeElement.play();
-		this.videoPlayerLT.nativeElement.play();
-		this.videoPlayerR.nativeElement.play();
-		this.videoPlayerRT.nativeElement.play();
-	}
-
-	//To prevent memory leak
-	ngOnDestroy(): void {
-		if (this.subscription) this.subscription.unsubscribe();
-	}
-
-	onDeleteUser(player: PlayerState) {
-		// this.backService.deleteUser(player._id, this.idGame).subscribe((game: Game) => {
-		// 	this.gameState = game;
-		// });
-	}
-
-	startGame() {
-		// if (this.gameState) {
-		// 	this.backService.startGame(this.gameState).subscribe((data: any) => {
-		// 		if (data.status == START_GAME) {
-		// 			this.gameState.status = data.status;
-		// 			this.gameState.round += 1;
-		// 		}
-		// 	});
-		// }
-	}
-
-	startRound() {
-		// this.backService.startRound(this.idGame, this.gameState.round).subscribe(() => {
-		// 	this.timer.set({ h: 0, m: this.gameState.roundMinutes, s: 0 });
-		// 	this.timer.start();
-		// 	this.gameState.status = PLAYING;
-		// 	this.audioService.playSound('start');
-		// 	this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.ROUND_START'));
-		// });
+	playVideos() {
+		this.videoPlayerL?.nativeElement?.play();
+		this.videoPlayerLT?.nativeElement?.play();
+		this.videoPlayerR?.nativeElement?.play();
+		this.videoPlayerRT?.nativeElement?.play();
 	}
 
 	stopRound() {
-		this.timer.stop();
-		this.timer.reset();
-		this.timer.set({ h: 0, m: 0, s: 0 });
-		this.gameState.status = GAME_STATUS.STOPPED;
-		this.timerProgress = 0;
-		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
 		this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
 		this.dialog.open(InformationDialogComponent, {
 			data: { text: this.i18nService.instant('EVENTS.ROUND_END'), sound: 'end' },
@@ -261,57 +169,34 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 		});
 		confDialogRef.afterClosed().subscribe((result) => {
-			// if (result && result == 'btn2') {
-			// 	this.backService.stopRound(this.idGame, this.gameState.round).subscribe();
-			// }
+			if (result && result == 'btn2') {
+				// TODO: Call backend stopRound endpoint when wired up
+			}
 		});
 	}
 
-    resetGame(rulesIdx: number) {
-		this.gameStateService.resetGame(this.gameStateId, this.session._id, rulesIdx).subscribe((data) => {
+	resetGame(rulesIdx: number) {
+		const session = this.gameStateService.getSessionSnapshot();
+		this.gameStateService.resetGame(this.gameStateId, session._id, rulesIdx).subscribe((data) => {
 			this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
-			this.session.gamesRules = this.session.gamesRules.map((rules) => {
-				if (rules.idx == rulesIdx) {
-					rules = { ...rules, ...data };
-				}
-				return rules;
-			});
 		});
-	}
-
-	resetGameFromBtn() {
-		// this.backService.resetGame(this.idGame).subscribe(() => {
-		// this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.RESET_GAME'));
-		// window.location.reload();
-		// });
-	}
-
-	resetGameFromUrl() {
-		// this.backService.resetGame(this.idGame).subscribe(() => {
-		// this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.RESET_GAME'));
-		// this.router.navigate(['ogame', this.idGame, 'master']);
-		// });
 	}
 
 	goBackToLobby() {
-		// this.router.navigate(['ogame', this.idGame, 'results']);
+		this.router.navigate(['/session', this.sessionId]);
 	}
 
-	sendSurvey() {}
-	pauseRound() {}
-
-	getUserUrl(idPlayer: string) {
-		// return environment.WEB_HOST + '/ogame/' + this.idGame + '/' + environment.PLAYER.GET + idPlayer;
+	getPlayerStateUrl(playerState: any) {
+		return environment.WEB_HOST + 'player/' + this.sessionId + '/' + playerState.avatarIdx + '/' + this.gameStateId + '/' + playerState.idx;
 	}
 
-	reJoin(idPlayer: string, username: string): void {
-		const dialogRef = this.dialog.open(JoinQrDialog, {
+	reJoin(playerState: any): void {
+		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
-				text: username,
-				url: this.getUserUrl(idPlayer),
+				text: playerState.avatar?.name || '',
+				url: this.getPlayerStateUrl(playerState),
 			},
 		});
-		dialogRef.afterClosed().subscribe(() => {});
 	}
 
 	qrCodeBank(): void {
@@ -320,17 +205,12 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 			username = text;
 		});
 
-		const dialogRef = this.dialog.open(JoinQrDialog, {
+		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				text: username,
 				url: environment.WEB_HOST + '/bank/' + this.gameStateId,
 			},
 		});
-		dialogRef.afterClosed().subscribe(() => {});
-	}
-
-	showEvents() {
-		// window.open('ogame/' + this.idGame + '/results', '_blank');
 	}
 
 	showBank() {
@@ -338,27 +218,46 @@ export class MasterBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	goToAdmin() {
-		window.open('table/' + this.gameStateId, '_blank');
+		window.open('table/' + this.sessionId + '/' + this.gameStateId, '_blank');
 	}
 
-	onKillUser(player: PlayerState) {
-		// this.backService.killUser(player._id, this.idGame).subscribe(() => {
-		// player.status = DEAD;
-		// });
+	toggleCoinRotate() {
+		this.coinRotate = !this.coinRotate;
 	}
-}
 
-@Component({
-	selector: 'join-qr-dialog',
-	template: 'deprecated',
-})
-export class JoinQrDialog {
-	constructor(
-		public dialogRef: MatDialogRef<JoinQrDialog>,
-		@Inject(MAT_DIALOG_DATA) public data: any
-	) {}
+	initGame() {
+		this.gameStateService.init(this.gameStateId).subscribe({
+			next: (result: any) => {
+				if (result.status === this.INITIALIZED) {
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.CARDS_DISTRIBUTED'));
+				}
+			},
+			error: (err: any) => {
+				this.snackbarService.showError(this.i18nService.instant('ERROR.DISTRIBUTE_CARDS'));
+			},
+		});
+	}
 
-	back(): void {
-		this.dialogRef.close();
+	startRound() {
+		const rules = this.gameStateService.getRulesSnapshot();
+		this.gameStateService.startRound(this.gameStateId).subscribe({
+			next: (result) => {
+				if (result.status === this.PLAYING) {
+					this.gameStateService.setInitialTimer(rules.roundMinutes);
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.ROUND_STARTED'));
+				}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant('ERROR.START_ROUND'));
+			},
+		});
+	}
+
+	pauseRound() {
+		// TODO: Wire to backend pauseRound when endpoint is ready
+	}
+
+	sendSurvey() {
+		// TODO: Wire to backend sendSurvey when endpoint is ready
 	}
 }

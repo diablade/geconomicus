@@ -5,7 +5,10 @@ import log from "#config/log";
 // Constants
 const CLEANUP_INTERVAL = 300000; // 30 minutes
 const MAX_RECONNECT_ATTEMPTS = 5;
-const RECONNECTION_DELAY = 5000; // 5 seconds
+const RECONNECTION_DELAY = 5000; // 5 seconds timeout for reconnection
+const PING_INTERVAL = 3000; // Send a ping every 3 seconds
+const PING_TIMEOUT = 6000; // Wait 6 seconds before considering the connection closed
+const ACK_TIMEOUT = 6000; // 6 seconds timeout for acknowledgements
 
 export class SocketManager {
     static #instance = null;
@@ -68,15 +71,15 @@ export class SocketManager {
                 credentials: false,
                 methods: ["GET", "POST"]
             },
-            pingInterval: 3000,      // Send a ping every 3 seconds
-            pingTimeout: 6000,       // Wait 6 seconds before considering the connection closed
+            pingInterval: PING_INTERVAL,
+            pingTimeout: PING_TIMEOUT,
             connectionStateRecovery: {
                 maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
                 skipMiddlewares: true
             },
             maxHttpBufferSize: 1e8,   // 100MB max buffer size
             allowEIO3: true,          // For older clients
-            ackTimeout: 6000,        // 6 seconds timeout for acknowledgements
+            ackTimeout: ACK_TIMEOUT,
             logFailure: true,         // Log failed emissions
             transports: ["websocket"], // 🚫 no fallback polling => missing packets
             allowUpgrades: true,
@@ -100,75 +103,77 @@ export class SocketManager {
         this.setupAckHandler();
         this.ioInstance.on('connection', (socket) => {
             const {
-                idPlayer,
-                idGame
+                publicChannel,
+                privateChannel
             } = socket.handshake.query;
 
-            if (!this.validateConnection(idPlayer, idGame)) {
+            if (!this.validateConnection(publicChannel, privateChannel)) {
                 socket.disconnect();
                 return;
             }
 
-            this.handleNewConnection(socket, idPlayer, idGame);
+            this.handleNewConnection(socket, publicChannel, privateChannel);
         });
     }
 
-    validateConnection(idPlayer, idGame) {
-        if (!idPlayer || !idGame) {
+    validateConnection(publicChannel, privateChannel) {
+        if (!publicChannel || !privateChannel) {
             log.error('socket error, idPlayer or idGame is missing in the query parameters.');
             return false;
         }
         return true;
     }
 
-    handleNewConnection(socket, idPlayer, idGame) {
-        log.info(`New connection - Player: ${idPlayer}, Game: ${idGame}, Socket: ${socket.id}`);
+    handleNewConnection(socket, publicChannel, privateChannel) {
+        log.info(`New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}`);
 
         // Store connection data with timestamp and reconnect attempts
         const connectionData = {
             socket,
             lastActive: Date.now(),
             reconnectAttempts: 0,
-            idGame,
+            publicChannel,
+            privateChannel,
             disconnectHandler: null,
             errorHandler: null,
         };
 
         // Handle previous connection if exists
-        const previousConnection = this.connections.get(idPlayer);
+        const previousConnection = this.connections.get(privateChannel);
         if (previousConnection && previousConnection.socket.connected && process.env.NODE_ENV === 'production') {
             // Clean up previous connection
             try {
-                log.info(`Replacing previous socket for player ${idPlayer}`);
+                log.info(`Replacing previous socket for player ${privateChannel}`);
                 previousConnection.socket.emit('kicked', {
                     reason: 'another_connection',
                     timestamp: Date.now(),
-                    idPlayer: idPlayer
+                    privateChannel: previousConnection.privateChannel,
+                    publicChannel: previousConnection.publicChannel
                 });
             }
             catch (e) {
-                log.warn(`Failed to notify kicked socket for player ${idPlayer}:`, e);
+                log.warn(`Failed to notify kicked socket for player ${privateChannel}:`, e);
             }
 
-            this.cleanupConnection(idPlayer);
+            this.cleanupConnection(privateChannel);
         }
 
         // Set up event handlers
-        connectionData.disconnectHandler = (reason) => this.handleDisconnect(idPlayer, reason);
-        connectionData.errorHandler = (error) => this.handleError(idPlayer, error);
+        connectionData.disconnectHandler = (reason) => this.handleDisconnect(privateChannel, reason);
+        connectionData.errorHandler = (error) => this.handleError(privateChannel, error);
 
         // Store the new connection
-        this.connections.set(idPlayer, connectionData);
+        this.connections.set(privateChannel, connectionData);
         // Join rooms
-        socket.join(idGame);
-        socket.join(idPlayer);
+        socket.join(publicChannel);
+        socket.join(privateChannel);
 
         // Send connection confirmation with server timestamp
         socket.emit('connected', {
             timestamp: Date.now(),
             sessionId: socket.id,
-            idPlayer: idPlayer,
-            idGame: idGame,
+            privateChannel: privateChannel,
+            publicChannel: publicChannel,
             serverTime: new Date().toISOString(),
             config: {
                 // heartbeatInterval: HEARTBEAT_INTERVAL,
@@ -181,33 +186,41 @@ export class SocketManager {
         socket.on('error', connectionData.errorHandler);
         socket.onAny(() => {
             // Track last activity on any socket event
-            const connData = this.connections.get(idPlayer);
+            const connData = this.connections.get(privateChannel);
             if (connData) {
                 connData.lastActive = Date.now();
             }
         });
         socket.on(IO.SHORT_CODE.EMIT, (data) => {
             log.info('ShortCodeEmitted:', data.code);
-            this.emitTo(idGame, IO.SHORT_CODE.BROADCAST, data);
+            this.emitTo(publicChannel, IO.SHORT_CODE.BROADCAST, data);
         });
         socket.on(IO.SHORT_CODE.CONFIRMED, (data) => {
             log.info('ShortCodeConfirmed');
             this.emitTo(data.idBuyer, IO.SHORT_CODE_CONFIRMED, data);
         });
+        socket.on('join', (room) => {
+            log.info(`Socket ${socket.id} joining room: ${room}`);
+            socket.join(room);
+        });
+        socket.on('leave', (room) => {
+            log.info(`Socket ${socket.id} leaving room: ${room}`);
+            socket.leave(room);
+        });
         socket.on('connect_error', () => log.error('Connection error:', err.message));
         socket.on('connect_timeout', (data) => log.error('time out:', data));
         socket.on('timeout', (err) => log.error('io socket time out!:', err));
         socket.on('reconnect_failed', (err) => log.error('All reconnection attempts failed:', err));
-        socket.on('reconnect_attempt', (attempt) => this.handleReconnect(idPlayer, attempt));
+        socket.on('reconnect_attempt', (attempt) => this.handleReconnect(privateChannel, attempt));
         socket.on('reconnecting', (err) => log.error('reconnecting...', err));
         socket.on('reconnect', (attemptNumber) => log.info('Reconnected after ' + attemptNumber + ' attempts'));
         socket.on('reconnect_error', () => log.error('Reconnection error'));
         socket.on('error', (err) => log.error('error io socket:', err));
 
         // Check for unacknowledged events
-        const unacknowledged = this.getUnacknowledgedEvents(idPlayer);
+        const unacknowledged = this.getUnacknowledgedEvents(privateChannel);
         if (unacknowledged.length > 0) {
-            log.info(`Player ${idPlayer} reconnected with ${unacknowledged.length} unacknowledged events`);
+            log.info(`Player ${privateChannel} reconnected with ${unacknowledged.length} unacknowledged events`);
 
             // Send resync signal
             socket.emit('resync', { needsResync: true });
@@ -218,13 +231,13 @@ export class SocketManager {
             // });
 
             // Or just clear the ack pool for this player
-            this.ackPool.delete(idPlayer);
+            this.ackPool.delete(privateChannel);
         }
     }
 
     // Handle disconnection
-    handleDisconnect(idPlayer, reason) {
-        const connection = this.connections.get(idPlayer);
+    handleDisconnect(privateChannel, reason) {
+        const connection = this.connections.get(privateChannel);
         if (!connection) {
             return;
         }
@@ -232,13 +245,12 @@ export class SocketManager {
         const {
             socket,
             reconnectAttempts,
-            idGame
+            publicChannel
         } = connection;
 
-        log.info(`game ${idGame},Player ${idPlayer} disconnected. Reason: ${reason}. Reconnect attempt ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS}`);
+        log.info(`game ${publicChannel},Player ${privateChannel} disconnected. Reason: ${reason}. Reconnect attempt ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS}`);
 
-        this.cleanupConnection(idPlayer);
-
+        this.cleanupConnection(privateChannel);
     }
 
     // Handle reconnect
@@ -347,8 +359,8 @@ export class SocketManager {
                     .find(conn => conn.socket.id === socket.id);
 
                 if (playerData) {
-                    const idPlayer = playerData.idPlayer;
-                    this.addToAckPool(idPlayer, eventId, event, data);
+                    const privateChannel = playerData.privateChannel;
+                    this.addToAckPool(privateChannel, eventId, event, data);
 
                     // Emit with the eventId included
                     const eventData = {
@@ -381,46 +393,46 @@ export class SocketManager {
 
     /**
      * Add an event to the acknowledgment pool
-     * @param {string} idPlayer - Player ID
+     * @param {string} privateChannel - Private channel ID
      * @param {string} eventId - Unique event ID
      * @param {string} event - Event name
      * @param {*} data - Event data
      */
-    addToAckPool(idPlayer, eventId, event, data) {
-        if (!this.ackPool.has(idPlayer)) {
-            this.ackPool.set(idPlayer, new Map());
+    addToAckPool(privateChannel, eventId, event, data) {
+        if (!this.ackPool.has(privateChannel)) {
+            this.ackPool.set(privateChannel, new Map());
         }
 
-        const playerAcks = this.ackPool.get(idPlayer);
+        const playerAcks = this.ackPool.get(privateChannel);
         playerAcks.set(eventId, {
             event,
             data,
             timestamp: Date.now()
         });
 
-        log.debug(`Added event ${eventId} to ack pool for player ${idPlayer}`);
+        log.debug(`Added event ${eventId} to ack pool for player ${privateChannel}`);
     }
 
     /**
      * Remove an event from the acknowledgment pool
-     * @param {string} idPlayer - Player ID
+     * @param {string} privateChannel - Private channel ID
      * @param {string} eventId - Event ID to remove
      * @returns {boolean} - True if event was found and removed
      */
-    removeFromAckPool(idPlayer, eventId) {
-        if (!this.ackPool.has(idPlayer)) {
+    removeFromAckPool(privateChannel, eventId) {
+        if (!this.ackPool.has(privateChannel)) {
             return false;
         }
 
-        const playerAcks = this.ackPool.get(idPlayer);
+        const playerAcks = this.ackPool.get(privateChannel);
         const wasRemoved = playerAcks.delete(eventId);
 
         if (wasRemoved) {
-            log.debug(`Removed event ${eventId} from ack pool for player ${idPlayer}`);
+            log.debug(`Removed event ${eventId} from ack pool for player ${privateChannel}`);
 
             // Clean up empty player maps
             if (playerAcks.size === 0) {
-                this.ackPool.delete(idPlayer);
+                this.ackPool.delete(privateChannel);
             }
         }
 
@@ -429,14 +441,14 @@ export class SocketManager {
 
     /**
      * Get all unacknowledged events for a player
-     * @param {string} idPlayer - Player ID
+     * @param {string} privateChannel - Private channel ID
      * @returns {Array} - Array of unacknowledged events
      */
-    getUnacknowledgedEvents(idPlayer) {
-        if (!this.ackPool.has(idPlayer)) {
+    getUnacknowledgedEvents(privateChannel) {
+        if (!this.ackPool.has(privateChannel)) {
             return [];
         }
-        return Array.from(this.ackPool.get(idPlayer).values());
+        return Array.from(this.ackPool.get(privateChannel).values());
     }
 
     /**
@@ -446,17 +458,17 @@ export class SocketManager {
         const now = Date.now();
         const MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
 
-        for (const [idPlayer, playerAcks] of this.ackPool.entries()) {
+        for (const [privateChannel, playerAcks] of this.ackPool.entries()) {
             for (const [eventId, eventData] of playerAcks.entries()) {
                 if (now - eventData.timestamp > MAX_AGE) {
-                    log.info(`Removing old unacknowledged event ${eventId} for player ${idPlayer}`);
+                    log.info(`Removing old unacknowledged event ${eventId} for player ${privateChannel}`);
                     playerAcks.delete(eventId);
                 }
             }
 
             // Clean up empty player maps
             if (playerAcks.size === 0) {
-                this.ackPool.delete(idPlayer);
+                this.ackPool.delete(privateChannel);
             }
         }
     }
@@ -469,13 +481,13 @@ export class SocketManager {
                     .find(conn => conn.socket.id === socket.id);
 
                 if (playerData && eventId) {
-                    const wasRemoved = this.removeFromAckPool(playerData.idPlayer, eventId);
+                    const wasRemoved = this.removeFromAckPool(playerData.privateChannel, eventId);
                     if (wasRemoved) {
-                        log.info(`Received explicit ack for event ${eventId} from player ${playerData.idPlayer}`);
+                        log.info(`Received explicit ack for event ${eventId} from player ${playerData.privateChannel}`);
                         callback({ status: 'ok' });
                     }
                     else {
-                        log.warn(`Received ack for unknown event ${eventId} from player ${playerData.idPlayer}`);
+                        log.warn(`Received ack for unknown event ${eventId} from player ${playerData.privateChannel}`);
                         callback({
                             status: 'error',
                             message: 'Event not found'

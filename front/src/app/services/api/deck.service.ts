@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
-import { Credit } from 'src/app/models/gameState';
+import { ERROR_RELOAD, ErrorService } from '../error.service';
 import { Card } from 'src/app/models/gameState';
 
 @Injectable({

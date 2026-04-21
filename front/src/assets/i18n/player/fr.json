@@ -1,0 +1,15 @@
+{
+    "PLAYER": {
+		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
+		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
+		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",
+		"BALANCE": "Solde :",
+		"WAITING": "En attente de l'animateur...",
+		"GAME_OVER": "Partie terminée...",
+		"ANSWER_SURVEY": "Répondre au questionnaire",
+		"DEBT": "Dettes",
+		"BUY": "ACHETER",
+		"CREDITS": "CRÉDITS",
+		"OBJECTIVES": "Objectifs"
+	}
+}

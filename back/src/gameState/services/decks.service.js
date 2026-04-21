@@ -16,7 +16,7 @@ const generateOneCard = async (letterIndex, letterNumber, weight, price) => {
 
 const DeckService = {};
 
-DeckService.generateDecks = async (rules) => {
+DeckService.generateDecks = async (rules, length) => {
     let tableDecks = [[], [], [], []];
     let lettersInGame = 0;
     const prices = [rules.priceWeight1, rules.priceWeight2, rules.priceWeight3, rules.priceWeight4];
@@ -25,7 +25,7 @@ DeckService.generateDecks = async (rules) => {
         lettersInGame = rules.generateLettersInDeck;
     }
     else {
-        lettersInGame = Math.round(1.25 * rules.avatars.length);
+        lettersInGame = Math.round(1.25 * length);
     }
 
     // genere cartes pour les 4 lots
@@ -73,18 +73,18 @@ DeckService.pushCardsInDecksInMemory = (state, cards) => {
  * @returns {{ newCards: Array, discardEvent: object, newCardsEvent: object }}
  * @throws Error if validation fails
  */
-DeckService.produceCardLevelUp = (state, rules, playerLifeIdx, cards) => {
-    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
-    if (!player) throw new Error('ERROR.PLAYER_NOT_FOUND');
+DeckService.produceCardLevelUp = (gameState, rules, playerStateIdx, cards) => {
+    const playerState = gameState.playersStates.find(p => p.idx === playerStateIdx);
+    if (!playerState) throw new Error('ERROR.PLAYER_NOT_FOUND');
 
     const amountCardsForProd = rules.amountCardsForProd;
-    const idsToFilter = cards.map(c => key);
+    const idsToFilter = cards.map(c => c.key);
 
     if (!DeckService.areCardIdsUnique(idsToFilter, amountCardsForProd)) {
         throw new Error('ERROR.CARDS_NOT_UNIQUE');
     }
 
-    const cardsToExchange = player.cards.filter(card => idsToFilter.includes(card.key));
+    const cardsToExchange = playerState.cards.filter(card => idsToFilter.includes(card.key));
     if (cardsToExchange.length !== amountCardsForProd) {
         throw new Error('ERROR.NOT_ENOUGH_CARDS');
     }
@@ -93,15 +93,15 @@ DeckService.produceCardLevelUp = (state, rules, playerLifeIdx, cards) => {
     if (weight >= 3) throw new Error('Technological change not yet implemented');
 
     // Remove production cards from player's hand
-    player.cards = player.cards.filter(card => !idsToFilter.includes(card.key));
+    playerState.cards = playerState.cards.filter(card => !idsToFilter.includes(card.key));
 
     // Return exchanged cards to deck and shuffle
-    state.decks[weight] = _.shuffle([...state.decks[weight], ...cardsToExchange]);
-    state.decks[weight + 1] = _.shuffle(state.decks[weight + 1]);
+    gameState.decks[weight] = _.shuffle([...gameState.decks[weight], ...cardsToExchange]);
+    gameState.decks[weight + 1] = _.shuffle(gameState.decks[weight + 1]);
 
     // Draw new cards
-    const newCards = state.decks[weight].splice(0, amountCardsForProd);
-    const newCardSup = state.decks[weight + 1].splice(0, 1)[0];
+    const newCards = gameState.decks[weight].splice(0, amountCardsForProd);
+    const newCardSup = gameState.decks[weight + 1].splice(0, 1)[0];
     const cardsDraw = [...newCards, newCardSup];
 
     if (cardsDraw.length < amountCardsForProd + 1 || newCardSup === undefined) {
@@ -109,12 +109,11 @@ DeckService.produceCardLevelUp = (state, rules, playerLifeIdx, cards) => {
     }
 
     // Add new cards to player's hand
-    player.cards = [...player.cards, ...cardsDraw];
+    playerState.cards = [...playerState.cards, ...cardsDraw];
 
     return {
-        newCards: cardsDraw,
-        cardsExchanged: cardsToExchange,
-        triggersEndRound: newCardSup.weight > 2,
+        gameState,
+        cardsDraw,
     };
 };
 

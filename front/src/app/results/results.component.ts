@@ -217,7 +217,6 @@ function addValues(points: TooltipPoint[]) {
 	styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
-	private socket: any;
 	idGame = '';
 
 	private destroy$ = new Subject<void>();

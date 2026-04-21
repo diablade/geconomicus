@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
-import { PlayerState, GameState, Card, Credit} from '../../models/gameState';
-import {Recipe, getAvailableRecipes} from "../../models/recipe";
-
+import { PlayerState, GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
-import { ERROR_RELOAD, ErrorService, REDIRECT_HOME } from '../error.service';
+import { ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
 import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE } from '@geco/shared';
 import { BankService } from './bank.service';
 import { DeckService } from './deck.service';
 import { ThemesService } from '../themes.service';
+import { Router } from '@angular/router';
 import _ from 'lodash';
 
 @Injectable({
@@ -33,11 +32,13 @@ export class PlayerStateService {
 	private defaultCreditSubject = new BehaviorSubject<boolean>(false);
 	defaultCredit$ = this.defaultCreditSubject.asObservable();
 
-	private socket: any;
-	private currentSessionId: string = '';
-	private currentGameStateId: string = '';
-	private currentAvatarIdx: number = 0;
-	private currentPlayerStateIdx: number = 0;
+	private sessionId: string = '';
+	private gameStateId: string = '';
+	private avatarIdx: number = 0;
+	private playerStateIdx: number = 0;
+
+	private roomGameState: string = '';
+	private roomPlayerState: string = '';
 
 	setPlayerState(playerState: PlayerState) {
 		this.playerStateSubject.next(playerState);
@@ -49,6 +50,7 @@ export class PlayerStateService {
 		this.rulesSubject.next(rules);
 	}
 	setCards(cards: Card[]) {
+		console.log('set cards', cards);
 		this.cardsSubject.next(cards);
 	}
 	setCredits(credits: Credit[]) {
@@ -67,10 +69,12 @@ export class PlayerStateService {
 		private wsService: WebSocketService,
 		private bankService: BankService,
 		private themesService: ThemesService,
-		private deckService: DeckService
+		private deckService: DeckService,
+		private router: Router
 	) {}
 
 	loadPlayerState(sessionId: string, gameStateId: string, avatarIdx: number, playerStateIdx: number): void {
+		this.sessionId = sessionId;
 		this.http
 			.get<any>(
 				environment.API_HOST +
@@ -83,7 +87,14 @@ export class PlayerStateService {
 					'/' +
 					playerStateIdx
 			)
-			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
+			.pipe(
+				catchError((err) => {
+					// Redirect to lobby-player on error
+					this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.GAME_NOT_FOUND');
+					this.router.navigate(['/avatar', sessionId, avatarIdx]);
+					return [];
+				})
+			)
 			.subscribe((data) => {
 				this.setPlayerState(data.playerState);
 				this.setGameState(data.gameState);
@@ -92,26 +103,41 @@ export class PlayerStateService {
 				this.setCredits(data.credits);
 				this.setPrison(data.prison);
 				this.setDefaultCredit(data.defaultCredit);
-				this.initializeSocket(sessionId, gameStateId, avatarIdx, playerStateIdx);
 			});
+		this.initializeSocket(sessionId, gameStateId, avatarIdx, playerStateIdx);
+	}
+
+	leaveRooms(): void {
+		if (this.gameStateId) {
+			this.wsService.leaveRoom(this.roomGameState);
+			this.wsService.leaveRoom(this.roomPlayerState);
+		}
+	}
+
+	private joinRooms(): void {
+		this.wsService.joinRoom(this.roomGameState);
+		this.wsService.joinRoom(this.roomPlayerState);
 	}
 
 	initializeSocket(sessionId: string, gameStateId: string, avatarIdx: number, playerStateIdx: number): void {
-		this.currentGameStateId = gameStateId;
-		this.currentAvatarIdx = avatarIdx;
-		this.currentPlayerStateIdx = playerStateIdx;
-		this.socket = this.wsService.getSocket({
-			publicChannel: gameStateId,
-			privateChannel: `${gameStateId}_${avatarIdx}_${playerStateIdx}`,
-		});
+		this.sessionId = sessionId;
+		this.gameStateId = gameStateId;
+		this.avatarIdx = avatarIdx;
+		this.playerStateIdx = playerStateIdx;
+		this.roomGameState = gameStateId;
+		this.roomPlayerState = `${gameStateId}:${avatarIdx}:${playerStateIdx}`;
 		this.setupSocketListeners();
 	}
 
 	private setupSocketListeners(): void {
-		if (!this.socket) return;
+		this.wsService.on('connected', () => {
+			// if avatarService is connected it should come here to connect other rooms
+			console.log('Joining game states rooms...');
+			this.joinRooms();
+		});
 
 		// Error handling
-		this.socket.on('error', (error: any) => {
+		this.wsService.on('error', (error: any) => {
 			console.error('Socket error:', error);
 			if (error && error.message && error.message.includes('timeout')) {
 				// Handle socket timeout
@@ -120,14 +146,16 @@ export class PlayerStateService {
 		});
 
 		// Resync event
-		this.socket.on('resync', (data: any) => {
+		this.wsService.on('resync', (data: any) => {
 			if (data.needsResync) {
-				this.loadPlayerState(this.currentSessionId, this.currentGameStateId, this.currentAvatarIdx, this.currentPlayerStateIdx);
+				this.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
 			}
 		});
 
+
 		// Game events
-		this.socket.on(IO.GAME.DISTRIB, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.PLAYER.INIT, async (data: any, cb: (response: any) => void) => {
+			console.log('PLAYER.INIT', data);
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentPlayerState = this.playerStateSubject.getValue();
 			if (currentPlayerState) {
@@ -141,7 +169,7 @@ export class PlayerStateService {
 			this.setCards(data.cards);
 		});
 
-		this.socket.on(IO.GAME.STARTED, async () => {
+		this.wsService.on(IO.GAME.STARTED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PLAYING;
@@ -157,7 +185,7 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		this.socket.on(IO.GAME.STOPPED, async () => {
+		this.wsService.on(IO.GAME.STOPPED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.STOPPED;
@@ -165,7 +193,7 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.GAME.FINISHED, (data: any) => {
+		this.wsService.on(IO.GAME.FINISHED, (data: any) => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.FINISHED;
@@ -173,7 +201,14 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.GAME.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
+			if (data.gameStateId == this.gameStateId) {
+				//redirect to lobby
+				this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
+			}
+		});
+
+		this.wsService.on(IO.GAME.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
 			if (cb) {
 				cb({ status: 'ok', _ackId: data._ackId });
 			}
@@ -189,12 +224,12 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.GAME.RESET, async (data: any) => {
+		this.wsService.on(IO.GAME.RESET, async (data: any) => {
 			// Handle game reset
 			window.location.reload();
 		});
 
-		this.socket.on(IO.GAME.FIRST_DU, async (data: any) => {
+		this.wsService.on(IO.GAME.FIRST_DU, async (data: any) => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.currentDU = data.du;
@@ -202,7 +237,7 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.PLAYER.DIED, async () => {
+		this.wsService.on(IO.PLAYER.DIED, async () => {
 			const currentPlayerState = this.playerStateSubject.getValue();
 			if (currentPlayerState) {
 				currentPlayerState.status = PLAYER_STATUS.DEAD;
@@ -217,19 +252,19 @@ export class PlayerStateService {
 			this.setPrison(true);
 		});
 
-		this.socket.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			this.loadPlayerState(this.currentSessionId, this.currentGameStateId, this.currentAvatarIdx, this.currentPlayerStateIdx);
+			this.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
 		});
 
-		this.socket.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
+		this.wsService.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
 			if (data) {
 				window.location.reload();
 			}
 		});
 
 		// Transaction events
-		this.socket.on(IO.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentPlayerState = this.playerStateSubject.getValue();
 			if (currentPlayerState) {
@@ -242,7 +277,7 @@ export class PlayerStateService {
 		});
 
 		// Credit events
-		this.socket.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			currentCredits.push(data.credit);
@@ -254,7 +289,7 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
@@ -266,7 +301,7 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		this.socket.on(IO.CREDIT.STARTED, async () => {
+		this.wsService.on(IO.CREDIT.STARTED, async () => {
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
 				if (c.status === CREDIT_STATUS.PAUSED) {
@@ -277,7 +312,7 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		this.socket.on(IO.CREDIT.PROGRESS, async (data: any) => {
+		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
 				if (c.idx === data.id) {
@@ -289,7 +324,7 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		this.socket.on(IO.CREDIT.DEFAULT, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.DEFAULT, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
@@ -302,7 +337,7 @@ export class PlayerStateService {
 			this.setDefaultCredit(true);
 		});
 
-		this.socket.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
@@ -315,11 +350,11 @@ export class PlayerStateService {
 		});
 
 		// Prison events
-		this.socket.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
+		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			// Handle prison progress - emit event for component to handle timer
 		});
 
-		this.socket.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			this.setPrison(false);
 			if (data && data.cards) {
@@ -327,7 +362,7 @@ export class PlayerStateService {
 			}
 		});
 
-		this.socket.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCards = this.cardsSubject.getValue();
 			const updatedCards = currentCards.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
@@ -349,49 +384,8 @@ export class PlayerStateService {
 		});
 	}
 
-    countOccurrencesAndHideDuplicates(cards: Card[]) {
-		cards = _.orderBy(cards, ['weight', 'letter']);
-		const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
-		const keyDuplicates: string[] = [];
-		for (const c of cards) {
-			const countKey = `${c.weight}-${c.letter}`;
-			c.count = countByResult[countKey] || 0;
-			const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
-			if (c.count > 1 && existCountKey) {
-				c.displayed = false;
-			}
-			if (c.count >= 1 && !existCountKey) {
-				keyDuplicates.push(countKey);
-				c.displayed = true;
-			}
-		}
-		cards = _.orderBy(cards, ['count'], 'desc');
-		return cards;
-	}
-
-	formatNewCards(newCards: Card[]) {
-		for (const c of newCards) {
-			c.displayed = true;
-			c.count = 1;
-		}
-		return newCards;
-	}
-
-	receiveCards(newCards: Card[]) {
-		const cards = this.formatNewCards(newCards);
-		let allCards = _.concat(this.cardsSubject.getValue(), cards);
-		allCards = _.orderBy(allCards, ['weight', 'letter']);
-		setTimeout(() => {
-			if (this.themesService.getCurrentTheme() === 'THEME.CLASSIC') {
-				return this.countOccurrencesAndHideDuplicates(allCards);
-			} else {
-				return allCards;
-			}
-		}, 1000);
-	}
-
 	sendBuyingShortCode(gameStateId: string, playerStateIdx: number, code: string): void {
-		this.socket.emit(IO.SHORT_CODE.EMIT, { code, idBuyer: playerStateIdx }, (ack: any) => {
+		this.wsService.emit(IO.SHORT_CODE.EMIT, { code, idBuyer: playerStateIdx }, (ack: any) => {
 			console.log(ack);
 		});
 	}
@@ -417,7 +411,7 @@ export class PlayerStateService {
 
 				const cost = rules.typeMoney === GAME_TYPE.JUNE ? (data.p * gameState.currentDU).toFixed(2) : data.p;
 
-				if (this.currentGameStateId && data.g && this.currentGameStateId !== data.g) {
+				if (this.gameStateId && data.g && this.gameStateId !== data.g) {
 					observer.next({ success: false, error: 'PLAYER.WRONG_GAME' });
 					observer.complete();
 					return;
@@ -429,7 +423,7 @@ export class PlayerStateService {
 					return;
 				}
 
-				this.transaction(this.currentGameStateId!, playerState!.idx.toString(), data.o, data.c).subscribe({
+				this.transaction(this.gameStateId!, playerState!.idx.toString(), data.o, data.c).subscribe({
 					next: (dataReceived) => {
 						if (dataReceived?.buyedCard) {
 							const currentCards = this.cardsSubject.getValue();
@@ -568,7 +562,7 @@ export class PlayerStateService {
 			}
 
 			const cardsForProd = identicalCards.slice(0, rules.amountCardsForProd);
-			const gameStateId = this.currentGameStateId;
+			const gameStateId = this.gameStateId;
 			const playerIdx = playerState?.idx?.toString();
 
 			if (!gameStateId || !playerIdx) {

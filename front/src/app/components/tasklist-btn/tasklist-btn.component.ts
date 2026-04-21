@@ -1,16 +1,12 @@
 import {Component, Inject, Input} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {faListAlt} from "@fortawesome/free-solid-svg-icons";
 import {SessionStorageService} from 'src/app/services/local-storage/session-storage.service';
-import {I18nService} from "../../services/i18n.service";
-
 @Component({
 	selector: 'app-tasklist-btn',
 	templateUrl: './tasklist-btn.component.html',
 	styleUrls: ['./tasklist-btn.component.scss']
 })
 export class TaskListBtnComponent {
-	protected readonly faListAlt = faListAlt;
 	@Input() labelBtn = "TASK.MASTER_TASK";
 	@Input() icon = true;
 	@Input() stroked = false;

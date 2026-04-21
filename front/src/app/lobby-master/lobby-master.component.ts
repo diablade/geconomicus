@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Session } from '../models/session';
 import { Avatar } from '../models/avatar';
 import { SessionService } from '../services/api/session.service';
@@ -18,7 +18,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
 import { IO, GAME_TYPE, SESSION_STATUS, GAME_STATUS } from '@geco/shared';
-import { WebSocketService } from '../services/web-socket.service';
 import { I18nService } from '../services/i18n.service';
 import { AudioService } from '../services/audio.service';
 import * as _ from 'lodash-es';
@@ -37,34 +36,35 @@ import { RulesService } from '../services/api/rules.service';
 	templateUrl: './lobby-master.component.html',
 	styleUrls: ['./lobby-master.component.scss'],
 })
-export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
-	sessionId = '';
-	session: Session = new Session();
-	protected readonly OPEN = SESSION_STATUS.OPEN;
+export class LobbyMasterComponent implements OnInit, OnDestroy {
+    protected readonly OPEN = SESSION_STATUS.OPEN;
 	protected readonly IN_PROGRESS = SESSION_STATUS.IN_PROGRESS;
 	protected readonly ENDED = SESSION_STATUS.ENDED;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly NONE = GAME_STATUS.NONE;
 	protected readonly CREATED = GAME_STATUS.CREATED;
-	protected readonly STARTED = GAME_STATUS.STARTED;
+	protected readonly INITIALIZED = GAME_STATUS.INITIALIZED;
 	protected readonly PLAYING = GAME_STATUS.PLAYING;
 	protected readonly PAUSED = GAME_STATUS.PAUSED;
 	protected readonly FINISHED = GAME_STATUS.FINISHED;
+	protected readonly environment = environment;
+	protected readonly faTrashCan = faTrashCan;
+	protected readonly faQrcode = faQrcode;
+	protected readonly faCogs = faCogs;
+	protected readonly faRightToBracket = faRightToBracket;
+	protected readonly faPencil = faPencil;
+	protected readonly faRotate = faRotate;
+	protected readonly faEye = faEye;
+	protected readonly faPeopleRoof = faPeopleRoof;
 
 	private subscription: Subscription | undefined;
-	joinLink = '';
-	private socket: any;
-	deleteUser = false;
+	private sessionSubscription: Subscription | undefined;
 	warningHairColorDuplicate = false;
-	protected readonly environment = environment;
-	faTrashCan = faTrashCan;
-	faQrcode = faQrcode;
-	faCogs = faCogs;
-	faRightToBracket = faRightToBracket;
-	faPencil = faPencil;
-	faRotate = faRotate;
-	faEye = faEye;
-	faPeopleRoof = faPeopleRoof;
+	joinLink = '';
+	deleteUser = false;
+	sessionId = '';
+	session$ = inject(SessionService).session$;
+	session: Session = new Session();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -73,7 +73,6 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		private avatarService: AvatarService,
 		private gameStateService: GameStateService,
 		private snackbarService: SnackbarService,
-		private wsService: WebSocketService,
 		private i18nService: I18nService,
 		private audioService: AudioService,
 		public dialog: MatDialog
@@ -84,39 +83,22 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
-			this.socket = this.wsService.getSocket({publicChannel: this.sessionId, privateChannel: `${this.sessionId}:master`});
-			this.getSession();
-		});
-	}
-
-	getSession() {
-		this.sessionService.getById(this.sessionId).subscribe((session) => {
-			this.session = session;
-			this.checkDuplicateHairColors();
 			this.joinLink = environment.WEB_HOST + 'join/' + this.sessionId;
+			this.sessionService.loadSession(this.sessionId).subscribe();
 		});
-	}
 
-	ngAfterViewInit(): void {
-		this.socket.on(IO.AVATAR.NEW, (data: any) => {
-			this.session.avatars.push(data.avatar);
-		});
-		this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
-			this.session.avatars = this.session.avatars.map((p) => {
-				if (p.idx == data.updatedAvatar.idx) {
-					p = data.updatedAvatar;
-				}
-				return p;
-			});
-			this.checkDuplicateHairColors();
-		});
-		this.socket.on(IO.AVATAR.DELETED, (data: any) => {
-			this.session.avatars = this.session.avatars.filter((p) => p.idx !== data.avatarIdx);
+		// Subscribe to session$ to track current session value
+		this.sessionSubscription = this.session$.subscribe((session) => {
+			if (session) {
+				this.session = session;
+				this.checkDuplicateHairColors();
+			}
 		});
 	}
 
 	ngOnDestroy(): void {
 		if (this.subscription) this.subscription.unsubscribe();
+		if (this.sessionSubscription) this.sessionSubscription.unsubscribe();
 	}
 
 	onDeleteUser(player: Avatar) {
@@ -143,6 +125,14 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		return environment.WEB_HOST + 'avatar/' + this.sessionId + '/' + avatarIdx;
 	}
 
+	copyPlayerLink(avatarIdx: number): void {
+		navigator.clipboard
+			.writeText(this.createAvatarUrl(avatarIdx))
+			.then(() => this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS')))
+			.catch((err) => console.error('Error copying: ', err));
+	}
+
+
 	reJoin(avatarIdx: number, username: string): void {
 		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
@@ -166,10 +156,12 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results) {
-				this.sessionService.update(this.sessionId, results).subscribe(() => {
+				this.sessionService.update(this.sessionId, results).subscribe((data) => {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
+					// Reload session to get updated data
+					// this.sessionService.loadSession(this.sessionId).subscribe();
+					// this.session = { ...this.session, ...results };
 				});
-				this.session = { ...results };
 			}
 		});
 	}
@@ -185,9 +177,10 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results === 'btnConfirm') {
-				this.sessionService.start(this.sessionId).subscribe((data: Session) => {
+				this.sessionService.start(this.sessionId).subscribe(() => {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.STARTED'));
-					this.session = data;
+					// Reload session to get updated data
+					this.sessionService.loadSession(this.sessionId).subscribe();
 				});
 			}
 		});
@@ -251,23 +244,25 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 	createGame(ruleIdx: number) {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
-				title: this.i18nService.instant('MASTER.OPEN_GAME_CONFIRM'),
-				message: this.i18nService.instant('MASTER.OPEN_GAME_CONFIRM_2'),
-				labelBtnConfirm: this.i18nService.instant('MASTER.OPEN_GAME'),
+				title: this.i18nService.instant('MASTER.CREATE_GAME_CONFIRM'),
+				message: this.i18nService.instant('MASTER.CREATE_GAME_CONFIRM_2'),
+				labelBtnConfirm: this.i18nService.instant('MASTER.CREATE_GAME'),
 				styleBtnConfirm: 'warn',
 			},
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results === 'btnConfirm') {
 				this.gameStateService.create(this.sessionId, ruleIdx).subscribe((data: any) => {
-					this.session.gamesRules = this.session.gamesRules.map((rules) => {
-                        console.log('data', data);
+					const currentSession = this.session;
+					currentSession.gamesRules = currentSession.gamesRules.map((rules) => {
 						if (rules.idx == ruleIdx) {
 							rules.gameStatus = data.gameStatus;
 							rules.gameStateId = data.gameStateId;
 						}
 						return rules;
 					});
+					// Update the session subject
+					this.sessionService.setSession({ ...currentSession });
 
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_LAUNCHED'));
 				});
@@ -275,8 +270,8 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-    killGame(ruleIdx: number, gameStateId: string) {
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+	killGame(ruleIdx: number, gameStateId: string) {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant('MASTER.KILL_GAME_CONFIRM'),
 				message: this.i18nService.instant('MASTER.KILL_GAME_CONFIRM_2'),
@@ -286,24 +281,22 @@ export class LobbyMasterComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results === 'btnConfirm') {
-                this.sessionService.killGame(this.sessionId, gameStateId, ruleIdx).subscribe((data: any) => {
-                    this.session.gamesRules = this.session.gamesRules.map((rules) => {
-                        if (rules.idx == ruleIdx) {
-                            rules.gameStatus = data.gameStatus;
-                            rules.gameStateId = data.gameStateId;
-                        }
-                        return rules;
-                    });
+				this.sessionService.killGame(this.sessionId, gameStateId, ruleIdx).subscribe((data: any) => {
+					const currentSession = this.session;
+					currentSession.gamesRules = currentSession.gamesRules.map((rules) => {
+						if (rules.idx == ruleIdx && data.gameStateId == rules.gameStateId) {
+							rules.gameStatus = data.ruleStatus;
+							rules.gameStateId = "";
+						}
+						return rules;
+					});
+					// Update the session subject
+					this.sessionService.setSession({ ...currentSession });
 
-                    this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_RESET'));
-                });
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_RESET'));
+				});
 			}
 		});
-
-    }
-
-	enterGame(gameStateId: string) {
-		// this.router.navigate(['/master', gameStateId]);
 	}
 
 	showResults() {}

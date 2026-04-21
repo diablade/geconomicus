@@ -11,6 +11,7 @@ import {SnackbarService} from "../services/snackbar.service";
 import {I18nService} from '../services/i18n.service';
 import {SessionService} from '../services/api/session.service';
 import {Session} from '../models/session';
+import {ThemesService} from '../services/themes.service';
 
 @Component({
 	selector: 'app-history-games',
@@ -39,6 +40,7 @@ export class HistoryGamesComponent implements OnInit {
 	            public dialog: MatDialog,
 	            private snackbarService: SnackbarService,
 	            private i18nService: I18nService,
+	            private themesService: ThemesService,
 	            private sessionService: SessionService) {
 		this.i18nService.loadNamespace("history");
 	}
@@ -59,6 +61,11 @@ export class HistoryGamesComponent implements OnInit {
 			this.sessions = _.orderBy(data, "createdAt", "desc");
 		});
 	}
+
+    getThemeName(theme: string): string {
+        const themeName = this.themesService.getThemeName(theme);
+        return themeName || theme;
+    }
 
 	getStatus(status: string): string {
 		switch (status) {

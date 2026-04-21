@@ -40,7 +40,6 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
     session: Session = new Session();
 	gameState: GameState = new GameState();
     rules: Rules = new Rules();
-	socket: any;
 	faInfoCircle = faInfoCircle;
 	get prisoners(): PlayerState[] {
 		return this.gameState.playersStates.filter(p => p.status === PLAYER_STATUS.PRISON);
@@ -61,38 +60,42 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 		this.subscription = this.route.params.subscribe(params => {
             this.sessionId = params['sessionId'];
 			this.gameStateId = params['gameStateId'];
+			this.wsService.initializeSocket({
+				publicChannel: this.gameStateId,
+				privateChannel: `${this.gameStateId}:bank`,
+			});
 			this.getGame();
 		});
 	}
 
 	ngAfterViewInit() {
-		this.socket.on(IO.GAME.RESET, async () => {
+		this.wsService.on(IO.GAME.RESET, async () => {
 			window.location.reload();
 		});
-		this.socket.on(IO.GAME.STARTED, async () => {
+		this.wsService.on(IO.GAME.STARTED, async () => {
 			this.gameState.status = GAME_STATUS.PLAYING;
 			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
 		});
-		this.socket.on(IO.GAME.STOPPED, async () => {
+		this.wsService.on(IO.GAME.STOPPED, async () => {
 			this.dialog.closeAll();
 			this.gameState.status = GAME_STATUS.WAITING;
 			this.dialog.open(InformationDialogComponent, {
 				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
 			});
 		});
-		this.socket.on(IO.GAME.SETUP, async (data: any) => {
+		this.wsService.on(IO.GAME.INIT, async (data: any) => {
 			if (data) {
 				this.gameState = {...this.gameState, ...data};
 			}
 		});
-		this.socket.on(IO.CREDIT.STARTED, async () => {
+		this.wsService.on(IO.CREDIT.STARTED, async () => {
 			_.forEach(this.gameState.credits, c => {
 				if (c.status == CREDIT_STATUS.PAUSED) {
 					c.status = CREDIT_STATUS.RUNNING;
 				}
 			});
 		});
-		this.socket.on(IO.CREDIT.PROGRESS, async (data: any) => {
+		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
 			_.forEach(this.gameState.credits, c => {
 				if (c.idx == data.idx) {
 					c.status = CREDIT_STATUS.RUNNING;
@@ -100,7 +103,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(IO.CREDIT.DONE, async (data: any) => {
+		this.wsService.on(IO.CREDIT.DONE, async (data: any) => {
 			_.forEach(this.gameState.credits, c => {
 				if (c.idx == data.idx) {
 					c.status = data.status;
@@ -111,14 +114,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(IO.CREDIT.TIMEOUT, async (data: any) => {
+		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any) => {
 			_.forEach(this.gameState.credits, c => {
 				if (c.idx == data.idx) {
 					c.status = data.status;
 				}
 			});
 		});
-		this.socket.on(IO.CREDIT.PAYED_INTEREST, async (data: any) => {
+		this.wsService.on(IO.CREDIT.PAYED_INTEREST, async (data: any) => {
 			_.forEach(this.gameState.credits, (c) => {
 				if (c.idx == data.idx) {
 					c.status = data.status;
@@ -128,7 +131,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(IO.CREDIT.DEFAULT, async (data: any) => {
+		this.wsService.on(IO.CREDIT.DEFAULT, async (data: any) => {
 			_.forEach(this.gameState.credits, (c) => {
 				if (c.playerStateIdx == data.playerStateIdx) {
 					c.status = data.status;
@@ -136,14 +139,14 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 			});
 			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT_MESSAGE"));
 		});
-		this.socket.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
+		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			_.forEach(this.prisoners, p => {
 				if (p.idx == data.idx) {
 					p.progressPrison = data.progress;
 				}
 			});
 		});
-		this.socket.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
+		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
 			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.PRISON_ENDED"));
 			_.remove(this.prisoners, p => p.idx == data.idx);
 			_.forEach(this.gameState.playersStates, p => {
@@ -153,7 +156,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(IO.PLAYER.DIED, async (event: any) => {
+		this.wsService.on(IO.PLAYER.DIED, async (event: any) => {
 			_.forEach(this.gameState.playersStates, p => {
 				if (p.idx == event.receiver) {
 					p.status = PLAYER_STATUS.DEAD;
@@ -165,7 +168,7 @@ export class BankBoardComponent implements OnInit, AfterViewInit {
 				}
 			});
 		});
-		this.socket.on(IO.AVATAR.UPDATED, (_data: any) => {
+		this.wsService.on(IO.AVATAR.UPDATED, (_data: any) => {
 			window.location.reload();
 		});
 	}

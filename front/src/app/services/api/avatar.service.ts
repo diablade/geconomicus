@@ -16,9 +16,8 @@ export class AvatarService {
 	avatar$ = this.avatarSubject.asObservable();
 	private sessionSubject = new BehaviorSubject<Session | null>(null);
 	session$ = this.sessionSubject.asObservable();
-	private socket: any;
-	private currentSessionId: string | undefined;
-	private currentAvatarIdx: number | undefined;
+	private sessionId: string | undefined;
+	private avatarIdx: number | undefined;
 
 	setAvatar(avatar: Avatar) {
 		this.avatarSubject.next(avatar);
@@ -51,11 +50,92 @@ export class AvatarService {
 					observer.next({ success: true, data: fetchSession ? data.avatar : data });
 					observer.complete();
 				});
-			if (sessionId !== this.currentSessionId || avatarIdx !== this.currentAvatarIdx) {
+			if (sessionId !== this.sessionId || avatarIdx !== this.avatarIdx) {
 				this.initializeSocket(sessionId, avatarIdx);
 			}
 		});
 	}
+
+	initializeSocket(sessionId: string, avatarIdx: number): void {
+		this.sessionId = sessionId;
+		this.avatarIdx = avatarIdx;
+		this.wsService.initializeSocket({
+			publicChannel: sessionId,
+			privateChannel: `${sessionId}:${avatarIdx}`,
+		});
+		this.setupSocketListeners();
+	}
+
+	private setupSocketListeners(): void {
+		// Avatar events
+		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
+			if (data.idx == this.avatarIdx) {
+				this.avatarSubject.next(data);
+			}
+		});
+
+		// Session events
+		this.wsService.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: data.gamesRules,
+				});
+			}
+		});
+
+		this.wsService.on(IO.SESSION.UPDATED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					...data,
+				});
+			}
+		});
+
+		// Game events
+		this.wsService.on(IO.GAME.DELETED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((rules: any) => {
+						if (rules.idx == data.idx) {
+							rules.gameStatus = data.gameStatus;
+							rules.gameStateId = '';
+						}
+						return rules;
+					}),
+				});
+			}
+		});
+
+		this.wsService.on(IO.GAME.CREATED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((game: any) => {
+						if (game.idx === data.idx) {
+							game.gameStateId = data.gameStateId;
+							game.typeMoney = data.typeMoney;
+							game.gameStatus = data.gameStatus;
+						}
+						return game;
+					}),
+				});
+			}
+		});
+
+		this.wsService.on(IO.REFRESH_FORCE, async (data: any) => {
+			window.location.reload();
+		});
+	}
+
 
 	updateAvatar(
 		sessionId: string,
@@ -115,89 +195,4 @@ export class AvatarService {
 			});
 	}
 
-	initializeSocket(sessionId: string, avatarIdx: number): void {
-		this.currentSessionId = sessionId;
-		this.currentAvatarIdx = avatarIdx;
-		this.socket = this.wsService.getSocket({
-			publicChannel: sessionId,
-			privateChannel: `${sessionId}:${avatarIdx}`,
-		});
-		this.setupSocketListeners();
-	}
-
-	private setupSocketListeners(): void {
-		if (!this.socket) return;
-
-		// Avatar events
-		this.socket.on(IO.AVATAR.UPDATED, (data: any) => {
-			if (data.idx == this.currentAvatarIdx) {
-				this.avatarSubject.next(data);
-			}
-		});
-
-		// Session events
-		this.socket.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', avatarIdx: this.currentAvatarIdx, _ackId: data._ackId });
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				this.sessionSubject.next({
-					...currentSession,
-					gamesRules: data.gamesRules,
-				});
-			}
-		});
-
-		this.socket.on(IO.SESSION.UPDATED, (data: any) => {
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				this.sessionSubject.next({
-					...currentSession,
-					...data,
-				});
-			}
-		});
-
-		// Game events
-		this.socket.on(IO.GAME.KILLED, (data: any) => {
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				this.sessionSubject.next({
-					...currentSession,
-					gamesRules: currentSession.gamesRules.map((rules: any) => {
-						if (rules.idx == data.idx) {
-							rules.gameStatus = data.gameStatus;
-							rules.gameStateId = '';
-						}
-						return rules;
-					}),
-				});
-			}
-		});
-
-		this.socket.on(IO.GAME.CREATED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', avatarIdx: this.currentAvatarIdx, _ackId: data._ackId });
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				this.sessionSubject.next({
-					...currentSession,
-					gamesRules: currentSession.gamesRules.map((game: any) => {
-						if (game.idx === data.idx) {
-							game.gameStateId = data.gameStateId;
-							game.typeMoney = data.typeMoney;
-							game.gameStatus = data.gameStatus;
-						}
-						return game;
-					}),
-				});
-			}
-		});
-
-		this.socket.on(IO.GAME.SETUP, async (data: any) => {
-			// change status of gameRules
-		});
-
-		this.socket.on(IO.REFRESH_FORCE, async (data: any) => {
-			window.location.reload();
-		});
-	}
 }

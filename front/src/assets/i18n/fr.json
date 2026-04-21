@@ -213,7 +213,6 @@
 		"TECHNOLOGY": "Bravo, vous avez acquis la technologie (fin de partie)",
 		"COPY_SUCCESS": "Copié !"
 	},
-
 	"GO_NEW_LIFE": "Ğo pour ma nouvelle vie !",
 	"REINCARNATED": "Hey ! Tu as été réincarné !",
 	"DIALOG": {
@@ -314,7 +313,10 @@
 	},
 	"ERROR": {
 		"GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
-		"GAME_NOT_FOUND": "Jeu introuvable",
+		"GAME_NOT_FOUND": "Partie introuvable",
+		"SESSION_NOT_FOUND": "Session non trouvée",
+		"GAME_ALREADY_LAUNCHED": "La partie est déjà ouverte, les joueurs peuvent la rejoindre.",
+		"DELETE_AVATAR": "Erreur suppression avatar.",
 		"IN_PROGRESS": "déjà en cours",
 		"CARDS_NOT_UNIQUE": "Cartes non uniques",
 		"NOT_ENOUGH_CARDS": "Pas assez de cartes",
@@ -423,19 +425,6 @@
 		"EURO": "€",
 		"JUNE": "Ğ1",
 		"DU": "DU"
-	},
-	"PLAYER": {
-		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
-		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
-		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",
-		"BALANCE": "Solde :",
-		"WAITING": "En attente de l'animateur...",
-		"GAME_OVER": "Partie terminée...",
-		"ANSWER_SURVEY": "Répondre au questionnaire",
-		"DEBT": "Dettes",
-		"BUY": "ACHETER",
-		"CREDITS": "CRÉDITS",
-		"OBJECTIVES": "Objectifs"
 	},
 	"DATE_FORMAT": {
 		"DATETIME": "dd-MM-YYYY à HH:mm"

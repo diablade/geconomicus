@@ -124,15 +124,15 @@ SessionController.delete = async (req, res, next) => {
 
 SessionController.killGame = async (req, res, next) => {
     try {
-        const sessionUpdated = await RulesService.resetDefault(req.body.sessionId, req.body.ruleIdx);
-        await GameStateService.delete(req.body.gameStateId);
-        delete sessionUpdated.avatars;
+        const { sessionId, ruleIdx, gameStateId } = req.body;
+        const sessionUpdated = await RulesService.resetDefault(sessionId, ruleIdx);
+        await GameStateService.delete(gameStateId);
         let response = {
-            gameStatus: sessionUpdated.gameStatus,
-            gameStateId: "",
-            idx: req.body.ruleIdx
+            gameStateId: gameStateId,
+            ruleStatus: sessionUpdated.gameStatus,
+            ruleIdx: ruleIdx
         }
-        socket.emitTo(req.body.sessionId, IO.GAME.KILLED, response);
+        socket.emitAckTo(sessionId, IO.GAME.DELETED, response);
         return res.status(200).json(response);
     }
     catch (err) {

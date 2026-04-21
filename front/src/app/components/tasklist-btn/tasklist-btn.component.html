@@ -1,6 +1,8 @@
-<button class="ms-2" *ngIf="stroked" mat-stroked-button (click)="showTaskList()">{{ labelBtn|translate }}
-	<fa-icon *ngIf="icon" [icon]="faListAlt"></fa-icon>
+<button class="ms-2" *ngIf="stroked" mat-stroked-button (click)="showTaskList()">
+	<mat-icon *ngIf="icon" class="outlined">list_alt_check</mat-icon>
+	{{ labelBtn | translate }}
 </button>
-<button class="ms-2" *ngIf="!stroked" mat-raised-button (click)="showTaskList()">{{ labelBtn|translate }}
-	<fa-icon *ngIf="icon" [icon]="faListAlt"></fa-icon>
+<button class="ms-2" *ngIf="!stroked" mat-raised-button (click)="showTaskList()">
+	<mat-icon *ngIf="icon" class="outlined">list_alt_check</mat-icon>
+	{{ labelBtn | translate }}
 </button>

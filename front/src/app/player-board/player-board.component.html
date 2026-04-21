@@ -57,7 +57,10 @@
 		</div>
 		<div class="">
 			<div class="d-flex justify-content-end">
-				<avatar [avatar]="avatar$ | async" class="imgTitle"></avatar>
+				<avatar
+					[routerLink]="['/avatar', sessionId, avatarIdx]"
+					[avatar]="avatar$ | async"
+					class="imgTitle"></avatar>
 			</div>
 			<div class="username">{{ (avatar$ | async)?.name }}</div>
 		</div>
@@ -91,7 +94,7 @@
 		</button>
 	</div>
 	<div *ngIf="(typeTheme$ | async) === 'CARD'" @list class="d-flex flex-row flex-wrap">
-		<ng-container *ngFor="let card of cards$ | async">
+		<ng-container *ngFor="let card of legacyCards | async">
 			<app-card
 				@item
 				*ngIf="card.displayed"
@@ -183,20 +186,20 @@
 			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
 		</button>
 		<button
-			*ngIf="(typeTheme$ | async) !== 'CARD' && !panelRecipeOpenState"
+			*ngIf="(typeTheme$ | async) !== 'THEME.CLASSIC' && !panelRecipeOpenState"
 			class="buy"
 			mat-icon-button
 			color="primary"
 			(click)="togglePanel('recipe')">
-			<fa-icon *ngIf="!panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
+			<mat-icon *ngIf="!panelRecipeOpenState">menu_book</mat-icon>
 		</button>
 		<button
-			*ngIf="(typeTheme$ | async) !== 'CARD' && panelRecipeOpenState"
+			*ngIf="(typeTheme$ | async) !== 'THEME.CLASSIC' && panelRecipeOpenState"
 			class="buy"
 			mat-fab
 			color="primary"
 			(click)="togglePanel('recipe')">
-			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
+			<mat-icon *ngIf="panelRecipeOpenState">menu_book</mat-icon>
 		</button>
 		<button
 			class="buy"

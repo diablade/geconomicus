@@ -427,3 +427,15 @@ html {
 		transform: rotate(360deg);
 	}
 }
+
+/* Fix for Material Icons - ensure correct font-family */
+mat-icon.outlined {
+	font-family: 'Material Symbols Outlined' !important;
+	// font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+}
+
+/* Fix for Material Icons Outlined - ensure correct font-family */
+mat-icon.material-icons {
+	font-family: 'Material Icons';
+	// font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+}

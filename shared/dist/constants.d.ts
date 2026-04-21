@@ -26,7 +26,7 @@ export type SessionStatus = typeof SESSION_STATUS[keyof typeof SESSION_STATUS];
 export declare const GAME_STATUS: {
     readonly NONE: "none";
     readonly CREATED: "created";
-    readonly STARTED: "started";
+    readonly INITIALIZED: "initialized";
     readonly PLAYING: "playing";
     readonly PAUSED: "paused";
     readonly WAITING: "waiting";
@@ -63,8 +63,7 @@ export declare const IO: {
     };
     readonly GAME: {
         readonly CREATED: "gc";
-        readonly SETUP: "gs";
-        readonly DISTRIB: "gd";
+        readonly INIT: "gi";
         readonly DISTRIB_DU: "gddu";
         readonly FIRST_DU: "gfd";
         readonly STARTED: "gsta";
@@ -73,9 +72,10 @@ export declare const IO: {
         readonly FINISHED: "gsf";
         readonly RESET: "reset";
         readonly DEATH_IS_COMING: "dic";
-        readonly KILLED: "gk";
+        readonly DELETED: "gdel";
     };
     readonly PLAYER: {
+        readonly INIT: "pi";
         readonly JOINED: "pj";
         readonly DIED: "pd";
         readonly FEEDBACK: "pf";
@@ -112,11 +112,12 @@ export type IoShortCode = typeof IO.SHORT_CODE[keyof typeof IO.SHORT_CODE];
 export declare const DB_EVENTS: {
     readonly SESSION_STARTED: "session-started";
     readonly GAME_CREATED: "game-created";
+    readonly GAME_INIT: "game-init";
+    readonly PLAYER_INIT: "player-init";
     readonly GAME_STARTED: "game-started";
     readonly GAME_PAUSED: "game-paused";
     readonly GAME_ENDED: "game-ended";
     readonly PLAYER_JOINED: "player-joined";
-    readonly DISTRIB_INIT: "distrib-init";
     readonly DISTRIB_DU: "distrib-du";
     readonly FIRST_DU: "first-du";
     readonly TRANSACTION: "trans";

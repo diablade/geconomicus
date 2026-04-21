@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { faCamera, faChevronDown, faKeyboard } from '@fortawesome/free-solid-svg-icons';
-import { JoinQrDialog } from '../master-board/master-board.component';
+import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { Platform } from '@angular/cdk/platform';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
 import { I18nService } from '../services/i18n.service';
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 	openKeyPub() {
 		const gunyKeyPub = '4JfewkSqRFpzdJsKnxrSBLgQcjBaopVs9ct4Qc32B8kf:jrw';
 		const keyText = this.i18nService.instant('PUBLIC_KEY');
-		this.dialog.open(JoinQrDialog, {
+		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				url: gunyKeyPub,
 				text: keyText + gunyKeyPub,
