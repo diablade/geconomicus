@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map, Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, debounceTime, map, Subscription } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,6 +14,8 @@ import { WebSocketService } from '../services/web-socket.service';
 import { AudioService } from '../services/audio.service';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash-es';
+
 
 @Component({
 	selector: 'app-master-board',
@@ -58,10 +60,25 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
         seconds: this.seconds$
     });
 
+    sp$ = combineLatest({
+        session: this.session$,
+        playersStates: this.playersStates$,
+    });
+
     killUser = false;
     coinRotate = false;
 
-	playersWithAvatars$ = this.vm$.pipe(
+	playersWithAvatars$ = this.sp$.pipe(
+		debounceTime(0), // wait for simultaneous emissions to stabilize
+		distinctUntilChanged((a, b) => {
+			if (!_.isEqual(a.session.avatars, b.session.avatars)) {
+				return false;
+			}
+			if (!_.isEqual(a.playersStates, b.playersStates)) {
+				return false;
+			}
+			return true;
+		}),
 		map(({playersStates, session}) =>
 			playersStates.map(playerState => ({
 				...playerState,
