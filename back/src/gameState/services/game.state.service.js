@@ -54,8 +54,6 @@ GameStateService.initGame = async (gameStateId) => {
 
 	log.info('Game setup completed', { gameStateId, typeMoney: gameState.typeMoney });
 
-    console.log('initializedGame', initializedGame);
-
 	// Persist setup state to DB,
 	await GameStateModel.findByIdAndUpdate(gameStateId, { $set: initializedGame });
 
@@ -66,34 +64,41 @@ GameStateService.initGame = async (gameStateId) => {
 
 	// emit to connected players their initial state
 	initializedGame.playersStates.forEach(async (playerState) => {
+		const roomId = `${gameStateId}:${playerState.avatarIdx}:${playerState.idx}`;
+
+		console.log('emit PLAYER_INIT to room', roomId);
 		await EventService.postNow(DB_EVENTS.PLAYER_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,playerState.idx,{playerState});
-		socket.emitAckTo(`${gameStateId}:${playerState.avatarIdx}:${playerState.idx}`, IO.PLAYER.INIT, {playerState,status: GAME_STATUS.INITIALIZED});
+		socket.emitAckTo(roomId, IO.PLAYER.INIT, {playerState,status: GAME_STATUS.INITIALIZED});
 	});
 
 	return initializedGame;
 };
 
 GameStateService.getById = async (id, enriched = true) => {
-	// Check in-memory first for a live game
-	const liveEntry = GameStateManager.get(id);
-	if (liveEntry) {
-		if (enriched) {
-			return { gameState: liveEntry.state, rules: liveEntry.rules };
-		}
-		return { gameState: liveEntry.state };
-	}
-	// Fall back to DB for finished / not-yet-started games
-	const gameState = await GameStateModel.findById(id).lean();
-	if (!gameState) {
-		throw new Error('Game state not found');
-	}
-	if (enriched) {
-		let session = await SessionService.getById(gameState.sessionId);
-		const rules = session.gamesRules.find((rule) => rule.idx === gameState.ruleIdx);
-		session.gamesRules = [];
-		return { gameState, session, rules };
-	}
-	return { gameState };
+
+
+    // Check in-memory first for a live game
+    const liveEntry = GameStateManager.get(id);
+    if (liveEntry) {
+        const session = await SessionService.getById(liveEntry.state.sessionId);
+        if (!session) {
+            throw new Error('Session not found for game state');
+        }
+        return { gameState: liveEntry.state, rules: liveEntry.rules, session };
+    }else{
+        // Fall back to DB for finished / not-yet-started games
+        const gameState = await GameStateModel.findById(id).lean();
+        if (!gameState) {
+            throw new Error('Game state not found');
+        }
+        const session = await SessionService.getById(gameState.sessionId);
+        if (!session) {
+            throw new Error('Session not found for game state');
+        }
+        const rules = session.gamesRules.find((rule) => rule.idx === gameState.ruleIdx);
+        session.gamesRules = [];
+        return { gameState, session, rules };
+    }
 };
 
 GameStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, avatarIdx) => {
@@ -135,18 +140,11 @@ GameStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, play
     );
     if (!playerState) return null;
 
-    const cards = playerState.cards || [];
     const credits = (gameState.credits || []).filter((c) => c.playerStateIdx == playerStateIdx);
-    const prison = playerState.status === PLAYER_STATUS.DEAD;
     const defaultCredit = credits.some((c) => c.status === 'default-credit');
 
     return {
-        playerState: {
-            idx: playerState.idx,
-            avatarIdx: playerState.avatarIdx,
-            status: playerState.status,
-            coins: playerState.coins,
-        },
+        playerState,
         gameState: {
             typeMoney: gameState.typeMoney,
             status: gameState.status,
@@ -154,9 +152,7 @@ GameStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, play
             currentMassMonetary: gameState.currentMassMonetary || 0,
         },
         rules,
-        cards,
         credits,
-        prison,
         defaultCredit,
     };
 };

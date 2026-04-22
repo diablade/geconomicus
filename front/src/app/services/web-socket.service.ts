@@ -140,24 +140,21 @@ export class WebSocketService {
 			this.handleTimeout();
 			// this.socket?.io?.reconnection();
 		});
-		this.socket.on('error', (error: any) => {
-			console.error('Socket error:', error);
-			if (error && error.message && error.message.includes('timeout')) {
-				this.handleTimeout();
-			}
-		});
 		this.socket.on('reconnect_attempt', (attempt) => {
-			console.log('Reconnection attempt:', attempt);
+            console.log('Reconnection attempt:', attempt);
 		});
 
 		this.socket.on('reconnect_error', () => {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
+            this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
 			console.log('Reconnection error');
 		});
-		this.socket.on('error', () => {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
-			console.log('error');
-		});
+        this.socket.on('error', (error: any) => {
+            this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
+            console.error('Socket error:', error);
+            if (error && error.message && error.message.includes('timeout')) {
+                this.handleTimeout();
+            }
+        });
 		this.socket.on('reconnect_failed', () => {
 			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
 			console.log('Reconnection failed');

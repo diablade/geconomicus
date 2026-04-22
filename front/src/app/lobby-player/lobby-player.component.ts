@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AvatarService } from '../services/api/avatar.service';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { GAME_TYPE, GAME_STATUS } from '@geco/shared';
 import { I18nService } from '../services/i18n.service';
 import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
@@ -29,6 +29,11 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	avatarIdx: number = 0;
 	avatar$ = inject(AvatarService).avatar$;
 	session$ = inject(AvatarService).session$;
+
+	vm$ = combineLatest({
+		avatar: this.avatar$,
+		session: this.session$
+	});
 
 	skin: string = '#f2d3b1';
 	hairColor: string = '#ac6511';

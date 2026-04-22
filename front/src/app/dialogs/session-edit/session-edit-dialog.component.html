@@ -5,19 +5,19 @@
 		</div>
 		<div class="text-center">
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ 'MASTER.SESSION_NAME' | translate }}</mat-label>
+				<mat-label>📝 {{ 'MASTER.SESSION_NAME' | translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="session.name" />
 			</mat-form-field>
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ 'MASTER.ANIMATOR' | translate }}</mat-label>
+				<mat-label>👤 {{ 'MASTER.ANIMATOR' | translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="session.animator" />
 			</mat-form-field>
 			<mat-form-field class="largeInput" appearance="fill">
-				<mat-label>{{ 'MASTER.LOCATION' | translate }}</mat-label>
+				<mat-label>📍 {{ 'MASTER.LOCATION' | translate }}</mat-label>
 				<input type="text" matInput placeholder="" [(ngModel)]="session.location" />
 			</mat-form-field>
 			<mat-form-field>
-				<mat-label>{{ 'THEME.TITLE' | translate }}</mat-label>
+				<mat-label>🎨 {{ 'THEME.TITLE' | translate }}</mat-label>
 				<mat-select class="m-auto" [(ngModel)]="session.theme">
 					<mat-option *ngFor="let theme of themes" [value]="theme">
 						{{ theme | translate }}

@@ -4,8 +4,9 @@ import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
 import { environment } from '../../../environments/environment';
-import { ERROR_RELOAD, ErrorService, REDIRECT_HOME } from '../error.service';
+import { ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
+import { ThemesService } from '../themes.service';
 import { IO } from '@geco/shared';
 
 @Injectable({
@@ -25,12 +26,14 @@ export class AvatarService {
 
 	setSession(session: Session) {
 		this.sessionSubject.next(session);
+		this.themesService.loadTheme(session.theme);
 	}
 
 	constructor(
 		public http: HttpClient,
 		private errorService: ErrorService,
-		private wsService: WebSocketService
+		private wsService: WebSocketService,
+		private themesService: ThemesService
 	) {}
 
 	loadAvatar(sessionId: string, avatarIdx: number, fetchSession: boolean = false): Observable<any> {
@@ -40,6 +43,7 @@ export class AvatarService {
 				.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
 				.subscribe((data) => {
 					if (fetchSession && data.avatar) {
+                        this.themesService.loadTheme(data.session.theme);
 						this.avatarSubject.next(data.avatar);
 						if (data.session) {
 							this.sessionSubject.next(data.session);
@@ -103,9 +107,9 @@ export class AvatarService {
 				this.sessionSubject.next({
 					...currentSession,
 					gamesRules: currentSession.gamesRules.map((rules: any) => {
-						if (rules.idx == data.idx) {
+						if (rules.gameStateId === data.gameStateId) {
 							rules.gameStatus = data.gameStatus;
-							rules.gameStateId = '';
+							rules.gameStateId = "";
 						}
 						return rules;
 					}),
@@ -119,13 +123,13 @@ export class AvatarService {
 			if (currentSession) {
 				this.sessionSubject.next({
 					...currentSession,
-					gamesRules: currentSession.gamesRules.map((game: any) => {
-						if (game.idx === data.idx) {
-							game.gameStateId = data.gameStateId;
-							game.typeMoney = data.typeMoney;
-							game.gameStatus = data.gameStatus;
+					gamesRules: currentSession.gamesRules.map((rules: any) => {
+						if (rules.idx === data.idx) {
+							rules.gameStateId = data.gameStateId;
+							rules.typeMoney = data.typeMoney;
+							rules.gameStatus = data.gameStatus;
 						}
-						return game;
+						return rules;
 					}),
 				});
 			}

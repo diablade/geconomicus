@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, inject} from '@angular/core';
-import {map, Subscription, withLatestFrom} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
-import {PlayerState, GameState, Card, Credit} from "../models/gameState";
+import {combineLatest, map, Subscription, withLatestFrom} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {Card, Credit, PlayerState} from "../models/gameState";
 import {MatDialog} from "@angular/material/dialog";
 import {I18nService} from "../services/i18n.service";
 import * as _ from 'lodash-es';
@@ -27,9 +27,9 @@ import {animations} from "../services/animations";
 import {ThemesService} from '../services/themes.service';
 import {getBackgroundStyle} from "../services/avatarTools";
 import {AvatarService} from "../services/api/avatar.service";
-import {PlayerStateService} from "../services/api/playerState.service";
+import {PlayerStateService} from "../services/api/player-state.service";
 import { DeckService } from '../services/api/deck.service';
-import {WebSocketService} from "../services/web-socket.service";
+import { Rules } from '../models/rules';
 
 @Component({
 	selector: 'app-player-board',
@@ -40,6 +40,7 @@ import {WebSocketService} from "../services/web-socket.service";
 export class PlayerBoardComponent implements OnInit, OnDestroy {
 
     protected readonly PLAYING = GAME_STATUS.PLAYING;
+    protected readonly PRISON = PLAYER_STATUS.PRISON;
     protected readonly DEAD = PLAYER_STATUS.DEAD;
     protected readonly JUNE = GAME_TYPE.JUNE;
     protected readonly DEBT = GAME_TYPE.DEBT;
@@ -58,22 +59,29 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	avatarIdx: number | undefined;
 	playerStateIdx: number | undefined;
 
-	typeTheme$ = this.themesService.typeTheme$;
+	typeTheme$ = inject(ThemesService).typeTheme$;
 	theme: string = this.themesService.getCurrentTheme();
     avatar$ = inject(AvatarService).avatar$;
     playerState$ = inject(PlayerStateService).playerState$;
     gameState$ = inject(PlayerStateService).gameState$;
     rules$ = inject(PlayerStateService).rules$;
-    cards$ = inject(PlayerStateService).cards$;
     credits$ = inject(PlayerStateService).credits$;
-    prison$ = inject(PlayerStateService).prison$;
     defaultCredit$ = inject(PlayerStateService).defaultCredit$;
+
+    vm$ = combineLatest({
+        playerState: this.playerState$,
+        gameState: this.gameState$,
+        rules: this.rules$,
+        credits: this.credits$,
+        avatar: this.avatar$,
+        typeTheme: this.typeTheme$,
+        defaultCredit: this.defaultCredit$
+    });
 
     scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
-	prison = false;
 	defaultCredit = false;
 	prisonProgress = 0;
 	minutesPrison = 5;
@@ -82,31 +90,34 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	isBuying = false;
 	isProducing = false;
 
-    currentDebts = this.credits$.pipe(
-        map(credits => credits
-            .filter(c => c.status !== CREDIT_STATUS.DONE)
-            .reduce((total, c) => total + c.amount + c.interest, 0)
-        )
-    );
 
-    receipes = this.cards$.pipe(
-        withLatestFrom(this.rules$),
-        map(([cards, rules]) => {
-            console.log(cards);
-            return getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters);
+    currentDebts = (credits: Credit[]): number => {
+        return credits
+            .filter(c => c.status !== CREDIT_STATUS.DONE)
+            .reduce((total, c) => total + c.amount + c.interest, 0);
+    };
+
+    recipies = (playerState: PlayerState, rules: Rules) => {
+        return getAvailableRecipes(playerState.cards, rules.amountCardsForProd, rules.generatedIdenticalLetters);
+    };
+
+    prison = this.vm$.pipe(
+        map(({playerState}) => {
+            console.log('playerState.status:', playerState.status);
+            return playerState.status === PLAYER_STATUS.PRISON;
         })
     );
 
-    legacyCards = this.cards$.pipe(
-        map(cards => {
-            if(this.theme !== 'CARD') {
-                return [];
-            }
-            cards = _.orderBy(cards, ['weight', 'letter']);
-            const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
-            const keyDuplicates: string[] = [];
-            for (const c of cards) {
-                const countKey = `${c.weight}-${c.letter}`;
+    cards = this.vm$.pipe(
+        map(({playerState, typeTheme}) => {
+            console.log(playerState);
+            let cards: Card[] = playerState.cards || [];
+            if(typeTheme === 'CARD') {
+                cards = _.orderBy(cards, ['weight', 'letter']);
+                const countByResult = _.countBy(cards, (obj: any) => `${obj.weight}-${obj.letter}`);
+                const keyDuplicates: string[] = [];
+                for (const c of cards) {
+                    const countKey = `${c.weight}-${c.letter}`;
                 c.count = countByResult[countKey] || 0;
                 const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
                 if (c.count > 1 && existCountKey) {
@@ -118,7 +129,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
                 }
             }
             cards = _.orderBy(cards, ['count'], 'desc');
-            return cards;
+        }
+        return cards;
         })
     );
 
@@ -134,7 +146,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	constructor(private route: ActivatedRoute,
 	            public dialog: MatDialog,
-	            private router: Router,
 	            private localStorageService: LocalStorageService,
 	            private deckService: DeckService,
 	            private i18nService: I18nService,
@@ -142,23 +153,22 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	            private audioService: AudioService,
 	            private snackbarService: SnackbarService,
 	            private avatarService: AvatarService,
-	            private playerStateService: PlayerStateService,
-	            private wsService: WebSocketService) {
+	            private playerStateService: PlayerStateService) {
 		this.i18nService.loadNamespace('player');
 	}
 
-	updateScreenSize() {
-		// Listen for window resize events to update the dimensions if the screen size changes
-		this.screenWidth = window.innerWidth;
-		this.screenHeight = window.innerHeight;
-		window.addEventListener('resize', this.updateScreenSize.bind(this));
+	ngOnDestroy(): void {
+		// Quitter les rooms du jeu
+		this.playerStateService.leaveRooms();
+		this.playerStateService.offAll();
+		if (this.subscription) this.subscription.unsubscribe();
 	}
 
 	ngOnInit(): void {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem("scanV3");
 		this.route.params.subscribe(params => {
-			this.sessionId = params['sessionId'];
+            this.sessionId = params['sessionId'];
 			this.avatarIdx = params['avatarIdx'];
 			this.gameStateId = params['gameStateId'];
 			this.playerStateIdx = params['playerStateIdx'];
@@ -171,17 +181,24 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
                 this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
 			}
 		});
-	}
+
+    }
+    updateScreenSize() {
+        // Listen for window resize events to update the dimensions if the screen size changes
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight;
+        window.addEventListener('resize', this.updateScreenSize.bind(this));
+    }
 
 	initPanels() {
 		const panelC = this.localStorageService.getItem("panelCredit");
 		const panelR = this.localStorageService.getItem("panelRecipe");
 		this.panelCreditOpenState = panelC == undefined ? false : panelC;
 		this.panelRecipeOpenState = panelR == undefined ? false : panelR;
-		this.gameState$.subscribe(gameState => {
+		this.gameState$.pipe(withLatestFrom(this.typeTheme$)).subscribe(([gameState, typeTheme]) => {
 			if (gameState.typeMoney === GAME_TYPE.JUNE) {
 				this.localStorageService.setItem('panelCredit', false);
-				if (this.theme === "THEME.CLASSIC") {
+				if (typeTheme === "CARD") {
 					this.localStorageService.setItem('panelRecipe', false);
 					this.panelRecipeOpenState = false;
 				} else {
@@ -189,7 +206,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				}
 			} else {
 				this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
-				if (this.theme === "THEME.CLASSIC") {
+				if (typeTheme === "CARD") {
 					this.localStorageService.setItem('panelRecipe', false);
 					this.panelRecipeOpenState = false;
 				} else {
@@ -218,15 +235,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			this.flipCoin = false;
 		}, 2000);
-	}
-
-	//To prevent memory leak
-	ngOnDestroy(): void {
-        // Quitter les rooms du jeu
-		if (this.gameStateId && this.avatarIdx != undefined && this.playerStateIdx != undefined) {
-            this.playerStateService.leaveRooms();
-		}
-        if (this.subscription) this.subscription.unsubscribe();
 	}
 
 	produceLevelUp($event: any) {

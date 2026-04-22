@@ -1,149 +1,173 @@
-<div class="d-flex flex-column h-100">
-	<div class="d-flex flex-row justify-content-between">
-		<img class="geco" src="./assets/images/geconomicus.png" alt="" />
-		<div class="d-flex flex-row align-items-center">
-			<app-tasklist-btn [stroked]="true"></app-tasklist-btn>
-			<app-notice-btn
-				[amountCardsForProd]="(rules$ | async)?.amountCardsForProd || 0"
-				[timerCredit]="(rules$ | async)?.timerCredit || 0"
-				[stroked]="true"></app-notice-btn>
-			<app-language-btn [short]="true"></app-language-btn>
-		</div>
-	</div>
-	<div class="fs-1 text-center pt-4 pb-4 shadowed" *ngIf="(gameState$ | async)?.status === 'open'">
-		{{ (session$ | async)?.name }}
-	</div>
-	<div class="container h-100" *ngIf="gameState$ | async as gameState">
-		<div class="d-flex align-items-center justify-content-evenly flex-row">
-			<div class="d-flex flex-column">
-				<video class="videoCard" #videoPlayerLT (click)="videoPlayerLT.play()" playsinline autoplay muted>
-					<source src="assets/videos/panier.mp4" type="video/mp4" />
-				</video>
-				<video class="videoCard" #videoPlayerL (click)="videoPlayerL.play()" playsinline autoplay muted>
-					<source src="assets/videos/bike.mp4" type="video/mp4" />
-				</video>
+<ng-container *ngIf="vm$ | async as vm">
+	<div class="d-flex flex-column h-100">
+		<div class="d-flex flex-row justify-content-between">
+			<img class="geco" src="./assets/images/geconomicus.png" alt="" />
+			<div class="d-flex flex-row align-items-center">
+				<app-tasklist-btn [stroked]="true"></app-tasklist-btn>
+				<app-notice-btn
+					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
+					[timerCredit]="vm.rules.timerCredit || 0"
+					[stroked]="true"></app-notice-btn>
+				<app-language-btn [short]="true"></app-language-btn>
 			</div>
-			<div class="countDownContainer">
-				<coin
-					class="coin"
-					[coinImage]="'./assets/images/' + (rules$ | async)?.typeMoney + '.png'"
-					[height]="'100%'"
-					[width]="'100%'"
-					(click)="toggleCoinRotate()"
-					[forceRotate]="coinRotate"></coin>
-				<div class="time">
-					<div class="minute shadowed">{{ minutes$ | async }}</div>
-					<div class="deuxpoints shadowed">:</div>
-					<div class="seconds shadowed">{{ seconds$ | async }}</div>
+		</div>
+		<div class="fs-1 text-center pt-4 pb-4 shadowed" *ngIf="vm.gameState.status === 'open'">
+			{{ vm.session.name }}
+		</div>
+		<div class="container h-100">
+			<div class="d-flex align-items-center justify-content-evenly flex-row">
+				<div class="d-flex flex-column">
+					<video class="videoCard" #videoPlayerLT (click)="videoPlayerLT.play()" playsinline autoplay muted>
+						<source src="assets/videos/panier.mp4" type="video/mp4" />
+					</video>
+					<video class="videoCard" #videoPlayerL (click)="videoPlayerL.play()" playsinline autoplay muted>
+						<source src="assets/videos/bike.mp4" type="video/mp4" />
+					</video>
 				</div>
-				<mat-progress-spinner
-					[color]="'primary'"
-					[mode]="'determinate'"
-					[diameter]="300"
-					strokeWidth="10"
-					[value]="timerProgress$ | async"></mat-progress-spinner>
+				<div class="countDownContainer">
+					<coin
+						class="coin"
+						[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
+						[height]="'100%'"
+						[width]="'100%'"
+						(click)="toggleCoinRotate()"
+						[forceRotate]="coinRotate"></coin>
+					<div class="time">
+						<div class="minute shadowed">{{ vm.minutes }}</div>
+						<div class="deuxpoints shadowed">:</div>
+						<div class="seconds shadowed">{{ vm.seconds }}</div>
+					</div>
+					<mat-progress-spinner
+						[color]="'primary'"
+						[mode]="'determinate'"
+						[diameter]="300"
+						strokeWidth="10"
+						[value]="vm.timerProgress"></mat-progress-spinner>
+				</div>
+				<div class="d-flex flex-column">
+					<video class="videoCard" #videoPlayerRT playsinline (click)="videoPlayerRT.play()" autoplay muted>
+						<source src="assets/videos/owl.mp4" type="video/mp4" />
+					</video>
+					<video class="videoCard" #videoPlayerR playsinline (click)="videoPlayerR.play()" autoplay muted>
+						<source src="assets/videos/sun.mp4" type="video/mp4" />
+					</video>
+				</div>
 			</div>
-			<div class="d-flex flex-column">
-				<video class="videoCard" #videoPlayerRT playsinline (click)="videoPlayerRT.play()" autoplay muted>
-					<source src="assets/videos/owl.mp4" type="video/mp4" />
-				</video>
-				<video class="videoCard" #videoPlayerR playsinline (click)="videoPlayerR.play()" autoplay muted>
-					<source src="assets/videos/sun.mp4" type="video/mp4" />
-				</video>
-			</div>
-		</div>
-		<div class="d-flex mt-5 justify-content-center">
-			<button class="ms-2" mat-stroked-button color="primary" (click)="goBackToLobby()">
-				<mat-icon>arrow_back</mat-icon>
-				{{ 'MASTER.GO_BACK_TO_LOBBY' | translate }}
-			</button>
-			<button
-				*ngIf="gameState.status === CREATED"
-				mat-raised-button
-				color="accent"
-				class="ms-2"
-				(click)="initGame()">
-				<mat-icon class="outlined">playing_cards</mat-icon>
-				{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
-			</button>
-			<button
-				*ngIf="gameState.status === INITIALIZED || gameState.status === PAUSED"
-				class="ms-2"
-				mat-raised-button
-				color="warn"
-				(click)="startRound()">
-				<mat-icon>play_arrow</mat-icon>
-				{{ 'MASTER.START_ROUND' | translate }}
-			</button>
-			<button
-				*ngIf="gameState.status === PLAYING"
-				mat-raised-button
-				color="warn"
-				class="ms-2"
-				(click)="pauseRound()">
-				<mat-icon>pause</mat-icon>
-				{{ 'MASTER.PAUSE_ROUND' | translate }}
-			</button>
-			<button
-				*ngIf="gameState.status === PLAYING || gameState.status === PAUSED"
-				mat-raised-button
-				color="warn"
-				class="ms-2"
-				(click)="endRound()">
-				<mat-icon>stop</mat-icon>
-				{{ 'MASTER.END_ROUND' | translate }}
-			</button>
-			<button
-				*ngIf="gameState.status === STOPPED"
-				class="ms-2"
-				mat-raised-button
-				color="accent"
-				(click)="sendSurvey()">
-				<mat-icon>send</mat-icon>
-				{{ 'MASTER.SEND_SURVEY' | translate }}
-			</button>
-		</div>
-		<div class="d-flex flex-row mt-4 align-items-center justify-content-center">
-			<div *ngIf="(session$ | async)?.devMode">
-				<button class="m-2" mat-stroked-button (click)="goToAdmin()">
-					<mat-icon class="outlined">table_eye</mat-icon>
-					{{ 'MASTER.GAME_TABLE_VIEW' | translate }}
+			<div class="d-flex mt-5 justify-content-center">
+				<button class="ms-2" mat-stroked-button color="primary" (click)="goBackToLobby()">
+					<mat-icon>arrow_back</mat-icon>
+					{{ 'MASTER.GO_BACK_TO_LOBBY' | translate }}
+				</button>
+				<button
+					*ngIf="vm.gameState.status === CREATED"
+					mat-raised-button
+					color="accent"
+					class="ms-2"
+					(click)="initGame()">
+					<mat-icon class="outlined">playing_cards</mat-icon>
+					{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
+				</button>
+				<button
+					*ngIf="vm.gameState.status === INITIALIZED || vm.gameState.status === PAUSED"
+					class="ms-2"
+					mat-raised-button
+					color="warn"
+					(click)="startRound()">
+					<mat-icon>play_arrow</mat-icon>
+					{{ 'MASTER.START_ROUND' | translate }}
+				</button>
+				<button
+					*ngIf="vm.gameState.status === PLAYING"
+					mat-raised-button
+					color="warn"
+					class="ms-2"
+					(click)="pauseRound()">
+					<mat-icon>pause</mat-icon>
+					{{ 'MASTER.PAUSE_ROUND' | translate }}
+				</button>
+				<button
+					*ngIf="vm.gameState.status === PLAYING || vm.gameState.status === PAUSED"
+					mat-raised-button
+					color="warn"
+					class="ms-2"
+					(click)="endRound()">
+					<mat-icon>stop</mat-icon>
+					{{ 'MASTER.END_ROUND' | translate }}
+				</button>
+				<button
+					*ngIf="vm.gameState.status === STOPPED"
+					class="ms-2"
+					mat-raised-button
+					color="accent"
+					(click)="sendSurvey()">
+					<mat-icon>send</mat-icon>
+					{{ 'MASTER.SEND_SURVEY' | translate }}
 				</button>
 			</div>
-			<button
-				*ngIf="gameState.typeMoney === DEBT"
-				class="m-2"
-				mat-raised-button
-				color="accent"
-				(click)="showBank()">
-				<mat-icon>account_balance</mat-icon>
-				{{ 'MASTER.BANK_BTN' | translate }}
-			</button>
-			<button *ngIf="gameState.typeMoney === DEBT" mat-icon-button (click)="qrCodeBank()">
-				<mat-icon>qr_code</mat-icon>
-			</button>
-		</div>
-	</div>
-	<div class="text-center" *ngIf="(gameState$ | async)?.status !== CREATED">
-		<h2 class="fs-3 shadowed">{{ 'MASTER.PLAYERS' | translate }}</h2>
-		<mat-slide-toggle
-			*ngIf="!(rules$ | async)?.autoDeath || (session$ | async)?.devMode"
-			class=""
-			[color]="'warn'"
-			[(ngModel)]="killUser">
-			{{ 'MASTER.KILL_USERS' | translate }} ☠️
-		</mat-slide-toggle>
-	</div>
-	<div class="p-3 sunyBg backgroundPlayers-Small">
-		<div class="d-flex flex-row justify-content-center flex-wrap">
-			<div *ngFor="let playerState of playersWithAvatars$ | async" class="player d-flex flex-column">
-				<div class="d-flex flex-row justify-content-center player-action">
-					<a href="{{ getPlayerStateUrl(playerState) }}" target="_blank">{{ playerState.avatar?.name }}</a>
-					<fa-icon class="joinQr" (click)="reJoin(playerState)" [icon]="faQrcode"></fa-icon>
+			<div class="d-flex flex-row mt-4 align-items-center justify-content-center">
+				<div *ngIf="vm.session.devMode">
+					<button class="m-2" mat-stroked-button (click)="goToAdmin()">
+						<mat-icon class="outlined">table_eye</mat-icon>
+						{{ 'MASTER.GAME_TABLE_VIEW' | translate }}
+					</button>
 				</div>
-				<avatar [avatar]="playerState.avatar"></avatar>
-				<div class="dead" *ngIf="playerState.status === 'dead'">🪦</div>
+				<button
+					*ngIf="vm.gameState.typeMoney === DEBT"
+					class="m-2"
+					mat-raised-button
+					color="accent"
+					(click)="showBank()">
+					<mat-icon>account_balance</mat-icon>
+					{{ 'MASTER.BANK_BTN' | translate }}
+				</button>
+				<button *ngIf="vm.gameState.typeMoney === DEBT" mat-icon-button (click)="qrCodeBank()">
+					<mat-icon>qr_code</mat-icon>
+				</button>
+			</div>
+		</div>
+		<div class="text-center" *ngIf="vm.gameState.status !== CREATED">
+			<h2 class="fs-3 shadowed">{{ 'MASTER.PLAYERS' | translate }}</h2>
+		</div>
+		<div class="p-3 sunyBg backgroundPlayers-Small">
+			<div class="d-flex flex-row justify-content-center flex-wrap">
+				<div *ngFor="let playerState of playersWithAvatars$ | async" class="player d-flex flex-column">
+					<div class="d-flex flex-row justify-content-center player-action">
+						<div>{{ playerState.avatar?.name }}</div>
+					</div>
+					<avatar
+						[avatar]="playerState.avatar"
+						[width]="'80px'"
+						[height]="'80px'"
+						[matMenuTriggerFor]="aboveMenu"></avatar>
+					<mat-menu #aboveMenu="matMenu" yPosition="above">
+						<button
+							mat-menu-item
+							[routerLink]="[
+								'/player',
+								sessionId,
+								playerState.avatar?.idx,
+								gameStateId,
+								playerState.idx,
+							]">
+							<mat-icon>play_arrow</mat-icon>
+							<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+						</button>
+						<button mat-menu-item (click)="copyPlayerLink(playerState)">
+							<mat-icon>link</mat-icon>
+							<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+						</button>
+						<button mat-menu-item (click)="reJoin(playerState)">
+							<mat-icon>qr_code_2</mat-icon>
+							<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+						</button>
+						<button mat-color="warn" mat-menu-item (click)="killUserNow(playerState)">
+							<mat-icon [color]="'warn'">person_remove</mat-icon>
+							<span>{{ 'MASTER.KILL_USER' | translate }}</span>
+						</button>
+					</mat-menu>
+					<div class="dead" *ngIf="playerState.status === 'dead'">🪦</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</ng-container>

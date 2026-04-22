@@ -220,7 +220,7 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	randomize() {
-		console.log('RANDOMIZE CALLED');
+		console.log('RANDOMIZE AVATAR CALLED');
 		this.avatar!.earrings = this.getRandomInt(-1, properties.earrings.default.length - 1);
 		this.avatar!.glasses = this.getRandomInt(-1, properties.glasses.default.length - 1);
 		this.avatar!.features = this.getRandomInt(-1, properties.features.default.length - 1);

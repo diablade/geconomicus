@@ -33,7 +33,7 @@
 							[fontcolor]="'#FF9818'"
 							[fontname]="'arial'"
 							[mode]="'label'"
-							[mSize]="14"
+							[mSize]="17"
 							[ecLevel]="'H'"
 							[crisp]="true"
 							[label]="session.shortId"></ngx-kjua>
@@ -66,9 +66,9 @@
 					<div class="fs-5 mt-4">📍 {{ 'LOCATION' | translate }} : {{ session.location | translate }}</div>
 					<div class="fs-5 mt-4">🎨 {{ 'MASTER.THEME' | translate }} : {{ session.theme | translate }}</div>
 					<div class="flex-grow-1"></div>
-					<button class="mb-2" [color]="'warn'" mat-stroked-button (click)="editSession()">
+					<button class="mb-2" mat-stroked-button (click)="editSession()">
+						<mat-icon>edit</mat-icon>
 						{{ 'MASTER.EDIT' | translate }}
-						<fa-icon [icon]="faCogs"></fa-icon>
 					</button>
 					<button
 						class="box-shadowed"
@@ -76,12 +76,12 @@
 						[disabled]="session.avatars.length < 6 && !session.devMode"
 						mat-raised-button
 						(click)="startSession()">
+						<mat-icon>groups</mat-icon>
 						{{
 							session.avatars.length < 6 && !session.devMode
 								? ('MASTER.WAITING' | translate: { count: 6 - session.avatars.length })
 								: ('MASTER.START' | translate)
 						}}
-						<fa-icon [icon]="faPeopleRoof"></fa-icon>
 					</button>
 				</div>
 			</div>

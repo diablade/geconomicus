@@ -1,23 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, map, Subscription } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
-import {
-	faFlagCheckered,
-	faQrcode,
-	faCogs,
-	faTrashCan,
-	faCircleInfo,
-	faWarning,
-	faBuildingColumns,
-	faRightToBracket,
-	faEye,
-	faPlay,
-	faPause,
-	faStop,
-	faArrowLeft,
-} from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
 // @ts-ignore
@@ -27,7 +12,6 @@ import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog
 import { I18nService } from '../services/i18n.service';
 import { WebSocketService } from '../services/web-socket.service';
 import { AudioService } from '../services/audio.service';
-import { SessionStorageService } from '../services/local-storage/session-storage.service';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -46,20 +30,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly environment = environment;
-	protected readonly faTrashCan = faTrashCan;
-	protected readonly faFlagCheckered = faFlagCheckered;
-	protected readonly faQrcode = faQrcode;
-	protected readonly faCogs = faCogs;
-	protected readonly faInfo = faCircleInfo;
-	protected readonly faRightToBracket = faRightToBracket;
-	protected readonly faWarning = faWarning;
-
-	faBuildingColumns = faBuildingColumns;
-	faEye = faEye;
-	faPlay = faPlay;
-	faPause = faPause;
-	faStop = faStop;
-	faArrowLeft = faArrowLeft;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
@@ -73,23 +43,32 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	rules$ = this.gameStateService.rules$;
 	session$ = this.gameStateService.session$;
 	playersStates$ = this.gameStateService.playersStates$;
+    // Timer state from service
+    timerProgress$ = this.gameStateService.timerProgress$;
+    minutes$ = this.gameStateService.minutes$;
+    seconds$ = this.gameStateService.seconds$;
 
-	playersWithAvatars$ = combineLatest([this.playersStates$, this.session$]).pipe(
-		map(([playerStates, session]) =>
-			playerStates.map(playerState => ({
+    vm$ = combineLatest({
+        gameState: this.gameState$,
+        rules: this.rules$,
+        session: this.session$,
+        playersStates: this.playersStates$,
+        timerProgress: this.timerProgress$,
+        minutes: this.minutes$,
+        seconds: this.seconds$
+    });
+
+    killUser = false;
+    coinRotate = false;
+
+	playersWithAvatars$ = this.vm$.pipe(
+		map(({playersStates, session}) =>
+			playersStates.map(playerState => ({
 				...playerState,
 				avatar: session.avatars.find(a => a.idx === playerState.avatarIdx) ?? null,
 			}))
 		)
 	);
-
-	// Timer state from service
-	timerProgress$ = this.gameStateService.timerProgress$;
-	minutes$ = this.gameStateService.minutes$;
-	seconds$ = this.gameStateService.seconds$;
-
-	killUser = false;
-	coinRotate = false;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -106,6 +85,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
     ngOnDestroy(): void {
+        this.gameStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
 	}
 
@@ -190,6 +170,12 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		return environment.WEB_HOST + 'player/' + this.sessionId + '/' + playerState.avatarIdx + '/' + this.gameStateId + '/' + playerState.idx;
 	}
 
+	copyPlayerLink(playerState: any): void {
+		const url = this.getPlayerStateUrl(playerState);
+		navigator.clipboard.writeText(url);
+		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
+	}
+
 	reJoin(playerState: any): void {
 		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
@@ -228,7 +214,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	initGame() {
 		this.gameStateService.init(this.gameStateId).subscribe({
 			next: (result: any) => {
-				if (result.status === this.INITIALIZED) {
+				if (result.gameState.status === this.INITIALIZED) {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.CARDS_DISTRIBUTED'));
 				}
 			},
@@ -255,6 +241,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 
 	pauseRound() {
 		// TODO: Wire to backend pauseRound when endpoint is ready
+	}
+
+	killUserNow(playerState: any) {
+		// TODO: Wire to backend killUser when endpoint is ready
 	}
 
 	sendSurvey() {
