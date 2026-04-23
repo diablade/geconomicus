@@ -27,7 +27,7 @@ class GameTimerManager {
             if (timer) {
                 // Wait for the timer to fully stop
                 await timer.stop().catch(err => {
-                    log.error(`Error stopping timer ${id}:`, err);
+                    log.error(`Error stopping timer ${id}: ${err}`);
                 });
                 // Remove the timer from the map
                 const wasDeleted = this.timers.delete(id);
@@ -41,7 +41,7 @@ class GameTimerManager {
             }
             return true;
         } catch (err) {
-            log.error(`Unexpected error in stopAndRemoveTimer for ${id}:`, err);
+            log.error(`Unexpected error in stopAndRemoveTimer for ${id}: ${err}`);
             return false;
         }
     }
@@ -59,7 +59,7 @@ class GameTimerManager {
                 await GameStateService.saveGameStateToDB(gameStateId);
                 log.debug(`[GameTimerManager] Persisted game ${gameStateId} to DB`);
             } catch (err) {
-                log.error(`[GameTimerManager] Failed to persist game ${gameStateId}:`, err);
+                log.error(`[GameTimerManager] Failed to persist game ${gameStateId}: ${err}`);
             }
         }, intervalMs);
         this._persistenceIntervals.set(gameStateId, id);

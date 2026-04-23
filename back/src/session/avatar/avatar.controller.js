@@ -94,7 +94,7 @@ AvatarController.delete = async (req, res, next) => {
         });
     }
     catch (error) {
-        log.error("delete avatar error:", error);
+        log.error(`delete avatar error: ${error}`);
         return res.status(404).json({
             message: "can't delete avatar not found",
         });

@@ -85,7 +85,7 @@ const _timeoutCredit = async (timer) => {
             }
         });
     } catch (err) {
-        log.error('[bankMemService] _timeoutCredit error:', err);
+        log.error(`[bankMemService] _timeoutCredit error: ${err}`);
     }
 };
 
@@ -421,7 +421,7 @@ const getOut = async (gameStateId, playerLifeIdx) => {
             socket.emitTo(gameStateId + BANK, PRISON_ENDED, { playerLifeIdx, cards: newCards });
         });
     } catch (err) {
-        log.error('[bankMemService] getOut error:', err);
+        log.error(`[bankMemService] getOut error: ${err}`);
     }
 };
 

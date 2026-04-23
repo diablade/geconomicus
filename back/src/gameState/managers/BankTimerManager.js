@@ -27,7 +27,7 @@ class BankTimerManager {
             if (timer) {
                 // Wait for the timer to fully stop
                 await timer.stop().catch(err => {
-                    log.error(`Error stopping timer ${id}:`, err);
+                    log.error(`Error stopping timer ${id}: ${err}`);
                 });
                 // Remove the timer from the map
                 const wasDeleted = this.timers.delete(id);
@@ -41,7 +41,7 @@ class BankTimerManager {
             }
             return true;
         } catch (err) {
-            log.error(`Unexpected error in stopAndRemoveTimer for bank timer ${id}:`, err);
+            log.error(`Unexpected error in stopAndRemoveTimer for bank timer ${id}: ${err}`);
             return false;
         }
     }

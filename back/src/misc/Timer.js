@@ -65,7 +65,7 @@ export default class Timer {
             return Promise.resolve();
         }
         catch (err) {
-            log.error(`Error stopping timer ${this.id}:`, err);
+            log.error(`Error stopping timer ${this.id}:${err}`);
             return Promise.reject(err);
         }
     }

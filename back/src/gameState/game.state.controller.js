@@ -53,7 +53,7 @@ GameStateController.create = async (req, res, next) => {
 		});
 		return res.status(200).json({gameStateId: savedGameState._id, gameStatus: savedGameState.status});
 	} catch (err) {
-		log.error('Game creation error:', err);
+		log.error(`Game creation error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.CREATE',
@@ -71,7 +71,7 @@ GameStateController.init = async (req, res, next) => {
 			gameState,
 		});
 	} catch (err) {
-		log.error('init game error', err);
+		log.error(`init game error: ${err}`);
 		next({
 			status: 400,
 			message: err,
@@ -84,7 +84,7 @@ GameStateController.getById = async (req, res, next) => {
 		const payload = await GameStateService.getById(req.params.gameStateId, req.query.enriched);
 		return res.status(200).json(payload);
 	} catch (err) {
-		log.error('Get game error:', err);
+		log.error(`Get game error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.NOT_FOUND',
@@ -97,7 +97,7 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 		const idx = await GameStateService.getCurrentPlayerStateIdx(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
 		return res.status(200).json({idx});
 	} catch (err) {
-		log.error('Get game error:', err);
+		log.error(`Get game error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.NOT_FOUND',
@@ -114,7 +114,7 @@ GameStateController.getPlayerState = async (req, res, next) => {
 		}
 		return res.status(200).json(payload);
 	} catch (err) {
-		log.error('Get player state error:', err);
+		log.error(`Get player state error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.PLAYER_NOT_FOUND',
@@ -132,7 +132,7 @@ GameStateController.startRound = async (req, res, next) => {
 
 		return res.status(200).json(result);
 	} catch (err) {
-		log.error('Start round error:', err);
+		log.error(`Start round error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.START_ROUND',
@@ -148,7 +148,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: 'ok',
 // 		});
 // 	} catch (err) {
-// 		log.error('Game produce error:', err);
+// 		log.error(`Game produce error: ${err}`);
 // 		return res.status(500).json({
 // 			status: 'ko',
 // 			message: 'ERROR.PRODUCE',
@@ -163,7 +163,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: 'ok',
 // 		});
 // 	} catch (err) {
-// 		log.error('Game transaction error:', err);
+// 		log.error(`Game transaction error: ${err}`);
 // 		return res.status(500).json({
 // 			status: 'ko',
 // 			message: 'ERROR.TRANSACTION',
@@ -185,7 +185,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error('Game who have ingredient error:', err);
+// 		log.error(`Game who have ingredient error: ${err}`);
 // 		return res.status(500).json({
 // 			status: 'ko',
 // 			message: 'ERROR.FINDING_INGREDIENT',
@@ -228,13 +228,13 @@ GameStateController.startRound = async (req, res, next) => {
 // 				});
 // 			})
 // 			.catch((err) => {
-// 				log.error('Start game error:', err);
+// 				log.error(`Start game error: ${err}`);
 // 				return res.status(500).json({
 // 					message: 'Start game error',
 // 				});
 // 			});
 // 	} catch (err) {
-// 		log.error('Cannot start Game, not found:', err);
+// 		log.error(`Cannot start Game, not found: ${err}`);
 // 		return res.status(404).json({
 // 			message: 'Cannot start Game, not found',
 // 		});
@@ -252,7 +252,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: STOP,
 // 		});
 // 	} catch (err) {
-// 		log.error('stop game error', err);
+// 		log.error(`stop game error: ${err}`);
 // 		next({ status: 500, message: err });
 // 	}
 // };
@@ -264,7 +264,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: PAUSE,
 // 		});
 // 	} catch (err) {
-// 		log.error('pause game error', err);
+// 		log.error(`pause game error: ${err}`);
 // 		next({ status: 500, message: err });
 // 	}
 // };
@@ -280,7 +280,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: END_GAME,
 // 		});
 // 	} catch (err) {
-// 		log.error('End game error:', err);
+// 		log.error(`End game error: ${err}`);
 // 		next({ status: 500, message: err });
 // 	}
 // };
@@ -307,7 +307,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error('delete game error', err);
+// 		log.error(`delete game error: ${err}`);
 // 		next({
 // 			status: 400,
 // 			message: err,
@@ -327,7 +327,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error('Game reset error:', err);
+// 		log.error(`Game reset error: ${err}`);
 // 		next({
 // 			status: 500,
 // 			message: 'Game reset error',
@@ -342,7 +342,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			status: 'done',
 // 		});
 // 	} catch (err) {
-// 		log.error('kill player error', err);
+// 		log.error(`kill player error: ${err}`);
 // 		next({
 // 			status: 400,
 // 			message: err,
@@ -362,7 +362,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error('Game refresh error:', err);
+// 		log.error(`Game refresh error: ${err}`);
 // 		next({
 // 			status: 400,
 // 			message: 'ERROR.REFRESH',
@@ -382,7 +382,7 @@ GameStateController.startRound = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error('Game refresh error:', err);
+// 		log.error(`Game refresh error: ${err}`);
 // 		next({
 // 			status: 400,
 // 			message: 'Game refresh error',

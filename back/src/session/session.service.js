@@ -52,7 +52,7 @@ SessionService.getAll = async () => {
 	]).sort({ createdAt: 1 });
 };
 SessionService.start = async (sessionId) => {
-	log.info('Session.start:', sessionId);
+	log.info(`Session.start: ${sessionId}`);
 
 	const session = await SessionModel.findOneAndUpdate(
 		{ _id: sessionId },

@@ -14,7 +14,7 @@ function waitForProductionToClear(activeTransactions, idGame, maxChecks = 5) {
         let checks = 0;
         const intervalId = setInterval(() => {
             checks++;
-            log.info("wait for prod " + checks + "...on game:", idGame);
+            log.info(`wait for prod ${checks}...on game: ${idGame}`);
             if (!activeTransactions.has(idGame)) {
                 clearInterval(intervalId);
                 resolve('cleared');
@@ -72,7 +72,7 @@ PlayerLifeController.produce = async (req, res, next) => {
     catch (err) {
         activeTransactions.delete(idGame);
         activeTransactions.delete(idPlayer);
-        log.error('Production error:', err);
+        log.error(`Production error: ${err}`);
         return next({
             status: 400,
             message: err.message || err || "Production error"
@@ -177,7 +177,7 @@ PlayerLifeController.transaction = async (req, res, next) => {
         });
     }
     catch (err) {
-        log.error('Transaction error:', err);
+        log.error(`Transaction error: ${err}`);
         return res.status(500).json({ message: 'Transaction error' });
     }
     finally {

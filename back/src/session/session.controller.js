@@ -18,7 +18,7 @@ SessionController.getById = async (req, res, next) => {
         return res.status(200).json(session);
     }
     catch (err) {
-        log.error("Session get by id error:", err);
+        log.error(`Session get by id error: ${err}`);
         return res.status(500).json({
             message: "ERROR.GET_BY_ID",
         });
@@ -30,7 +30,7 @@ SessionController.getByShortId = async (req, res, next) => {
         return res.status(200).json(session);
     }
     catch (err) {
-        log.error("Session get by short id error:", err);
+        log.error(`Session get by short id error: ${err}`);
         return res.status(500).json({
             message: "ERROR.GET_BY_SHORT_ID",
         });
@@ -42,7 +42,7 @@ SessionController.create = async (req, res, next) => {
         return res.status(200).json(session);
     }
     catch (err) {
-        log.error("Session creation error:", err);
+        log.error(`Session creation error: ${err}`);
         return res.status(500).json({
             message: "ERROR.CREATE",
         });
@@ -56,7 +56,7 @@ SessionController.start = async (req, res, next) => {
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
-        log.error("Session start error:", err);
+        log.error(`Session start error: ${err}`);
         return res.status(500).json({message: "ERROR.START"});
     }
 };
@@ -75,7 +75,7 @@ SessionController.update = async (req, res, next) => {
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
-        log.error("Session update error:", err);
+        log.error(`Session update error: ${err}`);
         return res.status(500).json({
             message: "ERROR.UPDATE",
         });
@@ -89,7 +89,7 @@ SessionController.getAll = async (req, res, next) => {
         return res.status(200).json(sessions);
     }
     catch (err) {
-        log.error("get all sessions error:", err);
+        log.error(`get all sessions error: ${err}`);
         return res.status(500).json({
             message: "ERROR.GET_ALL",
         });
@@ -115,7 +115,7 @@ SessionController.delete = async (req, res, next) => {
         }
     }
     catch (err) {
-        log.error("try remove session with error:", err);
+        log.error(`try remove session with error: ${err}`);
         return res.status(500).json({
             message: "ERROR.SESSION_REMOVE_BY_ID",
         });
@@ -136,7 +136,7 @@ SessionController.killGame = async (req, res, next) => {
         return res.status(200).json(response);
     }
     catch (err) {
-        log.error("Session kill game error:", err);
+        log.error(`Session kill game error: ${err}`);
         return res.status(500).json({
             message: "ERROR.KILL_GAME",
         });

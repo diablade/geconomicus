@@ -91,7 +91,7 @@ export class SocketManager {
         // Enable debugging in development
         if (process.env.NODE_ENV === 'development') {
             this.ioInstance.engine.on("connection_error", (err) => {
-                log.error('Socket connection error:', err);
+                log.error('Socket connection error: '+ err);
             });
         }
 
@@ -152,7 +152,7 @@ export class SocketManager {
                 });
             }
             catch (e) {
-                log.warn(`Failed to notify kicked socket for player ${privateChannel}:`, e);
+                log.warn(`Failed to notify kicked socket for player ${privateChannel}: ${e}`);
             }
 
             this.cleanupConnection(privateChannel);
@@ -192,7 +192,7 @@ export class SocketManager {
             }
         });
         socket.on(IO.SHORT_CODE.EMIT, (data) => {
-            log.info('ShortCodeEmitted:', data.code);
+            log.info(`ShortCodeEmitted: ${data.code}`);
             this.emitTo(publicChannel, IO.SHORT_CODE.BROADCAST, data);
         });
         socket.on(IO.SHORT_CODE.CONFIRMED, (data) => {
@@ -207,15 +207,15 @@ export class SocketManager {
             log.info(`Socket ${socket.id} leaving room: ${room}`);
             socket.leave(room);
         });
-        socket.on('connect_error', () => log.error('Connection error:', err.message));
-        socket.on('connect_timeout', (data) => log.error('time out:', data));
-        socket.on('timeout', (err) => log.error('io socket time out!:', err));
-        socket.on('reconnect_failed', (err) => log.error('All reconnection attempts failed:', err));
+        socket.on('connect_error', () => log.error(`Connection error: ${err.message}`));
+        socket.on('connect_timeout', (data) => log.error(`time out: ${data}`));
+        socket.on('timeout', (err) => log.error(`io socket time out!: ${err}`));
+        socket.on('reconnect_failed', (err) => log.error(`All reconnection attempts failed: ${err}`));
         socket.on('reconnect_attempt', (attempt) => this.handleReconnect(privateChannel, attempt));
-        socket.on('reconnecting', (err) => log.error('reconnecting...', err));
-        socket.on('reconnect', (attemptNumber) => log.info('Reconnected after ' + attemptNumber + ' attempts'));
+        socket.on('reconnecting', (err) => log.error(`reconnecting...: ${err}`));
+        socket.on('reconnect', (attemptNumber) => log.info(`Reconnected after ${attemptNumber} attempts`));
         socket.on('reconnect_error', () => log.error('Reconnection error'));
-        socket.on('error', (err) => log.error('error io socket:', err));
+        socket.on('error', (err) => log.error(`error io socket: ${err}`));
 
         // Check for unacknowledged events
         const unacknowledged = this.getUnacknowledgedEvents(privateChannel);
@@ -274,7 +274,7 @@ export class SocketManager {
 
     // Handle socket errors
     handleError(idPlayer, error) {
-        log.error(`Socket error for player ${idPlayer}:`, error);
+        log.error(`Socket error for player ${idPlayer}: ${error}`);
         const connection = this.connections.get(idPlayer);
         if (connection) {
             connection.lastActive = Date.now();

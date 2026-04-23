@@ -36,7 +36,7 @@ if (env.environment !== "test") {
             heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
             external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
         };
-        log.info('Memory usage:', memoryUsage);
+        log.info(`Memory usage: ${JSON.stringify(memoryUsage)}`);
     }, 3600000); // Log every hours
 }
 
@@ -52,7 +52,7 @@ if (env.environment !== 'test') {
         log.info('Socket.IO successfully initialized');
     }
     catch (err) {
-        log.error('Socket.IO not initialized', err);
+        log.error(`Socket.IO not initialized: ${err}`);
     }
 }
 

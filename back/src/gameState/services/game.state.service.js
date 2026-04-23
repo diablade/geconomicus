@@ -48,16 +48,16 @@ GameStateService.initGame = async (gameStateId) => {
 		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,"-",{});
 
 	} else {
-		log.error('Unknown game type', { typeMoney: gameState.typeMoney });
+		log.error('Unknown game type '+ { typeMoney: gameState.typeMoney });
 		throw new Error('Unknown game type');
 	}
 
-	log.info('Game setup completed', { gameStateId, typeMoney: gameState.typeMoney });
+	log.info('Game setup completed '+ { gameStateId, typeMoney: gameState.typeMoney });
 
 	// Persist setup state to DB,
 	await GameStateModel.findByIdAndUpdate(gameStateId, { $set: initializedGame });
 
-	log.info('Game state persisted to DB', { gameStateId });
+	log.info('Game state persisted to DB '+ { gameStateId });
 
     // then store in memory with rules
 	GameStateManager.store(gameStateId, initializedGame, rules);

@@ -40,7 +40,7 @@ const killPlayer = async (idGame, idPlayer) => {
         socket.emitTo(idGame + MASTER, DEAD, event);
     }
     catch (err) {
-        log.error('kill player error:', err);
+        log.error(`kill player error: ${err}`);
         throw new Error("kill player failed");
     }
 }
@@ -80,7 +80,7 @@ const getPlayer = async (idGame, idPlayer, statusGame = false) => {
         }
     }
     catch (err) {
-        log.error("GetPlayer: ", err);
+        log.error(`GetPlayer: ${err}`);
         throw err;
     }
 }

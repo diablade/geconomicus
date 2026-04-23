@@ -14,7 +14,7 @@ RulesController.create = async (req, res, next) => {
 		});
 		return res.status(200).json(rulesCreated);
 	} catch (err) {
-		log.error('Rules creation error:', err);
+		log.error(`Rules creation error: ${err}`);
 		return res.status(500).json({
 			message: 'ERROR.CREATE',
 		});
@@ -37,7 +37,7 @@ RulesController.update = async (req, res, next) => {
 			status: 'updated',
 		});
 	} catch (err) {
-		log.error('Rules update error:', err);
+		log.error(`Rules update error: ${err}`);
 		return res.status(500).json({
 			message: 'ERROR.UPDATE',
 		});
@@ -48,7 +48,7 @@ RulesController.resetDefault = async (req, res, next) => {
 		const rulesReset = await RulesService.resetDefault(req.body.sessionId, req.body.ruleIdx);
 		return res.status(200).json(rulesReset);
 	} catch (err) {
-		log.error('Rules default error:', err);
+		log.error(`Rules default error: ${err}`);
 		return res.status(500).json({
 			message: 'ERROR.DEFAULT',
 		});
@@ -59,7 +59,7 @@ RulesController.getByIdx = async (req, res, next) => {
 		const session = await RulesService.getByIdx(req.params.sessionId, req.params.ruleIdx);
 		return res.status(200).json(session);
 	} catch (err) {
-		log.error('Rules get by idx error:', err);
+		log.error(`Rules get by idx error: ${err}`);
 		return res.status(500).json({
 			message: 'ERROR.GET_BY_IDX',
 		});
@@ -79,7 +79,7 @@ RulesController.remove = async (req, res, next) => {
 			});
 		}
 	} catch (err) {
-		log.error('Rules remove by idx error:', err);
+		log.error(`Rules remove by idx error: ${err}`);
 		return res.status(500).json({
 			message: 'ERROR.REMOVE_BY_IDX',
 		});
