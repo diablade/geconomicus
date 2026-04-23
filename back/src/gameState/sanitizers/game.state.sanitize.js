@@ -20,20 +20,20 @@ export const stateSanitize = {
                              'any.invalid':  'Invalid game state ID format',
                              'any.required': 'Game state ID is required'
                          }),
-        buyerId:     Joi.string().custom(isValidNanoId4).required()
+        buyerIdx:     Joi.number().required()
                          .messages({
-                             'any.invalid':  'Invalid buyer ID format',
-                             'any.required': 'Buyer ID is required'
+                             'any.invalid':  'Invalid buyer index format',
+                             'any.required': 'Buyer index is required'
                          }),
-        sellerId:    Joi.string().custom(isValidNanoId4).required()
+        sellerIdx:    Joi.number().required()
                          .messages({
-                             'any.invalid':  'Invalid seller ID format',
-                             'any.required': 'Seller ID is required'
+                             'any.invalid':  'Invalid seller index format',
+                             'any.required': 'Seller index is required'
                          }),
-        cardId:      Joi.string().custom(isValidNanoId4).required()
+        cardKey:     Joi.string().required()
                          .messages({
-                             'any.invalid':  'Invalid card ID format',
-                             'any.required': 'Card ID is required'
+                             'any.invalid':  'Invalid card key format',
+                             'any.required': 'Card key is required'
                          })
     }),
     produce:     Joi.object({
@@ -42,10 +42,10 @@ export const stateSanitize = {
                              'any.invalid':  'Invalid game ID format',
                              'any.required': 'Game ID is required'
                          }),
-        lifeId:      Joi.string().custom(isValidNanoId4).required()
+        playerIdx:      Joi.number().required()
                          .messages({
-                             'any.invalid':  'Invalid player life ID format',
-                             'any.required': 'Player life ID is required'
+                             'any.invalid':  'Invalid player index format',
+                             'any.required': 'Player index is required'
                          }),
         cards:       Joi.array().min(3).items(Joi.object({
             _id:    Joi.string().custom(isValidObjectId).required(),

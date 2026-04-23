@@ -6,6 +6,7 @@ export type GameType = typeof GAME_TYPE[keyof typeof GAME_TYPE];
 export declare const PLAYER_TYPE: {
     readonly MASTER: "master";
     readonly BANK: "bank";
+    readonly RESULTS: "results";
     readonly AVATAR: "avatar";
 };
 export type PlayerType = typeof PLAYER_TYPE[keyof typeof PLAYER_TYPE];
@@ -83,6 +84,7 @@ export declare const IO: {
         readonly PROD_DRAW_CARDS: "ppdc";
         readonly PRISON_ENDED: "ppe";
         readonly PROGRESS_PRISON: "ppp";
+        readonly TRANSACTION_DONE: "td";
     };
     readonly CREDIT: {
         readonly NEW: "cn";
@@ -102,6 +104,8 @@ export declare const IO: {
     readonly TIMER_LEFT: "tl";
     readonly TRANSACTION_DONE: "td";
     readonly REFRESH_FORCE: "rf";
+    readonly INFO: "i";
+    readonly EVENT: "ev";
 };
 export type IoSession = typeof IO.SESSION[keyof typeof IO.SESSION];
 export type IoAvatar = typeof IO.AVATAR[keyof typeof IO.AVATAR];

@@ -25,9 +25,9 @@ export class SnackbarService {
 	showNotif(message: string) {
 		const config = new MatSnackBarConfig();
 		config.panelClass = ['snackbar-success'];
-		config.politeness = 'assertive';
+		config.politeness = 'polite';
 		config.verticalPosition = 'top';
-		config.horizontalPosition = 'left';
+		config.horizontalPosition = 'right';
 		config.duration = this.durationInSeconds;
 		this.snackBar.open(message, "Ok", config);
 	}
@@ -37,7 +37,7 @@ export class SnackbarService {
 		config.panelClass = ['snackbar-error'];
 		config.politeness = 'assertive';
 		config.verticalPosition = 'top';
-		config.horizontalPosition = 'center';
+		config.horizontalPosition = 'right';
 		config.duration = this.durationInSeconds;
 		this.snackBar.open(message, undefined, config);
 	}
@@ -68,7 +68,7 @@ export class SnackbarService {
 		snackBarRef.onAction().subscribe(() => {
 			window.location.reload();
 		});
-		
+
 		snackBarRef.afterDismissed().subscribe(() => {
 			window.location.reload();
 		});

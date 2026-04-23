@@ -330,6 +330,8 @@
 		"PLAYER_NOT_FOUND": "Joueur inexistant",
 		"UPDATE": "Échec de la modification",
 		"EXCHANGE": "Échange impossible",
+		"ID_PLAYER_MISSING": "ID du joueur manquant",
+		"INSUFFICIENT_FUNDS": "Fonds insuffisants",
 		"DELETE": "Échec de la suppression",
 		"START_GAME": "Échec du démarrage de la partie",
 		"RESET_GAME": "Échec de la réinitialisation de la partie",

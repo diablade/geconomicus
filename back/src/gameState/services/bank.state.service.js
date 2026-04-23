@@ -10,9 +10,113 @@ import Timer from "../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
 import mongoose from 'mongoose';
 
+
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const _findPlayer = (state, playerLifeIdx) => {
+    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
+    if (!player) throw new Error(`Player idx ${playerLifeIdx} not found`);
+    return player;
+};
+
+const _findCredit = (state, creditIdx) => {
+    const credit = state.credits.find(c => idx === creditIdx);
+    if (!credit) throw new Error(`Credit idx ${creditIdx} not found`);
+    return credit;
+};
+
+// ─── Timer helpers ───────────────────────────────────────────────────────────
+
+const _addDebtTimer = (creditId, startTickNow, duration, data) => {
+    bankTimerManager.addTimer(new Timer(creditId, duration * minute, fiveSeconds, data, (timer) => {
+        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+        socket.emitTo(timer.data.gameStateId + BANK, IO.CREDIT_PROGRESS, { id: creditId, progress });
+        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.CREDIT_PROGRESS, { id: creditId, progress });
+    }, (timer) => {
+        _timeoutCredit(timer);
+    }), startTickNow);
+};
+
+const _addPrisonTimer = (playerId, duration, data) => {
+    bankTimerManager.addTimer(new Timer(playerId, duration * minute, fiveSeconds, data, (timer) => {
+        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+        socket.emitTo(timer.data.gameStateId + BANK, IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
+        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
+    }, (timer) => {
+        _timeoutPrison(timer);
+    }), true);
+};
+
+const _timeoutCredit = async (timer) => {
+    if (!timer) return;
+    const { gameStateId, playerLifeIdx, creditIdx } = timer.data;
+    await bankTimerManager.stopAndRemoveTimer(timer.id);
+
+    try {
+        await inMemoryGameStateManager.withLock(gameStateId, ({ state, rules }) => {
+            const credit = _findCredit(state, creditIdx);
+            const player = _findPlayer(state, playerLifeIdx);
+
+            if (credit.status === CREDIT_DONE) return;
+
+            if (credit.amount + credit.interest <= player.coins) {
+                // Player can pay interest — request it
+                credit.status = REQUEST_CREDIT;
+                const event = _makeEvent(REQUEST_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
+                state.events = state.events || [];
+                state.events.push(event);
+                socket.emitTo(gameStateId + EVENT, EVENT, event);
+                socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_TIMEOUT, { credit });
+                socket.emitTo(gameStateId + BANK, IO.CREDIT_TIMEOUT, credit);
+            } else {
+                // Default
+                credit.status = DEFAULT_CREDIT;
+                const event = _makeEvent(DEFAULT_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
+                state.events = state.events || [];
+                state.events.push(event);
+                socket.emitTo(gameStateId + EVENT, EVENT, event);
+                socket.emitTo(gameStateId + BANK, IO.CREDIT_DEFAULT, credit);
+                if (player.status !== DEAD) {
+                    socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_DEFAULT, { credit });
+                }
+            }
+        });
+    } catch (err) {
+        log.error(`[bankMemService] _timeoutCredit error: ${err}`);
+    }
+};
+
+const _timeoutPrison = async (timer) => {
+    if (!timer) return;
+    const { gameStateId, playerLifeIdx } = timer.data;
+    await bankTimerManager.stopAndRemoveTimer(timer.id);
+    await getOut(gameStateId, playerLifeIdx);
+};
+
+// Simple event builder (mirrors legacy constructor.event shape)
+const _makeEvent = (type, from, to, amount, items) => ({
+    type,
+    from: from?.toString?.() ?? from,
+    to: to?.toString?.() ?? to,
+    amount,
+    items,
+    date: Date.now(),
+});
+
+// ─── Public API ──────────────────────────────────────────────────────────────
+
+/**
+ * Create a credit for a player.
+ * Adds coins (amount) to player, pushes credit into state.credits,
+ * updates currentMassMonetary, starts a debt timer.
+ */
 const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
     let id = new mongoose.Types.ObjectId();
     const credit = constructor.credit(id, amount, interest, idGame, idPlayer, startNow ? RUNNING_CREDIT : PAUSED_CREDIT, Date.now(),

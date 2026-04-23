@@ -7,6 +7,7 @@ export const GAME_TYPE = {
 export const PLAYER_TYPE = {
     MASTER: 'master',
     BANK: 'bank',
+    RESULTS: 'results',
     AVATAR: 'avatar',
 };
 // ─── PLAYER STATUS ────────────────────────────────────────────────────────────
@@ -84,6 +85,7 @@ export const IO = {
         PROD_DRAW_CARDS: 'ppdc',
         PRISON_ENDED: 'ppe',
         PROGRESS_PRISON: 'ppp',
+        TRANSACTION_DONE: 'td',
     },
     CREDIT: {
         NEW: 'cn',
@@ -103,6 +105,8 @@ export const IO = {
     TIMER_LEFT: 'tl',
     TRANSACTION_DONE: 'td',
     REFRESH_FORCE: 'rf',
+    INFO: 'i',
+    EVENT: 'ev',
 };
 // ─── DATABASE EVENTS (human-readable for debugging) ───────────────────────────
 export const DB_EVENTS = {

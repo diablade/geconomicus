@@ -36,6 +36,7 @@ export const environment = {
 	PLAYER_STATE: {
 		GET: 'game-state/player-state/',
 		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state-idx/',
+		TRANSACTION: 'game-state/player-state/transaction',
 	},
 
 	//LEGACY

@@ -3,11 +3,9 @@ import log from '#config/log';
 import socket from '#config/socket';
 import EventService from '../event/event.service.js';
 import GameStateService from './services/game.state.service.js';
+import PlayerStateService from './services/player.state.service.js';
 import SessionService from '../session/session.service.js';
 import RulesService from '../session/rules/rules.service.js';
-// import gameTimerManager from './managers/GameTimerManager.js';
-// import inMemoryGameStateManager from './managers/InMemoryGameStateManager.js';
-// import playerMemService from './playersStates/player.mem.service.js';
 
 const GameStateController = {};
 
@@ -94,7 +92,7 @@ GameStateController.getById = async (req, res, next) => {
 
 GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 	try {
-		const idx = await GameStateService.getCurrentPlayerStateIdx(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
+		const idx = await PlayerStateService.getCurrentPlayerStateIdx(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
 		return res.status(200).json({idx});
 	} catch (err) {
 		log.error(`Get game error: ${err}`);
@@ -108,7 +106,7 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 GameStateController.getPlayerState = async (req, res, next) => {
 	try {
 		const { sessionId, gameStateId, avatarIdx, playerStateIdx } = req.params;
-		const payload = await GameStateService.getPlayerState(sessionId, gameStateId, parseInt(avatarIdx), parseInt(playerStateIdx));
+		const payload = await PlayerStateService.getPlayerState(sessionId, gameStateId, parseInt(avatarIdx), parseInt(playerStateIdx));
 		if (!payload) {
 			return res.status(404).json({ status: 'ko', message: 'ERROR.PLAYER_NOT_FOUND' });
 		}
@@ -140,58 +138,58 @@ GameStateController.startRound = async (req, res, next) => {
 	}
 };
 
+GameStateController.produce = async (req, res, next) => {
+	try {
+		const game = await DeckStateService.produce(req.body);
+		return res.status(200).json({
+			status: 'ok',
+		});
+	} catch (err) {
+		log.error(`Game produce error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.PRODUCE',
+			error: err.message,
+		});
+	}
+};
 
-// GameStateController.produce = async (req, res, next) => {
-// 	try {
-// 		// const game = await GameStateService.produce(req.body);
-// 		return res.status(200).json({
-// 			status: 'ok',
-// 		});
-// 	} catch (err) {
-// 		log.error(`Game produce error: ${err}`);
-// 		return res.status(500).json({
-// 			status: 'ko',
-// 			message: 'ERROR.PRODUCE',
-// 		});
-// 	}
-// };
-
-// GameStateController.transaction = async (req, res, next) => {
-// 	try {
-// 		// const game = await GameStateService.transaction(req.body);
-// 		return res.status(200).json({
-// 			status: 'ok',
-// 		});
-// 	} catch (err) {
-// 		log.error(`Game transaction error: ${err}`);
-// 		return res.status(500).json({
-// 			status: 'ko',
-// 			message: 'ERROR.TRANSACTION',
-// 		});
-// 	}
-// };
+GameStateController.transaction = async (req, res, next) => {
+	try {
+		const { gameStateId, buyerIdx, sellerIdx, cardKey } = req.body;
+		const result = await PlayerStateService.transaction(gameStateId, buyerIdx, sellerIdx, cardKey);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error(`Game transaction error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.TRANSACTION',
+			error: err.message,
+		});
+	}
+};
 
 
-// GameStateController.whoHaveCard = async (req, res, next) => {
-// 	const {gameStateId, cardKey} = req.params;
-// 	try {
-// 		const payload = await GameStateService.whoHaveCard(gameStateId, cardKey);
-// 		if (payload && payload.status !== 'ko') {
-// 			return res.status(200).json(payload);
-// 		} else {
-// 			return res.status(404).json({
-// 				status: 'ko',
-// 				message: payload.reason,
-// 			});
-// 		}
-// 	} catch (err) {
-// 		log.error(`Game who have ingredient error: ${err}`);
-// 		return res.status(500).json({
-// 			status: 'ko',
-// 			message: 'ERROR.FINDING_INGREDIENT',
-// 		});
-// 	}
-// };
+GameStateController.whoHaveCard = async (req, res, next) => {
+	const {gameStateId, cardKey} = req.params;
+	try {
+		const payload = await DeckStateService.whoHaveCard(gameStateId, cardKey);
+		if (payload && payload.status !== 'ko') {
+			return res.status(200).json(payload);
+		} else {
+			return res.status(404).json({
+				status: 'ko',
+				message: payload.reason,
+			});
+		}
+	} catch (err) {
+		log.error(`Game who have card error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.FINDING_CARD',
+		});
+	}
+};
 
 // GameStateController.start = async (req, res, next) => {
 // 	const body = req.body;

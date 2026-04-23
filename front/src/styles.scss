@@ -439,3 +439,11 @@ mat-icon.material-icons {
 	font-family: 'Material Icons';
 	// font-family: 'Material Icons', 'Material Symbols Outlined' !important;
 }
+
+mat-chip {
+    cursor: pointer;
+
+    mat-icon, span {
+        pointer-events: none; // ✅ laisse passer les clics au chip parent
+    }
+}

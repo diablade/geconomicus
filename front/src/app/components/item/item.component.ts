@@ -43,9 +43,9 @@ export class ItemComponent {
 	state = "default";
 	translateX = 0;
 	translateY = 0;
-	shortCode: ShortCode | undefined;
+	code: string = '';
 
-	@Output() onCreateShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
+	@Output() onChangedShortCode: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 
 	constructor(private elementRef: ElementRef, private audioService: AudioService, private themesService: ThemesService) {
 	}
@@ -97,12 +97,13 @@ export class ItemComponent {
 	}
 
 	createShortCode() {
-		this.shortCode = new ShortCode(this.getData(), this.suffixShortCode);
-		this.onCreateShortCode.emit(this.shortCode);
+		const shortCode = new ShortCode(this.getData(), this.suffixShortCode);
+		this.code = shortCode.code;
+		this.onChangedShortCode.emit(shortCode);
 	}
 
 	deleteShortCode() {
-		this.shortCode = undefined;
-		this.onCreateShortCode.emit(this.shortCode);
+		this.code = "";
+		this.onChangedShortCode.emit({payload: '', code: ''} as ShortCode);
 	}
 }

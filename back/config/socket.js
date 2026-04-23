@@ -192,12 +192,15 @@ export class SocketManager {
             }
         });
         socket.on(IO.SHORT_CODE.EMIT, (data) => {
-            log.info(`ShortCodeEmitted: ${data.code}`);
-            this.emitTo(publicChannel, IO.SHORT_CODE.BROADCAST, data);
+            log.info(`broadcasting to game state room: ${data.gameStateId} the code:${data.code} ...`);
+            this.emitTo(data.gameStateId, IO.SHORT_CODE.BROADCAST, data);
         });
         socket.on(IO.SHORT_CODE.CONFIRMED, (data) => {
-            log.info('ShortCodeConfirmed');
-            this.emitTo(data.idBuyer, IO.SHORT_CODE_CONFIRMED, data);
+            log.info(`ShortCodeConfirmed: ${data.code} for game state ${data.gameStateId} by seller ${data.sellerIdx}`);
+            // send to buyer
+            const buyerRoom = `${data.gameStateId}:${data.buyerAvatarIdx}:${data.buyerIdx}`;
+            log.info(`broadcasting confirmation to buyer's room: ${buyerRoom} for code: ${data.code}`);
+            this.emitTo(buyerRoom, IO.SHORT_CODE.CONFIRMED, data);
         });
         socket.on('join', (room) => {
             log.info(`Socket ${socket.id} joining room: ${room}`);

@@ -7,9 +7,10 @@ export type GameType = typeof GAME_TYPE[keyof typeof GAME_TYPE];
 
 // ─── PLAYER TYPES ─────────────────────────────────────────────────────────────
 export const PLAYER_TYPE = {
-  MASTER: 'master',
-  BANK:   'bank',
-  AVATAR: 'avatar',
+  MASTER:  'master',
+  BANK:    'bank',
+  RESULTS: 'results',
+  AVATAR:  'avatar',
 } as const;
 export type PlayerType = typeof PLAYER_TYPE[keyof typeof PLAYER_TYPE];
 
@@ -96,6 +97,7 @@ export const IO = {
     PROD_DRAW_CARDS:  'ppdc',
     PRISON_ENDED:     'ppe',
     PROGRESS_PRISON:  'ppp',
+    TRANSACTION_DONE: 'td',
   },
   CREDIT: {
     NEW:        'cn',
@@ -115,6 +117,8 @@ export const IO = {
   TIMER_LEFT:       'tl',
   TRANSACTION_DONE: 'td',
   REFRESH_FORCE:    'rf',
+  INFO:             'i',
+  EVENT:            'ev',
 } as const;
 
 export type IoSession   = typeof IO.SESSION[keyof typeof IO.SESSION];

@@ -1,6 +1,5 @@
-import log from "#config/log";
 import _ from 'lodash';
-import GameStateModel from "../game.state.model.js";
+import { PLAYER_STATUS } from "@geco/shared";
 
 const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
     "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ"];
@@ -14,9 +13,9 @@ const generateOneCard = async (letterIndex, letterNumber, weight, price) => {
     return card;
 }
 
-const DeckService = {};
+const DeckStateService = {};
 
-DeckService.generateDecks = async (rules, length) => {
+DeckStateService.generateDecks = async (rules, length) => {
     let tableDecks = [[], [], [], []];
     let lettersInGame = 0;
     const prices = [rules.priceWeight1, rules.priceWeight2, rules.priceWeight3, rules.priceWeight4];
@@ -43,7 +42,7 @@ DeckService.generateDecks = async (rules, length) => {
     return tableDecks;
 };
 
-DeckService.areCardIdsUnique = (cardIds, authorizedLength) => {
+DeckStateService.areCardIdsUnique = (cardIds, authorizedLength) => {
     const uniqueIds = new Set(cardIds);  // Convert array to a Set to eliminate duplicates
     return uniqueIds.size === authorizedLength;  // Compare the size of the Set array length authorized
 };
@@ -54,7 +53,7 @@ DeckService.areCardIdsUnique = (cardIds, authorizedLength) => {
  * @param {object} state - mutable in-memory game state
  * @param {Array}  cards - cards to push back
 */
-DeckService.pushCardsInDecksInMemory = (state, cards) => {
+DeckStateService.pushCardsInDecksInMemory = (state, cards) => {
     cards.forEach(card => {
         state.decks[card.weight].push(card);
     });
@@ -73,14 +72,14 @@ DeckService.pushCardsInDecksInMemory = (state, cards) => {
  * @returns {{ newCards: Array, discardEvent: object, newCardsEvent: object }}
  * @throws Error if validation fails
  */
-DeckService.produceCardLevelUp = (gameState, rules, playerStateIdx, cards) => {
+DeckStateService.produce = (gameState, rules, playerStateIdx, cards) => {
     const playerState = gameState.playersStates.find(p => p.idx === playerStateIdx);
     if (!playerState) throw new Error('ERROR.PLAYER_NOT_FOUND');
 
     const amountCardsForProd = rules.amountCardsForProd;
     const idsToFilter = cards.map(c => c.key);
 
-    if (!DeckService.areCardIdsUnique(idsToFilter, amountCardsForProd)) {
+    if (!DeckStateService.areCardIdsUnique(idsToFilter, amountCardsForProd)) {
         throw new Error('ERROR.CARDS_NOT_UNIQUE');
     }
 
@@ -117,4 +116,39 @@ DeckService.produceCardLevelUp = (gameState, rules, playerStateIdx, cards) => {
     };
 };
 
-export default DeckService;
+
+DeckStateService.whoHaveCard = async (gameStateId, cardKey) => {
+    const gameState = GameStateManager.get(gameStateId);
+    if (gameState) {
+        const player = gameState.playersStates
+            .filter((p) => p.status === PLAYER_STATUS.ALIVE)
+            .find((player) => player.cards.find((card) => card.key === cardKey));
+        if (player) {
+            return {
+                status: 'player',
+                name: player.name,
+            };
+        } else {
+            const inDeck = gameState.decks.some((deck) => deck.some((card) => card.key === cardKey));
+            if (inDeck) {
+                return {
+                    status: 'deck',
+                    name: '',
+                };
+            }
+            return {
+                status: 'ko',
+                name: '',
+                reason: 'not found in deck and avatars hands',
+            };
+        }
+    } else {
+        return {
+            status: 'ko',
+            name: '',
+            reason: 'GameState not found',
+        };
+    }
+};
+
+export default DeckStateService;

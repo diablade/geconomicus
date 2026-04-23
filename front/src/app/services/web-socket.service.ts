@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {io, Socket} from 'socket.io-client';
 import {environment} from '../../environments/environment';
 import {SnackbarService} from "./snackbar.service";
@@ -8,6 +8,7 @@ import {BehaviorSubject} from "rxjs";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {I18nService} from "./i18n.service";
 import {LocalStorageService} from "./local-storage/local-storage.service";
+import { IO } from '@geco/shared';
 
 @Injectable({
 	providedIn: 'root'
@@ -97,6 +98,9 @@ export class WebSocketService {
 				},
 			});
 		});
+        this.socket.on(IO.INFO, (data: any) => {
+            inject(SnackbarService).showNotif(data.message);
+        });
 		this.socket.io.on('reconnect', (attemptNumber: number) => {
 			console.log('Reconnect after', attemptNumber, 'attempts');
 			if (last && now - last > maxOfflineDuration) {

@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { PlayerState, GameState, Card, Credit } from '../../models/gameState';
@@ -11,6 +11,10 @@ import { BankService } from './bank.service';
 import { DeckService } from './deck.service';
 import { Router } from '@angular/router';
 import _ from 'lodash';
+import { ShortCode } from 'src/app/models/shortCode';
+import { SnackbarService } from '../snackbar.service';
+import { I18nService } from '../i18n.service';
+import { AudioService } from '../audio.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -37,6 +41,8 @@ export class PlayerStateService {
 	private roomGameState: string = '';
 	private roomPlayerState: string = '';
 
+	public shortCode: ShortCode | undefined;
+
 	setPlayerState(playerState: PlayerState) {
 		this.playerStateSubject.next(playerState);
 	}
@@ -57,8 +63,11 @@ export class PlayerStateService {
 		private http: HttpClient,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
+		private audioService: AudioService,
 		private bankService: BankService,
 		private deckService: DeckService,
+		private snackbarService: SnackbarService,
+		private i18nService: I18nService,
 		private router: Router
 	) {}
 
@@ -96,7 +105,10 @@ export class PlayerStateService {
 				this.setCredits(data.credits);
 				this.setDefaultCredit(data.defaultCredit);
 			});
-		this.setupSocketListeners();
+		this.setupMiscSocketListeners();
+		this.setupGameSocketListeners();
+		this.setupPlayerSocketListeners();
+		this.setupMoneySocketListeners();
 		if (this.wsService.isConnected()) {
 			this.joinRooms();
 		}
@@ -108,13 +120,12 @@ export class PlayerStateService {
 			this.wsService.leaveRoom(this.roomPlayerState);
 		}
 	}
-
 	private joinRooms(): void {
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomPlayerState);
 	}
 
-	private setupSocketListeners(): void {
+	private setupMiscSocketListeners(): void {
 		this.wsService.on('connected', () => {
 			// if avatarService is connected it should come here to connect other rooms
 			console.log('Joining game states rooms...');
@@ -129,20 +140,18 @@ export class PlayerStateService {
 			}
 		});
 
-		// Game events
-		this.wsService.on(IO.PLAYER.INIT, async (data: any, cb: (response: any) => void) => {
-			console.log('PLAYER.INIT', data);
+		this.wsService.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				this.playerStateSubject.next({ ...currentPlayerState, ...data.playerState });
-			}
-			const currentGameState = this.gameStateSubject.getValue();
-			if (currentGameState) {
-				this.gameStateSubject.next({ ...currentGameState, status: data.status });
-			}
+			this.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
 		});
 
+		this.wsService.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
+			if (data) {
+				window.location.reload();
+			}
+		});
+	}
+	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
@@ -210,6 +219,37 @@ export class PlayerStateService {
 				this.gameStateSubject.next(currentGameState);
 			}
 		});
+	}
+	private setupPlayerSocketListeners(): void {
+		this.wsService.on(IO.PLAYER.INIT, async (data: any, cb: (response: any) => void) => {
+			console.log('PLAYER.INIT', data);
+			cb({ status: 'ok', _ackId: data._ackId });
+			const currentPlayerState = this.playerStateSubject.getValue();
+			if (currentPlayerState) {
+				this.playerStateSubject.next({ ...currentPlayerState, ...data.playerState });
+			}
+			const currentGameState = this.gameStateSubject.getValue();
+			if (currentGameState) {
+				this.gameStateSubject.next({ ...currentGameState, status: data.status });
+			}
+		});
+
+		// Prison events
+		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
+			// Handle prison progress - emit event for component to handle timer
+		});
+
+		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', _ackId: data._ackId });
+			if (data && data.cards) {
+				const currentPlayerState = this.playerStateSubject.getValue();
+				if (currentPlayerState) {
+					currentPlayerState.cards = data.cards;
+					currentPlayerState.status = PLAYER_STATUS.ALIVE;
+					this.playerStateSubject.next({ ...currentPlayerState });
+				}
+			}
+		});
 
 		this.wsService.on(IO.PLAYER.DIED, async () => {
 			const currentPlayerState = this.playerStateSubject.getValue();
@@ -218,27 +258,50 @@ export class PlayerStateService {
 				this.playerStateSubject.next(currentPlayerState);
 			}
 		});
-
-		this.wsService.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
-			this.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
-		});
-
-		this.wsService.on(IO.SESSION.UPDATED_RULES, async (data: any) => {
-			if (data) {
-				window.location.reload();
+	}
+	private setupMoneySocketListeners(): void {
+		this.wsService.on(IO.SHORT_CODE.BROADCAST, (data: any) => {
+			if (this.shortCode && this.shortCode.code === data.code && this.gameStateId === data.gameStateId) {
+				console.log('ShortCode Broadcast confirming ownership ', data);
+				this.wsService.emit(IO.SHORT_CODE.CONFIRMED, {
+					...data,
+					sellerIdx: this.playerStateIdx,
+					payload: this.shortCode.payload,
+				});
 			}
 		});
 
-		// Transaction events
-		this.wsService.on(IO.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.SHORT_CODE.CONFIRMED, async (data: any) => {
+			console.log('ShortCodeConfirmed', data);
+			if (data && data.payload) {
+				this.buy(data.payload).subscribe({
+					next: (result) => {
+						if (result.success) {
+							console.log('ShortCodeConfirmed - Buy successful');
+							this.audioService.playSound('cardFlipBack');
+						} else {
+							console.log('ShortCodeConfirmed - Buy failed', result.error);
+							this.snackbarService.showNotif(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
+							this.audioService.playSound('error');
+						}
+					},
+					error: (error) => {
+						console.log('ShortCodeConfirmed - Buy error', error);
+						this.audioService.playSound('error');
+					},
+				});
+			}
+		});
+
+		this.wsService.on(IO.PLAYER.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				currentPlayerState.coins = data.coins;
-				const updatedCards = currentPlayerState.cards.filter((c: any) => c.key !== data.idCardSold);
-				currentPlayerState.cards = updatedCards;
-				this.playerStateSubject.next({ ...currentPlayerState });
+			if (currentPlayerState?.idx === Number(data.sellerIdx)) {
+				this.setPlayerState({
+					...currentPlayerState,
+					coins: data.coinsAfter,
+					cards: currentPlayerState.cards.filter((c: any) => c.key !== data.cardKey),
+				});
 			}
 		});
 
@@ -315,23 +378,6 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		// Prison events
-		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			// Handle prison progress - emit event for component to handle timer
-		});
-
-		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
-			if (data && data.cards) {
-				const currentPlayerState = this.playerStateSubject.getValue();
-				if (currentPlayerState) {
-					currentPlayerState.cards = data.cards;
-					currentPlayerState.status = PLAYER_STATUS.ALIVE;
-					this.playerStateSubject.next({ ...currentPlayerState });
-				}
-			}
-		});
-
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCards = this.cardsSubject.getValue();
@@ -356,7 +402,7 @@ export class PlayerStateService {
 	// Remove all event listeners to prevent memory leaks
 	offAll(): void {
 		// playerState service events
-        this.wsService.off('resync');
+		this.wsService.off('resync');
 		this.wsService.off(IO.PLAYER.INIT);
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
@@ -378,26 +424,36 @@ export class PlayerStateService {
 		this.wsService.off(IO.CREDIT.DEFAULT);
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.CREDIT.SEIZURE);
+		this.wsService.off(IO.SHORT_CODE.BROADCAST);
+		this.wsService.off(IO.SHORT_CODE.CONFIRMED);
 	}
 
-	sendBuyingShortCode(gameStateId: string, playerStateIdx: number, code: string): void {
-		this.wsService.emit(IO.SHORT_CODE.EMIT, { code, idBuyer: playerStateIdx }, (ack: any) => {
-			console.log(ack);
-		});
-	}
-
-	transaction(idGame: string, idBuyer: string, idSeller: any, idCard: any): Observable<any> {
+	transaction(gameStateId: string, buyerIdx: string, sellerIdx: any, cardKey: any): Observable<any> {
 		return this.http
-			.post<any>(environment.API_HOST + environment.PLAYER.TRANSACTION, {
-				idGame,
-				idBuyer,
-				idSeller,
-				idCard,
+			.post<any>(environment.API_HOST + environment.PLAYER_STATE.TRANSACTION, {
+				gameStateId,
+				buyerIdx,
+				sellerIdx,
+				cardKey,
 			})
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.TRANSACTION')));
 	}
 
+	sendBuyingShortCode(code: string): void {
+		if (!this.gameStateId || !this.playerStateIdx) {
+			this.snackbarService.showError(this.i18nService.instant('ERROR.ID_PLAYER_MISSING'));
+			return;
+		}
+		this.wsService.emit(IO.SHORT_CODE.EMIT, {
+			code,
+			buyerIdx: this.playerStateIdx!,
+			buyerAvatarIdx: this.avatarIdx,
+			gameStateId: this.gameStateId!,
+		});
+	}
+
 	buy(dataRaw: string): Observable<{ success: boolean; error?: string; data?: any }> {
+		console.log('here.?');
 		return new Observable((observer) => {
 			try {
 				const data = JSON.parse(dataRaw);
@@ -408,37 +464,34 @@ export class PlayerStateService {
 				const cost = rules.typeMoney === GAME_TYPE.JUNE ? (data.p * gameState.currentDU).toFixed(2) : data.p;
 
 				if (this.gameStateId && data.g && this.gameStateId !== data.g) {
-					observer.next({ success: false, error: 'PLAYER.WRONG_GAME' });
+					observer.next({ success: false, error: 'ERROR.WRONG_GAME' });
 					observer.complete();
 					return;
 				}
 
 				if (!playerState || playerState.coins < parseFloat(cost.toString())) {
-					observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
+					observer.next({ success: false, error: 'ERROR.INSUFFICIENT_FUNDS' });
 					observer.complete();
 					return;
 				}
 
-				this.transaction(this.gameStateId!, playerState!.idx.toString(), data.o, data.c).subscribe({
-					next: (dataReceived) => {
-						if (dataReceived?.buyedCard) {
+				this.transaction(this.gameStateId!, playerState!.idx.toString(), data.o, data.k).subscribe({
+					next: (data) => {
+						if (data?.buyedCard) {
 							let playerState = this.playerStateSubject.getValue();
 							if (playerState) {
-								const currentCards = playerState.cards || [];
-								const newCards = [...currentCards, dataReceived.buyedCard];
-								this.setPlayerState({ ...playerState, cards: newCards });
-
-								playerState.coins = dataReceived.coins;
-								this.playerStateSubject.next({ ...playerState });
+								playerState.cards.push(data.buyedCard);
+								playerState.coins = data.coinsAfter;
+								this.setPlayerState({ ...playerState });
 							}
-							observer.next({ success: true, data: dataReceived });
+							observer.next({ success: true, data: data });
 						} else {
 							observer.next({ success: false, error: 'PLAYER.NO_CARD_RECEIVED' });
 						}
 						observer.complete();
 					},
-					error: (err) => {
-						observer.next({ success: false, error: 'PLAYER.TRANSACTION_ERROR' });
+					error: (error) => {
+						observer.next({ success: false, error });
 						observer.complete();
 					},
 				});

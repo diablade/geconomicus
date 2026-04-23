@@ -36,7 +36,7 @@
 		</div>
 		<div class="flex-grow-1 w-100 h-100">
 			<div class="qrcodeWrapper">
-				<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
+				<div class="shortCode" *ngIf="code">{{ code }}</div>
 				<ngx-kjua
 					[text]="getData()"
 					[minVersion]="1"

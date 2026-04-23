@@ -104,6 +104,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			if (!_.isEqual(a.typeTheme, b.typeTheme)) {
 				return false;
 			}
+			if (a.playerState.cards.length !== b.playerState.cards.length) {
+				return false;
+			}
 			if (!_.isEqual(a.playerState.cards, b.playerState.cards)) {
 				return false;
 			}
@@ -294,7 +297,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	buyWithCode(code: string) {
-		this.playerStateService.sendBuyingShortCode(this.gameStateId!, this.playerStateIdx!, code);
+		this.playerStateService.sendBuyingShortCode(code);
 		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.SHORT_CODE_SEND'));
 	}
 
@@ -414,8 +417,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		// TODO: Implement reincarnation flow
 	}
 
-	onCreateShortCode($event: ShortCode) {
-		this.shortCode = $event;
+	onChangedShortCode($event: ShortCode) {
+		this.playerStateService.shortCode = $event;
 	}
 
 	openDialogShorCode() {
@@ -450,20 +453,21 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
-		const cardName = this.themesService.getIcon(ingredient.key) + ' ' + this.i18nService.instant(ingredient.key);
-		this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text:
-						payload.status == 'deck'
-							? this.i18nService.instant('CARD.IN_DECK', { cardName })
-							: this.i18nService.instant('CARD.IN_PLAYER', {
-									player: payload.name,
-									cardName,
-								}),
-				},
-			});
-		});
+		this.snackbarService.showNotif(this.i18nService.instant('ERROR.INSUFFICIENT_FUNDS'));
+		// const cardName = this.themesService.getIcon(ingredient.key) + ' ' + this.i18nService.instant(ingredient.key);
+		// this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
+		// 	this.dialog.open(InformationDialogComponent, {
+		// 		data: {
+		// 			text:
+		// 				payload.status == 'deck'
+		// 					? this.i18nService.instant('CARD.IN_DECK', { cardName })
+		// 					: this.i18nService.instant('CARD.IN_PLAYER', {
+		// 							player: payload.name,
+		// 							cardName,
+		// 						}),
+		// 		},
+		// 	});
+		// });
 	}
 
 	recipeCompleted(recipe: Recipe) {

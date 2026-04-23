@@ -1,5 +1,5 @@
 import GameStateModel from '../game.state.model.js';
-import { setupGameJune, setupGameDebt } from './setup.game.service.js';
+import { setupGameJune, setupGameDebt } from './setup.state.service.js';
 import EventService from '../../event/event.service.js';
 import RulesService from '../../session/rules/rules.service.js';
 import GameStateManager from '../managers/GameStateManager.js';
@@ -99,96 +99,6 @@ GameStateService.getById = async (id, enriched = true) => {
         session.gamesRules = [];
         return { gameState, session, rules };
     }
-};
-
-GameStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, avatarIdx) => {
-    const entry = GameStateManager.get(gameStateId);
-    if (entry) {
-        const player = entry.state.playersStates.find((p) => p.avatarIdx == avatarIdx);
-        if (player) {
-            return player.idx;
-        }
-    }
-    // Fallback to DB
-    const gameState = await GameStateModel.findById(gameStateId).lean();
-    if (gameState) {
-        const player = gameState.playersStates.find((p) => p.avatarIdx == avatarIdx);
-        if (player) {
-            return player.idx;
-        }
-    }
-    return -1;
-};
-
-GameStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, playerStateIdx) => {
-    // Try in-memory first
-    let gameState, rules;
-    const entry = GameStateManager.get(gameStateId);
-    if (entry) {
-        gameState = entry.state;
-        rules = entry.rules;
-    } else {
-        // Fallback to DB
-        gameState = await GameStateModel.findById(gameStateId).lean();
-        if (!gameState) return null;
-        const session = await SessionService.getById(gameState.sessionId);
-        rules = session.gamesRules.find((rule) => rule.idx === gameState.ruleIdx);
-    }
-
-    const playerState = gameState.playersStates.find(
-        (p) => p.idx == playerStateIdx && p.avatarIdx == avatarIdx
-    );
-    if (!playerState) return null;
-
-    const credits = (gameState.credits || []).filter((c) => c.playerStateIdx == playerStateIdx);
-    const defaultCredit = credits.some((c) => c.status === 'default-credit');
-
-    return {
-        playerState,
-        gameState: {
-            typeMoney: gameState.typeMoney,
-            status: gameState.status,
-            currentDU: gameState.currentDU || 0,
-            currentMassMonetary: gameState.currentMassMonetary || 0,
-        },
-        rules,
-        credits,
-        defaultCredit,
-    };
-};
-
-GameStateService.whoHaveCard = async (gameStateId, cardKey) => {
-    const gameState = GameStateManager.get(gameStateId);
-	if (gameState) {
-		const player = gameState.playersStates
-			.filter((p) => p.status === 'alive')
-			.find((player) => player.cards.find((card) => card.key === cardKey));
-		if (player) {
-			return {
-				status: 'player',
-				name: player.name,
-			};
-		} else {
-			const inDeck = gameState.decks.some((deck) => deck.some((card) => card.key === cardKey));
-			if (inDeck) {
-				return {
-					status: 'deck',
-					name: '',
-				};
-			}
-			return {
-				status: 'ko',
-				name: '',
-				reason: 'not found in deck and avatars hands',
-			};
-		}
-	} else {
-		return {
-			status: 'ko',
-			name: '',
-			reason: 'GameState not found',
-		};
-	}
 };
 
 /**

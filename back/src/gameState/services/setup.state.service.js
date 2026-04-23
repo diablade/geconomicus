@@ -1,5 +1,5 @@
 import { PLAYER_STATUS, GAME_STATUS } from '@geco/shared';
-import decksService from './decks.service.js';
+import decksService from './decks.state.service.js';
 import _ from 'lodash';
 
 //***************** DEFAULT VALUES *******//
