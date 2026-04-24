@@ -75,30 +75,15 @@ GameStateService.initGame = async (gameStateId) => {
 };
 
 GameStateService.getById = async (id, enriched = true) => {
-
-
-    // Check in-memory first for a live game
-    const liveEntry = GameStateManager.get(id);
-    if (liveEntry) {
-        const session = await SessionService.getById(liveEntry.state.sessionId);
-        if (!session) {
+    const entry = await GameStateManager.getOrReload(id);
+    if (entry) {
+        const session = enriched ? await SessionService.getById(entry.gameState.sessionId) : null;
+        if (enriched && !session) {
             throw new Error('Session not found for game state');
         }
-        return { gameState: liveEntry.state, rules: liveEntry.rules, session };
-    }else{
-        // Fall back to DB for finished / not-yet-started games
-        const gameState = await GameStateModel.findById(id).lean();
-        if (!gameState) {
-            throw new Error('Game state not found');
-        }
-        const session = await SessionService.getById(gameState.sessionId);
-        if (!session) {
-            throw new Error('Session not found for game state');
-        }
-        const rules = session.gamesRules.find((rule) => rule.idx === gameState.ruleIdx);
-        session.gamesRules = [];
-        return { gameState, session, rules };
+        return { gameState: entry.gameState, rules: entry.rules, session };
     }
+    throw new Error('Game state not found');
 };
 
 /**

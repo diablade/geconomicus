@@ -6,7 +6,6 @@ import RulesService from '../../session/rules/rules.service.js';
 import socket from '#config/socket';
 import { IO } from '@geco/shared';
 
-
 /**
  * InMemoryGameStateManager
  *
@@ -54,6 +53,20 @@ class GameStateManager {
 	 */
 	get(gameStateId) {
 		return this._games.get(gameStateId) || null;
+	}
+
+	/**
+	 * Get the full payload { state, rules } for a game, reloading from DB if not in memory.
+	 * @param {string} gameStateId
+	 * @returns {{ state: object, rules: object } | null}
+	 */
+	async getOrReload(gameStateId) {
+		let entry = this.get(gameStateId);
+		if (!entry) {
+			await this.reload(gameStateId); // recharge si PLAYING/PAUSED
+			entry = this.get(gameStateId);
+		}
+		return entry;
 	}
 
 	/**
@@ -120,10 +133,10 @@ class GameStateManager {
 		}
 		this.store(gameStateId, fromDb, rules);
 		log.info(`[WARN] Game ${gameStateId} reloaded from DB (in memory)`);
-        socket.emitTo(`${gameStateId}:master`, IO.INFO, {
-            gameStateId,
-            message: 'Game reloaded from DB after memory loss',
-        });
+		socket.emitTo(`${gameStateId}:master`, IO.INFO, {
+			gameStateId,
+			message: 'Game reloaded from DB after memory loss',
+		});
 	}
 
 	/**
