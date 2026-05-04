@@ -10,8 +10,8 @@
     "VALUES_BY_DEFAULT": "Valeurs par défaut",
     "CANCEL": "Annuler",
     "OK": "OK",
-	"SAVE": "Sauvegarder",
-	"DELETE": "Supprimer",
+    "SAVE": "Sauvegarder",
+    "DELETE": "Supprimer",
     "ALL": "Tous",
     "HOME": {
         "PAGE": "Page d'accueil",
@@ -39,7 +39,7 @@
         "START_GAME": "Partie démarrée"
     },
     "MASTER": {
-        "SCAN_QR": "Vas sur {{webHost}}, puis clique sur 'Rejoindre' !",
+        "SCAN_QR": "Va sur {{webHost}}, puis clique sur 'Rejoindre' !",
         "JOIN": "Rejoins la partie {{name}}",
         "GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la partie.",
         "TYPE_OF_MONEY": "Type de monnaie",
@@ -428,7 +428,7 @@
     "ERROR": {
         "IN_PROGRESS": "déjà en cours",
         "GAME_NOT_FOUND": "Jeu introuvable",
-        "PLAYER_NOT_FOUND": "Joueur introuvable",
+        "PLAYER_NOT_FOUND": "Joueur inexistant",
         "CARDS_NOT_UNIQUE": "Cartes non uniques",
         "NOT_ENOUGH_CARDS": "Pas assez de cartes",
         "NOT_ENOUGH_CARDS_IN_DECK": "Pas assez de cartes dans le deck",
@@ -439,7 +439,6 @@
         "JOIN": "Impossible de rejoindre",
         "CREATE": "Échec de la création",
         "GAME_UNAVAILABLE": "Partie indisponible",
-        "PLAYER_NOT_FOUND": "Joueur inexistant",
         "UPDATE": "Échec de la modification",
         "EXCHANGE": "Échange impossible",
         "DELETE": "Échec de la suppression",
