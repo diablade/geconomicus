@@ -127,6 +127,7 @@ SessionController.killGame = async (req, res, next) => {
         const { sessionId, ruleIdx, gameStateId } = req.body;
         const sessionUpdated = await RulesService.resetDefault(sessionId, ruleIdx);
         await GameStateService.delete(gameStateId);
+        await EventService.removeAllByGameStateId(gameStateId);
         let response = {
             gameStateId: gameStateId,
             ruleStatus: sessionUpdated.gameStatus,

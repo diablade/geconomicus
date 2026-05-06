@@ -151,8 +151,15 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	}
 
 	editSession() {
+		const sessionData = {
+            name: this.session.name,
+			animator: this.session.animator,
+			location: this.session.location,
+			theme: this.session.theme,
+            devMode: this.session.devMode,
+		};
 		const dialogRef = this.dialog.open(SessionEditDialogComponent, {
-			data: { session: _.clone(this.session) },
+			data: { session: sessionData },
 		});
 		dialogRef.afterClosed().subscribe((results) => {
 			if (results) {

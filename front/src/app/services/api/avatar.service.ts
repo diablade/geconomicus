@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
 import { environment } from '../../../environments/environment';
-import { ERROR_RELOAD, ErrorService } from '../error.service';
+import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
 import { ThemesService } from '../themes.service';
-import { IO } from '@geco/shared';
+import { IO, ROOMS } from '@geco/shared';
 
 @Injectable({
 	providedIn: 'root',
@@ -64,8 +64,8 @@ export class AvatarService {
 		this.sessionId = sessionId;
 		this.avatarIdx = avatarIdx;
 		this.wsService.initializeSocket({
-			publicChannel: sessionId,
-			privateChannel: `${sessionId}:${avatarIdx}`,
+			publicChannel: ROOMS.session(sessionId),
+			privateChannel: ROOMS.sessionAvatar(sessionId, avatarIdx),
 		});
 		this.setupSocketListeners();
 	}
@@ -183,7 +183,7 @@ export class AvatarService {
 					'/' +
 					avatarIdx
 			)
-			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')));
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.PLAYER_NOT_FOUND')));
 	}
 
 	refreshForceAvatar(sessionId: string, avatarIdx: number): void {

@@ -4,9 +4,9 @@ import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { PlayerState, GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
-import { ERROR_RELOAD, ErrorService } from '../error.service';
+import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
-import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE } from '@geco/shared';
+import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE, ROOMS } from '@geco/shared';
 import { BankService } from './bank.service';
 import { DeckService } from './deck.service';
 import { Router } from '@angular/router';
@@ -15,6 +15,8 @@ import { ShortCode } from 'src/app/models/shortCode';
 import { SnackbarService } from '../snackbar.service';
 import { I18nService } from '../i18n.service';
 import { AudioService } from '../audio.service';
+import { InformationDialogComponent } from 'src/app/dialogs/information-dialog/information-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
 	providedIn: 'root',
@@ -61,6 +63,7 @@ export class PlayerStateService {
 
 	constructor(
 		private http: HttpClient,
+        private dialog: MatDialog,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
 		private audioService: AudioService,
@@ -76,8 +79,8 @@ export class PlayerStateService {
 		this.gameStateId = gameStateId;
 		this.avatarIdx = avatarIdx;
 		this.playerStateIdx = playerStateIdx;
-		this.roomGameState = gameStateId;
-		this.roomPlayerState = `${gameStateId}:${avatarIdx}:${playerStateIdx}`;
+		this.roomGameState = ROOMS.gameState(gameStateId);
+		this.roomPlayerState = ROOMS.playerState(gameStateId,avatarIdx,playerStateIdx);
 		this.http
 			.get<any>(
 				environment.API_HOST +
@@ -93,7 +96,7 @@ export class PlayerStateService {
 			.pipe(
 				catchError((err) => {
 					// Redirect to lobby-player on error
-					this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.GAME_NOT_FOUND');
+					this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND');
 					this.router.navigate(['/avatar', sessionId, avatarIdx]);
 					return [];
 				})
@@ -124,9 +127,17 @@ export class PlayerStateService {
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomPlayerState);
 	}
-
+    getCurrency() {
+        return this.i18nService.instant(this.gameStateSubject.value?.typeMoney === GAME_TYPE.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE');
+    }
 	private setupMiscSocketListeners(): void {
 		this.wsService.on('connected', () => {
+			// if avatarService is connected it should come here to connect other rooms
+			console.log('Joining game states rooms...');
+			this.joinRooms();
+		});
+
+		this.wsService.on('reconnected', () => {
 			// if avatarService is connected it should come here to connect other rooms
 			console.log('Joining game states rooms...');
 			this.joinRooms();
@@ -230,8 +241,18 @@ export class PlayerStateService {
 			}
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
-				this.gameStateSubject.next({ ...currentGameState, status: data.status });
+				this.gameStateSubject.next({ ...currentGameState, status: data.status, currentDU: data.currentDU });
 			}
+			if (currentGameState?.typeMoney === GAME_TYPE.JUNE) {
+				this.audioService.playSound('du');
+			} else {
+				this.audioService.playSound('cardFlipBack');
+			}
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					text: this.i18nService.instant("PLAYER.INIT", { cardsLength: data.playerState.cards.length, coins: data.playerState.coins, currency: this.getCurrency() })
+				},
+			});
 		});
 
 		// Prison events
@@ -316,6 +337,11 @@ export class PlayerStateService {
 				currentPlayerState.coins += data.credit.amount;
 				this.playerStateSubject.next(currentPlayerState);
 			}
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.credit.amount})
+				},
+			});
 		});
 
 		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
@@ -519,7 +545,7 @@ export class PlayerStateService {
 						const updatedCredits = currentCredits.map((c) => {
 							if (c.idx === data.idx) {
 								c.status = data.status;
-								c.endDate = data.endDate;
+								c.remainingTime = data.remainingTime;
 							}
 							return c;
 						});

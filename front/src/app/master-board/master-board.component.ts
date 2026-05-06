@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
 // @ts-ignore
-import { GAME_STATUS, GAME_TYPE, IO } from '@geco/shared';
+import { GAME_STATUS, GAME_TYPE, PLAYER_STATUS, IO } from '@geco/shared';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { I18nService } from '../services/i18n.service';
@@ -15,7 +15,6 @@ import { AudioService } from '../services/audio.service';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash-es';
-
 
 @Component({
 	selector: 'app-master-board',
@@ -31,6 +30,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly environment = environment;
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
@@ -45,28 +45,28 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	rules$ = this.gameStateService.rules$;
 	session$ = this.gameStateService.session$;
 	playersStates$ = this.gameStateService.playersStates$;
-    // Timer state from service
-    timerProgress$ = this.gameStateService.timerProgress$;
-    minutes$ = this.gameStateService.minutes$;
-    seconds$ = this.gameStateService.seconds$;
+	// Timer state from service
+	timerProgress$ = this.gameStateService.timerProgress$;
+	minutes$ = this.gameStateService.minutes$;
+	seconds$ = this.gameStateService.seconds$;
 
-    vm$ = combineLatest({
-        gameState: this.gameState$,
-        rules: this.rules$,
-        session: this.session$,
-        playersStates: this.playersStates$,
-        timerProgress: this.timerProgress$,
-        minutes: this.minutes$,
-        seconds: this.seconds$
-    });
+	vm$ = combineLatest({
+		gameState: this.gameState$,
+		rules: this.rules$,
+		session: this.session$,
+		playersStates: this.playersStates$,
+		timerProgress: this.timerProgress$,
+		minutes: this.minutes$,
+		seconds: this.seconds$,
+	});
 
-    sp$ = combineLatest({
-        session: this.session$,
-        playersStates: this.playersStates$,
-    });
+	sp$ = combineLatest({
+		session: this.session$,
+		playersStates: this.playersStates$,
+	});
 
-    killUser = false;
-    coinRotate = false;
+	killUser = false;
+	coinRotate = false;
 
 	playersWithAvatars$ = this.sp$.pipe(
 		debounceTime(0), // wait for simultaneous emissions to stabilize
@@ -79,10 +79,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			}
 			return true;
 		}),
-		map(({playersStates, session}) =>
-			playersStates.map(playerState => ({
+		map(({ playersStates, session }) =>
+			playersStates.map((playerState) => ({
 				...playerState,
-				avatar: session.avatars.find(a => a.idx === playerState.avatarIdx) ?? null,
+				avatar: session.avatars.find((a) => a.idx === playerState.avatarIdx) ?? null,
 			}))
 		)
 	);
@@ -101,8 +101,8 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		this.i18nService.loadNamespace('master');
 	}
 
-    ngOnDestroy(): void {
-        this.gameStateService.offAll();
+	ngOnDestroy(): void {
+		this.gameStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
 	}
 
@@ -184,7 +184,17 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	getPlayerStateUrl(playerState: any) {
-		return environment.WEB_HOST + 'player/' + this.sessionId + '/' + playerState.avatarIdx + '/' + this.gameStateId + '/' + playerState.idx;
+		return (
+			environment.WEB_HOST +
+			'player/' +
+			this.sessionId +
+			'/' +
+			playerState.avatarIdx +
+			'/' +
+			this.gameStateId +
+			'/' +
+			playerState.idx
+		);
 	}
 
 	copyPlayerLink(playerState: any): void {

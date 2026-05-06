@@ -86,6 +86,8 @@ export const IO = {
         PRISON_ENDED: 'ppe',
         PROGRESS_PRISON: 'ppp',
         TRANSACTION_DONE: 'td',
+        CONNECTED: 'pc',
+        DISCONNECTED: 'pdc',
     },
     CREDIT: {
         NEW: 'cn',
@@ -127,4 +129,12 @@ export const DB_EVENTS = {
     CREDIT_SETTLE: 'credit-settle',
     CREDIT_PAYED_INTEREST: 'credit-payed-interest',
     CREDIT_SEIZED_DEAD: 'credit-seized-dead',
+};
+export const ROOMS = {
+    session: (sessionId) => `s:${sessionId}`,
+    sessionMaster: (sessionId) => `s:${sessionId}:master`,
+    sessionAvatar: (sessionId, avatarIdx) => `s:${sessionId}:${avatarIdx}`,
+    gameState: (gameStateId) => `gs:${gameStateId}`,
+    gameStateMaster: (gameStateId) => `gs:${gameStateId}:master`,
+    playerState: (gameStateId, avatarIdx, playerIdx) => `gs:${gameStateId}:${avatarIdx}:${playerIdx}`,
 };

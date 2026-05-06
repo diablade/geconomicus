@@ -5,7 +5,7 @@ import { Session } from '../../models/session';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService, REDIRECT_HOME } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
-import { IO } from '@geco/shared';
+import { IO, ROOMS } from '@geco/shared';
 
 @Injectable({
 	providedIn: 'root',
@@ -25,6 +25,7 @@ export class SessionService {
 	) {}
 
     loadSession(sessionId: string): Observable<Session> {
+        this.setupSocketListeners();
         this.initializeSocket(sessionId);
         return new Observable((observer: any) => {
             this.http
@@ -46,11 +47,10 @@ export class SessionService {
     }
 
 	initializeSocket(sessionId: string): void {
-		this.wsService.initializeSocket({
-			publicChannel: sessionId,
-			privateChannel: `${sessionId}:master`,
+        this.wsService.initializeSocket({
+            publicChannel: ROOMS.session(sessionId),
+			privateChannel: ROOMS.sessionMaster(sessionId),
 		});
-		this.setupSocketListeners();
 	}
 
 	setupSocketListeners(): void {

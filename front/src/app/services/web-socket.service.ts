@@ -20,6 +20,7 @@ export class WebSocketService {
 	private isReConnected = new BehaviorSubject<boolean>(false);
 	private currentQuery: any = null;
 	private eventHandlers: Map<string, Function[]> = new Map();
+	private joinedRooms: Set<string> = new Set();
 
 	constructor(
 		private snackbarService: SnackbarService,
@@ -45,7 +46,16 @@ export class WebSocketService {
 
 		window.addEventListener('online', () => {
 			console.log('Browser is back online');
+            this.dialog.closeAll();
+
 			this.socket?.connect();
+			// Rejoin rooms after a short delay to allow connection to establish
+			setTimeout(() => {
+                if (this.socket?.connected) {
+					console.log('Rejoining rooms after browser came back online:', Array.from(this.joinedRooms));
+					this.rejoinAllRooms();
+				}
+			}, 500);
 		});
 	}
 
@@ -103,6 +113,10 @@ export class WebSocketService {
         });
 		this.socket.io.on('reconnect', (attemptNumber: number) => {
 			console.log('Reconnect after', attemptNumber, 'attempts');
+			// Rejoin all previously joined rooms
+			console.log('Rejoining rooms after socket reconnect:', Array.from(this.joinedRooms));
+            this.dialog.closeAll();
+			this.rejoinAllRooms();
 			if (last && now - last > maxOfflineDuration) {
 				console.warn('Reconnected after long offline time — reloading page');
 				window.location.reload(); // force refresh
@@ -183,6 +197,7 @@ export class WebSocketService {
 			this.socket?.disconnect();
 			this.socket?.removeAllListeners();
 			this.eventHandlers.clear();
+			this.joinedRooms.clear();
 		}
 
 		this.connect({privateChannel: query.privateChannel, publicChannel: query.publicChannel});
@@ -267,15 +282,33 @@ export class WebSocketService {
 	}
 
 	joinRoom(room: string): void {
-		if (this.socket && this.socket.connected) {
-			this.socket.emit('join', room);
+		if (room) {
+			this.joinedRooms.add(room);
+			if (this.socket && this.socket.connected) {
+				console.log('Joining room:', room);
+				this.socket.emit('join', room);
+			}
 		}
 	}
 
 	leaveRoom(room: string): void {
+		this.joinedRooms.delete(room);
 		if (this.socket && this.socket.connected) {
 			this.socket.emit('leave', room);
 		}
+	}
+
+	private rejoinAllRooms(): void {
+		if (this.socket && this.socket.connected) {
+			this.joinedRooms.forEach(room => {
+				console.log('Auto-rejoining room:', room);
+				this.socket!.emit('join', room);
+			});
+		}
+	}
+
+	clearJoinedRooms(): void {
+		this.joinedRooms.clear();
 	}
 
 	isConnected(): boolean {

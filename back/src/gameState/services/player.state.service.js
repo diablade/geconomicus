@@ -1,8 +1,6 @@
 import log from "#config/log";
 import _ from 'lodash';
 import GameStateManager from '../managers/GameStateManager.js';
-import GameStateModel from '../game.state.model.js';
-import SessionService from '../../session/session.service.js';
 import EventService from '../../event/event.service.js';
 import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, PLAYER_TYPE, IO } from "@geco/shared";
 import socket from '#config/socket';
@@ -21,7 +19,6 @@ PlayerStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, ava
 
 PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, playerStateIdx) => {
     return await GameStateManager.withQueue(gameStateId, async (entry) => {
-        console.log('entry', entry);
         const { gameState, rules } = entry;
         const playerState = gameState.playersStates.find(
             (p) => p.idx == playerStateIdx && p.avatarIdx == avatarIdx
@@ -79,7 +76,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
         });
 
         // Emit transaction event to results room
-        const resultsRoom = `${gameStateId}:${PLAYER_TYPE.RESULTS}`;
+        const resultsRoom = `gs:${gameStateId}:${PLAYER_TYPE.RESULTS}`;
         socket.emitTo(resultsRoom, IO.EVENT, {
             event: DB_EVENTS.TRANSACTION,
             sessionId: entry.gameState.sessionId,
@@ -93,7 +90,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
         });
 
         // Notify seller
-        const sellerRoom = `${gameStateId}:${seller.avatarIdx}:${sellerIdx}`;
+        const sellerRoom = `gs:${gameStateId}:${seller.avatarIdx}:${sellerIdx}`;
         socket.emitAckTo(sellerRoom, IO.PLAYER.TRANSACTION_DONE, {
             sellerIdx,
             cardKey: card.key,

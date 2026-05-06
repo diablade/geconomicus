@@ -2,7 +2,7 @@
 	<div class="overlay" (click)="closeCard()"></div>
 </ng-container>
 <div
-	class="card"
+	class="card box-shadowed"
 	[ngClass]="[card.color]"
 	[@itemFlip]="{ value: state, params: { translateX: translateX, translateY: translateY, height, width } }">
 	<div class="face" *ngIf="state === 'default'" (click)="cardClicked()">

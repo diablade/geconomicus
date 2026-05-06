@@ -28,6 +28,7 @@ export class LanguageBtnComponent implements OnInit {
 
 	selectedLanguage: Language = this.languages[0];
 	@Input() short = false;
+    @Input() white = false;
 	@Input() cornerScreen = false;
 
 	constructor(private i18nService: I18nService) {}

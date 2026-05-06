@@ -353,7 +353,9 @@
 		"DELETE_GAME": "Échec de la suppression",
 		"CONNECTION_EXPIRED": "La connexion a expiré. Rechargement automatique de la page...",
 		"IO_SOCKET_ERROR": "Une erreur s'est produite, veuillez réessayer plus tard.",
-		"FINDING_CARD": "Carte non trouvé"
+		"FINDING_CARD": "Carte non trouvé",
+		"GAME_STATE_OVER": "Partie terminée"
+
 	},
 	"SOCKET": {
 		"OFFLINE": {

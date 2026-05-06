@@ -85,6 +85,8 @@ export declare const IO: {
         readonly PRISON_ENDED: "ppe";
         readonly PROGRESS_PRISON: "ppp";
         readonly TRANSACTION_DONE: "td";
+        readonly CONNECTED: "pc";
+        readonly DISCONNECTED: "pdc";
     };
     readonly CREDIT: {
         readonly NEW: "cn";
@@ -132,3 +134,12 @@ export declare const DB_EVENTS: {
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
 };
 export type DbEvent = typeof DB_EVENTS[keyof typeof DB_EVENTS];
+export declare const ROOMS: {
+    session: (sessionId: string) => string;
+    sessionMaster: (sessionId: string) => string;
+    sessionAvatar: (sessionId: string, avatarIdx: number) => string;
+    gameState: (gameStateId: string) => string;
+    gameStateMaster: (gameStateId: string) => string;
+    playerState: (gameStateId: string, avatarIdx: number, playerIdx: number) => string;
+};
+export type Rooms = typeof ROOMS[keyof typeof ROOMS];

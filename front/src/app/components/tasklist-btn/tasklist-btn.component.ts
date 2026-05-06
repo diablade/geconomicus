@@ -10,6 +10,7 @@ export class TaskListBtnComponent {
 	@Input() labelBtn = "TASK.MASTER_TASK";
 	@Input() icon = true;
 	@Input() stroked = false;
+    @Input() white = false;
 
 	presentYourself = false;
 	presentML = false;

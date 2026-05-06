@@ -9,7 +9,7 @@ import { Session } from "../../models/session";
 	styleUrls: ['./session-edit-dialog.component.scss']
 })
 export class SessionEditDialogComponent {
-	session: Session;
+	session: Partial<Session>;
 	themes: string[];
 	Math = Math;
 

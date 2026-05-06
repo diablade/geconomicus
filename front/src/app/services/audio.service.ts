@@ -15,10 +15,9 @@ export class AudioService {
   playSound(key: string) {
     if (this.sounds[key]) {
       this.sounds[key].play().catch(e => console.error(`Playback failed for ${key}:`, e));
-
-    }else{
-      this.preloadSound(key, "./assets/audios/" + key + ".mp3");
-      this.playSound(key);
+      return;
     }
+    this.preloadSound(key, "./assets/audios/" + key + ".mp3");
+    this.playSound(key);
   }
 }

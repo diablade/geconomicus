@@ -1,8 +1,13 @@
-<button class="ms-2" *ngIf="stroked" mat-stroked-button (click)="showTaskList()">
+<button
+	class="ms-2 blur box-shadowed"
+	[ngClass]="white ? 'whiteBtn' : ''"
+	*ngIf="stroked"
+	mat-stroked-button
+	(click)="showTaskList()">
 	<mat-icon *ngIf="icon" class="outlined">list_alt_check</mat-icon>
 	{{ labelBtn | translate }}
 </button>
-<button class="ms-2" *ngIf="!stroked" mat-raised-button (click)="showTaskList()">
+<button class="ms-2" [ngClass]="white ? 'whiteBtn' : ''" *ngIf="!stroked" mat-raised-button (click)="showTaskList()">
 	<mat-icon *ngIf="icon" class="outlined">list_alt_check</mat-icon>
 	{{ labelBtn | translate }}
 </button>

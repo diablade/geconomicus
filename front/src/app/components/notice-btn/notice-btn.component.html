@@ -1,8 +1,18 @@
-<button class="ms-2" *ngIf="stroked" mat-stroked-button (click)="showRules()">
+<button
+	class="ms-2 blur box-shadowed"
+	*ngIf="stroked"
+	[ngClass]="white ? 'whiteBtn' : ''"
+	mat-stroked-button
+	(click)="showRules()">
 	<mat-icon *ngIf="icon" class="outlined">info</mat-icon>
 	{{ labelBtn | translate }}
 </button>
-<button class="ms-2 box-shadowed" *ngIf="!stroked" mat-raised-button (click)="showRules()">
+<button
+	class="ms-2 box-shadowed"
+	*ngIf="!stroked"
+	[ngClass]="white ? 'whiteBtn' : ''"
+	mat-raised-button
+	(click)="showRules()">
 	<mat-icon *ngIf="icon" class="outlined">info</mat-icon>
 	{{ labelBtn | translate }}
 </button>

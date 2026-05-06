@@ -85,7 +85,7 @@ GameStateController.getById = async (req, res, next) => {
 		log.error(`Get game error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
-			message: 'ERROR.NOT_FOUND',
+			message: err.message,
 		});
 	}
 };
@@ -98,7 +98,7 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 		log.error(`Get game error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
-			message: 'ERROR.NOT_FOUND',
+			message: err.message,
 		});
 	}
 };

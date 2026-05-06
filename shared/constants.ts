@@ -91,13 +91,15 @@ export const IO = {
   PLAYER: {
     INIT:             'pi',
     JOINED:           'pj',
-    DIED:              'pd',
+    DIED:             'pd',
     FEEDBACK:         'pf',
     PROD_DISCARDS:    'ppd',
     PROD_DRAW_CARDS:  'ppdc',
     PRISON_ENDED:     'ppe',
     PROGRESS_PRISON:  'ppp',
     TRANSACTION_DONE: 'td',
+    CONNECTED:        'pc',
+    DISCONNECTED:     'pdc',
   },
   CREDIT: {
     NEW:        'cn',
@@ -148,4 +150,16 @@ export const DB_EVENTS = {
   CREDIT_PAYED_INTEREST:  'credit-payed-interest',
   CREDIT_SEIZED_DEAD:     'credit-seized-dead',
 } as const;
+
 export type DbEvent = typeof DB_EVENTS[keyof typeof DB_EVENTS];
+
+export const ROOMS ={
+    session: (sessionId: string) => `s:${sessionId}`,
+    sessionMaster: (sessionId: string) => `s:${sessionId}:master`,
+    sessionAvatar: (sessionId: string, avatarIdx: number) => `s:${sessionId}:${avatarIdx}`,
+    gameState: (gameStateId: string) => `gs:${gameStateId}`,
+    gameStateMaster: (gameStateId: string) => `gs:${gameStateId}:master`,
+    playerState: (gameStateId: string, avatarIdx: number, playerIdx: number) => `gs:${gameStateId}:${avatarIdx}:${playerIdx}`,
+}
+
+export type Rooms = typeof ROOMS[keyof typeof ROOMS];

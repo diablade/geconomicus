@@ -25,6 +25,7 @@ let Credit = new Schema(
 		createDate: { type: Date, required: true },
 		startDate: { type: Date },
 		endDate: { type: Date },
+		timerLeft: { type: Number, required: true },
 	},
 	{ _id: false }
 );
@@ -36,6 +37,15 @@ let PlayerState = new Schema(
 		status: { type: String, required: true },
 		coins: { type: Number, required: true },
 		cards: { type: [CardSchema], required: true },
+	},
+	{ _id: false }
+);
+
+let DeathState = new Schema(
+	{
+		intervalDeath: { type: Number, required: true, default: 0 },
+		intervalDeathLeft: { type: Number, required: true, default: 0 },
+		deathQueue: { type: Array, required: true, default: [] },
 	},
 	{ _id: false }
 );
@@ -75,6 +85,15 @@ let GameStateSchema = new Schema(
 			type: Number,
 			required: true,
 			default: 0,
+		},
+		timerLeft: {
+			type: Number,
+			required: true,
+			default: 0,
+		},
+		deathState: {
+			type: DeathState,
+			default: {},
 		},
 		//state june
 		currentDU: {

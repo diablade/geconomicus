@@ -9,6 +9,7 @@ import gameTimerManager from '../managers/GameTimerManager.js';
 import Timer from '../../misc/Timer.js';
 import socket from '#config/socket';
 import log from '#config/log';
+import PlayersStateConnectionManager from '../managers/PlayersStateConnectionManager.js';
 
 const GameStateService = {};
 
@@ -48,27 +49,27 @@ GameStateService.initGame = async (gameStateId) => {
 		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,"-",{});
 
 	} else {
-		log.error('Unknown game type '+ { typeMoney: gameState.typeMoney });
+		log.error('Unknown game type: '+ gameState.typeMoney);
 		throw new Error('Unknown game type');
 	}
 
-	log.info('Game setup completed '+ { gameStateId, typeMoney: gameState.typeMoney });
+	log.info('Game setup completed: '+ gameStateId +' with type: '+ gameState.typeMoney);
 
 	// Persist setup state to DB,
 	await GameStateModel.findByIdAndUpdate(gameStateId, { $set: initializedGame });
 
-	log.info('Game state persisted to DB '+ { gameStateId });
+	log.info('Game state persisted to DB: '+ gameStateId);
 
     // then store in memory with rules
 	GameStateManager.store(gameStateId, initializedGame, rules);
 
 	// emit to connected players their initial state
+	log.info('Emitting PLAYER_INIT to all players');
 	initializedGame.playersStates.forEach(async (playerState) => {
 		const roomId = `${gameStateId}:${playerState.avatarIdx}:${playerState.idx}`;
-
-		console.log('emit PLAYER_INIT to room', roomId);
+        log.info('emit PLAYER_INIT to room: ' + roomId);
 		await EventService.postNow(DB_EVENTS.PLAYER_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,playerState.idx,{playerState});
-		socket.emitAckTo(roomId, IO.PLAYER.INIT, {playerState,status: GAME_STATUS.INITIALIZED});
+		socket.emitAckTo(roomId, IO.PLAYER.INIT, {playerState,currentDU: initializedGame.currentDU, status: GAME_STATUS.INITIALIZED});
 	});
 
 	return initializedGame;
@@ -78,12 +79,13 @@ GameStateService.getById = async (id, enriched = true) => {
     const entry = await GameStateManager.getOrReload(id);
     if (entry) {
         const session = enriched ? await SessionService.getById(entry.gameState.sessionId) : null;
+        const connectedPlayers = enriched ? PlayersStateConnectionManager.getPlayersConnectionStatus(id) : null;
         if (enriched && !session) {
-            throw new Error('Session not found for game state');
+            throw new Error('ERROR.SESSION_NOT_FOUND');
         }
-        return { gameState: entry.gameState, rules: entry.rules, session };
+        return { gameState: entry.gameState, rules: entry.rules, session, connectedPlayers };
     }
-    throw new Error('Game state not found');
+    throw new Error('ERROR.GAME_STATE_NOT_FOUND');
 };
 
 /**

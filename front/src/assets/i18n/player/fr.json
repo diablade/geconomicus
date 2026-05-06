@@ -1,5 +1,6 @@
 {
     "PLAYER": {
+        "INIT": "Vous avez reçu {{cardsLength}} cartes 🎴 et {{coins}}{{currency}} 👛. Bonne chance !",
 		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
 		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
 		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",

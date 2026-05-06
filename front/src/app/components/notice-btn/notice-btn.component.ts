@@ -11,6 +11,7 @@ export class NoticeBtnComponent {
 	@Input() labelBtn = "GAME_NOTICE";
 	@Input() icon = true;
 	@Input() stroked = false;
+	@Input() white = false;
 	@Input() amountCardsForProd = 4;
 	@Input() timerCredit = 5;
 

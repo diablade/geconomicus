@@ -5,6 +5,8 @@ import GameStateModel from '../game.state.model.js';
 import RulesService from '../../session/rules/rules.service.js';
 import socket from '#config/socket';
 import { IO } from '@geco/shared';
+import gameTimerManager from './GameTimerManager.js';
+import bankTimerManager from './BankTimerManager.js';
 
 /**
  * InMemoryGameStateManager
@@ -13,6 +15,7 @@ import { IO } from '@geco/shared';
  * Each entry is { state, rules }:
  *   - state: the mutable game state (playersStates, decks, credits, etc.)
  *   - rules: the immutable rules for the game (used for calculations, never persisted here)
+ *   - events: historical events that occurred during the game (buffered in memory before being saved to DB)
  *
  * The periodic DB save (every 60s) persists state only — rules come from the session.
  */
@@ -31,9 +34,10 @@ class GameStateManager {
 	 * @param {string} gameStateId
 	 * @param {object} gameState — plain JS object matching GameStateSchema
 	 * @param {object} rules — plain JS rules object from the session
+	 * @param {object[]} events — array of historical events (buffered in memory)
 	 */
-	store(gameStateId, gameState, rules) {
-		this._games.set(gameStateId, { gameState, rules });
+	store(gameStateId, gameState, rules, events = []) {
+		this._games.set(gameStateId, { gameState, rules, events });
 		log.debug(`[GameStateManager] Game ${gameStateId} loaded into memory`);
 	}
 
@@ -49,7 +53,7 @@ class GameStateManager {
 	/**
 	 * Get the full payload { state, rules } for a game.
 	 * @param {string} gameStateId
-	 * @returns {{ state: object, rules: object } | null}
+	 * @returns {{ gameState: object, rules: object, events: object[] } | null}
 	 */
 	get(gameStateId) {
 		return this._games.get(gameStateId) || null;
@@ -58,7 +62,7 @@ class GameStateManager {
 	/**
 	 * Get the full payload { state, rules } for a game, reloading from DB if not in memory.
 	 * @param {string} gameStateId
-	 * @returns {{ state: object, rules: object } | null}
+	 * @returns {{ gameState: object, rules: object, events: object[] } | null}
 	 */
 	async getOrReload(gameStateId) {
 		let entry = this.get(gameStateId);
@@ -117,12 +121,25 @@ class GameStateManager {
 		}
 
 		// Only reload if the game is in a state that should be in memory
-		if (![GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(fromDb.status)) {
+		if (![GAME_STATUS.CREATED, GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(fromDb.status)) {
 			// Notifie le game master et throw
 			socket.emitTo(`${gameStateId}:master`, IO.INFO, {
-				message: 'Game not found or not reloadable',
+				message: 'ERROR.GAME_STATE_OVER',
 			});
-			throw new Error(`[GameStateManager] Game ${gameStateId} is ${fromDb.status}, not reloading`);
+			log.warn(`[GameStateManager] Game ${gameStateId} has status: ${fromDb.status}, will not be reloaded from DB`);
+			throw new Error('ERROR.GAME_STATE_OVER');
+		}
+		if (fromDb.status === GAME_STATUS.PLAYING && fromDb.timerLeft > 30) {
+			const timer = gameTimerManager.getTimer(gameStateId);
+			if (!timer) {
+			}
+			fromDb.timerLeft = 30;
+			log.warn(`[GameStateManager] Game ${gameStateId} timerLeft adjusted to 30 seconds`);
+		}
+		if (fromDb.status === GAME_STATUS.PAUSED) {
+			await gameTimerManager.pauseTimer(gameStateId);
+			await bankTimerManager.pauseTimer(gameStateId);
+			log.warn(`[GameStateManager] Game ${gameStateId} timer paused`);
 		}
 
 		const rules = await RulesService.getByIdx(fromDb.sessionId, fromDb.ruleIdx);

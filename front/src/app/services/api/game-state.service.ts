@@ -7,10 +7,11 @@ import { GameState, PlayerState } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { Session } from '../../models/session';
 import { WebSocketService } from '../web-socket.service';
-import { IO, GAME_STATUS, PLAYER_STATUS } from '@geco/shared';
+import { IO, GAME_STATUS, PLAYER_STATUS, ROOMS } from '@geco/shared';
 import { SessionStorageService } from '../local-storage/session-storage.service';
 import { StorageKey } from '../local-storage/storage-key.const';
 import createCountdown from '../countDown';
+import { SessionService } from './session.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -47,8 +48,14 @@ export class GameStateService {
 	private timer: any;
 
 	// Setters
-	setGameState(gameState: GameState) {
+	setGameState(gameState: GameState, connectedPlayers?: any) {
 		this.gameStateSubject.next(gameState);
+        if (connectedPlayers) {
+            gameState.playersStates.forEach(playerState => {
+                const connectStatus = connectedPlayers.find((connection: any) => connection.idx === playerState.idx);
+                playerState.connected = connectStatus?.connected || false;
+            });
+        }
 		this.playersStatesSubject.next(gameState.playersStates || []);
 	}
 	setRules(rules: Rules) {
@@ -57,7 +64,7 @@ export class GameStateService {
 	setSession(session: Session) {
 		this.sessionSubject.next(session);
 	}
-    // Getters
+	// Getters
 	getGameStateSnapshot(): GameState {
 		return this.gameStateSubject.getValue();
 	}
@@ -72,7 +79,8 @@ export class GameStateService {
 		public http: HttpClient,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
-		private sessionStorageService: SessionStorageService
+		private sessionStorageService: SessionStorageService,
+		private sessionService: SessionService
 	) {
 		this.initializeTimer();
 	}
@@ -80,11 +88,12 @@ export class GameStateService {
 	loadForMaster(sessionId: string, gameStateId: string): void {
 		this.sessionId = sessionId;
 		this.gameStateId = gameStateId;
-		this.roomGameState = gameStateId;
-		this.roomMaster = `${gameStateId}:master`;
+		this.roomGameState = ROOMS.gameState(gameStateId);
+		this.roomMaster = ROOMS.gameStateMaster(gameStateId);
 
+        this.sessionService.initializeSocket(sessionId);
 		this.get(gameStateId, true).subscribe((payload) => {
-			this.setGameState(payload.gameState);
+			this.setGameState(payload.gameState, payload.connectedPlayers);
 			this.setRules(payload.rules);
 			if (payload.session) {
 				this.setSession(payload.session);
@@ -92,11 +101,13 @@ export class GameStateService {
 		});
 		this.setupMasterSocketListeners();
 		if (this.wsService.isConnected()) {
+            console.log("connected");
 			this.joinRooms();
 		}
+        console.log("not connected");
 	}
 
-    leaveRooms(): void {
+	leaveRooms(): void {
 		if (this.gameStateId) {
 			this.wsService.leaveRoom(this.roomGameState);
 			this.wsService.leaveRoom(this.roomMaster);
@@ -104,23 +115,48 @@ export class GameStateService {
 	}
 
 	private joinRooms(): void {
+        console.log("joining rooms...");
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomMaster);
 	}
 
-    private setupMasterSocketListeners(): void {
+	private setupMasterSocketListeners(): void {
+		console.log('setupMasterSocketListeners');
 		this.wsService.on(IO.AVATAR.UPDATED, (player: PlayerState) => {
 			// Avatar updated event — could refresh player list
 		});
 
 		this.wsService.on(IO.PLAYER.JOINED, (player: PlayerState) => {
+			console.log('test joined ws:', player);
 			const current = this.playersStatesSubject.getValue();
 			this.playersStatesSubject.next([...current, player]);
+		});
+
+		this.wsService.on(IO.PLAYER.CONNECTED as any, (data) => {
+            console.log("test connected ws:", data);
+			this.updatePlayerConnectionStatus(data, true);
+		});
+
+		this.wsService.on(IO.PLAYER.DISCONNECTED as any, (data) => {
+            console.log("test disconnected ws:", data);
+			this.updatePlayerConnectionStatus(data, false);
 		});
 
 		this.wsService.on('connected', (data: any) => {
 			console.log('connected, joining other rooms...', data);
 			this.joinRooms();
+		});
+
+		// Handle reconnection - if we receive 'connected' event, check if we're still in rooms
+		this.wsService.on('disconnect', () => {
+			console.log('Master board disconnected, will reconnect...');
+			// Schedule reconnection after a short delay
+			setTimeout(() => {
+				if (this.wsService.isConnected()) {
+					console.log('Master board reconnecting to rooms...');
+					this.joinRooms();
+				}
+			}, 2000); // Reconnect after 2 seconds
 		});
 
 		this.wsService.on(IO.TIMER_LEFT, (minutesRemaining: number) => {
@@ -159,16 +195,18 @@ export class GameStateService {
 		});
 	}
 
-    offAll(): void {
-        this.wsService.off(IO.AVATAR.UPDATED);
+	offAll(): void {
+		this.wsService.off(IO.AVATAR.UPDATED);
 		this.wsService.off(IO.PLAYER.JOINED);
+		this.wsService.off(IO.PLAYER.CONNECTED);
+		this.wsService.off(IO.PLAYER.DISCONNECTED);
 		this.wsService.off(IO.TIMER_LEFT);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
 		this.wsService.off(IO.GAME.FINISHED);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
-    }
+	}
 
 	create(sessionId: string, ruleIdx: number): Observable<any> {
 		return this.http
@@ -179,21 +217,21 @@ export class GameStateService {
 	get(gameStateId: string, enriched: boolean): Observable<any> {
 		return this.http
 			.get<any>(environment.API_HOST + environment.GAME_STATE.GET + gameStateId + '?enriched=' + enriched)
-			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')));
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
 	}
 
 	init(gameStateId: string): Observable<any> {
-        return new Observable((observer) => {
-				this.http
-					.post<any>(environment.API_HOST + environment.GAME_STATE.INIT, { gameStateId })
-					.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.DISTRIBUTE_CARDS')))
-					.subscribe((data) => {
-						if (data.status == 'done') {
-							this.setGameState(data.gameState);
-						}
-						observer.next(data);
-						observer.complete();
-					});
+		return new Observable((observer) => {
+			this.http
+				.post<any>(environment.API_HOST + environment.GAME_STATE.INIT, { gameStateId })
+				.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.DISTRIBUTE_CARDS')))
+				.subscribe((data) => {
+					if (data.status == 'done') {
+						this.setGameState(data.gameState);
+					}
+					observer.next(data);
+					observer.complete();
+				});
 		});
 	}
 
@@ -223,7 +261,7 @@ export class GameStateService {
 		}
 	}
 
-    /**
+	/**
 	 * Initialize the timer countdown.
 	 */
 	private initializeTimer(): void {
@@ -243,6 +281,17 @@ export class GameStateService {
 				},
 			}
 		);
+	}
+
+	/**
+	 * Update player connection status.
+	 */
+	updatePlayerConnectionStatus(data: any, connected: boolean): void {
+		const currentPlayers = this.playersStatesSubject.value;
+		const updatedPlayers = currentPlayers.map((player) =>{
+			return player.idx === data.playerStateIdx ? { ...player, connected } : player;
+        });
+		this.playersStatesSubject.next(updatedPlayers);
 	}
 
 	/**

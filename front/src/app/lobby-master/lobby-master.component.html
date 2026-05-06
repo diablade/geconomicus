@@ -1,21 +1,30 @@
 <div class="lobby-master sunyBg h-100" *ngIf="session$ | async as session">
-	<div class="d-flex flex-column h-100 clouds overflow-auto">
+	<div class="d-flex flex-column h-100 dots overflow-auto">
 		<!-- HEADER  -->
 		<div class="d-flex flex-row justify-content-between flex-wrap">
 			<img class="geco" src="./assets/images/geconomicus.png" alt="" />
 			<div class="d-flex flex-row align-items-center flex-wrap gap-2">
-				<app-tasklist-btn [stroked]="true"></app-tasklist-btn>
-				<app-notice-btn [amountCardsForProd]="4" [timerCredit]="5" [stroked]="true"></app-notice-btn>
-				<app-language-btn [short]="true"></app-language-btn>
+				<button
+					class="box-shadowed blur whiteBtn"
+					*ngIf="session.status == OPEN || session.devMode"
+					mat-stroked-button
+					(click)="editSession()">
+					<mat-icon>settings</mat-icon>
+					{{ 'MASTER.EDIT' | translate }}
+				</button>
+				<app-tasklist-btn [stroked]="true" [white]="true"></app-tasklist-btn>
+				<app-notice-btn
+					[amountCardsForProd]="4"
+					[timerCredit]="5"
+					[stroked]="true"
+					[white]="true"></app-notice-btn>
+				<app-language-btn [short]="true" [white]="true"></app-language-btn>
 			</div>
 		</div>
 		<!-- TITLE  -->
 		<div>
 			<div class="fs-1 text-center pt-4 pb-4 shadowed glow">
 				{{ session.status !== 'open' ? session.name : ('MASTER.JOIN' | translate: { name: session.name }) }}
-				<button *ngIf="session.status === 'open'" class="ms-2" mat-icon-button (click)="copyJoinLink()">
-					<fa-icon [icon]="faRightToBracket"></fa-icon>
-				</button>
 			</div>
 		</div>
 		<!-- CONTENT  -->
@@ -27,13 +36,15 @@
 				<div class="templateQrCode">
 					<div class="qrcodeImage">
 						<ngx-kjua
-							[size]="205"
+							class="ngx-kjua"
+							[size]="255"
 							[text]="joinLink"
 							[render]="'svg'"
 							[fontcolor]="'#FF9818'"
 							[fontname]="'arial'"
 							[mode]="'label'"
 							[mSize]="17"
+							[quiet]="3"
 							[ecLevel]="'H'"
 							[crisp]="true"
 							[label]="session.shortId"></ngx-kjua>
@@ -54,34 +65,63 @@
 						*ngIf="session.status !== 'open'"
 						[pointer]="true"
 						[contents]="['MASTER.GUNY_ENJOY']"></bulle>
-					<img class="guny" src="./assets/images/guny.png" alt="" />
+					<img class="guny halo" src="./assets/images/guny.png" alt="" />
 				</div>
 			</div>
 			<!--  OPTIONS  -->
 			<div
 				*ngIf="session.status === 'open'"
-				class="content-item d-flex flex-column justify-content-center align-items-center">
+				class="content-item-session d-flex flex-column justify-content-center align-items-center session">
 				<div class="inner-item d-flex flex-column">
-					<div class="fs-5">👤 {{ 'ANIMATOR' | translate }} : {{ session.animator }}</div>
-					<div class="fs-5 mt-4">📍 {{ 'LOCATION' | translate }} : {{ session.location | translate }}</div>
-					<div class="fs-5 mt-4">🎨 {{ 'MASTER.THEME' | translate }} : {{ session.theme | translate }}</div>
+					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2">
+						<mat-icon>info_outline</mat-icon>
+						{{ 'MASTER.SESSION_INFO' | translate }}
+					</div>
+					<div class="fs-6 mt-2">
+						🔗
+						<button mat-stroked-button (click)="copyJoinLink()">
+							{{ 'MASTER.JOIN_LINK' | translate }}
+						</button>
+					</div>
+					<div class="fs-6 mt-2">
+						👤 {{ 'ANIMATOR' | translate }}:
+						<span class="fw-bold">{{ session.animator }}</span>
+					</div>
+					<div class="fs-6 mt-2">
+						📍 {{ 'LOCATION' | translate }}:
+						<span class="fw-bold">{{ session.location | translate }}</span>
+					</div>
+					<div class="fs-6 mt-2 mb-2">
+						🎨 {{ 'MASTER.THEME' | translate }}:
+						<span class="fw-bold">{{ session.theme | translate }}</span>
+					</div>
+					<div class="divider"></div>
+					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2">
+						<mat-icon>play_circle_outline</mat-icon>
+						{{ 'MASTER.SESSION_STATE' | translate }}
+					</div>
+					<div class="fs-6 mt-2 mb-2">
+						<span *ngIf="session.avatars.length < 6" class="fw-bold">
+							{{ 'MASTER.SESSION_WAITING' | translate }}
+						</span>
+						<span *ngIf="session.avatars.length >= 6 || session.devMode">
+							{{ 'MASTER.SESSION_READY' | translate }}
+						</span>
+					</div>
+					<div class="fs-6 mt-1">
+						<span *ngIf="session.avatars.length < 6 && !session.devMode">
+							{{ 'MASTER.WAITING' | translate: { count: 6 - session.avatars.length } }}
+						</span>
+					</div>
 					<div class="flex-grow-1"></div>
-					<button class="mb-2" mat-stroked-button (click)="editSession()">
-						<mat-icon>edit</mat-icon>
-						{{ 'MASTER.EDIT' | translate }}
-					</button>
 					<button
-						class="box-shadowed"
+						class="box-shadowed blur"
 						[color]="'primary'"
 						[disabled]="session.avatars.length < 6 && !session.devMode"
 						mat-raised-button
 						(click)="startSession()">
 						<mat-icon>groups</mat-icon>
-						{{
-							session.avatars.length < 6 && !session.devMode
-								? ('MASTER.WAITING' | translate: { count: 6 - session.avatars.length })
-								: ('MASTER.START' | translate)
-						}}
+						{{ 'MASTER.START' | translate }}
 					</button>
 				</div>
 			</div>
@@ -96,7 +136,7 @@
 									[label]="(rule.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"
 									(click)="rule.rotate = !rule.rotate"
 									[forceRotate]="rule.rotate"></coin>
-								<div class="fs-7 text-center">
+								<div class="fs-7 text-center white">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
 									{{ rule.gameStatus === INITIALIZED ? ('MASTER.GAME_OPEN' | translate) : '' }}
 									{{ rule.gameStatus === FINISHED ? ('MASTER.GAME_FINISHED' | translate) : '' }}
@@ -105,14 +145,10 @@
 									*ngIf="rule.gameStatus === NONE"
 									class="contourText"
 									mat-button
-									[color]="session.devMode ? 'warn' : ''"
+									[color]="session.devMode ? 'accent' : 'primary'"
 									(click)="editRules(rule)">
 									<mat-icon *ngIf="session.devMode">settings</mat-icon>
-									{{
-										session.devMode
-											? ('MASTER.EDIT_RULES' | translate)
-											: ('MASTER.DURATION' | translate: { minutes: rule.roundMinutes })
-									}}
+									{{ 'MASTER.DURATION' | translate: { minutes: rule.roundMinutes } }}
 								</button>
 								<button
 									*ngIf="rule.gameStatus === NONE"
@@ -175,7 +211,7 @@
 		<div class="flex-grow-1" [ngClass]="session.status === OPEN ? '' : ''">
 			<div class="d-flex flex-column h-100">
 				<div class="text-center">
-					<h2 class="fs-3 shadowed">
+					<h2 class="fs-3 shadowed m-4 geconomicusFont">
 						{{ 'MASTER.USERS_CONNECTED' | translate }}
 						<span
 							*ngIf="warningHairColorDuplicate"
@@ -186,39 +222,43 @@
 						</span>
 					</h2>
 				</div>
-				<div class="p-3 flex-grow-1">
-					<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
-						<div *ngFor="let avatar of session.avatars" class="player d-flex flex-column">
-							<div class="d-flex flex-row justify-content-center player-action">
-								<div class="avatarName shadowed">
-									{{ avatar.name }}
+				<div class="ms-2 me-2 flex-grow-1">
+					<div class="d-flex justify-content-center">
+						<div class="players">
+							<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
+								<div
+									*ngFor="let avatar of session.avatars"
+									class="d-flex flex-column align-items-center">
+									<avatar
+										[avatar]="avatar"
+										[width]="'120px'"
+										[height]="'120px'"
+										[matMenuTriggerFor]="aboveMenu"></avatar>
+									<mat-menu #aboveMenu="matMenu" yPosition="above">
+										<button mat-menu-item [routerLink]="['/avatar', sessionId, avatar.idx]">
+											<mat-icon>play_arrow</mat-icon>
+											<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+										</button>
+										<span>
+											<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
+												<mat-icon>link</mat-icon>
+												<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+											</button>
+											<button mat-menu-item (click)="reJoin(avatar.idx, avatar.name)">
+												<mat-icon>qr_code_2</mat-icon>
+												<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+											</button>
+										</span>
+										<button mat-color="warn" mat-menu-item (click)="onDeleteUser(avatar)">
+											<mat-icon [color]="'warn'">person_remove</mat-icon>
+											<span>{{ 'MASTER.DELETE_USER' | translate }}</span>
+										</button>
+									</mat-menu>
+									<div class="avatarName shadowed">
+										{{ avatar.name }}
+									</div>
 								</div>
 							</div>
-							<avatar
-								[avatar]="avatar"
-								[width]="'120px'"
-								[height]="'120px'"
-								[matMenuTriggerFor]="aboveMenu"></avatar>
-							<mat-menu #aboveMenu="matMenu" yPosition="above">
-								<button mat-menu-item [routerLink]="['/avatar', sessionId, avatar.idx]">
-									<mat-icon>play_arrow</mat-icon>
-									<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
-								</button>
-								<span>
-									<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
-										<mat-icon>link</mat-icon>
-										<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
-									</button>
-									<button mat-menu-item (click)="reJoin(avatar.idx, avatar.name)">
-										<mat-icon>qr_code_2</mat-icon>
-										<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
-									</button>
-								</span>
-								<button mat-color="warn" mat-menu-item (click)="onDeleteUser(avatar)">
-									<mat-icon [color]="'warn'">person_remove</mat-icon>
-									<span>{{ 'MASTER.DELETE_USER' | translate }}</span>
-								</button>
-							</mat-menu>
 						</div>
 					</div>
 				</div>

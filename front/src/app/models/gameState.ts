@@ -19,6 +19,7 @@ export class Credit {
 	progress: number = 0;
 	createDate: Date = new Date();
 	startDate: Date = new Date();
+    remainingTime: number = 0;
 	endDate: Date = new Date();
 }
 
@@ -30,6 +31,13 @@ export class PlayerState {
 	coins: number = 0;
 	cards: Card[] = [];
 	progressPrison: number = 0;
+    connected: boolean = false;
+}
+
+export class DeathState {
+    intervalDeath: number = 0;
+    intervalDeathLeft: number = 0;
+    deathQueue: any[] = [];
 }
 
 export class GameState {
@@ -41,6 +49,9 @@ export class GameState {
 	playerStateIndexSeq: number = 0;
 	playersStates: PlayerState[] = [];
 	currentMassMonetary: number = 0;
+
+	timerLeft: number = 0;
+	deathState: DeathState = new DeathState();
 
 	//state june
 	currentDU: number = 0;

@@ -3,8 +3,9 @@
 		{{ selectedLanguage.flag }}
 	</button>
 	<button
-		class="contourText white"
+		class="contourText blur box-shadowed"
 		*ngIf="!short"
+		[ngClass]="white ? 'whiteBtn' : ''"
 		mat-stroked-button
 		[matMenuTriggerFor]="menuLanguages"
 		aria-label="menu languages">

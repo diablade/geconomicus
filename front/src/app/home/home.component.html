@@ -1,5 +1,5 @@
-<div class="w-100 h-100 bg">
-	<div class="clouds overflow-auto">
+<div class="w-100 h-100 sunyBg">
+	<div class="cloud dots overflow-auto">
 		<!-- <svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.08"> -->
 		<!-- 1. Pattern de points -->
 		<!-- <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"> -->
@@ -24,7 +24,7 @@
 			<!--  GUNY  -->
 			<div class="mt-4 d-flex flex-column align-items-center bulleHome">
 				<bulle [pointer]="true" [contents]="['HOME.WELCOME']"></bulle>
-				<img class="guny" src="./assets/images/guny.png" alt="" (click)="beep()" />
+				<img class="guny halo" src="./assets/images/guny.png" alt="" (click)="beep()" />
 			</div>
 			<div *ngIf="modalPwaPlatform === 'ANDROID' || modalPwaPlatform === 'IOS'" class="mt-4 d-flex flex-row">
 				<button class="m-2 box-shadowed" mat-raised-button (click)="installApp()">
@@ -52,7 +52,7 @@
 			</div>
 			<div class="d-flex flex-row mt-2">
 				<app-notice-btn class="contourText" [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>
-				<app-language-btn class="ms-2 contourText"></app-language-btn>
+				<app-language-btn class="ms-2 contourText" [white]="true"></app-language-btn>
 			</div>
 			<div class="mt-4">
 				<img class="img-bottom" src="./assets/images/cards.png" alt="" />
@@ -78,7 +78,11 @@
 					<img class="icon" alt="" [src]="'/assets/images/june.png'" (click)="openKeyPub()" />
 				</span>
 			</div>
-			<button class="ms-2 contourText" mat-stroked-button color="accent" (click)="contribution()">
+			<button
+				class="ms-2 contourText box-shadowed blur"
+				mat-stroked-button
+				color="accent"
+				(click)="contribution()">
 				{{ 'HOME.CONTRIBUTION' | translate }}
 			</button>
 			<div class="m-2 contourText">
