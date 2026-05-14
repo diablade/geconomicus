@@ -73,7 +73,7 @@
 				*ngIf="session.status === 'open'"
 				class="content-item-session d-flex flex-column justify-content-center align-items-center session">
 				<div class="inner-item d-flex flex-column">
-					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2">
+					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2 contourText">
 						<mat-icon>info_outline</mat-icon>
 						{{ 'MASTER.SESSION_INFO' | translate }}
 					</div>
@@ -85,18 +85,18 @@
 					</div>
 					<div class="fs-6 mt-2">
 						👤 {{ 'ANIMATOR' | translate }}:
-						<span class="fw-bold">{{ session.animator }}</span>
+						<span class="fw-bold contourText">{{ session.animator }}</span>
 					</div>
 					<div class="fs-6 mt-2">
 						📍 {{ 'LOCATION' | translate }}:
-						<span class="fw-bold">{{ session.location | translate }}</span>
+						<span class="fw-bold contourText">{{ session.location | translate }}</span>
 					</div>
 					<div class="fs-6 mt-2 mb-2">
 						🎨 {{ 'MASTER.THEME' | translate }}:
-						<span class="fw-bold">{{ session.theme | translate }}</span>
+						<span class="fw-bold contourText">{{ session.theme | translate }}</span>
 					</div>
 					<div class="divider"></div>
-					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2">
+					<div class="fs-6 fw-bold text-uppercase d-flex align-items-center gap-2 contourText">
 						<mat-icon>play_circle_outline</mat-icon>
 						{{ 'MASTER.SESSION_STATE' | translate }}
 					</div>
@@ -224,7 +224,7 @@
 				</div>
 				<div class="ms-2 me-2 flex-grow-1">
 					<div class="d-flex justify-content-center">
-						<div class="players">
+						<div class="players rounded-box">
 							<div class="d-flex flex-row justify-content-center flex-wrap gap-2">
 								<div
 									*ngFor="let avatar of session.avatars"
@@ -233,6 +233,7 @@
 										[avatar]="avatar"
 										[width]="'120px'"
 										[height]="'120px'"
+										[namePosition]="'bottom'"
 										[matMenuTriggerFor]="aboveMenu"></avatar>
 									<mat-menu #aboveMenu="matMenu" yPosition="above">
 										<button mat-menu-item [routerLink]="['/avatar', sessionId, avatar.idx]">
@@ -254,9 +255,6 @@
 											<span>{{ 'MASTER.DELETE_USER' | translate }}</span>
 										</button>
 									</mat-menu>
-									<div class="avatarName shadowed">
-										{{ avatar.name }}
-									</div>
 								</div>
 							</div>
 						</div>

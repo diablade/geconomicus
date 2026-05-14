@@ -1,5 +1,5 @@
 import GameStateModel from '../game.state.model.js';
-import { setupGameJune, setupGameDebt } from './setup.state.service.js';
+import { setupGameJune, setupGameDebt } from '../helpers/setup.state.helper.js';
 import EventService from '../../event/event.service.js';
 import RulesService from '../../session/rules/rules.service.js';
 import GameStateManager from '../managers/GameStateManager.js';

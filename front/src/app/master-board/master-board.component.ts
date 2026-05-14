@@ -102,6 +102,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
+		this.gameStateService.leaveRooms();
 		this.gameStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
 	}

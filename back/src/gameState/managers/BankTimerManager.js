@@ -1,4 +1,77 @@
 import log from "#config/log";
+import Timer from "../misc/Timer.js";
+
+// ─── Timer helpers ───────────────────────────────────────────────────────────
+
+const _addDebtTimer = (creditId, startTickNow, duration, data) => {
+    bankTimerManager.addTimer(new Timer(creditId, duration * minute, fiveSeconds, data, (timer) => {
+        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+        socket.emitTo(timer.data.gameStateId + BANK, IO.CREDIT_PROGRESS, { id: creditId, progress });
+        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.CREDIT_PROGRESS, { id: creditId, progress });
+    }, (timer) => {
+        _timeoutCredit(timer);
+    }), startTickNow);
+};
+
+const _addPrisonTimer = (playerId, duration, data) => {
+    bankTimerManager.addTimer(new Timer(playerId, duration * minute, fiveSeconds, data, (timer) => {
+        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
+        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
+        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+        socket.emitTo(timer.data.gameStateId + BANK, IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
+        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
+    }, (timer) => {
+        _timeoutPrison(timer);
+    }), true);
+};
+
+const _timeoutCredit = async (timer) => {
+    if (!timer) return;
+    const { gameStateId, playerLifeIdx, creditIdx } = timer.data;
+    await bankTimerManager.stopAndRemoveTimer(timer.id);
+
+    try {
+        await inMemoryGameStateManager.withLock(gameStateId, ({ state, rules }) => {
+            const credit = _findCredit(state, creditIdx);
+            const player = _findPlayer(state, playerLifeIdx);
+
+            if (credit.status === CREDIT_DONE) return;
+
+            if (credit.amount + credit.interest <= player.coins) {
+                // Player can pay interest — request it
+                credit.status = REQUEST_CREDIT;
+                const event = _makeEvent(REQUEST_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
+                state.events = state.events || [];
+                state.events.push(event);
+                socket.emitTo(gameStateId + EVENT, EVENT, event);
+                socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_TIMEOUT, { credit });
+                socket.emitTo(gameStateId + BANK, IO.CREDIT_TIMEOUT, credit);
+            } else {
+                // Default
+                credit.status = DEFAULT_CREDIT;
+                const event = _makeEvent(DEFAULT_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
+                state.events = state.events || [];
+                state.events.push(event);
+                socket.emitTo(gameStateId + EVENT, EVENT, event);
+                socket.emitTo(gameStateId + BANK, IO.CREDIT_DEFAULT, credit);
+                if (player.status !== DEAD) {
+                    socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_DEFAULT, { credit });
+                }
+            }
+        });
+    } catch (err) {
+        log.error(`[bankMemService] _timeoutCredit error: ${err}`);
+    }
+};
+
+// const _timeoutPrison = async (timer) => {
+//     if (!timer) return;
+//     const { gameStateId, playerLifeIdx } = timer.data;
+//     await bankTimerManager.stopAndRemoveTimer(timer.id);
+//     await getOut(gameStateId, playerLifeIdx);
+// };
 
 class BankTimerManager {
     constructor() {
@@ -46,20 +119,20 @@ class BankTimerManager {
         }
     }
 
-    startAllIdGameDebtTimer(idGame) {
+    startAllDebtTimersOfGameState(gameStateId) {
         for (const timer of this.timers.values()) {
-            if (timer?.data?.idGame === idGame) {
+            if (timer?.data?.gameStateId === gameStateId) {
                 timer.start();
             }
         }
     }
 
-    async stopAllPlayerDebtsTimer(idGame, idPlayer) {
+    async stopPlayerDebtsTimer(gameStateId, playerIdx) {
         const timersToRemove = [];
 
         // First, collect all timer IDs to remove
         for (const [id, timer] of this.timers.entries()) {
-            if (timer?.data?.idGame === idGame && timer?.data?.idPlayer === idPlayer) {
+            if (timer?.data?.gameStateId === gameStateId && timer?.data?.playerIdx === playerIdx) {
                 timersToRemove.push(id);
             }
         }
@@ -70,12 +143,12 @@ class BankTimerManager {
         }
     }
 
-    async stopAndRemoveAllIdGameDebtTimer(idGame) {
+    async stopAndRemoveAllGameStateTimers(gameStateId) {
         const timersToRemove = [];
 
         // First, collect all timer IDs to remove
         for (const [id, timer] of this.timers.entries()) {
-            if (timer?.data?.idGame === idGame) {
+            if (timer?.data?.gameStateId === gameStateId) {
                 timersToRemove.push(id);
             }
         }

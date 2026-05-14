@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Avatar } from '../../models/avatar';
+import { PlayerState } from 'src/app/models/gameState';
 
 @Component({
 	selector: 'avatar',
@@ -10,6 +11,11 @@ export class AvatarComponent implements AfterViewInit {
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	@Input() width!: string;
 	@Input() height!: string;
+	@Input() namePosition: 'right' | 'bottom' | 'none' = 'none';
+	@Input() online: 'online' | 'none' | 'offline' = 'none';
+	@Input() playerState!: PlayerState | null;
+	@Input() showOnlineStatus: boolean = false;
+
 	private _avatar: Avatar = new Avatar();
 
 	@Input()
@@ -32,5 +38,15 @@ export class AvatarComponent implements AfterViewInit {
 		if (this.svgContainer?.nativeElement && this._avatar?.image) {
 			this.svgContainer.nativeElement.innerHTML = this._avatar.image;
 		}
+	}
+
+	getAlignment() {
+		if (this.namePosition === 'right') {
+			return 'flex-row gap-2';
+		}
+		if (this.namePosition === 'bottom') {
+			return 'flex-column gap-1';
+		}
+		return '';
 	}
 }

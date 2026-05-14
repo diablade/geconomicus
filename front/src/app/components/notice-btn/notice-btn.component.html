@@ -1,7 +1,7 @@
 <button
 	class="ms-2 blur box-shadowed"
 	*ngIf="stroked"
-	[ngClass]="white ? 'whiteBtn' : ''"
+	[ngClass]="white ? 'whiteBtn' : 'blackBtn'"
 	mat-stroked-button
 	(click)="showRules()">
 	<mat-icon *ngIf="icon" class="outlined">info</mat-icon>
@@ -10,7 +10,7 @@
 <button
 	class="ms-2 box-shadowed"
 	*ngIf="!stroked"
-	[ngClass]="white ? 'whiteBtn' : ''"
+	[ngClass]="white ? 'whiteBtn' : 'blackBtn'"
 	mat-raised-button
 	(click)="showRules()">
 	<mat-icon *ngIf="icon" class="outlined">info</mat-icon>

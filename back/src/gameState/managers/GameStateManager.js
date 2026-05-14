@@ -132,6 +132,7 @@ class GameStateManager {
 		if (fromDb.status === GAME_STATUS.PLAYING && fromDb.timerLeft > 30) {
 			const timer = gameTimerManager.getTimer(gameStateId);
 			if (!timer) {
+                //TODO
 			}
 			fromDb.timerLeft = 30;
 			log.warn(`[GameStateManager] Game ${gameStateId} timerLeft adjusted to 30 seconds`);

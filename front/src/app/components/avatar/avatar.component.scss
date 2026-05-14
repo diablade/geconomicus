@@ -5,4 +5,35 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width: 100%;
+	height: 100%;
+
+	&-name {
+		max-width: 100px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&-container {
+		position: relative;
+		display: inline-block; // ou width: fit-content
+	}
+
+	&-status {
+		position: absolute;
+		top: 70px;
+		right: -5px;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		border: 1px solid white; // pour le détacher visuellement de l'avatar
+	}
+}
+.connected {
+	background-color: #4caf50;
+}
+
+.disconnected {
+	background-color: #ff2020;
 }

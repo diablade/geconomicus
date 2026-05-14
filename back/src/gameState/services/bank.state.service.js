@@ -1,14 +1,12 @@
-import GameModel, {constructor} from "../game/game.model.js";
 import _ from "lodash";
-import { ALIVE, BANK, CREDIT_DONE, CREDITS_STARTED, DEAD, DEFAULT_CREDIT, EVENT, MASTER, NEW_CREDIT, PAUSED_CREDIT, PAY_INTEREST, PAYED_INTEREST, PRISON, PRISON_ENDED, PROGRESS_CREDIT, PROGRESS_PRISON, REQUEST_CREDIT, RUNNING_CREDIT, SEIZED_DEAD, SEIZURE, SETTLE_CREDIT, TIMEOUT_CREDIT } from '#constantes';
-import bankTimerManager from "./BankTimerManager.js";
+import bankTimerManager from "./../managers/BankTimerManager.js";
 import socket from "#config/socket";
 import log from "#config/log";
-import decksService from "../misc/legacy.decks.service.js";
-import playerService from "../player/player.service.js";
+import DecksStateHelper from "../helpers/decks.state.helper.js";
 import Timer from "../misc/Timer.js";
 import {differenceInMilliseconds} from "date-fns";
-import mongoose from 'mongoose';
+import {CREDIT_STATUS, PLAYER_TYPE} from "@geco/shared";
+import EventService from "../../event/event.service.js";
 
 
 const minute = 60 * 1000;
@@ -16,11 +14,11 @@ const fiveSeconds = 5 * 1000;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const _findPlayer = (state, playerLifeIdx) => {
-    const player = state.playersStates.find(p => p.idx === playerLifeIdx);
-    if (!player) throw new Error(`Player idx ${playerLifeIdx} not found`);
-    return player;
-};
+// const _findPlayer = (state, playerLifeIdx) => {
+//     const player = state.playersStates.find(p => p.idx === playerLifeIdx);
+//     if (!player) throw new Error(`Player idx ${playerLifeIdx} not found`);
+//     return player;
+// };
 
 const _findCredit = (state, creditIdx) => {
     const credit = state.credits.find(c => idx === creditIdx);
@@ -28,163 +26,173 @@ const _findCredit = (state, creditIdx) => {
     return credit;
 };
 
-// ─── Timer helpers ───────────────────────────────────────────────────────────
-
-const _addDebtTimer = (creditId, startTickNow, duration, data) => {
-    bankTimerManager.addTimer(new Timer(creditId, duration * minute, fiveSeconds, data, (timer) => {
-        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
-        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
-        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-        socket.emitTo(timer.data.gameStateId + BANK, IO.CREDIT_PROGRESS, { id: creditId, progress });
-        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.CREDIT_PROGRESS, { id: creditId, progress });
-    }, (timer) => {
-        _timeoutCredit(timer);
-    }), startTickNow);
+const _findCreditsByPlayer = (state, playerStateIdx) => {
+    const credits = state.credits.filter(c => c.playerStateIdx === playerStateIdx);
+    return credits;
 };
 
-const _addPrisonTimer = (playerId, duration, data) => {
-    bankTimerManager.addTimer(new Timer(playerId, duration * minute, fiveSeconds, data, (timer) => {
-        const remainingTime = differenceInMilliseconds(timer.endTime, new Date());
-        const totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
-        const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-        socket.emitTo(timer.data.gameStateId + BANK, IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
-        socket.emitTo(timer.data.playerLifeIdx.toString(), IO.PRISON_PROGRESS, { id: playerId, progress, remainingTime });
-    }, (timer) => {
-        _timeoutPrison(timer);
-    }), true);
-};
+const _seizeCards = (cards, targetAmount) => {
+    // Function to seize cards to match the target amount cardsValue
+    // Sort the player's cards by price in descending order
+    const sortedCards = _.sortBy(cards, 'price').reverse();
 
-const _timeoutCredit = async (timer) => {
-    if (!timer) return;
-    const { gameStateId, playerLifeIdx, creditIdx } = timer.data;
-    await bankTimerManager.stopAndRemoveTimer(timer.id);
+    let seizedCards = [];
+    let remainingAmount = targetAmount;
 
-    try {
-        await inMemoryGameStateManager.withLock(gameStateId, ({ state, rules }) => {
-            const credit = _findCredit(state, creditIdx);
-            const player = _findPlayer(state, playerLifeIdx);
+    // Seize cards until the target amount is reached
+    for (let card of sortedCards) {
+        if (remainingAmount <= 0) {
+            break;
+        } // Stop if the target is met
 
-            if (credit.status === CREDIT_DONE) return;
-
-            if (credit.amount + credit.interest <= player.coins) {
-                // Player can pay interest — request it
-                credit.status = REQUEST_CREDIT;
-                const event = _makeEvent(REQUEST_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
-                state.events = state.events || [];
-                state.events.push(event);
-                socket.emitTo(gameStateId + EVENT, EVENT, event);
-                socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_TIMEOUT, { credit });
-                socket.emitTo(gameStateId + BANK, IO.CREDIT_TIMEOUT, credit);
-            } else {
-                // Default
-                credit.status = DEFAULT_CREDIT;
-                const event = _makeEvent(DEFAULT_CREDIT, MASTER, playerLifeIdx, credit.amount, [credit]);
-                state.events = state.events || [];
-                state.events.push(event);
-                socket.emitTo(gameStateId + EVENT, EVENT, event);
-                socket.emitTo(gameStateId + BANK, IO.CREDIT_DEFAULT, credit);
-                if (player.status !== DEAD) {
-                    socket.emitAckTo(playerLifeIdx.toString(), IO.CREDIT_DEFAULT, { credit });
-                }
-            }
-        });
-    } catch (err) {
-        log.error(`[bankMemService] _timeoutCredit error: ${err}`);
+        if (card.price <= remainingAmount) {
+            seizedCards.push(card); // Add card to seized list
+            remainingAmount -= card.price; // Reduce the target by card's price
+        }0
     }
+    return seizedCards;
 };
 
-const _timeoutPrison = async (timer) => {
-    if (!timer) return;
-    const { gameStateId, playerLifeIdx } = timer.data;
-    await bankTimerManager.stopAndRemoveTimer(timer.id);
-    await getOut(gameStateId, playerLifeIdx);
+const _canDoCreditAction = (credit, playerState, action) => {
+    if (!credit) {
+        throw new Error("Can't find credit to check amount to pay");
+    }
+    if (!playerState) {
+        throw new Error("Can't find player to check amount to pay");
+    }
+    if (credit.playerStateIdx !== playerState.idx) {
+        throw new Error("Player is not the owner of this credit");
+    }
+    if (credit.status === CREDIT_STATUS.DONE) {
+        throw new Error("Credit is already done");
+    }
+    if (action === CREDIT_STATUS.SETTLE) {
+        return {
+            canPay: credit.amount + credit.interest <= playerState.coins
+        };
+    }
+    if (action === CREDIT_STATUS.PAY_INTEREST) {
+        return {
+            canPay: credit.interest <= playerState.coins
+        };
+    }
+    if (action === CREDIT_STATUS.SEIZURE) {
+        return {
+            canPay: credit.status === CREDIT_STATUS.DEFAULT
+        };
+    }
+    throw new Error("Invalid credit action");
 };
-
-// Simple event builder (mirrors legacy constructor.event shape)
-const _makeEvent = (type, from, to, amount, items) => ({
-    type,
-    from: from?.toString?.() ?? from,
-    to: to?.toString?.() ?? to,
-    amount,
-    items,
-    date: Date.now(),
-});
 
 // ─── Public API ──────────────────────────────────────────────────────────────
+
+const BankStateService = {};
 
 /**
  * Create a credit for a player.
  * Adds coins (amount) to player, pushes credit into state.credits,
  * updates currentMassMonetary, starts a debt timer.
  */
-const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
-    let id = new mongoose.Types.ObjectId();
-    const credit = constructor.credit(id, amount, interest, idGame, idPlayer, startNow ? RUNNING_CREDIT : PAUSED_CREDIT, Date.now(),
-        startNow ? Date.now() : null, null);
-    let newEvent = constructor.event(NEW_CREDIT, MASTER, idPlayer, amount, [credit], Date.now());
+BankStateService.createCredit = async (gameStateId, playerLifeIdx, amount, interest, startNow) => {
+    //TODO: Implement credit creation logic with QUEUE
+}
 
-    const updatedGame = await GameModel.findOneAndUpdate({
-        _id:           idGame,
-        "players._id": idPlayer
-    }, {
-        $push: {
-            credits: credit,
-            events:  newEvent
-        },
-        $inc:  {
-            currentMassMonetary: amount,
-            "players.$.coins":   amount
+BankStateService.seizureOnDead = async (gameState, rules, player) => {
+    let cardsValue = _.reduce(player.cards, (acc, c) => price + acc, 0);
+    await bankTimerManager.stopPlayerDebtsTimer(gameState._id, player.idx);
+    let credits = _findCreditsByPlayer(gameState, player.idx);
+
+    let totalPayedInterest = 0;
+    let totalPayedAmount = 0;
+    let totalValuesToSeize = 0;
+    let totalNotPayed = 0; //rest that is not payed by coins or cards
+
+    for (let credit of credits) {
+        let payedInterest = 0;
+        let payedAmount = 0;
+        let seizureCardsValue = 0;
+
+        // FIRST PAY INTEREST
+        if ((player.coins - credit.interest) >= 0) {
+            payedInterest = credit.interest;
+            player.coins -= credit.interest;
+            credit.interest = 0;
         }
-    }, {
-        new: true
-    });
-    addDebtTimer(id.toString(), startNow, updatedGame.timerCredit, credit);
-    socket.emitTo(idGame + EVENT, EVENT, newEvent);
-    socket.emitAckTo(idPlayer, NEW_CREDIT, {credit});
-    return credit;
+        else {
+            //seizure on cards
+            if (cardsValue >= credit.interest) {
+                cardsValue -= credit.interest;
+                seizureCardsValue += credit.interest;
+                credit.interest = 0;
+            }
+            else {
+                seizureCardsValue += cardsValue;
+                cardsValue = 0;
+                credit.interest -= cardsValue;
+            }
+        }
+
+        //SECOND PAY CREDIT AMOUNT
+        if ((player.coins - credit.amount) >= 0) {
+            player.coins -= credit.amount;
+            payedAmount += credit.amount;
+            credit.amount = 0;
+        }
+        else {
+            // seize the rest coins
+            credit.amount -= player.coins;
+            payedAmount += player.coins;
+            player.coins = 0;
+            //seizure on cards
+            if (cardsValue >= credit.amount) {
+                cardsValue -= credit.amount;
+                seizureCardsValue += credit.amount;
+                credit.amount = 0;
+            }
+            else {
+                seizureCardsValue += cardsValue;
+                credit.amount -= cardsValue;
+                cardsValue = 0;
+            }
+        }
+
+        totalPayedInterest += payedInterest;
+        totalPayedAmount += payedAmount;
+        totalValuesToSeize += seizureCardsValue;
+        totalNotPayed += (credit.interest + credit.amount);
+
+        credit.status = CREDIT_STATUS.DONE;
+    }
+
+    //convert value to cards
+    let totalSeizedCards = _seizeCards(player.cards, totalValuesToSeize);
+    let totalSeizedCardsValue = _.reduce(totalSeizedCards, (acc, card) => card.price + acc, 0);
+    let totalCoinSeized = totalPayedInterest + totalPayedAmount;
+
+    gameState.bankMoneyLost += totalNotPayed;
+    gameState.bankGoodsEarned += totalSeizedCardsValue;
+    gameState.bankInterestEarned += totalPayedInterest;
+    gameState.currentMassMonetary -= totalCoinSeized;
+
+
+    //PUT BACK seized CARDS IN THE DECKs
+    await DecksStateHelper.pushCardsInDecks(gameState, totalSeizedCards);
+    // remove seized cards from player's hand
+    player.cards = player.cards.filter((card) => !totalSeizedCards.some((c) => c._id.equals(card._id)));
+
+    EventService.postNow(DB_EVENTS.CREDIT_SEIZED_DEAD, sessionId, gameState._id, PLAYER_TYPE.MASTER, PLAYER_TYPE.BANK,
+        {
+            totalCoinSeized,
+            interest: totalPayedInterest,
+            amount: totalPayedAmount,
+            cards: totalSeizedCards,
+            bankMoneyLost: totalNotPayed,
+            bankGoodsEarned: totalSeizedCardsValue
+        }
+    );
+    return gameState;
 }
 
-const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
-    const credit = await getCreditOfPlayer(idGame, idPlayer, idCredit);
-    if (!credit) {
-        throw new Error("Can't find credit to check amount to pay");
-    }
-    const player = await playerService.getPlayer(idGame, idPlayer);
-    if (!player) {
-        throw new Error("Can't find player to check amount to pay");
-    }
-    if (credit.idPlayer !== idPlayer) {
-        throw new Error("Player is not the owner of this credit");
-    }
-    if (credit.status === CREDIT_DONE) {
-        throw new Error("Credit is already done");
-    }
-
-    if (action === SETTLE_CREDIT) {
-        return {
-            credit,
-            player,
-            canPay: credit.amount + credit.interest <= player.coins
-        };
-    }
-    if (action === PAY_INTEREST) {
-        return {
-            credit,
-            player,
-            canPay: credit.interest <= player.coins
-        };
-    }
-    if (action === SEIZURE) {
-        return {
-            credit,
-            player,
-            canPay: credit.status === DEFAULT_CREDIT
-        };
-    }
-    else {
-        throw new Error("Action not found");
-    }
-}
 const addDebtTimer = (id, startTickNow, duration, data) => {
     bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data, (timer) => {
         let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
@@ -203,27 +211,7 @@ const addDebtTimer = (id, startTickNow, duration, data) => {
         timeoutCredit(timer);
     }), startTickNow);
 }
-const seizeCards = (cards, targetAmount) => {
-    // Function to seize cards to match the target amount cardsValue
-    // Sort the player's cards by price in descending order
-    const sortedCards = _.sortBy(cards, 'price').reverse();
 
-    let seizedCards = [];
-    let remainingAmount = targetAmount;
-
-    // Seize cards until the target amount is reached
-    for (let card of sortedCards) {
-        if (remainingAmount <= 0) {
-            break;
-        } // Stop if the target is met
-
-        if (card.price <= remainingAmount) {
-            seizedCards.push(card); // Add card to seized list
-            remainingAmount -= card.price; // Reduce the target by card's price
-        }
-    }
-    return seizedCards;
-};
 const getRunningCreditsOfPlayer = async (idGame, idPlayer) => {
     const game = await GameModel.findById(idGame.toString());
     return game.credits.filter(credit => credit.idPlayer === idPlayer && credit.status !== CREDIT_DONE);
@@ -232,7 +220,8 @@ const getCreditOfPlayer = async (idGame, idPlayer, idCredit) => {
     const game = await GameModel.findById(idGame.toString());
     return game.credits.find(credit => credit.idPlayer === idPlayer && credit._id == idCredit);
 }
-const seizure = async (idCredit, idGame, idPlayer, seizure) => {
+
+BankStateService.seizure = async (gameStateId, creditIdx, playerStateIdx, seizure) => {
     let {
         credit,
         canPay
@@ -306,117 +295,8 @@ const seizure = async (idCredit, idGame, idPlayer, seizure) => {
         };
     }
 }
-const seizureOnDead = async (idGame, idPlayer) => {
-    let player = await playerService.getPlayer(idGame, idPlayer);
-    let cardsValue = _.reduce(player.cards, (acc, c) => price + acc, 0);
-    let credits = await getRunningCreditsOfPlayer(idGame, idPlayer);
 
-    let totalPayedInterest = 0;
-    let totalPayedAmount = 0;
-    let totalValuesToSeize = 0;
-    let totalNotPayed = 0; //rest that is not payed by coins or cards
-
-    for (let credit of credits) {
-        let payedInterest = 0;
-        let payedAmount = 0;
-        let seizureCardsValue = 0;
-
-        // FIRST PAY INTEREST
-        if ((player.coins - credit.interest) >= 0) {
-            payedInterest = credit.interest;
-            player.coins -= credit.interest;
-            credit.interest = 0;
-        }
-        else {
-            //seizure on cards
-            if (cardsValue >= credit.interest) {
-                cardsValue -= credit.interest;
-                seizureCardsValue += credit.interest;
-                credit.interest = 0;
-            }
-            else {
-                seizureCardsValue += cardsValue;
-                cardsValue = 0;
-                credit.interest -= cardsValue;
-            }
-        }
-
-        //SECOND PAY CREDIT AMOUNT
-        if ((player.coins - credit.amount) >= 0) {
-            player.coins -= credit.amount;
-            payedAmount += credit.amount;
-            credit.amount = 0;
-        }
-        else {
-            // seize the rest coins
-            credit.amount -= player.coins;
-            payedAmount += player.coins;
-            player.coins = 0;
-            //seizure on cards
-            if (cardsValue >= credit.amount) {
-                cardsValue -= credit.amount;
-                seizureCardsValue += credit.amount;
-                credit.amount = 0;
-            }
-            else {
-                seizureCardsValue += cardsValue;
-                credit.amount -= cardsValue;
-                cardsValue = 0;
-            }
-        }
-
-        // update status credit
-        await GameModel.updateOne({
-            _id:           credit.idGame,
-            'credits._id': credit._id
-        }, {
-            $set: {
-                'credits.$.status':  CREDIT_DONE,
-                'credits.$.endDate': Date.now(),
-            },
-        });
-        totalPayedInterest += payedInterest;
-        totalPayedAmount += payedAmount;
-        totalValuesToSeize += seizureCardsValue;
-        totalNotPayed += (credit.interest + credit.amount);
-    }
-
-    //convert value to cards
-    let totalSeizedCards = seizeCards(player.cards, totalValuesToSeize);
-    let totalSeizedCardsValue = _.reduce(totalSeizedCards, (acc, c) => price + acc, 0);
-    let totalPayedInCoins = totalPayedInterest + totalPayedAmount;
-
-    //PUT BACK seized CARDS IN THE DECKs
-    await decksService.pushCardsInDecks(idGame, totalSeizedCards);
-    // remove seized cards from player's hand
-    // user update, bank update, and MMonetary update
-    let event = constructor.event(SEIZED_DEAD, idPlayer, BANK, totalPayedInCoins, [
-        {
-            interest:        totalPayedInterest,
-            amount:          totalPayedAmount,
-            cards:           totalSeizedCards,
-            bankMoneyLost:   totalNotPayed,
-            bankGoodsEarned: totalSeizedCardsValue
-        }
-    ], Date.now());
-    await GameModel.updateOne({
-        _id:           idGame,
-        'players._id': idPlayer
-    }, {
-        $inc:  {
-            'players.$.coins':     -totalPayedInCoins,
-            'bankInterestEarned':  totalPayedInterest,
-            'bankGoodsEarned':     totalSeizedCardsValue,
-            'bankMoneyLost':       totalNotPayed,
-            'currentMassMonetary': -totalPayedInCoins
-        },
-        $pull: {'players.$.cards': {_id: {$in: totalSeizedCards.map(c => id)}}},
-        $push: {'events': event},
-    },);
-    return event;
-}
-
-const settleCredit = async (idCredit, idGame, idPlayer) => {
+BankStateService.settleCredit = async (gameStateId, creditIdx, playerStateIdx) => {
     try {
         const {
             credit,
@@ -461,7 +341,7 @@ const settleCredit = async (idCredit, idGame, idPlayer) => {
     }
 }
 
-const payInterest = async (idCredit, idGame, idPlayer) => {
+BankStateService.payInterest = async (gameStateId, creditIdx, playerStateIdx) => {
     const {
         credit,
         canPay
@@ -674,19 +554,20 @@ const startCreditsByIdGame = async (idGame) => {
         });
 }
 
-export default {
-    getRunningCreditsOfPlayer,
-    getCreditOnActionPayment,
-    seizure,
-    seizureOnDead,
-    createCredit,
-    settleCredit,
-    payInterest,
-    addDebtTimer,
-    addPrisonTimer,
-    timeoutCredit,
-    timeoutPrison,
-    lockDownPlayer,
-    startCreditsByIdGame,
-    getOut,
-}
+export default BankStateService;
+// {
+//     getRunningCreditsOfPlayer,
+//     getCreditOnActionPayment,
+//     seizure,
+//     seizureOnDead,
+//     createCredit,
+//     settleCredit,
+//     payInterest,
+//     addDebtTimer,
+//     addPrisonTimer,
+//     timeoutCredit,
+//     timeoutPrison,
+//     lockDownPlayer,
+//     startCreditsByIdGame,
+//     getOut,
+// }

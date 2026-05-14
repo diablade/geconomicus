@@ -54,6 +54,7 @@ export class GameStateService {
             gameState.playersStates.forEach(playerState => {
                 const connectStatus = connectedPlayers.find((connection: any) => connection.idx === playerState.idx);
                 playerState.connected = connectStatus?.connected || false;
+                playerState.lastSeen = connectStatus?.lastSeen || null;
             });
         }
 		this.playersStatesSubject.next(gameState.playersStates || []);

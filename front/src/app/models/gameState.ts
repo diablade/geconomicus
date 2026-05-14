@@ -32,6 +32,7 @@ export class PlayerState {
 	cards: Card[] = [];
 	progressPrison: number = 0;
     connected: boolean = false;
+    lastSeen: Date = new Date();
 }
 
 export class DeathState {

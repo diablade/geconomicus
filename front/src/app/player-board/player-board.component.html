@@ -31,50 +31,51 @@
 		class="p-2 w-100 h-100 game d-flex flex-column overflow-auto"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
 		<div class="">
-			<div class="titleBar d-flex flex-row">
-				<div class="position-relative" (click)="refresh()">
-					<div class="coin-container" [ngSwitch]="vm.gameState.typeMoney">
-						<ng-container *ngSwitchCase="JUNE">
-							<img
-								[src]="'/assets/images/june.png'"
-								class="imgCoin free box-shadowed"
-								[@coinFlip]="flipCoin" />
-						</ng-container>
-						<ng-container *ngSwitchCase="DEBT">
-							<img
-								[src]="'/assets/images/debt.png'"
-								class="imgCoin debt box-shadowed"
-								[@coinFlip]="flipCoin" />
-						</ng-container>
-					</div>
-					<div class="username">{{ 'PLAYER.BALANCE' | translate }}</div>
-				</div>
-				<div *ngIf="vm.gameState.typeMoney === JUNE" class="sold flex-grow-1 contour">
-					{{ vm.playerState.coins / vm.gameState.currentDU | number: '1.2-2' }}
-					<span class="du">{{ 'CURRENCY.DU' | translate }}</span>
-					<div class="smallSold">
-						{{ vm.playerState.coins | number: '1.2-2' }}{{ 'CURRENCY.JUNE' | translate }}
-					</div>
-				</div>
-				<div *ngIf="vm.gameState.typeMoney === DEBT" class="sold flex-grow-1 contour">
-					{{ vm.playerState.coins | number: '1.2-2' }} {{ 'CURRENCY.EURO' | translate }}
-					<div *ngIf="vm.gameState.typeMoney === DEBT" class="smallSold">
-						{{ 'PLAYER.DEBT' | translate }} : {{ currentDebts(vm.credits) | number: '1.2-2' }}
-						{{ 'CURRENCY.EURO' | translate }}
-					</div>
-				</div>
-				<div class="">
-					<div class="d-flex justify-content-end">
+			<div class="titleBar d-flex flex-row justify-content-between">
+				<div class="avatar-container">
+					<div class="d-flex flex-row align-items-center gap-2">
 						<avatar
 							[routerLink]="['/avatar', sessionId, avatarIdx]"
 							[avatar]="vm.avatar"
-							class="imgTitle"></avatar>
+							[width]="'69px'"
+							[height]="'69px'"
+							[namePosition]="'right'"
+							class="avatar"></avatar>
+						<!-- <div class="username contourText">{{ vm.avatar?.name }}</div> -->
 					</div>
-					<div class="username">{{ vm.avatar?.name }}</div>
+				</div>
+				<div class="sold-container d-flex flex-row rounded-box align-items-center" (click)="refresh()">
+					<div class="d-flex flex-column">
+						<div class="sold contourText">
+							{{
+								(vm.gameState.typeMoney === DEBT
+									? vm.playerState.coins
+									: vm.playerState.coins / vm.gameState.currentDU
+								) | number: '1.2-2'
+							}}
+							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU') | translate }}
+						</div>
+						<div class="smallSold">
+							{{ vm.gameState.typeMoney === DEBT ? ('PLAYER.DEBT' | translate) + ':' : '' }}
+							{{
+								vm.gameState.typeMoney === DEBT
+									? currentDebts(vm.credits)
+									: (vm.playerState.coins | number: '1.2-2')
+							}}
+							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE') | translate }}
+						</div>
+					</div>
+					<coin
+						class=""
+						[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
+						[height]="'50px'"
+						[width]="'50px'"
+						[forceRotate]="false"></coin>
 				</div>
 			</div>
 			<div class="" *ngIf="vm.gameState.status !== PLAYING">
-				<div class="text-center shadowed fs-1 m-4">
+				<div class="text-center m-5 fs-1">⌛</div>
+				<div class="text-center shadowed fs-1 m-2">
 					{{
 						vm.gameState.status !== FINISHED
 							? ('PLAYER.WAITING' | translate)
@@ -82,6 +83,7 @@
 					}}
 				</div>
 				<app-notice-btn
+					class="text-center d-block m-4"
 					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
 					[timerCredit]="vm.rules.timerCredit || 0"
 					*ngIf="vm.gameState.status !== FINISHED"></app-notice-btn>
@@ -180,7 +182,7 @@
 			<div class="bottomBtn d-flex flex-row justify-content-between">
 				<button
 					*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
-					class="buy"
+					class="buy box-shadowed"
 					mat-icon-button
 					color="primary"
 					(click)="togglePanel('credit')">
@@ -188,7 +190,7 @@
 				</button>
 				<button
 					*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
-					class="buy"
+					class="buy box-shadowed"
 					mat-fab
 					color="primary"
 					(click)="togglePanel('credit')">
@@ -196,7 +198,7 @@
 				</button>
 				<button
 					*ngIf="vm.typeTheme !== 'CARD' && !panelRecipeOpenState"
-					class="buy"
+					class="buy box-shadowed"
 					mat-icon-button
 					color="primary"
 					(click)="togglePanel('recipe')">
@@ -204,14 +206,14 @@
 				</button>
 				<button
 					*ngIf="vm.typeTheme !== 'CARD' && panelRecipeOpenState"
-					class="buy"
+					class="buy box-shadowed"
 					mat-fab
 					color="primary"
 					(click)="togglePanel('recipe')">
 					<mat-icon *ngIf="panelRecipeOpenState">menu_book</mat-icon>
 				</button>
 				<button
-					class="buy"
+					class="buy box-shadowed"
 					mat-fab
 					color="accent"
 					[disabled]="vm.gameState.status !== PLAYING || vm.playerState.status === DEAD"

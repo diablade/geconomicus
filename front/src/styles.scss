@@ -267,6 +267,13 @@ html {
 		4px 4px 1px black;
 }
 
+.rounded-box {
+    border: 1px solid #dfdfdf;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
 .blur {
 	backdrop-filter: blur(20px);
 }
@@ -279,6 +286,12 @@ html {
 	border: solid 1px #e9e9e9aa !important;
 	color: #e9e9e9 !important;
 	background: #ffffff36 !important;
+}
+
+.blackBtn {
+	border: solid 2px black !important;
+	color: #000000 !important;
+	background: #ffffff42 !important;
 }
 
 .contourText {
@@ -504,25 +517,3 @@ mat-chip {
     right: 0;
 }
 
-.avatar-container {
-    position: relative;
-    display: inline-block; // ou width: fit-content
-
-    .status-dot {
-        position: absolute;
-        top: 70px;
-        right: -5px;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        border: 1px solid white; // pour le détacher visuellement de l'avatar
-
-        &.connected {
-            background-color: #4CAF50;
-        }
-
-        &.disconnected {
-            background-color: #ff2020;
-        }
-    }
-}

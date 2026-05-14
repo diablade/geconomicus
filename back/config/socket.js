@@ -122,7 +122,6 @@ export class SocketManager {
 
 	handleNewConnection(socket, publicChannel, privateChannel) {
 		log.info(`New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}`);
-		console.log('new connect ROOMS', socket.rooms);
 
 		// Store connection data with timestamp and reconnect attempts
 		const connectionData = {
@@ -243,10 +242,11 @@ export class SocketManager {
 				) {
 					const playerIdx = parseInt(playerStateIdx);
 					if (playerIdx >= 0) {
-						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { connected: true });
+                        const lastSeen = new Date();
+						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { connected: true, lastSeen });
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
-						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { playerStateIdx: parseInt(playerStateIdx) });
+						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { playerStateIdx: parseInt(playerStateIdx), lastSeen });
 						log.info(`Player ${playerStateIdx} (avatar ${avatarIdx}) joined to gameState ${gameStateId}`);
 					}
 				} else {

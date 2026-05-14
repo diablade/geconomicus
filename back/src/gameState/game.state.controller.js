@@ -155,8 +155,8 @@ GameStateController.produce = async (req, res, next) => {
 };
 
 GameStateController.transaction = async (req, res, next) => {
+    const { gameStateId, buyerIdx, sellerIdx, cardKey } = req.body;
 	try {
-		const { gameStateId, buyerIdx, sellerIdx, cardKey } = req.body;
 		const result = await PlayerStateService.transaction(gameStateId, buyerIdx, sellerIdx, cardKey);
 		return res.status(200).json(result);
 	} catch (err) {
@@ -165,6 +165,22 @@ GameStateController.transaction = async (req, res, next) => {
 			status: 'ko',
 			message: 'ERROR.TRANSACTION',
 			error: err.message,
+		});
+	}
+};
+
+GameStateController.killPlayer = async (req, res, next) => {
+	const {gameStateId, playerStateId} = req.body;
+	try {
+		await PlayerStateService.killPlayer(gameStateId, playerStateId);
+		return res.status(200).json({
+			status: 'done',
+		});
+	} catch (err) {
+		log.error(`kill player error: ${err}`);
+		next({
+			status: 400,
+			message: err,
 		});
 	}
 };
@@ -332,21 +348,7 @@ GameStateController.whoHaveCard = async (req, res, next) => {
 // 		});
 // 	}
 // };
-// GameStateController.killPlayer = async (req, res, next) => {
-// 	const {gameStateId, playerStateId} = req.body;
-// 	try {
-// 		await playerMemService.killPlayer(gameStateId, playerStateId);
-// 		return res.status(200).json({
-// 			status: 'done',
-// 		});
-// 	} catch (err) {
-// 		log.error(`kill player error: ${err}`);
-// 		next({
-// 			status: 400,
-// 			message: err,
-// 		});
-// 	}
-// };
+
 // GameStateController.refreshForceAllPlayers = async (req, res, next) => {
 // 	try {
 // 		const done = await GameStateService.refreshForceAllPlayers(req.body.gameStateId);
