@@ -25,8 +25,8 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;
 
-	sessionId: string = '';
-	avatarIdx: number = 0;
+	sessionId= '';
+	avatarIdx = 0;
 	avatar$ = inject(AvatarService).avatar$;
 	session$ = inject(AvatarService).session$;
 
@@ -34,9 +34,8 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		avatar: this.avatar$,
 		session: this.session$
 	});
-
-	skin: string = '#f2d3b1';
-	hairColor: string = '#ac6511';
+	skin = '#f2d3b1';
+	hairColor = '#ac6511';
 	private subscription: Subscription | undefined;
 
 	constructor(

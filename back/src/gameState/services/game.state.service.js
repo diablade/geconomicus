@@ -3,7 +3,7 @@ import { setupGameJune, setupGameDebt } from '../helpers/setup.state.helper.js';
 import EventService from '../../event/event.service.js';
 import RulesService from '../../session/rules/rules.service.js';
 import GameStateManager from '../managers/GameStateManager.js';
-import { PLAYER_STATUS, DB_EVENTS, GAME_TYPE, PLAYER_TYPE, GAME_STATUS, IO } from '@geco/shared';
+import { PLAYER_STATUS, DB_EVENTS, GAME_TYPE, PLAYER_TYPE, GAME_STATUS, IO, ROOMS } from '@geco/shared';
 import SessionService from '../../session/session.service.js';
 import gameTimerManager from '../managers/GameTimerManager.js';
 import Timer from '../../misc/Timer.js';
@@ -11,6 +11,52 @@ import socket from '#config/socket';
 import log from '#config/log';
 import PlayersStateConnectionManager from '../managers/PlayersStateConnectionManager.js';
 
+const TIMER_SAVE_STATE_INTERVAL = 60000; // 1 minute
+const TIMER_HEARTBEAT_INTERVAL = 1000; // 1 second
+
+// TIMER CALLBACK METHODS
+//--------------------------
+const _timerSaveStateCallback = async (timerInstance) => {
+	const gameStateId = timerInstance.gameStateId;
+	await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules, events } = entry;
+		log.info(`Saving state and post events for game: ${gameStateId}`);
+		if (!gameState) {
+			log.error(`Game state not in memory — no-op : ${gameStateId}`);
+			return;
+		}
+		try {
+			await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState });
+			await EventService.postMany(entry.events);
+			log.info(`With posted ${entry.events?.length || 0} events for game: ${gameStateId}`);
+			// clean events
+			entry.events = [];
+		} catch (err) {
+			// Re-throw so the timer can log the error
+			throw err;
+		}
+	});
+};
+
+const _timerHeartBeatCallback = async (timerInstance) => {
+	const elapsed = Date.now() - timerInstance.startTime;
+	const remainingMs = timerInstance.duration - elapsed;
+	const remainingSeconds = Math.ceil(remainingMs / 1000);
+	const remainingMinutes = Math.ceil(remainingSeconds / 60);
+
+	// Emit TIMER_LEFT event to all clients
+	socket.emitTo(ROOMS.gameState(timerInstance.gameStateId), IO.TIMER_LEFT, remainingMinutes);
+};
+
+const _timerEndCallback = async (timerInstance) => {
+	log.info(`Timer ended for game ${timerInstance.gameStateId}`);
+	// Stop the game
+	await GameStateService.stop(timerInstance.gameStateId);
+};
+//----------------------------------------------------------------
+
+// PUBLIC API
+//-----------------------------------------
 const GameStateService = {};
 
 GameStateService.create = async (session, rules) => {
@@ -18,7 +64,7 @@ GameStateService.create = async (session, rules) => {
 		typeMoney: rules.typeMoney,
 		sessionId: session._id,
 		ruleIdx: rules.idx,
-		playerStateIndexSeq: session.avatarIndexSeq+1,
+		playerStateIndexSeq: session.avatarIndexSeq + 1,
 		playersStates: session.avatars.map((p) => {
 			return {
 				idx: p.idx,
@@ -41,71 +87,62 @@ GameStateService.initGame = async (gameStateId) => {
 	let initializedGame;
 	if (gameState.typeMoney === GAME_TYPE.JUNE) {
 		initializedGame = await setupGameJune(gameState, rules);
-		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,"-",{});
-        await EventService.postNow(DB_EVENTS.FIRST_DU, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,"-",{firstDU:initializedGame.currentDU});
-
+		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {});
+		await EventService.postNow(DB_EVENTS.FIRST_DU, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {
+			firstDU: initializedGame.currentDU,
+		});
 	} else if (gameState.typeMoney === GAME_TYPE.DEBT) {
 		initializedGame = await setupGameDebt(gameState, rules);
-		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,"-",{});
-
+		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {});
 	} else {
-		log.error('Unknown game type: '+ gameState.typeMoney);
+		log.error(`Unknown game type: ${gameState.typeMoney}`);
 		throw new Error('Unknown game type');
 	}
 
-	log.info('Game setup completed: '+ gameStateId +' with type: '+ gameState.typeMoney);
+	log.info(`Game setup completed: ${gameStateId} with type: ${gameState.typeMoney}`);
 
 	// Persist setup state to DB,
 	await GameStateModel.findByIdAndUpdate(gameStateId, { $set: initializedGame });
 
-	log.info('Game state persisted to DB: '+ gameStateId);
+	log.info(`Game state persisted to DB: ${gameStateId}`);
 
-    // then store in memory with rules
+	// then store in memory with rules
 	GameStateManager.store(gameStateId, initializedGame, rules);
 
 	// emit to connected players their initial state
-	log.info('Emitting PLAYER_INIT to all players');
+	log.info(`Emitting PLAYER_INIT to all players for game: ${gameStateId}`);
 	initializedGame.playersStates.forEach(async (playerState) => {
-		const roomId = `${gameStateId}:${playerState.avatarIdx}:${playerState.idx}`;
-        log.info('emit PLAYER_INIT to room: ' + roomId);
-		await EventService.postNow(DB_EVENTS.PLAYER_INIT, gameState.sessionId, gameStateId,PLAYER_TYPE.MASTER,playerState.idx,{playerState});
-		socket.emitAckTo(roomId, IO.PLAYER.INIT, {playerState,currentDU: initializedGame.currentDU, status: GAME_STATUS.INITIALIZED});
+        const roomId = ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx);
+		log.info(`emit PLAYER_INIT to room: ${roomId}`);
+		await EventService.postNow(
+			DB_EVENTS.PLAYER_INIT,
+			gameState.sessionId,
+			gameStateId,
+			PLAYER_TYPE.MASTER,
+			playerState.idx,
+			{ playerState }
+		);
+		socket.emitAckTo(roomId, IO.PLAYER.INIT, {
+			playerState,
+			currentDU: initializedGame.currentDU,
+			status: GAME_STATUS.INITIALIZED,
+		});
 	});
 
 	return initializedGame;
 };
 
 GameStateService.getById = async (id, enriched = true) => {
-    const entry = await GameStateManager.getOrReload(id);
-    if (entry) {
-        const session = enriched ? await SessionService.getById(entry.gameState.sessionId) : null;
-        const connectedPlayers = enriched ? PlayersStateConnectionManager.getPlayersConnectionStatus(id) : null;
-        if (enriched && !session) {
-            throw new Error('ERROR.SESSION_NOT_FOUND');
-        }
-        return { gameState: entry.gameState, rules: entry.rules, session, connectedPlayers };
-    }
-    throw new Error('ERROR.GAME_STATE_NOT_FOUND');
-};
-
-/**
- * Persist the in-memory state of a game to MongoDB.
- * Called automatically every 60s by GameTimerManager.
- * Also called manually on game stop/end before removing from memory.
- * @param {string} gameStateId
- */
-GameStateService.saveGameStateToDB = async (gameStateId) => {
-	const entry = GameStateManager.get(gameStateId);
-	if (!entry) {
-		// Game not in memory (already ended or not yet initialized) — no-op
-		return;
+	const entry = await GameStateManager.getOrReload(id);
+	if (entry) {
+		const session = enriched ? await SessionService.getById(entry.gameState.sessionId) : null;
+		const connectedPlayers = enriched ? PlayersStateConnectionManager.getPlayersConnectionStatus(id) : null;
+		if (enriched && !session) {
+			throw new Error('ERROR.SESSION_NOT_FOUND');
+		}
+		return { gameState: entry.gameState, rules: entry.rules, session, connectedPlayers };
 	}
-	try {
-		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.state });
-	} catch (err) {
-		// Re-throw so the timer can log the error
-		throw err;
-	}
+	throw new Error('ERROR.GAME_STATE_NOT_FOUND');
 };
 
 /**
@@ -131,7 +168,7 @@ GameStateService.removeAllBySessionId = async (id) => {
 	return await GameStateModel.deleteMany({ sessionId: id }).exec();
 };
 
-GameStateService.startRound = async (gameStateId) => {
+GameStateService.start = async (gameStateId) => {
 	const entry = GameStateManager.get(gameStateId);
 	if (!entry) {
 		throw new Error('Game not found in memory');
@@ -166,63 +203,49 @@ GameStateService.startTimer = async (gameStateId, roundMinutes) => {
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
 
 	const durationMs = roundMinutes * 60 * 1000; // Convert to milliseconds
-	const intervalMs = 1000; // Emit every second
 
 	const timer = new Timer(
 		gameStateId,
 		durationMs,
-		intervalMs,
+		TIMER_HEARTBEAT_INTERVAL,
+		TIMER_SAVE_STATE_INTERVAL,
 		{ gameStateId, roundMinutes },
-		// Callback at interval (every second)
-		(timerInstance) => {
-			const elapsed = Date.now() - timerInstance.startTime;
-			const remainingMs = timerInstance.duration - elapsed;
-			const remainingSeconds = Math.ceil(remainingMs / 1000);
-			const remainingMinutes = Math.ceil(remainingSeconds / 60);
-
-			// Emit TIMER_LEFT event to all clients
-			socket.emitTo(gameStateId, IO.TIMER_LEFT, remainingMinutes);
-		},
-		// Callback at end
-		async (timerInstance) => {
-			log.info(`Round timer ended for game ${gameStateId}`);
-			// Stop the game
-			await GameStateService.stopRound(gameStateId);
-		}
+		this._timerHeartBeatCallback,
+		this._timerSaveStateCallback,
+		this._timerEndCallback
 	);
 
 	// Add timer to manager
 	await gameTimerManager.addTimer(timer);
+	await gameTimerManager.startTimer(gameStateId);
 
-	// Start the timer
-	timer.start();
-
-	log.info(`Round timer started for game ${gameStateId} (${roundMinutes} minutes)`);
+	log.info(`Timer started for game ${gameStateId} (${roundMinutes} minutes)`);
 };
 
 /**
  * Stop the round and clean up timers.
  * @param {string} gameStateId
  */
-GameStateService.stopRound = async (gameStateId) => {
+GameStateService.stop = async (gameStateId) => {
 	// Stop the countdown timer
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
 
-	// Stop the persistence timer
-	gameTimerManager.stopPersistenceTimer(gameStateId);
+	return GameStateManager.withQueue(gameStateId, async (entry) => {
+		log.info(`Stopping and saving last state: ${gameStateId}`);
+		if (entry) {
+			entry.state.status = GAME_STATUS.STOPPED;
+			await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState });
+			await EventService.postMany(entry.events);
+			GameStateManager.delete(gameStateId);
+			log.info(`Game state deleted from memory: ${gameStateId}`);
+		} else {
+			log.warn(`Game state not found in memory, skipping cleanup: ${gameStateId}`);
+		}
 
-	// Update game status to STOPPED
-	const entry = GameStateManager.get(gameStateId);
-	if (entry) {
-		entry.state.status = GAME_STATUS.STOPPED;
-		GameStateManager.store(gameStateId, entry.state, entry.rules);
-		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: { status: GAME_STATUS.STOPPED } });
-	}
-
-	// Emit GAME.STOPPED event
-	socket.emitTo(gameStateId, IO.GAME.STOPPED, {});
-
-	log.info(`Round stopped for game ${gameStateId}`);
+		// Emit GAME.STOPPED event
+		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STOPPED, {});
+		log.info(`Game stopped : ${gameStateId}`);
+	});
 };
 
 export default GameStateService;

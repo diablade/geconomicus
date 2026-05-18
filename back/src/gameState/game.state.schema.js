@@ -16,15 +16,15 @@ const CardSchema = new Schema(
 
 let Credit = new Schema(
 	{
-		idx: { type: Number, required: true }, //nanoId4
+		idx: { type: Number, required: true },
 		amount: { type: Number, required: true },
 		interest: { type: Number, required: true },
 		playerStateIdx: { type: Number, required: true },
 		status: { type: String, required: true },
 		extended: { type: Number, required: true },
-		createDate: { type: Date, required: true },
-		startDate: { type: Date },
-		endDate: { type: Date },
+		createdAt: { type: Date, required: true },
+		startedAt: { type: Date },
+		endAt: { type: Date },
 		timerLeft: { type: Number, required: true },
 	},
 	{ _id: false }

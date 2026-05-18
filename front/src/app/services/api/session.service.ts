@@ -49,7 +49,7 @@ export class SessionService {
 	initializeSocket(sessionId: string): void {
         this.wsService.initializeSocket({
             publicChannel: ROOMS.session(sessionId),
-			privateChannel: ROOMS.sessionMaster(sessionId),
+			privateChannel: ROOMS.lobbyMaster(sessionId),
 		});
 	}
 

@@ -2,7 +2,10 @@
 	<div
 		class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
-		<div class="m-4 shadowed text-center fs-1 glow" (click)="refresh()">
+		<div class="d-flex flex-row justify-content-between align-items-center m-2">
+			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
+		</div>
+		<div class="shadowed text-center fs-1 m-5" (click)="refresh()">
 			{{ 'AVATAR.LOBBY' | translate }}
 		</div>
 		<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
@@ -32,7 +35,7 @@
 						[label]="(game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
 					<button
 						*ngIf="game.gameStatus !== GAME_FINISHED"
-						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus == undefined"
+						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus === undefined"
 						class="m-2 box-shadowed"
 						mat-raised-button
 						color="primary"

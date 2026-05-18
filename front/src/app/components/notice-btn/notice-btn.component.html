@@ -1,5 +1,5 @@
 <button
-	class="ms-2 blur box-shadowed"
+	class="ms-2 blur box-shadowed contourText"
 	*ngIf="stroked"
 	[ngClass]="white ? 'whiteBtn' : 'blackBtn'"
 	mat-stroked-button
@@ -8,7 +8,7 @@
 	{{ labelBtn | translate }}
 </button>
 <button
-	class="ms-2 box-shadowed"
+	class="ms-2 blur box-shadowed"
 	*ngIf="!stroked"
 	[ngClass]="white ? 'whiteBtn' : 'blackBtn'"
 	mat-raised-button

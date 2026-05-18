@@ -36,7 +36,7 @@ export class AvatarService {
 		private themesService: ThemesService
 	) {}
 
-	loadAvatar(sessionId: string, avatarIdx: number, fetchSession: boolean = false): Observable<any> {
+	loadAvatar(sessionId: string, avatarIdx: number, fetchSession = false): Observable<any> {
 		return new Observable((observer: any) => {
 			this.http
 				.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
@@ -65,7 +65,7 @@ export class AvatarService {
 		this.avatarIdx = avatarIdx;
 		this.wsService.initializeSocket({
 			publicChannel: ROOMS.session(sessionId),
-			privateChannel: ROOMS.sessionAvatar(sessionId, avatarIdx),
+			privateChannel: ROOMS.lobbyAvatar(sessionId, avatarIdx),
 		});
 		this.setupSocketListeners();
 	}

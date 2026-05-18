@@ -121,8 +121,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 		});
 
 		// Notify seller
-		const sellerRoom = `gs:${gameStateId}:${seller.avatarIdx}:${sellerIdx}`;
-		socket.emitAckTo(sellerRoom, IO.PLAYER.TRANSACTION_DONE, {
+		socket.emitAckTo(ROOMS.playerState(gameStateId, seller.avatarIdx, sellerIdx), IO.PLAYER.TRANSACTION_DONE, {
 			sellerIdx,
 			cardKey: card.key,
 			coinsAfter: seller.coins,

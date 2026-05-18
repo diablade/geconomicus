@@ -2,28 +2,28 @@ export declare const GAME_TYPE: {
     readonly JUNE: "june";
     readonly DEBT: "debt";
 };
-export type GameType = typeof GAME_TYPE[keyof typeof GAME_TYPE];
+export type GameType = (typeof GAME_TYPE)[keyof typeof GAME_TYPE];
 export declare const PLAYER_TYPE: {
     readonly MASTER: "master";
     readonly BANK: "bank";
     readonly RESULTS: "results";
     readonly AVATAR: "avatar";
 };
-export type PlayerType = typeof PLAYER_TYPE[keyof typeof PLAYER_TYPE];
+export type PlayerType = (typeof PLAYER_TYPE)[keyof typeof PLAYER_TYPE];
 export declare const PLAYER_STATUS: {
     readonly ALIVE: "alive";
     readonly DEAD: "dead";
     readonly PRISON: "prison";
     readonly REMIND_DEAD: "remind-dead";
 };
-export type PlayerStatus = typeof PLAYER_STATUS[keyof typeof PLAYER_STATUS];
+export type PlayerStatus = (typeof PLAYER_STATUS)[keyof typeof PLAYER_STATUS];
 export declare const SESSION_STATUS: {
     readonly OPEN: "open";
     readonly IN_PROGRESS: "in_progress";
     readonly PAUSED: "paused";
     readonly ENDED: "ended";
 };
-export type SessionStatus = typeof SESSION_STATUS[keyof typeof SESSION_STATUS];
+export type SessionStatus = (typeof SESSION_STATUS)[keyof typeof SESSION_STATUS];
 export declare const GAME_STATUS: {
     readonly NONE: "none";
     readonly CREATED: "created";
@@ -35,7 +35,7 @@ export declare const GAME_STATUS: {
     readonly STOPPED: "stopped";
     readonly EVENT: "event";
 };
-export type GameStatus = typeof GAME_STATUS[keyof typeof GAME_STATUS];
+export type GameStatus = (typeof GAME_STATUS)[keyof typeof GAME_STATUS];
 export declare const CREDIT_STATUS: {
     readonly PAY_INTEREST: "credit-pay-interest";
     readonly SEIZURE: "seizure";
@@ -47,7 +47,7 @@ export declare const CREDIT_STATUS: {
     readonly DEFAULT: "default-credit";
     readonly DONE: "credit-done";
 };
-export type CreditStatus = typeof CREDIT_STATUS[keyof typeof CREDIT_STATUS];
+export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
 export declare const IO: {
     readonly SESSION: {
         readonly STARTED: "ss";
@@ -109,12 +109,12 @@ export declare const IO: {
     readonly INFO: "i";
     readonly EVENT: "ev";
 };
-export type IoSession = typeof IO.SESSION[keyof typeof IO.SESSION];
-export type IoAvatar = typeof IO.AVATAR[keyof typeof IO.AVATAR];
-export type IoGame = typeof IO.GAME[keyof typeof IO.GAME];
-export type IoPlayer = typeof IO.PLAYER[keyof typeof IO.PLAYER];
-export type IoCredit = typeof IO.CREDIT[keyof typeof IO.CREDIT];
-export type IoShortCode = typeof IO.SHORT_CODE[keyof typeof IO.SHORT_CODE];
+export type IoSession = (typeof IO.SESSION)[keyof typeof IO.SESSION];
+export type IoAvatar = (typeof IO.AVATAR)[keyof typeof IO.AVATAR];
+export type IoGame = (typeof IO.GAME)[keyof typeof IO.GAME];
+export type IoPlayer = (typeof IO.PLAYER)[keyof typeof IO.PLAYER];
+export type IoCredit = (typeof IO.CREDIT)[keyof typeof IO.CREDIT];
+export type IoShortCode = (typeof IO.SHORT_CODE)[keyof typeof IO.SHORT_CODE];
 export declare const DB_EVENTS: {
     readonly SESSION_STARTED: "session-started";
     readonly GAME_CREATED: "game-created";
@@ -133,13 +133,15 @@ export declare const DB_EVENTS: {
     readonly CREDIT_PAYED_INTEREST: "credit-payed-interest";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
 };
-export type DbEvent = typeof DB_EVENTS[keyof typeof DB_EVENTS];
+export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];
 export declare const ROOMS: {
     session: (sessionId: string) => string;
-    sessionMaster: (sessionId: string) => string;
-    sessionAvatar: (sessionId: string, avatarIdx: number) => string;
+    lobbyMaster: (sessionId: string) => string;
+    lobbyAvatar: (sessionId: string, avatarIdx: number) => string;
     gameState: (gameStateId: string) => string;
     gameStateMaster: (gameStateId: string) => string;
+    gameStateBank: (gameStateId: string) => string;
+    gameStateEvents: (gameStateId: string) => string;
     playerState: (gameStateId: string, avatarIdx: number, playerIdx: number) => string;
 };
-export type Rooms = typeof ROOMS[keyof typeof ROOMS];
+export type Rooms = (typeof ROOMS)[keyof typeof ROOMS];

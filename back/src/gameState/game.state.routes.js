@@ -10,7 +10,6 @@ const router = express.Router();
 
 router.post('/create', validate(stateSanitize.create), gameStateController.create);
 router.post('/init', validate(stateSanitize.init), gameStateController.init);
-router.post('/start-round', validate(stateSanitize.startRound), gameStateController.startRound);
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
 
@@ -20,10 +19,10 @@ router.post('/player-state/transaction', validate(stateSanitize.transaction), ga
 
 router.post('/produce', validate(stateSanitize.produce), gameStateController.produce);
 
-// router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
-// router.post('/start', validate(stateSanitize.start), gameStateController.start);
-// router.post('/pause', validate(sanitize.pause), gameStateController.pause);
-// router.post('/stop', validate(sanitize.stop), gameStateController.stop);
+router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
+router.post('/start', validate(stateSanitize.start), gameStateController.start);
+router.post('/pause', validate(stateSanitize.pause), gameStateController.pause);
+router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
 // router.post('/end', validate(sanitize.end), gameStateController.end);
 // router.post('/kill-player', validate(sanitize.killPlayer), gameStateController.killPlayer);
 // router.post('/refresh-force-all-players', validate(sanitize.refreshForceAllPlayers), gameStateController.refreshForceAllPlayers);

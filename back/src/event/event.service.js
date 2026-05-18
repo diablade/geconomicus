@@ -14,6 +14,36 @@ EventService.getByGameStateId = async (gameStateId) => {
     }).sort({ createdAt: 1 }).exec();
 };
 
+EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
+    return await EventModel.find({
+        gameStateId,
+        $or: [
+            { emitter: avatarIdx },
+            { receiver: avatarIdx }
+        ]
+    }).sort({ createdAt: 1 }).exec();
+};
+
+/**
+ * @description Create an event object
+ * @param {string} typeEvent - The type of the event
+ * @param {string} sessionId - The ID of the session
+ * @param {string} gameStateId - The ID of the game state
+ * @param {string} emitter - The emitter of the event
+ * @param {string} receiver - The receiver of the event
+ * @param {object} payload - The payload of the event
+ * @returns {object} The created event object
+ */
+EventService.createEventObject = (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
+    return {
+        typeEvent: typeEvent,
+        sessionId: sessionId,
+        gameStateId: gameStateId,
+        emitter: emitter,
+        receiver: receiver,
+        payload: payload,
+    };
+};
 
 /* Post */
 /**
@@ -36,6 +66,28 @@ EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiv
         payload: payload,
     });
     return await newEvent.save();
+};
+
+/* Post */
+/**
+ * @description Post many events
+ * @param {Array<object>} eventObjects - The array of event objects to post
+ * @returns {Promise<Array<EventModel>>} The created events
+ */
+EventService.postMany = async (eventObjects) => {
+    if (!Array.isArray(eventObjects) || eventObjects.length === 0) {
+        return [];
+    }
+    const newEvents = eventObjects.map(eventObject => ({
+        typeEvent: eventObject.typeEvent,
+        sessionId: eventObject.sessionId,
+        gameStateId: eventObject.gameStateId,
+        emitter: eventObject.emitter,
+        receiver: eventObject.receiver,
+        payload: eventObject.payload,
+        createdAt: eventObject.createdAt,
+    }));
+    return await EventModel.insertMany(newEvents);
 };
 
 /* Remove */

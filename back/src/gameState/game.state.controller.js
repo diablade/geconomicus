@@ -1,4 +1,4 @@
-import { DB_EVENTS, IO, PLAYER_TYPE, SESSION_STATUS } from '@geco/shared';
+import { DB_EVENTS, IO, PLAYER_TYPE, SESSION_STATUS, ROOMS } from '@geco/shared';
 import log from '#config/log';
 import socket from '#config/socket';
 import EventService from '../event/event.service.js';
@@ -12,44 +12,37 @@ const GameStateController = {};
 // create state in DB
 GameStateController.create = async (req, res, next) => {
 	try {
-		const {ruleIdx, sessionId} = req.body;
+		const { ruleIdx, sessionId } = req.body;
 		const session = await SessionService.getById(sessionId);
-		const rules = session.gamesRules.find(rule => rule.idx === ruleIdx);
+		const rules = session.gamesRules.find((rule) => rule.idx === ruleIdx);
 		if (!session || !rules) {
-			return res.status(404).json({message: 'ERROR.SESSION_NOT_FOUND'});
+			return res.status(404).json({ message: 'ERROR.SESSION_NOT_FOUND' });
 		}
 		if (session.status !== SESSION_STATUS.IN_PROGRESS) {
-			return res.status(404).json({message: 'ERROR.SESSION_NOT_STARTED'});
+			return res.status(404).json({ message: 'ERROR.SESSION_NOT_STARTED' });
 		}
 		if (rules.gameStateId) {
 			const gameState = await GameStateService.getById(rules.gameStateId);
 			if (!gameState || gameState._id.toString() !== rules.gameStateId) {
-				return res.status(404).json({message: 'ERROR.GAME_NOT_FOUND'});
+				return res.status(404).json({ message: 'ERROR.GAME_NOT_FOUND' });
 			}
-			return res.status(300).json({message: 'ERROR.GAME_ALREADY_CREATED', gameState});
+			return res.status(300).json({ message: 'ERROR.GAME_ALREADY_CREATED', gameState });
 		}
 
 		const savedGameState = await GameStateService.create(session, rules);
 		const rulesUpdated = await RulesService.updateFromCreatedGameStateId(sessionId, ruleIdx, savedGameState._id);
-		await EventService.postNow(
-			DB_EVENTS.GAME_CREATED,
-			sessionId,
-			savedGameState._id,
-			PLAYER_TYPE.MASTER,
-			'-',
-			{
-				ruleIdx,
-				typeMoney: rules.typeMoney,
-				status: savedGameState.status,
-			}
-		);
-		socket.emitAckTo(sessionId, IO.GAME.CREATED, {
+		await EventService.postNow(DB_EVENTS.GAME_CREATED, sessionId, savedGameState._id, PLAYER_TYPE.MASTER, '-', {
+			ruleIdx,
+			typeMoney: rules.typeMoney,
+			status: savedGameState.status,
+		});
+		socket.emitAckTo(ROOMS.session(sessionId), IO.GAME.CREATED, {
 			gameStateId: savedGameState._id,
 			idx: ruleIdx,
 			typeMoney: rules.typeMoney,
-			gameStatus: savedGameState.status
+			gameStatus: savedGameState.status,
 		});
-		return res.status(200).json({gameStateId: savedGameState._id, gameStatus: savedGameState.status});
+		return res.status(200).json({ gameStateId: savedGameState._id, gameStatus: savedGameState.status });
 	} catch (err) {
 		log.error(`Game creation error: ${err}`);
 		return res.status(500).json({
@@ -92,8 +85,12 @@ GameStateController.getById = async (req, res, next) => {
 
 GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 	try {
-		const idx = await PlayerStateService.getCurrentPlayerStateIdx(req.params.sessionId, req.params.gameStateId, req.params.avatarIdx);
-		return res.status(200).json({idx});
+		const idx = await PlayerStateService.getCurrentPlayerStateIdx(
+			req.params.sessionId,
+			req.params.gameStateId,
+			req.params.avatarIdx
+		);
+		return res.status(200).json({ idx });
 	} catch (err) {
 		log.error(`Get game error: ${err}`);
 		return res.status(500).json({
@@ -106,7 +103,12 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 GameStateController.getPlayerState = async (req, res, next) => {
 	try {
 		const { sessionId, gameStateId, avatarIdx, playerStateIdx } = req.params;
-		const payload = await PlayerStateService.getPlayerState(sessionId, gameStateId, parseInt(avatarIdx), parseInt(playerStateIdx));
+		const payload = await PlayerStateService.getPlayerState(
+			sessionId,
+			gameStateId,
+			parseInt(avatarIdx),
+			parseInt(playerStateIdx)
+		);
 		if (!payload) {
 			return res.status(404).json({ status: 'ko', message: 'ERROR.PLAYER_NOT_FOUND' });
 		}
@@ -116,24 +118,6 @@ GameStateController.getPlayerState = async (req, res, next) => {
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.PLAYER_NOT_FOUND',
-		});
-	}
-};
-
-GameStateController.startRound = async (req, res, next) => {
-	try {
-		const { gameStateId } = req.body;
-		const result = await GameStateService.startRound(gameStateId);
-
-		// Emit socket event to notify clients (timer is started by the service)
-		socket.emitTo(gameStateId, IO.GAME.STARTED, result);
-
-		return res.status(200).json(result);
-	} catch (err) {
-		log.error(`Start round error: ${err}`);
-		return res.status(500).json({
-			status: 'ko',
-			message: 'ERROR.START_ROUND',
 		});
 	}
 };
@@ -155,7 +139,7 @@ GameStateController.produce = async (req, res, next) => {
 };
 
 GameStateController.transaction = async (req, res, next) => {
-    const { gameStateId, buyerIdx, sellerIdx, cardKey } = req.body;
+	const { gameStateId, buyerIdx, sellerIdx, cardKey } = req.body;
 	try {
 		const result = await PlayerStateService.transaction(gameStateId, buyerIdx, sellerIdx, cardKey);
 		return res.status(200).json(result);
@@ -170,7 +154,7 @@ GameStateController.transaction = async (req, res, next) => {
 };
 
 GameStateController.killPlayer = async (req, res, next) => {
-	const {gameStateId, playerStateId} = req.body;
+	const { gameStateId, playerStateId } = req.body;
 	try {
 		await PlayerStateService.killPlayer(gameStateId, playerStateId);
 		return res.status(200).json({
@@ -185,9 +169,8 @@ GameStateController.killPlayer = async (req, res, next) => {
 	}
 };
 
-
 GameStateController.whoHaveCard = async (req, res, next) => {
-	const {gameStateId, cardKey} = req.params;
+	const { gameStateId, cardKey } = req.params;
 	try {
 		const payload = await DeckStateService.whoHaveCard(gameStateId, cardKey);
 		if (payload && payload.status !== 'ko') {
@@ -207,81 +190,52 @@ GameStateController.whoHaveCard = async (req, res, next) => {
 	}
 };
 
-// GameStateController.start = async (req, res, next) => {
-// 	const body = req.body;
-// 	try {
-// 		const game = await GameStateService.findById(body.gameStateId);
-// 		game.typeMoney = body.typeMoney ? body.typeMoney : JUNE;
-// 		let gameUpdated;
-// 		let startGameEvent = constructor.event(START_GAME, MASTER, '', 0, [], Date.now());
-// 		game.events.push(startGameEvent);
-// 		gameUpdated = await GameStateService.initGame(game);
-// 		//and save the rest
-// 		GameStateService.updateOne(
-// 			{
-// 				_id: body.gameStateId,
-// 			},
-// 			{
-// 				$set: {
-// 					status: START_GAME,
-// 					decks: gameUpdated.decks,
-// 					events: gameUpdated.events,
-// 					avatars: gameUpdated.avatars,
-// 					round: gameUpdated.round + 1,
-// 					currentDU: gameUpdated.currentDU,
-// 					currentMassMonetary: gameUpdated.currentMassMonetary,
-// 					modified: Date.now(),
-// 				},
-// 			}
-// 		)
-// 			.then((updatedGame) => {
-// 				return res.status(200).json({
-// 					status: START_GAME,
-// 					timerCredit: gameUpdated.timerCredit,
-// 					typeMoney: gameUpdated.typeMoney,
-// 				});
-// 			})
-// 			.catch((err) => {
-// 				log.error(`Start game error: ${err}`);
-// 				return res.status(500).json({
-// 					message: 'Start game error',
-// 				});
-// 			});
-// 	} catch (err) {
-// 		log.error(`Cannot start Game, not found: ${err}`);
-// 		return res.status(404).json({
-// 			message: 'Cannot start Game, not found',
-// 		});
-// 	}
-// };
-// GameStateController.stop = async (req, res, next) => {
-// 	const {gameStateId, round} = req.body;
-// 	try {
-// 		// Final DB save before removing from memory
-// 		await GameStateService.saveGameStateToDB(gameStateId);
-// 		gameTimerManager.stopPersistenceTimer(gameStateId);
-// 		inMemoryGameStateManager.removeGame(gameStateId);
-// 		await GameStateService.stop(gameStateId, round);
-// 		return res.status(200).json({
-// 			status: STOP,
-// 		});
-// 	} catch (err) {
-// 		log.error(`stop game error: ${err}`);
-// 		next({ status: 500, message: err });
-// 	}
-// };
-// GameStateController.pause = async (req, res, next) => {
-// 	const {gameStateId, round} = req.body;
-// 	try {
-// 		await GameStateService.pause(gameStateId, round);
-// 		return res.status(200).json({
-// 			status: PAUSE,
-// 		});
-// 	} catch (err) {
-// 		log.error(`pause game error: ${err}`);
-// 		next({ status: 500, message: err });
-// 	}
-// };
+GameStateController.start = async (req, res, next) => {
+	try {
+		const { gameStateId } = req.body;
+		const result = await GameStateService.start(gameStateId);
+
+		// Emit socket event to notify clients (timer is started by the service)
+		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STARTED, result);
+
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error(`Start round error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.START_ROUND',
+		});
+	}
+};
+
+GameStateController.stop = async (req, res, next) => {
+	try {
+		const { gameStateId, round } = req.body;
+		// 		// Final DB save before removing from memory
+		// 		await GameStateService.saveGameStateToDB(gameStateId);
+		// 		gameTimerManager.stopPersistenceTimer(gameStateId);
+		// 		inMemoryGameStateManager.removeGame(gameStateId);
+		// 		await GameStateService.stop(gameStateId, round);
+		return res.status(200).json({
+			status: STOP,
+		});
+	} catch (err) {
+		log.error(`stop game error: ${err}`);
+		next({ status: 500, message: err });
+	}
+};
+GameStateController.pause = async (req, res, next) => {
+	try {
+		const { gameStateId, round } = req.body;
+		// await GameStateService.pause(gameStateId, round);
+		return res.status(200).json({
+			status: PAUSE,
+		});
+	} catch (err) {
+		log.error(`pause game error: ${err}`);
+		next({ status: 500, message: err });
+	}
+};
 // GameStateController.end = async (req, res, next) => {
 // 	const gameStateId = req.body.gameStateId;
 // 	try {

@@ -40,10 +40,10 @@ export class GameStateService {
 	private secondsSubject = new BehaviorSubject<string>('00');
 	seconds$ = this.secondsSubject.asObservable();
 
-	private sessionId: string = '';
-	private gameStateId: string = '';
-	private roomGameState: string = '';
-	private roomMaster: string = '';
+	private sessionId = '';
+	private gameStateId = '';
+	private roomGameState = '';
+	private roomMaster = '';
 
 	private timer: any;
 

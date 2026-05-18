@@ -1,7 +1,7 @@
 import env from '#config/env';
 import log from "#config/log";
 import socket from '#config/socket';
-import { IO, DB_EVENTS, PLAYER_TYPE } from '@geco/shared';
+import { IO, DB_EVENTS, PLAYER_TYPE, ROOMS } from '@geco/shared';
 
 import SessionService from "./session.service.js";
 import RulesService from "./rules/rules.service.js";
@@ -52,7 +52,7 @@ SessionController.start = async (req, res, next) => {
     try {
         const sessionUpdated = await SessionService.start(req.body.sessionId);
         await EventService.postNow(DB_EVENTS.SESSION_STARTED, sessionUpdated._id, "-", PLAYER_TYPE.MASTER, '-', {gamesRules_idx: sessionUpdated.gamesRules});//.map(rule => rule.idx)}
-        socket.emitAckTo(req.body.sessionId, IO.SESSION.STARTED, {gamesRules: sessionUpdated.gamesRules});
+        socket.emitAckTo(ROOMS.session(req.body.sessionId), IO.SESSION.STARTED, {gamesRules: sessionUpdated.gamesRules});
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
@@ -133,7 +133,7 @@ SessionController.killGame = async (req, res, next) => {
             ruleStatus: sessionUpdated.gameStatus,
             ruleIdx: ruleIdx
         }
-        socket.emitAckTo(sessionId, IO.GAME.DELETED, response);
+        socket.emitAckTo(ROOMS.session(sessionId), IO.GAME.DELETED, response);
         return res.status(200).json(response);
     }
     catch (err) {

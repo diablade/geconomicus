@@ -2,11 +2,11 @@
 	<div class="d-flex flex-column h-100 dots overflow-auto">
 		<!-- HEADER  -->
 		<div class="d-flex flex-row justify-content-between flex-wrap">
-			<img class="geco" src="./assets/images/geconomicus.png" alt="" />
+			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 			<div class="d-flex flex-row align-items-center flex-wrap gap-2">
 				<button
 					class="box-shadowed blur whiteBtn"
-					*ngIf="session.status == OPEN || session.devMode"
+					*ngIf="session.status === OPEN || session.devMode"
 					mat-stroked-button
 					(click)="editSession()">
 					<mat-icon>settings</mat-icon>
@@ -23,7 +23,7 @@
 		</div>
 		<!-- TITLE  -->
 		<div>
-			<div class="fs-1 text-center pt-4 pb-4 shadowed glow">
+			<div class="fs-1 text-center pt-4 pb-4 shadowed">
 				{{ session.status !== 'open' ? session.name : ('MASTER.JOIN' | translate: { name: session.name }) }}
 			</div>
 		</div>

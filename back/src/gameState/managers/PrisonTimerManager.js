@@ -1,12 +1,12 @@
 import log from '#config/log';
 
-class BankTimerManager {
+class PrisonTimerManager {
 	constructor() {
-		if (!BankTimerManager.instance) {
+		if (!PrisonTimerManager.instance) {
 			this.timers = new Map();
-			BankTimerManager.instance = this;
+			PrisonTimerManager.instance = this;
 		}
-		return BankTimerManager.instance;
+		return PrisonTimerManager.instance;
 	}
 
 	async addTimer(timer, startTickNow) {
@@ -39,16 +39,16 @@ class BankTimerManager {
 				// Remove the timer from the map
 				const wasDeleted = this.timers.delete(id);
 				if (wasDeleted) {
-					log.debug(`Successfully stopped and removed bank timer ${id}`);
+					log.debug(`Successfully stopped and removed prison timer ${id}`);
 				} else {
-					log.warn(`Bank timer ${id} not found in timers map when trying to remove`);
+					log.warn(`Prison timer ${id} not found in timers map when trying to remove`);
 				}
 			} else {
-				log.debug(`Bank timer ${id} not found, nothing to stop`);
+				log.debug(`Prison timer ${id} not found, nothing to stop`);
 			}
 			return true;
 		} catch (err) {
-			log.error(`Unexpected error in stopAndRemoveTimer for bank timer ${id}: ${err}`);
+			log.error(`Unexpected error in stopAndRemoveTimer for prison timer ${id}: ${err}`);
 			return false;
 		}
 	}
@@ -94,7 +94,7 @@ class BankTimerManager {
 	}
 }
 
-const bankTimerManager = new BankTimerManager();
-Object.freeze(bankTimerManager);
+const prisonTimerManager = new PrisonTimerManager();
+Object.freeze(prisonTimerManager);
 
-export default bankTimerManager;
+export default prisonTimerManager;

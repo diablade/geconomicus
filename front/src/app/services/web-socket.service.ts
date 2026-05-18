@@ -215,7 +215,7 @@ export class WebSocketService {
 		if (handler) {
 			const handlers = this.eventHandlers.get(event);
 			if (handlers) {
-				const idx = handlers.indexOf(handler as Function);
+				const idx = handlers.indexOf(handler as any);
 				if (idx > -1) handlers.splice(idx, 1);
 			}
 			this.socket?.off(event, handler as any);

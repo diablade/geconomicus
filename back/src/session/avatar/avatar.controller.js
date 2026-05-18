@@ -1,6 +1,6 @@
 import log from '#config/log';
 import socket from '#config/socket';
-import { IO } from '@geco/shared';
+import { IO, ROOMS } from '@geco/shared';
 import AvatarService from "./avatar.service.js";
 // import { generateToken, hashToken } from '../../misc/token.service.js';
 
@@ -19,7 +19,7 @@ AvatarController.join = async (req, res, next) => {
         if (!avatar) {
             return res.status(404).json({message: "Session not found"});
         }
-        socket.emitTo(sessionId, IO.AVATAR.NEW, {
+        socket.emitTo(ROOMS.session(sessionId), IO.AVATAR.NEW, {
             name:   name,
             avatar: avatar
         });
@@ -55,7 +55,7 @@ AvatarController.update = async (req, res, next) => {
             updates
         } = req.body;
         const updatedAvatar = await AvatarService.update(sessionId, avatarIdx, updates);
-        socket.emitTo(sessionId, IO.AVATAR.UPDATED, {updatedAvatar});
+        socket.emitTo(ROOMS.session(sessionId), IO.AVATAR.UPDATED, {updatedAvatar});
         return res.status(200).json(updatedAvatar);
     }
     catch (err) {
@@ -69,7 +69,7 @@ AvatarController.refresh = async (req, res, next) => {
             sessionId,
             avatarIdx
         } = req.body;
-        socket.emitTo('avatar' + avatarIdx, IO.REFRESH_FORCE);
+        socket.emitTo(ROOMS.avatar(sessionId, avatarIdx), IO.REFRESH_FORCE);
         return res.status(200).json({status: 'ok'});
     }
     catch (err) {
@@ -87,7 +87,7 @@ AvatarController.delete = async (req, res, next) => {
         if (!ack) {
             return res.status(404).json({message: "ERROR.DELETE_AVATAR"});
         }
-        socket.emitTo(sessionId, IO.AVATAR.DELETED, {avatarIdx});
+        socket.emitTo(ROOMS.session(sessionId), IO.AVATAR.DELETED, {avatarIdx});
         return res.status(200).json({
             ...ack,
             avatarIdx

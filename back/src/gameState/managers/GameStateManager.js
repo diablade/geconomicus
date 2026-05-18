@@ -22,7 +22,7 @@ import bankTimerManager from './BankTimerManager.js';
 class GameStateManager {
 	constructor() {
 		if (!GameStateManager.instance) {
-			// Map<gameStateId, { state: POJO, rules: POJO }>
+			// Map<gameStateId, { gameState: POJO, rules: POJO, events: object[] }>
 			this._games = new Map();
 			GameStateManager.instance = this;
 		}
@@ -166,7 +166,7 @@ class GameStateManager {
 	 * @param {function({ state: object, rules: object }): Promise<any>} fn
 	 * @returns {Promise<any>} resolves with fn's return value
 	 */
-	withQueue(gameStateId, fn) {
+	async withQueue(gameStateId, fn) {
 		return gameQueueManager.enqueue(gameStateId, async () => {
 			let entry = this.get(gameStateId);
 			if (!entry) {

@@ -132,9 +132,11 @@ export const DB_EVENTS = {
 };
 export const ROOMS = {
     session: (sessionId) => `s:${sessionId}`,
-    sessionMaster: (sessionId) => `s:${sessionId}:master`,
-    sessionAvatar: (sessionId, avatarIdx) => `s:${sessionId}:${avatarIdx}`,
+    lobbyMaster: (sessionId) => `s:${sessionId}:master`,
+    lobbyAvatar: (sessionId, avatarIdx) => `s:${sessionId}:${avatarIdx}`,
     gameState: (gameStateId) => `gs:${gameStateId}`,
     gameStateMaster: (gameStateId) => `gs:${gameStateId}:master`,
+    gameStateBank: (gameStateId) => `gs:${gameStateId}:bank`,
+    gameStateEvents: (gameStateId) => `gs:${gameStateId}:events`,
     playerState: (gameStateId, avatarIdx, playerIdx) => `gs:${gameStateId}:${avatarIdx}:${playerIdx}`,
 };
