@@ -4,6 +4,7 @@
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	// Désactive les paramètres VS Code au profit d'EditorConfig
 	"editor.detectIndentation": false,
+	"editor.glyphMargin": false,
 	"files.insertFinalNewline": true,
 	"files.trimTrailingWhitespace": true,
 	"editor.hover.delay": 2000,

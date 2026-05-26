@@ -152,6 +152,7 @@
 						class="m-2 box-shadowed"
 						mat-raised-button
 						color="accent"
+						[disabled]="vm.gameState.status === CREATED"
 						[routerLink]="['/bank', sessionId, gameStateId]">
 						<mat-icon>account_balance</mat-icon>
 						{{ 'MASTER.BANK_BTN' | translate }}

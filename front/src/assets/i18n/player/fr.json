@@ -1,6 +1,7 @@
 {
 	"PLAYER": {
 		"INIT": "Vous avez reçu {{cardsLength}} cartes 🎴 et {{coins}}{{currency}} 👛. Bonne chance !",
+		"INIT_DEBT": "Vous avez reçu {{cardsLength}} cartes 🎴 et {{coins}}{{currency}} 👛. Allez voir le banquier pour avoir de l'argent. Bonne chance !",
 		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
 		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
 		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",
@@ -33,7 +34,8 @@
 		"DEBT": "Dette",
 		"INTEREST": "Intérêt",
 
-		"CANCELED": "Crédit annulé, {{amount}} € remboursés",
+		"CANCEL_SUCCESS": "Crédit annulé, {{amount}} € remboursés",
+		"CANCELED": "Crédit annulé",
 
 		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
 		"DONE_AT": "Clos le",

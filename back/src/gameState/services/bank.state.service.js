@@ -394,11 +394,9 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 			)
 		);
 
-		socket.emitAckTo(
-			ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.playerStateIdx),
-			IO.CREDIT.CANCELED,
-			{ credit }
-		);
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx), IO.CREDIT.CANCELED, {
+			credit,
+		});
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, { credit });
 
 		return {

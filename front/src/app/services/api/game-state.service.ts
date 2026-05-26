@@ -501,7 +501,7 @@ export class GameStateService {
 
 	cancelCredit(credit: Credit) {
 		this.bankService.cancelCredit(this.gameStateId, credit.id).subscribe((res: any) => {
-			this.snackbarService.showSuccess(this.i18n.instant('CREDIT.CANCEL_SUCCESS'));
+			this.snackbarService.showSuccess(this.i18n.instant('CREDIT.CANCELED'));
 			const credits = this.creditsSubject.getValue();
 			const updatedCredits = credits.map((c) => (c.id === credit.id ? res.data.credit : c));
 			this.creditsSubject.next(updatedCredits);

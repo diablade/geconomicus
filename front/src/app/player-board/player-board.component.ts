@@ -93,7 +93,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	currentDebts = (credits: Credit[]): number => {
 		return credits
-			.filter((c) => c.status !== CREDIT_STATUS.DONE)
+			.filter((c) => c.status !== CREDIT_STATUS.DONE && c.status !== CREDIT_STATUS.CANCELED)
 			.reduce((total, c) => total + c.amount + c.interest, 0);
 	};
 

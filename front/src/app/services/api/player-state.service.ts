@@ -276,11 +276,14 @@ export class PlayerStateService {
 			}
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant('PLAYER.INIT', {
-						cardsLength: data.playerState.cards.length,
-						coins: data.playerState.coins,
-						currency: this.getCurrency(),
-					}),
+					text: this.i18nService.instant(
+						currentGameState.typeMoney === GAME_TYPE.DEBT ? 'PLAYER.INIT_DEBT' : 'PLAYER.INIT',
+						{
+							cardsLength: data.playerState.cards.length,
+							coins: data.playerState.coins,
+							currency: this.getCurrency(),
+						}
+					),
 				},
 			});
 		});
@@ -362,7 +365,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.CANCELED, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			console.log('new credit', data);
+			console.log('credit canceled', data);
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((credit) => {
 				if (credit.id === data.credit.id) {
