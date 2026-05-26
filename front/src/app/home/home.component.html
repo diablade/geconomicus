@@ -1,4 +1,4 @@
-<div class="w-100 h-100 sunyBg">
+<div class="w-100 h-100 darkBg">
 	<div class="cloud dots overflow-auto">
 		<!-- <svg style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.08"> -->
 		<!-- 1. Pattern de points -->
@@ -51,10 +51,14 @@
 				</mat-menu>
 			</div>
 			<div class="d-flex flex-row mt-2">
-				<app-notice-btn [white]="true" [labelBtn]="'HOME.HOW_TO_PLAY'" [icon]="false"></app-notice-btn>
+				<app-notice-btn
+					[white]="true"
+					[stroked]="false"
+					[labelBtn]="'HOME.HOW_TO_PLAY'"
+					[icon]="false"></app-notice-btn>
 				<app-language-btn class="ms-2 contourText" [white]="true"></app-language-btn>
 			</div>
-			<div class="mt-4">
+			<div class="mt-4 z1">
 				<img class="img-bottom" src="./assets/images/cards.png" alt="" />
 			</div>
 			<span class="d-flex flex-row align-items-center contourText">

@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable } from 'rxjs';
-import { PlayerState, GameState, Card, Credit } from '../../models/gameState';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
-import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE, ROOMS } from '@geco/shared';
+import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE, ROOMS, GameType, PlayerStatus } from '@geco/shared';
 import { BankService } from './bank.service';
 import { DeckService } from './deck.service';
+import { ThemesService } from '../themes.service';
 import { Router } from '@angular/router';
 import _ from 'lodash';
 import { ShortCode } from 'src/app/models/shortCode';
@@ -22,48 +23,71 @@ import { MatDialog } from '@angular/material/dialog';
 	providedIn: 'root',
 })
 export class PlayerStateService {
-	private playerStateSubject = new BehaviorSubject<PlayerState>(new PlayerState());
-	playerState$ = this.playerStateSubject.asObservable();
+	private typeMoneySubject = new BehaviorSubject<GameType>(GAME_TYPE.JUNE);
+	typeMoney$ = this.typeMoneySubject.asObservable();
+	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
+	playerStatus$ = this.playerStatusSubject.asObservable();
+
+	private coinsSubject = new BehaviorSubject<number>(0);
+	coins$ = this.coinsSubject.asObservable();
+	private cardsSubject = new BehaviorSubject<Card[]>([]);
+	rawCards$ = this.cardsSubject.asObservable();
+	private creditsSubject = new BehaviorSubject<Credit[]>([]);
+	credits$ = this.creditsSubject.asObservable();
+
 	private gameStateSubject = new BehaviorSubject<GameState>(new GameState());
 	gameState$ = this.gameStateSubject.asObservable();
 	private rulesSubject = new BehaviorSubject<Rules>(new Rules());
 	rules$ = this.rulesSubject.asObservable();
-	private cardsSubject = new BehaviorSubject<Card[]>([]);
-	cards$ = this.cardsSubject.asObservable();
-	private creditsSubject = new BehaviorSubject<Credit[]>([]);
-	credits$ = this.creditsSubject.asObservable();
-	private defaultCreditSubject = new BehaviorSubject<boolean>(false);
-	defaultCredit$ = this.defaultCreditSubject.asObservable();
 
-	private sessionId: string = '';
-	private gameStateId: string = '';
-	private avatarIdx: number = 0;
-	private playerStateIdx: number = 0;
+	private sessionId = '';
+	private gameStateId = '';
+	private avatarIdx = 0;
+	private playerStateIdx = 0;
 
-	private roomGameState: string = '';
-	private roomPlayerState: string = '';
+	private roomGameState = '';
+	private roomPlayerState = '';
 
 	public shortCode: ShortCode | undefined;
 
-	setPlayerState(playerState: PlayerState) {
-		this.playerStateSubject.next(playerState);
-	}
-	setGameState(gameState: GameState) {
-		this.gameStateSubject.next(gameState);
-	}
-	setRules(rules: Rules) {
-		this.rulesSubject.next(rules);
-	}
-	setCredits(credits: Credit[]) {
-		this.creditsSubject.next(credits);
-	}
-	setDefaultCredit(defaultCredit: boolean) {
-		this.defaultCreditSubject.next(defaultCredit);
-	}
+	typeTheme$ = inject(ThemesService).typeTheme$;
+
+	cards$ = combineLatest({
+		cards: this.cardsSubject,
+		typeTheme: this.typeTheme$,
+	}).pipe(
+		debounceTime(0),
+		distinctUntilChanged((a, b) => {
+			if (!_.isEqual(a.typeTheme, b.typeTheme)) return false;
+			if (a.cards.length !== b.cards.length) return false;
+			if (!_.isEqual(a.cards, b.cards)) return false;
+			return true;
+		}),
+		map(({ cards, typeTheme }: { cards: Card[]; typeTheme: string }) => {
+			if (typeTheme !== 'CARD') return cards;
+
+			const sorted = _.orderBy(cards, ['weight', 'letter']);
+			const countByResult = _.countBy(sorted, (c: Card) => `${c.weight}-${c.letter}`);
+			const keyDuplicates: string[] = [];
+
+			for (const c of sorted) {
+				const countKey = `${c.weight}-${c.letter}`;
+				c.count = countByResult[countKey] || 0;
+				const existCountKey = keyDuplicates.find((k) => k === countKey);
+				if (c.count > 1 && existCountKey) c.displayed = false;
+				if (c.count >= 1 && !existCountKey) {
+					keyDuplicates.push(countKey);
+					c.displayed = true;
+				}
+			}
+
+			return _.orderBy(sorted, ['count'], 'desc');
+		})
+	);
 
 	constructor(
 		private http: HttpClient,
-        private dialog: MatDialog,
+		private dialog: MatDialog,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
 		private audioService: AudioService,
@@ -80,7 +104,7 @@ export class PlayerStateService {
 		this.avatarIdx = avatarIdx;
 		this.playerStateIdx = playerStateIdx;
 		this.roomGameState = ROOMS.gameState(gameStateId);
-		this.roomPlayerState = ROOMS.playerState(gameStateId,avatarIdx,playerStateIdx);
+		this.roomPlayerState = ROOMS.playerState(gameStateId, avatarIdx, playerStateIdx);
 		this.http
 			.get<any>(
 				environment.API_HOST +
@@ -102,11 +126,14 @@ export class PlayerStateService {
 				})
 			)
 			.subscribe((data) => {
-				this.setPlayerState(data.playerState);
-				this.setGameState(data.gameState);
-				this.setRules(data.rules);
-				this.setCredits(data.credits);
-				this.setDefaultCredit(data.defaultCredit);
+				this.coinsSubject.next(data.playerState.coins);
+				this.playerStatusSubject.next(data.playerState.status);
+				this.typeMoneySubject.next(data.playerState.typeMoney);
+				this.cardsSubject.next(data.playerState.cards);
+				this.creditsSubject.next(data.credits);
+
+				this.gameStateSubject.next(data.gameState);
+				this.rulesSubject.next(data.rules);
 			});
 		this.setupMiscSocketListeners();
 		this.setupGameSocketListeners();
@@ -127,9 +154,11 @@ export class PlayerStateService {
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomPlayerState);
 	}
-    getCurrency() {
-        return this.i18nService.instant(this.gameStateSubject.value?.typeMoney === GAME_TYPE.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE');
-    }
+	getCurrency() {
+		return this.i18nService.instant(
+			this.gameStateSubject.value?.typeMoney === GAME_TYPE.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE'
+		);
+	}
 	private setupMiscSocketListeners(): void {
 		this.wsService.on('connected', () => {
 			// if avatarService is connected it should come here to connect other rooms
@@ -206,11 +235,9 @@ export class PlayerStateService {
 			if (cb) {
 				cb({ status: 'ok', _ackId: data._ackId });
 			}
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				currentPlayerState.coins += data.du;
-				this.playerStateSubject.next(currentPlayerState);
-			}
+			const currentCoins = this.coinsSubject.getValue();
+			this.coinsSubject.next(currentCoins + data.du);
+
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.currentDU = data.du;
@@ -235,10 +262,9 @@ export class PlayerStateService {
 		this.wsService.on(IO.PLAYER.INIT, async (data: any, cb: (response: any) => void) => {
 			console.log('PLAYER.INIT', data);
 			cb({ status: 'ok', _ackId: data._ackId });
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				this.playerStateSubject.next({ ...currentPlayerState, ...data.playerState });
-			}
+			this.coinsSubject.next(data.playerState.coins);
+			this.cardsSubject.next(data.playerState.cards);
+
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				this.gameStateSubject.next({ ...currentGameState, status: data.status, currentDU: data.currentDU });
@@ -250,7 +276,11 @@ export class PlayerStateService {
 			}
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant("PLAYER.INIT", { cardsLength: data.playerState.cards.length, coins: data.playerState.coins, currency: this.getCurrency() })
+					text: this.i18nService.instant('PLAYER.INIT', {
+						cardsLength: data.playerState.cards.length,
+						coins: data.playerState.coins,
+						currency: this.getCurrency(),
+					}),
 				},
 			});
 		});
@@ -262,22 +292,12 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			if (data && data.cards) {
-				const currentPlayerState = this.playerStateSubject.getValue();
-				if (currentPlayerState) {
-					currentPlayerState.cards = data.cards;
-					currentPlayerState.status = PLAYER_STATUS.ALIVE;
-					this.playerStateSubject.next({ ...currentPlayerState });
-				}
-			}
+			this.cardsSubject.next(data.cards);
+			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
 		});
 
 		this.wsService.on(IO.PLAYER.DIED, async () => {
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				currentPlayerState.status = PLAYER_STATUS.DEAD;
-				this.playerStateSubject.next(currentPlayerState);
-			}
+			this.playerStatusSubject.next(PLAYER_STATUS.DEAD);
 		});
 	}
 	private setupMoneySocketListeners(): void {
@@ -316,30 +336,47 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState?.idx === Number(data.sellerIdx)) {
-				this.setPlayerState({
-					...currentPlayerState,
-					coins: data.coinsAfter,
-					cards: currentPlayerState.cards.filter((c: any) => c.key !== data.cardKey),
-				});
+			if (this.playerStateIdx === Number(data.sellerIdx)) {
+				this.coinsSubject.next(data.coinsLK);
+				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
+				this.cardsSubject.next(updatedCards);
 			}
 		});
 
 		// Credit events
 		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
+			console.log('new credit', data);
 			const currentCredits = this.creditsSubject.getValue();
 			currentCredits.push(data.credit);
 			this.creditsSubject.next(currentCredits);
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				currentPlayerState.coins += data.credit.amount;
-				this.playerStateSubject.next(currentPlayerState);
-			}
+			this.coinsSubject.next(this.coinsSubject.getValue() + data.credit.amount);
+			this.audioService.playSound('coins');
+
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.credit.amount})
+					text: this.i18nService.instant('CREDIT.NEW_CREDIT', { amount: data.credit.amount }),
+				},
+			});
+		});
+
+		this.wsService.on(IO.CREDIT.CANCELED, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', _ackId: data._ackId });
+			console.log('new credit', data);
+			const currentCredits = this.creditsSubject.getValue();
+			const updatedCredits = currentCredits.map((credit) => {
+				if (credit.id === data.credit.id) {
+					credit.status = data.credit.status;
+				}
+				return credit;
+			});
+			this.creditsSubject.next(updatedCredits);
+			this.coinsSubject.next(this.coinsSubject.getValue() - data.credit.amount);
+			this.audioService.playSound('interest');
+
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					text: this.i18nService.instant('CREDIT.CANCEL_SUCCESS', { amount: data.credit.amount }),
 				},
 			});
 		});
@@ -348,7 +385,7 @@ export class PlayerStateService {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.idx === data.credit.idx) {
+				if (c.id === data.credit.id) {
 					c.status = data.credit.status;
 				}
 				return c;
@@ -370,33 +407,33 @@ export class PlayerStateService {
 		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.idx === data.id) {
+				if (c.id === data.id) {
 					c.status = CREDIT_STATUS.RUNNING;
 					c.progress = data.progress;
 				}
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
+			//TODO if progress is 80% give warning to player
 		});
 
-		this.wsService.on(IO.CREDIT.DEFAULT, async (data: any, cb: (response: any) => void) => {
+		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.idx === data.credit.idx) {
+				if (c.id === data.credit.id) {
 					c.status = data.credit.status;
 				}
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
-			this.setDefaultCredit(true);
 		});
 
 		this.wsService.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.idx === data.credit.idx) {
+				if (c.id === data.credit.id) {
 					c.status = CREDIT_STATUS.DONE;
 				}
 				return c;
@@ -406,22 +443,38 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			const currentCards = this.cardsSubject.getValue();
-			const updatedCards = currentCards.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
+			const updatedCards = this.cardsSubject
+				.getValue()
+				.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.idx === data.credit.idx) {
+				if (c.id === data.credit.id) {
 					c.status = CREDIT_STATUS.DONE;
 				}
 				return c;
 			});
+
+			this.cardsSubject.next(updatedCards);
 			this.creditsSubject.next(updatedCredits);
-			const currentPlayerState = this.playerStateSubject.getValue();
-			if (currentPlayerState) {
-				currentPlayerState.coins -= data.seizure.coins;
-				this.playerStateSubject.next(currentPlayerState);
-			}
-			this.setDefaultCredit(false);
+			this.coinsSubject.next(this.coinsSubject.getValue() - data.seizure.coins);
+		});
+
+		this.wsService.on(IO.CREDIT.PAYED_INTEREST, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', _ackId: data._ackId });
+			this.coinsSubject.next(data.coinsLK);
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					// title: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.TITLE'),
+					// message: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.MESSAGE', {
+					// 	amount: credit.amount + credit.interest,
+					// 	interest: credit.interest,
+					// }),
+					// labelBtn1: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN1'),
+					// labelBtn2: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN2'),
+					// autoClickBtn2: true,
+					// timerBtn2: '14', //en secondes
+				},
+			});
 		});
 	}
 
@@ -447,7 +500,7 @@ export class PlayerStateService {
 		this.wsService.off(IO.CREDIT.TIMEOUT);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
-		this.wsService.off(IO.CREDIT.DEFAULT);
+		this.wsService.off(IO.CREDIT.FAULT);
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.CREDIT.SEIZURE);
 		this.wsService.off(IO.SHORT_CODE.BROADCAST);
@@ -472,9 +525,9 @@ export class PlayerStateService {
 		}
 		this.wsService.emit(IO.SHORT_CODE.EMIT, {
 			code,
-			buyerIdx: this.playerStateIdx!,
+			buyerIdx: this.playerStateIdx,
 			buyerAvatarIdx: this.avatarIdx,
-			gameStateId: this.gameStateId!,
+			gameStateId: this.gameStateId,
 		});
 	}
 
@@ -484,7 +537,7 @@ export class PlayerStateService {
 			try {
 				const data = JSON.parse(dataRaw);
 				const gameState = this.gameStateSubject.getValue();
-				const playerState = this.playerStateSubject.getValue();
+				const coins = this.coinsSubject.getValue();
 				const rules = this.rulesSubject.getValue();
 
 				const cost = rules.typeMoney === GAME_TYPE.JUNE ? (data.p * gameState.currentDU).toFixed(2) : data.p;
@@ -495,21 +548,19 @@ export class PlayerStateService {
 					return;
 				}
 
-				if (!playerState || playerState.coins < parseFloat(cost.toString())) {
+				if (coins < parseFloat(cost.toString())) {
 					observer.next({ success: false, error: 'ERROR.INSUFFICIENT_FUNDS' });
 					observer.complete();
 					return;
 				}
 
-				this.transaction(this.gameStateId!, playerState!.idx.toString(), data.o, data.k).subscribe({
+				this.transaction(this.gameStateId, this.playerStateIdx.toString(), data.o, data.k).subscribe({
 					next: (data) => {
 						if (data?.buyedCard) {
-							let playerState = this.playerStateSubject.getValue();
-							if (playerState) {
-								playerState.cards.push(data.buyedCard);
-								playerState.coins = data.coinsAfter;
-								this.setPlayerState({ ...playerState });
-							}
+							const cards = this.cardsSubject.getValue();
+							cards.push(data.buyedCard);
+							this.cardsSubject.next(cards);
+							this.coinsSubject.next(data.coinsLK);
 							observer.next({ success: true, data: data });
 						} else {
 							observer.next({ success: false, error: 'PLAYER.NO_CARD_RECEIVED' });
@@ -530,9 +581,9 @@ export class PlayerStateService {
 
 	settleCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
 		return new Observable((observer) => {
-			const playerState = this.playerStateSubject.getValue();
+			const coins = this.coinsSubject.getValue();
 
-			if (!playerState || playerState.coins < credit.amount + credit.interest) {
+			if (coins < credit.amount + credit.interest) {
 				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
 				observer.complete();
 				return;
@@ -543,20 +594,14 @@ export class PlayerStateService {
 					if (data) {
 						const currentCredits = this.creditsSubject.getValue();
 						const updatedCredits = currentCredits.map((c) => {
-							if (c.idx === data.idx) {
+							if (c.id === data.id) {
 								c.status = data.status;
 								c.remainingTime = data.remainingTime;
 							}
 							return c;
 						});
 						this.creditsSubject.next(updatedCredits);
-
-						const currentPlayerState = this.playerStateSubject.getValue();
-						if (currentPlayerState) {
-							currentPlayerState.coins -= data.amount + data.interest;
-							currentPlayerState.status = PLAYER_STATUS.ALIVE;
-							this.playerStateSubject.next({ ...currentPlayerState });
-						}
+						this.coinsSubject.next(data.coinsLK);
 
 						observer.next({ success: true, data });
 					} else {
@@ -572,56 +617,10 @@ export class PlayerStateService {
 		});
 	}
 
-	payInterest(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
-		return new Observable((observer) => {
-			const playerState = this.playerStateSubject.getValue();
-
-			if (!playerState || playerState.coins < credit.interest) {
-				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
-				observer.complete();
-				return;
-			}
-
-			this.bankService.payInterest(credit).subscribe({
-				next: (data) => {
-					if (data) {
-						const currentCredits = this.creditsSubject.getValue();
-						const updatedCredits = currentCredits.map((c) => {
-							if (c.idx === data.idx) {
-								c.status = data.status;
-								c.extended = data.extended;
-								c.progress = 0;
-							}
-							return c;
-						});
-						this.creditsSubject.next(updatedCredits);
-
-						const currentPlayerState = this.playerStateSubject.getValue();
-						if (currentPlayerState) {
-							currentPlayerState.coins -= credit.interest;
-							currentPlayerState.status = PLAYER_STATUS.ALIVE;
-							this.playerStateSubject.next({ ...currentPlayerState });
-						}
-
-						observer.next({ success: true, data });
-					} else {
-						observer.next({ success: false, error: 'PLAYER.PAY_INTEREST_FAILED' });
-					}
-					observer.complete();
-				},
-				error: (err) => {
-					observer.next({ success: false, error: 'PLAYER.TRANSACTION_ERROR' });
-					observer.complete();
-				},
-			});
-		});
-	}
-
 	produce(letter: string, weight: number): Observable<{ success: boolean; error?: string; data?: any }> {
 		return new Observable((observer) => {
 			const rules = this.rulesSubject.getValue();
 			const cards = this.cardsSubject.getValue();
-			const playerState = this.playerStateSubject.getValue();
 
 			if (!rules || !cards) {
 				observer.next({ success: false, error: 'PLAYER.INVALID_STATE' });
@@ -639,15 +638,14 @@ export class PlayerStateService {
 
 			const cardsForProd = identicalCards.slice(0, rules.amountCardsForProd);
 			const gameStateId = this.gameStateId;
-			const playerIdx = playerState?.idx?.toString();
 
-			if (!gameStateId || !playerIdx) {
+			if (!gameStateId || !this.playerStateIdx) {
 				observer.next({ success: false, error: 'PLAYER.INVALID_IDS' });
 				observer.complete();
 				return;
 			}
 
-			this.deckService.produce(gameStateId, playerIdx, cardsForProd).subscribe({
+			this.deckService.produce(gameStateId, this.playerStateIdx.toString(), cardsForProd).subscribe({
 				next: (newCards) => {
 					if (newCards) {
 						// Remove the used cards

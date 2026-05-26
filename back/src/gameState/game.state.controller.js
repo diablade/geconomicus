@@ -6,6 +6,7 @@ import GameStateService from './services/game.state.service.js';
 import PlayerStateService from './services/player.state.service.js';
 import SessionService from '../session/session.service.js';
 import RulesService from '../session/rules/rules.service.js';
+import BankStateService from './services/bank.state.service.js';
 
 const GameStateController = {};
 
@@ -236,6 +237,43 @@ GameStateController.pause = async (req, res, next) => {
 		next({ status: 500, message: err });
 	}
 };
+
+GameStateController.createCredit = async (req, res, next) => {
+	try {
+		const { gameStateId, playerStateIdx, amount, interest } = req.body;
+		const result = await BankStateService.createCredit(gameStateId, playerStateIdx, amount, interest);
+		return res.status(200).json({
+			status: 'ok',
+			message: 'CREDIT_CREATED',
+			data: result,
+		});
+	} catch (err) {
+		log.error(`Create credit error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.CREATE_CREDIT',
+		});
+	}
+};
+
+GameStateController.cancelCredit = async (req, res, next) => {
+	try {
+		const { gameStateId, creditId } = req.body;
+		const result = await BankStateService.cancelCredit(gameStateId, creditId);
+		return res.status(200).json({
+			status: 'ok',
+			message: 'CREDIT.CANCEL_SUCCESS',
+			data: result,
+		});
+	} catch (err) {
+		log.error(`Cancel credit error: ${err}`);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.CANCEL_CREDIT',
+		});
+	}
+};
+
 // GameStateController.end = async (req, res, next) => {
 // 	const gameStateId = req.body.gameStateId;
 // 	try {

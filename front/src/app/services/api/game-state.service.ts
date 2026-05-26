@@ -1,24 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
-import { GameState, PlayerState } from '../../models/gameState';
+import { ERROR, ErrorService } from '../error.service';
+import { GameState, PlayerState, Credit, PlayerConnection } from '../../models/gameState';
 import { Rules } from '../../models/rules';
+import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
 import { WebSocketService } from '../web-socket.service';
-import { IO, GAME_STATUS, PLAYER_STATUS, ROOMS } from '@geco/shared';
+import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, ROOMS } from '@geco/shared';
 import { SessionStorageService } from '../local-storage/session-storage.service';
 import { StorageKey } from '../local-storage/storage-key.const';
 import createCountdown from '../countDown';
 import { SessionService } from './session.service';
+import { BankService } from './bank.service';
+import _ from 'lodash';
+import { SnackbarService } from '../snackbar.service';
+import { I18nService } from '../i18n.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class GameStateService {
 	// Reactive state subjects
-	private gameStateSubject = new BehaviorSubject<GameState>(new GameState());
+	private gameStateSubject = new BehaviorSubject<Partial<GameState>>({});
 	gameState$ = this.gameStateSubject.asObservable();
 
 	private rulesSubject = new BehaviorSubject<Rules>(new Rules());
@@ -29,6 +35,39 @@ export class GameStateService {
 
 	private playersStatesSubject = new BehaviorSubject<PlayerState[]>([]);
 	playersStates$ = this.playersStatesSubject.asObservable();
+
+	private connectedPlayersSubject = new BehaviorSubject<PlayerConnection[]>([]);
+	connectedPlayers$ = this.connectedPlayersSubject.asObservable();
+
+	playersAC$ = combineLatest({
+		session: this.session$,
+		playersStates: this.playersStates$,
+		connectedPlayers: this.connectedPlayers$,
+	}).pipe(
+		debounceTime(0), // wait for simultaneous emissions to stabilize
+		distinctUntilChanged((a, b) => {
+			if (!_.isEqual(a.session.avatars, b.session.avatars)) {
+				return false;
+			}
+			if (!_.isEqual(a.playersStates, b.playersStates)) {
+				return false;
+			}
+			if (!_.isEqual(a.connectedPlayers, b.connectedPlayers)) {
+				return false;
+			}
+			return true;
+		}),
+		map(({ playersStates, session, connectedPlayers }) =>
+			playersStates.map((playerState: PlayerState) => ({
+				...playerState,
+				connection: connectedPlayers.find((c: PlayerConnection) => c.idx === playerState.idx),
+				avatar: session.avatars.find((a: Avatar) => a.idx === playerState.avatarIdx) ?? undefined,
+			}))
+		)
+	);
+
+	private creditsSubject = new BehaviorSubject<Credit[]>([]);
+	credits$ = this.creditsSubject.asObservable();
 
 	// Timer state
 	private timerProgressSubject = new BehaviorSubject<number>(100);
@@ -44,36 +83,13 @@ export class GameStateService {
 	private gameStateId = '';
 	private roomGameState = '';
 	private roomMaster = '';
+	private roomBank = '';
 
 	private timer: any;
 
-	// Setters
-	setGameState(gameState: GameState, connectedPlayers?: any) {
-		this.gameStateSubject.next(gameState);
-        if (connectedPlayers) {
-            gameState.playersStates.forEach(playerState => {
-                const connectStatus = connectedPlayers.find((connection: any) => connection.idx === playerState.idx);
-                playerState.connected = connectStatus?.connected || false;
-                playerState.lastSeen = connectStatus?.lastSeen || null;
-            });
-        }
-		this.playersStatesSubject.next(gameState.playersStates || []);
-	}
-	setRules(rules: Rules) {
-		this.rulesSubject.next(rules);
-	}
-	setSession(session: Session) {
-		this.sessionSubject.next(session);
-	}
-	// Getters
-	getGameStateSnapshot(): GameState {
-		return this.gameStateSubject.getValue();
-	}
-	getRulesSnapshot(): Rules {
-		return this.rulesSubject.getValue();
-	}
-	getSessionSnapshot(): Session {
-		return this.sessionSubject.getValue();
+	getAvatar(playerStateIdx: number): Avatar | undefined {
+		const session = this.sessionSubject.getValue();
+		return session.avatars.find((avatar) => avatar.idx === playerStateIdx);
 	}
 
 	constructor(
@@ -81,67 +97,74 @@ export class GameStateService {
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
 		private sessionStorageService: SessionStorageService,
+		private snackbarService: SnackbarService,
+		private i18n: I18nService,
+		private dialog: MatDialog,
+		private bankService: BankService,
 		private sessionService: SessionService
 	) {
 		this.initializeTimer();
 	}
 
-	loadForMaster(sessionId: string, gameStateId: string): void {
+	loadForMaster(sessionId: string, gameStateId: string, isBank = false): void {
 		this.sessionId = sessionId;
 		this.gameStateId = gameStateId;
 		this.roomGameState = ROOMS.gameState(gameStateId);
 		this.roomMaster = ROOMS.gameStateMaster(gameStateId);
 
-        this.sessionService.initializeSocket(sessionId);
+		this.setupMasterSocketListeners();
+		this.setupPlayersSocketListeners();
+		if (isBank) {
+			this.setupBankSocketListener();
+			this.roomBank = ROOMS.gameStateBank(gameStateId);
+		}
+
+		this.sessionService.initializeSocket(sessionId);
 		this.get(gameStateId, true).subscribe((payload) => {
-			this.setGameState(payload.gameState, payload.connectedPlayers);
-			this.setRules(payload.rules);
+			this.gameStateSubject.next(payload.gameState);
+			this.playersStatesSubject.next(payload.gameState.playersStates);
+			this.connectedPlayersSubject.next(payload.connectedPlayers);
+			this.rulesSubject.next(payload.rules);
 			if (payload.session) {
-				this.setSession(payload.session);
+				this.sessionSubject.next(payload.session);
+			}
+			if (payload.gameState.credits) {
+				this.creditsSubject.next(payload.gameState.credits);
 			}
 		});
-		this.setupMasterSocketListeners();
 		if (this.wsService.isConnected()) {
-            console.log("connected");
+			console.log('connected');
 			this.joinRooms();
+		} else {
+			console.log('not connected');
 		}
-        console.log("not connected");
 	}
 
 	leaveRooms(): void {
 		if (this.gameStateId) {
 			this.wsService.leaveRoom(this.roomGameState);
 			this.wsService.leaveRoom(this.roomMaster);
+			if (this.roomBank) {
+				this.wsService.leaveRoom(this.roomBank);
+			}
 		}
 	}
 
+	leaveBankRoom(): void {
+		this.wsService.leaveRoom(this.roomBank);
+	}
+
 	private joinRooms(): void {
-        console.log("joining rooms...");
+		console.log('joining rooms...');
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomMaster);
+		if (this.roomBank) {
+			this.wsService.joinRoom(this.roomBank);
+		}
 	}
 
 	private setupMasterSocketListeners(): void {
-		console.log('setupMasterSocketListeners');
-		this.wsService.on(IO.AVATAR.UPDATED, (player: PlayerState) => {
-			// Avatar updated event — could refresh player list
-		});
-
-		this.wsService.on(IO.PLAYER.JOINED, (player: PlayerState) => {
-			console.log('test joined ws:', player);
-			const current = this.playersStatesSubject.getValue();
-			this.playersStatesSubject.next([...current, player]);
-		});
-
-		this.wsService.on(IO.PLAYER.CONNECTED as any, (data) => {
-            console.log("test connected ws:", data);
-			this.updatePlayerConnectionStatus(data, true);
-		});
-
-		this.wsService.on(IO.PLAYER.DISCONNECTED as any, (data) => {
-            console.log("test disconnected ws:", data);
-			this.updatePlayerConnectionStatus(data, false);
-		});
+		console.log('setup Master SocketListeners');
 
 		this.wsService.on('connected', (data: any) => {
 			console.log('connected, joining other rooms...', data);
@@ -183,6 +206,10 @@ export class GameStateService {
 		this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
 			// Death event — component handles dialog
 		});
+	}
+
+	private setupPlayersSocketListeners(): void {
+		console.log('setup Player SocketListeners');
 
 		this.wsService.on(IO.PLAYER.DIED, (event: any) => {
 			const currentStates = this.playersStatesSubject.getValue();
@@ -193,12 +220,116 @@ export class GameStateService {
 				return p;
 			});
 			this.playersStatesSubject.next(updated);
+
+			const credits = this.creditsSubject.getValue();
+			credits.map((c) => {
+				if (c.playerStateIdx === event.receiver && c.status === CREDIT_STATUS.FAULT) {
+					this.dialog.closeAll();
+				}
+				return c;
+			});
+		});
+
+		this.wsService.on(IO.AVATAR.UPDATED, () => {
+			// Avatar updated event — could refresh player list
+			window.location.reload();
+		});
+
+		this.wsService.on(IO.PLAYER.CONNECTED, (data) => {
+			console.log('room connected ws:', data);
+			this.updatePlayerConnectionStatus(data, true);
+		});
+
+		this.wsService.on(IO.PLAYER.DISCONNECTED, (data) => {
+			console.log('room disconnected ws:', data);
+			this.updatePlayerConnectionStatus(data, false);
+		});
+	}
+
+	private setupBankSocketListener(): void {
+		console.log('setup Bank SocketListener');
+
+		this.wsService.on(IO.CREDIT.STARTED, async () => {
+			_.forEach(this.creditsSubject.getValue(), (c) => {
+				if (c.status == CREDIT_STATUS.PAUSED || c.status == CREDIT_STATUS.IDLE) {
+					c.status = CREDIT_STATUS.RUNNING;
+				}
+			});
+		});
+		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
+			_.forEach(this.creditsSubject.getValue(), (c) => {
+				if (c.id == data.id) {
+					c.status = CREDIT_STATUS.RUNNING;
+					c.progress = data.progress;
+				}
+			});
+		});
+		this.wsService.on(IO.CREDIT.DONE, async (data: any) => {
+			const currentStates = this.gameStateSubject.getValue();
+			currentStates.currentMassMonetary = data.currentMassMonetary;
+			currentStates.bankInterestEarned = data.bankInterestEarned;
+			currentStates.bankMoneyLost = data.bankMoneyLost;
+			currentStates.bankGoodsEarned = data.bankGoodsEarned;
+			this.gameStateSubject.next(currentStates);
+
+			const credits = this.creditsSubject.getValue();
+			_.forEach(credits, (c) => {
+				if (c.id == data.id) {
+					c.status = data.status;
+				}
+			});
+		});
+		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any) => {
+			_.forEach(this.creditsSubject.getValue(), (c) => {
+				if (c.id == data.id) {
+					c.status = data.status;
+				}
+			});
+		});
+		this.wsService.on(IO.CREDIT.PAYED_INTEREST, async (data: any) => {
+			const currentStates = this.gameStateSubject.getValue();
+			const credits = this.creditsSubject.getValue();
+			_.forEach(credits, (c) => {
+				if (c.id == data.id) {
+					c.status = data.status;
+					c.extended = data.extended;
+					c.progress = 0;
+					currentStates.currentMassMonetary = currentStates.currentMassMonetary
+						? currentStates.currentMassMonetary - c.interest
+						: currentStates.currentMassMonetary;
+				}
+			});
+			this.creditsSubject.next(credits);
+			this.gameStateSubject.next(currentStates);
+		});
+		this.wsService.on(IO.CREDIT.FAULT, async (data: any) => {
+			_.forEach(this.creditsSubject.getValue(), (c) => {
+				if (c.playerStateIdx == data.playerStateIdx) {
+					c.status = data.status;
+				}
+			});
+			this.snackbarService.showError(this.i18n.instant('CREDIT.DEFAULT_CREDIT_MESSAGE'));
+		});
+		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
+			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
+				if (p.idx == data.idx) {
+					p.progressPrison = data.progress;
+				}
+			});
+		});
+		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
+			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.PRISON_ENDED'));
+			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
+				if (p.idx == data.idx) {
+					p.status = PLAYER_STATUS.ALIVE;
+					p.progressPrison = 0;
+				}
+			});
 		});
 	}
 
 	offAll(): void {
 		this.wsService.off(IO.AVATAR.UPDATED);
-		this.wsService.off(IO.PLAYER.JOINED);
 		this.wsService.off(IO.PLAYER.CONNECTED);
 		this.wsService.off(IO.PLAYER.DISCONNECTED);
 		this.wsService.off(IO.TIMER_LEFT);
@@ -207,6 +338,14 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.FINISHED);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
+		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
+		this.wsService.off(IO.CREDIT.STARTED);
+		this.wsService.off(IO.CREDIT.PROGRESS);
+		this.wsService.off(IO.CREDIT.TIMEOUT);
+		this.wsService.off(IO.CREDIT.FAULT);
+		this.wsService.off(IO.CREDIT.DONE);
+		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
+		this.wsService.off(IO.PLAYER.PRISON_ENDED);
 	}
 
 	create(sessionId: string, ruleIdx: number): Observable<any> {
@@ -228,7 +367,7 @@ export class GameStateService {
 				.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.DISTRIBUTE_CARDS')))
 				.subscribe((data) => {
 					if (data.status == 'done') {
-						this.setGameState(data.gameState);
+						this.gameStateSubject.next(data.gameState);
 					}
 					observer.next(data);
 					observer.complete();
@@ -253,7 +392,7 @@ export class GameStateService {
 	 */
 	private handleTimerLeft(minutesRemaining: number): void {
 		this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
-		const gameState = this.getGameStateSnapshot();
+		const gameState = this.gameStateSubject.getValue();
 		if (minutesRemaining && gameState.status == GAME_STATUS.PLAYING) {
 			this.timer.stop();
 			this.timer.reset();
@@ -270,7 +409,7 @@ export class GameStateService {
 			{ h: 0, m: 0, s: 0 },
 			{
 				listen: ({ hh, mm, ss, s, h, m }: any) => {
-					const rules = this.getRulesSnapshot();
+					const rules = this.rulesSubject.getValue();
 					const secondsRemaining = s + m * 60;
 					this.minutesSubject.next(mm);
 					this.secondsSubject.next(ss);
@@ -287,12 +426,12 @@ export class GameStateService {
 	/**
 	 * Update player connection status.
 	 */
-	updatePlayerConnectionStatus(data: any, connected: boolean): void {
-		const currentPlayers = this.playersStatesSubject.value;
-		const updatedPlayers = currentPlayers.map((player) =>{
-			return player.idx === data.playerStateIdx ? { ...player, connected } : player;
-        });
-		this.playersStatesSubject.next(updatedPlayers);
+	updatePlayerConnectionStatus(data: any, isConnected: boolean): void {
+		const currentConnections = this.connectedPlayersSubject.getValue();
+		const updatedConnections = currentConnections.map((connection) => {
+			return connection.idx === data.idx ? { ...connection, isConnected } : connection;
+		});
+		this.connectedPlayersSubject.next(updatedConnections);
 	}
 
 	/**
@@ -304,7 +443,7 @@ export class GameStateService {
 			this.minutesSubject.next(minutes);
 
 			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
-			const gameState = this.getGameStateSnapshot();
+			const gameState = this.gameStateSubject.getValue();
 
 			if (timerRemaining && gameState.status == GAME_STATUS.PLAYING) {
 				this.timer.set({ h: 0, m: 0, s: timerRemaining });
@@ -335,5 +474,58 @@ export class GameStateService {
 			seconds: this.secondsSubject.getValue(),
 			progress: this.timerProgressSubject.getValue(),
 		};
+	}
+
+	createCredit(contrat: { playerIdx: number; amount: number; interest: number; playerName: string }): void {
+		this.bankService
+			.contractCredit({
+				playerStateIdx: contrat.playerIdx,
+				amount: contrat.amount,
+				interest: contrat.interest,
+				gameStateId: this.gameStateId,
+			})
+			.subscribe((res: any) => {
+				this.snackbarService.showSuccess(
+					this.i18n.instant('CONTRACT.CREDIT_SUCCESS', {
+						player: contrat.playerName,
+					})
+				);
+				const credits = this.creditsSubject.getValue();
+				credits.push(res.data.credit);
+				this.creditsSubject.next(credits);
+				const gameState = this.gameStateSubject.getValue();
+				gameState.currentMassMonetary = res.data.currentMassMonetary;
+				this.gameStateSubject.next(gameState);
+			});
+	}
+
+	cancelCredit(credit: Credit) {
+		this.bankService.cancelCredit(this.gameStateId, credit.id).subscribe((res: any) => {
+			this.snackbarService.showSuccess(this.i18n.instant('CREDIT.CANCEL_SUCCESS'));
+			const credits = this.creditsSubject.getValue();
+			const updatedCredits = credits.map((c) => (c.id === credit.id ? res.data.credit : c));
+			this.creditsSubject.next(updatedCredits);
+		});
+	}
+
+	seizureOnCredit(seizure: any, credit: Credit) {
+		this.bankService.seizure(seizure, credit).subscribe((data: any) => {
+			this.snackbarService.showSuccess(this.i18n.instant('DIALOG.SEIZURE.SUCCESS'));
+			if (data) {
+				// this.gameState.credits = _.map(this.gameState.credits, (c) => {
+				// if (c.idx == data.credit.idx) {
+				// return data.credit;
+				// } else {
+				// return c;
+				// }
+				// });
+				// if (data.prisoner) {
+				// this.prisoners.push(data.prisoner);
+				// }
+				// if (data.seizure) {
+				// this.gameState.currentMassMonetary -= seizure.coins;
+				// }
+			}
+		});
 	}
 }

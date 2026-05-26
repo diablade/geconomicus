@@ -35,8 +35,12 @@ export const environment = {
 	},
 	PLAYER_STATE: {
 		GET: 'game-state/player-state/',
-		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state-idx/',
+		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state/',
 		TRANSACTION: 'game-state/player-state/transaction',
+	},
+	BANK_STATE: {
+		CREATE_CREDIT: 'game-state/bank-state/create-credit',
+		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
 	},
 
 	//LEGACY

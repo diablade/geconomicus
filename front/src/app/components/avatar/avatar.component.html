@@ -1,6 +1,6 @@
 <div class="avatar-container">
 	<div class="d-flex align-items-center w-100 h-100" [ngClass]="getAlignment()">
-		<div class="dead" *ngIf="playerState?.status === 'dead'">🪦</div>
+		<div class="dead" *ngIf="playerStatus === DEAD">🪦</div>
 		<div
 			class="avatar box-shadowed"
 			#svgContainer
@@ -9,17 +9,17 @@
 		</div>
 		<div *ngIf="namePosition !== 'none'" class="avatar-name contourText">{{ avatar.name }}</div>
 		<div
-			*ngIf="showOnlineStatus"
+			*ngIf="onlineStatus"
+			class="avatar-online-status"
 			[matTooltip]="
 				'MASTER.LAST_SEEN'
 					| translate
 						: {
-								lastSeen: playerState?.lastSeen
-									? (playerState?.lastSeen | date: 'dd/MM/yyyy HH:mm:ss')
+								lastSeen: playerConnection?.lastSeen
+									? (playerConnection?.lastSeen | date: 'dd/MM/yyyy HH:mm:ss')
 									: '_',
 						  }
 			"
-			[ngClass]="[playerState?.connected ? 'connected' : 'disconnected']"
-			class="status-dot"></div>
+			[ngClass]="[playerConnection?.isConnected ? 'connected' : 'disconnected']"></div>
 	</div>
 </div>

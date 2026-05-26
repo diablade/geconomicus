@@ -1,131 +1,168 @@
-<div class="p-3 bank" *ngIf="gameState.typeMoney === DEBT">
-	<h1 class="d-flex justify-content-center">
-		<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
-		<div class="m-2 fs-4 shadowed geconomicusFont">{{ 'BANK.TITLE' | translate }}</div>
-		<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
-	</h1>
-	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
-	<div class="d-flex flex-row">
-		<div class="w-50">
-			<h2 class="fs-4 shadowed">{{ 'BANK.SUB_TITLE_IND' | translate }}</h2>
-			<div>
-				{{ 'BANK.MASS_MONEY' | translate }} :
-				<mat-chip>
-					{{ gameState.currentMassMonetary }}
-				</mat-chip>
-			</div>
-			<div>
-				{{ 'BANK.AVG_PLAYERS' | translate }} :
-				<mat-chip [ngClass]="getAverageCurrency() < 2 ? 'warning' : 'good'">
-					<b>{{ getAverageCurrency() | number: '1.2-2' }}</b>
-					<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate"></fa-icon>
-				</mat-chip>
-			</div>
-			<div>
-				{{ 'BANK.CURRENT_DEBT' | translate }} :
-				<mat-chip>
-					{{ getDebts() }}
-				</mat-chip>
-			</div>
-			<div>
-				{{ 'BANK.INTEREST_GAIN' | translate }} :
-				<mat-chip>
-					{{ gameState.bankInterestEarned }}
-				</mat-chip>
-			</div>
-			<div>
-				{{ 'BANK.RESSOURCES_GAIN' | translate }} :
-				<mat-chip>
-					{{ gameState.bankGoodsEarned }}
-				</mat-chip>
-			</div>
-		</div>
-		<div class="w-50">
-			<div class="d-flex flex-row justify-content-between align-items-center">
-				<h2 class="fs-4 shadowed">Prison</h2>
-				<mat-slide-toggle [color]="'warn'" [(ngModel)]="iWantToBreakFree">
-					{{ 'BANK.ASK_FREE' | translate }}
-				</mat-slide-toggle>
-			</div>
-			<div class="prison">
-				<div *ngFor="let prisoner of prisoners">
-					<div class="player m-2 d-flex flex-column justify-content-center">
-						<div class="breakfree" (click)="breakFree(prisoner.idx)" *ngIf="iWantToBreakFree">🆓</div>
-						<div class="player-frame player-svg">
-							<avatar
-								[avatar]="getAvatar(prisoner.avatarIdx)"
-								[width]="'150px'"
-								[height]="'150px'"></avatar>
+<ng-container *ngIf="vm$ | async as vm">
+	<!-- TODO for ML to see indicators -->
+	<div class="bank riseSunyBg">
+		<div class="dots p-3" *ngIf="vm.gameState.typeMoney === DEBT">
+			<img class="geco" src="./assets/images/geconomicus.png" alt="" />
+			<h1 class="d-flex justify-content-center">
+				<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
+				<div class="m-2 fs-2 shadowed geconomicusFont">{{ 'BANK.TITLE' | translate }}</div>
+				<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>
+			</h1>
+			<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
+			<div class="d-flex flex-row gap-4">
+				<div class="indicators">
+					<h2 class="fs-5 shadowed geconomicusFont">{{ 'BANK.SUB_TITLE_IND' | translate }}</h2>
+					<div class="indicator frame frame-light">
+						<div>
+							<span class="fs-4">🪙</span>
+							{{ 'BANK.MASS_MONEY' | translate }} :
 						</div>
-						<div class="shadowed">{{ prisoner.name }}</div>
-						<div
-							class="progress m-2"
-							role="progressbar"
-							aria-label=""
-							aria-valuenow="10"
-							aria-valuemin="0"
-							aria-valuemax="100">
-							<div
-								class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
-								[style.width.%]="prisoner.progressPrison"></div>
+						<mat-chip>
+							{{ vm.gameState.currentMassMonetary }}
+						</mat-chip>
+					</div>
+					<div class="indicator frame frame-light">
+						<div>
+							<span class="fs-4">⚖️</span>
+							{{ 'BANK.AVG_PLAYERS' | translate }} :
+						</div>
+						<mat-chip [ngClass]="vm.averageCurrency < 2 ? 'warning' : 'good'">
+							<b>{{ vm.averageCurrency | number: '1.2-2' }}</b>
+							<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate"></fa-icon>
+						</mat-chip>
+					</div>
+					<div class="indicator frame frame-light">
+						<div>
+							<span class="fs-4">📈</span>
+							{{ 'BANK.CURRENT_DEBT' | translate }} :
+						</div>
+						<mat-chip>
+							{{ (bank$ | async)?.debts }}
+						</mat-chip>
+					</div>
+					<div class="indicator frame frame-light">
+						<div>
+							<span class="fs-4">🤑</span>
+							{{ 'BANK.INTEREST_GAIN' | translate }} :
+						</div>
+						<mat-chip>
+							{{ vm.gameState.bankInterestEarned }}
+						</mat-chip>
+					</div>
+					<div class="indicator frame frame-light">
+						<div>
+							<span class="fs-4">🫴</span>
+							{{ 'BANK.RESSOURCES_GAIN' | translate }} :
+						</div>
+						<mat-chip>
+							{{ vm.gameState.bankGoodsEarned }}
+						</mat-chip>
+					</div>
+					<div class="mt-3 d-flex flex-column frame frame-light gap-2">
+						<div class="d-flex flex-row justify-content-between">
+							<h2 class="fs-5 shadowed geconomicusFont">
+								{{ 'BANK.SUB_TITLE_CREDITS' | translate }}
+							</h2>
+							<app-notice-btn
+								class="ms-2"
+								[white]="false"
+								[amountCardsForProd]="vm.rules.amountCardsForProd"
+								[timerCredit]="vm.rules.timerCredit"
+								[stroked]="true"></app-notice-btn>
+						</div>
+						<button
+							class="box-shadowed"
+							mat-raised-button
+							color="accent"
+							[disabled]="vm.gameState.status === FINISHED"
+							(click)="showContract()">
+							<fa-icon [icon]="faSackDollar"></fa-icon>
+							{{ 'BANK.GIVE_CREDIT' | translate }}
+						</button>
+						<div class="m-2 soluce">
+							{{ 'BANK.SOLUTION' | translate }}
+						</div>
+						<button
+							class="box-shadowed"
+							mat-raised-button
+							color="primary"
+							[disabled]="vm.gameState.status === FINISHED"
+							(click)="creditForAll()">
+							<mat-icon>groups</mat-icon>
+							{{ 'BANK.CREDIT_FOR_ALL' | translate }}
+						</button>
+					</div>
+					<button
+						class="mt-3 box-shadowed blur blackBtn"
+						mat-stroked-button
+						color="primary"
+						(click)="goBackToGame()">
+						<mat-icon>arrow_back</mat-icon>
+						{{ 'BANK.GO_BACK_TO_GAME' | translate }}
+					</button>
+				</div>
+				<div class="credits">
+					<div class="d-flex flex-column">
+						<h2 class="fs-5 shadowed geconomicusFont">{{ 'BANK.PRISON' | translate }}</h2>
+						<div class="prison">
+							<div *ngFor="let prisoner of prisoners$ | async">
+								<div class="player m-2 d-flex flex-column justify-content-center">
+									<div class="player-frame player-svg">
+										<avatar
+											[avatar]="getAvatar(prisoner.idx)"
+											[width]="'150px'"
+											[height]="'150px'"></avatar>
+									</div>
+									<div class="shadowed">{{ prisoner.name }}</div>
+									<div
+										class="progress m-2"
+										role="progressbar"
+										aria-label=""
+										aria-valuenow="10"
+										aria-valuemin="0"
+										aria-valuemax="100">
+										<div
+											class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
+											[style.width.%]="prisoner.progressPrison"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<h2 class="mt-3 fs-5 shadowed geconomicusFont">
+							{{ 'CREDIT.RUNNING_CREDIT' | translate }}
+						</h2>
+						<div class="creditsLine">
+							<ng-container *ngFor="let credit of (bank$ | async)?.openedCredits">
+								<app-credit
+									[interestMinutes]="vm.rules.timerCredit"
+									[credit]="credit"
+									[bankOption]="true"
+									[contractor]="getAvatar(credit.playerStateIdx)"
+									(actionBtn)="actionBtn($event, credit)"
+									[matMenuTriggerFor]="aboveMenu"></app-credit>
+								<mat-menu #aboveMenu="matMenu" yPosition="above">
+									<button mat-menu-item (click)="cancelCredit(credit)">
+										<mat-icon color="warn">cancel</mat-icon>
+										<span>{{ 'CREDIT.CANCEL' | translate }}</span>
+									</button>
+								</mat-menu>
+							</ng-container>
+						</div>
+						<h2 class="mt-3 fs-5 shadowed geconomicusFont">{{ 'CREDIT.CREDIT_DONE' | translate }}</h2>
+						<div class="creditsLine">
+							<ng-container *ngFor="let credit of (bank$ | async)?.closedCredits">
+								<app-credit
+									[interestMinutes]="vm.rules.timerCredit"
+									[credit]="credit"
+									[bankOption]="true"
+									[contractor]="getAvatar(credit.playerStateIdx)"
+									(actionBtn)="actionBtn($event, credit)"></app-credit>
+							</ng-container>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div *ngIf="vm.gameState.typeMoney === JUNE">{{ 'BANK.NO_BANK_FREE_MONEY' | translate }}</div>
 	</div>
-	<div class="mt-5 d-flex align-items-baseline flex-wrap">
-		<h2 class="fs-4 shadowed">{{ 'BANK.SUB_TITLE_CREDITS' | translate }}</h2>
-		<app-notice-btn
-			class="ms-2"
-			[amountCardsForProd]="rules.amountCardsForProd"
-			[timerCredit]="rules.timerCredit"
-			[stroked]="true"></app-notice-btn>
-		<button
-			class="ms-2"
-			mat-raised-button
-			color="accent"
-			[disabled]="gameState.status === FINISHED"
-			(click)="showContract()">
-			{{ 'BANK.GIVE_CREDIT' | translate }}
-			<fa-icon [icon]="faSackDollar"></fa-icon>
-		</button>
-		<div class="ms-2">
-			{{ 'BANK.SOLUTION' | translate }}
-		</div>
-		<button
-			class="ms-2"
-			mat-raised-button
-			color="accent"
-			[disabled]="gameState.status === FINISHED"
-			(click)="creditForAll()">
-			{{ 'BANK.CREDIT_FOR_ALL' | translate }}
-			<fa-icon [icon]="faSackDollar"></fa-icon>
-			<fa-icon [icon]="faSackDollar"></fa-icon>
-			<fa-icon [icon]="faSackDollar"></fa-icon>
-		</button>
-	</div>
-	<h2 class="fs-4 shadowed">{{ 'CREDIT.RUNNING_CREDIT' | translate }}</h2>
-	<div class="d-inline-flex" *ngFor="let credit of gameState.credits">
-		<ng-container *ngIf="credit.status != CREDIT_DONE">
-			<app-credit
-				[interestMinutes]="rules.timerCredit"
-				[credit]="credit"
-				[bankOption]="true"
-				[contractor]="getAvatar(credit.playerStateIdx)"
-				(actionBtn)="actionBtn($event, credit)"></app-credit>
-		</ng-container>
-	</div>
-	<h2 class="fs-4 shadowed">{{ 'CREDIT.CREDIT_DONE' | translate }}</h2>
-	<div class="d-inline-flex" *ngFor="let credit of gameState.credits">
-		<ng-container *ngIf="credit.status == CREDIT_DONE">
-			<app-credit
-				[interestMinutes]="rules.timerCredit"
-				[credit]="credit"
-				[bankOption]="true"
-				[contractor]="getAvatar(credit.playerStateIdx)"
-				(actionBtn)="actionBtn($event, credit)"></app-credit>
-		</ng-container>
-	</div>
-</div>
-<div *ngIf="gameState.typeMoney === JUNE">{{ 'BANK.NO_BANK_FREE_MONEY' | translate }}</div>
+</ng-container>

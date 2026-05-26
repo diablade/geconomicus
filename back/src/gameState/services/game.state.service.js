@@ -210,9 +210,9 @@ GameStateService.startTimer = async (gameStateId, roundMinutes) => {
 		TIMER_HEARTBEAT_INTERVAL,
 		TIMER_SAVE_STATE_INTERVAL,
 		{ gameStateId, roundMinutes },
-		this._timerHeartBeatCallback,
-		this._timerSaveStateCallback,
-		this._timerEndCallback
+		_timerHeartBeatCallback,
+		_timerSaveStateCallback,
+		_timerEndCallback
 	);
 
 	// Add timer to manager

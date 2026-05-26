@@ -1,6 +1,6 @@
 {
-    "PLAYER": {
-        "INIT": "Vous avez reçu {{cardsLength}} cartes 🎴 et {{coins}}{{currency}} 👛. Bonne chance !",
+	"PLAYER": {
+		"INIT": "Vous avez reçu {{cardsLength}} cartes 🎴 et {{coins}}{{currency}} 👛. Bonne chance !",
 		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
 		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
 		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",
@@ -11,5 +11,36 @@
 		"BUY": "ACHETER",
 		"CREDITS": "CRÉDITS",
 		"OBJECTIVES": "Objectifs"
+	},
+	"DIALOG": {
+		"CREDIT_EXPIRED": {
+			"TITLE": "Le crédit est arrivé à expiration !",
+			"MESSAGE": "Rembourser l'intégralité ({{amount}}) ou prolonger de 5 min en payant l’intérêt de {{interest}}",
+			"BTN1": "Rembourser",
+			"BTN2": "Prolonger"
+		}
+	},
+	"CREDIT": {
+		"PAUSED_CREDIT": "Jeu en pause...",
+		"RUNNING_CREDIT": "En cours...",
+		"REQUEST_CREDIT": "Prolonger ?",
+		"DEFAULT_CREDIT": "Défaut de paiement",
+		"CREDIT_DONE": "Terminé",
+		"NEW_CREDIT": "Crédit obtenu (+{{amount}}💰)",
+
+		"ANSWER": "Répondre",
+		"SETTLE": "Rembourser",
+		"DEBT": "Dette",
+		"INTEREST": "Intérêt",
+
+		"CANCELED": "Crédit annulé, {{amount}} € remboursés",
+
+		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
+		"DONE_AT": "Clos le",
+		"EXTENDED": "Prolongé",
+		"DEFAULT_CREDIT_MESSAGE": "!!! UN CRÉDIT EST EN DÉFAUT DE PAIEMENT !!!",
+		"CREDIT_SETTLED": "Crédit remboursé",
+		"SETTLE_ALL": "Rembourser intégralement",
+		"SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?"
 	}
 }

@@ -20,14 +20,15 @@
 		display: inline-block; // ou width: fit-content
 	}
 
-	&-status {
+	&-online-status {
+		width: 14px;
+		height: 14px;
 		position: absolute;
 		top: 70px;
 		right: -5px;
-		width: 14px;
-		height: 14px;
 		border-radius: 50%;
 		border: 1px solid white; // pour le détacher visuellement de l'avatar
+        box-shadow: 1px 1px 0px rgb(0, 0, 0);
 	}
 }
 .connected {

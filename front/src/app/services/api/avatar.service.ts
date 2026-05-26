@@ -13,21 +13,12 @@ import { IO, ROOMS } from '@geco/shared';
 	providedIn: 'root',
 })
 export class AvatarService {
-	private avatarSubject = new BehaviorSubject<Avatar|null>(null);
+	private avatarSubject = new BehaviorSubject<Avatar | undefined>(undefined);
 	avatar$ = this.avatarSubject.asObservable();
 	private sessionSubject = new BehaviorSubject<Session | null>(null);
 	session$ = this.sessionSubject.asObservable();
 	private sessionId: string | undefined;
 	private avatarIdx: number | undefined;
-
-	setAvatar(avatar: Avatar) {
-		this.avatarSubject.next(avatar);
-	}
-
-	setSession(session: Session) {
-		this.sessionSubject.next(session);
-		this.themesService.loadTheme(session.theme);
-	}
 
 	constructor(
 		public http: HttpClient,
@@ -145,7 +136,7 @@ export class AvatarService {
 		sessionId: string,
 		avatarIdx: number,
 		updates: Partial<Avatar>,
-		sendRefresh: boolean = false
+		sendRefresh = false
 	): Observable<any> {
 		return new Observable((observer: any) => {
 			try {

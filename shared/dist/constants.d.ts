@@ -41,10 +41,12 @@ export declare const CREDIT_STATUS: {
     readonly SEIZURE: "seizure";
     readonly DECOTE: "decote";
     readonly FEES: "fees";
+    readonly IDLE: "idle";
     readonly PAUSED: "paused";
     readonly RUNNING: "running";
     readonly REQUESTING: "requesting";
-    readonly DEFAULT: "default-credit";
+    readonly FAULT: "fault";
+    readonly CANCELED: "canceled";
     readonly DONE: "credit-done";
 };
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
@@ -93,8 +95,9 @@ export declare const IO: {
         readonly STARTED: "cs";
         readonly PROGRESS: "cp";
         readonly TIMEOUT: "ct";
-        readonly DEFAULT: "cd";
+        readonly FAULT: "cf";
         readonly DONE: "cdone";
+        readonly CANCELED: "ccan";
         readonly SEIZURE: "csq";
         readonly PAYED_INTEREST: "cpi";
     };
@@ -130,6 +133,7 @@ export declare const DB_EVENTS: {
     readonly BIRTH: "birth";
     readonly CREDIT_NEW: "credit-new";
     readonly CREDIT_SETTLE: "credit-settle";
+    readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_PAYED_INTEREST: "credit-payed-interest";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
 };

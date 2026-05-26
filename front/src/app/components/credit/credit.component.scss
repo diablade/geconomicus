@@ -1,92 +1,80 @@
 .contract {
-  background: white;
-  width: 160px;
-  border-radius: 20px;
-  padding: 5px;
-  margin: 5px;
-  box-shadow: 7px 7px 15px -10px rgb(0, 0, 0, 0.5);
+	background: white;
+	width: 160px;
+	border-radius: 20px;
+	padding: 5px;
+	margin: 5px;
+	box-shadow: 7px 7px 15px -10px rgb(0, 0, 0, 0.5);
 }
 
 .fontName {
-  font-size: small;
-
+	font-size: small;
 }
 
 .running {
-  background-color: #A2CBA2 !important;
+	background-color: #a2cba2 !important;
 }
 
 .paused {
-  background-color: #fff04b !important;
+	background-color: #fff04b !important;
 }
 
 .requesting {
-  background-color: #ffaf4d !important;
+	background-color: #ffaf4d !important;
 }
 
 .credit-done {
-  background-color: #a4a4a4 !important;
+	background-color: #a4a4a4 !important;
+}
+
+.canceled {
+	background-color: #9c7b7b !important;
 }
 
 .buttonContrat {
-  border-radius: 20px;
+	border-radius: 20px;
 }
 
 @keyframes cops {
-  0% {
-    background: #3153ff;
-  }
-  50% {
-    background: #ff0000;
-  }
-  100% {
-    background: #3153ff;
-  }
+	0% {
+		background: #3153ff;
+	}
+	50% {
+		background: #ff0000;
+	}
+	100% {
+		background: #3153ff;
+	}
 }
 
 .default-credit {
-  background-color: #ff706e; /* Fallback */
-  animation: cops 1s infinite ease;
-  color: white;
+	background-color: #ff706e; /* Fallback */
+	animation: cops 1s infinite ease;
+	color: white;
 }
 
-
 .status {
-  position: relative;
-  width: 100%;
-  padding: 5px;
-  height: 30px;
-  border-radius: 20px;
-  z-index: 1;
-  overflow: hidden;
+	position: relative;
+	width: 100%;
+	padding: 5px;
+	height: 30px;
+	border-radius: 20px;
+	z-index: 1;
+	overflow: hidden;
 }
 
 .progress {
-  background-color: #4caf50;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%; /* Match parent height */
-  z-index: 0;
+	background-color: #4caf50;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%; /* Match parent height */
+	z-index: 0;
 }
 
 .statusLabel {
-  position: relative;
-  font-weight: bold;
-  vertical-align: middle;
-  z-index: 2;
-}
-
-.player {
-  &-frame {
-    background: white;
-  }
-
-  &-svg {
-    width: 60px;
-    height: 60px;
-    border-radius: 80px;
-    border: solid black 2px;
-    box-shadow: 2px 2px 4px -2px black;
-  }
+	position: relative;
+	font-weight: bold;
+	vertical-align: middle;
+	z-index: 2;
 }

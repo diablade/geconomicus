@@ -124,12 +124,12 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 		socket.emitAckTo(ROOMS.playerState(gameStateId, seller.avatarIdx, sellerIdx), IO.PLAYER.TRANSACTION_DONE, {
 			sellerIdx,
 			cardKey: card.key,
-			coinsAfter: seller.coins,
+			coinsLK: seller.coins,
 		});
 
 		return {
 			buyedCard: card,
-			coinsAfter: buyer.coins,
+			coinsLK: buyer.coins,
 		};
 	});
 };

@@ -140,9 +140,9 @@ export const stateSanitize = {
 			'any.invalid': 'Invalid game state ID format',
 			'any.required': 'Game state ID is required',
 		}),
-		playerStateId: Joi.string().custom(isValidObjectId).required().messages({
-			'any.invalid': 'Invalid player state ID format',
-			'any.required': 'Player state ID is required',
+		playerStateIdx: Joi.number().integer().min(0).required().messages({
+			'any.invalid': 'Invalid player state index format',
+			'any.required': 'Player state index is required',
 		}),
 	}).required(),
 	startRound: Joi.object({
@@ -151,4 +151,33 @@ export const stateSanitize = {
 			'any.required': 'Game state ID is required',
 		}),
 	}).required(),
+    createCredit: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+        playerStateIdx: Joi.number().integer().min(0).required().messages({
+            'any.invalid': 'Invalid player state index format',
+            'any.required': 'Player state index is required',
+        }),
+		amount: Joi.number().min(0).required().messages({
+			'any.invalid': 'Invalid amount format',
+			'any.required': 'Amount is required',
+		}),
+		interest: Joi.number().min(0).required().messages({
+			'any.invalid': 'Invalid interest format',
+			'any.required': 'Interest is required',
+		}),
+
+    }).required(),
+    cancelCredit: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+            'any.invalid': 'Invalid game state ID format',
+            'any.required': 'Game state ID is required',
+        }),
+        creditId: Joi.string().required().messages({
+            'any.invalid': 'Invalid credit ID format',
+            'any.required': 'Credit ID is required',
+        }),
+    }).required(),
 };

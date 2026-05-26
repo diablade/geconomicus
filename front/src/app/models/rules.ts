@@ -1,44 +1,44 @@
 export class Rules {
 	idx = 0;
-	gameStateId: string = '';
-	gameStatus: string = 'none';
-	rotate: boolean = false;
-	typeMoney: string = 'june';
+	gameStateId = '';
+	gameStatus = 'none';
+	rotate = false;
+	typeMoney = 'june';
 
 	//common
-	amountCardsForProd: number = 0;
-	generatedIdenticalLetters: number = 0;
-	generateLettersAuto: boolean = false;
-	generateLettersInDeck: number = 0;
-	distribInitCards: number = 0;
-	surveyEnabled: boolean = false;
-	roundMax: number = 0;
-	roundMinutes: number = 0;
-	autoDeath: boolean = false;
-	deathPassTimer: number = 0;
+	amountCardsForProd = 0;
+	generatedIdenticalLetters = 0;
+	generateLettersAuto = false;
+	generateLettersInDeck = 0;
+	distribInitCards = 0;
+	surveyEnabled = false;
+	roundMax = 0;
+	roundMinutes = 0;
+	autoDeath = false;
+	deathPassTimer = 0;
 
 	//not commun
-	priceWeight1: number = 0;
-	priceWeight2: number = 0;
-	priceWeight3: number = 0;
-	priceWeight4: number = 0;
+	priceWeight1 = 0;
+	priceWeight2 = 0;
+	priceWeight3 = 0;
+	priceWeight4 = 0;
 
 	//option june
-	inequalityStart: boolean = false;
-	tauxCroissance: number = 0;
-	startAmountCoins: number = 0;
-	pctPoor: number = 0;
-	pctRich: number = 0;
+	inequalityStart = false;
+	tauxCroissance = 0;
+	startAmountCoins = 0;
+	pctPoor = 0;
+	pctRich = 0;
 
 	//option debt
-	defaultCreditAmount: number = 0;
-	defaultInterestAmount: number = 0;
-	timerCredit: number = 0;
-	timerPrison: number = 0;
-	manualBank: boolean = false;
-	seizureType: string = '';
-	seizureCosts: number = 0;
-	seizureDecote: number = 0;
-	modifiedAt: Date = new Date();
+	defaultCreditAmount = 0;
+	defaultInterestAmount = 0;
+	timerCredit = 0;
+	timerPrison = 0;
+	manualBank = false;
+	seizureType = '';
+	seizureCosts = 0;
+	seizureDecote = 0;
+	modifiedAt = new Date();
 	createdAt: Date = new Date();
 }

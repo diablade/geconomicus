@@ -109,24 +109,6 @@
 		"IN_DECK": "la carte <b>({{cardName}})</b> est dans le <b>deck</b>",
 		"IN_PLAYER": "la carte <b>({{cardName}})</b> est chez le joueur <b>{{player}}</b>"
 	},
-	"BANK": {
-		"TITLE": "Banque",
-		"SUB_TITLE_IND": "Indicateurs économiques courants",
-		"MASS_MONEY": "Masse monétaire en circulation",
-		"AVG_PLAYERS": "Moyenne par joueur",
-		"AVG_NOTICE": "Il est conseillé de maintenir une moyenne d'au moins 2 € par joueur, pour éviter la récession. En cas de récession, vous pouvez baisser le taux d'intérêt, jusqu'à 0 % quand la crise est sévère.",
-		"CURRENT_DEBT": "Dettes courantes",
-		"INTEREST_GAIN": "Intérêts encaissés",
-		"RESSOURCES_GAIN": "Valeur totale des ressources saisies",
-		"PRISON": "Prison",
-		"ASK_FREE": "Libérer un joueur ?",
-		"SUB_TITLE_CREDITS": "Détails des crédits",
-		"GIVE_CREDIT": "Accorder un crédit",
-		"SOLUTION": "(Si le joueur ne voit pas son crédit, rafraîchis sa page ! 😉 )",
-		"NO_BANK_FREE_MONEY": "Pas de banque en monnaie libre ;)",
-		"CREDIT_FOR_ALL": "Créditer tous les joueurs",
-		"CREDIT_FOR_ALL_MESSAGE": "Voulez-vous vraiment créditer tous les joueurs ? (Crédit par defaut)"
-	},
 	"CONTRACT": {
 		"TITLE": "Contrat",
 		"CREDIT": "Crédit",
@@ -141,27 +123,6 @@
 		"CREDIT_SUCCESS": "Crédit accordé à {{player}}",
 		"QUICK_CREDIT": "Crédit de {{amount}}, intérêt à {{interest}}",
 		"MANUAL_CREDIT": "Saisie manuelle d'un crédit"
-	},
-	"CREDIT": {
-		"PAUSED_CREDIT": "Jeu en pause...",
-		"RUNNING_CREDIT": "En cours...",
-		"REQUEST_CREDIT": "Prolonger ?",
-		"DEFAULT_CREDIT": "Défaut de paiement",
-		"CREDIT_DONE": "Terminé",
-		"NEW_CREDIT": "Crédit obtenu (+{{amount}}💰)",
-		"SEIZE": "Saisir",
-		"ANSWER": "Répondre",
-		"SETTLE": "Rembourser",
-		"DEBT": "Dette",
-		"INTEREST": "Intérêt",
-		"CREATED": "Créé",
-		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
-		"DONE_AT": "Clos le",
-		"EXTENDED": "Prolongé",
-		"DEFAULT_CREDIT_MESSAGE": "!!! UN CRÉDIT EST EN DÉFAUT DE PAIEMENT !!!",
-		"CREDIT_SETTLED": "Crédit remboursé",
-		"SETTLE_ALL": "Rembourser intégralement",
-		"SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?"
 	},
 	"THEME": {
 		"TITLE": "Theme",
@@ -233,12 +194,6 @@
 			"MESSAGE": "Confirmez-vous ?",
 			"BTN1": "Annuler",
 			"BTN2": "Oui"
-		},
-		"CREDIT_EXPIRED": {
-			"TITLE": "Le crédit est arrivé à expiration !",
-			"MESSAGE": "Rembourser l'intégralité ({{amount}}) ou prolonger de 5 min en payant l’intérêt de {{interest}}",
-			"BTN1": "Rembourser",
-			"BTN2": "Prolonger"
 		},
 		"CREATE_GAME": {
 			"TITLE": "Créer une partie",

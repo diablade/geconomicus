@@ -11,14 +11,15 @@
 		</div>
 	</div>
 	<div *ngIf="!small" class="d-flex flex-row align-content-center">
-		<div class="player-frame player-svg">
-			<avatar [avatar]="contractor" [width]="'150px'" [height]="'150px'"></avatar>
-		</div>
-		<div *ngIf="!small" class="fw-bold text-truncate">{{ contractor.name }}</div>
+		<avatar [avatar]="contractor" [width]="'40px'" [height]="'40px'" [namePosition]="'right'"></avatar>
 	</div>
 	<div *ngIf="!small" class="fontName">
 		<span class="fw-bold">{{ 'CREDIT.CREATED' | translate }} :</span>
-		{{ credit.createDate | date: 'YY-MM-dd HH:mm' }}
+		{{ credit.createdAt | date: 'YY-MM-dd HH:mm' }}
+	</div>
+	<div *ngIf="!small" class="fontName">
+		<span class="fw-bold">{{ 'CREDIT.STARTED' | translate }} :</span>
+		{{ (credit.startedAt | date: 'YY-MM-dd HH:mm') || '-' }}
 	</div>
 	<div class="fontName m-1">
 		<span class="fw-bold">{{ 'CREDIT.DEBT' | translate }} :</span>
@@ -33,9 +34,9 @@
 				[matTooltip]="'CREDIT.NOTICE_INTEREST' | translate: { interestMinutes }"></fa-icon>
 		</mat-chip>
 	</div>
-	<div *ngIf="credit.status === CREDIT_DONE" class="fontName m-1">
+	<div *ngIf="credit.status === CREDIT_DONE || credit.status === CREDIT_CANCELED" class="fontName m-1">
 		<span class="fw-bold">{{ 'CREDIT.DONE_AT' | translate }} :</span>
-		{{ credit.endDate | date: 'YY-MM-dd HH:mm' }}
+		{{ credit.endAt | date: 'YY-MM-dd HH:mm' }}
 	</div>
 	<div class="fontName m-1">
 		<span class="fw-bold">{{ 'CREDIT.EXTENDED' | translate }} :</span>

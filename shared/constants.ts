@@ -52,10 +52,12 @@ export const CREDIT_STATUS = {
 	SEIZURE: 'seizure',
 	DECOTE: 'decote',
 	FEES: 'fees',
+	IDLE: 'idle',
 	PAUSED: 'paused',
 	RUNNING: 'running',
 	REQUESTING: 'requesting',
-	DEFAULT: 'default-credit',
+	FAULT: 'fault',
+	CANCELED: 'canceled',
 	DONE: 'credit-done',
 } as const;
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
@@ -106,8 +108,9 @@ export const IO = {
 		STARTED: 'cs',
 		PROGRESS: 'cp',
 		TIMEOUT: 'ct',
-		DEFAULT: 'cd',
+		FAULT: 'cf',
 		DONE: 'cdone',
+		CANCELED: 'ccan',
 		SEIZURE: 'csq',
 		PAYED_INTEREST: 'cpi',
 	},
@@ -147,6 +150,8 @@ export const DB_EVENTS = {
 	// Credit events
 	CREDIT_NEW: 'credit-new',
 	CREDIT_SETTLE: 'credit-settle',
+	CREDIT_FAULT: 'credit-fault',
+	CREDIT_CANCELED: 'credit-canceled',
 	CREDIT_PAYED_INTEREST: 'credit-payed-interest',
 	CREDIT_SEIZED_DEAD: 'credit-seized-dead',
 } as const;

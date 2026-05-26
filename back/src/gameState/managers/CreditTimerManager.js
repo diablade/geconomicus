@@ -1,12 +1,12 @@
 import log from '#config/log';
 
-class BankTimerManager {
+class CreditTimerManager {
 	constructor() {
-		if (!BankTimerManager.instance) {
+		if (!CreditTimerManager.instance) {
 			this.timers = new Map();
-			BankTimerManager.instance = this;
+			CreditTimerManager.instance = this;
 		}
-		return BankTimerManager.instance;
+		return CreditTimerManager.instance;
 	}
 
 	async addTimer(timer, startTickNow) {
@@ -29,6 +29,13 @@ class BankTimerManager {
 	}
 
 	async stopTimer(id) {
+		const timer = this.getTimer(id);
+		if (timer) {
+			timer.stop();
+		}
+	}
+
+	async stopAndRemoveTimer(id) {
 		try {
 			const timer = this.getTimer(id);
 			if (timer) {
@@ -66,7 +73,8 @@ class BankTimerManager {
 
 		// First, collect all timer IDs to remove
 		for (const [id, timer] of this.timers.entries()) {
-			if (timer?.data?.gameStateId === gameStateId && timer?.data?.playerIdx === playerIdx) {
+			const data = timer?.data;
+			if (data?.gameStateId === gameStateId && (data?.playerIdx === playerIdx || data?.playerStateIdx === playerIdx)) {
 				timersToRemove.push(id);
 			}
 		}
@@ -77,7 +85,7 @@ class BankTimerManager {
 		}
 	}
 
-	async stopAndRemoveAllGameStateTimers(gameStateId) {
+	async stopAndRemoveAllGameTimers(gameStateId) {
 		const timersToRemove = [];
 
 		// First, collect all timer IDs to remove
@@ -94,7 +102,7 @@ class BankTimerManager {
 	}
 }
 
-const bankTimerManager = new BankTimerManager();
-Object.freeze(bankTimerManager);
+const creditTimerManager = new CreditTimerManager();
+Object.freeze(creditTimerManager);
 
-export default bankTimerManager;
+export default creditTimerManager;

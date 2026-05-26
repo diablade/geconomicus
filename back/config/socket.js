@@ -191,7 +191,7 @@ export class SocketManager {
 					) {
 						const playerIdx = parseInt(playerStateIdx);
 						if (playerIdx >= 0) {
-							PlayersStateConnectionManager.upsertPlayer(gameStateId,playerIdx,{ connected: false });
+							PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
 							// Emit to master room
 							const masterRoom = ROOMS.gameStateMaster(gameStateId);
 							this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, {
@@ -242,11 +242,14 @@ export class SocketManager {
 				) {
 					const playerIdx = parseInt(playerStateIdx);
 					if (playerIdx >= 0) {
-                        const lastSeen = new Date();
-						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { connected: true, lastSeen });
+						const lastSeen = new Date();
+						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, {
+							isConnected: true,
+							lastSeen,
+						});
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
-						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { playerStateIdx: parseInt(playerStateIdx), lastSeen });
+						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { idx: parseInt(playerStateIdx), lastSeen });
 						log.info(`Player ${playerStateIdx} (avatar ${avatarIdx}) joined to gameState ${gameStateId}`);
 					}
 				} else {
@@ -263,10 +266,10 @@ export class SocketManager {
 				if (roomType === 'gs' && avatarIdx !== 'master' && avatarIdx !== 'bank' && avatarIdx !== 'results') {
 					const playerIdx = parseInt(playerStateIdx);
 					if (playerIdx >= 0) {
-						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { connected: false });
+						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
-						this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, { playerStateIdx: playerIdx });
+						this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, { idx: playerIdx });
 						log.info(
 							`Player ${playerIdx} (avatar ${avatarIdx}) disconnected from gameState ${gameStateId}`
 						);

@@ -28,18 +28,18 @@ class PrisonTimerManager {
 		}
 	}
 
-	async stopTimer(id) {
+	async releasePlayer(gameStateId, playerIdx) {
 		try {
-			const timer = this.getTimer(id);
+			const timer = this.getTimer(`${gameStateId}-${playerIdx}`);
 			if (timer) {
 				// Wait for the timer to fully stop
 				await timer.stop().catch((err) => {
-					log.error(`Error stopping timer ${id}: ${err}`);
+					log.error(`Error stopping timer ${gameStateId}-${playerIdx}: ${err}`);
 				});
 				// Remove the timer from the map
-				const wasDeleted = this.timers.delete(id);
+				const wasDeleted = this.timers.delete(`${gameStateId}-${playerIdx}`);
 				if (wasDeleted) {
-					log.debug(`Successfully stopped and removed prison timer ${id}`);
+					log.debug(`Successfully stopped and removed prison timer ${gameStateId}-${playerIdx}`);
 				} else {
 					log.warn(`Prison timer ${id} not found in timers map when trying to remove`);
 				}

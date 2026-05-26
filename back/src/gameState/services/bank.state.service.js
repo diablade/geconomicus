@@ -1,13 +1,14 @@
 import _ from 'lodash';
-import bankTimerManager from './../managers/BankTimerManager.js';
+import GameStateManager from '../managers/GameStateManager.js';
+import creditTimerManager from '../managers/CreditTimerManager.js';
+import prisonTimerManager from '../managers/PrisonTimerManager.js';
 import socket from '#config/socket';
 import log from '#config/log';
 import DecksStateHelper from '../helpers/decks.state.helper.js';
 import Timer from '../../misc/Timer.js';
 import { differenceInMilliseconds } from 'date-fns';
-import { CREDIT_STATUS, PLAYER_TYPE, ROOMS } from '@geco/shared';
+import { CREDIT_STATUS, GAME_STATUS, PLAYER_TYPE, PLAYER_STATUS, ROOMS, IO, DB_EVENTS } from '@geco/shared';
 import EventService from '../../event/event.service.js';
-import { DB_EVENTS } from '@geco/shared';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -79,7 +80,7 @@ const _canDoCreditAction = (credit, playerState, action) => {
 	}
 	if (action === CREDIT_STATUS.SEIZURE) {
 		return {
-			canPay: credit.status === CREDIT_STATUS.DEFAULT,
+			canPay: credit.status === CREDIT_STATUS.FAULT,
 		};
 	}
 	throw new Error('Invalid credit action');
@@ -195,45 +196,6 @@ const lockDownPlayer = async (idPlayer, idGame, prisonTime) => {
 	//     };
 };
 
-// ─── Timer callbacks ───────────────────────────────────────────────────────────
-
-const _creditTimeoutCallback = async (timerInstance) => {
-	const gameStateId = timerInstance.data.gameStateId;
-	await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules, events } = entry;
-		(timer) => {
-			timeoutCredit(timer);
-		};
-	});
-};
-
-const _creditHeartBeatCallback = async (timerInstance) => {
-	let remainingTime = differenceInMilliseconds(timerInstance.endTime, new Date());
-	let totalTime = differenceInMilliseconds(timerInstance.endTime, timerInstance.startTime);
-
-	const elapsed = Date.now() - timerInstance.startTime;
-	const remainingMs = timerInstance.duration - elapsed;
-	const remainingSeconds = Math.ceil(remainingMs / 1000);
-	const remainingMinutes = Math.ceil(remainingSeconds / 60);
-	const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-	socket.emitTo(ROOMS.gameState(timerInstance.data.gameStateId), PROGRESS_CREDIT, {
-		id: timerInstance.id,
-		progress,
-	});
-	socket.emitTo(
-		ROOMS.playerState(
-			timerInstance.data.gameStateId,
-			timerInstance.data.avatarIdx,
-			timerInstance.data.playerStateIdx
-		),
-		PROGRESS_CREDIT,
-		{
-			id: timerInstance.id,
-			progress,
-		}
-	);
-};
-
 const _prisonEndCallback = async (timerInstance) => {
 	log.info(`Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`);
 	// TODO: Implement prison end logic
@@ -281,6 +243,45 @@ const _prisonProgressCallback = async (timerInstance) => {
 	// TODO: Implement prison progress logic
 };
 
+// ─── Timer callbacks ───────────────────────────────────────────────────────────
+
+const _creditTimeoutCallback = async (timerInstance) => {
+	const gameStateId = timerInstance.data.gameStateId;
+	await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules, events } = entry;
+		(timer) => {
+			timeoutCredit(timer);
+		};
+	});
+};
+
+const _creditHeartBeatCallback = async (timerInstance) => {
+	let remainingTime = differenceInMilliseconds(timerInstance.endTime, new Date());
+	let totalTime = differenceInMilliseconds(timerInstance.endTime, timerInstance.startTime);
+
+	const elapsed = Date.now() - timerInstance.startTime;
+	const remainingMs = timerInstance.duration - elapsed;
+	const remainingSeconds = Math.ceil(remainingMs / 1000);
+	const remainingMinutes = Math.ceil(remainingSeconds / 60);
+	const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
+	socket.emitTo(ROOMS.gameState(timerInstance.data.gameStateId), PROGRESS_CREDIT, {
+		id: timerInstance.id,
+		progress,
+	});
+	socket.emitTo(
+		ROOMS.playerState(
+			timerInstance.data.gameStateId,
+			timerInstance.data.avatarIdx,
+			timerInstance.data.playerStateIdx
+		),
+		PROGRESS_CREDIT,
+		{
+			id: timerInstance.id,
+			progress,
+		}
+	);
+};
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 const BankStateService = {};
@@ -290,15 +291,24 @@ const BankStateService = {};
  * Adds coins (amount) to player, pushes credit into state.credits,
  * updates currentMassMonetary, starts a debt timer.
  */
-BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, interest, startNow) => {
+BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, interest) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
 		const playerState = _findPlayer(gameState, playerStateIdx);
+		if (!playerState) {
+			throw new Error('Player not found');
+		}
+		if (playerState.status !== PLAYER_STATUS.ALIVE) {
+			throw new Error('Player is not alive or in prison');
+		}
+
+		const startNow = gameState.status === GAME_STATUS.RUNNING;
 
 		gameState.creditIndexSeq++;
-		const id = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
+		const timerId = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
+
 		const credit = {
-			idx: gameState.creditIndexSeq,
+			id: timerId,
 			amount,
 			interest,
 			playerStateIdx,
@@ -309,33 +319,90 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			endAt: startNow ? new Date(Date.now() + rules.creditDuration * 60 * 1000) : null,
 			timerLeft: rules.creditDuration * 60 * 1000,
 		};
-		events.push(EventService.createEventObject(DB_EVENTS.CREDIT_CREATED, entry.sessionId, entry.gameStateId, PLAYER_TYPE.BANK, playerStateIdx, credit));
-
-		bankTimerManager.addTimer(
+		creditTimerManager.addTimer(
 			new Timer(
-				id,
+				timerId,
 				rules.timerCredit * minute,
 				fiveSeconds,
-                null,
+				null,
 				credit,
-				this._creditHeartBeatCallback,
-                null,
-				this._creditTimeoutCallback
+				_creditHeartBeatCallback,
+				null,
+				_creditTimeoutCallback
 			),
 			startNow
 		);
+		gameState.currentMassMonetary += amount;
+		gameState.credits.push(credit);
+		playerState.coins += amount;
+
+		events.push(
+			EventService.createEventObject(
+				DB_EVENTS.CREDIT_CREATED,
+				entry.sessionId,
+				entry.gameStateId,
+				PLAYER_TYPE.BANK,
+				playerStateIdx,
+				credit
+			)
+		);
+
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit });
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerStateIdx), IO.CREDIT.NEW, {
+			credit,
+		});
 
 		return {
-			playerState,
-			gameState: {
-				typeMoney: gameState.typeMoney,
-				status: gameState.status,
-				currentDU: gameState.currentDU || 0,
-				currentMassMonetary: gameState.currentMassMonetary || 0,
-			},
-			rules,
-			credits,
-			defaultCredit,
+			currentMassMonetary: gameState.currentMassMonetary || 0,
+			credit,
+		};
+	});
+};
+
+BankStateService.cancelCredit = async (gameStateId, creditId) => {
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, events } = entry;
+
+		const credit = gameState.credits.find((c) => c.id === creditId);
+		if (!credit) {
+			throw new Error('Credit not found');
+		}
+		const playerState = _findPlayer(gameState, credit.playerStateIdx);
+		if (!playerState) {
+			throw new Error('Player state not found');
+		}
+		console.log(playerState.coins);
+		console.log(credit.amount);
+		if (playerState.coins < credit.amount) {
+			throw new Error('Not enough coins');
+		}
+
+		gameState.currentMassMonetary -= credit.amount;
+		playerState.coins -= credit.amount;
+		credit.status = CREDIT_STATUS.CANCELED;
+		credit.endAt = new Date();
+		creditTimerManager.stopAndRemoveTimer(credit.timerId);
+
+		events.push(
+			EventService.createEventObject(
+				DB_EVENTS.CREDIT_CANCELED,
+				entry.sessionId,
+				entry.gameStateId,
+				PLAYER_TYPE.BANK,
+				credit.playerStateIdx,
+				credit
+			)
+		);
+
+		socket.emitAckTo(
+			ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.playerStateIdx),
+			IO.CREDIT.CANCELED,
+			{ credit }
+		);
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, { credit });
+
+		return {
+			credit,
 		};
 	});
 };
@@ -348,7 +415,7 @@ BankStateService.startCreditsOfGame = async (idGame) => {
 	//         $set: {"credits.$[].status": RUNNING_CREDIT},
 	//     }, {new: true})
 	//         .then((updatedGame) => {
-	//             bankTimerManager.startAllIdGameDebtTimer(idGame);
+	//             creditTimerManager.startAllIdGameDebtTimer(idGame);
 	//             socket.emitTo(idGame + BANK, CREDITS_STARTED);
 	//         })
 	//         .catch((error) => {
@@ -358,7 +425,7 @@ BankStateService.startCreditsOfGame = async (idGame) => {
 
 BankStateService.seizureOnDead = async (gameState, rules, player) => {
 	let cardsValue = _.reduce(player.cards, (acc, c) => price + acc, 0);
-	await bankTimerManager.stopPlayerDebtsTimer(gameState._id, player.idx);
+	await creditTimerManager.stopPlayerDebtsTimer(gameState._id, player.idx);
 	let credits = _findCreditsOfPlayer(gameState, player.idx);
 
 	let totalPayedInterest = 0;
@@ -627,8 +694,8 @@ BankStateService.payInterest = async (gameStateId, creditIdx, playerStateIdx) =>
 };
 
 BankStateService.prisonBreak = async (gameStateId, playerStateIdx) => {
-    await bankTimerManager.stopAllIdGameDebtTimer(gameStateId);
-    return false;
+	const result = await prisonTimerManager.releasePlayer(gameStateId, playerStateIdx);
+	return result;
 };
 
 export default BankStateService;

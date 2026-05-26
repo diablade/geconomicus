@@ -1,68 +1,74 @@
+import { PlayerStatus } from '@geco/shared';
+
 export class Card {
-	key: string = '';
-	letter: string = '';
-	color: string = '';
-	weight: number = 0;
-	price: number = 0;
+	key = '';
+	letter = '';
+	color = '';
+	weight = 0;
+	price = 0;
 
 	displayed = true;
 	count = 1;
 }
 
 export class Credit {
-	idx: number = 0;
-	amount: number = 0;
-	interest: number = 0;
-	playerStateIdx: number = 0;
-	status: string = '';
-	extended: number = 0;
-	progress: number = 0;
-	createDate: Date = new Date();
-	startDate: Date = new Date();
-    remainingTime: number = 0;
-	endDate: Date = new Date();
+	id = '';
+	amount = 0;
+	interest = 0;
+	playerStateIdx = 0;
+	status = '';
+	extended = 0;
+	progress = 0;
+	createdAt = new Date();
+	startedAt = new Date();
+	remainingTime = 0;
+	endAt = new Date();
 }
 
 export class PlayerState {
-	idx: number = 0;
-	name: string = '';
-	avatarIdx: number = 0;
-	status: string = '';
-	coins: number = 0;
-	cards: Card[] = [];
-	progressPrison: number = 0;
-    connected: boolean = false;
-    lastSeen: Date = new Date();
+	idx = 0;
+	name = '';
+	avatarIdx = 0;
+	status: PlayerStatus | null = null;
+	coins = 0;
+	cards = [];
+	progressPrison = 0;
+}
+
+export class PlayerConnection {
+	idx = 0;
+	isConnected = false;
+	lastSeen = new Date();
 }
 
 export class DeathState {
-    intervalDeath: number = 0;
-    intervalDeathLeft: number = 0;
-    deathQueue: any[] = [];
+	intervalDeath = 0;
+	intervalDeathLeft = 0;
+	deathQueue = [];
 }
 
 export class GameState {
-	typeMoney: string = '';
-	sessionId: string = '';
-	ruleIdx: number = 0;
-	status: string = '';
+	typeMoney = '';
+	sessionId = '';
+	ruleIdx = 0;
+	status = '';
 	decks: Card[][] = [];
-	playerStateIndexSeq: number = 0;
+	playerStateIndexSeq = 0;
 	playersStates: PlayerState[] = [];
-	currentMassMonetary: number = 0;
+	currentMassMonetary = 0;
 
-	timerLeft: number = 0;
-	deathState: DeathState = new DeathState();
+	timerLeft = 0;
+	deathState = new DeathState();
 
 	//state june
-	currentDU: number = 0;
+	currentDU = 0;
 	//state debt
-	creditIndexSeq: number = 0;
-	credits: Credit[] = [];
-	bankInterestEarned: number = 0;
-	bankGoodsEarned: number = 0;
-	bankMoneyLost: number = 0;
+	creditIndexSeq = 0;
+	credits = [];
+	bankInterestEarned = 0;
+	bankGoodsEarned = 0;
+	bankMoneyLost = 0;
 
-	modifiedAt: Date = new Date();
-	createdAt: Date = new Date();
+	modifiedAt = new Date();
+	createdAt = new Date();
 }

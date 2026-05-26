@@ -1,11 +1,10 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, distinctUntilChanged, debounceTime, map, Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, debounceTime, map, Subscription, take } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
-// @ts-ignore
 import { GAME_STATUS, GAME_TYPE, PLAYER_STATUS, IO } from '@geco/shared';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
@@ -32,60 +31,34 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly environment = environment;
+
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
 	@ViewChild('videoPlayerR') videoPlayerR!: ElementRef;
 	@ViewChild('videoPlayerRT') videoPlayerRT!: ElementRef;
+	coinRotate = false;
 
-	sessionId: string = '';
-	gameStateId: string = '';
+	sessionId = '';
+	gameStateId = '';
 
 	// Reactive state from service
 	gameState$ = this.gameStateService.gameState$;
 	rules$ = this.gameStateService.rules$;
 	session$ = this.gameStateService.session$;
-	playersStates$ = this.gameStateService.playersStates$;
 	// Timer state from service
 	timerProgress$ = this.gameStateService.timerProgress$;
 	minutes$ = this.gameStateService.minutes$;
 	seconds$ = this.gameStateService.seconds$;
+	playersAC$ = this.gameStateService.playersAC$;
 
 	vm$ = combineLatest({
 		gameState: this.gameState$,
 		rules: this.rules$,
 		session: this.session$,
-		playersStates: this.playersStates$,
 		timerProgress: this.timerProgress$,
 		minutes: this.minutes$,
 		seconds: this.seconds$,
 	});
-
-	sp$ = combineLatest({
-		session: this.session$,
-		playersStates: this.playersStates$,
-	});
-
-	killUser = false;
-	coinRotate = false;
-
-	playersWithAvatars$ = this.sp$.pipe(
-		debounceTime(0), // wait for simultaneous emissions to stabilize
-		distinctUntilChanged((a, b) => {
-			if (!_.isEqual(a.session.avatars, b.session.avatars)) {
-				return false;
-			}
-			if (!_.isEqual(a.playersStates, b.playersStates)) {
-				return false;
-			}
-			return true;
-		}),
-		map(({ playersStates, session }) =>
-			playersStates.map((playerState) => ({
-				...playerState,
-				avatar: session.avatars.find((a) => a.idx === playerState.avatarIdx) ?? null,
-			}))
-		)
-	);
 
 	constructor(
 		private route: ActivatedRoute,
@@ -124,17 +97,18 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			});
 
 			this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
-				const rules = this.gameStateService.getRulesSnapshot();
-				if (rules.autoDeath) {
-					this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.DEATH_PASS'));
-				} else {
-					this.dialog.open(InformationDialogComponent, {
-						data: {
-							text: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
-							sound: './assets/audios/iamdeath.mp3',
-						},
-					});
-				}
+				this.rules$.pipe(take(1)).subscribe((rules) => {
+					if (rules.autoDeath) {
+						this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.DEATH_PASS'));
+					} else {
+						this.dialog.open(InformationDialogComponent, {
+							data: {
+								text: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
+								sound: './assets/audios/iamdeath.mp3',
+							},
+						});
+					}
+				});
 			});
 		});
 
@@ -174,9 +148,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	resetGame(rulesIdx: number) {
-		const session = this.gameStateService.getSessionSnapshot();
-		this.gameStateService.resetGame(this.gameStateId, session._id, rulesIdx).subscribe((data) => {
-			this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
+		this.session$.pipe(take(1)).subscribe((session) => {
+			this.gameStateService.resetGame(this.gameStateId, session._id, rulesIdx).subscribe((data) => {
+				this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
+			});
 		});
 	}
 
@@ -227,10 +202,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	showBank() {
-		window.open('bank/' + this.gameStateId, '_blank');
-	}
-
 	goToAdmin() {
 		window.open('table/' + this.sessionId + '/' + this.gameStateId, '_blank');
 	}
@@ -253,17 +224,18 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	startRound() {
-		const rules = this.gameStateService.getRulesSnapshot();
-		this.gameStateService.startRound(this.gameStateId).subscribe({
-			next: (result) => {
-				if (result.status === this.PLAYING) {
-					this.gameStateService.setInitialTimer(rules.roundMinutes);
-					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.ROUND_STARTED'));
-				}
-			},
-			error: (err) => {
-				this.snackbarService.showError(this.i18nService.instant('ERROR.START_ROUND'));
-			},
+		this.rules$.pipe(take(1)).subscribe((rules) => {
+			this.gameStateService.startRound(this.gameStateId).subscribe({
+				next: (result) => {
+					if (result.status === this.PLAYING) {
+						this.gameStateService.setInitialTimer(rules.roundMinutes);
+						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.ROUND_STARTED'));
+					}
+				},
+				error: (err) => {
+					this.snackbarService.showError(this.i18nService.instant('ERROR.START_ROUND'));
+				},
+			});
 		});
 	}
 

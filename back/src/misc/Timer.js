@@ -11,10 +11,19 @@ export default class Timer {
 	 * @param {Function|null} callbackAtSave
 	 * @param {Function} callbackAtEnd
 	 */
-	constructor(uniqueId, duration, interval, saveInterval, data, callbackAtInterval, callbackAtSave, callbackAtEnd) {
+	constructor(
+		uniqueId,
+		duration,
+		heartbeatInterval,
+		saveInterval,
+		data,
+		callbackAtInterval,
+		callbackAtSave,
+		callbackAtEnd
+	) {
 		this.id = uniqueId;
 		this.duration = duration;
-		this.interval = interval;
+		this.heartbeatInterval = heartbeatInterval;
 		this.saveInterval = saveInterval;
 		this.data = data;
 		this.callbackAtInterval = callbackAtInterval;
@@ -90,14 +99,14 @@ export default class Timer {
 	}
 
 	_startHeartbeat() {
-		if (!this.interval || !this.callbackAtInterval) return;
+		if (!this.heartbeatInterval || !this.callbackAtInterval) return;
 		this._heartbeat = setInterval(async () => {
 			try {
 				await this.callbackAtInterval(this);
 			} catch (err) {
 				log.error(`[Timer] ${this.id} callbackAtInterval error: ${err}`);
 			}
-		}, this.interval);
+		}, this.heartbeatInterval);
 	}
 
 	_startSaveHeartbeat() {

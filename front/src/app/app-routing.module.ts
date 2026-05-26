@@ -26,6 +26,7 @@ const routes: Routes = [
 	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent},
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
 	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
+	{path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent},
 	{path: 'table/:sessionId/:gameStateId', component: MasterAdminComponent},
 	{path: 'module/galileo', component: ModuleGalileoComponent},
 	{path: 'module/gini', component: ModuleWealthDistribComponent},

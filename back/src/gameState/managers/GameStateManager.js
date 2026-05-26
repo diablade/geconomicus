@@ -6,7 +6,7 @@ import RulesService from '../../session/rules/rules.service.js';
 import socket from '#config/socket';
 import { IO } from '@geco/shared';
 import gameTimerManager from './GameTimerManager.js';
-import bankTimerManager from './BankTimerManager.js';
+import bankTimerManager from './CreditTimerManager.js';
 
 /**
  * InMemoryGameStateManager

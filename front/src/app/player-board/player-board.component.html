@@ -1,9 +1,9 @@
 <ng-container *ngIf="vm$ | async as vm">
-	<div class="blocked" *ngIf="vm.playerState.status === PRISON || defaultCredit">
+	<div class="blocked" *ngIf="vm.playerStatus === PRISON || defaultCredit">
 		<div class="default-credit" *ngIf="defaultCredit">
 			{{ 'PLAYER.GO_TO_BANK' | translate }}
 		</div>
-		<div class="prison" *ngIf="vm.playerState.status === PRISON" [@prisonDoor]="'in'">
+		<div class="prison" *ngIf="vm.playerStatus === PRISON" [@prisonDoor]="'in'">
 			<div class="countDownContainer">
 				<div class="time">
 					<div class="minute shadowed">{{ minutesPrison | number: '2.0' }}</div>
@@ -19,7 +19,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="blocked" *ngIf="vm.playerState.status === DEAD">
+	<div class="blocked" *ngIf="vm.playerStatus === DEAD">
 		<div class="default-credit d-flex flex-column">
 			<div class="shadowed fs-3">{{ 'PLAYER.THIS_LIFE_IS_GONE' | translate }}</div>
 			<button (click)="tryReincarnate()" mat-raised-button color="accent">
@@ -41,17 +41,14 @@
 							[height]="'69px'"
 							[namePosition]="'right'"
 							class="avatar"></avatar>
-						<!-- <div class="username contourText">{{ vm.avatar?.name }}</div> -->
 					</div>
 				</div>
-				<div class="sold-container d-flex flex-row rounded-box align-items-center" (click)="refresh()">
-					<div class="d-flex flex-column">
+				<div class="sold-container d-flex flex-row frame frame-light align-items-center" (click)="refresh()">
+					<div class="d-flex flex-column ms-2">
 						<div class="sold contourText">
 							{{
-								(vm.gameState.typeMoney === DEBT
-									? vm.playerState.coins
-									: vm.playerState.coins / vm.gameState.currentDU
-								) | number: '1.2-2'
+								(vm.gameState.typeMoney === DEBT ? vm.coins : vm.coins / vm.gameState.currentDU)
+									| number: '1.2-2'
 							}}
 							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU') | translate }}
 						</div>
@@ -60,11 +57,12 @@
 							{{
 								vm.gameState.typeMoney === DEBT
 									? currentDebts(vm.credits)
-									: (vm.playerState.coins | number: '1.2-2')
+									: (vm.coins | number: '1.2-2')
 							}}
 							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE') | translate }}
 						</div>
 					</div>
+					<div class="flex-grow-1"></div>
 					<coin
 						class=""
 						[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
@@ -85,6 +83,7 @@
 				<app-notice-btn
 					class="text-center d-block m-4"
 					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
+					[stroked]="true"
 					[timerCredit]="vm.rules.timerCredit || 0"
 					*ngIf="vm.gameState.status !== FINISHED"></app-notice-btn>
 				<button
@@ -104,7 +103,7 @@
 				</button>
 			</div>
 			<div *ngIf="vm.typeTheme === 'CARD'" @list class="d-flex flex-row flex-wrap">
-				<ng-container *ngFor="let card of cards | async">
+				<ng-container *ngFor="let card of vm.cards">
 					<!-- {{ card | json }} -->
 					<app-card
 						@item
@@ -127,7 +126,7 @@
 				</ng-container>
 			</div>
 			<div *ngIf="vm.typeTheme !== 'CARD'" @list class="d-flex flex-row flex-wrap justify-content-center">
-				<div @item *ngFor="let card of cards | async">
+				<div @item *ngFor="let card of vm.cards">
 					<!-- {{ card | json }} -->
 					<app-item
 						@item
@@ -168,7 +167,7 @@
 					class="d-flex flex-row overflow-auto"
 					*ngIf="panelRecipeOpenState"
 					[ngClass]="panelCreditOpenState ? 'w-50' : 'w-100'">
-					<div class="m-1" *ngFor="let recipe of recipies(vm.playerState, vm.rules)">
+					<div class="m-1" *ngFor="let recipe of recipies(vm.cards, vm.rules)">
 						<app-recipe
 							[recipe]="recipe"
 							[typeTheme]="vm.typeTheme"
@@ -216,7 +215,7 @@
 					class="buy box-shadowed"
 					mat-fab
 					color="accent"
-					[disabled]="vm.gameState.status !== PLAYING || vm.playerState.status === DEAD"
+					[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
 					(click)="buyWith()">
 					<fa-icon [icon]="faCreditCardAlt"></fa-icon>
 				</button>

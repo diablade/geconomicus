@@ -5,8 +5,8 @@ const BankController = {};
 BankController.createCredit = async (req, res, next) => {
 	const { gameStateId, playerStateIdx, interest, amount, startNow } = req.body;
 	try {
-		const credit = await BankStateService.createCredit(gameStateId, playerStateIdx, interest, amount, startNow);
-		return res.status(200).json({ credit });
+		const data = await BankStateService.createCredit(gameStateId, playerStateIdx, interest, amount, startNow);
+		return res.status(200).json({ data });
 	} catch (err) {
 		log.error(err);
 		return res.status(500).json({

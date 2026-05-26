@@ -16,7 +16,7 @@ const CardSchema = new Schema(
 
 let Credit = new Schema(
 	{
-		idx: { type: Number, required: true },
+		id: { type: String, required: true },
 		amount: { type: Number, required: true },
 		interest: { type: Number, required: true },
 		playerStateIdx: { type: Number, required: true },

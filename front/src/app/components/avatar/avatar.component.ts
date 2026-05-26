@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Avatar } from '../../models/avatar';
-import { PlayerState } from 'src/app/models/gameState';
+import { PlayerConnection } from 'src/app/models/gameState';
+import { PLAYER_STATUS, PlayerStatus } from '@geco/shared';
 
 @Component({
 	selector: 'avatar',
@@ -13,13 +14,16 @@ export class AvatarComponent implements AfterViewInit {
 	@Input() height!: string;
 	@Input() namePosition: 'right' | 'bottom' | 'none' = 'none';
 	@Input() online: 'online' | 'none' | 'offline' = 'none';
-	@Input() playerState!: PlayerState | null;
-	@Input() showOnlineStatus: boolean = false;
+	@Input() playerStatus: PlayerStatus | null = null;
+	@Input() playerConnection!: PlayerConnection | null;
+	@Input() onlineStatus = false;
+
+	protected readonly DEAD = PLAYER_STATUS.DEAD;
 
 	private _avatar: Avatar = new Avatar();
 
 	@Input()
-	set avatar(value: Avatar | null) {
+	set avatar(value: Avatar | undefined) {
 		if (!value) return;
 		this._avatar = value;
 		this.renderSvg();

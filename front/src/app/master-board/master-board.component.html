@@ -1,8 +1,8 @@
 <ng-container *ngIf="vm$ | async as vm">
-	<div class="sunyBg h-100" [ngClass]="[vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg']">
+	<div class="h-100" [ngClass]="[vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg']">
 		<div class="d-flex flex-column h-100 dots">
 			<div class="d-flex flex-row justify-content-between">
-				<img class="geco" src="./assets/images/geconomicus.png" alt="" />
+				<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 				<div class="d-flex flex-row align-items-center">
 					<app-tasklist-btn [white]="vm.rules.typeMoney !== JUNE" [stroked]="true"></app-tasklist-btn>
 					<app-notice-btn
@@ -13,7 +13,7 @@
 					<app-language-btn [short]="true"></app-language-btn>
 				</div>
 			</div>
-			<div class="container">
+			<div class="container z1">
 				<div class="d-flex align-items-center justify-content-evenly flex-row">
 					<div class="d-flex flex-column">
 						<video
@@ -152,7 +152,7 @@
 						class="m-2 box-shadowed"
 						mat-raised-button
 						color="accent"
-						(click)="showBank()">
+						[routerLink]="['/bank', sessionId, gameStateId]">
 						<mat-icon>account_balance</mat-icon>
 						{{ 'MASTER.BANK_BTN' | translate }}
 					</button>
@@ -161,37 +161,21 @@
 					</button>
 				</div>
 			</div>
-			<div class="backgroundPlayers-Small h-100">
+			<div class="backgroundPlayers mt-4">
 				<div class="d-flex justify-content-center">
-					<div class="players rounded-box">
+					<div class="players frame frame-light">
 						<div class="d-flex flex-row justify-content-center flex-wrap">
-							<div
-								*ngFor="let playerState of playersWithAvatars$ | async"
-								class="player d-flex flex-column">
+							<div *ngFor="let player of playersAC$ | async" class="player d-flex flex-column">
 								<div class="avatar-container">
 									<avatar
-										[avatar]="playerState.avatar"
+										[avatar]="player.avatar"
 										[width]="'80px'"
 										[height]="'80px'"
-										[playerState]="playerState"
-										[showOnlineStatus]="true"
+										[playerStatus]="player.status"
+										[onlineStatus]="true"
+										[playerConnection]="player.connection || null"
 										[namePosition]="'bottom'"
 										[matMenuTriggerFor]="aboveMenu"></avatar>
-									<!-- { lastSeen: (playerState.lastSeen | date: 'dd/MM/yyyy HH:mm:ss') || '_' }" -->
-									<!-- <div
-										*ngIf="playerState.status !== DEAD"
-										[matTooltip]="
-											'MASTER.LAST_SEEN'
-												| translate
-													: {
-															lastSeen: playerState.lastSeen
-																? (playerState.lastSeen | date: 'dd/MM/yyyy HH:mm:ss')
-																: '_',
-													  }
-										"
-										[ngClass]="[playerState.connected ? 'connected' : 'disconnected']"
-										class="status-dot"></div> -->
-									<!-- <div class="dead" *ngIf="playerState.status === 'dead'">🪦</div> -->
 								</div>
 								<mat-menu #aboveMenu="matMenu" yPosition="above">
 									<button
@@ -199,29 +183,26 @@
 										[routerLink]="[
 											'/player',
 											sessionId,
-											playerState.avatar?.idx,
+											player.avatar?.idx,
 											gameStateId,
-											playerState.idx,
+											player.idx,
 										]">
 										<mat-icon>play_arrow</mat-icon>
 										<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
 									</button>
-									<button mat-menu-item (click)="copyPlayerLink(playerState)">
+									<button mat-menu-item (click)="copyPlayerLink(player)">
 										<mat-icon>link</mat-icon>
 										<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
 									</button>
-									<button mat-menu-item (click)="reJoin(playerState)">
+									<button mat-menu-item (click)="reJoin(player)">
 										<mat-icon>qr_code_2</mat-icon>
 										<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
 									</button>
-									<button mat-color="warn" mat-menu-item (click)="killUserNow(playerState)">
+									<button mat-color="warn" mat-menu-item (click)="killUserNow(player)">
 										<mat-icon [color]="'warn'">person_remove</mat-icon>
 										<span>{{ 'MASTER.KILL_USER' | translate }}</span>
 									</button>
 								</mat-menu>
-								<!-- <div class="text-center"> -->
-								<!-- <div>{{ playerState.avatar?.name }}</div> -->
-								<!-- </div> -->
 							</div>
 						</div>
 					</div>
