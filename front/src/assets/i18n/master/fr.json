@@ -64,8 +64,7 @@
 		"PLAY_USER": "Jouer ce joueur",
 		"COPY_USER_LINK": "Copier le lien du joueur",
 		"JOIN_VIA_QR_CODE": "Via le QR code",
-		"GAME_TABLE_VIEW": "Voir la table de jeu",
-		"LAST_SEEN": "Dernière connexion : {{lastSeen}}"
+		"GAME_TABLE_VIEW": "Voir la table de jeu"
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Des couleurs de cheveux sont identique",

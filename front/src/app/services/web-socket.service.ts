@@ -30,23 +30,18 @@ export class WebSocketService {
 		public localStorageService: LocalStorageService,
 		private i18nService: I18nService
 	) {
-		const initConn = new ConnectionStatus();
-		initConn.isConnected = this.isConnected();
 		const lastConnected = this.getLastConnectedTime();
-		initConn.lastSeen = lastConnected ? new Date(lastConnected) : null;
-		this.connectionStatusSubject.next(initConn);
+		this.updateConnectionStatus(this.isConnected(), lastConnected ? new Date(lastConnected) : null);
 
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
 			this.dialog.closeAll();
 			this.disconnected = true;
 			this.socket?.disconnect();
-			this.socket?.removeAllListeners();
-			const conn = new ConnectionStatus();
-			conn.isConnected = false;
+			// Keep listeners registered so a later socket.connect() can
+			// trigger connection status updates and restore UI indicators.
 			const lastConnectedTime = this.getLastConnectedTime();
-			conn.lastSeen = lastConnectedTime ? new Date(lastConnectedTime) : null;
-			this.connectionStatusSubject.next(conn);
+			this.updateConnectionStatus(false, lastConnectedTime ? new Date(lastConnectedTime) : null);
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
@@ -107,9 +102,16 @@ export class WebSocketService {
 
 	private setupConnectionListeners(): void {
 		if (!this.socket) return;
-		const last = this.getLastConnectedTime();
-		const now = Date.now();
 		const maxOfflineDuration = 10000; // 10 secondes
+
+		const handleConnectedState = () => {
+			if (this.disconnected) {
+				this.disconnected = false;
+				this.dialog.closeAll();
+				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
+			}
+			this.updateConnectedStatus();
+		};
 
 		this.socket.on('kicked', (data) => {
 			console.warn("kicked : " + data.reason);
@@ -130,7 +132,9 @@ export class WebSocketService {
 			console.log('Rejoining rooms after socket reconnect:', Array.from(this.joinedRooms));
             this.dialog.closeAll();
 			this.rejoinAllRooms();
-			if (last && now - last > maxOfflineDuration) {
+			const lastConnected = this.getLastConnectedTime();
+			const now = Date.now();
+			if (lastConnected && now - lastConnected > maxOfflineDuration) {
 				console.warn('Reconnected after long offline time — reloading page');
 				window.location.reload(); // force refresh
 			} else {
@@ -138,40 +142,27 @@ export class WebSocketService {
 				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTED"));
 			}
 		});
+		this.socket.on('connect', () => {
+			console.log('Socket connect');
+			handleConnectedState();
+		});
 		//this.socket.io.on('ping', () => console.log('ping sent'));
 		this.socket.on("connected", (data: any) => {
 			console.log('Socket IO acknowledged connection');
-			if (this.disconnected) {
-				this.disconnected = false;
-				this.dialog.closeAll();
-				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
-			}
-			this.saveLastConnectedTime();
-			const conn = new ConnectionStatus();
-			conn.isConnected = true;
-			conn.lastSeen = new Date();
-			this.connectionStatusSubject.next(conn);
+			handleConnectedState();
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
 			this.dialog.closeAll();
 			this.showDisconnectedDialog();
-			const conn = new ConnectionStatus();
-			conn.isConnected = false;
-			const lastConnected = this.getLastConnectedTime();
-			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
-			this.connectionStatusSubject.next(conn);
+			this.updateDisconnectedStatus();
 			// this.socket?.io?.reconnection();
 		});
 		this.socket.on("disconnect", (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
 			this.showReconnectingDialog();
-			const conn = new ConnectionStatus();
-			conn.isConnected = false;
-			const lastConnected = this.getLastConnectedTime();
-			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
-			this.connectionStatusSubject.next(conn);
+			this.updateDisconnectedStatus();
 			//try reconnection
 			// this.socket?.io?.reconnection();
 		});
@@ -214,6 +205,7 @@ export class WebSocketService {
 
 		if (this.socket && this.socket.connected && !queryChanged) {
 			this.disconnected = false;
+			this.updateConnectedStatus();
 			return;
 		}
 
@@ -224,11 +216,7 @@ export class WebSocketService {
 			this.socket?.removeAllListeners();
 			this.eventHandlers.clear();
 			this.joinedRooms.clear();
-			const conn = new ConnectionStatus();
-			conn.isConnected = false;
-			const lastConnected = this.getLastConnectedTime();
-			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
-			this.connectionStatusSubject.next(conn);
+			this.updateDisconnectedStatus();
 		}
 
 		this.connect({privateChannel: query.privateChannel, publicChannel: query.publicChannel});
@@ -295,6 +283,23 @@ export class WebSocketService {
 
 	private saveLastConnectedTime(): void {
 		this.localStorageService.setItem('lastSocketConnected', Date.now().toString());
+	}
+
+	private updateConnectionStatus(isConnected: boolean, lastSeen: Date | null): void {
+		const conn = new ConnectionStatus();
+		conn.isConnected = isConnected;
+		conn.lastSeen = lastSeen;
+		this.connectionStatusSubject.next(conn);
+	}
+
+	private updateConnectedStatus(): void {
+		this.saveLastConnectedTime();
+		this.updateConnectionStatus(true, new Date());
+	}
+
+	private updateDisconnectedStatus(): void {
+		const lastConnected = this.getLastConnectedTime();
+		this.updateConnectionStatus(false, lastConnected ? new Date(lastConnected) : null);
 	}
 
 	private getLastConnectedTime(): number | null {
