@@ -89,10 +89,14 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 
 	bank$ = combineLatest({
 		openedCredits: this.credits$.pipe(
-			map((credits) => credits.filter((c) => c.status !== CREDIT_STATUS.DONE && c.status !== CREDIT_STATUS.CANCELED)),
+			map((credits) =>
+				credits.filter((c) => c.status !== CREDIT_STATUS.DONE && c.status !== CREDIT_STATUS.CANCELED)
+			)
 		),
 		closedCredits: this.credits$.pipe(
-			map((credits) => credits.filter((c) => c.status === CREDIT_STATUS.DONE || c.status === CREDIT_STATUS.CANCELED)),
+			map((credits) =>
+				credits.filter((c) => c.status === CREDIT_STATUS.DONE || c.status === CREDIT_STATUS.CANCELED)
+			)
 		),
 		debts: this.credits$.pipe(
 			map((credits) => {
@@ -165,11 +169,15 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant('CREDIT.CANCEL'),
-				message: this.i18nService.instant('CREDIT.CANCEL_MESSAGE', { amount: credit.amount }),
+				message: this.i18nService.instant('CREDIT.CANCEL_MESSAGE', {
+					amount: credit.amount,
+					username: this.getAvatar(credit.playerStateIdx)?.name,
+				}),
+				message2: this.i18nService.instant('CREDIT.CANCEL_MESSAGE2'),
 			},
 		});
 		dialogRef.afterClosed().subscribe((result) => {
-			if (result) {
+			if (result === 'btnConfirm') {
 				this.gameStateService.cancelCredit(credit);
 			}
 		});
@@ -183,7 +191,7 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 			},
 		});
 		dialogRef.afterClosed().subscribe((result) => {
-			if (result) {
+			if (result === 'btnConfirm') {
 				// this.gameState.playersStates
 				// 	.filter((p) => p.status === PLAYER_STATUS.ALIVE)
 				// 	.forEach((p) => {

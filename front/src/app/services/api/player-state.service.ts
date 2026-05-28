@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
-import { GameState, Card, Credit } from '../../models/gameState';
+import { GameState, Card, Credit, ConnectionStatus } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
@@ -27,6 +27,7 @@ export class PlayerStateService {
 	typeMoney$ = this.typeMoneySubject.asObservable();
 	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
 	playerStatus$ = this.playerStatusSubject.asObservable();
+	playerConnection$ = inject(WebSocketService).connectionStatus$;
 
 	private coinsSubject = new BehaviorSubject<number>(0);
 	coins$ = this.coinsSubject.asObservable();
@@ -151,6 +152,7 @@ export class PlayerStateService {
 		}
 	}
 	private joinRooms(): void {
+		console.log('Joining game states rooms...');
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomPlayerState);
 	}
@@ -161,12 +163,6 @@ export class PlayerStateService {
 	}
 	private setupMiscSocketListeners(): void {
 		this.wsService.on('connected', () => {
-			// if avatarService is connected it should come here to connect other rooms
-			console.log('Joining game states rooms...');
-			this.joinRooms();
-		});
-
-		this.wsService.on('reconnected', () => {
 			// if avatarService is connected it should come here to connect other rooms
 			console.log('Joining game states rooms...');
 			this.joinRooms();
@@ -484,6 +480,7 @@ export class PlayerStateService {
 	// Remove all event listeners to prevent memory leaks
 	offAll(): void {
 		// playerState service events
+		this.wsService.off('connected');
 		this.wsService.off('resync');
 		this.wsService.off(IO.PLAYER.INIT);
 		this.wsService.off(IO.PLAYER.DIED);

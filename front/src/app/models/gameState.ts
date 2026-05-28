@@ -35,10 +35,10 @@ export class PlayerState {
 	progressPrison = 0;
 }
 
-export class PlayerConnection {
+export class ConnectionStatus {
 	idx = 0;
 	isConnected = false;
-	lastSeen = new Date();
+	lastSeen: Date | null = null;
 }
 
 export class DeathState {

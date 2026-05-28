@@ -3,36 +3,43 @@ import log from '#config/log';
 export default class Timer {
 	/**
 	 * @param {string} uniqueId
+     * @param {*} data                        - payload
 	 * @param {number} duration              - total duration in ms
-	 * @param {number|null} heartbeatInterval - heartbeat interval in ms (null = disabled)
-	 * @param {number|null} saveInterval      - save interval in ms (null = disabled)
-	 * @param {*} data                        - payload
-	 * @param {Function|null} callbackAtInterval
-	 * @param {Function|null} callbackAtSave
-	 * @param {Function} callbackAtEnd
+     * @param {Function} callbackAtEnd
+	 * @param {number|null} durationInterval1 - duration interval in ms (null = disabled)
+     * @param {Function|null} callbackInterval1
+     * @param {number|null} durationInterval2 - duration interval in ms (null = disabled)
+     * @param {Function|null} callbackInterval2
+     * @param {number|null} durationInterval3 - duration interval in ms (null = disabled)
+     * @param {Function|null} callbackInterval3
 	 */
 	constructor(
 		uniqueId,
-		duration,
-		heartbeatInterval,
-		saveInterval,
 		data,
-		callbackAtInterval,
-		callbackAtSave,
-		callbackAtEnd
+		duration,
+		callbackAtEnd,
+		durationInterval1,
+		callbackInterval1,
+		durationInterval2,
+		callbackInterval2,
+		durationInterval3,
+		callbackInterval3,
 	) {
 		this.id = uniqueId;
-		this.duration = duration;
-		this.heartbeatInterval = heartbeatInterval;
-		this.saveInterval = saveInterval;
 		this.data = data;
-		this.callbackAtInterval = callbackAtInterval;
-		this.callbackAtSave = callbackAtSave;
+		this.duration = duration;
 		this.callbackAtEnd = callbackAtEnd;
+		this.durationInterval1 = durationInterval1;
+		this.callbackInterval1 = callbackInterval1;
+		this.durationInterval2 = durationInterval2;
+		this.callbackInterval2 = callbackInterval2;
+		this.durationInterval3 = durationInterval3;
+		this.callbackInterval3 = callbackInterval3;
 
 		this._timer = null;
-		this._heartbeat = null;
-		this._saveHeartbeat = null;
+		this._interval1 = null;
+		this._interval2 = null;
+		this._interval3 = null;
 
 		this.startTime = null;
 		this.remainingMs = duration;
@@ -42,9 +49,11 @@ export default class Timer {
 	start() {
 		if (this.status !== 'idle') return;
 		this.startTime = new Date();
+		this.data.startedAt = new Date();
 		this._startMainTimer();
-		this._startHeartbeat();
-		this._startSaveHeartbeat();
+		this._startInterval1();
+		this._startInterval2();
+		this._startInterval3();
 		this.status = 'running';
 		log.debug(`[Timer] ${this.id} started`);
 	}
@@ -63,8 +72,9 @@ export default class Timer {
 		if (this.status !== 'paused') return;
 		this.startTime = new Date();
 		this._startMainTimer();
-		this._startHeartbeat();
-		this._startSaveHeartbeat();
+		this._startInterval1();
+		this._startInterval2();
+		this._startInterval3();
 		this.status = 'running';
 		log.debug(`[Timer] ${this.id} resumed`);
 	}
@@ -72,6 +82,7 @@ export default class Timer {
 	stop() {
 		if (this.status === 'stopped') return;
 		log.debug(`[Timer] ${this.id} stopping...`);
+		this.data.endedAt = new Date();
 		this._clearTimers();
 		this.status = 'stopped';
 		log.debug(`[Timer] ${this.id} stopped`);
@@ -95,37 +106,50 @@ export default class Timer {
 			} catch (err) {
 				log.error(`[Timer] ${this.id} callbackAtEnd error: ${err}`);
 			}
-		}, this.remainingMs);
+		}, this.duration);
 	}
 
-	_startHeartbeat() {
-		if (!this.heartbeatInterval || !this.callbackAtInterval) return;
-		this._heartbeat = setInterval(async () => {
+	_startInterval1() {
+		if (!this.durationInterval1 || !this.callbackInterval1) return;
+		this._interval1 = setInterval(async () => {
 			try {
-				await this.callbackAtInterval(this);
+				await this.callbackInterval1(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackAtInterval error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackInterval1 error: ${err}`);
 			}
-		}, this.heartbeatInterval);
+		}, this.durationInterval1);
 	}
 
-	_startSaveHeartbeat() {
-		if (!this.saveInterval || !this.callbackAtSave) return;
-		this._saveHeartbeat = setInterval(async () => {
+	_startInterval2() {
+		if (!this.durationInterval2 || !this.callbackInterval2) return;
+		this._interval2 = setInterval(async () => {
 			try {
-				await this.callbackAtSave(this);
+				await this.callbackInterval2(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackAtSave error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackInterval2 error: ${err}`);
 			}
-		}, this.saveInterval);
+		}, this.durationInterval2);
+	}
+
+	_startInterval3() {
+		if (!this.durationInterval3 || !this.callbackInterval3) return;
+		this._interval3 = setInterval(async () => {
+			try {
+				await this.callbackInterval3(this);
+			} catch (err) {
+				log.error(`[Timer] ${this.id} callbackInterval3 error: ${err}`);
+			}
+		}, this.durationInterval3);
 	}
 
 	_clearTimers() {
 		clearTimeout(this._timer);
-		clearInterval(this._heartbeat);
-		clearInterval(this._saveHeartbeat);
+		clearInterval(this._interval1);
+		clearInterval(this._interval2);
+		clearInterval(this._interval3);
 		this._timer = null;
-		this._heartbeat = null;
-		this._saveHeartbeat = null;
+		this._interval1 = null;
+		this._interval2 = null;
+		this._interval3 = null;
 	}
 }

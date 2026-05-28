@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService } from '../error.service';
-import { GameState, PlayerState, Credit, PlayerConnection } from '../../models/gameState';
+import { GameState, PlayerState, Credit, ConnectionStatus } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
@@ -26,6 +26,7 @@ export class GameStateService {
 	// Reactive state subjects
 	private gameStateSubject = new BehaviorSubject<Partial<GameState>>({});
 	gameState$ = this.gameStateSubject.asObservable();
+	masterConnection$ = inject(WebSocketService).connectionStatus$;
 
 	private rulesSubject = new BehaviorSubject<Rules>(new Rules());
 	rules$ = this.rulesSubject.asObservable();
@@ -36,7 +37,7 @@ export class GameStateService {
 	private playersStatesSubject = new BehaviorSubject<PlayerState[]>([]);
 	playersStates$ = this.playersStatesSubject.asObservable();
 
-	private connectedPlayersSubject = new BehaviorSubject<PlayerConnection[]>([]);
+	private connectedPlayersSubject = new BehaviorSubject<ConnectionStatus[]>([]);
 	connectedPlayers$ = this.connectedPlayersSubject.asObservable();
 
 	playersAC$ = combineLatest({
@@ -60,7 +61,7 @@ export class GameStateService {
 		map(({ playersStates, session, connectedPlayers }) =>
 			playersStates.map((playerState: PlayerState) => ({
 				...playerState,
-				connection: connectedPlayers.find((c: PlayerConnection) => c.idx === playerState.idx),
+				connection: connectedPlayers.find((c: ConnectionStatus) => c.idx === playerState.idx),
 				avatar: session.avatars.find((a: Avatar) => a.idx === playerState.avatarIdx) ?? undefined,
 			}))
 		)

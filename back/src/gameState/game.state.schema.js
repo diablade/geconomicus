@@ -50,6 +50,17 @@ let DeathState = new Schema(
 	{ _id: false }
 );
 
+let GameTimer = new Schema(
+	{
+		createdAt: { type: Date },
+		startedAt: { type: Date },
+		endedAt: { type: Date },
+		remainingTime: { type: Number, required: true, default: 0 },
+		deathState: { type: DeathState, default: {} },
+	},
+	{ _id: false }
+);
+
 let GameStateSchema = new Schema(
 	{
 		typeMoney: {
@@ -117,6 +128,10 @@ let GameStateSchema = new Schema(
 		bankMoneyLost: {
 			type: Number,
 			default: 0,
+		},
+		gameTimers: {
+			type: GameTimer,
+			default: {},
 		},
 	},
 	{ timestamps: true }

@@ -9,6 +9,7 @@ import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.c
 import {I18nService} from "./i18n.service";
 import {LocalStorageService} from "./local-storage/local-storage.service";
 import { IO } from '@geco/shared';
+import { ConnectionStatus } from '../models/gameState';
 
 @Injectable({
 	providedIn: 'root'
@@ -17,7 +18,8 @@ export class WebSocketService {
 	private socket: Socket | undefined;
 	private ioUrl: string = environment.API_HOST;
 	private disconnected = false;
-	private isReConnected = new BehaviorSubject<boolean>(false);
+	private connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(new ConnectionStatus());
+	connectionStatus$ = this.connectionStatusSubject.asObservable();
 	private currentQuery: any = null;
 	private eventHandlers: Map<string, Function[]> = new Map();
 	private joinedRooms: Set<string> = new Set();
@@ -28,12 +30,23 @@ export class WebSocketService {
 		public localStorageService: LocalStorageService,
 		private i18nService: I18nService
 	) {
+		const initConn = new ConnectionStatus();
+		initConn.isConnected = this.isConnected();
+		const lastConnected = this.getLastConnectedTime();
+		initConn.lastSeen = lastConnected ? new Date(lastConnected) : null;
+		this.connectionStatusSubject.next(initConn);
+
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
 			this.dialog.closeAll();
 			this.disconnected = true;
 			this.socket?.disconnect();
 			this.socket?.removeAllListeners();
+			const conn = new ConnectionStatus();
+			conn.isConnected = false;
+			const lastConnectedTime = this.getLastConnectedTime();
+			conn.lastSeen = lastConnectedTime ? new Date(lastConnectedTime) : null;
+			this.connectionStatusSubject.next(conn);
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
@@ -132,20 +145,33 @@ export class WebSocketService {
 				this.disconnected = false;
 				this.dialog.closeAll();
 				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
-				this.isReConnected.next(true);
 			}
 			this.saveLastConnectedTime();
+			const conn = new ConnectionStatus();
+			conn.isConnected = true;
+			conn.lastSeen = new Date();
+			this.connectionStatusSubject.next(conn);
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
 			this.dialog.closeAll();
 			this.showDisconnectedDialog();
+			const conn = new ConnectionStatus();
+			conn.isConnected = false;
+			const lastConnected = this.getLastConnectedTime();
+			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
+			this.connectionStatusSubject.next(conn);
 			// this.socket?.io?.reconnection();
 		});
 		this.socket.on("disconnect", (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
 			this.showReconnectingDialog();
+			const conn = new ConnectionStatus();
+			conn.isConnected = false;
+			const lastConnected = this.getLastConnectedTime();
+			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
+			this.connectionStatusSubject.next(conn);
 			//try reconnection
 			// this.socket?.io?.reconnection();
 		});
@@ -198,6 +224,11 @@ export class WebSocketService {
 			this.socket?.removeAllListeners();
 			this.eventHandlers.clear();
 			this.joinedRooms.clear();
+			const conn = new ConnectionStatus();
+			conn.isConnected = false;
+			const lastConnected = this.getLastConnectedTime();
+			conn.lastSeen = lastConnected ? new Date(lastConnected) : null;
+			this.connectionStatusSubject.next(conn);
 		}
 
 		this.connect({privateChannel: query.privateChannel, publicChannel: query.publicChannel});
@@ -275,10 +306,6 @@ export class WebSocketService {
 		if (this.socket) {
 			this.socket.emit(event, data, callback);
 		}
-	}
-
-	getReConnectionStatus() {
-		return this.isReConnected.asObservable();
 	}
 
 	joinRoom(room: string): void {

@@ -191,15 +191,7 @@ export class SocketManager {
 					) {
 						const playerIdx = parseInt(playerStateIdx);
 						if (playerIdx >= 0) {
-							PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
-							// Emit to master room
-							const masterRoom = ROOMS.gameStateMaster(gameStateId);
-							this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, {
-								playerStateIdx: parseInt(playerStateIdx),
-							});
-							log.info(
-								`Player ${playerIdx} (avatar ${avatarIdx}) disconnected from gameState ${gameStateId}`
-							);
+							this.emitDisconnecting(gameStateId, avatarIdx, playerIdx);
 						}
 					}
 				}
@@ -360,6 +352,8 @@ export class SocketManager {
 
 		const { socket, disconnectHandler, errorHandler } = connection;
 
+		// Leave all rooms
+		socket.leaveAll();
 		// Remove event listeners
 		if (disconnectHandler) {
 			socket.off('disconnect', disconnectHandler);
@@ -367,9 +361,6 @@ export class SocketManager {
 		if (errorHandler) {
 			socket.off('error', errorHandler);
 		}
-
-		// Leave all rooms
-		socket.leaveAll();
 
 		// Disconnect the socket if still connected
 		if (socket.connected) {
@@ -402,6 +393,16 @@ export class SocketManager {
 		}
 
 		log.info('All socket connections cleaned up');
+	}
+
+	emitDisconnecting(gameStateId, avatarIdx, playerIdx) {
+		PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
+		// Emit to master room
+		const masterRoom = ROOMS.gameStateMaster(gameStateId);
+		this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, {
+			idx: playerIdx,
+		});
+		log.info(`Player ${playerIdx} (avatar ${avatarIdx}) disconnected from gameState ${gameStateId}`);
 	}
 
 	emitTo(roomId, event, data) {

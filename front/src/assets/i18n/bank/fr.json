@@ -41,6 +41,7 @@
 		"SETTLE_ALL": "Rembourser intégralement",
 		"SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?",
 		"CANCEL": "Annuler le crédit",
-		"CANCEL_MESSAGE": "Voulez-vous vraiment annuler le crédit de {{amount}} € ?\n (⚠️ le joueur doit avoir au moins {{amount}} €, les intérêts ne seront pas collectés)",
+		"CANCEL_MESSAGE": "Voulez-vous vraiment annuler le crédit de {{username}} de {{amount}} € ?",
+		"CANCEL_MESSAGE2": "⚠️ le joueur doit avoir au moins {{amount}} €, les intérêts ne seront pas collectés"
 	}
 }

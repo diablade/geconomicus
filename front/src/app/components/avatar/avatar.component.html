@@ -1,25 +1,15 @@
 <div class="avatar-container">
 	<div class="d-flex align-items-center w-100 h-100" [ngClass]="getAlignment()">
 		<div class="dead" *ngIf="playerStatus === DEAD">🪦</div>
-		<div
-			class="avatar box-shadowed"
-			#svgContainer
-			[ngStyle]="{ 'border-color': '#' + avatar.hairColor, width: width, height: height }">
-			<div class="fs-1 geconomicusFont shadowed">?</div>
+		<div class="avatar-wrapper">
+			<div
+				class="avatar box-shadowed"
+				#svgContainer
+				[ngStyle]="{ 'border-color': '#' + avatar.hairColor, width: width, height: height }">
+				<div class="fs-1 geconomicusFont shadowed">?</div>
+			</div>
+			<online-status *ngIf="onlineStatus" class="avatar-online-status" [connection]="connection"></online-status>
 		</div>
 		<div *ngIf="namePosition !== 'none'" class="avatar-name contourText">{{ avatar.name }}</div>
-		<div
-			*ngIf="onlineStatus"
-			class="avatar-online-status"
-			[matTooltip]="
-				'MASTER.LAST_SEEN'
-					| translate
-						: {
-								lastSeen: playerConnection?.lastSeen
-									? (playerConnection?.lastSeen | date: 'dd/MM/yyyy HH:mm:ss')
-									: '_',
-						  }
-			"
-			[ngClass]="[playerConnection?.isConnected ? 'connected' : 'disconnected']"></div>
 	</div>
 </div>

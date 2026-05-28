@@ -70,9 +70,9 @@ const _areCardIdsUnique = (cardIds, authorizedLength) => {
 	return uniqueIds.size === authorizedLength; // Compare the size of the Set array length authorized
 };
 
-const DecksStateHelper = {};
+const DecksHelper = {};
 
-DecksStateHelper.generateDecks = async (rules, length) => {
+DecksHelper.generateDecks = async (rules, length) => {
 	let tableDecks = [[], [], [], []];
 	let lettersInGame = 0;
 	const prices = [rules.priceWeight1, rules.priceWeight2, rules.priceWeight3, rules.priceWeight4];
@@ -105,7 +105,7 @@ DecksStateHelper.generateDecks = async (rules, length) => {
  * @param {object} state - mutable in-memory game state
  * @param {Array}  cards - cards to push back
  */
-DecksStateHelper.pushCardsInDecks = (gameState, cards) => {
+DecksHelper.pushCardsInDecks = (gameState, cards) => {
 	cards.forEach((card) => {
 		gameState.decks[card.weight].push(card);
 	});
@@ -124,7 +124,7 @@ DecksStateHelper.pushCardsInDecks = (gameState, cards) => {
  * @returns {{ newCards: Array, discardEvent: object, newCardsEvent: object }}
  * @throws Error if validation fails
  */
-DecksStateHelper.produce = (gameState, rules, playerStateIdx, cards) => {
+DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	const playerState = gameState.playersStates.find((p) => p.idx === playerStateIdx);
 	if (!playerState) throw new Error('ERROR.PLAYER_NOT_FOUND');
 
@@ -168,7 +168,7 @@ DecksStateHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	};
 };
 
-DecksStateHelper.whoHaveCard = async (gameState, cardKey) => {
+DecksHelper.whoHaveCard = async (gameState, cardKey) => {
 	if (gameState) {
 		const player = gameState.playersStates
 			.filter((p) => p.status === PLAYER_STATUS.ALIVE)
@@ -201,4 +201,4 @@ DecksStateHelper.whoHaveCard = async (gameState, cardKey) => {
 	}
 };
 
-export default DecksStateHelper;
+export default DecksHelper;

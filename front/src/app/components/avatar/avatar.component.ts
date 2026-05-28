@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Avatar } from '../../models/avatar';
-import { PlayerConnection } from 'src/app/models/gameState';
+import { ConnectionStatus } from 'src/app/models/gameState';
 import { PLAYER_STATUS, PlayerStatus } from '@geco/shared';
+import { Observable } from 'rxjs';
 
 @Component({
 	selector: 'avatar',
@@ -15,7 +16,7 @@ export class AvatarComponent implements AfterViewInit {
 	@Input() namePosition: 'right' | 'bottom' | 'none' = 'none';
 	@Input() online: 'online' | 'none' | 'offline' = 'none';
 	@Input() playerStatus: PlayerStatus | null = null;
-	@Input() playerConnection!: PlayerConnection | null;
+	@Input() connection: ConnectionStatus | null = null;
 	@Input() onlineStatus = false;
 
 	protected readonly DEAD = PLAYER_STATUS.DEAD;

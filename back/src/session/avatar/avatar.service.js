@@ -2,7 +2,6 @@ import SessionModel from './../session.model.js';
 
 const AvatarService = {};
 
-
 AvatarService.create = async (sessionId, name) => {
     let newAvatar = {
         name,

@@ -6,7 +6,7 @@ import RulesService from '../../session/rules/rules.service.js';
 import socket from '#config/socket';
 import { IO } from '@geco/shared';
 import gameTimerManager from './GameTimerManager.js';
-import bankTimerManager from './CreditTimerManager.js';
+import creditTimerManager from './CreditTimerManager.js';
 
 /**
  * InMemoryGameStateManager
@@ -139,7 +139,7 @@ class GameStateManager {
 		}
 		if (fromDb.status === GAME_STATUS.PAUSED) {
 			await gameTimerManager.pauseTimer(gameStateId);
-			await bankTimerManager.pauseTimer(gameStateId);
+			await creditTimerManager.pauseTimer(gameStateId);
 			log.warn(`[GameStateManager] Game ${gameStateId} timer paused`);
 		}
 

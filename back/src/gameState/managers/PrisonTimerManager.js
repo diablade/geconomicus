@@ -9,12 +9,10 @@ class PrisonTimerManager {
 		return PrisonTimerManager.instance;
 	}
 
-	async addTimer(timer, startTickNow) {
+	async startTimer(timer) {
 		await this.stopAndRemoveTimer(timer.id);
 		this.timers.set(timer.id, timer);
-		if (startTickNow) {
-			timer.start();
-		}
+		timer.start();
 	}
 
 	getTimer(id) {

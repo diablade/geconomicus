@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { combineLatest, map, Subscription, withLatestFrom } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { Card, Credit, PlayerState } from '../models/gameState';
+import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
@@ -58,6 +58,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	theme: string = this.themesService.getCurrentTheme();
 	avatar$ = inject(AvatarService).avatar$;
 	playerStatus$ = inject(PlayerStateService).playerStatus$;
+	playerConnection$ = inject(PlayerStateService).playerConnection$;
+
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
 	credits$ = inject(PlayerStateService).credits$;
@@ -90,6 +92,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	shortCode: ShortCode | undefined;
 	isBuying = false;
 	isProducing = false;
+	playerConnection: ConnectionStatus | null = null;
 
 	currentDebts = (credits: Credit[]): number => {
 		return credits

@@ -1,8 +1,9 @@
 import log from '#config/log';
 import _ from 'lodash';
 import GameStateManager from '../managers/GameStateManager.js';
-import EventService from '../../event/event.service.js';
+import EventHelper from '../helpers/event.helper.js';
 import BankStateService from './bank.state.service.js';
+import creditTimerManager from '../managers/CreditTimerManager.js';
 import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, PLAYER_TYPE, IO, ROOMS } from '@geco/shared';
 import socket from '#config/socket';
 
@@ -46,28 +47,34 @@ PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, pl
 
 PlayerStateService.killPlayer = async (gameStateId, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules } = entry;
+		const { gameState, events } = entry;
 		const player = gameState.playersStates.find((p) => p.idx === playerStateIdx);
 		if (!player) throw new Error('ERROR.PLAYER_NOT_FOUND');
+		player.status = PLAYER_STATUS.DEAD;
 
-		// Seize player's assets before
+		// Seize player's assets
 		if (gameState.typeMoney === GAME_TYPE.DEBT) {
 			//stop timer of player's credits
-			await BankStateService.seizureOnDead(gameState, rules, player);
-			// socket.emitTo(gameStateId + C.EVENT, C.EVENT, event);
-			// socket.emitTo(gameStateId + C.BANK, C.SEIZED_DEAD, event);
+			await creditTimerManager.stopPlayerDebtsTimer(entry.gameState._id, player.idx);
+			await BankStateService.seizureOnDead(gameState, events, player);
+			socket.to(ROOMS.gameStateBank(gameStateId)).emit(IO.CREDIT.SEIZURE, { playerStateIdx });
+			socket.to(ROOMS.playerState(gameStateId, player.idx)).emit(IO.CREDIT.SEIZURE, { playerStateIdx });
 		}
 
-		player.status = PLAYER_STATUS.DEAD;
 		// Post player died event
-		EventService.postNow(DB_EVENTS.PLAYER_DIED, entry.gameState.sessionId, gameStateId, playerStateIdx, {
-			coins: player.coins,
-			cards: player.cards,
-		});
-		EventService.postNow(DB_EVENTS.PLAYER_SEIZED_DEAD, entry.gameState.sessionId, gameStateId, playerStateIdx, {
-			coins: player.coins,
-			cards: player.cards,
-		});
+		const eventDied = EventHelper.createEvent(
+			DB_EVENTS.PLAYER_DIED,
+			entry.gameState.sessionId,
+			gameStateId,
+			playerStateIdx,
+			{
+				coins: player.coins,
+				cards: player.cards,
+			}
+		);
+
+		events.push(eventDied);
+
 		socket.to(ROOMS.playerState(gameStateId, player.idx)).emit(IO.PLAYER.DIED, { playerStateIdx });
 		socket.to(ROOMS.gameStateMaster(gameStateId)).emit(IO.PLAYER.DIED, { playerStateIdx });
 		return true;
@@ -101,7 +108,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 		seller.cards = seller.cards.filter((c) => c.key !== cardKey);
 
 		// Post transaction event
-		EventService.postNow(DB_EVENTS.TRANSACTION, entry.gameState.sessionId, gameStateId, buyerIdx, sellerIdx, {
+		EventHelper.postNow(DB_EVENTS.TRANSACTION, entry.gameState.sessionId, gameStateId, buyerIdx, sellerIdx, {
 			cost,
 			card,
 		});

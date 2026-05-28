@@ -1,10 +1,8 @@
-.bank {
-	.geco {
-		height: 40px;
-		position: absolute;
-		top: 10px;
-		left: 10px;
-	}
+.geco {
+	height: 40px;
+	position: absolute;
+	top: 10px;
+	left: 10px;
 }
 
 .indicators {
@@ -22,6 +20,11 @@
 	align-items: center;
 	height: 50px;
 }
+.credits {
+	min-width: 100px;
+	flex: 1;
+	overflow: hidden;
+}
 
 .soluce {
 	background: rgba(22, 194, 224, 0.479);
@@ -38,17 +41,11 @@
 	overflow-y: hidden;
 }
 
-.credits {
-	min-width: 0;
-	flex: 1;
-	overflow: hidden;
-}
-
 .creditsLine {
 	min-height: 200px;
 	width: auto;
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 	overflow-x: auto;
 	overflow-y: hidden;
 }

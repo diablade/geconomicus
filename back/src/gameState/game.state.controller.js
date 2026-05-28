@@ -30,7 +30,9 @@ GameStateController.create = async (req, res, next) => {
 			return res.status(300).json({ message: 'ERROR.GAME_ALREADY_CREATED', gameState });
 		}
 
+		console.log('saving game state...');
 		const savedGameState = await GameStateService.create(session, rules);
+		console.log('saved?');
 		const rulesUpdated = await RulesService.updateFromCreatedGameStateId(sessionId, ruleIdx, savedGameState._id);
 		await EventService.postNow(DB_EVENTS.GAME_CREATED, sessionId, savedGameState._id, PLAYER_TYPE.MASTER, '-', {
 			ruleIdx,
@@ -204,11 +206,10 @@ GameStateController.start = async (req, res, next) => {
 		log.error(`Start round error: ${err}`);
 		return res.status(500).json({
 			status: 'ko',
-			message: 'ERROR.START_ROUND',
+			message: err.message,
 		});
 	}
 };
-
 GameStateController.stop = async (req, res, next) => {
 	try {
 		const { gameStateId, round } = req.body;

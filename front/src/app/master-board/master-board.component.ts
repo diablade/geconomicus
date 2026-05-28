@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, distinctUntilChanged, debounceTime, map, Subscription, take } from 'rxjs';
+import { combineLatest, Subscription, take } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,6 +42,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	gameStateId = '';
 
 	// Reactive state from service
+	masterConnection$ = this.gameStateService.masterConnection$;
 	gameState$ = this.gameStateService.gameState$;
 	rules$ = this.gameStateService.rules$;
 	session$ = this.gameStateService.session$;
@@ -202,6 +203,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	spinnerDiameter(): number {
+		return window.innerWidth < 850 ? 200 : 300;
+	}
+
 	goToAdmin() {
 		window.open('table/' + this.sessionId + '/' + this.gameStateId, '_blank');
 	}
@@ -224,18 +229,18 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	startRound() {
-		this.rules$.pipe(take(1)).subscribe((rules) => {
-			this.gameStateService.startRound(this.gameStateId).subscribe({
-				next: (result) => {
+		this.gameStateService.startRound(this.gameStateId).subscribe({
+			next: (result) => {
+				this.rules$.pipe(take(1)).subscribe((rules) => {
 					if (result.status === this.PLAYING) {
 						this.gameStateService.setInitialTimer(rules.roundMinutes);
 						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.ROUND_STARTED'));
 					}
-				},
-				error: (err) => {
-					this.snackbarService.showError(this.i18nService.instant('ERROR.START_ROUND'));
-				},
-			});
+				});
+			},
+			error: (error) => {
+				this.snackbarService.showError(this.i18nService.instant(error.message));
+			},
 		});
 	}
 

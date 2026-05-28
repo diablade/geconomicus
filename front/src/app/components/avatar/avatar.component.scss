@@ -20,21 +20,13 @@
 		display: inline-block; // ou width: fit-content
 	}
 
-	&-online-status {
-		width: 14px;
-		height: 14px;
-		position: absolute;
-		top: 70px;
-		right: -5px;
-		border-radius: 50%;
-		border: 1px solid white; // pour le détacher visuellement de l'avatar
-        box-shadow: 1px 1px 0px rgb(0, 0, 0);
+	&-wrapper {
+		position: relative;
 	}
-}
-.connected {
-	background-color: #4caf50;
-}
 
-.disconnected {
-	background-color: #ff2020;
+	&-online-status {
+		position: absolute;
+		right: -5px;
+		top: 70px;
+	}
 }

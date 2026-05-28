@@ -9,20 +9,14 @@ class GameTimerManager {
 		return GameTimerManager.instance;
 	}
 
-	async addTimer(timer) {
-		await this.stopAndRemoveTimer(timer.id);
-		this.timers.set(timer.id, timer);
-	}
-
 	getTimer(id) {
-		return this.timers.get(id);
+        return this.timers.get(id);
 	}
 
-	async startTimer(timerId) {
-		const timer = this.getTimer(timerId);
-		if (timer) {
-			timer.start();
-		}
+	async startTimer(timer) {
+        await this.stopAndRemoveTimer(timer.id);
+        this.timers.set(timer.id, timer);
+		timer.start();
 	}
 
 	async pauseTimer(timerId) {
@@ -50,17 +44,11 @@ class GameTimerManager {
 		try {
 			const timer = this.getTimer(id);
 			if (timer) {
-				// Wait for the timer to fully stop
 				await timer.stop().catch((err) => {
 					log.error(`Error stopping timer ${id}: ${err}`);
 				});
-				// Remove the timer from the map
-				const wasDeleted = this.timers.delete(id);
-				if (wasDeleted) {
-					log.debug(`Successfully stopped and removed timer ${id}`);
-				} else {
-					log.warn(`Timer ${id} not found in timers map when trying to remove`);
-				}
+				this.timers.delete(id);
+                log.debug(`Successfully stopped and removed timer ${id}`);
 			} else {
 				log.debug(`Timer ${id} not found, nothing to stop`);
 			}
