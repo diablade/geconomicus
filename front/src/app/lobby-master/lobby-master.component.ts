@@ -46,7 +46,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	protected readonly INITIALIZED = GAME_STATUS.INITIALIZED;
 	protected readonly PLAYING = GAME_STATUS.PLAYING;
 	protected readonly PAUSED = GAME_STATUS.PAUSED;
-	protected readonly FINISHED = GAME_STATUS.FINISHED;
+	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly environment = environment;
 	protected readonly faTrashCan = faTrashCan;
 	protected readonly faQrcode = faQrcode;

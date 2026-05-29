@@ -331,6 +331,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 
 		gameState.creditIndexSeq++;
 		const timerId = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
+		const now = new Date();
 		const credit = {
 			id: timerId,
 			amount,
@@ -338,9 +339,9 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			playerStateIdx,
 			status: startNow ? CREDIT_STATUS.RUNNING : CREDIT_STATUS.PAUSED,
 			extended: 0,
-			createdAt: new Date(),
-			startedAt: startNow ? new Date() : null,
-			endAt: startNow ? new Date(Date.now() + rules.creditDuration * 60 * 1000) : null,
+			createdAt: now,
+			startedAt: startNow ? now : null,
+			endAt: startNow ? new Date(now.getTime() + rules.creditDuration * 60 * 1000) : null,
 			timerLeft: rules.creditDuration * 60 * 1000,
 		};
 
@@ -362,7 +363,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 				PLAYER_TYPE.BANK,
 				playerStateIdx,
 				credit,
-				Date().now()
+				now.getTime()
 			)
 		);
 

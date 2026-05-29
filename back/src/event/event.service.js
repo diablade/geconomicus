@@ -1,4 +1,5 @@
 import EventModel from './event.model.js';
+import log from '../../config/log.js';
 
 const EventService = {};
 
@@ -51,9 +52,12 @@ EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiv
 /**
  * @description Post many events
  * @param {Array<object>} eventObjects - The array of event objects to post
+ * @param {string} gameStateId - The ID of the game state
  * @returns {Promise<Array<EventModel>>} The created events
  */
-EventService.postMany = async (eventObjects) => {
+EventService.postMany = async (eventObjects, gameStateId) => {
+    log.debug(`Events posted: ${eventObjects.length || 0} events for game: ${gameStateId}`);
+
     if (!Array.isArray(eventObjects) || eventObjects.length === 0) {
         return [];
     }

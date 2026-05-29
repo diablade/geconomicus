@@ -77,7 +77,7 @@
 				<div class="text-center m-5 fs-1">⌛</div>
 				<div class="text-center shadowed fs-1 m-2">
 					{{
-						vm.gameState.status !== FINISHED
+						vm.gameState.status !== STOPPED
 							? ('PLAYER.WAITING' | translate)
 							: ('PLAYER.GAME_OVER' | translate)
 					}}
@@ -87,9 +87,9 @@
 					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
 					[stroked]="true"
 					[timerCredit]="vm.rules.timerCredit || 0"
-					*ngIf="vm.gameState.status !== FINISHED"></app-notice-btn>
+					*ngIf="vm.gameState.status !== STOPPED"></app-notice-btn>
 				<button
-					*ngIf="vm.gameState.status === FINISHED && vm.rules.surveyEnabled"
+					*ngIf="vm.gameState.status === STOPPED && vm.rules.surveyEnabled"
 					[routerLink]="['survey', sessionId, gameStateId, avatarIdx]"
 					mat-raised-button
 					color="accent">
@@ -97,7 +97,7 @@
 				</button>
 				<button
 					class="ms-1"
-					*ngIf="vm.gameState.status === FINISHED"
+					*ngIf="vm.gameState.status === STOPPED"
 					[routerLink]="['/avatar', sessionId, avatarIdx]"
 					mat-raised-button
 					color="warn">

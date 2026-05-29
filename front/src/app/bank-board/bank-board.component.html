@@ -74,7 +74,7 @@
 							class="box-shadowed"
 							mat-raised-button
 							color="accent"
-							[disabled]="vm.gameState.status === FINISHED"
+							[disabled]="vm.gameState.status === STOPPED"
 							(click)="showContract()">
 							<fa-icon [icon]="faSackDollar"></fa-icon>
 							{{ 'BANK.GIVE_CREDIT' | translate }}
@@ -86,7 +86,7 @@
 							class="box-shadowed"
 							mat-raised-button
 							color="primary"
-							[disabled]="vm.gameState.status === FINISHED"
+							[disabled]="vm.gameState.status === STOPPED"
 							(click)="creditForAll()">
 							<mat-icon>groups</mat-icon>
 							{{ 'BANK.CREDIT_FOR_ALL' | translate }}

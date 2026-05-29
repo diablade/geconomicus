@@ -24,7 +24,6 @@ import { Avatar } from '../models/avatar';
 	styleUrls: ['./bank-board.component.scss'],
 })
 export class BankBoardComponent implements OnInit, OnDestroy {
-	protected readonly FINISHED = GAME_STATUS.FINISHED;
 	protected readonly CREDIT_DONE = CREDIT_STATUS.DONE;
 	protected readonly CREDIT_CANCELED = CREDIT_STATUS.CANCELED;
 	protected readonly CREATED = GAME_STATUS.CREATED;

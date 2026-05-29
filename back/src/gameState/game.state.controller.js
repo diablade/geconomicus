@@ -1,4 +1,4 @@
-import { DB_EVENTS, IO, PLAYER_TYPE, SESSION_STATUS, ROOMS } from '@geco/shared';
+import { DB_EVENTS, IO, PLAYER_TYPE, SESSION_STATUS, GAME_STATUS, ROOMS } from '@geco/shared';
 import log from '#config/log';
 import socket from '#config/socket';
 import EventService from '../event/event.service.js';
@@ -210,31 +210,27 @@ GameStateController.start = async (req, res, next) => {
 		});
 	}
 };
-GameStateController.stop = async (req, res, next) => {
-	try {
-		const { gameStateId, round } = req.body;
-		// 		// Final DB save before removing from memory
-		// 		await GameStateService.saveGameStateToDB(gameStateId);
-		// 		gameTimerManager.stopPersistenceTimer(gameStateId);
-		// 		inMemoryGameStateManager.removeGame(gameStateId);
-		// 		await GameStateService.stop(gameStateId, round);
-		return res.status(200).json({
-			status: STOP,
-		});
-	} catch (err) {
-		log.error(`stop game error: ${err}`);
-		next({ status: 500, message: err });
-	}
-};
 GameStateController.pause = async (req, res, next) => {
 	try {
-		const { gameStateId, round } = req.body;
-		// await GameStateService.pause(gameStateId, round);
+		const { gameStateId } = req.body;
+		await GameStateService.pause(gameStateId);
 		return res.status(200).json({
-			status: PAUSE,
+			status: PAUSED,
 		});
 	} catch (err) {
 		log.error(`pause game error: ${err}`);
+		next({ status: 500, message: err });
+	}
+};
+GameStateController.stop = async (req, res, next) => {
+	try {
+		const { gameStateId } = req.body;
+		await GameStateService.stop(gameStateId);
+		return res.status(200).json({
+			status: GAME_STATUS.STOPPED,
+		});
+	} catch (err) {
+		log.error(`stop game error: ${err}`);
 		next({ status: 500, message: err });
 	}
 };

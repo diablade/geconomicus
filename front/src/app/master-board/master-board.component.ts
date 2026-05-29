@@ -94,7 +94,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			});
 
 			this.wsService.on(IO.GAME.STOPPED, () => {
-				this.stopRound();
+				this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
+				this.dialog.open(InformationDialogComponent, {
+					data: { text: this.i18nService.instant('EVENTS.ROUND_END'), sound: 'end' },
+				});
 			});
 
 			this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
@@ -126,26 +129,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		this.videoPlayerLT?.nativeElement?.play();
 		this.videoPlayerR?.nativeElement?.play();
 		this.videoPlayerRT?.nativeElement?.play();
-	}
-
-	stopRound() {
-		this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
-		this.dialog.open(InformationDialogComponent, {
-			data: { text: this.i18nService.instant('EVENTS.ROUND_END'), sound: 'end' },
-		});
-	}
-
-	endRound() {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				message: this.i18nService.instant('EVENTS.ASK_END_ROUND'),
-			},
-		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btn2') {
-				// TODO: Call backend stopRound endpoint when wired up
-			}
-		});
 	}
 
 	resetGame(rulesIdx: number) {
@@ -229,7 +212,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	startRound() {
-		this.gameStateService.startRound(this.gameStateId).subscribe({
+		this.gameStateService.startGame(this.gameStateId).subscribe({
 			next: (result) => {
 				this.rules$.pipe(take(1)).subscribe((rules) => {
 					if (result.status === this.PLAYING) {
@@ -244,15 +227,26 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
+    stopRound() {
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				message: this.i18nService.instant('EVENTS.ASK_END_ROUND'),
+			},
+		});
+		confDialogRef.afterClosed().subscribe((result) => {
+			if (result && result == 'btnConfirm') {
+				this.gameStateService.stopGame(this.gameStateId).subscribe(() => {
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_ENDED'));
+				});
+			}
+		});
+	}
+
 	pauseRound() {
 		// TODO: Wire to backend pauseRound when endpoint is ready
 	}
 
 	killUserNow(playerState: any) {
 		// TODO: Wire to backend killUser when endpoint is ready
-	}
-
-	sendSurvey() {
-		// TODO: Wire to backend sendSurvey when endpoint is ready
 	}
 }

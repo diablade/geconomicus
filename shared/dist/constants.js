@@ -31,10 +31,7 @@ export const GAME_STATUS = {
     INITIALIZED: 'initialized',
     PLAYING: 'playing',
     PAUSED: 'paused',
-    WAITING: 'waiting',
-    FINISHED: 'finished',
     STOPPED: 'stopped',
-    EVENT: 'event',
 };
 // ─── CREDIT STATUS ────────────────────────────────────────────────────────────
 export const CREDIT_STATUS = {
@@ -73,7 +70,6 @@ export const IO = {
         STARTED: 'gsta',
         PAUSED: 'gpa',
         STOPPED: 'gsto',
-        FINISHED: 'gsf',
         RESET: 'reset',
         DEATH_IS_COMING: 'dic',
         DELETED: 'gdel',
@@ -116,6 +112,7 @@ export const IO = {
 // ─── DATABASE EVENTS (human-readable for debugging) ───────────────────────────
 export const DB_EVENTS = {
     SESSION_STARTED: 'session-started',
+    SESSION_ENDED: 'session-ended',
     GAME_CREATED: 'game-created',
     GAME_INIT: 'game-init',
     GAME_STARTED: 'game-started',
@@ -130,6 +127,7 @@ export const DB_EVENTS = {
     PLAYER_DIED: 'player-died',
     // Credit events
     CREDIT_NEW: 'credit-new',
+    CREDIT_REQUEST: 'credit-request',
     CREDIT_SETTLE: 'credit-settle',
     CREDIT_FAULT: 'credit-fault',
     CREDIT_CANCELED: 'credit-canceled',

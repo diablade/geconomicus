@@ -20,43 +20,49 @@ const app = express();
 app.set('trust proxy', true);
 // CORS POLICY
 // app.use(cors())
-app.use(cors({
-    origin:      [
-        'http://localhost:4200', 'https://geconomicus.fr'
-    ],
-    credentials: false
-}));
+app.use(
+	cors({
+		origin: ['http://localhost:4200', 'https://geconomicus.fr'],
+		credentials: false,
+	})
+);
 
 // USE MIDDLEWARE
 
 // Middleware to block bots
 const botPattern = /bot|crawler|spider|crawling/i;
 app.use((req, res, next) => {
-    if (botPattern.test(req.headers['user-agent'])) {
-        // Respond with 403 Forbidden for bots
-        return res.status(403).json({message: 'Forbidden'});
-    }
-    next();
+	if (botPattern.test(req.headers['user-agent'])) {
+		// Respond with 403 Forbidden for bots
+		return res.status(403).json({ message: 'Forbidden' });
+	}
+	next();
 });
 
 // Middleware to allow only specific paths to be logged by Morgan (for better readability of logs)
-const acceptedPathToBeLogged = /^\/(bank|game|player|session|rules|survey|event|avatar|game-state|bank-state|status)(\/|$)/;
+const acceptedPathToBeLogged =
+	/^\/(bank|game|player|session|rules|survey|event|avatar|game-state|bank-state|status)(\/|$)/;
 app.use((req, res, next) => {
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    req.headers['accept-charset'] = 'utf-8';
-    next();
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
+	req.headers['accept-charset'] = 'utf-8';
+	next();
 });
 
 // Morgan logger setup: Log only defined routes
-app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
-    skip: (req, res) => {
-        return !acceptedPathToBeLogged.test(req.originalUrl);
-    }
-}));
+app.use(
+	morgan(
+		':remote-addr | :remote-user | [:date[clf]] | :method | ":url" | :status | res-size: :res[content-length] | :response-time ms',
+		{
+			skip: (req, res) => {
+				return !acceptedPathToBeLogged.test(req.originalUrl);
+			},
+		}
+	)
+);
 
 // Ensure all requests and responses use UTF-8 encoding
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // MAIN ROUTES middleware
 //legacy routes for old version of the app
@@ -73,40 +79,40 @@ app.use('/game-state', gameStateRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
-    return res.status(200).json({
-        status:  'running',
-        version: env.version
-    })
+	return res.status(200).json({
+		status: 'running',
+		version: env.version,
+	});
 });
 
 //api memory routes
 app.get('/debug/memory', (req, res) => {
-    const used = process.memoryUsage();
-    return res.status(200).json({
-        status:      'running',
-        version:     env.version,
-        memoryUsage: {
-            rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
-            heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-            heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-            external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
-        }
-    })
+	const used = process.memoryUsage();
+	return res.status(200).json({
+		status: 'running',
+		version: env.version,
+		memoryUsage: {
+			rss: `${Math.round((used.rss / 1024 / 1024) * 100) / 100} MB`,
+			heapTotal: `${Math.round((used.heapTotal / 1024 / 1024) * 100) / 100} MB`,
+			heapUsed: `${Math.round((used.heapUsed / 1024 / 1024) * 100) / 100} MB`,
+			external: `${Math.round((used.external / 1024 / 1024) * 100) / 100} MB`,
+		},
+	});
 });
 
 // Catch-all for non-matching routes (404 handler)
 app.use((req, res, next) => {
-    return res.status(404).json({"not": "Found"});
+	return res.status(404).json({ not: 'Found' });
 });
 
 // handle errors
 app.use((err, req, res) => {
-    log.error(err);
+	log.error(err);
 
-    // Set error response
-    return res.status(err.status || 500).json({
-        message: err.message || err || "Something looks wrong :(",
-    });
+	// Set error response
+	return res.status(err.status || 500).json({
+		message: err.message || err || 'Something looks wrong :(',
+	});
 });
 
 export default app;

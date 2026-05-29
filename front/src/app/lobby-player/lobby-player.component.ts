@@ -20,7 +20,7 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	protected readonly GAME_CREATED = GAME_STATUS.CREATED;
 	protected readonly GAME_PLAYING = GAME_STATUS.PLAYING;
 	protected readonly GAME_PAUSED = GAME_STATUS.PAUSED;
-	protected readonly GAME_FINISHED = GAME_STATUS.FINISHED;
+	protected readonly GAME_STOPPED = GAME_STATUS.STOPPED;
 	protected readonly GAME_NONE = GAME_STATUS.NONE;
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;

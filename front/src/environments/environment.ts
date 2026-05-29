@@ -31,7 +31,9 @@ export const environment = {
 		GET: 'game-state/',
 		RESET: 'game-state/reset/',
 		BUY_WITH_CODE: 'game-state/buy-with-code/',
-		START_ROUND: 'game-state/start-round',
+		START: 'game-state/start',
+		PAUSE: 'game-state/pause',
+		STOP: 'game-state/stop',
 	},
 	PLAYER_STATE: {
 		GET: 'game-state/player-state/',

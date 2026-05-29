@@ -67,8 +67,11 @@ class GameStateManager {
 	async getOrReload(gameStateId) {
 		let entry = this.get(gameStateId);
 		if (!entry) {
-			await this.reload(gameStateId); // recharge si PLAYING/PAUSED
-			entry = this.get(gameStateId);
+			const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
+			if (reload.reloaded) {
+				entry = this.get(gameStateId);
+			}
+			return reload;
 		}
 		return entry;
 	}
@@ -115,46 +118,49 @@ class GameStateManager {
 	}
 
 	async reload(gameStateId) {
-		const fromDb = await GameStateModel.findById(gameStateId).lean();
-		if (!fromDb) {
+		const gameState = await GameStateModel.findById(gameStateId).lean();
+		if (!gameState) {
 			throw new Error(`[GameStateManager] Game ${gameStateId} not found in DB`);
+		}
+		const rules = await RulesService.getByIdx(gameState.sessionId, gameState.ruleIdx);
+		if (!rules) {
+			throw new Error(
+				`[GameStateManager] Rules ${gameState.ruleIdx} not found in session ${gameState.sessionId} for game ${gameStateId}`
+			);
 		}
 
 		// Only reload if the game is in a state that should be in memory
-		if (![GAME_STATUS.CREATED, GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(fromDb.status)) {
-			// Notifie le game master et throw
-			socket.emitTo(`${gameStateId}:master`, IO.INFO, {
-				message: 'ERROR.GAME_STATE_OVER',
-			});
-			log.warn(`[GameStateManager] Game ${gameStateId} has status: ${fromDb.status}, will not be reloaded from DB`);
-			throw new Error('ERROR.GAME_STATE_OVER');
+		if (
+			![GAME_STATUS.CREATED, GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(
+				gameState.status
+			)
+		) {
+			log.warn(
+				`[GameStateManager] Game ${gameStateId} has status: ${gameState.status}, will not be reloaded from DB`
+			);
+			return { reloaded: false, gameState, rules };
 		}
-		if (fromDb.status === GAME_STATUS.PLAYING && fromDb.timerLeft > 30) {
+		if (gameState.status === GAME_STATUS.PLAYING && gameState.timerLeft > 30) {
 			const timer = gameTimerManager.getTimer(gameStateId);
 			if (!timer) {
-                //TODO
+				//TODO
 			}
-			fromDb.timerLeft = 30;
+			gameState.timerLeft = 30;
 			log.warn(`[GameStateManager] Game ${gameStateId} timerLeft adjusted to 30 seconds`);
 		}
-		if (fromDb.status === GAME_STATUS.PAUSED) {
+		if (gameState.status === GAME_STATUS.PAUSED) {
 			await gameTimerManager.pauseTimer(gameStateId);
 			await creditTimerManager.pauseTimer(gameStateId);
 			log.warn(`[GameStateManager] Game ${gameStateId} timer paused`);
 		}
 
-		const rules = await RulesService.getByIdx(fromDb.sessionId, fromDb.ruleIdx);
-		if (!rules) {
-			throw new Error(
-				`[GameStateManager] Rules ${fromDb.ruleIdx} not found in session ${fromDb.sessionId} for game ${gameStateId}`
-			);
-		}
-		this.store(gameStateId, fromDb, rules);
+		this.store(gameStateId, gameState, rules);
 		log.info(`[WARN] Game ${gameStateId} reloaded from DB (in memory)`);
 		socket.emitTo(`${gameStateId}:master`, IO.INFO, {
 			gameStateId,
 			message: 'Game reloaded from DB after memory loss',
 		});
+		return { reloaded: true };
 	}
 
 	/**

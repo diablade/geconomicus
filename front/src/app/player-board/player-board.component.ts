@@ -39,7 +39,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEBT = GAME_TYPE.DEBT;
-	protected readonly FINISHED = GAME_STATUS.FINISHED;
+	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly faFileContract = faFileContract;
 	protected readonly faClipboardCheck = faClipboardCheck;
 	protected readonly faCreditCardAlt = faCreditCardAlt;

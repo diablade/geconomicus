@@ -139,7 +139,7 @@
 								<div class="fs-7 text-center white">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
 									{{ rule.gameStatus === INITIALIZED ? ('MASTER.GAME_OPEN' | translate) : '' }}
-									{{ rule.gameStatus === FINISHED ? ('MASTER.GAME_FINISHED' | translate) : '' }}
+									{{ rule.gameStatus === STOPPED ? ('MASTER.GAME_STOPPED' | translate) : '' }}
 								</div>
 								<button
 									*ngIf="rule.gameStatus === NONE"

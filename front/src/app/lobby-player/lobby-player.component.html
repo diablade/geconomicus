@@ -34,7 +34,7 @@
 						[coinImage]="'./assets/images/' + game.typeMoney + '.png'"
 						[label]="(game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
 					<button
-						*ngIf="game.gameStatus !== GAME_FINISHED"
+						*ngIf="game.gameStatus !== GAME_STOPPED"
 						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus === undefined"
 						class="m-2 box-shadowed"
 						mat-raised-button

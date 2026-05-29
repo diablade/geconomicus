@@ -1,6 +1,7 @@
 {
   "name": "@geco/shared",
-  "version": "1.0.1",
+  "type": "module",
+  "version": "1.0.2",
   "description": "shared code for geconomicus",
   "main": "./dist/constants.js",
   "types": "./dist/constants.d.ts",

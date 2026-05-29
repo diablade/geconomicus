@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
-import { GameState, Card, Credit, ConnectionStatus } from '../../models/gameState';
+import { GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
@@ -208,14 +208,6 @@ export class PlayerStateService {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.STOPPED;
-				this.gameStateSubject.next(currentGameState);
-			}
-		});
-
-		this.wsService.on(IO.GAME.FINISHED, (data: any) => {
-			const currentGameState = this.gameStateSubject.getValue();
-			if (currentGameState) {
-				currentGameState.status = GAME_STATUS.FINISHED;
 				this.gameStateSubject.next(currentGameState);
 			}
 		});
@@ -488,7 +480,6 @@ export class PlayerStateService {
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
 		this.wsService.off(IO.GAME.STARTED);
 		this.wsService.off(IO.GAME.STOPPED);
-		this.wsService.off(IO.GAME.FINISHED);
 		this.wsService.off(IO.GAME.DELETED);
 		this.wsService.off(IO.GAME.DISTRIB_DU);
 		this.wsService.off(IO.GAME.RESET);

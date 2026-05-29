@@ -13,7 +13,6 @@ router.post('/init', validate(stateSanitize.init), gameStateController.init);
 router.post('/start', validate(stateSanitize.start), gameStateController.start);
 router.post('/pause', validate(stateSanitize.pause), gameStateController.pause);
 router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
-// router.post('/end', validate(sanitize.end), gameStateController.end);
 
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);

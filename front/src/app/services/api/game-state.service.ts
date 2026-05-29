@@ -184,8 +184,8 @@ export class GameStateService {
 			}, 2000); // Reconnect after 2 seconds
 		});
 
-		this.wsService.on(IO.TIMER_LEFT, (minutesRemaining: number) => {
-			this.handleTimerLeft(minutesRemaining);
+		this.wsService.on(IO.TIMER_LEFT, (millisecondsRemaining: number) => {
+			this.handleTimerLeft(millisecondsRemaining);
 		});
 
 		this.wsService.on(IO.GAME.STOPPED, () => {
@@ -198,12 +198,6 @@ export class GameStateService {
 			const currentState = this.gameStateSubject.getValue();
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
 		});
-
-		this.wsService.on(IO.GAME.FINISHED, () => {
-			const currentState = this.gameStateSubject.getValue();
-			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.FINISHED });
-		});
-
 		this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
 			// Death event — component handles dialog
 		});
@@ -336,7 +330,6 @@ export class GameStateService {
 		this.wsService.off(IO.TIMER_LEFT);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
-		this.wsService.off(IO.GAME.FINISHED);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
@@ -382,22 +375,34 @@ export class GameStateService {
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
 	}
 
-	startRound(gameStateId: string): Observable<any> {
+	startGame(gameStateId: string): Observable<any> {
 		return this.http
-			.post<any>(environment.API_HOST + environment.GAME_STATE.START_ROUND, { gameStateId })
+			.post<any>(environment.API_HOST + environment.GAME_STATE.START, { gameStateId })
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.START_ROUND')));
+	}
+
+	pauseGame(gameStateId: string): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.PAUSE, { gameStateId })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.PAUSE_GAME')));
+	}
+
+	stopGame(gameStateId: string): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.STOP, { gameStateId })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.PAUSE_GAME')));
 	}
 
 	/**
 	 * Handle TIMER_LEFT socket event.
 	 */
-	private handleTimerLeft(minutesRemaining: number): void {
-		this.sessionStorageService.setItem(StorageKey.timerRemaining, minutesRemaining * 60);
+	private handleTimerLeft(millisRemaining: number): void {
+		this.sessionStorageService.setItem(StorageKey.timerRemaining, millisRemaining);
 		const gameState = this.gameStateSubject.getValue();
-		if (minutesRemaining && gameState.status == GAME_STATUS.PLAYING) {
+		if (millisRemaining && gameState.status == GAME_STATUS.PLAYING) {
 			this.timer.stop();
 			this.timer.reset();
-			this.timer.set({ h: 0, m: minutesRemaining, s: 0 });
+			this.timer.set({ h: 0, m: 0, s: Math.floor(millisRemaining / 1000) });
 			this.timer.start();
 		}
 	}

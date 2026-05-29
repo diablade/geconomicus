@@ -24,6 +24,7 @@ const errorStackFormat = winston.format((info) => {
 
 // Création du logger principal
 const logger = winston.createLogger({
+    level:      process.env.GECO_NODE_ENV === 'production' ? 'info' : 'debug',
     format:     winston.format.combine(errorStackFormat(), winston.format.timestamp(), winston.format.json()),
     transports: [
         new winston.transports.File({

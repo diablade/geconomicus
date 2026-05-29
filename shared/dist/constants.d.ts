@@ -30,10 +30,7 @@ export declare const GAME_STATUS: {
     readonly INITIALIZED: "initialized";
     readonly PLAYING: "playing";
     readonly PAUSED: "paused";
-    readonly WAITING: "waiting";
-    readonly FINISHED: "finished";
     readonly STOPPED: "stopped";
-    readonly EVENT: "event";
 };
 export type GameStatus = (typeof GAME_STATUS)[keyof typeof GAME_STATUS];
 export declare const CREDIT_STATUS: {
@@ -72,7 +69,6 @@ export declare const IO: {
         readonly STARTED: "gsta";
         readonly PAUSED: "gpa";
         readonly STOPPED: "gsto";
-        readonly FINISHED: "gsf";
         readonly RESET: "reset";
         readonly DEATH_IS_COMING: "dic";
         readonly DELETED: "gdel";
@@ -120,6 +116,7 @@ export type IoCredit = (typeof IO.CREDIT)[keyof typeof IO.CREDIT];
 export type IoShortCode = (typeof IO.SHORT_CODE)[keyof typeof IO.SHORT_CODE];
 export declare const DB_EVENTS: {
     readonly SESSION_STARTED: "session-started";
+    readonly SESSION_ENDED: "session-ended";
     readonly GAME_CREATED: "game-created";
     readonly GAME_INIT: "game-init";
     readonly GAME_STARTED: "game-started";
@@ -133,6 +130,7 @@ export declare const DB_EVENTS: {
     readonly PLAYER_JOINED: "player-joined";
     readonly PLAYER_DIED: "player-died";
     readonly CREDIT_NEW: "credit-new";
+    readonly CREDIT_REQUEST: "credit-request";
     readonly CREDIT_SETTLE: "credit-settle";
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
