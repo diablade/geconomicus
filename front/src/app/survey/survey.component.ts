@@ -42,9 +42,7 @@ export class SurveyComponent implements OnInit {
 
 	loadExistingFeedback() {
 		this.surveyService.getPreviousFeedback(this.sessionId, this.gameStateId, this.avatarIdx).subscribe((feedback) => {
-			console.log(feedback);
-			this.feedback = { ...this.feedback, ...feedback };
-			console.log(this.feedback);
+			this.feedback = feedback;
 		});
 	}
 

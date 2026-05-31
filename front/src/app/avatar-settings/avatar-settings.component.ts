@@ -70,7 +70,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 						} else {
 							this.skin = '#' + this.avatar.skinColor;
 							this.hairColor = '#' + this.avatar.hairColor;
-							console.log('avatar chargé, image:', this.avatar.image?.substring(0, 50));
 						}
 					}
 				},
@@ -100,10 +99,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
 	}
 
-	changeBoardColor(color: string) {
-		console.log(color);
-		// this.avatar.boardColor = color;
-	}
 
 	onChangeSysScan() {
 		this.localStorageService.setItem('scanV3', this.scanV3);
@@ -220,7 +215,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	randomize() {
-		console.log('RANDOMIZE AVATAR CALLED');
 		this.avatar!.earrings = this.getRandomInt(-1, properties.earrings.default.length - 1);
 		this.avatar!.glasses = this.getRandomInt(-1, properties.glasses.default.length - 1);
 		this.avatar!.features = this.getRandomInt(-1, properties.features.default.length - 1);
@@ -233,6 +227,5 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		this.avatar!.skinColor = this.skin.replace('#', '');
 		this.avatar!.hairColor = this.hairColor.replace('#', '');
 		this.avatar = { ...this.avatar!, image: createSvg(this.avatar!) };
-		// this.updateSvg();
 	}
 }

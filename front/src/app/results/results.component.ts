@@ -506,7 +506,6 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 				.onLangChange()
 				.pipe(takeUntil(this.destroy$))
 				.subscribe(async (langEvent) => {
-					console.log('🌐 Language changed to:', langEvent.lang);
 					// Wait for new translations to load
 					await this.waitForTranslationsReady();
 					this.loadTranslations();

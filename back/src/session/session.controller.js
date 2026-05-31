@@ -70,7 +70,7 @@ SessionController.update = async (req, res, next) => {
             status: sessionUpdated.status,
             theme: sessionUpdated.theme
         };
-        console.log("Session updated:", sessionLight);
+        log.info(`Session updated: ${sessionLight._id}`);
         socket.emitTo(req.body.sessionId, IO.SESSION.UPDATED, sessionLight);
         return res.status(200).json(sessionUpdated);
     }

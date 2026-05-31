@@ -133,8 +133,6 @@ GameStateService.create = async (session, rules) => {
 			};
 		}),
 	});
-	// create life for each player
-	// link to distribute to avatars ...
 	return await newGameState.save();
 };
 

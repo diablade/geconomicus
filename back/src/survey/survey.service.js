@@ -47,7 +47,6 @@ SurveyService.update = async (id, updates) => {
 		dependantAutonomous: updates.dependantAutonomous,
 		poorRich: updates.poorRich,
 	};
-	console.log('updating survey', id, updatesClean);
 	return await SurveyModel.updateOne({ _id: id }, { $set: updatesClean }, { runValidators: true }).exec();
 };
 
