@@ -173,4 +173,10 @@ export class SessionService {
 			.post<any>(environment.API_HOST + environment.SESSION.KILL_GAME, { gameStateId, sessionId, ruleIdx })
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
 	}
+
+	allowRedoSurvey(sessionId: string, avatarIdx: number): Observable<void> {
+		return this.http
+			.post<void>(environment.API_HOST + environment.SURVEY.ALLOW_REDO_SURVEY, { sessionId, avatarIdx })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.ALLOW_REDO_SURVEY')));
+	}
 }

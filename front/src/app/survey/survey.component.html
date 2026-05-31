@@ -1,10 +1,22 @@
 <div class="survey">
 	<h1>{{ 'SURVEY.TITLE' | translate }}</h1>
-	<h3>{{ 'SURVEY.SUBTITLE' | translate }}</h3>
-
 	<div class="question">
-		<div class="label">
+		<h4>{{ 'SURVEY.SUBTITLE' | translate }}</h4>
+		<h4>{{ 'SURVEY.SUBTITLE2' | translate }}</h4>
+		<h4>{{ 'SURVEY.SUBTITLE3' | translate }}</h4>
+		<!-- <h4>{{ 'SURVEY.SUBTITLE4' | translate }}</h4> -->
+	</div>
+
+	<div class="question mb-2">
+		<div class="d-flex flex-row justify-content-between">
+			<div class="fs-7">{{ 'SURVEY.SUBTITLE_OPTION1' | translate }}</div>
+			<div class="fs-7">{{ 'SURVEY.SUBTITLE_OPTION2' | translate }}</div>
+			<div class="fs-7 text-end">{{ 'SURVEY.SUBTITLE_OPTION3' | translate }}</div>
+			<div class="fs-7 text-end">{{ 'SURVEY.SUBTITLE_OPTION4' | translate }}</div>
+		</div>
+		<div class="label d-flex flex-row align-items-center">
 			<div class="float-start">😒</div>
+			<div class="tempScale flex-grow-1"></div>
 			<div class="float-end">😊</div>
 		</div>
 	</div>
@@ -18,30 +30,12 @@
 			</div>
 		</div>
 		<mat-radio-group class="group" [(ngModel)]="feedback.depressedHappy">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.INDIVIDUAL' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.COLLECTIVE' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.individualCollective">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
 		</mat-radio-group>
 	</div>
 	<div class="question">
@@ -54,120 +48,12 @@
 			</div>
 		</div>
 		<mat-radio-group class="group" [(ngModel)]="feedback.insatisfiedAccomplished">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.GREEDY' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.GENEROUS' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.greedyGenerous">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.COMPETITIVE' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.COOPERATIVE' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.competitiveCooperative">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.ANXIOUS' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.CONFIDENT' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.anxiousConfident">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.AGGRESSIVE' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.PLEASANT' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.agressiveAvenant">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.IRRITABLE' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.TOLERANT' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.irritableTolerant">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
-		</mat-radio-group>
-	</div>
-	<div class="question">
-		<div class="label">
-			<div class="float-start">
-				{{ 'SURVEY.DEPENDENT' | translate }}
-			</div>
-			<div class="float-end">
-				{{ 'SURVEY.AUTONOMOUS' | translate }}
-			</div>
-		</div>
-		<mat-radio-group class="group" [(ngModel)]="feedback.dependantAutonomous">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
 		</mat-radio-group>
 	</div>
 	<div class="question">
@@ -180,12 +66,138 @@
 			</div>
 		</div>
 		<mat-radio-group class="group" [(ngModel)]="feedback.poorRich">
-			<mat-radio-button color="warn" value="-3"></mat-radio-button>
-			<mat-radio-button color="warn" value="-2"></mat-radio-button>
-			<mat-radio-button color="warn" value="-1"></mat-radio-button>
-			<mat-radio-button color="warn" value="1"></mat-radio-button>
-			<mat-radio-button color="warn" value="2"></mat-radio-button>
-			<mat-radio-button color="warn" value="3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.ANXIOUS' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.CONFIDENT' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.anxiousConfident">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.AGGRESSIVE' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.PLEASANT' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.agressiveAvenant">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.GREEDY' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.GENEROUS' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.greedyGenerous">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.IRRITABLE' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.TOLERANT' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.irritableTolerant">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.INDIVIDUAL' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.COLLECTIVE' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.individualCollective">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.COMPETITIVE' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.COOPERATIVE' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.competitiveCooperative">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
+		</mat-radio-group>
+	</div>
+	<div class="question">
+		<div class="label">
+			<div class="float-start">
+				{{ 'SURVEY.DEPENDENT' | translate }}
+			</div>
+			<div class="float-end">
+				{{ 'SURVEY.AUTONOMOUS' | translate }}
+			</div>
+		</div>
+		<mat-radio-group class="group" [(ngModel)]="feedback.dependantAutonomous">
+			<mat-radio-button color="warn" [value]="-3"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="-1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="1"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="2"></mat-radio-button>
+			<mat-radio-button color="warn" [value]="3"></mat-radio-button>
 		</mat-radio-group>
 	</div>
 	<div class="question">

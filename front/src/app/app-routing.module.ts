@@ -24,7 +24,7 @@ const routes: Routes = [
 	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
 	{path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent},
 	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent},
-	{path: 'survey/:sessionId/:gameStateId/:avatarIdx', component: SurveyComponent},
+	{path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent},
 	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
 	{path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent},
 	{path: 'table/:sessionId/:gameStateId', component: MasterAdminComponent},

@@ -1,19 +1,22 @@
 {
-    "AVATAR": {
-        "LOBBY": "Salle d'attente",
-        "ANIMATOR": "Animateur: {{name}}",
-        "NAME": "Prénom ou pseudo",
-        "YOUR_AVATAR": "Votre avatar",
-        "SYS_SCAN": "Acheter avec",
-        "EYES": "Yeux",
-        "EYEBROWS": "Sourcils",
-        "MOUTH": "Bouche",
-        "GLASSES": "Lunettes",
-        "EARRINGS": "Oreilles",
-        "FEATURES": "Divers",
-        "GAME_TABLE": "Table de jeu",
-        "SKIN": "Peau",
-        "HAIR": "Cheveux",
-        "PLAY": "Acceder au jeu"
-    }
+	"AVATAR": {
+		"LOBBY": "Salle d'attente",
+		"ANIMATOR": "Animateur: {{name}}",
+		"NAME": "Prénom ou pseudo",
+		"YOUR_AVATAR": "Votre avatar",
+		"SYS_SCAN": "Acheter avec",
+		"EYES": "Yeux",
+		"EYEBROWS": "Sourcils",
+		"MOUTH": "Bouche",
+		"GLASSES": "Lunettes",
+		"EARRINGS": "Oreilles",
+		"FEATURES": "Divers",
+		"GAME_TABLE": "Table de jeu",
+		"SKIN": "Peau",
+		"HAIR": "Cheveux",
+		"PLAY": "Acceder au jeu",
+		"MODIFY_FEEDBACK": "Corriger mes réponses",
+		"MODIFY_FEEDBACK_MESSAGE": "Demandez à l'animateur de vous permettre de corriger vos réponses, puis essayez à nouveau.",
+		"SURVEY_AUTORIZED": "Vous pouvez à nouveau répondre au questionnaire"
+	}
 }

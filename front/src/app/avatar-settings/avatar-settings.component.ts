@@ -27,8 +27,8 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	protected readonly skinPalette = skinPalette;
 	protected readonly hairPalette = hairPalette;
 	getBackgroundStyle = getBackgroundStyle;
-	sessionId: string = '';
-	avatarIdx: number = 0;
+	sessionId = '';
+	avatarIdx = 0;
 	avatar: Avatar | undefined;
 	subscription: Subscription | undefined;
 	faChevronLeft = faChevronLeft;

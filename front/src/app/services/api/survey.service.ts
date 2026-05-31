@@ -16,12 +16,20 @@ export class SurveyService {
 
 	sendFeedback(sessionId: string, gameStateId: string, avatarIdx: string, feedback: Feedback) {
 		return this.http
-			.post<any>(environment.API_HOST + environment.PLAYER.SURVEY, {
+			.post<any>(environment.API_HOST + environment.SURVEY.ADD_FEEDBACK, {
 				sessionId,
 				gameStateId,
 				avatarIdx,
-				feedback,
+				...feedback,
 			})
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.SEND_SURVEY')));
+	}
+
+	getPreviousFeedback(sessionId: string, gameStateId: string, avatarIdx: string) {
+		return this.http
+			.get<Feedback>(
+				`${environment.API_HOST}${environment.SURVEY.GET_AVATAR_GAME_FEEDBACK}/${sessionId}/${gameStateId}/${avatarIdx}`
+			)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.GET_SURVEY')));
 	}
 }

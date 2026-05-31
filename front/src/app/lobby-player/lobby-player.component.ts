@@ -3,10 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AvatarService } from '../services/api/avatar.service';
 import { combineLatest, Subscription } from 'rxjs';
 import { GAME_TYPE, GAME_STATUS } from '@geco/shared';
+import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
 import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { getBackgroundStyle } from '../services/avatarTools';
 import { AudioService } from '../services/audio.service';
+import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 
 @Component({
 	selector: 'app-lobby-player',
@@ -24,15 +26,16 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	protected readonly GAME_NONE = GAME_STATUS.NONE;
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;
+	allowEditFeedback = false;
 
-	sessionId= '';
+	sessionId = '';
 	avatarIdx = 0;
 	avatar$ = inject(AvatarService).avatar$;
 	session$ = inject(AvatarService).session$;
 
 	vm$ = combineLatest({
 		avatar: this.avatar$,
-		session: this.session$
+		session: this.session$,
 	});
 	skin = '#f2d3b1';
 	hairColor = '#ac6511';
@@ -43,6 +46,7 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		private audioService: AudioService,
 		private route: ActivatedRoute,
 		private router: Router,
+		private dialog: MatDialog,
 		private i18n: I18nService
 	) {
 		this.i18n.loadNamespace('avatar');
@@ -55,12 +59,19 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 			// this.avatarService.initializeSocket(this.sessionId, this.avatarIdx);
 			this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
 		});
+		this.avatarService.surveyRedo$.subscribe((redo: boolean) => {
+			if (redo) {
+				this.allowEditFeedback = true;
+			}
+		});
 	}
 
 	joinGame(gameStateId: string) {
-		this.avatarService.getCurrentPlayerStateIdx(this.sessionId, gameStateId, this.avatarIdx).subscribe((data: any) => {
-			this.router.navigate(['player', this.sessionId, this.avatarIdx, gameStateId, data.idx]);
-		});
+		this.avatarService
+			.getCurrentPlayerStateIdx(this.sessionId, gameStateId, this.avatarIdx)
+			.subscribe((data: any) => {
+				this.router.navigate(['player', this.sessionId, this.avatarIdx, gameStateId, data.idx]);
+			});
 	}
 
 	//To prevent memory leak
@@ -78,5 +89,18 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 
 	coinClick() {
 		this.audioService.playSound('coins');
+	}
+
+	modifyFeedback(gameStateId: string) {
+		if (!this.allowEditFeedback) {
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					title: this.i18n.instant('AVATAR.MODIFY_FEEDBACK'),
+					message: this.i18n.instant('AVATAR.MODIFY_FEEDBACK_MESSAGE'),
+				},
+			});
+		} else {
+			this.router.navigate(['/survey', this.sessionId, gameStateId, this.avatarIdx, 'edit']);
+		}
 	}
 }

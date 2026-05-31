@@ -23,7 +23,7 @@ SurveyService.create = async (surveyObject) => {
 };
 
 /* Retrieve */
-SurveyService.getBySessionGameStateAvatarId = async (sessionId, gameStateId, avatarIdx) => {
+SurveyService.getBySessionGameStateAvatarIdx = async (sessionId, gameStateId, avatarIdx) => {
 	return await SurveyModel.findOne({ sessionId: sessionId, gameStateId: gameStateId, avatarIdx: avatarIdx }).exec();
 };
 SurveyService.getByGameStateId = async (gameStateId) => {
@@ -35,7 +35,20 @@ SurveyService.getBySessionId = async (sessionId) => {
 
 /* Update */
 SurveyService.update = async (id, updates) => {
-	return await SurveyModel.updateOne({ _id: id }, { $set: updates }, { runValidators: true }).exec();
+	const updatesClean = {
+		depressedHappy: updates.depressedHappy,
+		individualCollective: updates.individualCollective,
+		insatisfiedAccomplished: updates.insatisfiedAccomplished,
+		greedyGenerous: updates.greedyGenerous,
+		competitiveCooperative: updates.competitiveCooperative,
+		anxiousConfident: updates.anxiousConfident,
+		agressiveAvenant: updates.agressiveAvenant,
+		irritableTolerant: updates.irritableTolerant,
+		dependantAutonomous: updates.dependantAutonomous,
+		poorRich: updates.poorRich,
+	};
+	console.log('updating survey', id, updatesClean);
+	return await SurveyModel.updateOne({ _id: id }, { $set: updatesClean }, { runValidators: true }).exec();
 };
 
 /* Remove */

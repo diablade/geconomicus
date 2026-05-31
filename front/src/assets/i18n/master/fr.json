@@ -64,7 +64,9 @@
 		"PLAY_USER": "Jouer ce joueur",
 		"COPY_USER_LINK": "Copier le lien du joueur",
 		"JOIN_VIA_QR_CODE": "Via le QR code",
-		"GAME_TABLE_VIEW": "Voir la table de jeu"
+		"GAME_TABLE_VIEW": "Voir la table de jeu",
+		"ALLOW_SURVEY_REDO": "Renvoyer le questionnaire",
+		"SURVEY_REDO_ALLOWED": "Le questionnaire peut être renvoyé par le joueur"
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Des couleurs de cheveux sont identique",

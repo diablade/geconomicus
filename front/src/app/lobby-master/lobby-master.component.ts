@@ -306,5 +306,13 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	showResults() {}
+	allowRedirectSurvey(avatarIdx: number) {
+		this.sessionService.allowRedoSurvey(this.sessionId, avatarIdx).subscribe();
+		this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SURVEY_REDO_ALLOWED'));
+	}
+
+	showResults() {
+		// TODO: Implement show results logic
+		console.log('Showing results');
+	}
 }

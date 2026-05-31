@@ -96,7 +96,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			this.wsService.on(IO.GAME.STOPPED, () => {
 				this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
 				this.dialog.open(InformationDialogComponent, {
-					data: { text: this.i18nService.instant('EVENTS.ROUND_END'), sound: 'end' },
+					data: { message: this.i18nService.instant('EVENTS.ROUND_END'), sound: 'end' },
 				});
 			});
 
@@ -107,7 +107,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 					} else {
 						this.dialog.open(InformationDialogComponent, {
 							data: {
-								text: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
+								message: this.i18nService.instant('EVENTS.NEED_DEATH_PASS'),
 								sound: './assets/audios/iamdeath.mp3',
 							},
 						});

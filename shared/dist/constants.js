@@ -56,11 +56,13 @@ export const IO = {
         UPDATED_RULES: 'sur',
         DELETED_RULES: 'sdr',
         GAME_STATE_CREATED: 'sgsc',
+        NEW_FEEDBACK: 'snf',
     },
     AVATAR: {
         NEW: 'an',
         UPDATED: 'au',
         DELETED: 'ad',
+        SURVEY_REDO: 'asr',
     },
     GAME: {
         CREATED: 'gc',

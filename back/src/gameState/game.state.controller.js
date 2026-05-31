@@ -33,7 +33,7 @@ GameStateController.create = async (req, res, next) => {
 		console.log('saving game state...');
 		const savedGameState = await GameStateService.create(session, rules);
 		console.log('saved?');
-		const rulesUpdated = await RulesService.updateFromCreatedGameStateId(sessionId, ruleIdx, savedGameState._id);
+		const rulesUpdated = await RulesService.updateGameStateStatus(sessionId, ruleIdx, savedGameState._id);
 		await EventService.postNow(DB_EVENTS.GAME_CREATED, sessionId, savedGameState._id, PLAYER_TYPE.MASTER, '-', {
 			ruleIdx,
 			typeMoney: rules.typeMoney,

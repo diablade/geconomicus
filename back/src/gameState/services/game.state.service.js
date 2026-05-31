@@ -274,10 +274,8 @@ GameStateService.start = async (gameStateId) => {
 GameStateService.stop = async (gameStateId) => {
 	log.debug(`Stopping game: ${gameStateId}`);
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
-	console.log('whesh1');
 	const entry = await GameStateManager.get(gameStateId);
 	if (entry) {
-		console.log('whesh2');
 		log.debug(`Game state found in memory: ${gameStateId}`);
 		entry.gameState.status = GAME_STATUS.STOPPED;
 		const result = await GameStateModel.findByIdAndUpdate(
@@ -303,12 +301,12 @@ GameStateService.stop = async (gameStateId) => {
 		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STOPPED, {});
 		log.info(`Game stopped : ${gameStateId}`);
 	} else {
-		log.info(`Game state not found in memory, saving STOP status in DB: ${gameStateId}`);
+		log.debug(`Game state not found in memory, saving STOPPED status in DB: ${gameStateId}`);
 		const result = await GameStateModel.findByIdAndUpdate(gameStateId, { $set: { 'gameState.status': GAME_STATUS.STOPPED } });
-		log.debug(`Game state updated in DB: ${gameStateId}`, result);
 		// Still emit the event to notify clients
 		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STOPPED, {});
 	}
+	await RulesService.updateGameStateStatus(entry.gameState.sessionId, entry.gameState.ruleIdx, gameStateId, GAME_STATUS.STOPPED);
 };
 
 /**

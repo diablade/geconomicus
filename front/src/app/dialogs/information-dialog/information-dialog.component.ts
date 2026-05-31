@@ -10,14 +10,16 @@ import {AudioService} from '../../services/audio.service';
 })
 
 export class InformationDialogComponent {
-	text = "";
 	title = "";
 	labelBtn = "";
 	timerBtn = 5;
 	disableClose = false;
+	message = "";
+	message2 = "";
 
 	constructor(public dialogRef: MatDialogRef<InformationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private i18nService: I18nService, private audioService: AudioService) {
-		this.text = data.text;
+		this.message = data.message;
+		this.message2 = data.message2;
 		this.title = data.title ? data.title : this.i18nService.instant("DIALOG.INFORMATION.TITLE");
 		this.labelBtn = data.labelBtn ? data.labelBtn : this.i18nService.instant("DIALOG.INFORMATION.BTN1");
 		this.disableClose = data.disableClose == undefined ? false : data.disableClose;

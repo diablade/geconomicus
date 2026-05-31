@@ -139,7 +139,7 @@
 								<div class="fs-7 text-center white">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
 									{{ rule.gameStatus === INITIALIZED ? ('MASTER.GAME_OPEN' | translate) : '' }}
-									{{ rule.gameStatus === STOPPED ? ('MASTER.GAME_STOPPED' | translate) : '' }}
+									{{ rule.gameStatus === STOPPED ? ('MASTER.GAME_ENDED' | translate) : '' }}
 								</div>
 								<button
 									*ngIf="rule.gameStatus === NONE"
@@ -240,16 +240,18 @@
 											<mat-icon>play_arrow</mat-icon>
 											<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
 										</button>
-										<span>
-											<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
-												<mat-icon>link</mat-icon>
-												<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
-											</button>
-											<button mat-menu-item (click)="reJoin(avatar.idx, avatar.name)">
-												<mat-icon>qr_code_2</mat-icon>
-												<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
-											</button>
-										</span>
+										<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
+											<mat-icon>link</mat-icon>
+											<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+										</button>
+										<button mat-menu-item (click)="reJoin(avatar.idx, avatar.name)">
+											<mat-icon>qr_code_2</mat-icon>
+											<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+										</button>
+										<button mat-menu-item (click)="allowRedirectSurvey(avatar.idx)">
+											<mat-icon>how_to_vote</mat-icon>
+											<span>{{ 'MASTER.ALLOW_SURVEY_REDO' | translate }}</span>
+										</button>
 										<button mat-color="warn" mat-menu-item (click)="onDeleteUser(avatar)">
 											<mat-icon [color]="'warn'">person_remove</mat-icon>
 											<span>{{ 'MASTER.DELETE_USER' | translate }}</span>

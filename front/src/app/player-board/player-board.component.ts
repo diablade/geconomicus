@@ -388,7 +388,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		// this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
 		// 	this.dialog.open(InformationDialogComponent, {
 		// 		data: {
-		// 			text:
+		// 			message:
 		// 				payload.status == 'deck'
 		// 					? this.i18nService.instant('CARD.IN_DECK', { cardName })
 		// 					: this.i18nService.instant('CARD.IN_PLAYER', {

@@ -43,6 +43,15 @@
 						{{ 'AVATAR.PLAY' | translate }}
 						<fa-icon [icon]="faRightToBracket"></fa-icon>
 					</button>
+					<button
+						*ngIf="game.gameStatus === GAME_STOPPED"
+						class="m-2 box-shadowed"
+						mat-raised-button
+						color="primary"
+						(click)="modifyFeedback(game.gameStateId)">
+						{{ 'AVATAR.MODIFY_FEEDBACK' | translate }}
+						<fa-icon [icon]="faPencil"></fa-icon>
+					</button>
 				</div>
 			</div>
 		</div>

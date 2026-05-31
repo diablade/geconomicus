@@ -44,6 +44,16 @@ export const environment = {
 		CREATE_CREDIT: 'game-state/bank-state/create-credit',
 		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
 	},
+	SURVEY: {
+		ADD_FEEDBACK: 'survey/feedback',
+		ALLOW_REDO_SURVEY: 'survey/redo',
+		GET_AVATAR_GAME_FEEDBACK: 'survey/player',
+		GET_BY_SESSION_ID: 'survey/session/',
+		GET_BY_SESSION_GAME_STATE_AVATAR_ID: 'survey/game/',
+		GET_BY_GAME_STATE_ID: 'survey/game/',
+		REMOVE_ALL_BY_SESSION_ID: 'survey/session/',
+		REMOVE_ALL_BY_GAME_STATE_ID: 'survey/game/',
+	},
 
 	//LEGACY
 	PLAYER: {

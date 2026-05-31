@@ -47,7 +47,7 @@ export class WebSocketService {
 				data: {
 					title: this.i18nService.instant('SOCKET.OFFLINE.TITLE'),
 					disableClose: true,
-					text: this.i18nService.instant('SOCKET.OFFLINE.TEXT'),
+					message: this.i18nService.instant('SOCKET.OFFLINE.TEXT'),
 				},
 			});
 		});
@@ -119,7 +119,7 @@ export class WebSocketService {
 				data: {
 					disableClose: true,
 					title: this.i18nService.instant('SOCKET.KICKED.TITLE'),
-					text: this.i18nService.instant('SOCKET.KICKED.TEXT') + ' ' + data.reason,
+					message: this.i18nService.instant('SOCKET.KICKED.TEXT') + ' ' + data.reason,
 				},
 			});
 		});

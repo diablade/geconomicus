@@ -24,13 +24,27 @@ export class SurveyComponent implements OnInit {
 		private router: Router,
 		private surveyService: SurveyService,
 		private snackbarService: SnackbarService
-	) {}
+	) {
+		this.i18nService.loadNamespace('survey');
+	}
 
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			this.avatarIdx = params['avatarIdx'];
 			this.gameStateId = params['gameStateId'];
+			const edit = params['edit'];
+			if (edit) {
+				this.loadExistingFeedback();
+			}
+		});
+	}
+
+	loadExistingFeedback() {
+		this.surveyService.getPreviousFeedback(this.sessionId, this.gameStateId, this.avatarIdx).subscribe((feedback) => {
+			console.log(feedback);
+			this.feedback = { ...this.feedback, ...feedback };
+			console.log(this.feedback);
 		});
 	}
 

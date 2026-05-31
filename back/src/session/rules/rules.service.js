@@ -109,20 +109,21 @@ RulesService.getByIdx = async (sessionId, ruleIdx) => {
 	).exec();
 	return session?.gamesRules?.[0] ?? null;
 };
-RulesService.updateFromCreatedGameStateId = async (sessionId, ruleIdx, gameStateId) => {
+RulesService.updateGameStateStatus = async (sessionId, ruleIdx, gameStateId, status) => {
 	const result = await SessionModel.updateOne(
 		{ _id: sessionId },
 		{
 			$set: {
 				'gamesRules.$[rule].gameStateId': gameStateId,
-				'gamesRules.$[rule].gameStatus': GAME_STATUS.CREATED,
+				'gamesRules.$[rule].gameStatus': status,
 			},
 		},
 		{
 			arrayFilters: [{ 'rule.idx': ruleIdx }],
+			new: true,
 			runValidators: true,
 		}
-	).exec();
+	).lean();
 	return result;
 };
 RulesService.removeByIdx = async (sessionId, ruleIdx) => {

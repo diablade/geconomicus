@@ -210,6 +210,16 @@ export class PlayerStateService {
 				currentGameState.status = GAME_STATUS.STOPPED;
 				this.gameStateSubject.next(currentGameState);
 			}
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					title: 'GAME_ENDED',
+					message: 'GAME_ENDED_MESSAGE',
+					message2: 'SURVEY_MESSAGE',
+					disableClose: true,
+				},
+			}).afterClosed().subscribe(() => {
+				this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx]);
+			});
 		});
 
 		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
@@ -264,7 +274,7 @@ export class PlayerStateService {
 			}
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant(
+					message: this.i18nService.instant(
 						currentGameState.typeMoney === GAME_TYPE.DEBT ? 'PLAYER.INIT_DEBT' : 'PLAYER.INIT',
 						{
 							cardsLength: data.playerState.cards.length,
@@ -346,7 +356,7 @@ export class PlayerStateService {
 
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant('CREDIT.NEW_CREDIT', { amount: data.credit.amount }),
+					message: this.i18nService.instant('CREDIT.NEW_CREDIT', { amount: data.credit.amount }),
 				},
 			});
 		});
@@ -367,7 +377,7 @@ export class PlayerStateService {
 
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					text: this.i18nService.instant('CREDIT.CANCEL_SUCCESS', { amount: data.credit.amount }),
+					message: this.i18nService.instant('CREDIT.CANCEL_SUCCESS', { amount: data.credit.amount }),
 				},
 			});
 		});
@@ -455,11 +465,11 @@ export class PlayerStateService {
 			this.coinsSubject.next(data.coinsLK);
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					// title: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.TITLE'),
-					// message: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.MESSAGE', {
-					// 	amount: credit.amount + credit.interest,
-					// 	interest: credit.interest,
-					// }),
+					title: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.TITLE'),
+					message: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.MESSAGE', {
+						amount: data.credit.amount + data.credit.interest,
+						interest: data.credit.interest,
+					}),
 					// labelBtn1: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN1'),
 					// labelBtn2: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN2'),
 					// autoClickBtn2: true,

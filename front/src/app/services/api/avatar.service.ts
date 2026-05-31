@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { Avatar } from '../../models/avatar';
@@ -8,6 +8,9 @@ import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
 import { ThemesService } from '../themes.service';
 import { IO, ROOMS } from '@geco/shared';
+import { I18nService } from '../i18n.service';
+import { SnackbarService } from '../snackbar.service';
+import { AudioService } from '../audio.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -19,22 +22,29 @@ export class AvatarService {
 	session$ = this.sessionSubject.asObservable();
 	private sessionId: string | undefined;
 	private avatarIdx: number | undefined;
+	private surveyRedoSubject = new BehaviorSubject<boolean>(false);
+	surveyRedo$ = this.surveyRedoSubject.asObservable();
 
 	constructor(
 		public http: HttpClient,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
-		private themesService: ThemesService
+		private themesService: ThemesService,
+		private audioService: AudioService,
+		private snackbarService: SnackbarService,
+		private i18n: I18nService
 	) {}
 
 	loadAvatar(sessionId: string, avatarIdx: number, fetchSession = false): Observable<any> {
 		return new Observable((observer: any) => {
 			this.http
-				.get<any>(environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession)
+				.get<any>(
+					environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession
+				)
 				.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
 				.subscribe((data) => {
 					if (fetchSession && data.avatar) {
-                        this.themesService.loadTheme(data.session.theme);
+						this.themesService.loadTheme(data.session.theme);
 						this.avatarSubject.next(data.avatar);
 						if (data.session) {
 							this.sessionSubject.next(data.session);
@@ -69,6 +79,15 @@ export class AvatarService {
 			}
 		});
 
+		this.wsService.on(IO.AVATAR.SURVEY_REDO, (data: { avatarIdx: number; sessionId: string }) => {
+			console.log('SURVEY_REDO', data);
+			if (data.avatarIdx === this.avatarIdx && this.sessionId === data.sessionId) {
+				this.snackbarService.showSuccess(this.i18n.instant('AVATAR.SURVEY_AUTORIZED'));
+				this.audioService.playSound('request');
+				this.surveyRedoSubject.next(true);
+			}
+		});
+
 		// Session events
 		this.wsService.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
@@ -100,7 +119,7 @@ export class AvatarService {
 					gamesRules: currentSession.gamesRules.map((rules: any) => {
 						if (rules.gameStateId === data.gameStateId) {
 							rules.gameStatus = data.gameStatus;
-							rules.gameStateId = "";
+							rules.gameStateId = '';
 						}
 						return rules;
 					}),
@@ -131,13 +150,7 @@ export class AvatarService {
 		});
 	}
 
-
-	updateAvatar(
-		sessionId: string,
-		avatarIdx: number,
-		updates: Partial<Avatar>,
-		sendRefresh = false
-	): Observable<any> {
+	updateAvatar(sessionId: string, avatarIdx: number, updates: Partial<Avatar>, sendRefresh = false): Observable<any> {
 		return new Observable((observer: any) => {
 			try {
 				this.http
@@ -189,5 +202,4 @@ export class AvatarService {
 				// The actual avatar update will come through WebSocket events
 			});
 	}
-
 }

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import {isNanoId4, isNumbersId4} from '../misc/misc.tool.js';
+import { isNanoId4, isNumbersId4 } from '../misc/misc.tool.js';
+import log from '#config/log';
 
 export const isValidObjectId = (value, helpers) => {
 	if (!mongoose.Types.ObjectId.isValid(value)) {
@@ -24,7 +25,7 @@ export const isValidNumberId4 = (value, helpers) => {
 
 export const validate = (schema, params = false) => {
 	return (req, res, next) => {
-		const {value, error} = schema.validate(params ? req.params : req.body, {
+		const { value, error } = schema.validate(params ? req.params : req.body, {
 			abortEarly: false,
 			stripUnknown: true,
 		});

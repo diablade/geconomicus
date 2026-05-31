@@ -55,11 +55,13 @@ export declare const IO: {
         readonly UPDATED_RULES: "sur";
         readonly DELETED_RULES: "sdr";
         readonly GAME_STATE_CREATED: "sgsc";
+        readonly NEW_FEEDBACK: "snf";
     };
     readonly AVATAR: {
         readonly NEW: "an";
         readonly UPDATED: "au";
         readonly DELETED: "ad";
+        readonly SURVEY_REDO: "asr";
     };
     readonly GAME: {
         readonly CREATED: "gc";
