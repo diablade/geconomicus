@@ -77,8 +77,9 @@ class GameStateManager {
 			const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
 			if (reload.reloaded) {
 				entry = this.get(gameStateId);
+			} else {
+				return reload;
 			}
-			return reload;
 		}
 		return entry;
 	}
@@ -137,11 +138,7 @@ class GameStateManager {
 		}
 
 		// Only reload if the game is in a state that should be in memory
-		if (
-			![GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(
-				gameState.status
-			)
-		) {
+		if (![GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(gameState.status)) {
 			log.warn(
 				`[GameStateManager] Game ${gameStateId} has status: ${gameState.status}, will not be stored in memory`
 			);
@@ -181,14 +178,14 @@ class GameStateManager {
 	 */
 	async withQueue(gameStateId, fn) {
 		return gameQueueManager.enqueue(gameStateId, async () => {
-			let entry = this.get(gameStateId);
-			if (!entry) {
-				log.error(`[GameStateManager] Game ${gameStateId} not found in memory`);
-				await this.reload(gameStateId);
-				entry = this.get(gameStateId);
-				// security net: reload() could have stored it but get() still fails
-				if (!entry) throw new Error(`[GameStateManager] Game ${gameStateId} still not found after reload`);
-			}
+			let entry = await this.getOrReload(gameStateId);
+			if (!entry) throw new Error(`[GameStateManager] Game ${gameStateId} still not found after reload`);
+			// if (!entry) {
+			// log.error(`[GameStateManager] Game ${gameStateId} not found in memory`);
+			// await this.reload(gameStateId);
+			// entry = this.get(gameStateId);
+			// security net: reload() could have stored it but get() still fails
+			// }
 			return fn(entry);
 		});
 	}

@@ -54,14 +54,25 @@ export class PlayerStateService {
 	typeTheme$ = inject(ThemesService).typeTheme$;
 
 	cards$ = combineLatest({
-		cards: this.cardsSubject,
+		cards: this.rawCards$,
 		typeTheme: this.typeTheme$,
 	}).pipe(
 		debounceTime(0),
 		distinctUntilChanged((a, b) => {
-			if (!_.isEqual(a.typeTheme, b.typeTheme)) return false;
-			if (a.cards.length !== b.cards.length) return false;
-			if (!_.isEqual(a.cards, b.cards)) return false;
+			console.log('comparing', a, b);
+			if (!_.isEqual(a.typeTheme, b.typeTheme)) {
+				console.log('typeTheme changed', a.typeTheme, b.typeTheme);
+				return false;
+			}
+			if (a.cards.length !== b.cards.length) {
+				console.log('cards length changed', a.cards.length, b.cards.length);
+				return false;
+			}
+			if (!_.isEqual(a.cards, b.cards)) {
+				console.log('cards changed', a.cards, b.cards);
+				return false;
+			}
+			console.log('no change');
 			return true;
 		}),
 		map(({ cards, typeTheme }: { cards: Card[]; typeTheme: string }) => {
@@ -210,16 +221,19 @@ export class PlayerStateService {
 				currentGameState.status = GAME_STATUS.STOPPED;
 				this.gameStateSubject.next(currentGameState);
 			}
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					title: 'GAME_ENDED',
-					message: 'GAME_ENDED_MESSAGE',
-					message2: 'SURVEY_MESSAGE',
-					disableClose: true,
-				},
-			}).afterClosed().subscribe(() => {
-				this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx]);
-			});
+			this.dialog
+				.open(InformationDialogComponent, {
+					data: {
+						title: 'GAME_ENDED',
+						message: 'GAME_ENDED_MESSAGE',
+						message2: 'SURVEY_MESSAGE',
+						disableClose: true,
+					},
+				})
+				.afterClosed()
+				.subscribe(() => {
+					this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx]);
+				});
 		});
 
 		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
@@ -337,7 +351,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			if (this.playerStateIdx === Number(data.sellerIdx)) {
+			if (Number(this.playerStateIdx) === Number(data.sellerIdx)) {
 				this.coinsSubject.next(data.coinsLK);
 				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
 				this.cardsSubject.next(updatedCards);
@@ -347,7 +361,6 @@ export class PlayerStateService {
 		// Credit events
 		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			console.log('new credit', data);
 			const currentCredits = this.creditsSubject.getValue();
 			currentCredits.push(data.credit);
 			this.creditsSubject.next(currentCredits);
@@ -533,7 +546,6 @@ export class PlayerStateService {
 	}
 
 	buy(dataRaw: string): Observable<{ success: boolean; error?: string; data?: any }> {
-		console.log('here.?');
 		return new Observable((observer) => {
 			try {
 				const data = JSON.parse(dataRaw);
@@ -559,8 +571,7 @@ export class PlayerStateService {
 					next: (data) => {
 						if (data?.buyedCard) {
 							const cards = this.cardsSubject.getValue();
-							cards.push(data.buyedCard);
-							this.cardsSubject.next(cards);
+							this.cardsSubject.next([...cards, data.buyedCard]);
 							this.coinsSubject.next(data.coinsLK);
 							observer.next({ success: true, data: data });
 						} else {

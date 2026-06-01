@@ -16,7 +16,7 @@ GameStateController.create = async (req, res, next) => {
 		log.info('[GameStateController] creating game state...');
 		const { ruleIdx, sessionId } = req.body;
 		const gameStateFound = await GameStateService.getBySessionIdAndRuleIdx(sessionId, ruleIdx);
-		const session = await SessionService.getById(sessionId,false);
+		const session = await SessionService.getById(sessionId, false);
 		const rules = session.gamesRules.find((rule) => rule.idx === ruleIdx);
 
 		if (!session || !rules) {
@@ -61,8 +61,7 @@ GameStateController.create = async (req, res, next) => {
 		});
 		return res.status(200).json({ gameStateId: savedGameState._id, gameStatus: savedGameState.status });
 	} catch (err) {
-		// console.error(`Game creation error: ${err}`);
-        log.error('[GameStateController] creation error:', err);
+		log.error('[GameStateController] creation error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.CREATE',
@@ -102,12 +101,14 @@ GameStateController.getById = async (req, res, next) => {
 };
 
 GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
+	log.debug('[GameStateController] getCurrentPlayerStateIdx', req.params);
 	try {
 		const idx = await PlayerStateService.getCurrentPlayerStateIdx(
 			req.params.sessionId,
 			req.params.gameStateId,
 			req.params.avatarIdx
 		);
+		log.debug('[GameStateController] getCurrentPlayerStateIdx', { idx });
 		return res.status(200).json({ idx });
 	} catch (err) {
 		log.error('[GameStateController] getCurrentPlayerStateIdx error:', err);

@@ -1,6 +1,6 @@
 import { PLAYER_STATUS, GAME_STATUS } from '@geco/shared';
 import decksService from './decks.helper.js';
-import generateDU from './money.helper.js';
+import { generateDU } from './money.helper.js';
 import _ from 'lodash';
 
 //***************** DEFAULT VALUES *******//

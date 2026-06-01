@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import EventHelper from './event.helper.js';
-import { PLAYER_TYPE, DB_EVENTS } from '@geco/shared';
+import { PLAYER_TYPE, PLAYER_STATUS, DB_EVENTS } from '@geco/shared';
 
-//******************************************************************************//
-//***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
+// ******************************************************************************//
+// ***************** DIVIDENDE UNIVERSEL ENGIN **********************************//
 export const generateDU = async (gameState, rules) => {
 	const nbPlayer = gameState.playersStates.filter((p) => p.status === PLAYER_STATUS.ALIVE).length;
 	const moyenne = gameState.currentMassMonetary / nbPlayer;

@@ -107,11 +107,20 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 		buyer.cards.push(card);
 		seller.cards = seller.cards.filter((c) => c.key !== cardKey);
 
-		// Post transaction event
-		EventHelper.postNow(DB_EVENTS.TRANSACTION, entry.gameState.sessionId, gameStateId, buyerIdx, sellerIdx, {
-			cost,
-			card,
-		});
+		// add transaction event
+		entry.events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.TRANSACTION,
+				entry.gameState.sessionId,
+				gameStateId,
+				buyerIdx,
+				sellerIdx,
+				{
+					cost,
+					card,
+				}
+			)
+		);
 
 		// Emit transaction event to results room
 		const resultsRoom = `gs:${gameStateId}:${PLAYER_TYPE.RESULTS}`;
