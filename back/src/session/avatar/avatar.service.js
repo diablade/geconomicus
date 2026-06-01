@@ -1,3 +1,4 @@
+import SessionService from '../session.service.js';
 import SessionModel from './../session.model.js';
 
 const AvatarService = {};
@@ -41,16 +42,17 @@ AvatarService.create = async (sessionId, name) => {
 };
 
 AvatarService.getByIdx = async (sessionId, avatarIdx, fetchSession) => {
-    const session = await SessionModel.findOne({
-        _id:           sessionId,
-        'avatars.idx': Number(avatarIdx)
-    }).lean();
-    const avatar = session?.avatars?.find(p => p.idx === Number(avatarIdx)) ?? null;
-    delete session.avatars;
+    // const session = await SessionModel.findOne({
+    //     _id:           sessionId,
+    //     'avatars.idx': Number(avatarIdx)
+    // }).lean();
+    const fullSession = await SessionService.getById(sessionId, true);
+    const avatar = fullSession?.avatars?.find(p => p.idx === Number(avatarIdx)) ?? null;
+    delete fullSession.avatars;
     if (fetchSession) {
         return {
             avatar:  avatar,
-            session: session
+            session: fullSession
         };
     }
     return {
@@ -59,7 +61,6 @@ AvatarService.getByIdx = async (sessionId, avatarIdx, fetchSession) => {
 };
 
 AvatarService.update = async (sessionId, avatarIdx, updates) => {
-    const s = SessionModel.find({}).lean();
     const set = {};
     for (const [key, value] of Object.entries(updates)) {
         set[`avatars.$.${key}`] = value;
