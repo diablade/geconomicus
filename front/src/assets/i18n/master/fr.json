@@ -58,7 +58,8 @@
 		"GAME_NOT_PLAYED": "Pas encore joué.",
 		"GAME_LAUNCHED": "La partie est ouverte, les joueurs peuvent la rejoindre.",
 		"GAME_OPEN": "La partie est ouverte.",
-		"GAME_ONGOING": "La partie est en cours.",
+		"GAME_IN_PROGRESS": "La partie est en cours.",
+		"GAME_PAUSED": "La partie est en pause.",
 		"GAME_ENDED": "La partie est terminée.",
 		"GO_BACK_TO_LOBBY": "Retour en salle d'attente",
 		"PLAY_USER": "Jouer ce joueur",
@@ -66,7 +67,8 @@
 		"JOIN_VIA_QR_CODE": "Via le QR code",
 		"GAME_TABLE_VIEW": "Voir la table de jeu",
 		"ALLOW_SURVEY_REDO": "Renvoyer le questionnaire",
-		"SURVEY_REDO_ALLOWED": "Le questionnaire peut être renvoyé par le joueur"
+		"SURVEY_REDO_ALLOWED": "Le questionnaire peut être renvoyé par le joueur",
+		"WARNING_RESULTS": "Les deux parties doivent être terminées pour comparer les résultats"
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Des couleurs de cheveux sont identique",

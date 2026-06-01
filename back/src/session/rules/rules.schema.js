@@ -3,46 +3,57 @@ import { GAME_TYPE, GAME_STATUS, CREDIT_STATUS } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
-let RulesSchema = new Schema({
-	idx: { type: Number, required: true },
-	gameStateId: { type: String, required: false },
-	gameStatus: { type: String, required: true, default: GAME_STATUS.NONE },
+let RulesSchema = new Schema(
+	{
+		idx: { type: Number, required: true },
+		gameStateId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'GameState', // le nom de votre modèle
+			required: false,
+		},
+		gameStatus: { type: String, required: true, default: GAME_STATUS.NONE },
 
-	//common
-	amountCardsForProd: { type: Number, required: true, default: 4 },
-	generatedIdenticalLetters: { type: Number, required: true, default: 5 },
-	generateLettersAuto: { type: Boolean, required: true, default: true },
-	generateLettersInDeck: { type: Number, required: false },
-	distribInitCards: { type: Number, required: true, default: 4 },
-	surveyEnabled: { type: Boolean, required: true, default: true },
-	roundMinutes: { type: Number, required: true, default: 20 },
-	autoDeath: { type: Boolean, required: true, default: true },
-	deathPassTimer: { type: Number, required: true, default: 5 },
+		//common
+		amountCardsForProd: { type: Number, required: true, default: 4 },
+		generatedIdenticalLetters: { type: Number, required: true, default: 5 },
+		generateLettersAuto: { type: Boolean, required: true, default: true },
+		generateLettersInDeck: { type: Number, required: false },
+		distribInitCards: { type: Number, required: true, default: 4 },
+		surveyEnabled: { type: Boolean, required: true, default: true },
+		roundMinutes: { type: Number, required: true, default: 20 },
+		autoDeath: { type: Boolean, required: true, default: true },
+		deathPassTimer: { type: Number, required: true, default: 5 },
 
-	//not commun
-	typeMoney: { type: String, required: true, default: GAME_TYPE.DEBT },
-	priceWeight1: { type: Number, required: true, default: 1 },
-	priceWeight2: { type: Number, required: true, default: 2 },
-	priceWeight3: { type: Number, required: true, default: 4 },
-	priceWeight4: { type: Number, required: true, default: 8 },
+		//not commun
+		typeMoney: { type: String, required: true, default: GAME_TYPE.DEBT },
+		priceWeight1: { type: Number, required: true, default: 1 },
+		priceWeight2: { type: Number, required: true, default: 2 },
+		priceWeight3: { type: Number, required: true, default: 4 },
+		priceWeight4: { type: Number, required: true, default: 8 },
 
-	//option june
-	inequalityStart: { type: Boolean, required: true, default: false },
-	tauxCroissance: { type: Number, required: true, default: 10 },
-	startAmountCoins: { type: Number, required: true, default: 5 },
-	pctPoor: { type: Number, required: true, default: 10 },
-	pctRich: { type: Number, required: true, default: 10 },
+		//option june
+		inequalityStart: { type: Boolean, required: true, default: false },
+		tauxCroissance: { type: Number, required: true, default: 10 },
+		startAmountCoins: { type: Number, required: true, default: 5 },
+		pctPoor: { type: Number, required: true, default: 10 },
+		pctRich: { type: Number, required: true, default: 10 },
 
-	//option debt
-	defaultCreditAmount: { type: Number, required: true, default: 3 },
-	defaultInterestAmount: { type: Number, required: true, default: 1 },
-	timerCredit: { type: Number, required: true, default: 5 },
-	timerPrison: { type: Number, required: true, default: 5 },
-	manualBank: { type: Boolean, required: true, default: false },
-	seizureType: { type: String, required: true, enum: [CREDIT_STATUS.DECOTE, CREDIT_STATUS.FEES], default: CREDIT_STATUS.DECOTE },
-	seizureCosts: { type: Number, required: true, default: 2 },
-	seizureDecote: { type: Number, required: true, default: 33 },
-}, { _id: false });
-
+		//option debt
+		defaultCreditAmount: { type: Number, required: true, default: 3 },
+		defaultInterestAmount: { type: Number, required: true, default: 1 },
+		timerCredit: { type: Number, required: true, default: 5 },
+		timerPrison: { type: Number, required: true, default: 5 },
+		manualBank: { type: Boolean, required: true, default: false },
+		seizureType: {
+			type: String,
+			required: true,
+			enum: [CREDIT_STATUS.DECOTE, CREDIT_STATUS.FEES],
+			default: CREDIT_STATUS.DECOTE,
+		},
+		seizureCosts: { type: Number, required: true, default: 2 },
+		seizureDecote: { type: Number, required: true, default: 33 },
+	},
+	{ _id: false }
+);
 
 export default RulesSchema;

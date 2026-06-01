@@ -20,8 +20,36 @@ SessionService.create = async (sessionObject) => {
 };
 
 /* Retrieve */
-SessionService.getById = async (id) => {
-	return SessionModel.findById(id).exec();
+SessionService.getById = async (id, tryPopulate = false) => {
+	log.debug(`[SessionService] getById tryPopulate: ${tryPopulate}`);
+	const session = await SessionModel.findById(id).exec();
+	if (!session || session.gamesRules.length === 0) {
+		log.debug(`[SessionService] getById no game states found for session: ${id}`);
+		return session;
+	}
+	if (session.gamesRules.every((gameRule) => !gameRule.gameStateId)) {
+		log.debug(`[SessionService] getById game states yet not created for session: ${id}`);
+		return session;
+	}
+	if (tryPopulate) {
+		const populatedSession = await session.populate({
+			path: 'gamesRules.gameStateId',
+			select: 'status',
+		});
+
+		// Convertir en objet plain et remapper
+		const sessionObj = populatedSession.toObject();
+		sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
+			...rule,
+			gameStateId: rule.gameStateId?._id ?? rule.gameStateId,
+			gameStatus: rule.gameStateId?.status ?? rule.gameStatus,
+		}));
+		log.debug(
+			`[SessionService] getById populated: ${sessionObj.gamesRules[0].gameStatus}, ${sessionObj.gamesRules[1].gameStatus}`
+		);
+		return sessionObj;
+	}
+	return session;
 };
 SessionService.getByShortId = async (shortId) => {
 	return SessionModel.findOne({ shortId, status: SESSION_STATUS.OPEN }).exec();
@@ -52,7 +80,7 @@ SessionService.getAll = async () => {
 	]).sort({ createdAt: 1 });
 };
 SessionService.start = async (sessionId) => {
-	log.info(`Session.start: ${sessionId}`);
+	log.info(`[SessionService] start: ${sessionId}`);
 
 	const session = await SessionModel.findOneAndUpdate(
 		{ _id: sessionId },

@@ -32,21 +32,21 @@ class PrisonTimerManager {
 			if (timer) {
 				// Wait for the timer to fully stop
 				await timer.stop().catch((err) => {
-					log.error(`Error stopping timer ${gameStateId}-${playerIdx}: ${err}`);
+					log.error(`[PrisonTimerManager] Error stopping timer ${gameStateId}-${playerIdx}: ${err}`);
 				});
 				// Remove the timer from the map
 				const wasDeleted = this.timers.delete(`${gameStateId}-${playerIdx}`);
 				if (wasDeleted) {
-					log.debug(`Successfully stopped and removed prison timer ${gameStateId}-${playerIdx}`);
+					log.debug(`[PrisonTimerManager] Successfully stopped and removed prison timer ${gameStateId}-${playerIdx}`);
 				} else {
-					log.warn(`Prison timer ${id} not found in timers map when trying to remove`);
+					log.warn(`[PrisonTimerManager] Prison timer ${id} not found in timers map when trying to remove`);
 				}
 			} else {
-				log.debug(`Prison timer ${id} not found, nothing to stop`);
+				log.debug(`[PrisonTimerManager] Prison timer ${id} not found, nothing to stop`);
 			}
 			return true;
 		} catch (err) {
-			log.error(`Unexpected error in stopAndRemoveTimer for prison timer ${id}: ${err}`);
+			log.error(`[PrisonTimerManager] Unexpected error in stopAndRemoveTimer for prison timer ${id}: ${err}`);
 			return false;
 		}
 	}

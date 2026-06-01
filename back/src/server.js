@@ -36,7 +36,7 @@ if (env.environment !== "test") {
             heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
             external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
         };
-        log.info(`Memory usage: ${JSON.stringify(memoryUsage)}`);
+        log.info(`[Server] Memory usage: ${JSON.stringify(memoryUsage)}`);
     }, 3600000); // Log every hours
 }
 

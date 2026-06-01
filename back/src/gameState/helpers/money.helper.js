@@ -17,7 +17,7 @@ export const generateDU = async (gameState, rules) => {
 const MoneyHelper = {};
 
 MoneyHelper.distributeNewDU = async (entry) => {
-	log.info(`Distributing DU for game: ${entry.gameState.id}`);
+	log.info(`[MoneyHelper] Distributing DU for game: ${entry.gameState.id}`);
 	const { gameState, rules, events } = entry;
 	const DU = await generateDU(gameState, rules);
 

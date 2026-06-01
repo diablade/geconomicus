@@ -80,7 +80,6 @@ export class AvatarService {
 		});
 
 		this.wsService.on(IO.AVATAR.SURVEY_REDO, (data: { avatarIdx: number; sessionId: string }) => {
-			console.log('SURVEY_REDO', data);
 			if (data.avatarIdx === this.avatarIdx && this.sessionId === data.sessionId) {
 				this.snackbarService.showSuccess(this.i18n.instant('AVATAR.SURVEY_AUTORIZED'));
 				this.audioService.playSound('request');

@@ -139,6 +139,8 @@
 								<div class="fs-7 text-center white">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}
 									{{ rule.gameStatus === INITIALIZED ? ('MASTER.GAME_OPEN' | translate) : '' }}
+									{{ rule.gameStatus === PLAYING ? ('MASTER.GAME_IN_PROGRESS' | translate) : '' }}
+									{{ rule.gameStatus === PAUSED ? ('MASTER.GAME_PAUSED' | translate) : '' }}
 									{{ rule.gameStatus === STOPPED ? ('MASTER.GAME_ENDED' | translate) : '' }}
 								</div>
 								<button
@@ -189,20 +191,17 @@
 									{{ 'MASTER.ENTER_GAME' | translate }}
 								</button>
 								<button
-									*ngIf="rule.gameStatus === ENDED"
+									color="accent"
+									[matTooltip]="'MASTER.WARNING_RESULTS' | translate"
+									mat-stroked-button
+									*ngIf="rule.gameStatus === STOPPED"
 									class="m-2 box-shadowed"
-									mat-raised-button
 									(click)="showResults()">
 									<mat-icon>analytics</mat-icon>
 									{{ 'MASTER.SHOW_RESULTS' | translate }}
 								</button>
 							</div>
 						</div>
-						<!-- <div class="game game-empty d-flex justify-content-center align-items-center"> -->
-						<!-- <div class='fs-4'> -->
-						<!-- <fa-icon [icon]="faPlus"></fa-icon> -->
-						<!-- </div> -->
-						<!-- </div> -->
 					</div>
 				</div>
 			</div>

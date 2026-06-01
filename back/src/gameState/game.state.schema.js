@@ -69,7 +69,8 @@ let GameStateSchema = new Schema(
 			required: true,
 		},
 		sessionId: {
-			type: String,
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Session',
 			required: true,
 		},
 		ruleIdx: {

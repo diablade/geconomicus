@@ -1,9 +1,10 @@
 import SessionModel from './../session.model.js';
 import { GAME_TYPE, GAME_STATUS } from '@geco/shared';
+import log from '#config/log';
 
 export const defaultDebtRules = {
 	typeMoney: GAME_TYPE.DEBT,
-    status: GAME_STATUS.NONE,
+	gameStatus: GAME_STATUS.NONE,
 	priceWeight1: 1,
 	priceWeight2: 2,
 	priceWeight3: 4,
@@ -11,7 +12,7 @@ export const defaultDebtRules = {
 };
 export const defaultJuneRules = {
 	typeMoney: GAME_TYPE.JUNE,
-    status: GAME_STATUS.NONE,
+	gameStatus: GAME_STATUS.NONE,
 	priceWeight1: 3,
 	priceWeight2: 6,
 	priceWeight3: 9,
@@ -21,6 +22,7 @@ export const defaultJuneRules = {
 const RulesService = {};
 
 RulesService.create = async (sessionId, rules) => {
+	log.debug(`[RulesService] create: Creating rules for session ${sessionId}`);
 	const session = await SessionModel.findOneAndUpdate(
 		{ _id: sessionId },
 		[
@@ -48,6 +50,7 @@ RulesService.create = async (sessionId, rules) => {
 	};
 };
 RulesService.update = async (sessionId, ruleIdx, updates) => {
+	log.debug(`[RulesService] update: Updating rules for session ${sessionId}, ruleIdx: ${ruleIdx}`);
 	const set = {};
 	for (const [key, value] of Object.entries(updates)) {
 		set[`gamesRules.$.${key}`] = value;
@@ -109,13 +112,21 @@ RulesService.getByIdx = async (sessionId, ruleIdx) => {
 	).exec();
 	return session?.gamesRules?.[0] ?? null;
 };
-RulesService.updateGameStateStatus = async (sessionId, ruleIdx, gameStateId, status) => {
+RulesService.updateGameStateId = async (sessionId, ruleIdx, gameStateId) => {
+	log.debug(`[RulesService] Updating game state id ${gameStateId} in rules of session ${sessionId}, ruleIdx: ${ruleIdx}`);
+	// only for optimisation, to avoid querying the session to get the game state id
+	// await RulesService.updateGameStateStatus(
+	// 	gameState.sessionId,
+	// 	gameState.ruleIdx,
+	// 	body.gameStateId,
+	// 	GAME_STATUS.INITIALIZED
+	// );
 	const result = await SessionModel.updateOne(
 		{ _id: sessionId },
 		{
 			$set: {
 				'gamesRules.$[rule].gameStateId': gameStateId,
-				'gamesRules.$[rule].gameStatus': status,
+				// 'gamesRules.$[rule].status': status, // TODO: uncomment when status is needed in rules
 			},
 		},
 		{

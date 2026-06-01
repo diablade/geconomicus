@@ -45,16 +45,16 @@ class GameTimerManager {
 			const timer = this.getTimer(id);
 			if (timer) {
 				await timer.stop().catch((err) => {
-					log.error(`Error stopping timer ${id}: ${err}`);
+					log.error(`[GameTimerManager] Error stopping timer ${id}: ${err}`);
 				});
 				this.timers.delete(id);
-                log.debug(`Successfully stopped and removed timer ${id}`);
+                log.debug(`[GameTimerManager] Successfully stopped and removed timer ${id}`);
 			} else {
-				log.debug(`Timer ${id} not found, nothing to stop`);
+				log.debug(`[GameTimerManager] Timer ${id} not found, nothing to stop`);
 			}
 			return true;
 		} catch (err) {
-			log.error(`Unexpected error in stopAndRemoveTimer for ${id}: ${err}`);
+			log.error(`[GameTimerManager] Unexpected error in stopAndRemoveTimer for ${id}: ${err}`);
 			return false;
 		}
 	}

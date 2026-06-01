@@ -37,6 +37,7 @@ EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
  * @returns {Promise<EventModel>} The created event
  */
 EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
+    log.debug(`[EventService] postNow: ${typeEvent} for game: ${gameStateId}`);
     const newEvent = new EventModel({
         typeEvent: typeEvent,
         sessionId: sessionId,
@@ -56,7 +57,7 @@ EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiv
  * @returns {Promise<Array<EventModel>>} The created events
  */
 EventService.postMany = async (eventObjects, gameStateId) => {
-    log.debug(`Events posted: ${eventObjects.length || 0} events for game: ${gameStateId}`);
+    log.debug(`[EventService] posted: ${eventObjects.length || 0} events for game: ${gameStateId}`);
 
     if (!Array.isArray(eventObjects) || eventObjects.length === 0) {
         return [];

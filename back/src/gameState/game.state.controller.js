@@ -13,26 +13,41 @@ const GameStateController = {};
 // create state in DB
 GameStateController.create = async (req, res, next) => {
 	try {
-        log.info('creating game state...');
+		log.info('[GameStateController] creating game state...');
 		const { ruleIdx, sessionId } = req.body;
-		const session = await SessionService.getById(sessionId);
+		const gameStateFound = await GameStateService.getBySessionIdAndRuleIdx(sessionId, ruleIdx);
+		const session = await SessionService.getById(sessionId,false);
 		const rules = session.gamesRules.find((rule) => rule.idx === ruleIdx);
+
 		if (!session || !rules) {
+			log.error("[GameStateController] can't create Session or rules not found");
 			return res.status(404).json({ message: 'ERROR.SESSION_NOT_FOUND' });
 		}
-		if (session.status !== SESSION_STATUS.IN_PROGRESS) {
-			return res.status(404).json({ message: 'ERROR.SESSION_NOT_STARTED' });
+		if (session.status === SESSION_STATUS.OPEN || session.status === SESSION_STATUS.ENDED) {
+			log.error(`[GameStateController] Can't create while Session status: ${session.status}`);
+			return res.status(404).json({ message: 'ERROR.SESSION_NOT_IN_PROGRESS' });
 		}
-		if (rules.gameStateId) {
-            const gameState = await GameStateService.getById(rules.gameStateId);
-			if (!gameState || gameState._id.toString() !== rules.gameStateId) {
-				return res.status(404).json({ message: 'ERROR.GAME_NOT_FOUND' });
+		if (gameStateFound) {
+			if (gameStateFound._id.equals(rules.gameStateId)) {
+				log.info(
+					'[GameStateController] already created - gameStateFound._id: ' +
+						gameStateFound._id +
+						' rules.gameStateId: ' +
+						rules.gameStateId
+				);
+				return res.status(300).json({ message: 'ERROR.GAME_ALREADY_CREATED', gameState: gameStateFound });
+			} else {
+				log.error(
+					'[GameStateController] mismatch - gameStateFound._id: ' +
+						gameStateFound._id +
+						' rules.gameStateId: ' +
+						rules.gameStateId
+				);
+				throw new Error('ERROR.GAME_STATE_MISMATCH');
 			}
-			return res.status(300).json({ message: 'ERROR.GAME_ALREADY_CREATED', gameState });
 		}
-
 		const savedGameState = await GameStateService.create(session, rules);
-		const rulesUpdated = await RulesService.updateGameStateStatus(sessionId, ruleIdx, savedGameState._id);
+		await RulesService.updateGameStateId(sessionId, ruleIdx, savedGameState._id);
 		await EventService.postNow(DB_EVENTS.GAME_CREATED, sessionId, savedGameState._id, PLAYER_TYPE.MASTER, '-', {
 			ruleIdx,
 			typeMoney: rules.typeMoney,
@@ -46,7 +61,8 @@ GameStateController.create = async (req, res, next) => {
 		});
 		return res.status(200).json({ gameStateId: savedGameState._id, gameStatus: savedGameState.status });
 	} catch (err) {
-		log.error(`Game creation error: ${err}`);
+		// console.error(`Game creation error: ${err}`);
+        log.error('[GameStateController] creation error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.CREATE',
@@ -64,7 +80,7 @@ GameStateController.init = async (req, res, next) => {
 			gameState,
 		});
 	} catch (err) {
-		log.error(`init game error: ${err}`);
+		log.error('[GameStateController] init game error:', err);
 		next({
 			status: 400,
 			message: err,
@@ -77,7 +93,7 @@ GameStateController.getById = async (req, res, next) => {
 		const payload = await GameStateService.getById(req.params.gameStateId, req.query.enriched);
 		return res.status(200).json(payload);
 	} catch (err) {
-		log.error(`Get game error: ${err}`);
+		log.error('[GameStateController] getById error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: err.message,
@@ -94,7 +110,7 @@ GameStateController.getCurrentPlayerStateIdx = async (req, res, next) => {
 		);
 		return res.status(200).json({ idx });
 	} catch (err) {
-		log.error(`Get game error: ${err}`);
+		log.error('[GameStateController] getCurrentPlayerStateIdx error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: err.message,
@@ -116,7 +132,7 @@ GameStateController.getPlayerState = async (req, res, next) => {
 		}
 		return res.status(200).json(payload);
 	} catch (err) {
-		log.error(`Get player state error: ${err}`);
+		log.error('[GameStateController] Get player state error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.PLAYER_NOT_FOUND',
@@ -131,7 +147,7 @@ GameStateController.produce = async (req, res, next) => {
 			status: 'ok',
 		});
 	} catch (err) {
-		log.error(`Game produce error: ${err}`);
+		log.error('[GameStateController] Game produce error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.PRODUCE',
@@ -146,7 +162,7 @@ GameStateController.transaction = async (req, res, next) => {
 		const result = await PlayerStateService.transaction(gameStateId, buyerIdx, sellerIdx, cardKey);
 		return res.status(200).json(result);
 	} catch (err) {
-		log.error(`Game transaction error: ${err}`);
+		log.error('[GameStateController] Game transaction error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.TRANSACTION',
@@ -163,7 +179,7 @@ GameStateController.killPlayer = async (req, res, next) => {
 			status: 'done',
 		});
 	} catch (err) {
-		log.error(`kill player error: ${err}`);
+		log.error('[GameStateController] kill player error:', err);
 		next({
 			status: 400,
 			message: err,
@@ -184,7 +200,7 @@ GameStateController.whoHaveCard = async (req, res, next) => {
 			});
 		}
 	} catch (err) {
-		log.error(`Game who have card error: ${err}`);
+		log.error('[GameStateController] Game who have card error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.FINDING_CARD',
@@ -196,13 +212,12 @@ GameStateController.start = async (req, res, next) => {
 	try {
 		const { gameStateId } = req.body;
 		const result = await GameStateService.start(gameStateId);
-
 		// Emit socket event to notify clients (timer is started by the service)
 		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STARTED, result);
 
 		return res.status(200).json(result);
 	} catch (err) {
-		log.error(`Start round error: ${err}`);
+		log.error('[GameStateController] Start round error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: err.message,
@@ -217,19 +232,19 @@ GameStateController.pause = async (req, res, next) => {
 			status: PAUSED,
 		});
 	} catch (err) {
-		log.error(`pause game error: ${err}`);
+		log.error('[GameStateController] pause game error:', err);
 		next({ status: 500, message: err });
 	}
 };
 GameStateController.stop = async (req, res, next) => {
 	try {
 		const { gameStateId } = req.body;
-		await GameStateService.stop(gameStateId);
+		const result = await GameStateService.stop(gameStateId);
 		return res.status(200).json({
 			status: GAME_STATUS.STOPPED,
 		});
 	} catch (err) {
-		log.error(`stop game error: ${err}`);
+		log.error('[GameStateController] stop game error:', err);
 		next({ status: 500, message: err });
 	}
 };
@@ -244,7 +259,7 @@ GameStateController.createCredit = async (req, res, next) => {
 			data: result,
 		});
 	} catch (err) {
-		log.error(`Create credit error: ${err}`);
+		log.error('[GameStateController] Create credit error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.CREATE_CREDIT',
@@ -262,7 +277,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 			data: result,
 		});
 	} catch (err) {
-		log.error(`Cancel credit error: ${err}`);
+		log.error('[GameStateController] Cancel credit error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: 'ERROR.CANCEL_CREDIT',

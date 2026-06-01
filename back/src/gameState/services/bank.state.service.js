@@ -162,7 +162,7 @@ const lockDownPlayer = async (idPlayer, idGame, prisonTime) => {
 };
 
 const _prisonEndCallback = async (timerInstance) => {
-	log.info(`Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`);
+	log.info(`[BankStateService] Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`);
 	// TODO: Implement prison end logic
 	// const getOut = async (idGame, idPlayer) => {
 	//     try {
@@ -203,7 +203,7 @@ const _prisonEndCallback = async (timerInstance) => {
 
 const _prisonProgressCallback = async (timerInstance) => {
 	log.info(
-		`Prison progress for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`
+		`[BankStateService] Prison progress for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`
 	);
 	// TODO: Implement prison progress logic
 };

@@ -67,6 +67,13 @@ class GameStateManager {
 	async getOrReload(gameStateId) {
 		let entry = this.get(gameStateId);
 		if (!entry) {
+			// // Skip reload during server startup to prevent blocking
+			// try {
+			// 	socket.getIo();
+			// } catch (err) {
+			// 	log.warn(`[GameStateManager] Socket.IO not initialized yet, skipping reload for game ${gameStateId}`);
+			// 	return null;
+			// }
 			const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
 			if (reload.reloaded) {
 				entry = this.get(gameStateId);
@@ -131,12 +138,12 @@ class GameStateManager {
 
 		// Only reload if the game is in a state that should be in memory
 		if (
-			![GAME_STATUS.CREATED, GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(
+			![GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(
 				gameState.status
 			)
 		) {
 			log.warn(
-				`[GameStateManager] Game ${gameStateId} has status: ${gameState.status}, will not be reloaded from DB`
+				`[GameStateManager] Game ${gameStateId} has status: ${gameState.status}, will not be stored in memory`
 			);
 			return { reloaded: false, gameState, rules };
 		}
@@ -155,7 +162,7 @@ class GameStateManager {
 		}
 
 		this.store(gameStateId, gameState, rules);
-		log.info(`[WARN] Game ${gameStateId} reloaded from DB (in memory)`);
+		log.info(`[GameStateManager] Game ${gameStateId} reloaded from DB (in memory)`);
 		socket.emitTo(`${gameStateId}:master`, IO.INFO, {
 			gameStateId,
 			message: 'Game reloaded from DB after memory loss',

@@ -37,7 +37,7 @@ import { RulesService } from '../services/api/rules.service';
 	styleUrls: ['./lobby-master.component.scss'],
 })
 export class LobbyMasterComponent implements OnInit, OnDestroy {
-    protected readonly OPEN = SESSION_STATUS.OPEN;
+	protected readonly OPEN = SESSION_STATUS.OPEN;
 	protected readonly IN_PROGRESS = SESSION_STATUS.IN_PROGRESS;
 	protected readonly ENDED = SESSION_STATUS.ENDED;
 	protected readonly JUNE = GAME_TYPE.JUNE;
@@ -132,7 +132,6 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 			.catch((err) => console.error('Error copying: ', err));
 	}
 
-
 	reJoin(avatarIdx: number, username: string): void {
 		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
@@ -152,11 +151,11 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 
 	editSession() {
 		const sessionData = {
-            name: this.session.name,
+			name: this.session.name,
 			animator: this.session.animator,
 			location: this.session.location,
 			theme: this.session.theme,
-            devMode: this.session.devMode,
+			devMode: this.session.devMode,
 		};
 		const dialogRef = this.dialog.open(SessionEditDialogComponent, {
 			data: { session: sessionData },
@@ -211,7 +210,12 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 
 		// update avatars
 		for (let i = 0; i < playersWithChangedColor.length; i++) {
-			this.avatarService.updateAvatar(this.sessionId, playersWithChangedColor[i].idx, playersWithChangedColor[i], true);
+			this.avatarService.updateAvatar(
+				this.sessionId,
+				playersWithChangedColor[i].idx,
+				playersWithChangedColor[i],
+				true
+			);
 		}
 	}
 
@@ -293,7 +297,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 					currentSession.gamesRules = currentSession.gamesRules.map((rules) => {
 						if (rules.idx == ruleIdx && data.gameStateId == rules.gameStateId) {
 							rules.gameStatus = data.ruleStatus;
-							rules.gameStateId = "";
+							rules.gameStateId = '';
 						}
 						return rules;
 					});
@@ -314,5 +318,12 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	showResults() {
 		// TODO: Implement show results logic
 		console.log('Showing results');
+	}
+
+	isBothGamesStopped(): boolean {
+		if (!this.session || !this.session.gamesRules) {
+			return false;
+		}
+		return this.session.gamesRules.every((rule) => rule.gameStatus === 'STOPPED');
 	}
 }

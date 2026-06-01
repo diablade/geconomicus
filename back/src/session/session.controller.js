@@ -14,7 +14,7 @@ const SessionController = {};
 
 SessionController.getById = async (req, res, next) => {
     try {
-        const session = await SessionService.getById(req.params.sessionId);
+        const session = await SessionService.getById(req.params.sessionId, true);
         return res.status(200).json(session);
     }
     catch (err) {
@@ -70,12 +70,12 @@ SessionController.update = async (req, res, next) => {
             status: sessionUpdated.status,
             theme: sessionUpdated.theme
         };
-        log.info(`Session updated: ${sessionLight._id}`);
+        log.info(`[SessionController] updated: ${sessionLight._id}`);
         socket.emitTo(req.body.sessionId, IO.SESSION.UPDATED, sessionLight);
         return res.status(200).json(sessionUpdated);
     }
     catch (err) {
-        log.error(`Session update error: ${err}`);
+        log.error(`[SessionController] update error: ${err}`);
         return res.status(500).json({
             message: "ERROR.UPDATE",
         });
@@ -89,7 +89,7 @@ SessionController.getAll = async (req, res, next) => {
         return res.status(200).json(sessions);
     }
     catch (err) {
-        log.error(`get all sessions error: ${err}`);
+        log.error(`[SessionController] get all sessions error: ${err}`);
         return res.status(500).json({
             message: "ERROR.GET_ALL",
         });
@@ -115,7 +115,7 @@ SessionController.delete = async (req, res, next) => {
         }
     }
     catch (err) {
-        log.error(`try remove session with error: ${err}`);
+        log.error(`[SessionController] try remove session with error: ${err}`);
         return res.status(500).json({
             message: "ERROR.SESSION_REMOVE_BY_ID",
         });
@@ -137,7 +137,7 @@ SessionController.killGame = async (req, res, next) => {
         return res.status(200).json(response);
     }
     catch (err) {
-        log.error(`Session kill game error: ${err}`);
+        log.error(`[SessionController] Session kill game error: ${err}`);
         return res.status(500).json({
             message: "ERROR.KILL_GAME",
         });
