@@ -10,8 +10,8 @@
     "VALUES_BY_DEFAULT": "Standardwerte",
     "CANCEL": "Abbrechen",
     "OK": "OK",
-	"SAVE": "Speichern",
-	"DELETE": "Löschen",
+    "SAVE": "Speichern",
+    "DELETE": "Löschen",
     "ALL": "Alle",
     "HOME": {
         "PAGE": "Startseite",
