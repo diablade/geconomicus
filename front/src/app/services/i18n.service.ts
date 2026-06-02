@@ -14,7 +14,7 @@ import {HttpClient} from '@angular/common/http';
 export class I18nService {
 	private readonly STORAGE_KEY = 'language';
 	private readonly DEFAULT_LANG = 'fr';
-	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'de', 'es', 'ja', 'ro', 'sr'];
+	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it','eo', 'de', 'es', 'ja', 'ro', 'sr'];
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
 
