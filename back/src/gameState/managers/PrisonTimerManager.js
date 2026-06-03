@@ -46,7 +46,7 @@ class PrisonTimerManager {
 			}
 			return true;
 		} catch (err) {
-			log.error(`[PrisonTimerManager] Unexpected error in stopAndRemoveTimer for prison timer ${id}: ${err}`);
+			log.error(`[PrisonTimerManager] Unexpected error in stopAndRemoveTimer for prison timer ${id}`, err);
 			return false;
 		}
 	}

@@ -33,7 +33,7 @@
         "END_GAME": "Giro terminato",
         "STOP_ROUND": "Giro terminato",
         "INTER_ROUND": "Inter turno",
-        "START_GAME": "Partita iniziata"
+        "STARTED": "Partita iniziata"
     },
     "MASTER": {
         "SCAN_QR": "Vai su {{webHost}}, poi clicca su 'unisciti'!",

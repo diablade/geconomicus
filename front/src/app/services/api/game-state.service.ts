@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService } from '../error.service';
 import { GameState, PlayerState, Credit, ConnectionStatus } from '../../models/gameState';
@@ -9,8 +9,6 @@ import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
 import { WebSocketService } from '../web-socket.service';
 import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, ROOMS } from '@geco/shared';
-import { SessionStorageService } from '../local-storage/session-storage.service';
-import { StorageKey } from '../local-storage/storage-key.const';
 import createCountdown from '../countDown';
 import { SessionService } from './session.service';
 import { BankService } from './bank.service';
@@ -80,6 +78,9 @@ export class GameStateService {
 	private secondsSubject = new BehaviorSubject<string>('00');
 	seconds$ = this.secondsSubject.asObservable();
 
+	private timerTickSubject = new Subject<void>();
+	timerTick$ = this.timerTickSubject.asObservable();
+
 	private sessionId = '';
 	private gameStateId = '';
 	private roomGameState = '';
@@ -97,7 +98,6 @@ export class GameStateService {
 		public http: HttpClient,
 		private errorService: ErrorService,
 		private wsService: WebSocketService,
-		private sessionStorageService: SessionStorageService,
 		private snackbarService: SnackbarService,
 		private i18n: I18nService,
 		private dialog: MatDialog,
@@ -131,6 +131,20 @@ export class GameStateService {
 			}
 			if (payload.gameState.credits) {
 				this.creditsSubject.next(payload.gameState.credits);
+			}
+
+			// Auto-resume or display paused timer from backend state
+			if (
+				payload.gameState.status === GAME_STATUS.PLAYING &&
+				payload.gameState.gameTimers?.remainingTime > 0
+			) {
+				this.startTimer(payload.gameState.gameTimers.remainingTime);
+			} else if (
+				payload.gameState.status === GAME_STATUS.PAUSED &&
+				payload.gameState.gameTimers?.remainingTime > 0
+			) {
+				console.log('game paused, remaining time: ', payload.gameState.gameTimers.remainingTime);
+				this.setPausedTimer(payload.gameState.gameTimers.remainingTime);
 			}
 		});
 		if (this.wsService.isConnected()) {
@@ -186,6 +200,7 @@ export class GameStateService {
 
 		this.wsService.on(IO.TIMER_LEFT, (millisecondsRemaining: number) => {
 			this.handleTimerLeft(millisecondsRemaining);
+			this.timerTickSubject.next();
 		});
 
 		this.wsService.on(IO.GAME.STOPPED, () => {
@@ -198,6 +213,13 @@ export class GameStateService {
 			const currentState = this.gameStateSubject.getValue();
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
 		});
+
+		this.wsService.on(IO.GAME.PAUSED, () => {
+			this.pauseTimer();
+			const currentState = this.gameStateSubject.getValue();
+			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PAUSED });
+		});
+
 		this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
 			// Death event — component handles dialog
 		});
@@ -330,6 +352,7 @@ export class GameStateService {
 		this.wsService.off(IO.TIMER_LEFT);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
+		this.wsService.off(IO.GAME.PAUSED);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
@@ -397,13 +420,9 @@ export class GameStateService {
 	 * Handle TIMER_LEFT socket event.
 	 */
 	private handleTimerLeft(millisRemaining: number): void {
-		this.sessionStorageService.setItem(StorageKey.timerRemaining, millisRemaining);
 		const gameState = this.gameStateSubject.getValue();
-		if (millisRemaining && gameState.status == GAME_STATUS.PLAYING) {
-			this.timer.stop();
-			this.timer.reset();
-			this.timer.set({ h: 0, m: 0, s: Math.floor(millisRemaining / 1000) });
-			this.timer.start();
+		if (millisRemaining && gameState.status === GAME_STATUS.PLAYING) {
+			this.startTimer(millisRemaining);
 		}
 	}
 
@@ -420,13 +439,55 @@ export class GameStateService {
 					this.minutesSubject.next(mm);
 					this.secondsSubject.next(ss);
 					this.timerProgressSubject.next((secondsRemaining / (rules.roundMinutes * 60)) * 100);
-					this.sessionStorageService.setItem(StorageKey.timerRemaining, secondsRemaining);
 				},
 				done: () => {
 					// Timer done - component can subscribe to this event
 				},
 			}
 		);
+	}
+
+	/**
+	 * Start the timer countdown.
+	 */
+	startTimer(remainingMs: number): void {
+		if (remainingMs > 0) {
+			const totalSeconds = Math.floor(remainingMs / 1000);
+			this.timer.set({ h: 0, m: 0, s: totalSeconds });
+			this.timer.reset();
+			this.timer.start();
+		}
+	}
+
+	/**
+	 * Pause the timer.
+	 */
+	pauseTimer(): void {
+		this.timer.stop();
+	}
+
+	/**
+	 * Set paused timer state.
+	 */
+	setPausedTimer(remainingMs: number): void {
+		if (remainingMs > 0) {
+			const totalSeconds = Math.floor(remainingMs / 1000);
+			this.timer.set({ h: 0, m: 0, s: totalSeconds });
+			this.timer.reset();
+			// this.timer.stop();
+		}
+	}
+
+	/**
+	 * Stop the timer.
+	 */
+	stopTimer(): void {
+		this.timer.stop();
+		this.timer.reset();
+		this.timer.set({ h: 0, m: 0, s: 0 });
+		this.timerProgressSubject.next(0);
+		this.minutesSubject.next('00');
+		this.secondsSubject.next('00');
 	}
 
 	/**
@@ -438,48 +499,6 @@ export class GameStateService {
 			return connection.idx === data.idx ? { ...connection, isConnected } : connection;
 		});
 		this.connectedPlayersSubject.next(updatedConnections);
-	}
-
-	/**
-	 * Set initial timer based on rules.
-	 */
-	setInitialTimer(roundMinutes: number): void {
-		if (roundMinutes > 0) {
-			const minutes = roundMinutes > 9 ? roundMinutes.toString() : '0' + roundMinutes.toString();
-			this.minutesSubject.next(minutes);
-
-			const timerRemaining = this.sessionStorageService.getItem(StorageKey.timerRemaining);
-			const gameState = this.gameStateSubject.getValue();
-
-			if (timerRemaining && gameState.status == GAME_STATUS.PLAYING) {
-				this.timer.set({ h: 0, m: 0, s: timerRemaining });
-				this.timer.start();
-			} else {
-				this.timer.set({ h: 0, m: roundMinutes, s: 0 });
-			}
-		}
-	}
-
-	/**
-	 * Stop the timer.
-	 */
-	private stopTimer(): void {
-		this.timer.stop();
-		this.timer.reset();
-		this.timer.set({ h: 0, m: 0, s: 0 });
-		this.timerProgressSubject.next(0);
-		this.sessionStorageService.removeItem(StorageKey.timerRemaining);
-	}
-
-	/**
-	 * Get timer snapshot values.
-	 */
-	getTimerSnapshot(): { minutes: string; seconds: string; progress: number } {
-		return {
-			minutes: this.minutesSubject.getValue(),
-			seconds: this.secondsSubject.getValue(),
-			progress: this.timerProgressSubject.getValue(),
-		};
 	}
 
 	createCredit(contrat: { playerIdx: number; amount: number; interest: number; playerName: string }): void {

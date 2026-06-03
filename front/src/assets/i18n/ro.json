@@ -32,7 +32,7 @@
         "END_GAME": "Jocul s-a încheiat",
         "STOP_ROUND": "Sfârșitul rundei",
         "INTER_ROUND": "Între runde",
-        "START_GAME": "Jocul a început"
+        "STARTED": "Jocul a început"
     },
     "MASTER": {
         "SCAN_QR": "mergi la {{webHost}}, apoi apasă pe 'alătură-te'!",

@@ -1,32 +1,34 @@
-import {Injectable} from '@angular/core';
-import {StorageKey} from "./storage-key.const";
+import { Injectable } from '@angular/core';
+import { StorageKey } from './storage-key.const';
 import * as _ from 'lodash';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class SessionStorageService {
+	getItem(key: string) {
+		const item = sessionStorage.getItem(this.formatKey(key));
+		if (!item) {
+			return null;
+		}
+		return JSON.parse(item);
+	}
 
-  getItem(key:string) {
-    // @ts-ignore
-    return JSON.parse(sessionStorage.getItem(this.formatKey(key)));
-  }
+	setItem(key: string, value: any) {
+		sessionStorage.setItem(this.formatKey(key), JSON.stringify(value));
+	}
 
-  setItem(key: string, value: any) {
-    sessionStorage.setItem(this.formatKey(key), JSON.stringify(value));
-  }
+	removeItem(key: string) {
+		sessionStorage.removeItem(this.formatKey(key));
+	}
 
-  removeItem(key: string) {
-    sessionStorage.removeItem(this.formatKey(key));
-  }
+	removeAllItem() {
+		_.forEach(StorageKey, (key) => {
+			this.removeItem(key);
+		});
+	}
 
-  removeAllItem() {
-    _.forEach(StorageKey, (key) => {
-      this.removeItem(key)
-    });
-  }
-
-  private formatKey(key:string) {
-    return StorageKey.prefixItem + key;
-  }
+	private formatKey(key: string) {
+		return StorageKey.prefixItem + key;
+	}
 }

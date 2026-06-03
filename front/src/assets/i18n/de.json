@@ -34,7 +34,7 @@
         "END_GAME": "Runde beendet",
         "STOP_ROUND": "Runde beendet",
         "INTER_ROUND": "Zwischenrunde",
-        "START_GAME": "Spiel gestartet"
+        "STARTED": "Spiel gestartet"
     },
     "MASTER": {
         "SCAN_QR": "Gehe auf {{webHost}} und klicke auf 'Beitreten'!",
@@ -263,7 +263,7 @@
             "ENDED": "Beendet",
             "OPEN": "Offen",
             "IN_PROGRESS": "In Bearbeitung",
-            "START_GAME": "Spiel gestartet",
+            "STARTED": "Spiel gestartet",
             "INTER_ROUND": "Runde im Gange",
             "STOP_ROUND": "Runde beendet"
         }

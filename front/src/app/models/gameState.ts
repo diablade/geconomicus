@@ -57,9 +57,6 @@ export class GameState {
 	playersStates: PlayerState[] = [];
 	currentMassMonetary = 0;
 
-	timerLeft = 0;
-	deathState = new DeathState();
-
 	//state june
 	currentDU = 0;
 	//state debt
@@ -68,7 +65,16 @@ export class GameState {
 	bankInterestEarned = 0;
 	bankGoodsEarned = 0;
 	bankMoneyLost = 0;
+	gameTimers = new GameTimer();
 
 	modifiedAt = new Date();
 	createdAt = new Date();
+}
+
+export class GameTimer {
+	createdAt: Date | null = null;
+	startedAt: Date | null = null;
+	endedAt: Date | null = null;
+	remainingTime = 0;
+	deathState = new DeathState();
 }

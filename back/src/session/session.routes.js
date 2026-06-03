@@ -1,7 +1,7 @@
 import express from 'express';
 import SessionController from './session.controller.js';
-import {sanitize} from './session.sanitize.js';
-import {validate} from '../misc/validate.tool.js';
+import { sanitize } from './session.sanitize.js';
+import { validate } from '../misc/validate.tool.js';
 
 const router = express.Router();
 

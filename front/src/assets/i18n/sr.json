@@ -32,7 +32,7 @@
         "END_GAME": "Igra završena",
         "STOP_ROUND": "Kraj runde",
         "INTER_ROUND": "Između rundi",
-        "START_GAME": "Igra počela"
+        "STARTED": "Igra počela"
     },
     "MASTER": {
         "SCAN_QR": "idite na {{webHost}}, zatim kliknite na 'pridruži se'!",

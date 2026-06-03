@@ -32,7 +32,7 @@
         "PLAYING": "En curso",
         "END_GAME": "Manga terminada",
         "STOP_ROUND": "Manga terminada",
-        "START_GAME": "Partida iniciada",
+        "STARTED": "Partida iniciada",
         "INTER_ROUND": "Pausa entre rondas"
     },
     "MASTER": {

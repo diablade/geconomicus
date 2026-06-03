@@ -163,11 +163,8 @@
 								</button>
 								<button
 									*ngIf="
-										session.devMode &&
-										(rule.gameStatus === CREATED ||
-											rule.gameStatus === INITIALIZED ||
-											rule.gameStatus === PLAYING ||
-											rule.gameStatus === PAUSED)
+										(session.devMode && rule.gameStatus !== NONE) ||
+										(!session.devMode && rule.gameStatus !== NONE && rule.gameStatus !== STOPPED)
 									"
 									class="mt-1 box-shadowed"
 									mat-raised-button

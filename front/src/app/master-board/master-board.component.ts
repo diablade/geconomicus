@@ -89,9 +89,11 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			// Load game state through the service (fetches data + initializes socket)
 			this.gameStateService.loadForMaster(this.sessionId, this.gameStateId);
 
-			this.wsService.on(IO.TIMER_LEFT, () => {
-				this.playVideos();
-			});
+			this.subscription?.add(
+				this.gameStateService.timerTick$.subscribe(() => {
+					this.playVideos();
+				})
+			);
 
 			this.wsService.on(IO.GAME.STOPPED, () => {
 				this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
@@ -114,13 +116,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 					}
 				});
 			});
-		});
-
-		// Subscribe to rules to set initial timer
-		this.rules$.subscribe((rules) => {
-			if (rules && rules.roundMinutes > 0) {
-				this.gameStateService.setInitialTimer(rules.roundMinutes);
-			}
 		});
 	}
 
@@ -211,14 +206,14 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	startRound() {
+	startGame() {
 		this.gameStateService.startGame(this.gameStateId).subscribe({
 			next: (result) => {
 				this.rules$.pipe(take(1)).subscribe((rules) => {
-					if (result.status === this.PLAYING) {
-						this.gameStateService.setInitialTimer(rules.roundMinutes);
-						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.ROUND_STARTED'));
-					}
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_STARTED'));
+					this.audioService.playSound('start');
+					const remainingMs = result?.remainingTimeMs || (rules.roundMinutes * 60 * 1000);
+					this.gameStateService.startTimer(remainingMs);
 				});
 			},
 			error: (error) => {
@@ -227,7 +222,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-    stopRound() {
+	stopGame() {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				message: this.i18nService.instant('EVENTS.ASK_END_ROUND'),
@@ -237,13 +232,22 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			if (result && result == 'btnConfirm') {
 				this.gameStateService.stopGame(this.gameStateId).subscribe(() => {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_ENDED'));
+                    this.gameStateService.stopTimer();
 				});
 			}
 		});
 	}
 
-	pauseRound() {
-		// TODO: Wire to backend pauseRound when endpoint is ready
+	pauseGame() {
+		this.gameStateService.pauseGame(this.gameStateId).subscribe({
+			next: () => {
+				this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_PAUSED'));
+				this.gameStateService.pauseTimer();
+			},
+			error: (error) => {
+				this.snackbarService.showError(this.i18nService.instant(error.message));
+			},
+		});
 	}
 
 	killUserNow(playerState: any) {

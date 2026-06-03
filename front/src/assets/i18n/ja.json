@@ -31,7 +31,7 @@
         "END_GAME": "ゲーム終了",
         "STOP_ROUND": "ラウンド終了",
         "INTER_ROUND": "ラウンド間",
-        "START_GAME": "ゲーム開始"
+        "STARTED": "ゲーム開始"
     },
     "MASTER": {
         "SCAN_QR": "{{webHost}}に行き、次に「参加」をクリックしてください！",

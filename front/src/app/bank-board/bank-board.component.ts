@@ -9,7 +9,6 @@ import { faCircleInfo, faSackDollar, faLandmark, faInfoCircle } from '@fortaweso
 import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
 import { SeizureDialogComponent } from '../dialogs/seizure-dialog/seizure-dialog.component';
 import { I18nService } from '../services/i18n.service';
-import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { SnackbarService } from '../services/snackbar.service';
 import { GameStateService } from '../services/api/game-state.service';

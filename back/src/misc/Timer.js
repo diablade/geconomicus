@@ -104,7 +104,7 @@ export default class Timer {
 			try {
 				await this.callbackAtEnd?.(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackAtEnd error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackAtEnd error: `, err);
 			}
 		}, this.duration);
 	}
@@ -115,7 +115,7 @@ export default class Timer {
 			try {
 				await this.callbackInterval1(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval1 error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackInterval1 error: `, err);
 			}
 		}, this.durationInterval1);
 	}
@@ -126,7 +126,7 @@ export default class Timer {
 			try {
 				await this.callbackInterval2(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval2 error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackInterval2 error: `, err);
 			}
 		}, this.durationInterval2);
 	}
@@ -137,7 +137,7 @@ export default class Timer {
 			try {
 				await this.callbackInterval3(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval3 error: ${err}`);
+				log.error(`[Timer] ${this.id} callbackInterval3 error: `, err);
 			}
 		}, this.durationInterval3);
 	}

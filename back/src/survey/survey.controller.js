@@ -41,7 +41,7 @@ SurveyController.allowAvatarEditSurvey = async (req, res, next) => {
 		});
 		return res.status(200).json({ status: 'ok' });
 	} catch (err) {
-		log.error(`Session allow avatar edit survey error: ${err}`);
+		log.error(`Session allow avatar edit survey error: `, err);
 		return res.status(500).json({
 			message: 'ERROR.ALLOW_AVATAR_EDIT_SURVEY',
 		});

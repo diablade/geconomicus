@@ -1,28 +1,32 @@
 import EventModel from './event.model.js';
-import log from '../../config/log.js';
+import mongoose from 'mongoose';
+import log from '#config/log';
 
 const EventService = {};
 
 /* Retrieve */
 EventService.getBySessionId = async (sessionId) => {
-    return await EventModel.find({
-        sessionId
-    }).sort({ createdAt: 1 }).exec();
+	return await EventModel.find({
+		sessionId,
+	})
+		.sort({ at: 1 })
+		.exec();
 };
 EventService.getByGameStateId = async (gameStateId) => {
-    return await EventModel.find({
-        gameStateId
-    }).sort({ createdAt: 1 }).exec();
+	return await EventModel.find({
+		gameStateId,
+	})
+		.sort({ at: 1 })
+		.exec();
 };
 
 EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
-    return await EventModel.find({
-        gameStateId,
-        $or: [
-            { emitter: avatarIdx },
-            { receiver: avatarIdx }
-        ]
-    }).sort({ createdAt: 1 }).exec();
+	return await EventModel.find({
+		gameStateId,
+		$or: [{ emitter: avatarIdx }, { receiver: avatarIdx }],
+	})
+		.sort({ at: 1 })
+		.exec();
 };
 
 /* Post */
@@ -37,16 +41,16 @@ EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
  * @returns {Promise<EventModel>} The created event
  */
 EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
-    log.debug(`[EventService] postNow: ${typeEvent} for game: ${gameStateId}`);
-    const newEvent = new EventModel({
-        typeEvent: typeEvent,
-        sessionId: sessionId,
-        gameStateId: gameStateId,
-        emitter: emitter,
-        receiver: receiver,
-        payload: payload,
-    });
-    return await newEvent.save();
+	log.debug(`[EventService] postNow: ${typeEvent} for game: ${gameStateId}`);
+	const newEvent = new EventModel({
+		typeEvent: typeEvent,
+		sessionId: sessionId,
+		gameStateId: gameStateId,
+		emitter: emitter,
+		receiver: receiver,
+		payload: payload,
+	});
+	return await newEvent.save();
 };
 
 /* Post */
@@ -57,29 +61,29 @@ EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiv
  * @returns {Promise<Array<EventModel>>} The created events
  */
 EventService.postMany = async (eventObjects, gameStateId) => {
-    log.debug(`[EventService] posted: ${eventObjects.length || 0} events for game: ${gameStateId}`);
+	log.debug(`[EventService] posting: ${eventObjects.length || 0} events for game: ${gameStateId}`);
 
-    if (!Array.isArray(eventObjects) || eventObjects.length === 0) {
-        return [];
-    }
-    const newEvents = eventObjects.map(eventObject => ({
-        typeEvent: eventObject.typeEvent,
-        sessionId: eventObject.sessionId,
-        gameStateId: eventObject.gameStateId,
-        emitter: eventObject.emitter,
-        receiver: eventObject.receiver,
-        payload: eventObject.payload,
-        createdAt: eventObject.at,
-    }));
-    return await EventModel.insertMany(newEvents);
+	if (!Array.isArray(eventObjects) || eventObjects.length === 0) {
+		return [];
+	}
+	const newEvents = eventObjects.map((eventObject) => ({
+		typeEvent: eventObject.typeEvent,
+		sessionId: new mongoose.Types.ObjectId(eventObject.sessionId),
+		gameStateId: new mongoose.Types.ObjectId(eventObject.gameStateId),
+		emitter: eventObject.emitter,
+		receiver: eventObject.receiver,
+		payload: eventObject.payload,
+		at: eventObject.at || new Date(),
+	}));
+	return await EventModel.insertMany(newEvents);
 };
 
 /* Remove */
 EventService.removeAllBySessionId = async (sessionId) => {
-    return await EventModel.deleteMany({ sessionId }).exec();
+	return await EventModel.deleteMany({ sessionId }).exec();
 };
 EventService.removeAllByGameStateId = async (gameStateId) => {
-    return await EventModel.deleteMany({ gameStateId }).exec();
+	return await EventModel.deleteMany({ gameStateId }).exec();
 };
 
 export default EventService;

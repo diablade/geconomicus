@@ -1,33 +1,34 @@
-import {Injectable} from '@angular/core';
-import {StorageKey} from './storage-key.const';
+import { Injectable } from '@angular/core';
+import { StorageKey } from './storage-key.const';
 import * as _ from 'lodash';
-import {BehaviorSubject} from "rxjs";
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class LocalStorageService {
+	getItem(key: string) {
+		const item = localStorage.getItem(this.formatKey(key));
+		if (!item) {
+			return null;
+		}
+		return JSON.parse(item);
+	}
 
-  getItem(key: string) {
-    // @ts-ignore
-    return JSON.parse(localStorage.getItem(this.formatKey(key)));
-  }
+	setItem(key: string, value: any) {
+		localStorage.setItem(this.formatKey(key), JSON.stringify(value));
+	}
 
-  setItem(key: string, value: any) {
-    localStorage.setItem(this.formatKey(key), JSON.stringify(value));
-  }
+	removeItem(key: string) {
+		localStorage.removeItem(this.formatKey(key));
+	}
 
-  removeItem(key: string) {
-    localStorage.removeItem(this.formatKey(key));
-  }
+	removeAllItem() {
+		_.forEach(StorageKey, (key) => {
+			this.removeItem(key);
+		});
+	}
 
-  removeAllItem() {
-    _.forEach(StorageKey, (key) => {
-      this.removeItem(key)
-    });
-  }
-
-  private formatKey(key: string) {
-    return StorageKey.prefixItem + key;
-  }
+	private formatKey(key: string) {
+		return StorageKey.prefixItem + key;
+	}
 }

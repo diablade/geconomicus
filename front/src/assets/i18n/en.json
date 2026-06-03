@@ -32,7 +32,7 @@
         "END_GAME": "Game ended",
         "STOP_ROUND": "Round ended",
         "INTER_ROUND": "Inter round",
-        "START_GAME": "Game started"
+        "STARTED": "Game started"
     },
     "MASTER": {
         "SCAN_QR": "go to {{webHost}}, then click 'join'!",

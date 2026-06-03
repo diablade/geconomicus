@@ -230,7 +230,7 @@ GameStateController.pause = async (req, res, next) => {
 		const { gameStateId } = req.body;
 		await GameStateService.pause(gameStateId);
 		return res.status(200).json({
-			status: PAUSED,
+			status: GAME_STATUS.PAUSED,
 		});
 	} catch (err) {
 		log.error('[GameStateController] pause game error:', err);
@@ -298,7 +298,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 // 			status: END_GAME,
 // 		});
 // 	} catch (err) {
-// 		log.error(`End game error: ${err}`);
+// 		log.error(`End game error: `, err);
 // 		next({ status: 500, message: err });
 // 	}
 // };
@@ -325,7 +325,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error(`delete game error: ${err}`);
+// 		log.error(`delete game error: `, err);
 // 		next({
 // 			status: 400,
 // 			message: err,
@@ -345,7 +345,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error(`Game reset error: ${err}`);
+// 		log.error(`Game reset error: `, err);
 // 		next({
 // 			status: 500,
 // 			message: 'Game reset error',
@@ -366,7 +366,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error(`Game refresh error: ${err}`);
+// 		log.error(`Game refresh error: `, err);
 // 		next({
 // 			status: 400,
 // 			message: 'ERROR.REFRESH',
@@ -386,7 +386,7 @@ GameStateController.cancelCredit = async (req, res, next) => {
 // 			});
 // 		}
 // 	} catch (err) {
-// 		log.error(`Game refresh error: ${err}`);
+// 		log.error(`Game refresh error: `, err);
 // 		next({
 // 			status: 400,
 // 			message: 'Game refresh error',

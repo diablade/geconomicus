@@ -67,13 +67,6 @@ class GameStateManager {
 	async getOrReload(gameStateId) {
 		let entry = this.get(gameStateId);
 		if (!entry) {
-			// // Skip reload during server startup to prevent blocking
-			// try {
-			// 	socket.getIo();
-			// } catch (err) {
-			// 	log.warn(`[GameStateManager] Socket.IO not initialized yet, skipping reload for game ${gameStateId}`);
-			// 	return null;
-			// }
 			const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
 			if (reload.reloaded) {
 				entry = this.get(gameStateId);
@@ -144,13 +137,16 @@ class GameStateManager {
 			);
 			return { reloaded: false, gameState, rules };
 		}
-		if (gameState.status === GAME_STATUS.PLAYING && gameState.timerLeft > 30) {
+		if (gameState.status === GAME_STATUS.PLAYING && gameState.gameTimers.remainingTime > 30) {
 			const timer = gameTimerManager.getTimer(gameStateId);
 			if (!timer) {
-				//TODO
-			}
-			gameState.timerLeft = 30;
-			log.warn(`[GameStateManager] Game ${gameStateId} timerLeft adjusted to 30 seconds`);
+				// Create a new timer with the actual remainingTime from DB
+				log.warn(`[GameStateManager] Game ${gameStateId} was PLAYING but timer not found, will use remainingTime from DB: ${gameState.gameTimers.remainingTime}ms`);
+			} else if (timer.status==="running"){
+				log.debug(`[GameStateManager] Game ${gameStateId} timer already exists, keeping current timer state`);
+			} else if (timer.status==='idle'){
+                log.
+            }
 		}
 		if (gameState.status === GAME_STATUS.PAUSED) {
 			await gameTimerManager.pauseTimer(gameStateId);

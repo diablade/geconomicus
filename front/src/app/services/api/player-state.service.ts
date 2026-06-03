@@ -213,7 +213,25 @@ export class PlayerStateService {
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
+			this.snackbarService.showNotif(this.i18nService.instant('GAME.STARTED'));
 		});
+
+		this.wsService.on(IO.GAME.PAUSED, async () => {
+            const currentGameState = this.gameStateSubject.getValue();
+			if (currentGameState) {
+				currentGameState.status = GAME_STATUS.PAUSED;
+				this.gameStateSubject.next(currentGameState);
+			}
+			const currentCredits = this.creditsSubject.getValue();
+			const updatedCredits = currentCredits.map((c) => {
+				if (c.status === CREDIT_STATUS.RUNNING) {
+					c.status = CREDIT_STATUS.PAUSED;
+				}
+				return c;
+			});
+			this.creditsSubject.next(updatedCredits);
+			this.snackbarService.showNotif(this.i18nService.instant('GAME.PAUSED'));
+        });
 
 		this.wsService.on(IO.GAME.STOPPED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();

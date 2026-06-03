@@ -269,7 +269,7 @@ export class WebSocketService {
 				data: {
 					disableClose: true,
 					title: this.i18nService.instant('SOCKET.RECONNECTING.TITLE'),
-					text: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
+					message: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
 				},
 			})
 			.afterClosed()

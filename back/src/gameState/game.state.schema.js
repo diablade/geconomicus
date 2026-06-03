@@ -98,15 +98,6 @@ let GameStateSchema = new Schema(
 			required: true,
 			default: 0,
 		},
-		timerLeft: {
-			type: Number,
-			required: true,
-			default: 0,
-		},
-		deathState: {
-			type: DeathState,
-			default: {},
-		},
 		//state june
 		currentDU: {
 			type: Number,

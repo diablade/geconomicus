@@ -94,7 +94,7 @@ export class TaskListBtnComponent {
 
 @Component({
 	selector: 'animator-tasklist-dialog',
-	templateUrl: '../../dialogs/animator-tasklist-dialog.html',
+	templateUrl: './animator-tasklist-dialog.html',
 })
 export class AnimatorTaskListDialog {
 	data: any;
