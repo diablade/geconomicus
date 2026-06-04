@@ -70,6 +70,7 @@ export declare const IO: {
         readonly FIRST_DU: "gfd";
         readonly STARTED: "gsta";
         readonly PAUSED: "gpa";
+        readonly RESUMED: "gres";
         readonly STOPPED: "gsto";
         readonly RESET: "reset";
         readonly DEATH_IS_COMING: "dic";
@@ -85,6 +86,7 @@ export declare const IO: {
         readonly PRISON_ENDED: "ppe";
         readonly PROGRESS_PRISON: "ppp";
         readonly TRANSACTION_DONE: "td";
+        readonly DISTRIB_DU: "du";
         readonly CONNECTED: "pc";
         readonly DISCONNECTED: "pdc";
     };

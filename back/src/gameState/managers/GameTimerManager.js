@@ -26,10 +26,13 @@ class GameTimerManager {
 		}
 	}
 
-	async resumeTimer(timerId) {
-		const timer = this.getTimer(timerId);
-		if (timer) {
-			timer.resume();
+	async resumeTimer(timer) {
+		const storedTimer = this.getTimer(timer.id);
+		if (storedTimer) {
+			storedTimer.resume();
+		} else {
+			this.timers.set(timer.id, timer);
+			timer.start();
 		}
 	}
 

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { GAME_STATUS, GAME_TYPE } from '@geco/shared';
+import { GAME_STATUS, GAME_TYPE, CREDIT_STATUS, PLAYER_STATUS } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
@@ -20,7 +20,7 @@ let Credit = new Schema(
 		amount: { type: Number, required: true },
 		interest: { type: Number, required: true },
 		playerStateIdx: { type: Number, required: true },
-		status: { type: String, required: true },
+		status: { type: String, enum: Object.values(CREDIT_STATUS), required: true },
 		extended: { type: Number, required: true },
 		createdAt: { type: Date, required: true },
 		startedAt: { type: Date },
@@ -34,7 +34,7 @@ let PlayerState = new Schema(
 	{
 		idx: { type: Number, required: true },
 		avatarIdx: { type: Number, required: true },
-		status: { type: String, required: true },
+		status: { type: String, required: true, enum: Object.values(PLAYER_STATUS) },
 		coins: { type: Number, required: true },
 		cards: { type: [CardSchema], required: true },
 	},
@@ -43,14 +43,14 @@ let PlayerState = new Schema(
 
 let DeathState = new Schema(
 	{
-		intervalDeath: { type: Number, required: true, default: 0 },
+		intervalDeathMs: { type: Number, required: true, default: 0 },
 		intervalDeathLeft: { type: Number, required: true, default: 0 },
 		deathQueue: { type: Array, required: true, default: [] },
 	},
 	{ _id: false }
 );
 
-let GameTimer = new Schema(
+let GameTimers = new Schema(
 	{
 		createdAt: { type: Date },
 		startedAt: { type: Date },
@@ -65,7 +65,7 @@ let GameStateSchema = new Schema(
 	{
 		typeMoney: {
 			type: String,
-			enum: [GAME_TYPE.JUNE, GAME_TYPE.DEBT],
+			enum: Object.values(GAME_TYPE),
 			required: true,
 		},
 		sessionId: {
@@ -80,6 +80,7 @@ let GameStateSchema = new Schema(
 		status: {
 			type: String,
 			required: true,
+			enum: Object.values(GAME_STATUS),
 			default: GAME_STATUS.CREATED,
 		},
 		decks: {
@@ -122,7 +123,7 @@ let GameStateSchema = new Schema(
 			default: 0,
 		},
 		gameTimers: {
-			type: GameTimer,
+			type: GameTimers,
 			default: {},
 		},
 	},

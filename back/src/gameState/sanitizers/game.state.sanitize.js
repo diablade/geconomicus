@@ -42,6 +42,12 @@ export const stateSanitize = {
 			'any.required': 'Game ID is required',
 		}),
 	}),
+	resume: Joi.object({
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game ID format',
+			'any.required': 'Game ID is required',
+		}),
+	}),
 	stop: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
 			'any.invalid': 'Invalid game ID format',

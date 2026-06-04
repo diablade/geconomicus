@@ -12,6 +12,7 @@ router.post('/create', validate(stateSanitize.create), gameStateController.creat
 router.post('/init', validate(stateSanitize.init), gameStateController.init);
 router.post('/start', validate(stateSanitize.start), gameStateController.start);
 router.post('/pause', validate(stateSanitize.pause), gameStateController.pause);
+router.post('/resume', validate(stateSanitize.resume), gameStateController.resume);
 router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
 
 

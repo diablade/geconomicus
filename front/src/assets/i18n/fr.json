@@ -10,6 +10,7 @@
 	"PUBLIC_KEY": "Clef publique :",
 	"LAST_SEEN": "Dernière connexion : {{lastSeen}}",
 	"VALUES_BY_DEFAULT": "Valeurs par défaut",
+	"BACK_TO_LOBBY": "Retour en salle d'attente",
 	"CANCEL": "Annuler",
 	"OK": "OK",
 	"ALL": "Tous",
@@ -20,7 +21,7 @@
 		"PLAYING": "En cours",
 		"END_GAME": "Manche terminée",
 		"STOP_ROUND": "Manche terminée",
-        "PAUSED": "Partie en pause",
+		"PAUSED": "Partie en pause",
 		"STARTED": "Partie démarrée"
 	},
 	"CARD": {

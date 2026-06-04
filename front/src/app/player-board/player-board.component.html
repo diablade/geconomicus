@@ -88,20 +88,14 @@
 					[stroked]="true"
 					[timerCredit]="vm.rules.timerCredit || 0"
 					*ngIf="vm.gameState.status !== STOPPED"></app-notice-btn>
-				<button
-					*ngIf="vm.gameState.status === STOPPED && vm.rules.surveyEnabled"
-					[routerLink]="['survey', sessionId, gameStateId, avatarIdx]"
-					mat-raised-button
-					color="accent">
-					{{ 'PLAYER.ANSWER_SURVEY' | translate }}
-				</button>
+
 				<button
 					class="ms-1"
 					*ngIf="vm.gameState.status === STOPPED"
 					[routerLink]="['/avatar', sessionId, avatarIdx]"
 					mat-raised-button
 					color="warn">
-					{{ 'HISTORY.VIEW_RESULTS' | translate }}
+					{{ 'BACK_TO_LOBBY' | translate }}
 				</button>
 			</div>
 			<div *ngIf="vm.typeTheme === 'CARD'" @list class="d-flex flex-row flex-wrap">

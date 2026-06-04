@@ -1,6 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable, Subject } from 'rxjs';
+import {
+	BehaviorSubject,
+	catchError,
+	combineLatest,
+	debounceTime,
+	distinctUntilChanged,
+	map,
+	Observable,
+	Subject,
+} from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService } from '../error.service';
 import { GameState, PlayerState, Credit, ConnectionStatus } from '../../models/gameState';
@@ -134,10 +143,7 @@ export class GameStateService {
 			}
 
 			// Auto-resume or display paused timer from backend state
-			if (
-				payload.gameState.status === GAME_STATUS.PLAYING &&
-				payload.gameState.gameTimers?.remainingTime > 0
-			) {
+			if (payload.gameState.status === GAME_STATUS.PLAYING && payload.gameState.gameTimers?.remainingTime > 0) {
 				this.startTimer(payload.gameState.gameTimers.remainingTime);
 			} else if (
 				payload.gameState.status === GAME_STATUS.PAUSED &&
@@ -251,7 +257,22 @@ export class GameStateService {
 			// Avatar updated event — could refresh player list
 			window.location.reload();
 		});
-
+		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
+			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
+				if (p.idx == data.idx) {
+					p.progressPrison = data.progress;
+				}
+			});
+		});
+		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
+			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.PRISON_ENDED'));
+			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
+				if (p.idx == data.idx) {
+					p.status = PLAYER_STATUS.ALIVE;
+					p.progressPrison = 0;
+				}
+			});
+		});
 		this.wsService.on(IO.PLAYER.CONNECTED, (data) => {
 			console.log('room connected ws:', data);
 			this.updatePlayerConnectionStatus(data, true);
@@ -260,6 +281,9 @@ export class GameStateService {
 		this.wsService.on(IO.PLAYER.DISCONNECTED, (data) => {
 			console.log('room disconnected ws:', data);
 			this.updatePlayerConnectionStatus(data, false);
+		});
+		this.wsService.on(IO.PLAYER.DISTRIB_DU, async (data: any) => {
+			console.log('room distrib du ws:', data);
 		});
 	}
 
@@ -327,25 +351,11 @@ export class GameStateService {
 			});
 			this.snackbarService.showError(this.i18n.instant('CREDIT.DEFAULT_CREDIT_MESSAGE'));
 		});
-		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
-				if (p.idx == data.idx) {
-					p.progressPrison = data.progress;
-				}
-			});
-		});
-		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
-			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.PRISON_ENDED'));
-			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
-				if (p.idx == data.idx) {
-					p.status = PLAYER_STATUS.ALIVE;
-					p.progressPrison = 0;
-				}
-			});
-		});
 	}
 
 	offAll(): void {
+		// Don't remove handlers from the map - they need to persist for socket reconnection
+		// Only remove from the actual socket
 		this.wsService.off(IO.AVATAR.UPDATED);
 		this.wsService.off(IO.PLAYER.CONNECTED);
 		this.wsService.off(IO.PLAYER.DISCONNECTED);
@@ -402,6 +412,12 @@ export class GameStateService {
 		return this.http
 			.post<any>(environment.API_HOST + environment.GAME_STATE.START, { gameStateId })
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.START_ROUND')));
+	}
+
+	resumeGame(gameStateId: string): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.RESUME, { gameStateId })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.RESUME_GAME')));
 	}
 
 	pauseGame(gameStateId: string): Observable<any> {

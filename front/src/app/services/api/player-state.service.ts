@@ -233,6 +233,23 @@ export class PlayerStateService {
 			this.snackbarService.showNotif(this.i18nService.instant('GAME.PAUSED'));
         });
 
+        this.wsService.on(IO.GAME.RESUMED, async () => {
+            const currentGameState = this.gameStateSubject.getValue();
+			if (currentGameState) {
+				currentGameState.status = GAME_STATUS.PLAYING;
+				this.gameStateSubject.next(currentGameState);
+			}
+			const currentCredits = this.creditsSubject.getValue();
+			const updatedCredits = currentCredits.map((c) => {
+				if (c.status === CREDIT_STATUS.PAUSED) {
+					c.status = CREDIT_STATUS.RUNNING;
+				}
+				return c;
+			});
+			this.creditsSubject.next(updatedCredits);
+			this.snackbarService.showNotif(this.i18nService.instant('GAME.RESUMED'));
+        });
+
 		this.wsService.on(IO.GAME.STOPPED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
@@ -242,9 +259,9 @@ export class PlayerStateService {
 			this.dialog
 				.open(InformationDialogComponent, {
 					data: {
-						title: 'GAME_ENDED',
-						message: 'GAME_ENDED_MESSAGE',
-						message2: 'SURVEY_MESSAGE',
+						title: 'EVENTS.GAME_ENDED',
+						message: 'EVENTS.GAME_ENDED_MESSAGE',
+						message2: 'EVENTS.SURVEY_MESSAGE',
 						disableClose: true,
 					},
 				})

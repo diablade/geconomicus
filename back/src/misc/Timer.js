@@ -3,15 +3,15 @@ import log from '#config/log';
 export default class Timer {
 	/**
 	 * @param {string} uniqueId
-     * @param {*} data                        - payload
+	 * @param {*} data                        - payload
 	 * @param {number} duration              - total duration in ms
-     * @param {Function} callbackAtEnd
+	 * @param {Function} callbackAtEnd
 	 * @param {number|null} durationInterval1 - duration interval in ms (null = disabled)
-     * @param {Function|null} callbackInterval1
-     * @param {number|null} durationInterval2 - duration interval in ms (null = disabled)
-     * @param {Function|null} callbackInterval2
-     * @param {number|null} durationInterval3 - duration interval in ms (null = disabled)
-     * @param {Function|null} callbackInterval3
+	 * @param {Function|null} callbackInterval1
+	 * @param {number|null} durationInterval2 - duration interval in ms (null = disabled)
+	 * @param {Function|null} callbackInterval2
+	 * @param {number|null} durationInterval3 - duration interval in ms (null = disabled)
+	 * @param {Function|null} callbackInterval3
 	 */
 	constructor(
 		uniqueId,
@@ -23,7 +23,7 @@ export default class Timer {
 		durationInterval2,
 		callbackInterval2,
 		durationInterval3,
-		callbackInterval3,
+		callbackInterval3
 	) {
 		this.id = uniqueId;
 		this.data = data;
@@ -55,7 +55,9 @@ export default class Timer {
 		this._startInterval2();
 		this._startInterval3();
 		this.status = 'running';
-		log.debug(`[Timer] ${this.id} started`);
+		log.debug(
+			`[GameTimerManager] Timer STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms`
+		);
 	}
 
 	pause() {
@@ -90,6 +92,7 @@ export default class Timer {
 
 	getRemainingMs() {
 		if (this.status === 'paused') return this.remainingMs;
+		if (this.status === 'idle') return this.remainingMs;
 		if (this.status !== 'running' || !this.startTime) return 0;
 		const elapsed = Date.now() - this.startTime.getTime();
 		return Math.max(0, this.remainingMs - elapsed);

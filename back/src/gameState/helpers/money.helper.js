@@ -24,6 +24,9 @@ MoneyHelper.distributeNewDU = async (entry) => {
 	const DU = await generateDU(gameState, rules);
 
 	gameState.currentDU = DU;
+	socket.emitTo(ROOMS.gameState(gameState._id), IO.GAME.DISTRIB_DU, {
+		du: DU,
+	});
 	gameState.playersStates.forEach((playerState) => {
 		log.debug(`[MoneyHelper] Distributing DU to player ${playerState.idx}: ${DU} coins`);
 		if (playerState.status == PLAYER_STATUS.ALIVE) {
@@ -31,10 +34,14 @@ MoneyHelper.distributeNewDU = async (entry) => {
 			playerState.coins += DU;
 			gameState.currentMassMonetary += DU;
 
-			socket.emitAckTo(ROOMS.playerState(gameState._id, playerState.avatarIdx, playerState.idx), IO.GAME.DISTRIB_DU, {
-				du: DU,
-				coinsLK: playerState.coins,
-			});
+			socket.emitAckTo(
+				ROOMS.playerState(gameState._id, playerState.avatarIdx, playerState.idx),
+				IO.GAME.DISTRIB_DU,
+				{
+					du: DU,
+					coinsLK: playerState.coins,
+				}
+			);
 
 			const event = EventHelper.createEvent(
 				DB_EVENTS.DISTRIB_DU,

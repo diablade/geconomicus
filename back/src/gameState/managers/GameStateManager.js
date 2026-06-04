@@ -137,25 +137,9 @@ class GameStateManager {
 			);
 			return { reloaded: false, gameState, rules };
 		}
-		if (gameState.status === GAME_STATUS.PLAYING && gameState.gameTimers.remainingTime > 30) {
-			const timer = gameTimerManager.getTimer(gameStateId);
-			if (!timer) {
-				// Create a new timer with the actual remainingTime from DB
-				log.warn(`[GameStateManager] Game ${gameStateId} was PLAYING but timer not found, will use remainingTime from DB: ${gameState.gameTimers.remainingTime}ms`);
-			} else if (timer.status==="running"){
-				log.debug(`[GameStateManager] Game ${gameStateId} timer already exists, keeping current timer state`);
-			} else if (timer.status==='idle'){
-                log.
-            }
-		}
-		if (gameState.status === GAME_STATUS.PAUSED) {
-			await gameTimerManager.pauseTimer(gameStateId);
-			await creditTimerManager.pauseTimer(gameStateId);
-			log.warn(`[GameStateManager] Game ${gameStateId} timer paused`);
-		}
 
 		this.store(gameStateId, gameState, rules);
-		log.info(`[GameStateManager] Game ${gameStateId} reloaded from DB (in memory)`);
+		log.info(`[GameStateManager] Game ${gameStateId} reloaded (in memory) from DB`);
 		socket.emitTo(`${gameStateId}:master`, IO.INFO, {
 			gameStateId,
 			message: 'Game reloaded from DB after memory loss',
@@ -176,12 +160,6 @@ class GameStateManager {
 		return gameQueueManager.enqueue(gameStateId, async () => {
 			let entry = await this.getOrReload(gameStateId);
 			if (!entry) throw new Error(`[GameStateManager] Game ${gameStateId} still not found after reload`);
-			// if (!entry) {
-			// log.error(`[GameStateManager] Game ${gameStateId} not found in memory`);
-			// await this.reload(gameStateId);
-			// entry = this.get(gameStateId);
-			// security net: reload() could have stored it but get() still fails
-			// }
 			return fn(entry);
 		});
 	}

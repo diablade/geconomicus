@@ -32,6 +32,7 @@ export const environment = {
 		RESET: 'game-state/reset/',
 		BUY_WITH_CODE: 'game-state/buy-with-code/',
 		START: 'game-state/start',
+		RESUME: 'game-state/resume',
 		PAUSE: 'game-state/pause',
 		STOP: 'game-state/stop',
 	},

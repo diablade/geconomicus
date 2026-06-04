@@ -218,7 +218,23 @@ GameStateController.start = async (req, res, next) => {
 
 		return res.status(200).json(result);
 	} catch (err) {
-		log.error('[GameStateController] Start round error:', err);
+		log.error('[GameStateController] Start game error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: err.message,
+		});
+	}
+};
+GameStateController.resume = async (req, res, next) => {
+	try {
+		const { gameStateId } = req.body;
+		const result = await GameStateService.resume(gameStateId);
+		// Emit socket event to notify clients (timer is started by the service)
+		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.RESUMED, result);
+
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] Resume game error:', err);
 		return res.status(500).json({
 			status: 'ko',
 			message: err.message,

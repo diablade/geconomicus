@@ -239,7 +239,8 @@ export class WebSocketService {
 			}
 			this.socket?.off(event, handler as any);
 		} else {
-			this.eventHandlers.delete(event);
+			// Don't delete from map - handlers need to persist for socket reconnection
+			// Only remove from the actual socket
 			this.socket?.off(event);
 		}
 	}
@@ -251,25 +252,25 @@ export class WebSocketService {
 				data: {
 					title: this.i18nService.instant('SOCKET.DISCONNECTED.TITLE'),
 					message: this.i18nService.instant('SOCKET.DISCONNECTED.MESSAGE'),
-					btn1Enable: false,
-					labelBtn2: this.i18nService.instant('SOCKET.DISCONNECTED.REFRESH'),
-					autoClickBtn2: true,
-					timerBtn2: this.i18nService.instant('SOCKET.DISCONNECTED.TIMER'),
+					labelBtnConfirm: this.i18nService.instant('SOCKET.DISCONNECTED.REFRESH'),
 				},
 			})
 			.afterClosed()
-			.subscribe(() => {
-				this.socket?.connect();
+			.subscribe((result) => {
+				if (result === 'btnConfirm') {
+					window.location.reload();
+				}
 			});
-	}
+        }
 
 	private showReconnectingDialog() {
-		this.dialog
-			.open(InformationDialogComponent, {
-				data: {
-					disableClose: true,
-					title: this.i18nService.instant('SOCKET.RECONNECTING.TITLE'),
-					message: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
+        this.dialog
+        .open(InformationDialogComponent, {
+            data: {
+                disableClose: true,
+                title: this.i18nService.instant('SOCKET.RECONNECTING.TITLE'),
+                message: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
+                timerBtn: 5,
 				},
 			})
 			.afterClosed()

@@ -95,7 +95,7 @@
 							color="primary"
 							(click)="goBackToLobby()">
 							<mat-icon>arrow_back</mat-icon>
-							{{ 'MASTER.GO_BACK_TO_LOBBY' | translate }}
+							{{ 'BACK_TO_LOBBY' | translate }}
 						</button>
 						<button
 							*ngIf="vm.gameState.status === CREATED"
@@ -111,7 +111,7 @@
 							class="ms-2 box-shadowed"
 							mat-raised-button
 							color="warn"
-							(click)="startGame()">
+							(click)="launchGame(vm.gameState.status)">
 							<mat-icon>play_arrow</mat-icon>
 							{{
 								vm.gameState.status === INITIALIZED

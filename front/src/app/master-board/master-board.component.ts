@@ -206,20 +206,36 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	startGame() {
-		this.gameStateService.startGame(this.gameStateId).subscribe({
-			next: (result) => {
-				this.rules$.pipe(take(1)).subscribe((rules) => {
-					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_STARTED'));
-					this.audioService.playSound('start');
-					const remainingMs = result?.remainingTimeMs || (rules.roundMinutes * 60 * 1000);
-					this.gameStateService.startTimer(remainingMs);
-				});
-			},
-			error: (error) => {
-				this.snackbarService.showError(this.i18nService.instant(error.message));
-			},
-		});
+	launchGame(status: string) {
+		if (status === this.INITIALIZED) {
+			this.gameStateService.startGame(this.gameStateId).subscribe({
+				next: (result) => {
+					this.rules$.pipe(take(1)).subscribe((rules) => {
+						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_STARTED'));
+						this.audioService.playSound('start');
+						const remainingMs = result?.remainingTimeMs || rules.roundMinutes * 60 * 1000;
+						this.gameStateService.startTimer(remainingMs);
+					});
+				},
+				error: (error) => {
+					this.snackbarService.showError(this.i18nService.instant(error.message));
+				},
+			});
+		} else if (status === this.PAUSED) {
+			this.gameStateService.resumeGame(this.gameStateId).subscribe({
+				next: (result) => {
+					this.rules$.pipe(take(1)).subscribe((rules) => {
+						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_RESUMED'));
+						this.audioService.playSound('start');
+						const remainingMs = result?.remainingTimeMs || rules.roundMinutes * 60 * 1000;
+						this.gameStateService.startTimer(remainingMs);
+					});
+				},
+				error: (error) => {
+					this.snackbarService.showError(this.i18nService.instant(error.message));
+				},
+			});
+		}
 	}
 
 	stopGame() {
@@ -232,7 +248,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			if (result && result == 'btnConfirm') {
 				this.gameStateService.stopGame(this.gameStateId).subscribe(() => {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_ENDED'));
-                    this.gameStateService.stopTimer();
+					this.gameStateService.stopTimer();
 				});
 			}
 		});
