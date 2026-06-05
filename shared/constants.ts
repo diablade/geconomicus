@@ -79,7 +79,7 @@ export const IO = {
 	GAME: {
 		CREATED: 'gc',
 		INIT: 'gi',
-		DISTRIB_DU: 'gddu',
+		CURRENT_DU: 'gcdu',
 		FIRST_DU: 'gfd',
 		STARTED: 'gsta',
 		PAUSED: 'gpa',

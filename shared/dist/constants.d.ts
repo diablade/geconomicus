@@ -66,7 +66,7 @@ export declare const IO: {
     readonly GAME: {
         readonly CREATED: "gc";
         readonly INIT: "gi";
-        readonly DISTRIB_DU: "gddu";
+        readonly CURRENT_DU: "gcdu";
         readonly FIRST_DU: "gfd";
         readonly STARTED: "gsta";
         readonly PAUSED: "gpa";

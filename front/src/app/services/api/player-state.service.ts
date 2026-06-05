@@ -267,7 +267,7 @@ export class PlayerStateService {
 				})
 				.afterClosed()
 				.subscribe(() => {
-					this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx]);
+					this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx, 'false']);
 				});
 		});
 
@@ -275,20 +275,6 @@ export class PlayerStateService {
 			if (data.gameStateId == this.gameStateId) {
 				//redirect to lobby
 				this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
-			}
-		});
-
-		this.wsService.on(IO.GAME.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
-			if (cb) {
-				cb({ status: 'ok', _ackId: data._ackId });
-			}
-			const currentCoins = this.coinsSubject.getValue();
-			this.coinsSubject.next(currentCoins + data.du);
-
-			const currentGameState = this.gameStateSubject.getValue();
-			if (currentGameState) {
-				currentGameState.currentDU = data.du;
-				this.gameStateSubject.next(currentGameState);
 			}
 		});
 
@@ -335,7 +321,20 @@ export class PlayerStateService {
 			});
 		});
 
-		// Prison events
+		this.wsService.on(IO.PLAYER.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
+			if (cb) {
+				cb({ status: 'ok', _ackId: data._ackId });
+			}
+			this.coinsSubject.next(data.coinsLK);
+			this.audioService.playSound('du');
+
+			const currentGameState = this.gameStateSubject.getValue();
+			if (currentGameState) {
+				currentGameState.currentDU = data.du;
+				this.gameStateSubject.next(currentGameState);
+			}
+		});
+
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			// Handle prison progress - emit event for component to handle timer
 		});
@@ -536,10 +535,10 @@ export class PlayerStateService {
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
+		this.wsService.off(IO.PLAYER.DISTRIB_DU);
 		this.wsService.off(IO.GAME.STARTED);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.DELETED);
-		this.wsService.off(IO.GAME.DISTRIB_DU);
 		this.wsService.off(IO.GAME.RESET);
 		this.wsService.off(IO.GAME.FIRST_DU);
 		this.wsService.off(IO.SESSION.UPDATED_RULES);

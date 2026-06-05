@@ -229,6 +229,14 @@ export class GameStateService {
 		this.wsService.on(IO.GAME.DEATH_IS_COMING, () => {
 			// Death event — component handles dialog
 		});
+
+		this.wsService.on(IO.GAME.CURRENT_DU, (data) => {
+			const currentGameState = this.gameStateSubject.getValue();
+			if (currentGameState) {
+				currentGameState.currentDU = data.du;
+				this.gameStateSubject.next(currentGameState);
+			}
+		});
 	}
 
 	private setupPlayersSocketListeners(): void {
@@ -363,6 +371,7 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
 		this.wsService.off(IO.GAME.PAUSED);
+		this.wsService.off(IO.GAME.CURRENT_DU);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.CREDIT.PAYED_INTEREST);

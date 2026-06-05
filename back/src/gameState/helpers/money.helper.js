@@ -24,7 +24,7 @@ MoneyHelper.distributeNewDU = async (entry) => {
 	const DU = await generateDU(gameState, rules);
 
 	gameState.currentDU = DU;
-	socket.emitTo(ROOMS.gameState(gameState._id), IO.GAME.DISTRIB_DU, {
+	socket.emitTo(ROOMS.gameState(gameState._id), IO.GAME.CURRENT_DU, {
 		du: DU,
 	});
 	gameState.playersStates.forEach((playerState) => {
@@ -36,7 +36,7 @@ MoneyHelper.distributeNewDU = async (entry) => {
 
 			socket.emitAckTo(
 				ROOMS.playerState(gameState._id, playerState.avatarIdx, playerState.idx),
-				IO.GAME.DISTRIB_DU,
+				IO.PLAYER.DISTRIB_DU,
 				{
 					du: DU,
 					coinsLK: playerState.coins,

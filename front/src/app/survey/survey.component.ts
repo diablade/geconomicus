@@ -34,16 +34,18 @@ export class SurveyComponent implements OnInit {
 			this.avatarIdx = params['avatarIdx'];
 			this.gameStateId = params['gameStateId'];
 			const edit = params['edit'];
-			if (edit) {
+			if (edit === 'edit') {
 				this.loadExistingFeedback();
 			}
 		});
 	}
 
 	loadExistingFeedback() {
-		this.surveyService.getPreviousFeedback(this.sessionId, this.gameStateId, this.avatarIdx).subscribe((feedback) => {
-			this.feedback = feedback;
-		});
+		this.surveyService
+			.getPreviousFeedback(this.sessionId, this.gameStateId, this.avatarIdx)
+			.subscribe((feedback) => {
+				this.feedback = feedback;
+			});
 	}
 
 	sendFeedback() {

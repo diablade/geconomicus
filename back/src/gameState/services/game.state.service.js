@@ -381,14 +381,12 @@ GameStateService.stop = async (gameStateId) => {
 	log.debug(`[GameStateService] Stopping game: ${gameStateId}`);
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
 	const entry = await GameStateManager.get(gameStateId);
-	let result;
 	if (entry) {
 		entry.gameState.status = GAME_STATUS.STOPPED;
 		if (entry.gameState.gameTimers) {
 			entry.gameState.gameTimers.remainingTime = 0;
 		}
-		result = await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState }, { new: true }).lean();
-		log.debug(`[GameStateService] Game state updated in DB: ${gameStateId}`, result);
+		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState }, { new: true }).lean();
 		await EventService.postMany(entry.events, gameStateId);
 		await EventService.postNow(
 			DB_EVENTS.GAME_ENDED,
@@ -407,7 +405,7 @@ GameStateService.stop = async (gameStateId) => {
 		log.info(`[GameStateService] Game stopped : ${gameStateId}`);
 	} else {
 		log.debug(`[GameStateService] Game state not found in memory, saving STOPPED status in DB: ${gameStateId}`);
-		result = await GameStateModel.findByIdAndUpdate(gameStateId, {
+		await GameStateModel.findByIdAndUpdate(gameStateId, {
 			$set: {
 				status: GAME_STATUS.STOPPED,
 				'gameTimers.remainingTime': 0,
@@ -418,8 +416,6 @@ GameStateService.stop = async (gameStateId) => {
 	}
 	return {
 		status: GAME_STATUS.STOPPED,
-		sessionId: result?.sessionId,
-		ruleIdx: result?.ruleIdx,
 	};
 };
 
