@@ -217,7 +217,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.GAME.PAUSED, async () => {
-            const currentGameState = this.gameStateSubject.getValue();
+			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PAUSED;
 				this.gameStateSubject.next(currentGameState);
@@ -231,10 +231,10 @@ export class PlayerStateService {
 			});
 			this.creditsSubject.next(updatedCredits);
 			this.snackbarService.showNotif(this.i18nService.instant('GAME.PAUSED'));
-        });
+		});
 
-        this.wsService.on(IO.GAME.RESUMED, async () => {
-            const currentGameState = this.gameStateSubject.getValue();
+		this.wsService.on(IO.GAME.RESUMED, async () => {
+			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PLAYING;
 				this.gameStateSubject.next(currentGameState);
@@ -248,7 +248,7 @@ export class PlayerStateService {
 			});
 			this.creditsSubject.next(updatedCredits);
 			this.snackbarService.showNotif(this.i18nService.instant('GAME.RESUMED'));
-        });
+		});
 
 		this.wsService.on(IO.GAME.STOPPED, async () => {
 			const currentGameState = this.gameStateSubject.getValue();
@@ -259,9 +259,9 @@ export class PlayerStateService {
 			this.dialog
 				.open(InformationDialogComponent, {
 					data: {
-						title: 'EVENTS.GAME_ENDED',
-						message: 'EVENTS.GAME_ENDED_MESSAGE',
-						message2: 'EVENTS.SURVEY_MESSAGE',
+						title: this.i18nService.instant('EVENTS.GAME_ENDED'),
+						message: this.i18nService.instant('EVENTS.GAME_ENDED_MESSAGE'),
+						message2: this.i18nService.instant('EVENTS.SURVEY_MESSAGE'),
 						disableClose: true,
 					},
 				})

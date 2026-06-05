@@ -71,7 +71,7 @@
 		"GAME_END": "Partie terminée",
 		"GAME_ENDED": "Partie terminée",
 		"GAME_ENDED_MESSAGE": "La partie est terminée. Merci d'avoir joué !",
-		"SURVEY_MESSAGE": "Vous allez être redirigé vers un questionnaire pour prendre à chaud vos ressentis sur le jeu. Celà sera utile pour les resultats en fin de partie. Merci de prendre 5 minutes pour y répondre !",
+		"SURVEY_MESSAGE": "Vous allez être redirigé vers un questionnaire pour recueillir à chaud vos ressentis sur cette partie. Merci de prendre 5 minutes pour y répondre !",
 		"ROUND_START": "Manche commencée",
 		"ROUND_END": "Manche terminée",
 		"DEATH_OF": "Mort de {{name}}",

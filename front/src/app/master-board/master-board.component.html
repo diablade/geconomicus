@@ -115,7 +115,7 @@
 							<mat-icon>play_arrow</mat-icon>
 							{{
 								vm.gameState.status === INITIALIZED
-									? 'MASTER.START_GAME'
+									? ('MASTER.START_GAME' | translate)
 									: ('MASTER.RESUME_GAME' | translate)
 							}}
 						</button>

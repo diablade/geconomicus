@@ -80,9 +80,11 @@ EventService.postMany = async (eventObjects, gameStateId) => {
 
 /* Remove */
 EventService.removeAllBySessionId = async (sessionId) => {
+	log.info(`[EventService] removeAllBySessionId: ${sessionId}`);
 	return await EventModel.deleteMany({ sessionId }).exec();
 };
 EventService.removeAllByGameStateId = async (gameStateId) => {
+	log.info(`[EventService] removeAllByGameStateId: ${gameStateId}`);
 	return await EventModel.deleteMany({ gameStateId }).exec();
 };
 
