@@ -105,6 +105,7 @@ export const IO = {
 	},
 	CREDIT: {
 		NEW: 'cn',
+		FREE_MONEY: 'cfm',
 		STARTED: 'cs',
 		PROGRESS: 'cp',
 		TIMEOUT: 'ct',
@@ -150,6 +151,7 @@ export const DB_EVENTS = {
 	PLAYER_JOINED: 'player-joined',
 	PLAYER_DIED: 'player-died',
 	// Credit events
+	FREE_MONEY: 'free-money',
 	CREDIT_NEW: 'credit-new',
 	CREDIT_REQUEST: 'credit-request',
 	CREDIT_SETTLE: 'credit-settle',

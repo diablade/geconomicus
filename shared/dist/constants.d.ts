@@ -92,6 +92,7 @@ export declare const IO: {
     };
     readonly CREDIT: {
         readonly NEW: "cn";
+        readonly FREE_MONEY: "cfm";
         readonly STARTED: "cs";
         readonly PROGRESS: "cp";
         readonly TIMEOUT: "ct";
@@ -133,6 +134,7 @@ export declare const DB_EVENTS: {
     readonly PLAYER_INIT: "player-init";
     readonly PLAYER_JOINED: "player-joined";
     readonly PLAYER_DIED: "player-died";
+    readonly FREE_MONEY: "free-money";
     readonly CREDIT_NEW: "credit-new";
     readonly CREDIT_REQUEST: "credit-request";
     readonly CREDIT_SETTLE: "credit-settle";

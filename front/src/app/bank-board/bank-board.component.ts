@@ -16,6 +16,7 @@ import { BankService } from '../services/api/bank.service';
 import { AudioService } from '../services/audio.service';
 import { Credit } from '../models/gameState';
 import { Avatar } from '../models/avatar';
+import { FreeMoneyDialogComponent } from '../dialogs/free-money-dialog/free-money-dialog.component';
 
 @Component({
 	selector: 'app-bank-board',
@@ -119,7 +120,6 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 		private audioService: AudioService,
 		private i18nService: I18nService
 	) {
-		// this.i18nService.loadNamespace('master');
 		this.i18nService.loadNamespace('bank');
 	}
 
@@ -212,6 +212,21 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 				// 			});
 				// 	});
 				// // 	this.snackbarService.showSuccess(this.i18nService.instant("BANK.CREDIT_FOR_ALL_SUCCESS"));
+			}
+		});
+	}
+
+	freeMoney() {
+		const freeMoneyDialogRef = this.dialog.open(FreeMoneyDialogComponent, {
+			data: {
+				players: this.playersAC$.pipe(
+					map((players) => players.filter((p) => p.status === PLAYER_STATUS.ALIVE))
+				),
+			},
+		});
+		freeMoneyDialogRef.afterClosed().subscribe((give) => {
+			if (give.amount > 0) {
+				this.gameStateService.giveFreeMoney(give);
 			}
 		});
 	}

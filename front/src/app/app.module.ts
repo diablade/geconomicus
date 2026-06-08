@@ -46,6 +46,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { BankBoardComponent } from './bank-board/bank-board.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ContractDialogComponent } from './dialogs/contract-dialog/contract-dialog.component';
+import { FreeMoneyDialogComponent } from './dialogs/free-money-dialog/free-money-dialog.component';
 import { CreditComponent } from './components/credit/credit.component';
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
 import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
@@ -116,6 +117,7 @@ LOAD_WASM().subscribe();
 		SurveyComponent,
 		BankBoardComponent,
 		ContractDialogComponent,
+		FreeMoneyDialogComponent,
 		CreditComponent,
 		ConfirmDialogComponent,
 		BtnTimerAutoClickComponent,

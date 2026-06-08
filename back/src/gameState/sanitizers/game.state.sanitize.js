@@ -174,7 +174,26 @@ export const stateSanitize = {
 			'any.invalid': 'Invalid interest format',
 			'any.required': 'Interest is required',
 		}),
-
+    }).required(),
+    creditForAll: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+            'any.invalid': 'Invalid game state ID format',
+            'any.required': 'Game state ID is required',
+        }),
+    }).required(),
+    freeMoney: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+            'any.invalid': 'Invalid game state ID format',
+            'any.required': 'Game state ID is required',
+        }),
+        playerStateIdx: Joi.number().integer().min(0).required().messages({
+            'any.invalid': 'Invalid player state index format',
+            'any.required': 'Player state index is required',
+        }),
+        amount: Joi.number().min(0).required().messages({
+            'any.invalid': 'Invalid amount format',
+            'any.required': 'Amount is required',
+        }),
     }).required(),
     cancelCredit: Joi.object({
         gameStateId: Joi.string().custom(isValidObjectId).required().messages({

@@ -1,0 +1,33 @@
+<div class="free">
+	<div class="d-flex align-items-center flex-column">
+		<h2 class="fs-4 shadowed geconomicusFont">{{ 'FREEMONEY.TITLE' | translate }}</h2>
+		<mat-form-field class="mt-2" appearance="fill">
+			<mat-label>{{ 'FREEMONEY.TO_PLAYER' | translate }}</mat-label>
+			<mat-select [(value)]="selectedPlayer" [compareWith]="compareById">
+				<mat-select-trigger>
+					<avatar
+						[avatar]="selectedPlayer?.avatar"
+						[width]="'40px'"
+						[height]="'40px'"
+						[namePosition]="'right'"></avatar>
+				</mat-select-trigger>
+				<mat-option *ngFor="let player of players | async" [value]="player">
+					<!-- {{ player.reincarnateFromId ? '🚼' : '' }} -->
+					<avatar
+						[avatar]="player.avatar"
+						[width]="'40px'"
+						[height]="'40px'"
+						[namePosition]="'right'"></avatar>
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<div>{{ 'FREEMONEY.DETAILS' | translate }}</div>
+		<div>
+			<button class="m-2" mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
+			<button class="m-2" [disabled]="!selectedPlayer" mat-raised-button color="accent" (click)="giveMoney()">
+				{{ 'FREEMONEY.GIVE_1_EURO' | translate }} 💸
+			</button>
+		</div>
+	</div>
+</div>

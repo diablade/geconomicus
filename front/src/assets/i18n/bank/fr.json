@@ -16,7 +16,24 @@
 		"SOLUTION": "Si le joueur ne voit pas son crédit, rafraîchis sa page ! 😉",
 		"NO_BANK_FREE_MONEY": "Pas de banque en monnaie libre ;)",
 		"CREDIT_FOR_ALL": "Créditer tous les joueurs",
-		"CREDIT_FOR_ALL_MESSAGE": "Voulez-vous vraiment créditer tous les joueurs ? (Crédit par defaut)"
+		"CREDIT_FOR_ALL_MESSAGE": "Voulez-vous vraiment créditer tous les joueurs ? (Crédit par defaut)",
+		"GIVE_FREE_MONEY": "Donner de l'argent",
+		"GIVE_FREE_MONEY_MESSAGE": "Voulez-vous vraiment donner de l'argent gratuitement ?"
+	},
+	"CONTRACT": {
+		"TITLE": "Contrat",
+		"CREDIT": "Crédit",
+		"INTEREST": "Intérêt",
+		"RATE_INTEREST": "Taux d'intérêt",
+		"CAN_CANCEL_CREDIT": "Montant à rembourser",
+		"DETAILS": "Dans {{timer}} minutes, le joueur devra détenir ce montant pour rembourser ce crédit y compris l'intérêt",
+		"WITH_PLAYER": "Avec le joueur",
+		"SIGN": "Signer",
+		"DEFAULT_CREDIT_AMOUNT": "3 par défaut",
+		"DEFAULT_INTEREST_AMOUNT": "1 par défaut",
+		"CREDIT_SUCCESS": "Crédit accordé à {{player}}",
+		"QUICK_CREDIT": "Crédit de {{amount}}, intérêt à {{interest}}",
+		"MANUAL_CREDIT": "Saisie manuelle d'un crédit"
 	},
 	"CREDIT": {
 		"CREATED": "Créé",
@@ -43,5 +60,12 @@
 		"CANCEL": "Annuler le crédit",
 		"CANCEL_MESSAGE": "Voulez-vous vraiment annuler le crédit de {{username}} de {{amount}} € ?",
 		"CANCEL_MESSAGE2": "⚠️ le joueur doit avoir au moins {{amount}} €, les intérêts ne seront pas collectés"
+	},
+	"FREEMONEY": {
+		"TITLE": "Donner de l'argent",
+		"TO_PLAYER": "À qui ?",
+		"DETAILS": "Vous pouvez donner de l'argent à un joueur, pour l'aider dans sa partie.",
+		"GIVE_1_EURO": "Donner 1€",
+		"SUCCESS": "Vous avez donné {{amount}}€ à {{playerName}}"
 	}
 }

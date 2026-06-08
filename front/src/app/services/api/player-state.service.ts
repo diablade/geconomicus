@@ -409,6 +409,17 @@ export class PlayerStateService {
 			});
 		});
 
+		this.wsService.on(IO.CREDIT.FREE_MONEY, async (data: any, cb: (response: any) => void) => {
+			cb({ status: 'ok', _ackId: data._ackId });
+			this.coinsSubject.next(data.coinsLK);
+			this.audioService.playSound('coins');
+			this.dialog.open(InformationDialogComponent, {
+				data: {
+					message: this.i18nService.instant('CREDIT.FREE_MONEY', { amount: data.amount }),
+				},
+			});
+		});
+
 		this.wsService.on(IO.CREDIT.CANCELED, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
 			console.log('credit canceled', data);

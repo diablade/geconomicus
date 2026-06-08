@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
-import { Credit } from 'src/app/models/gameState';
+import { Credit, GameState } from 'src/app/models/gameState';
 
 @Injectable({
 	providedIn: 'root',
@@ -80,5 +80,20 @@ export class BankService {
 		return this.http
 			.post(environment.API_HOST + environment.BANK.PAY_INTEREST, { credit })
 			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.PAY_INTEREST')));
+	}
+
+	giveFreeMoney(gameStateId: string, playerStateIdx: number, amount: number): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.GIVE_FREE_MONEY, {
+				gameStateId,
+				playerStateIdx,
+				amount,
+			})
+			.pipe(
+				catchError((error) => {
+					this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.GIVE_FREE_MONEY');
+					throw error;
+				})
+			);
 	}
 }

@@ -29,6 +29,7 @@
 		"DEFAULT_CREDIT": "Défaut de paiement",
 		"CREDIT_DONE": "Terminé",
 		"NEW_CREDIT": "Crédit obtenu (+{{amount}}💰)",
+        "FREE_MONEY": "Argent gratuit reçu (+{{amount}}💰)",
 
 		"ANSWER": "Répondre",
 		"SETTLE": "Rembourser",

@@ -91,6 +91,15 @@
 							<mat-icon>groups</mat-icon>
 							{{ 'BANK.CREDIT_FOR_ALL' | translate }}
 						</button>
+						<button
+							class="box-shadowed"
+							mat-raised-button
+							color="warn"
+							[disabled]="vm.gameState.status === STOPPED"
+							(click)="freeMoney()">
+							<mat-icon>💸</mat-icon>
+							{{ 'FREEMONEY.TITLE' | translate }}
+						</button>
 					</div>
 					<button
 						class="mt-3 box-shadowed blur blackBtn"

@@ -295,15 +295,16 @@ GameStateService.start = async (gameStateId) => {
 				deathQueue,
 			},
 		};
+
+		//start credit timers if game is in debt mode
+		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
+			await BankStateService.startAllTimersCreditGame(gameStateId, entry.gameState.credits, entry.rules);
+		}
+
 		//create and store/start timer
 		const { timer, stored } = await _getTimer(entry.gameState, gameStateId);
 		log.info(`[GameTimerManager] Timer STARTING... for game ${timer.id}`);
 		await gameTimerManager.startTimer(timer);
-
-		//start credit timers if game is in debt mode
-		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-			await BankStateService.startAllTimersCreditGame(gameStateId, entry.gameState.credits);
-		}
 
 		// Persist to DB
 		EventService.postNow(
@@ -349,7 +350,7 @@ GameStateService.resume = async (gameStateId) => {
 		entry.gameState.status = GAME_STATUS.PLAYING;
 
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-			await BankStateService.resumeAllTimersCreditGame(gameStateId, entry.gameState.credits);
+			await BankStateService.resumeAllTimersCreditGame(gameStateId, entry.gameState.credits, entry.rules);
 		}
 
 		// Persist to DB

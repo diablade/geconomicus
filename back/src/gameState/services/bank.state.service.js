@@ -8,6 +8,7 @@ import Timer from '../../misc/Timer.js';
 import { differenceInMilliseconds } from 'date-fns';
 import { CREDIT_STATUS, GAME_STATUS, PLAYER_TYPE, PLAYER_STATUS, ROOMS, IO, DB_EVENTS } from '@geco/shared';
 import EventHelper from '../helpers/event.helper.js';
+import EventService from '../../event/event.service.js';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -162,7 +163,9 @@ const lockDownPlayer = async (idPlayer, idGame, prisonTime) => {
 };
 
 const _prisonEndCallback = async (timerInstance) => {
-	log.info(`[BankStateService] Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`);
+	log.info(
+		`[BankStateService] Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`
+	);
 	// TODO: Implement prison end logic
 	// const getOut = async (idGame, idPlayer) => {
 	//     try {
@@ -379,8 +382,64 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 	});
 };
 
+BankStateService.createCreditForAll = async (gameStateId) => {
+	log.debug(`[BankStateService] Creating credit for all in game state ${gameStateId}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules, events } = entry;
+		const playerStates = gameState.playerStates;
+		const credits = [];
+		for (const playerState of playerStates) {
+			if (playerState.status !== PLAYER_STATUS.ALIVE) {
+				continue;
+			}
+			const credit = await BankStateService.createCredit(
+				gameStateId,
+				playerState.idx,
+				rules.creditAmount,
+				rules.creditInterest
+			);
+			credits.push(credit);
+		}
+		return {
+			credits,
+			currentMassMonetary: gameState.currentMassMonetary,
+		};
+	});
+};
+
+BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
+	log.debug(`[BankStateService] Freeing money for player ${playerStateIdx} in game state ${gameStateId}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, events } = entry;
+		const playerState = _findPlayer(gameState, playerStateIdx);
+		if (!playerState || playerState.status !== PLAYER_STATUS.ALIVE) {
+			throw new Error('Player state not found or not alive');
+		}
+		playerState.coins += amount;
+		gameState.currentMassMonetary += amount;
+
+		events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.FREE_MONEY,
+				entry.sessionId,
+				entry.gameStateId,
+				PLAYER_TYPE.BANK,
+				playerStateIdx,
+				{ coins: playerState.coins, currentMassMonetary: gameState.currentMassMonetary, amount },
+				Date.now()
+			)
+		);
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerStateIdx), IO.CREDIT.FREE_MONEY, {
+			coinsLK: playerState.coins,
+			amount,
+		});
+
+		return { amount, playerStateIdx, currentMassMonetary: gameState.currentMassMonetary };
+	});
+};
+
 BankStateService.cancelCredit = async (gameStateId, creditId) => {
-    log.debug(`[BankStateService] Canceling credit ${creditId} in game state ${gameStateId}`);
+	log.debug(`[BankStateService] Canceling credit ${creditId} in game state ${gameStateId}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, events } = entry;
 
@@ -388,7 +447,7 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 		if (!credit) {
 			throw new Error('Credit not found');
 		}
-        log.debug(`[BankStateService] Canceling credit ${creditId} for player ${credit.playerStateIdx}`);
+		log.debug(`[BankStateService] Canceling credit ${creditId} for player ${credit.playerStateIdx}`);
 		const playerState = _findPlayer(gameState, credit.playerStateIdx);
 		if (!playerState) {
 			throw new Error('Player state not found');
@@ -421,12 +480,13 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 
 		return {
 			credit,
+			currentMassMonetary: gameState.currentMassMonetary,
 		};
 	});
 };
 
 BankStateService.startAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
-    log.debug(`[BankStateService] Starting all credit timers for game state ${gameStateId}`);
+	log.debug(`[BankStateService] Starting all credit timers for game state ${gameStateId}`);
 	for (const credit of credits) {
 		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
 			const timer = _createCreditTimer(gameStateId, credit, rules);
@@ -436,19 +496,19 @@ BankStateService.startAllTimersCreditGame = async (gameStateId, credits = [], ru
 };
 
 BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
-    log.debug(`[BankStateService] Pausing all credit timers for game state ${gameStateId}`);
-    for (const credit of credits) {
-        if (credit.status === CREDIT_STATUS.RUNNING) {
-            const timer = creditTimerManager.getTimer(credit.id);
-            if (timer) {
-                creditTimerManager.pauseTimer(timer);
-            }
-        }
-    }
+	log.debug(`[BankStateService] Pausing all credit timers for game state ${gameStateId}`);
+	for (const credit of credits) {
+		if (credit.status === CREDIT_STATUS.RUNNING) {
+			const timer = creditTimerManager.getTimer(credit.id);
+			if (timer) {
+				creditTimerManager.pauseTimer(timer);
+			}
+		}
+	}
 };
 
 BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
-    log.debug(`[BankStateService] Resuming all credit timers for game state ${gameStateId}`);
+	log.debug(`[BankStateService] Resuming all credit timers for game state ${gameStateId}`);
 	for (const credit of credits) {
 		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
 			const timer = _createCreditTimer(gameStateId, credit, rules);

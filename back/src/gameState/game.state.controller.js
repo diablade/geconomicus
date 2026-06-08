@@ -284,6 +284,42 @@ GameStateController.createCredit = async (req, res, next) => {
 	}
 };
 
+GameStateController.creditForAll = async (req, res, next) => {
+	try {
+		const { gameStateId } = req.body;
+		const result = await BankStateService.createCreditForAll(gameStateId);
+		return res.status(200).json({
+			status: 'ok',
+			message: 'CREDIT_FOR_ALL_CREATED',
+			data: result,
+		});
+	} catch (err) {
+		log.error('[GameStateController] Create credit for all error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.CREATE_CREDIT_FOR_ALL',
+		});
+	}
+};
+
+GameStateController.freeMoney = async (req, res, next) => {
+	try {
+		const { gameStateId, playerStateIdx, amount } = req.body;
+		const result = await BankStateService.freeMoney(gameStateId, playerStateIdx, amount);
+		return res.status(200).json({
+			status: 'ok',
+			message: 'FREE_MONEY_SEND',
+			data: result,
+		});
+	} catch (err) {
+		log.error('[GameStateController] Free money error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.FREE_MONEY',
+		});
+	}
+};
+
 GameStateController.cancelCredit = async (req, res, next) => {
 	try {
 		const { gameStateId, creditId } = req.body;

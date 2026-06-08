@@ -558,6 +558,22 @@ export class GameStateService {
 		});
 	}
 
+	giveFreeMoney(give: any) {
+		this.bankService.giveFreeMoney(this.gameStateId, give.playerStateIdx, give.amount).subscribe((data: any) => {
+			this.snackbarService.showSuccess(
+				this.i18n.instant('FREEMONEY.SUCCESS', {
+					playerName: give.playerName,
+					amount: give.amount,
+				})
+			);
+			if (data) {
+				const gameState = this.gameStateSubject.getValue();
+				gameState.currentMassMonetary = data.data.currentMassMonetary;
+				this.gameStateSubject.next(gameState);
+			}
+		});
+	}
+
 	seizureOnCredit(seizure: any, credit: Credit) {
 		this.bankService.seizure(seizure, credit).subscribe((data: any) => {
 			this.snackbarService.showSuccess(this.i18n.instant('DIALOG.SEIZURE.SUCCESS'));

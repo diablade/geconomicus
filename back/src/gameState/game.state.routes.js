@@ -29,7 +29,9 @@ router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', v
 router.post('/player-state/transaction', validate(stateSanitize.transaction), gameStateController.transaction);
 
 
+router.post('/bank-state/free-money', validate(stateSanitize.freeMoney), gameStateController.freeMoney);
 router.post('/bank-state/create-credit', validate(stateSanitize.createCredit), gameStateController.createCredit);
+router.post('/bank-state/credit-for-all', validate(stateSanitize.creditForAll), gameStateController.creditForAll);
 router.post('/bank-state/cancel-credit', validate(stateSanitize.cancelCredit), gameStateController.cancelCredit);
 
 // router.get('/get-credits/:idGame/:idPlayer', bank.getCreditsByIdPlayer);

@@ -36,21 +36,6 @@
 		"IN_DECK": "la carte <b>({{cardName}})</b> est dans le <b>deck</b>",
 		"IN_PLAYER": "la carte <b>({{cardName}})</b> est chez le joueur <b>{{player}}</b>"
 	},
-	"CONTRACT": {
-		"TITLE": "Contrat",
-		"CREDIT": "Crédit",
-		"INTEREST": "Intérêt",
-		"RATE_INTEREST": "Taux d'intérêt",
-		"CAN_CANCEL_CREDIT": "Montant à rembourser",
-		"DETAILS": "Dans {{timer}} minutes, le joueur devra détenir ce montant pour rembourser ce crédit y compris l'intérêt",
-		"WITH_PLAYER": "Avec le joueur",
-		"SIGN": "Signer",
-		"DEFAULT_CREDIT_AMOUNT": "3 par défaut",
-		"DEFAULT_INTEREST_AMOUNT": "1 par défaut",
-		"CREDIT_SUCCESS": "Crédit accordé à {{player}}",
-		"QUICK_CREDIT": "Crédit de {{amount}}, intérêt à {{interest}}",
-		"MANUAL_CREDIT": "Saisie manuelle d'un crédit"
-	},
 	"THEME": {
 		"TITLE": "Theme",
 		"CLASSIC": "Cartes classiques",
