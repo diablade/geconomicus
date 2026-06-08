@@ -36,15 +36,15 @@ export class AvatarService {
 	) {}
 
 	loadAvatar(sessionId: string, avatarIdx: number, fetchSession = false): Observable<any> {
-		return new Observable((observer: any) => {
+		return new Observable( (observer: any) => {
 			this.http
 				.get<any>(
 					environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession
 				)
 				.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
-				.subscribe((data) => {
+				.subscribe(async (data) => {
 					if (fetchSession && data.avatar) {
-						this.themesService.loadTheme(data.session.theme);
+						await this.themesService.loadTheme(data.session.theme);
 						this.avatarSubject.next(data.avatar);
 						if (data.session) {
 							this.sessionSubject.next(data.session);

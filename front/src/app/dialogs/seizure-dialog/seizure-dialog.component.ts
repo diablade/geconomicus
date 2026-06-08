@@ -1,24 +1,22 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Card, Credit, Player} from "../../models/game";
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-// @ts-ignore
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Card, Credit, Player } from '../../models/game';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CREDIT_STATUS } from '@geco/shared';
-import {DeprecatedBackService} from "../../services/deprecated-back.service";
+import { DeprecatedBackService } from '../../services/deprecated-back.service';
 import * as _ from 'lodash-es';
-import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
-import {getBackgroundStyle} from "../../services/avatarTools";
+import { faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar } from '@fortawesome/free-solid-svg-icons';
+import { getBackgroundStyle } from '../../services/avatarTools';
 
 @Component({
 	selector: 'app-seizure-dialog',
 	templateUrl: './seizure-dialog.component.html',
-	styleUrls: ['./seizure-dialog.component.scss']
+	styleUrls: ['./seizure-dialog.component.scss'],
 })
 export class SeizureDialogComponent implements OnInit {
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	credit: Credit | undefined;
 	player: Player = new Player();
-	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	playerCards: Card[] = [];
 	seizureCards: Card[] = [];
 	seizureCoins = 0;
@@ -32,7 +30,11 @@ export class SeizureDialogComponent implements OnInit {
 	seizureDecote: number;
 	timerPrisonMax = 5;
 
-	constructor(private backService: DeprecatedBackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(
+		private backService: DeprecatedBackService,
+		public dialogRef: MatDialogRef<SeizureDialogComponent>,
+		@Inject(MAT_DIALOG_DATA) public data: any
+	) {
 		this.credit = data.credit;
 		this.seizureType = data.seizureType;
 		this.seizureCost = data.seizureCosts;
@@ -40,19 +42,22 @@ export class SeizureDialogComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.backService.getPlayer(this.credit?.idGame, this.credit?.idPlayer).subscribe(async data => {
+		this.backService.getPlayer(this.credit?.idGame, this.credit?.idPlayer).subscribe(async (data) => {
 			this.player = data.player;
 			this.playerCards = data.player.cards;
-			// @ts-ignore
-			this.svgContainer.nativeElement.innerHTML = this.player.image;
 		});
 	}
 
-	onDrop(event: CdkDragDrop<Card []>) {
+	onDrop(event: CdkDragDrop<Card[]>) {
 		if (event.container === event.previousContainer) {
 			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 		} else {
-			transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
+			transferArrayItem(
+				event.previousContainer.data,
+				event.container.data,
+				event.previousIndex,
+				event.currentIndex
+			);
 		}
 	}
 
@@ -63,9 +68,9 @@ export class SeizureDialogComponent implements OnInit {
 
 	getSeizure() {
 		let seize = 0;
-		_.forEach(this.seizureCards, c => {
+		_.forEach(this.seizureCards, (c) => {
 			if (this.seizureType == CREDIT_STATUS.DECOTE) {
-				seize += (c.price - (c.price * this.seizureDecote / 100));
+				seize += c.price - (c.price * this.seizureDecote) / 100;
 			} else {
 				seize += c.price;
 			}
@@ -85,7 +90,7 @@ export class SeizureDialogComponent implements OnInit {
 	}
 
 	getProgressSeizure() {
-		const progress = this.getSeizure() / this.getSeizureObjective() * 100;
+		const progress = (this.getSeizure() / this.getSeizureObjective()) * 100;
 		return progress > 100 ? 100 : progress;
 	}
 
@@ -97,8 +102,8 @@ export class SeizureDialogComponent implements OnInit {
 		this.dialogRef.close({
 			cards: this.seizureCards,
 			coins: this.seizureCoins,
-			prisonTime: this.prisonTime
-		})
+			prisonTime: this.prisonTime,
+		});
 	}
 
 	getMinTimerPrison() {

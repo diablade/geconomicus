@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
@@ -98,7 +98,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	close() {
 		this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
 	}
-
 
 	onChangeSysScan() {
 		this.localStorageService.setItem('scanV3', this.scanV3);

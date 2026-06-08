@@ -302,7 +302,7 @@ GameStateService.start = async (gameStateId) => {
 
 		//start credit timers if game is in debt mode
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-			await BankStateService.startCreditsTimersOfGame(gameStateId, entry.gameState.credits);
+			await BankStateService.startAllTimersCreditGame(gameStateId, entry.gameState.credits);
 		}
 
 		// Persist to DB
@@ -349,7 +349,7 @@ GameStateService.resume = async (gameStateId) => {
 		entry.gameState.status = GAME_STATUS.PLAYING;
 
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-			await BankStateService.startCreditsTimersOfGame(gameStateId, entry.gameState.credits);
+			await BankStateService.resumeAllTimersCreditGame(gameStateId, entry.gameState.credits);
 		}
 
 		// Persist to DB

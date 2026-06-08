@@ -351,7 +351,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 		playerState.coins += amount;
 
 		if (startNow) {
-			const timer = _createCreditTimer(gameStateId, credit, rules, true);
+			const timer = _createCreditTimer(gameStateId, credit, rules);
 			creditTimerManager.startTimer(timer);
 		}
 
@@ -380,6 +380,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 };
 
 BankStateService.cancelCredit = async (gameStateId, creditId) => {
+    log.debug(`[BankStateService] Canceling credit ${creditId} in game state ${gameStateId}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, events } = entry;
 
@@ -387,6 +388,7 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 		if (!credit) {
 			throw new Error('Credit not found');
 		}
+        log.debug(`[BankStateService] Canceling credit ${creditId} for player ${credit.playerStateIdx}`);
 		const playerState = _findPlayer(gameState, credit.playerStateIdx);
 		if (!playerState) {
 			throw new Error('Player state not found');
@@ -423,11 +425,34 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 	});
 };
 
-BankStateService.startCreditsTimersOfGame = async (gameStateId, credits = [], rules) => {
+BankStateService.startAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
+    log.debug(`[BankStateService] Starting all credit timers for game state ${gameStateId}`);
 	for (const credit of credits) {
 		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
 			const timer = _createCreditTimer(gameStateId, credit, rules);
 			creditTimerManager.startTimer(timer);
+		}
+	}
+};
+
+BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
+    log.debug(`[BankStateService] Pausing all credit timers for game state ${gameStateId}`);
+    for (const credit of credits) {
+        if (credit.status === CREDIT_STATUS.RUNNING) {
+            const timer = creditTimerManager.getTimer(credit.id);
+            if (timer) {
+                creditTimerManager.pauseTimer(timer);
+            }
+        }
+    }
+};
+
+BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
+    log.debug(`[BankStateService] Resuming all credit timers for game state ${gameStateId}`);
+	for (const credit of credits) {
+		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
+			const timer = _createCreditTimer(gameStateId, credit, rules);
+			creditTimerManager.resumeTimer(timer);
 		}
 	}
 };

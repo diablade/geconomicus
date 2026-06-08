@@ -4,6 +4,25 @@ import { SESSION_STATUS } from '@geco/shared';
 import log from '#config/log';
 import { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
 
+const populateStatusForGameRules = async (session) => {
+	const populatedSession = await session.populate({
+		path: 'gamesRules.gameStateId',
+		select: 'status',
+	});
+
+	// Convertir en objet plain et remapper
+	const sessionObj = populatedSession.toObject();
+	sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
+		...rule,
+		gameStateId: rule.gameStateId?._id ?? rule.gameStateId,
+		gameStatus: rule.gameStateId?.status ?? rule.gameStatus,
+	}));
+	log.debug(
+		`[SessionService] getById populated: ${sessionObj.gamesRules[0].gameStatus}, ${sessionObj.gamesRules[1].gameStatus}`
+	);
+	return sessionObj;
+};
+
 const SessionService = {};
 
 /* Create */
@@ -32,22 +51,7 @@ SessionService.getById = async (id, tryPopulate = false) => {
 		return session;
 	}
 	if (tryPopulate) {
-		const populatedSession = await session.populate({
-			path: 'gamesRules.gameStateId',
-			select: 'status',
-		});
-
-		// Convertir en objet plain et remapper
-		const sessionObj = populatedSession.toObject();
-		sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
-			...rule,
-			gameStateId: rule.gameStateId?._id ?? rule.gameStateId,
-			gameStatus: rule.gameStateId?.status ?? rule.gameStatus,
-		}));
-		log.debug(
-			`[SessionService] getById populated: ${sessionObj.gamesRules[0].gameStatus}, ${sessionObj.gamesRules[1].gameStatus}`
-		);
-		return sessionObj;
+		return populateStatusForGameRules(session);
 	}
 	return session;
 };
@@ -125,7 +129,12 @@ SessionService.update = async (sessionId, updates) => {
 	for (const [key, value] of Object.entries(updates)) {
 		set[key] = value;
 	}
-	return SessionModel.findOneAndUpdate({ _id: sessionId }, { $set: set }, { new: true, runValidators: true }).lean();
+	const session = await SessionModel.findOneAndUpdate(
+		{ _id: sessionId },
+		{ $set: set },
+		{ new: true, runValidators: true }
+	);
+	return populateStatusForGameRules(session);
 };
 
 /* Remove */

@@ -7,11 +7,12 @@
 				id="player-cards"
 				(cdkDropListDropped)="onDrop($event)"
 				[cdkDropListData]="playerCards"
+				[ngClass]="player.boardConf"
 				[ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)"
 				class="d-flex flex-column player-board m-2">
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">
-						<div class="svg" [ngStyle]="{ 'border-color': '#' + player.hairColor }" #svgContainer></div>
+						<avatar [avatar]="player"></avatar>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
 						<div class="fs-6 shadowed">{{ player.name }}</div>

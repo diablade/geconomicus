@@ -33,7 +33,7 @@
 		</div>
 		<button
 			*ngIf="card.count && amountCardsForProd ? card.count >= amountCardsForProd : false"
-			(click)="buildCardLvlUp()"
+			(click)="buildCard()"
 			mat-raised-button
 			class="transform"
 			[ngClass]="getBuildColor(card)">

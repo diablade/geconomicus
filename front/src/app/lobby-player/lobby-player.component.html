@@ -1,6 +1,7 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<div
 		class="p-2 w-100 h-100 lobby d-flex flex-column overflow-auto"
+		[ngClass]="vm.avatar?.boardConf"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
 		<div class="d-flex flex-row justify-content-between align-items-center m-2">
 			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />

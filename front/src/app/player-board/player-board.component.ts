@@ -7,11 +7,11 @@ import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
 import { faClipboardCheck, faFileContract, faCreditCardAlt } from '@fortawesome/free-solid-svg-icons';
 import { SnackbarService } from '../services/snackbar.service';
-import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
+// import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { CongratsDialogComponent } from '../dialogs/congrats-dialog/congrats-dialog.component';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
-import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, IO, PLAYER_STATUS } from '@geco/shared';
+import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import { ShortCode } from '../models/shortCode';
 import { Recipe, Ingredient, getAvailableRecipes } from '../models/recipe';
 import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
@@ -347,7 +347,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		// TODO: Implement reincarnation flow
 	}
 
-	onChangedShortCode($event: ShortCode) {
+	onChangedShortCode($event: any) {
 		this.playerStateService.shortCode = $event;
 	}
 

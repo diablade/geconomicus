@@ -29,6 +29,7 @@
 	</div>
 	<div
 		class="p-2 w-100 h-100 game d-flex flex-column overflow-auto"
+		[ngClass]="vm.avatar?.boardConf"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
 		<div class="">
 			<div class="titleBar d-flex flex-row justify-content-between">
@@ -99,7 +100,7 @@
 				</button>
 			</div>
 			<div *ngIf="vm.typeTheme === 'CARD'" @list class="d-flex flex-row flex-wrap">
-				<ng-container *ngFor="let card of vm.cards">
+				<ng-container *ngFor="let card of cards$ | async">
 					<!-- {{ card | json }} -->
 					<app-card
 						@item
@@ -111,23 +112,23 @@
 						[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
 						[currentDU]="vm.gameState.currentDU"
 						[amountCardsForProd]="vm.rules.amountCardsForProd"
-						(onBuildCardLvlUp)="produceLevelUp($event)"
-						(onChangedShortCode)="onChangedShortCode($event)"
-						[screenWidth]="screenWidth"
-						[screenHeight]="screenHeight"
+						(buildCardLvlUp)="produceLevelUp($event)"
+						(shortCodeChanged)="onChangedShortCode($event)"
 						[width]="screenWidth < screenHeight ? '28vw' : '28vh'"
 						[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)' : 'calc(28vh * 1.5)'"
+						[screenWidth]="screenWidth"
+						[screenHeight]="screenHeight"
 						[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
 						[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"></app-card>
 				</ng-container>
 			</div>
 			<div *ngIf="vm.typeTheme !== 'CARD'" @list class="d-flex flex-row flex-wrap justify-content-center">
-				<div @item *ngFor="let card of vm.cards">
+				<ng-container *ngFor="let card of cards$ | async">
 					<!-- {{ card | json }} -->
 					<app-item
 						@item
 						[card]="card"
-						[typeMoney]="vm.gameState.typeMoney"
+						[typeMoney]="vm.rules.typeMoney"
 						[ownerIdx]="playerStateIdx"
 						[gameStateId]="gameStateId"
 						[typeTheme]="vm.typeTheme"
@@ -135,14 +136,8 @@
 						[currentDU]="vm.gameState.currentDU"
 						(onChangedShortCode)="onChangedShortCode($event)"
 						[screenWidth]="screenWidth"
-						[screenHeight]="screenHeight"
-						[height]="screenWidth < screenHeight ? '28vw' : '28vh'"
-						[width]="screenWidth < screenHeight ? '28vw' : '28vh'"
-						[iconSize]="screenWidth < screenHeight ? '16vw' : '16vh'"
-						[letterSize]="screenWidth < screenHeight ? '2rem' : '2rem'"
-						[textSize]="screenWidth < screenHeight ? '1rem' : '1rem'"
-						[priceSize]="screenWidth < screenHeight ? '1rem' : '1rem'"></app-item>
-				</div>
+						[screenHeight]="screenHeight"></app-item>
+				</ng-container>
 			</div>
 			<div
 				class="credits w-100 d-flex flex-row"

@@ -21,7 +21,7 @@
     "type": "module",
     "main": "./src/app.js",
     "scripts": {
-        "startmon": "nodemon ./src/server.js",
+        "startmon": "nodemon --watch src ./src/server.js",
         "run": "node ./src/server.js",
         "cleanProd": "npm ci --omit=dev && npm cache clean --force",
         "test": "cross-env NODE_ENV=test && node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand --detectOpenHandles"

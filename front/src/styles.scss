@@ -130,25 +130,6 @@ html {
 		-1.5px -1.5px 0px black;
 }
 
-.riseSunyBg {
-	background: -webkit-linear-gradient(90deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-}
-.darkBg {
-	background:
-		radial-gradient(ellipse at 20% 30%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),
-		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
-		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
-		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
-}
-
-.debtBg {
-	background: -webkit-linear-gradient(250deg, #090152 0%, #19547b 35%, #ffd89b 100%); /* Chrome 10-25, Safari 5.1-6 */
-}
-
-.juneBg {
-	background: linear-gradient(315deg, #ffd89b 10%, #fc9088 35%, #090152 100%);
-}
-
 .halo {
 	filter: drop-shadow(0 0 0.75rem white);
 }
@@ -180,42 +161,6 @@ html {
 		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
 			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
 	}
-}
-
-.clouds {
-	width: 100vw;
-	height: 100vh;
-	background-image: url('/assets/images/texture_cloud.svg');
-	background-size: cover;
-}
-
-.dots {
-	position: relative; /* needed for pseudo-element */
-	width: 100vw;
-	height: 100vh;
-	z-index: 1;
-}
-
-.dots::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background-image: url('/assets/images/texture.png');
-	background-size: contain;
-	background-repeat: repeat;
-	background-position: center;
-	opacity: 0.4;
-	z-index: -1;
-}
-
-/* Override: dark version */
-.dots--dark::before {
-	opacity: 0.9;
-}
-
-/* Override: light version */
-.dots--light::before {
-	opacity: 0.25;
 }
 
 .box-shadowed {
@@ -495,4 +440,99 @@ mat-chip {
 
 .z1 {
 	z-index: 1;
+}
+
+.z2 {
+	z-index: 2;
+}
+
+
+// .clouds {
+// 	width: 100vw;
+// 	height: 100vh;
+// 	background-image: url('/assets/images/texture_cloud.svg');
+// 	background-size: cover;
+// }
+
+.dots {
+	position: relative; /* needed for pseudo-element */
+	width: 100vw;
+	height: 100vh;
+	z-index: 1;
+}
+
+.dots::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image: url('/assets/images/texture.png');
+	background-size: contain;
+	background-repeat: repeat;
+	background-position: center;
+	opacity: 0.4;
+	z-index: -1;
+}
+
+/* Override: dark version */
+.dots-dark::before {
+	opacity: 0.9;
+}
+
+/* Override: light version */
+.dots-light::before {
+	opacity: 0.25;
+}
+
+.debtBg {
+    @extend .dots;
+	background: -webkit-linear-gradient(250deg, #090152 0%, #19547b 35%, #ffd89b 100%); /* Chrome 10-25, Safari 5.1-6 */
+}
+
+.juneBg {
+    @extend .dots;
+	background: linear-gradient(315deg, #ffd89b 10%, #fc9088 35%, #090152 100%);
+}
+
+.riseSunyBg {
+    @extend .dots;
+	background: -webkit-linear-gradient(90deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+}
+
+.bgWood {
+    background-image: url('/assets/images/woodJapAlt.jpg');
+}
+.bgGreen {
+	background-image: url('/assets/images/green-carpet.jpg');
+}
+.bgGradien1{
+    @extend .dots;
+	background: linear-gradient(109.6deg, rgba(83, 94, 161, 1) 44.5%, rgba(188, 14, 107, 1) 100.2%);
+}
+.bgGradien2{
+    @extend .dots;
+	background: linear-gradient(111.9deg, #19547b, #ffd89b);
+}
+.bgGradien3 {
+    @extend .dots;
+	background: linear-gradient(to bottom, #fddf62 0.000%, #fc9088 50.000%, #ff59d1 100.000%);
+}
+.bgGradien4 {
+    @extend .dots;
+    background: conic-gradient(from 11.1deg, rgba(0,40,70,1) -4.8%, rgba(255, 115, 115, 1) 82.7%, rgba(255, 175, 123, 1) 97.2%);
+}
+.bgGradien5 {
+    @extend .dots;
+	background: linear-gradient(111.9deg, rgba(255, 255, 169, 1) 0.2%, rgba(255, 208, 120, 1) 14.1%, rgba(255, 156, 94, 1) 27.4%, rgba(251, 99, 95, 1) 41.4%, rgba(226, 28, 114, 1) 55.8%, rgba(176, 0, 140, 1) 65.2%, rgba(83, 0, 166, 1) 88.1%);
+}
+.bgGradien6 {
+    @extend .dots;
+    background: linear-gradient(20.5deg, #ffd89b 0.000%, #fc9088 50.000%, #090152 100.000%);
+}
+.bgGradien7 {
+    @extend .dots;
+	background:
+		radial-gradient(ellipse at 20% 30%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),
+		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
+		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
+		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
 }
