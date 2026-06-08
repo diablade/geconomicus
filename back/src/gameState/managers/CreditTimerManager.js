@@ -44,14 +44,18 @@ class CreditTimerManager {
 		log.debug(`[CreditTimerManager] Stopping and removing credit timer ${timerId}`);
 		const timer = this.getTimer(timerId) || null;
 		if (timer) {
-			await timer.stop().catch((err) => log.error(`[CreditTimerManager] Error stopping credit timer ${timerId}: ${err}`));
+			await timer
+				.stop()
+				.catch((err) => log.error(`[CreditTimerManager] Error stopping credit timer ${timerId}: `, err));
 			this.timers.delete(timerId);
 			log.debug(`[CreditTimerManager] Removed credit timer ${timerId}`);
 		}
 	}
 
 	async stopPlayerTimers(gameStateId, playerIdx) {
-		log.debug(`[CreditTimerManager] Stopping all credit timers for player ${playerIdx} in game state ${gameStateId}`);
+		log.debug(
+			`[CreditTimerManager] Stopping all credit timers for player ${playerIdx} in game state ${gameStateId}`
+		);
 		const timersToRemove = [];
 
 		for (const [id, timer] of this.timers.entries()) {

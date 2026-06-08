@@ -90,7 +90,7 @@ export class SocketManager {
 		// Enable debugging in development
 		if (process.env.NODE_ENV === 'development') {
 			this.ioInstance.engine.on('connection_error', (err) => {
-				log.error('[socket] connection error: ' + err);
+				log.error('[socket] connection error: ', err);
 			});
 		}
 
@@ -121,7 +121,9 @@ export class SocketManager {
 	}
 
 	handleNewConnection(socket, publicChannel, privateChannel) {
-		log.info(`[socket] New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}`);
+		log.info(
+			`[socket] New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}`
+		);
 
 		// Store connection data with timestamp and reconnect attempts
 		const connectionData = {
@@ -212,7 +214,9 @@ export class SocketManager {
 			this.emitTo(gameStateRoom, IO.SHORT_CODE.BROADCAST, data);
 		});
 		socket.on(IO.SHORT_CODE.CONFIRMED, (data) => {
-			log.info(`[socket] ShortCodeConfirmed: ${data.code} for game state ${data.gameStateId} by seller ${data.sellerIdx}`);
+			log.info(
+				`[socket] ShortCodeConfirmed: ${data.code} for game state ${data.gameStateId} by seller ${data.sellerIdx}`
+			);
 			// send to buyer
 			const buyerRoom = ROOMS.playerState(data.gameStateId, data.buyerAvatarIdx, data.buyerIdx);
 			log.info(`[socket] broadcasting confirmation to buyer's room: ${buyerRoom} for code: ${data.code}`);
@@ -242,10 +246,14 @@ export class SocketManager {
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
 						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { idx: parseInt(playerStateIdx), lastSeen });
-						log.info(`[socket] Player ${playerStateIdx} (avatar ${avatarIdx}) joined to gameState ${gameStateId}`);
+						log.info(
+							`[socket] Player ${playerStateIdx} (avatar ${avatarIdx}) joined to gameState ${gameStateId}`
+						);
 					}
 				} else {
-					log.info(`[socket] Room type: ${roomType}, gameStateId: ${gameStateId}, playerType: ${avatarIdx} joined`);
+					log.info(
+						`[socket] Room type: ${roomType}, gameStateId: ${gameStateId}, playerType: ${avatarIdx} joined`
+					);
 				}
 			}
 		});
@@ -269,20 +277,22 @@ export class SocketManager {
 				}
 			}
 		});
-		socket.on('connect_error', (err) => log.error(`[socket] Connection error: ${err.message}`));
-		socket.on('connect_timeout', (data) => log.error(`[socket] time out: ${data}`));
-		socket.on('timeout', (err) => log.error(`[socket] io socket time out!: ${err}`));
-		socket.on('reconnect_failed', (err) => log.error(`[socket] All reconnection attempts failed: ${err}`));
+		socket.on('connect_error', (err) => log.error(`[socket] Connection error: `, err));
+		socket.on('connect_timeout', (data) => log.error(`[socket] time out: `, data));
+		socket.on('timeout', (err) => log.error(`[socket] io socket time out!: `, err));
+		socket.on('reconnect_failed', (err) => log.error(`[socket] All reconnection attempts failed: `, err));
 		socket.on('reconnect_attempt', (attempt) => this.handleReconnect(privateChannel, attempt));
-		socket.on('reconnecting', (err) => log.error(`[socket] reconnecting...: ${err}`));
+		socket.on('reconnecting', (err) => log.error(`[socket] reconnecting...: `, err));
 		socket.on('reconnect', (attemptNumber) => log.info(`[socket] Reconnected after ${attemptNumber} attempts`));
-		socket.on('reconnect_error', () => log.error(`[socket] Reconnection error`));
-		socket.on('error', (err) => log.error(`[socket] error io socket: ${err}`));
+		socket.on('reconnect_error', (err) => log.error(`[socket] Reconnection error: `, err));
+		socket.on('error', (err) => log.error(`[socket] error io socket: `, err));
 
 		// Check for unacknowledged events
 		const unacknowledged = this.getUnacknowledgedEvents(privateChannel);
 		if (unacknowledged.length > 0) {
-			log.info(`[socket] Player ${privateChannel} reconnected with ${unacknowledged.length} unacknowledged events`);
+			log.info(
+				`[socket] Player ${privateChannel} reconnected with ${unacknowledged.length} unacknowledged events`
+			);
 
 			// Send resync signal
 			socket.emit('resync', { needsResync: true });
@@ -328,7 +338,7 @@ export class SocketManager {
 		// If we've exceeded max reconnection attempts, clean up
 		if (connection.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
 			log.warn(
-				`[socket] Max reconnection attempts (${MAX_RECONNECT_ATTEMPTS}) reached for player ${roomId}. Cleaning up.`
+				`[socket] Reconnection attempts (${attempt}/${MAX_RECONNECT_ATTEMPTS}) reached for player ${roomId}. Cleaning up.`
 			);
 			this.cleanupConnection(roomId);
 		}
@@ -336,7 +346,7 @@ export class SocketManager {
 
 	// Handle socket errors
 	handleError(roomId, error) {
-		log.error(`[socket] Socket error for player ${roomId}: ${error}`);
+		log.error(`[socket] Socket error for player ${roomId}:`, error);
 		const connection = this.connections.get(roomId);
 		if (connection) {
 			connection.lastActive = Date.now();
@@ -553,10 +563,14 @@ export class SocketManager {
 				if (playerData && eventId) {
 					const wasRemoved = this.removeFromAckPool(playerData.privateChannel, eventId);
 					if (wasRemoved) {
-						log.info(`[socket] Received explicit ack for event ${eventId} from player ${playerData.privateChannel}`);
+						log.info(
+							`[socket] Received explicit ack for event ${eventId} from player ${playerData.privateChannel}`
+						);
 						callback({ status: 'ok' });
 					} else {
-						log.warn(`[socket] Received ack for unknown event ${eventId} from player ${playerData.privateChannel}`);
+						log.warn(
+							`[socket] Received ack for unknown event ${eventId} from player ${playerData.privateChannel}`
+						);
 						callback({
 							status: 'error',
 							message: 'Event not found',

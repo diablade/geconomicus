@@ -32,7 +32,7 @@ class PrisonTimerManager {
 			if (timer) {
 				// Wait for the timer to fully stop
 				await timer.stop().catch((err) => {
-					log.error(`[PrisonTimerManager] Error stopping timer ${gameStateId}-${playerIdx}: ${err}`);
+					log.error(`[PrisonTimerManager] Error stopping timer ${gameStateId}-${playerIdx}: `, err);
 				});
 				// Remove the timer from the map
 				const wasDeleted = this.timers.delete(`${gameStateId}-${playerIdx}`);

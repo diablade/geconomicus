@@ -1,7 +1,7 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<!-- TODO for ML to see indicators -->
 	<div class="riseSunyBg h-100 w-100">
-		<div class="dots p-3 h-100 overflow-auto" *ngIf="vm.gameState.typeMoney === DEBT">
+		<div class="p-3 h-100 overflow-auto" *ngIf="vm.gameState.typeMoney === DEBT">
 			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 			<h1 class="d-flex justify-content-center">
 				<fa-icon class="m-2 icon" [icon]="faLandMark"></fa-icon>

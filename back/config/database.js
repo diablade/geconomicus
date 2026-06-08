@@ -23,10 +23,10 @@ const connect = async () => {
         log.info("[Database] connected");
     }
     catch (err) {
-        log.error("[Database] Failed to connect to database: "+ err);
+        log.error("[Database] Failed to connect to database: ", err);
     }
     mongoose.connection.on("error", function(err) {
-        log.error("[Database] Mongoose connection error: "+ err);
+        log.error("[Database] Mongoose connection error: ", err);
     });
     mongoose.connection.on("connected", function() {
         log.info("[Database] Mongoose connected");

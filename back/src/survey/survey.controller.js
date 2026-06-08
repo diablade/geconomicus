@@ -29,7 +29,7 @@ SurveyController.addFeedback = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 SurveyController.allowAvatarEditSurvey = async (req, res, next) => {
@@ -40,10 +40,11 @@ SurveyController.allowAvatarEditSurvey = async (req, res, next) => {
 			avatarIdx,
 		});
 		return res.status(200).json({ status: 'ok' });
-	} catch (err) {
+	} catch (error) {
 		log.error(`Session allow avatar edit survey error: `, err);
 		return res.status(500).json({
 			message: 'ERROR.ALLOW_AVATAR_EDIT_SURVEY',
+			error,
 		});
 	}
 };
@@ -57,7 +58,7 @@ SurveyController.getBySessionId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 SurveyController.getByGameStateId = async (req, res, next) => {
@@ -70,7 +71,7 @@ SurveyController.getByGameStateId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 SurveyController.getBySessionGameStateAvatarIdx = async (req, res, next) => {
@@ -90,7 +91,7 @@ SurveyController.getBySessionGameStateAvatarIdx = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 SurveyController.removeAllByGameStateId = async (req, res, next) => {
@@ -104,7 +105,7 @@ SurveyController.removeAllByGameStateId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 SurveyController.removeAllBySessionId = async (req, res, next) => {
@@ -118,7 +119,7 @@ SurveyController.removeAllBySessionId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error' + error });
+		return res.status(500).json({ message: 'internal server error', error });
 	}
 };
 
