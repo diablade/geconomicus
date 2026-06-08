@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Card } from '../../models/gameState';
 import { ShortCode } from '../../models/shortCode';
 import { AudioService } from '../../services/audio.service';
@@ -10,7 +10,7 @@ import { animations } from '../../services/animations';
 	styleUrls: ['./card.component.scss'],
 	animations,
 })
-export class CardComponent {
+export class CardComponent implements OnChanges {
 	@Input() card!: Card;
 	@Input() ownerIdx: number | undefined;
 	@Input() gameStateId: string | undefined;
@@ -20,12 +20,12 @@ export class CardComponent {
 	@Input() suffixShortCode: string | undefined;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() width = 'calc(28vw)';
-	@Input() height = 'calc(28vw * 1.5)';
-	@Input() letterSize = this.screenWidth < this.screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
-	@Input() priceSize = this.screenWidth < this.screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
+	@Input() width = '';
+	@Input() height = '';
+	@Input() letterSize = '';
+	@Input() priceSize = '';
 	@Input() flippable = true;
-	smallPriceSize = this.screenWidth < this.screenHeight ? 'calc(6vw * 0.2)' : 'calc(6vh * 0.2)';
+	smallPriceSize = '';
 	state = 'default';
 	translateX = 0;
 	translateY = 0;
@@ -37,6 +37,25 @@ export class CardComponent {
 		private elementRef: ElementRef,
 		private audioService: AudioService
 	) {}
+
+        ngOnChanges(changes: SimpleChanges) {
+            if (changes['screenWidth'] || changes['screenHeight']) {
+                this.recalculateSizes();
+            }
+        }
+
+	private recalculateSizes() {
+		const isPortrait = this.screenWidth < this.screenHeight;
+		this.height = this.height ? this.height : isPortrait ? 'calc(28vw * 1.5)' : 'calc(28vh * 1.5)';
+		this.width = this.width ? this.width : isPortrait ? '28vw' : '28vh';
+		this.letterSize = this.letterSize ? this.letterSize : isPortrait ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
+		this.priceSize = this.priceSize ? this.priceSize : isPortrait ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
+		this.smallPriceSize = this.smallPriceSize
+			? this.smallPriceSize
+			: isPortrait
+				? 'calc(6vw * 0.2)'
+				: 'calc(6vh * 0.2)';
+	}
 
 	closeCard() {
 		this.audioService.playSound('cardFlipBack');
