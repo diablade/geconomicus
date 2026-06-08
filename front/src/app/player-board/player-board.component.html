@@ -134,7 +134,7 @@
 						[typeTheme]="vm.typeTheme"
 						[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
 						[currentDU]="vm.gameState.currentDU"
-						(onChangedShortCode)="onChangedShortCode($event)"
+						(shortCodeChanged)="onChangedShortCode($event)"
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"></app-item>
 				</ng-container>

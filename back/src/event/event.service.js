@@ -43,12 +43,12 @@ EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
 EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
 	log.debug(`[EventService] postNow: ${typeEvent} for game: ${gameStateId}`);
 	const newEvent = new EventModel({
-		typeEvent: typeEvent,
-		sessionId: sessionId,
-		gameStateId: gameStateId,
-		emitter: emitter,
-		receiver: receiver,
-		payload: payload,
+		typeEvent,
+		sessionId,
+		gameStateId,
+		emitter,
+		receiver,
+		payload,
 	});
 	return await newEvent.save();
 };

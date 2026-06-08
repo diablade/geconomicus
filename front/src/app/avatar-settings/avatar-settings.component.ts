@@ -74,7 +74,7 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 					}
 				},
 				error: (err) => {
-					this.toastr.showError(this.i18nService.instant('ERROR.UNKNOWN'));
+					this.toastr.showError(this.i18nService.instant(err));
 				},
 			});
 		});

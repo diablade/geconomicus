@@ -351,6 +351,7 @@ export class PlayerStateService {
 	}
 	private setupMoneySocketListeners(): void {
 		this.wsService.on(IO.SHORT_CODE.BROADCAST, (data: any) => {
+			console.log('ShortCode Broadcast', data);
 			if (this.shortCode && this.shortCode.code === data.code && this.gameStateId === data.gameStateId) {
 				console.log('ShortCode Broadcast confirming ownership ', data);
 				this.wsService.emit(IO.SHORT_CODE.CONFIRMED, {
@@ -567,6 +568,7 @@ export class PlayerStateService {
 	}
 
 	sendBuyingShortCode(code: string): void {
+		console.log('emit buying ShortCode', code);
 		if (!this.gameStateId || !this.playerStateIdx) {
 			this.snackbarService.showError(this.i18nService.instant('ERROR.ID_PLAYER_MISSING'));
 			return;

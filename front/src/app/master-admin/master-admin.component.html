@@ -74,7 +74,7 @@
 			class="m-1"
 			mat-raised-button
 			color="accent"
-			[disabled]="!(game?.status == C.OPEN || game?.status == C.START_GAME)"
+			[disabled]="!(game?.status === C.OPEN || game?.status === C.START_GAME)"
 			(click)="nextColorForDuplicateColorHair()">
 			Resolve duplicate hair color
 		</button>

@@ -12,7 +12,7 @@ const EventSchema = new Schema(
 		gameStateId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'GameState',
-			required: true,
+            required: false,
 		},
 		emitter: { type: String },
 		receiver: { type: String },
