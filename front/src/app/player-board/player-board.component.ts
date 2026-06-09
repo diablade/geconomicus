@@ -140,6 +140,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
+		this.coins$.subscribe(() => {
+			this.flipCoins();
+		});
+
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem('scanV3');
 		this.route.params.subscribe((params) => {
@@ -217,7 +221,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.flipCoin = true;
 		setTimeout(() => {
 			this.flipCoin = false;
-		}, 2000);
+		}, 1000);
 	}
 
 	produceLevelUp($event: any) {

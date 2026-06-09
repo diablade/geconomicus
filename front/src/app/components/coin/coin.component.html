@@ -1,7 +1,7 @@
 <div class="coin-wrapper">
-	<div class="coin" [ngClass]="{ 'coin-spinning': forceRotate }" [ngStyle]="{ width: width, height: height }">
+	<div class="coin" [ngClass]="{ spinning: forceRotate }" [ngStyle]="{ width: width, height: height }">
 		<div class="coinRing">
-			<img [src]="coinImage" alt="coin"/>
+			<img [src]="coinImage" alt="coin" />
 		</div>
 	</div>
 	<ng-container *ngIf="label">

@@ -382,6 +382,7 @@ html {
 		'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
+
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
 	.keyboard-dialog {
@@ -407,15 +408,22 @@ html {
 	}
 }
 
+.spinning {
+    animation: spin 200ms ease-in-out infinite;
+}
+
 @keyframes spin {
 	0% {
-		transform: rotate(0deg);
+		transform: rotateY(0deg);
 	}
-
 	100% {
-		transform: rotate(360deg);
+		transform: rotateY(360deg);
 	}
+	// 100% {
+	// 	transform: rotateY(0deg);
+    // }
 }
+
 
 /* Fix for Material Icons - ensure correct font-family */
 mat-icon.outlined {

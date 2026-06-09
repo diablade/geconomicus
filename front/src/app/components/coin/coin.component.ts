@@ -6,12 +6,12 @@ import { Component, Input } from '@angular/core';
 	styleUrls: ['./coin.component.scss'],
 })
 export class CoinComponent {
-	@Input() coinImage: string = '';
-	@Input() coinImageBack: string = this.coinImage;
-	@Input() width: string = '150px';
-	@Input() height: string = '150px';
-	@Input() forceRotate: boolean = false;
-	@Input() label: string = '';
+	@Input() coinImage = '';
+	@Input() coinImageBack = this.coinImage;
+	@Input() width = '150px';
+	@Input() height = '150px';
+	@Input() forceRotate = false;
+	@Input() label = '';
 
 	// coins = document.querySelectorAll('.coin, .coin-double-face');
 
