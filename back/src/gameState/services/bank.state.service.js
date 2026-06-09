@@ -292,7 +292,7 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 	const remainingSeconds = Math.ceil(remainingMs / 1000);
 	const remainingMinutes = Math.ceil(remainingSeconds / 60);
 	const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-	socket.emitTo(ROOMS.gameState(timerInstance.data.gameStateId), PROGRESS_CREDIT, {
+	socket.emitTo(ROOMS.gameState(timerInstance.data.gameStateId), IO.CREDIT.PROGRESS, {
 		id: timerInstance.id,
 		progress,
 	});
