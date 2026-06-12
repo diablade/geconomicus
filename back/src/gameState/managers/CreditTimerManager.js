@@ -44,9 +44,7 @@ class CreditTimerManager {
 		log.debug(`[CreditTimerManager] Stopping and removing credit timer ${timerId}`);
 		const timer = this.getTimer(timerId) || null;
 		if (timer) {
-			await timer
-				.stop()
-				.catch((err) => log.error(`[CreditTimerManager] Error stopping credit timer ${timerId}: `, err));
+			await timer.stop();
 			this.timers.delete(timerId);
 			log.debug(`[CreditTimerManager] Removed credit timer ${timerId}`);
 		}
@@ -69,14 +67,30 @@ class CreditTimerManager {
 		}
 	}
 
+	async pauseGameTimers(gameStateId) {
+		log.debug(`[CreditTimerManager] Pausing all credit timers for game state ${gameStateId}`);
+		const timersToPause = [];
+		for (const [id, timer] of this.timers.entries()) {
+			if (timer?.data?.gameStateId === gameStateId) {
+				timersToPause.push(id);
+			}
+		}
+
+		for (const id of timersToPause) {
+			await this.pauseTimer(id);
+		}
+	}
+
 	async removeGameTimers(gameStateId) {
-		log.debug(`[CreditTimerManager] Removing all credit timers for game state ${gameStateId}`);
-		const timersToRemove = [];
+        const timersToRemove = [];
 		for (const [id, timer] of this.timers.entries()) {
 			if (timer?.data?.gameStateId === gameStateId) {
 				timersToRemove.push(id);
 			}
 		}
+		log.debug(
+			`[CreditTimerManager] Removing all credit timers for game state ${gameStateId}, (${timersToRemove.length} found)`
+		);
 
 		for (const id of timersToRemove) {
 			await this.stopAndRemoveTimer(id);

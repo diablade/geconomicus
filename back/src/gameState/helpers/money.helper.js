@@ -35,7 +35,7 @@ MoneyHelper.distributeNewDU = async (entry) => {
 			gameState.currentMassMonetary += DU;
 
 			socket.emitAckTo(
-				ROOMS.playerState(gameState._id, playerState.avatarIdx, playerState.idx),
+				ROOMS.playerState(gameState._id, playerState.idx),
 				IO.PLAYER.DISTRIB_DU,
 				{
 					du: DU,

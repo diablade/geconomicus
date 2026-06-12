@@ -14,7 +14,7 @@ export class NoticeBtnComponent {
 	@Input() stroked = false;
 	@Input() white = false;
 	@Input() amountCardsForProd = 4;
-	@Input() timerCredit = 5;
+	@Input() durationCredit = 5;
 
 	constructor(
 		public dialog: MatDialog,
@@ -27,7 +27,7 @@ export class NoticeBtnComponent {
 		this.dialog.open(GameInfosDialog, {
 			data: {
 				amountCardsForProd: this.amountCardsForProd,
-				timerCredit: this.timerCredit,
+				durationCredit: this.durationCredit,
 			},
 		});
 	}
@@ -39,13 +39,13 @@ export class NoticeBtnComponent {
 })
 export class GameInfosDialog {
 	amountCardsForProd: number;
-	timerCredit: number;
+	durationCredit: number;
 	constructor(
 		public dialogRef: MatDialogRef<GameInfosDialog>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
 		this.amountCardsForProd = data.amountCardsForProd;
-		this.timerCredit = data.timerCredit;
+		this.durationCredit = data.durationCredit;
 	}
 
 	faQrcode = faQrcode;

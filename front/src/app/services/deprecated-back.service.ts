@@ -239,7 +239,7 @@ export class DeprecatedBackService {
 			// Debt options
 			defaultCreditAmount: game.defaultCreditAmount,
 			defaultInterestAmount: game.defaultInterestAmount,
-			timerCredit: game.timerCredit,
+			durationCredit: game.durationCredit,
 			timerPrison: game.timerPrison,
 			manualBank: game.manualBank,
 			seizureType: game.seizureType,

@@ -137,7 +137,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 		});
 
 		// Notify seller
-		socket.emitAckTo(ROOMS.playerState(gameStateId, seller.avatarIdx, sellerIdx), IO.PLAYER.TRANSACTION_DONE, {
+		socket.emitAckTo(ROOMS.playerState(gameStateId, sellerIdx), IO.PLAYER.TRANSACTION_DONE, {
 			sellerIdx,
 			cardKey: card.key,
 			coinsLK: seller.coins,

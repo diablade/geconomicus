@@ -1,4 +1,5 @@
 // server.js
+const startTime = performance.now();
 import http from 'http';
 import app from './app.js';
 import env from '#config/env';
@@ -49,10 +50,12 @@ server.listen(env.port, '0.0.0.0', () => {
 			' | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n' +
 			'  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n' +
 			'                                                              \n' +
-			env.version +
-			'                    made with <3 by Markovic Nicolas Copyright ©\n' +
-			'   server is started and ready'
+			` ${env.version}` +
+			'            made with <3 by Markovic Nicolas Copyright ©\n' +
+			'server is started and ready'
 	);
+	const readyTime = performance.now() - startTime;
+	log.debug(`Ready in ${readyTime.toFixed(0)}ms (pid ${process.pid})`);
 });
 if (env.environment !== 'test') {
 	try {

@@ -21,11 +21,11 @@ let Credit = new Schema(
 		interest: { type: Number, required: true },
 		playerStateIdx: { type: Number, required: true },
 		status: { type: String, enum: Object.values(CREDIT_STATUS), required: true },
-		extended: { type: Number, required: true },
+		extended: { type: Number, required: true, default: 0 },
 		createdAt: { type: Date, required: true },
 		startedAt: { type: Date },
 		endAt: { type: Date },
-		timerLeft: { type: Number, required: true },
+		remainingTime: { type: Number, required: true },
 	},
 	{ _id: false }
 );

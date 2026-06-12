@@ -41,7 +41,7 @@ let RulesSchema = new Schema(
 		//option debt
 		defaultCreditAmount: { type: Number, required: true, default: 3 },
 		defaultInterestAmount: { type: Number, required: true, default: 1 },
-		timerCredit: { type: Number, required: true, default: 5 },
+		durationCredit: { type: Number, required: true, default: 5 },
 		timerPrison: { type: Number, required: true, default: 5 },
 		manualBank: { type: Boolean, required: true, default: false },
 		seizureType: {

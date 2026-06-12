@@ -152,6 +152,6 @@ export declare const ROOMS: {
     gameStateMaster: (gameStateId: string) => string;
     gameStateBank: (gameStateId: string) => string;
     gameStateEvents: (gameStateId: string) => string;
-    playerState: (gameStateId: string, avatarIdx: number, playerIdx: number) => string;
+    playerState: (gameStateId: string, playerIdx: number) => string;
 };
 export type Rooms = (typeof ROOMS)[keyof typeof ROOMS];

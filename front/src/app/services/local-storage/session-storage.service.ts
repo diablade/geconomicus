@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { StorageKey } from './storage-key.const';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 @Injectable({
 	providedIn: 'root',

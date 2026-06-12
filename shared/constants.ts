@@ -166,13 +166,12 @@ export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];
 export const ROOMS = {
 	session: (sessionId: string) => `s:${sessionId}`,
 	lobbyMaster: (sessionId: string) => `s:${sessionId}:master`,
-	lobbyAvatar: (sessionId: string, avatarIdx: number) => `s:${sessionId}:${avatarIdx}`,
+	lobbyAvatar: (sessionId: string, avatarIdx: number) => `s:${sessionId}:a:${avatarIdx}`,
 	gameState: (gameStateId: string) => `gs:${gameStateId}`,
 	gameStateMaster: (gameStateId: string) => `gs:${gameStateId}:master`,
 	gameStateBank: (gameStateId: string) => `gs:${gameStateId}:bank`,
 	gameStateEvents: (gameStateId: string) => `gs:${gameStateId}:events`,
-	playerState: (gameStateId: string, avatarIdx: number, playerIdx: number) =>
-		`gs:${gameStateId}:${avatarIdx}:${playerIdx}`,
+	playerState: (gameStateId: string, playerIdx: number) => `gs:${gameStateId}:ps:${playerIdx}`,
 };
 
 export type Rooms = (typeof ROOMS)[keyof typeof ROOMS];

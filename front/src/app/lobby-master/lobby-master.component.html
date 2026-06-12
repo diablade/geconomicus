@@ -15,7 +15,7 @@
 				<app-tasklist-btn [stroked]="true" [white]="true"></app-tasklist-btn>
 				<app-notice-btn
 					[amountCardsForProd]="4"
-					[timerCredit]="5"
+					[durationCredit]="5"
 					[stroked]="true"
 					[white]="true"></app-notice-btn>
 				<app-language-btn [short]="true" [white]="true"></app-language-btn>
@@ -134,7 +134,7 @@
 								<coin
 									[coinImage]="'./assets/images/' + rule.typeMoney + '.png'"
 									[label]="(rule.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"
-									(click)="rule.rotate = !rule.rotate"
+									(click)="flipCoin(rule)"
 									[forceRotate]="rule.rotate"></coin>
 								<div class="fs-7 text-center white">
 									{{ rule.gameStatus === NONE ? ('MASTER.GAME_NOT_PLAYED' | translate) : '' }}

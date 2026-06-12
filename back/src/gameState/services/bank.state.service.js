@@ -57,10 +57,11 @@ const _seizeCards = (cards, targetAmount) => {
 
 // Helper to instantiate a Timer object for a given credit
 const _createCreditTimer = (gameStateId, credit, rules) => {
+	log.debug('[BankStateService] creating credit timer');
 	return new Timer(
 		credit.id,
 		{ ...credit, gameStateId },
-		rules.timerCredit * minute,
+		rules.durationCredit * minute,
 		_creditTimeoutCallback,
 		fiveSeconds,
 		_creditHeartBeatCallback
@@ -68,12 +69,13 @@ const _createCreditTimer = (gameStateId, credit, rules) => {
 };
 
 const _payInterest = async (playerState, credit, entry) => {
+	log.debug('[BankStateService] paying interest for credit');
 	const { gameState, rules, events } = entry;
 	const interest = credit.interest;
 	playerState.coins -= interest;
 	credit.extended++;
-	credit.endAt = Date.now() + rules.timerCredit * minute;
-	credit.timerLeft = rules.timerCredit * minute;
+	credit.endAt = Date.now() + rules.durationCredit * minute;
+	credit.remainingTime = rules.durationCredit * minute;
 	credit.status = CREDIT_STATUS.RUNNING;
 
 	const event = EventHelper.createEvent(
@@ -214,6 +216,7 @@ const _prisonProgressCallback = async (timerInstance) => {
 // ─── Timer callbacks ───────────────────────────────────────────────────────────
 
 const _creditTimeoutCallback = async (timerInstance) => {
+	log.debug('[BankStateService] timeout credit callback ');
 	const gameStateId = timerInstance.data.gameStateId;
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
@@ -239,11 +242,7 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				events.push(event);
 				credit.status = CREDIT_STATUS.REQUESTING;
 				socket.emitTo(ROOMS.gameState(gameStateId), event);
-				socket.emitAckTo(
-					ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx),
-					IO.CREDIT.REQUEST,
-					{ credit }
-				);
+				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.REQUEST, { credit });
 				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.REQUEST, credit);
 			} else if (canPayInterest) {
 				// paying interest
@@ -251,11 +250,7 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				// restart timer
 				const timer = _createCreditTimer(gameState.id, credit, rules);
 				await creditTimerManager.startTimer(timer);
-				socket.emitAckTo(
-					ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx),
-					IO.CREDIT.PAYED_INTEREST,
-					credit
-				);
+				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.PAYED_INTEREST, { credit });
 				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.PAYED_INTEREST, credit);
 			} else {
 				// bankrup payment
@@ -269,12 +264,8 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				);
 				events.push(event);
 				credit.status = CREDIT_STATUS.FAULT;
-				socket.emitTo(ROOMS.gameState(gameStateId), event);
-				socket.emitAckTo(
-					ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx),
-					IO.CREDIT.FAULT,
-					{ credit }
-				);
+				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, event);
+				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.FAULT, { credit });
 				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.FAULT, credit);
 			}
 		} else {
@@ -284,28 +275,19 @@ const _creditTimeoutCallback = async (timerInstance) => {
 };
 
 const _creditHeartBeatCallback = async (timerInstance) => {
-	let remainingTime = differenceInMilliseconds(timerInstance.endTime, new Date());
-	let totalTime = differenceInMilliseconds(timerInstance.endTime, timerInstance.startTime);
-
-	const elapsed = Date.now() - timerInstance.startTime;
-	const remainingMs = timerInstance.duration - elapsed;
-	const remainingSeconds = Math.ceil(remainingMs / 1000);
-	const remainingMinutes = Math.ceil(remainingSeconds / 60);
-	const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-	socket.emitTo(ROOMS.gameState(timerInstance.data.gameStateId), IO.CREDIT.PROGRESS, {
+	log.debug('[BankStateService] heartbeat credit callback ');
+	const remainingMs = timerInstance.getRemainingMs();
+	log.debug('[BankStateService] remainingTime: ' + remainingMs);
+	socket.emitTo(ROOMS.gameStateBank(timerInstance.data.gameStateId), IO.CREDIT.PROGRESS, {
 		id: timerInstance.id,
-		progress,
+		remainingTime: remainingMs,
 	});
 	socket.emitTo(
-		ROOMS.playerState(
-			timerInstance.data.gameStateId,
-			timerInstance.data.avatarIdx,
-			timerInstance.data.playerStateIdx
-		),
-		PROGRESS_CREDIT,
+		ROOMS.playerState(timerInstance.data.gameStateId, timerInstance.data.playerStateIdx),
+		IO.CREDIT.PROGRESS,
 		{
 			id: timerInstance.id,
-			progress,
+			remainingTime: remainingMs,
 		}
 	);
 };
@@ -320,6 +302,9 @@ const BankStateService = {};
  * updates currentMassMonetary, starts a debt timer.
  */
 BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, interest) => {
+	log.info(
+		`[BankStateService] creating credit for p:${playerStateIdx} in g:${gameStateId} / c:${amount}, i:${interest}`
+	);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
 		const playerState = _findPlayer(gameState, playerStateIdx);
@@ -340,12 +325,12 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			amount,
 			interest,
 			playerStateIdx,
-			status: startNow ? CREDIT_STATUS.RUNNING : CREDIT_STATUS.PAUSED,
+			status: startNow ? CREDIT_STATUS.RUNNING : CREDIT_STATUS.IDLE,
 			extended: 0,
 			createdAt: now,
 			startedAt: startNow ? now : null,
-			endAt: startNow ? new Date(now.getTime() + rules.creditDuration * 60 * 1000) : null,
-			timerLeft: rules.creditDuration * 60 * 1000,
+			endAt: null,
+			remainingTime: rules.durationCredit * minute,
 		};
 
 		// update gameState
@@ -360,7 +345,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 
 		events.push(
 			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_CREATED,
+				DB_EVENTS.CREDIT_NEW,
 				entry.sessionId,
 				entry.gameStateId,
 				PLAYER_TYPE.BANK,
@@ -371,7 +356,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 		);
 
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit });
-		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerStateIdx), IO.CREDIT.NEW, {
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
 			credit,
 		});
 
@@ -429,7 +414,7 @@ BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
 				Date.now()
 			)
 		);
-		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerStateIdx), IO.CREDIT.FREE_MONEY, {
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.FREE_MONEY, {
 			coinsLK: playerState.coins,
 			amount,
 		});
@@ -473,7 +458,7 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 			)
 		);
 
-		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.avatarIdx, playerState.idx), IO.CREDIT.CANCELED, {
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.CANCELED, {
 			credit,
 		});
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, { credit });
@@ -485,36 +470,58 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 	});
 };
 
-BankStateService.startAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
+BankStateService.startAllTimersCreditGame = async (gameStateId, credits, rules) => {
 	log.debug(`[BankStateService] Starting all credit timers for game state ${gameStateId}`);
 	for (const credit of credits) {
-		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
+		if (credit.status === CREDIT_STATUS.IDLE) {
+			log.debug(`[BankStateService] Starting credit timer ${credit.id}`);
 			const timer = _createCreditTimer(gameStateId, credit, rules);
 			creditTimerManager.startTimer(timer);
+			credit.status = CREDIT_STATUS.RUNNING;
+			credit.remainingTime = timer.getRemainingMs();
+			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.STARTED, { id: credit.id });
+			socket.emitTo(ROOMS.playerState(gameStateId, credit.playerStateIdx), IO.CREDIT.STARTED, {
+				id: credit.id,
+			});
 		}
 	}
 };
 
-BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
+BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits) => {
 	log.debug(`[BankStateService] Pausing all credit timers for game state ${gameStateId}`);
 	for (const credit of credits) {
 		if (credit.status === CREDIT_STATUS.RUNNING) {
 			const timer = creditTimerManager.getTimer(credit.id);
 			if (timer) {
-				creditTimerManager.pauseTimer(timer);
+				log.debug(
+					`[BankStateService] pausing credit ${timer.id}, status: ${timer.status}, remainingTime: ${timer.getRemainingMs()}`
+				);
+				credit.remainingTime = timer.getRemainingMs();
+				credit.status = CREDIT_STATUS.PAUSED;
+			}
+		}
+	}
+	await creditTimerManager.pauseGameTimers(gameStateId);
+};
+
+BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules) => {
+	log.debug(`[BankStateService] Resuming all credit timers for game state ${gameStateId}`);
+	for (const credit of credits) {
+		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
+			const timer = creditTimerManager.getTimer(credit.id);
+			if (timer) {
+				creditTimerManager.resumeTimer(timer);
+			} else {
+				const newTimer = _createCreditTimer(gameStateId, credit, rules);
+				creditTimerManager.startTimer(newTimer);
 			}
 		}
 	}
 };
 
-BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits = [], rules) => {
-	log.debug(`[BankStateService] Resuming all credit timers for game state ${gameStateId}`);
-	for (const credit of credits) {
-		if (credit.status === CREDIT_STATUS.IDLE || credit.status === CREDIT_STATUS.PAUSED) {
-			const timer = _createCreditTimer(gameStateId, credit, rules);
-			creditTimerManager.resumeTimer(timer);
-		}
-	}
+BankStateService.stopAllTimersCreditGame = async (gameStateId) => {
+	log.debug(`[BankStateService] Stopping all credit timers for game state ${gameStateId}`);
+	await creditTimerManager.removeGameTimers(gameStateId);
 };
 
 BankStateService.seizureOnDead = async (gameState, events, player) => {
@@ -682,7 +689,7 @@ BankStateService.seizure = async (gameStateId, creditIdx, playerStateIdx, seizur
 	// if (seizure.prisonTime && seizure.prisonTime > 0) {
 	// 	const result = await lockDownPlayer(idPlayer, idGame, seizure.prisonTime);
 	// 	socket.emitTo(ROOMS.gameStateBank(gameStateId), EVENT, result.event);
-	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, avatarIdx, playerStateIdx), SEIZURE, {
+	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), SEIZURE, {
 	// 		credit: credit,
 	// 		seizure: seizure,
 	// 		prisoner: result.prisoner,
@@ -693,7 +700,7 @@ BankStateService.seizure = async (gameStateId, creditIdx, playerStateIdx, seizur
 	// 		prisoner: result.prisoner,
 	// 	};
 	// } else {
-	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, avatarIdx, playerStateIdx), SEIZURE, {
+	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), SEIZURE, {
 	// 		credit: credit,
 	// 		seizure: seizure,
 	// 		prisoner: undefined,
@@ -787,7 +794,7 @@ BankStateService.payInterest = async (gameStateId, creditIdx, playerStateIdx) =>
 	// if (!creditUpdated) {
 	//     throw new Error("Updated credit not found after update.");
 	// }
-	// addDebtTimer(credit._id.toString(), true, updatedGameAfterCredit.timerCredit, creditUpdated);
+	// addDebtTimer(credit._id.toString(), true, updatedGameAfterCredit.durationCredit, creditUpdated);
 	// socket.emitTo(idGame + EVENT, EVENT, newEvent);
 	// socket.emitTo(idGame + BANK, PAYED_INTEREST, creditUpdated);
 	// return creditUpdated;

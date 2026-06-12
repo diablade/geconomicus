@@ -2,11 +2,11 @@
 	<div class="status" [ngClass]="credit.status">
 		<div>
 			<div
-				*ngIf="credit.status === 'running'"
+				*ngIf="progress > 0"
 				class="progress progress-bar-striped progress-bar-animated"
 				role="progressbar"
-				[style.background-color]="getStatusColor(credit.progress)"
-				[style.width.%]="credit.progress"></div>
+				[style.background-color]="getStatusColor(progress)"
+				[style.width.%]="progress"></div>
 			<div class="statusLabel">{{ getStatus(credit.status) | translate }}</div>
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 			{{ credit.interest }}
 			<fa-icon
 				[icon]="faCircleInfo"
-				[matTooltip]="'CREDIT.NOTICE_INTEREST' | translate: { interestMinutes }"></fa-icon>
+				[matTooltip]="'CREDIT.NOTICE_INTEREST' | translate: { interestMinutes: duration }"></fa-icon>
 		</mat-chip>
 	</div>
 	<div *ngIf="credit.status === CREDIT_DONE || credit.status === CREDIT_CANCELED" class="fontName m-1">

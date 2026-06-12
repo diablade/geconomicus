@@ -72,7 +72,7 @@
 			<b>{{ interest + amount }}</b>
 			<br />
 			-
-			<span [innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.timerCredit }"></span>
+			<span [innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.durationCredit }"></span>
 		</div>
 		<div>
 			<button class="m-2" mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { faCircleInfo, faCommentsDollar, faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { Credit } from '../../models/gameState';
 import { CREDIT_STATUS } from '@geco/shared';
@@ -9,7 +9,8 @@ import { Avatar } from 'src/app/models/avatar';
 	templateUrl: './credit.component.html',
 	styleUrls: ['./credit.component.scss'],
 })
-export class CreditComponent {
+export class CreditComponent implements OnChanges {
+	protected readonly CREDIT_IDLE = CREDIT_STATUS.IDLE;
 	protected readonly CREDIT_DONE = CREDIT_STATUS.DONE;
 	protected readonly CREDIT_PAUSED = CREDIT_STATUS.PAUSED;
 	protected readonly DEFAULT_CREDIT = CREDIT_STATUS.FAULT;
@@ -19,14 +20,22 @@ export class CreditComponent {
 	faSackDollar = faSackDollar;
 	faCommentsDollar = faCommentsDollar;
 	faCircleInfo = faCircleInfo;
+	progress = 0;
 
 	@Input() credit!: Credit;
 	@Input() contractor: Avatar | undefined = new Avatar();
 
-	@Input() interestMinutes: number | undefined;
+	@Input() duration = 0;
 	@Input() bankOption = false;
-	@Output() actionBtn = new EventEmitter<string>();
 	@Input() small = false;
+	@Output() actionBtn = new EventEmitter<string>();
+
+	ngOnChanges() {
+		if (this.credit.remainingTime > 0 && this.duration > 0) {
+			const durationMs = this.duration * 60 * 1000;
+			this.progress = ((durationMs - this.credit.remainingTime) / durationMs) * 100;
+		}
+	}
 
 	actionBtnClick(action: string) {
 		this.actionBtn.emit(action);
@@ -34,18 +43,20 @@ export class CreditComponent {
 
 	getStatus(status: string) {
 		switch (status) {
+			case this.CREDIT_IDLE:
+				return 'CREDIT.IDLE';
 			case this.CREDIT_PAUSED:
-				return 'CREDIT.PAUSED_CREDIT';
+				return 'CREDIT.PAUSED';
 			case this.CREDIT_CANCELED:
 				return 'CREDIT.CANCELED';
 			case this.RUNNING_CREDIT:
-				return 'CREDIT.RUNNING_CREDIT';
+				return 'CREDIT.RUNNING';
 			case this.REQUEST_CREDIT:
-				return 'CREDIT.REQUEST_CREDIT';
+				return 'CREDIT.REQUEST';
 			case this.DEFAULT_CREDIT:
-				return 'CREDIT.DEFAULT_CREDIT';
+				return 'CREDIT.DEFAULT';
 			case this.CREDIT_DONE:
-				return 'CREDIT.CREDIT_DONE';
+				return 'CREDIT.DONE';
 			default:
 				return 'error';
 		}

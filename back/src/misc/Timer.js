@@ -48,54 +48,49 @@ export default class Timer {
 
 	start() {
 		if (this.status !== 'idle') return;
-		this.startTime = new Date();
 		this.data.startedAt = new Date();
-		this._startMainTimer();
-		this._startInterval1();
-		this._startInterval2();
-		this._startInterval3();
-		this.status = 'running';
+		this._launchTimers();
 		log.debug(
-			`[GameTimerManager] Timer STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms`
+			`[Timer] STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms`
 		);
 	}
 
 	pause() {
 		if (this.status !== 'running') return;
-		const elapsed = Date.now() - this.startTime.getTime();
-		this.remainingMs = Math.max(0, this.remainingMs - elapsed);
+		this.updateRemainingMs();
 		this.startTime = null;
 		this._clearTimers();
 		this.status = 'paused';
-		log.debug(`[Timer] ${this.id} paused — ${Math.round(this.remainingMs / 1000)}s restants`);
+		log.debug(`[Timer] PAUSED ${this.id}, remaining: ${this.remainingMs}ms`);
 	}
 
 	resume() {
 		if (this.status !== 'paused') return;
-		this.startTime = new Date();
-		this._startMainTimer();
-		this._startInterval1();
-		this._startInterval2();
-		this._startInterval3();
-		this.status = 'running';
-		log.debug(`[Timer] ${this.id} resumed`);
+		this._launchTimers();
+		log.debug(`[Timer] RESUMED ${this.id}`);
 	}
 
 	stop() {
 		if (this.status === 'stopped') return;
-		log.debug(`[Timer] ${this.id} stopping...`);
+		log.debug(`[Timer] stopping... ${this.id}`);
 		this.data.endedAt = new Date();
 		this._clearTimers();
 		this.status = 'stopped';
-		log.debug(`[Timer] ${this.id} stopped`);
+		log.debug(`[Timer] STOPPED ${this.id}`);
 	}
 
 	getRemainingMs() {
 		if (this.status === 'paused') return this.remainingMs;
 		if (this.status === 'idle') return this.remainingMs;
 		if (this.status !== 'running' || !this.startTime) return 0;
+		this.updateRemainingMs();
+		return this.remainingMs;
+	}
+
+	updateRemainingMs() {
 		const elapsed = Date.now() - this.startTime.getTime();
-		return Math.max(0, this.remainingMs - elapsed);
+		this.remainingMs = Math.max(0, this.remainingMs - elapsed);
+		this.data.remainingTime = this.remainingMs;
 	}
 
 	// ─── privé ───────────────────────────────────────────────
@@ -143,6 +138,15 @@ export default class Timer {
 				log.error(`[Timer] ${this.id} callbackInterval3 error: `, err);
 			}
 		}, this.durationInterval3);
+	}
+
+	_launchTimers() {
+		this.startTime = new Date();
+		this._startMainTimer();
+		this._startInterval1();
+		this._startInterval2();
+		this._startInterval3();
+		this.status = 'running';
 	}
 
 	_clearTimers() {

@@ -116,7 +116,7 @@ export class PlayerStateService {
 		this.avatarIdx = avatarIdx;
 		this.playerStateIdx = playerStateIdx;
 		this.roomGameState = ROOMS.gameState(gameStateId);
-		this.roomPlayerState = ROOMS.playerState(gameStateId, avatarIdx, playerStateIdx);
+		this.roomPlayerState = ROOMS.playerState(gameStateId, playerStateIdx);
 		this.http
 			.get<any>(
 				environment.API_HOST +
@@ -404,7 +404,7 @@ export class PlayerStateService {
 
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					message: this.i18nService.instant('CREDIT.NEW_CREDIT', { amount: data.credit.amount }),
+					message: this.i18nService.instant('CREDIT.NEW', { amount: data.credit.amount }),
 				},
 			});
 		});
@@ -453,23 +453,20 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 
-		this.wsService.on(IO.CREDIT.STARTED, async () => {
+		this.wsService.on(IO.CREDIT.STARTED, async (data: { id: string }) => {
 			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((c) => {
-				if (c.status === CREDIT_STATUS.PAUSED) {
-					c.status = CREDIT_STATUS.RUNNING;
-				}
-				return c;
-			});
-			this.creditsSubject.next(updatedCredits);
-		});
-
-		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
-			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((c) => {
+			_.forEach(currentCredits, (c) => {
 				if (c.id === data.id) {
 					c.status = CREDIT_STATUS.RUNNING;
-					c.progress = data.progress;
+				}
+			});
+			this.creditsSubject.next(currentCredits);
+		});
+
+		this.wsService.on(IO.CREDIT.PROGRESS, async (data: { id: string; remainingTime: number }) => {
+			const updatedCredits = this.creditsSubject.getValue().map((c) => {
+				if (c.id === data.id) {
+					return { ...c, status: CREDIT_STATUS.RUNNING, remainingTime: data.remainingTime };
 				}
 				return c;
 			});
@@ -479,8 +476,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
-			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((c) => {
+			const updatedCredits = this.creditsSubject.getValue().map((c) => {
 				if (c.id === data.credit.id) {
 					c.status = data.credit.status;
 				}

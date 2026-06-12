@@ -87,7 +87,7 @@
 					class="text-center d-block m-4"
 					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
 					[stroked]="true"
-					[timerCredit]="vm.rules.timerCredit || 0"
+					[durationCredit]="vm.rules.durationCredit || 0"
 					*ngIf="vm.gameState.status !== STOPPED"></app-notice-btn>
 
 				<button
@@ -145,7 +145,7 @@
 					<app-credit
 						*ngFor="let credit of vm.credits"
 						[small]="true"
-						[interestMinutes]="vm.rules.timerCredit"
+						[duration]="vm.rules.durationCredit"
 						[credit]="credit"
 						(actionBtn)="creditActionBtn($event, credit)"></app-credit>
 				</div>

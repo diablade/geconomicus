@@ -131,6 +131,7 @@ SessionController.killGame = async (req, res, next) => {
 			ruleIdx: ruleIdx,
 		};
 		socket.emitAckTo(ROOMS.session(sessionId), IO.GAME.DELETED, response);
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.GAME.DELETED, { gameStateId });
 		return res.status(200).json(response);
 	} catch (err) {
 		log.error(`[SessionController] Session kill game error:`, err);

@@ -34,7 +34,7 @@ export const sanitize = {
 			//option debt
 			defaultCreditAmount: Joi.number().default(3),
 			defaultInterestAmount: Joi.number().default(1),
-			timerCredit: Joi.number().default(5),
+			durationCredit: Joi.number().default(5),
 			timerPrison: Joi.number().default(5),
 			manualBank: Joi.boolean().default(false),
 			seizureType: Joi.string().default(CREDIT_STATUS.DECOTE),
@@ -83,7 +83,7 @@ export const sanitize = {
 
 			defaultCreditAmount: Joi.number().optional(),
 			defaultInterestAmount: Joi.number().optional(),
-			timerCredit: Joi.number().optional(),
+			durationCredit: Joi.number().optional(),
 			timerPrison: Joi.number().optional(),
 			manualBank: Joi.boolean().optional(),
 			seizureType: Joi.string().optional(),

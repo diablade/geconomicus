@@ -14,12 +14,14 @@ class GameTimerManager {
 	}
 
 	async startTimer(timer) {
+		log.info(`[GameTimerManager] STARTING... for game ${timer.id}`);
 		await this.stopAndRemoveTimer(timer.id);
 		this.timers.set(timer.id, timer);
 		timer.start();
 	}
 
 	async pauseTimer(timerId) {
+        log.info(`[GameTimerManager] PAUSING... for game ${timerId}`);
 		const timer = this.getTimer(timerId);
 		if (timer) {
 			timer.pause();
@@ -27,19 +29,13 @@ class GameTimerManager {
 	}
 
 	async resumeTimer(timer) {
+        log.info(`[GameTimerManager] RESUMING... for game ${timer.id}`);
 		const storedTimer = this.getTimer(timer.id);
 		if (storedTimer) {
 			storedTimer.resume();
 		} else {
 			this.timers.set(timer.id, timer);
 			timer.start();
-		}
-	}
-
-	async stopTimer(timerId) {
-		const timer = this.getTimer(timerId);
-		if (timer) {
-			timer.stop();
 		}
 	}
 

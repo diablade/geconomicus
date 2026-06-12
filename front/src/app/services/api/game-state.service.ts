@@ -25,6 +25,7 @@ import _ from 'lodash';
 import { SnackbarService } from '../snackbar.service';
 import { I18nService } from '../i18n.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'root',
@@ -111,6 +112,7 @@ export class GameStateService {
 		private i18n: I18nService,
 		private dialog: MatDialog,
 		private bankService: BankService,
+		private router: Router,
 		private sessionService: SessionService
 	) {
 		this.initializeTimer();
@@ -298,20 +300,29 @@ export class GameStateService {
 	private setupBankSocketListener(): void {
 		console.log('setup Bank SocketListener');
 
-		this.wsService.on(IO.CREDIT.STARTED, async () => {
+		this.wsService.on(IO.GAME.DELETED, async (data: { gameStateId: string }) => {
+			console.log('game deleted ws:', data);
+			if (data.gameStateId === this.gameStateId) {
+				//redirect to lobby session
+				this.router.navigate(['/session', this.sessionId]);
+			}
+		});
+
+		this.wsService.on(IO.CREDIT.STARTED, async (data: { id: string }) => {
 			_.forEach(this.creditsSubject.getValue(), (c) => {
-				if (c.status == CREDIT_STATUS.PAUSED || c.status == CREDIT_STATUS.IDLE) {
+				if (c.id === data.id) {
 					c.status = CREDIT_STATUS.RUNNING;
 				}
 			});
 		});
-		this.wsService.on(IO.CREDIT.PROGRESS, async (data: any) => {
-			_.forEach(this.creditsSubject.getValue(), (c) => {
-				if (c.id == data.id) {
-					c.status = CREDIT_STATUS.RUNNING;
-					c.progress = data.progress;
+		this.wsService.on(IO.CREDIT.PROGRESS, async (data: { id: string; remainingTime: number }) => {
+			const updatedCredits = this.creditsSubject.getValue().map((c) => {
+				if (c.id === data.id) {
+					return { ...c, status: CREDIT_STATUS.RUNNING, remainingTime: data.remainingTime };
 				}
+				return c;
 			});
+			this.creditsSubject.next(updatedCredits);
 		});
 		this.wsService.on(IO.CREDIT.DONE, async (data: any) => {
 			const currentStates = this.gameStateSubject.getValue();
@@ -371,6 +382,7 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
 		this.wsService.off(IO.GAME.PAUSED);
+		this.wsService.off(IO.GAME.DELETED);
 		this.wsService.off(IO.GAME.CURRENT_DU);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);

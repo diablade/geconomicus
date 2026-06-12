@@ -133,13 +133,19 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	}
 
 	reJoin(avatarIdx: number, username: string): void {
-		const dialogRef = this.dialog.open(ReJoinQrDialogComponent, {
+		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
 				text: username,
 				url: this.createAvatarUrl(avatarIdx),
 			},
 		});
-		dialogRef.afterClosed().subscribe(() => {});
+	}
+
+	flipCoin(rule: any) {
+		rule.rotate = true;
+		setTimeout(() => {
+			rule.rotate = false;
+		}, 500);
 	}
 
 	copyJoinLink(): void {

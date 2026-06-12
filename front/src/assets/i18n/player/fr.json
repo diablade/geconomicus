@@ -23,12 +23,13 @@
 		}
 	},
 	"CREDIT": {
-		"PAUSED_CREDIT": "Jeu en pause...",
-		"RUNNING_CREDIT": "En cours...",
-		"REQUEST_CREDIT": "Prolonger ?",
-		"DEFAULT_CREDIT": "Défaut de paiement",
-		"CREDIT_DONE": "Terminé",
-		"NEW_CREDIT": "Crédit obtenu (+{{amount}}💰)",
+        "IDLE": "En attente...",
+		"PAUSED": "Jeu en pause...",
+		"RUNNING": "En cours...",
+		"REQUEST": "Prolonger ?",
+		"DEFAULT": "Défaut de paiement",
+		"DONE": "Terminé",
+		"NEW": "Crédit obtenu (+{{amount}}💰)",
         "FREE_MONEY": "Argent gratuit reçu (+{{amount}}💰)",
 
 		"ANSWER": "Répondre",

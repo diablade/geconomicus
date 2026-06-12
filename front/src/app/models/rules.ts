@@ -33,7 +33,7 @@ export class Rules {
 	//option debt
 	defaultCreditAmount = 0;
 	defaultInterestAmount = 0;
-	timerCredit = 0;
+	durationCredit = 0;
 	timerPrison = 0;
 	manualBank = false;
 	seizureType = '';

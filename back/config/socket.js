@@ -218,7 +218,7 @@ export class SocketManager {
 				`[socket] ShortCodeConfirmed: ${data.code} for game state ${data.gameStateId} by seller ${data.sellerIdx}`
 			);
 			// send to buyer
-			const buyerRoom = ROOMS.playerState(data.gameStateId, data.buyerAvatarIdx, data.buyerIdx);
+			const buyerRoom = ROOMS.playerState(data.gameStateId, data.buyerIdx);
 			log.info(`[socket] broadcasting confirmation to buyer's room: ${buyerRoom} for code: ${data.code}`);
 			this.emitTo(buyerRoom, IO.SHORT_CODE.CONFIRMED, data);
 		});
