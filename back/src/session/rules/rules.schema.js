@@ -23,6 +23,8 @@ let RulesSchema = new Schema(
 		roundMinutes: { type: Number, required: true, default: 20 },
 		autoDeath: { type: Boolean, required: true, default: true },
 		deathPassTimer: { type: Number, required: true, default: 5 },
+		timerSaveInterval: { type: Number, required: true, default: 10 },
+		timerDUInterval: { type: Number, required: true, default: 60 },
 
 		//not commun
 		typeMoney: { type: String, required: true, default: GAME_TYPE.DEBT },

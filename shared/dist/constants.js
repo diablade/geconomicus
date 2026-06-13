@@ -76,6 +76,7 @@ export const IO = {
         RESET: 'reset',
         DEATH_IS_COMING: 'dic',
         DELETED: 'gdel',
+        RECOVERY: 'grec',
     },
     PLAYER: {
         INIT: 'pi',
@@ -122,6 +123,7 @@ export const DB_EVENTS = {
     GAME_INIT: 'game-init',
     GAME_STARTED: 'game-started',
     GAME_PAUSED: 'game-paused',
+    GAME_RESUMED: 'game-resumed',
     GAME_ENDED: 'game-ended',
     DISTRIB_DU: 'distrib-du',
     FIRST_DU: 'first-du',

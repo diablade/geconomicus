@@ -23,6 +23,8 @@ export const sanitize = {
 			roundMinutes: Joi.number().default(20),
 			autoDeath: Joi.boolean().default(true),
 			deathPassTimer: Joi.number().default(5),
+			timerSaveInterval: Joi.number().default(20),
+			timerDUInterval: Joi.number().default(60),
 
 			//option june
 			inequalityStart: Joi.boolean().default(false),
@@ -74,6 +76,8 @@ export const sanitize = {
 			roundMinutes: Joi.number().optional(),
 			autoDeath: Joi.boolean().optional(),
 			deathPassTimer: Joi.number().optional(),
+			timerSaveInterval: Joi.number().optional(),
+			timerDUInterval: Joi.number().optional(),
 
 			inequalityStart: Joi.boolean().optional(),
 			tauxCroissance: Joi.number().optional(),

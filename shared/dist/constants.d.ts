@@ -75,6 +75,7 @@ export declare const IO: {
         readonly RESET: "reset";
         readonly DEATH_IS_COMING: "dic";
         readonly DELETED: "gdel";
+        readonly RECOVERY: "grec";
     };
     readonly PLAYER: {
         readonly INIT: "pi";
@@ -126,6 +127,7 @@ export declare const DB_EVENTS: {
     readonly GAME_INIT: "game-init";
     readonly GAME_STARTED: "game-started";
     readonly GAME_PAUSED: "game-paused";
+    readonly GAME_RESUMED: "game-resumed";
     readonly GAME_ENDED: "game-ended";
     readonly DISTRIB_DU: "distrib-du";
     readonly FIRST_DU: "first-du";

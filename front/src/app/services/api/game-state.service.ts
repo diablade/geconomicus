@@ -147,10 +147,7 @@ export class GameStateService {
 			// Auto-resume or display paused timer from backend state
 			if (payload.gameState.status === GAME_STATUS.PLAYING && payload.gameState.gameTimers?.remainingTime > 0) {
 				this.startTimer(payload.gameState.gameTimers.remainingTime);
-			} else if (
-				payload.gameState.status === GAME_STATUS.PAUSED &&
-				payload.gameState.gameTimers?.remainingTime > 0
-			) {
+			} else if (payload.gameState.gameTimers?.remainingTime > 0) {
 				console.log('game paused, remaining time: ', payload.gameState.gameTimers.remainingTime);
 				this.setPausedTimer(payload.gameState.gameTimers.remainingTime);
 			}
@@ -218,6 +215,11 @@ export class GameStateService {
 		});
 
 		this.wsService.on(IO.GAME.STARTED, () => {
+			const currentState = this.gameStateSubject.getValue();
+			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
+		});
+
+		this.wsService.on(IO.GAME.RESUMED, () => {
 			const currentState = this.gameStateSubject.getValue();
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
 		});

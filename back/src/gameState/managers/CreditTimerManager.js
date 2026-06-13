@@ -50,6 +50,17 @@ class CreditTimerManager {
 		}
 	}
 
+	stopAndGetRemaining(creditId) {
+		log.debug(`[CreditTimerManager] Stopping and getting remaining for credit ${creditId}`);
+		const timer = this.getTimer(creditId);
+		if (!timer) return null;
+		const remaining = timer.getRemainingMs();
+		timer.stop();
+		this.timers.delete(creditId);
+		log.debug(`[CreditTimerManager] Stopped and got remaining for credit ${creditId}, remaining: ${remaining}`);
+		return remaining;
+	}
+
 	async stopPlayerTimers(gameStateId, playerIdx) {
 		log.debug(
 			`[CreditTimerManager] Stopping all credit timers for player ${playerIdx} in game state ${gameStateId}`
@@ -82,7 +93,7 @@ class CreditTimerManager {
 	}
 
 	async removeGameTimers(gameStateId) {
-        const timersToRemove = [];
+		const timersToRemove = [];
 		for (const [id, timer] of this.timers.entries()) {
 			if (timer?.data?.gameStateId === gameStateId) {
 				timersToRemove.push(id);

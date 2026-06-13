@@ -12,6 +12,8 @@ export default class Timer {
 	 * @param {Function|null} callbackInterval2
 	 * @param {number|null} durationInterval3 - duration interval in ms (null = disabled)
 	 * @param {Function|null} callbackInterval3
+	 * @param {number|null} durationInterval4 - duration interval in ms (null = disabled)
+	 * @param {Function|null} callbackInterval4
 	 */
 	constructor(
 		uniqueId,
@@ -23,7 +25,9 @@ export default class Timer {
 		durationInterval2,
 		callbackInterval2,
 		durationInterval3,
-		callbackInterval3
+		callbackInterval3,
+		durationInterval4,
+		callbackInterval4
 	) {
 		this.id = uniqueId;
 		this.data = data;
@@ -35,11 +39,14 @@ export default class Timer {
 		this.callbackInterval2 = callbackInterval2;
 		this.durationInterval3 = durationInterval3;
 		this.callbackInterval3 = callbackInterval3;
+		this.durationInterval4 = durationInterval4;
+		this.callbackInterval4 = callbackInterval4;
 
 		this._timer = null;
 		this._interval1 = null;
 		this._interval2 = null;
 		this._interval3 = null;
+		this._interval4 = null;
 
 		this.startTime = null;
 		this.remainingMs = duration;
@@ -51,21 +58,25 @@ export default class Timer {
 		this.data.startedAt = new Date();
 		this._launchTimers();
 		log.debug(
-			`[Timer] STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms`
+			`[Timer] STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms, interval4: ${this.durationInterval4}ms`
 		);
 	}
 
 	pause() {
-		if (this.status !== 'running') return;
+		if (this.status === 'paused') return this.remainingMs;
+		if (this.status !== 'running') return this.remainingMs;
 		this.updateRemainingMs();
 		this.startTime = null;
 		this._clearTimers();
 		this.status = 'paused';
 		log.debug(`[Timer] PAUSED ${this.id}, remaining: ${this.remainingMs}ms`);
+		return this.remainingMs;
 	}
 
 	resume() {
+		log.debug(`[Timer] RESUMING... ${this.id}, duration: ${this.duration}ms, remaining: ${this.remainingMs}ms`);
 		if (this.status !== 'paused') return;
+		this.duration = this.remainingMs;
 		this._launchTimers();
 		log.debug(`[Timer] RESUMED ${this.id}`);
 	}
@@ -88,8 +99,9 @@ export default class Timer {
 	}
 
 	updateRemainingMs() {
-		const elapsed = Date.now() - this.startTime.getTime();
-		this.remainingMs = Math.max(0, this.remainingMs - elapsed);
+		const now = new Date();
+		const elapsed = now.getTime() - this.startTime.getTime();
+		this.remainingMs = Math.max(0, this.duration - elapsed);
 		this.data.remainingTime = this.remainingMs;
 	}
 
@@ -140,23 +152,37 @@ export default class Timer {
 		}, this.durationInterval3);
 	}
 
+	_startInterval4() {
+		if (!this.durationInterval4 || !this.callbackInterval4) return;
+		this._interval4 = setInterval(async () => {
+			try {
+				await this.callbackInterval4(this);
+			} catch (err) {
+				log.error(`[Timer] ${this.id} callbackInterval4 error: `, err);
+			}
+		}, this.durationInterval4);
+	}
+
 	_launchTimers() {
 		this.startTime = new Date();
 		this._startMainTimer();
 		this._startInterval1();
 		this._startInterval2();
 		this._startInterval3();
+		this._startInterval4();
 		this.status = 'running';
 	}
 
 	_clearTimers() {
 		clearTimeout(this._timer);
-		clearInterval(this._interval1);
-		clearInterval(this._interval2);
-		clearInterval(this._interval3);
+		if (this._interval1) clearInterval(this._interval1);
+		if (this._interval2) clearInterval(this._interval2);
+		if (this._interval3) clearInterval(this._interval3);
+		if (this._interval4) clearInterval(this._interval4);
 		this._timer = null;
 		this._interval1 = null;
 		this._interval2 = null;
 		this._interval3 = null;
+		this._interval4 = null;
 	}
 }

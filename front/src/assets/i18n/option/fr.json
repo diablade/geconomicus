@@ -8,6 +8,8 @@
 		"DEATH": "Mort automatique",
 		"PRICE_NET": "Prix net :",
 		"PRICE_DU": "Prix en DU :",
+		"SAVE_INTERVAL": "Sauvegarde toutes les (secondes)",
+		"DU_INTERVAL": "Dividende universel toutes les (secondes)",
 		"DEATH_MINUTES": "Passage de la mort toutes les {{deathMinute}} minutes",
 		"DEATH_MINUTES_FORMULA": "(durée de la manche/ nombre de joueurs)",
 		"DU_RATES": "Taux de croissance du dividende universel",

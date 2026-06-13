@@ -87,8 +87,12 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		this.router.navigate(['avatar', this.sessionId, this.avatarIdx, 'settings']);
 	}
 
-	coinClick() {
-		this.audioService.playSound('coins');
+	flipCoin(rule: any) {
+        this.audioService.playSound('coins');
+		rule.rotate = true;
+		setTimeout(() => {
+			rule.rotate = false;
+		}, 500);
 	}
 
 	modifyFeedback(gameStateId: string) {

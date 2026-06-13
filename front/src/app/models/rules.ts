@@ -16,6 +16,8 @@ export class Rules {
 	roundMinutes = 0;
 	autoDeath = false;
 	deathPassTimer = 0;
+	timerSaveInterval = 10;
+	timerDUInterval = 60;
 
 	//not commun
 	priceWeight1 = 0;

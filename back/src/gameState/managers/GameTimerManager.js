@@ -13,6 +13,14 @@ class GameTimerManager {
 		return this.timers.get(id);
 	}
 
+	storeTimer(timer) {
+		if (this.timers.has(timer.id)) {
+			log.error(`[GameTimerManager] Timer ${timer.id} already exists, nothing to store`);
+			return;
+		}
+		this.timers.set(timer.id, timer);
+	}
+
 	async startTimer(timer) {
 		log.info(`[GameTimerManager] STARTING... for game ${timer.id}`);
 		await this.stopAndRemoveTimer(timer.id);
@@ -21,21 +29,30 @@ class GameTimerManager {
 	}
 
 	async pauseTimer(timerId) {
-        log.info(`[GameTimerManager] PAUSING... for game ${timerId}`);
+		log.info(`[GameTimerManager] PAUSING... for game ${timerId}`);
 		const timer = this.getTimer(timerId);
 		if (timer) {
-			timer.pause();
+			const remainingTimeMs = timer.pause();
+			return remainingTimeMs;
+		} else {
+			log.error(`[GameTimerManager] Timer ${timerId} not found, nothing to pause`);
+			return null;
 		}
 	}
 
-	async resumeTimer(timer) {
-        log.info(`[GameTimerManager] RESUMING... for game ${timer.id}`);
-		const storedTimer = this.getTimer(timer.id);
-		if (storedTimer) {
+	async resumeTimer(timerId) {
+		log.info(`[GameTimerManager] RESUMING... for game ${timerId}`);
+		const storedTimer = this.getTimer(timerId);
+		if (!storedTimer) {
+			log.error(`[GameTimerManager] Timer ${timerId} not found, cannot resume`);
+			return;
+		}
+		if (storedTimer.status === 'paused') {
 			storedTimer.resume();
+		} else if (storedTimer.status === 'idle') {
+			storedTimer.start();
 		} else {
-			this.timers.set(timer.id, timer);
-			timer.start();
+			log.warn(`[GameTimerManager] Timer ${timerId} is in status '${storedTimer.status}', skipping resume`);
 		}
 	}
 

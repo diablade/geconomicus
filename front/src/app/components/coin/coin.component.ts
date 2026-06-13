@@ -12,15 +12,4 @@ export class CoinComponent {
 	@Input() height = '150px';
 	@Input() forceRotate = false;
 	@Input() label = '';
-
-	// coins = document.querySelectorAll('.coin, .coin-double-face');
-
-	// coins.forEach(coin => {
-	//     coin.addEventListener('click', function () {
-	//         // Exemple: rotation de 180° supplémentaires à chaque clic
-	//         const currentRotation = this.style.transform || 'rotateY(0deg)';
-	//         const currentDegrees = parseInt(currentRotation.match(/\d+/) || 0);
-	//         this.style.transform = `rotateY(${currentDegrees + 180}deg)`;
-	//     });
-	// });
 }
