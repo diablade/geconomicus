@@ -338,6 +338,24 @@ GameStateController.cancelCredit = async (req, res, next) => {
 	}
 };
 
+GameStateController.settleCredit = async (req, res, next) => {
+	try {
+		const { gameStateId, creditId, playerStateIdx } = req.body;
+		const result = await BankStateService.settleCredit(gameStateId, creditId, playerStateIdx);
+		return res.status(200).json({
+			status: 'ok',
+			message: 'CREDIT.SETTLE_SUCCESS',
+			data: result,
+		});
+	} catch (err) {
+		log.error('[GameStateController] Settle credit error:', err);
+		return res.status(500).json({
+			status: 'ko',
+			message: 'ERROR.SETTLE_CREDIT',
+		});
+	}
+};
+
 // GameStateController.end = async (req, res, next) => {
 // 	const gameStateId = req.body.gameStateId;
 // 	try {

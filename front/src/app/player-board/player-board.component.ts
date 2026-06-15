@@ -297,22 +297,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	settleDebt(credit: Credit) {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				message: this.i18nService.instant('CREDIT.SETTLE_CREDIT', { amount: credit.amount + credit.interest }),
-				labelBtn1: this.i18nService.instant('CREDIT.SETTLE_ALL'),
-				labelBtn2: this.i18nService.instant('DIALOG.CANCEL'),
-			},
-		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btn1') {
-				this.settleCredit(credit);
-			}
-		});
-	}
-
 	settleCredit(credit: Credit) {
+        console.log('settle???');
 		this.playerStateService.settleCredit(credit).subscribe({
 			next: (result) => {
 				if (result.success) {
@@ -331,20 +317,24 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
-		this.gameState$
-			.pipe(
-				withLatestFrom(this.playerStatus$),
-				map(([gameState, playerStatus]) => {
-					if (gameState.status == GAME_STATUS.PLAYING && playerStatus != PLAYER_STATUS.DEAD) {
-						if ($event == 'settle') {
-							this.settleDebt(credit);
-						} else if ($event == 'answer') {
-							// deprecated this.requestingWhenCreditEnds(credit, false);
-						}
-					}
-				})
-			)
-			.subscribe();
+		if ($event == 'settle') {
+			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+				data: {
+					message: this.i18nService.instant('CREDIT.SETTLE_CREDIT', {
+						amount: credit.amount + credit.interest,
+					}),
+					labelBtn1: this.i18nService.instant('CREDIT.SETTLE_ALL'),
+					labelBtn2: this.i18nService.instant('DIALOG.CANCEL'),
+				},
+			});
+			confDialogRef.afterClosed().subscribe((result) => {
+				if (result && result == 'btnConfirm') {
+					this.settleCredit(credit);
+				}
+			});
+		} else if ($event == 'answer') {
+			// deprecated this.requestingWhenCreditEnds(credit, false);
+		}
 	}
 
 	tryReincarnate() {

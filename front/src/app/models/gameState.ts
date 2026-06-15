@@ -65,6 +65,7 @@ export class GameState {
 	bankInterestEarned = 0;
 	bankGoodsEarned = 0;
 	bankMoneyLost = 0;
+	bankMoneyDestroyed = 0;
 	gameTimers = new GameTimer();
 
 	modifiedAt = new Date();

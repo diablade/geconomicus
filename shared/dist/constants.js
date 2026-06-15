@@ -136,7 +136,7 @@ export const DB_EVENTS = {
     FREE_MONEY: 'free-money',
     CREDIT_NEW: 'credit-new',
     CREDIT_REQUEST: 'credit-request',
-    CREDIT_SETTLE: 'credit-settle',
+    CREDIT_SETTLED: 'credit-settled',
     CREDIT_FAULT: 'credit-fault',
     CREDIT_CANCELED: 'credit-canceled',
     CREDIT_PAYED_INTEREST: 'credit-payed-interest',

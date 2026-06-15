@@ -205,4 +205,18 @@ export const stateSanitize = {
             'any.required': 'Credit ID is required',
         }),
     }).required(),
+    settleCredit: Joi.object({
+        gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+            'any.invalid': 'Invalid game state ID format',
+            'any.required': 'Game state ID is required',
+        }),
+        playerStateIdx: Joi.number().integer().min(0).required().messages({
+            'any.invalid': 'Invalid player state index format',
+            'any.required': 'Player state index is required',
+        }),
+        creditId: Joi.string().required().messages({
+            'any.invalid': 'Invalid credit ID format',
+            'any.required': 'Credit ID is required',
+        }),
+    }).required(),
 };

@@ -9,6 +9,10 @@ class CreditTimerManager {
 		return CreditTimerManager.instance;
 	}
 
+	getTimer(id) {
+		return this.timers.get(id);
+	}
+
 	async startTimer(timer) {
 		log.debug(`[CreditTimerManager] Starting credit timer ${timer.id}`);
 		if (this.timers.has(timer.id)) {
@@ -16,28 +20,6 @@ class CreditTimerManager {
 		}
 		this.timers.set(timer.id, timer);
 		timer.start();
-	}
-
-	getTimer(id) {
-		return this.timers.get(id);
-	}
-
-	async pauseTimer(id) {
-		log.debug(`[CreditTimerManager] Pausing credit timer ${id}`);
-		const timer = this.getTimer(id);
-		if (timer) {
-			await timer.pause();
-			log.debug(`[CreditTimerManager] Paused credit timer ${id}`);
-		}
-	}
-
-	async resumeTimer(id) {
-		log.debug(`[CreditTimerManager] Resuming credit timer ${id}`);
-		const timer = this.getTimer(id);
-		if (timer) {
-			await timer.resume();
-			log.debug(`[CreditTimerManager] Resumed credit timer ${id}`);
-		}
 	}
 
 	async stopAndRemoveTimer(timerId) {

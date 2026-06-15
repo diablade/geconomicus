@@ -68,9 +68,9 @@ export class BankService {
 		);
 	}
 
-	settleCredit(credit: Credit): Observable<any> {
+	settleCredit(gameStateId: string, playerStateIdx: number, creditId: string): Observable<any> {
 		return this.http
-			.post(environment.API_HOST + environment.BANK.SETTLE_CREDIT, { credit })
+			.post(environment.API_HOST + environment.BANK_STATE.SETTLE_CREDIT, { gameStateId, playerStateIdx, creditId })
 			.pipe(
 				catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.SETTLE_CREDIT'))
 			);

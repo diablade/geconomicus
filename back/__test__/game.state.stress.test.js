@@ -77,6 +77,7 @@ function createFakeGameState(overrides = {}) {
 		bankInterestEarned: 0,
 		bankGoodsEarned: 0,
 		bankMoneyLost: 0,
+		bankMoneyDestroyed: 0,
 		gameTimers: {
 			createdAt: null,
 			startedAt: null,

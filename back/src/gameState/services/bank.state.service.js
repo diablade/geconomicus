@@ -91,16 +91,16 @@ const _payInterest = async (playerState, credit, entry) => {
 
 const _whatCanDoCredit = (credit, playerState) => {
 	if (!credit) {
-		throw new Error("Can't find credit to check amount to pay");
+		throw new Error('ERROR.CREDIT_NOT_FOUND');
 	}
 	if (!playerState) {
-		throw new Error("Can't find player to check amount to pay");
+		throw new Error('ERROR.PLAYER_NOT_FOUND');
 	}
-	if (credit.playerStateIdx !== playerState.idx) {
-		throw new Error('Player is not the owner of this credit');
+	if (Number(credit.playerStateIdx) !== Number(playerState.idx)) {
+		throw new Error('ERROR.OWNERSHIP_CREDIT');
 	}
 	if (credit.status === CREDIT_STATUS.DONE || credit.status === CREDIT_STATUS.CANCELED) {
-		throw new Error('Credit is already done or canceled');
+		throw new Error('ERROR.CREDIT_ALREADY_DONE_OR_CANCELED');
 	}
 	return {
 		canPayInterest: credit.interest <= playerState.coins,
@@ -224,11 +224,8 @@ const _creditTimeoutCallback = async (timerInstance) => {
 		if (credit) {
 			await creditTimerManager.stopAndRemoveTimer(timerInstance.id);
 			const playerState = gameState.playersStates.find((ps) => ps.idx === credit.playerStateIdx);
-			if (!playerState) {
-				throw new Error(`Player state not found for credit ${credit.id}`);
-			}
-			const { canSettle, canPayInterest } = await _whatCanDoCredit(credit, playerState);
 
+			const { canSettle, canPayInterest } = await _whatCanDoCredit(credit, playerState);
 			if (canSettle) {
 				// requesting settle credit or pay interest
 				const event = EventHelper.createEvent(
@@ -502,12 +499,12 @@ BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits) => {
 BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits) => {
 	log.debug(`[BankStateService] Resuming all credit timers for game ${gameStateId}`);
 	for (const credit of credits) {
-		if (credit.status !== CREDIT_STATUS.PAUSED) continue;
+		if (credit.status !== CREDIT_STATUS.PAUSED && credit.status !== CREDIT_STATUS.IDLE) continue;
 		// On recrée depuis le credit (remainingTime est la source de vérité)
 		const timer = _createCreditTimer(gameStateId, credit);
 		await creditTimerManager.startTimer(timer);
 		credit.status = CREDIT_STATUS.RUNNING;
-		log.debug(`[CreditTimerManager] Recreated timer for credit ${credit.id}, remaining: ${credit.remainingTime}ms`);
+		log.debug(`[CreditTimerManager] Resumed timer for credit ${credit.id}, remaining: ${credit.remainingTime}ms`);
 	}
 };
 
@@ -584,6 +581,7 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 	let totalCoinSeized = totalPayedInterest + totalPayedAmount;
 
 	gameState.bankMoneyLost += totalNotPayed;
+	gameState.bankMoneyDestroyed += totalPayedAmount;
 	gameState.bankGoodsEarned += totalSeizedCardsValue;
 	gameState.bankInterestEarned += totalPayedInterest;
 	gameState.currentMassMonetary -= totalCoinSeized;
@@ -605,6 +603,7 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 			amount: totalPayedAmount,
 			cards: totalSeizedCards,
 			bankMoneyLost: totalNotPayed,
+			bankMoneyDestroyed: totalPayedAmount,
 			bankGoodsEarned: totalSeizedCardsValue,
 		}
 	);
@@ -705,48 +704,57 @@ BankStateService.seizure = async (gameStateId, creditIdx, playerStateIdx, seizur
 	// }
 };
 
-BankStateService.settleCredit = async (gameStateId, creditIdx, playerStateIdx) => {
-	// try {
-	// const {
-	//     credit,
-	//     canPay
-	// } = await getCreditOnActionPayment(idGame, idPlayer, idCredit, SETTLE_CREDIT);
-	// if (canPay) {
-	//     let newEvent = constructor.event(SETTLE_CREDIT, credit.idPlayer, BANK, (credit.interest + credit.amount), [credit], Date.now());
-	//     const updatedGame = await GameModel.findOneAndUpdate({
-	//         _id:           credit.idGame,
-	//         'players._id': idPlayer,
-	//         'credits._id': credit._id.toString(),
-	//     }, {
-	//         $inc:  {
-	//             'players.$.coins':     -(credit.interest + credit.amount),
-	//             'bankInterestEarned':  credit.interest,
-	//             'currentMassMonetary': -(credit.interest + credit.amount)
-	//         },
-	//         $set:  {
-	//             'credits.$[c].status':  CREDIT_DONE,
-	//             'credits.$[c].endDate': Date.now()
-	//         },
-	//         $push: {'events': newEvent},
-	//     }, {
-	//         new:          true,
-	//         arrayFilters: [{'_id': credit._id.toString()}]
-	//     });
-	//     let creditUpdated = updatedGame.credits.find(c => _id.toString() === credit._id.toString());
-	//     await bankTimerManager.stopAndRemoveTimer(credit._id.toString());
-	//     socket.emitTo(idGame + EVENT, EVENT, newEvent);
-	//     socket.emitAckTo(idPlayer, CREDIT_DONE, {credit:creditUpdated});
-	//     socket.emitTo(idGame + BANK, CREDIT_DONE, {credit:creditUpdated});
-	//     return creditUpdated;
-	// }
-	// else {
-	//     return undefined;
-	// }
-	// }
-	// catch (err) {
-	// log.error(err);
-	// throw err;
-	// }
+BankStateService.settleCredit = async (gameStateId, creditId, playerStateIdx) => {
+	log.debug(`[BankStateService] Settling credit:${creditId} in game:${gameStateId} for player:${playerStateIdx}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, events } = entry;
+
+		const credit = gameState.credits.find((c) => c.id === creditId);
+		const playerState = _findPlayer(gameState, credit.playerStateIdx);
+
+		const { canSettle } = _whatCanDoCredit(credit, playerState);
+		if (!canSettle) {
+			throw new Error('ERROR.NOT_ENOUGH_COINS');
+		}
+
+		gameState.currentMassMonetary -= credit.amount + credit.interest;
+		gameState.bankInterestEarned += credit.interest;
+		gameState.bankMoneyDestroyed += credit.amount;
+		playerState.coins -= credit.amount + credit.interest;
+
+		credit.status = CREDIT_STATUS.DONE;
+		credit.endAt = new Date();
+		credit.remainingTime = 0;
+		creditTimerManager.stopAndRemoveTimer(credit.id);
+
+		events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.CREDIT_SETTLED,
+				entry.sessionId,
+				entry.gameStateId,
+				credit.playerStateIdx,
+				PLAYER_TYPE.BANK,
+				credit
+			)
+		);
+
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.DONE, {
+			credit,
+		});
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.DONE, {
+			credit,
+			currentMassMonetary: gameState.currentMassMonetary,
+			bankInterestEarned: gameState.bankInterestEarned,
+			bankMoneyLost: gameState.bankMoneyLost,
+			bankMoneyDestroyed: gameState.bankMoneyDestroyed,
+		});
+
+		return {
+			credit,
+			coinsLK: playerState.coins,
+			currentMassMonetary: gameState.currentMassMonetary,
+		};
+	});
 };
 
 BankStateService.payInterest = async (gameStateId, creditIdx, playerStateIdx) => {

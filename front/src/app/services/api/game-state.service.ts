@@ -331,6 +331,7 @@ export class GameStateService {
 			currentStates.currentMassMonetary = data.currentMassMonetary;
 			currentStates.bankInterestEarned = data.bankInterestEarned;
 			currentStates.bankMoneyLost = data.bankMoneyLost;
+			currentStates.bankMoneyDestroyed = data.bankMoneyDestroyed;
 			currentStates.bankGoodsEarned = data.bankGoodsEarned;
 			this.gameStateSubject.next(currentStates);
 

@@ -40,22 +40,6 @@ class GameTimerManager {
 		}
 	}
 
-	async resumeTimer(timerId) {
-		log.info(`[GameTimerManager] RESUMING... for game ${timerId}`);
-		const storedTimer = this.getTimer(timerId);
-		if (!storedTimer) {
-			log.error(`[GameTimerManager] Timer ${timerId} not found, cannot resume`);
-			return;
-		}
-		if (storedTimer.status === 'paused') {
-			storedTimer.resume();
-		} else if (storedTimer.status === 'idle') {
-			storedTimer.start();
-		} else {
-			log.warn(`[GameTimerManager] Timer ${timerId} is in status '${storedTimer.status}', skipping resume`);
-		}
-	}
-
 	async stopAndRemoveTimer(id) {
 		try {
 			const timer = this.getTimer(id);

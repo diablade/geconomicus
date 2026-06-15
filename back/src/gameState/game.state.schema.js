@@ -122,6 +122,10 @@ let GameStateSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
+		bankMoneyDestroyed: {
+			type: Number,
+			default: 0,
+		},
 		gameTimers: {
 			type: GameTimers,
 			default: {},

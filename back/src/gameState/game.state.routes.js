@@ -33,9 +33,9 @@ router.post('/bank-state/free-money', validate(stateSanitize.freeMoney), gameSta
 router.post('/bank-state/create-credit', validate(stateSanitize.createCredit), gameStateController.createCredit);
 router.post('/bank-state/credit-for-all', validate(stateSanitize.creditForAll), gameStateController.creditForAll);
 router.post('/bank-state/cancel-credit', validate(stateSanitize.cancelCredit), gameStateController.cancelCredit);
+router.post('/bank-state/settle-credit', validate(stateSanitize.settleCredit), gameStateController.settleCredit);
 
 // router.get('/get-credits/:idGame/:idPlayer', bank.getCreditsByIdPlayer);
-// router.post('/settle-credit', validate(schemas.settleCredit), bank.settleCredit);
 // router.post('/pay-interest', validate(schemas.payInterest), bank.payInterest);
 // router.post('/seizure', validate(schemas.seizure), bank.seizure);
 // router.post('/prison-break', validate(schemas.prisonBreak), bank.iveGotToBreakFree);

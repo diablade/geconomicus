@@ -653,15 +653,23 @@ export class PlayerStateService {
 
 	settleCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
 		return new Observable((observer) => {
-			const coins = this.coinsSubject.getValue();
+			if (
+				this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
+				this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
+			) {
+				observer.next({ success: false, error: 'PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING' });
+				observer.complete();
+				return;
+			}
 
+			const coins = this.coinsSubject.getValue();
 			if (coins < credit.amount + credit.interest) {
 				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
 				observer.complete();
 				return;
 			}
 
-			this.bankService.settleCredit(credit).subscribe({
+			this.bankService.settleCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
 				next: (data) => {
 					if (data) {
 						const currentCredits = this.creditsSubject.getValue();

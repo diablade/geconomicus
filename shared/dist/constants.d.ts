@@ -139,7 +139,7 @@ export declare const DB_EVENTS: {
     readonly FREE_MONEY: "free-money";
     readonly CREDIT_NEW: "credit-new";
     readonly CREDIT_REQUEST: "credit-request";
-    readonly CREDIT_SETTLE: "credit-settle";
+    readonly CREDIT_SETTLED: "credit-settled";
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
     readonly CREDIT_PAYED_INTEREST: "credit-payed-interest";
