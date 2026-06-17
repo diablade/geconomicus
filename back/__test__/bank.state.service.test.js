@@ -38,7 +38,7 @@ await jest.unstable_mockModule('#config/log', () => ({
 }));
 
 // Avoid importing Timer for real — mock it lightweight
-await jest.unstable_mockModule('../../misc/Timer.js', () => ({
+await jest.unstable_mockModule('../src/misc/Timer.js', () => ({
     default: jest.fn().mockImplementation((id, data, duration) => ({
         id,
         data,
@@ -133,7 +133,15 @@ describe('BankStateService — createCredit', () => {
         expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
     });
 
-    it('sets credit status to IDLE and does NOT start timer when game is not RUNNING', async () => {
+    it('sets credit status to IDLE and does NOT start timer when game is INITIALIZED', async () => {
+        gameState.status = GAME_STATUS.INITIALIZED;
+        await BankStateService.createCredit('game-001', 1, 3, 1);
+
+        expect(gameState.credits[0].status).toBe(CREDIT_STATUS.IDLE);
+        expect(creditTimerManager.startTimer).not.toHaveBeenCalled();
+    });
+
+    it('sets credit status to IDLE and does NOT start timer when game is PAUSED', async () => {
         gameState.status = GAME_STATUS.PAUSED;
         await BankStateService.createCredit('game-001', 1, 3, 1);
 

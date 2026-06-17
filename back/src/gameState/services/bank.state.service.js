@@ -8,7 +8,7 @@ import Timer from '../../misc/Timer.js';
 import { differenceInMilliseconds } from 'date-fns';
 import { CREDIT_STATUS, GAME_STATUS, PLAYER_TYPE, PLAYER_STATUS, ROOMS, IO, DB_EVENTS } from '@geco/shared';
 import EventHelper from '../helpers/event.helper.js';
-import EventService from '../../event/event.service.js';
+import DecksHelper from '../helpers/decks.helper.js';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -313,7 +313,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			throw new Error('Player is not alive or in prison');
 		}
 
-		const startNow = gameState.status === GAME_STATUS.RUNNING;
+		const startNow = gameState.status === GAME_STATUS.PLAYING;
 
 		gameState.creditIndexSeq++;
 		const timerId = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
@@ -445,8 +445,9 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 		credit.endAt = new Date();
 		creditTimerManager.stopAndRemoveTimer(credit.id);
 
+
 		events.push(
-			EventHelper.createEventObject(
+			EventHelper.createEvent(
 				DB_EVENTS.CREDIT_CANCELED,
 				entry.sessionId,
 				entry.gameStateId,
@@ -593,7 +594,7 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 
 	const event = EventHelper.createEvent(
 		DB_EVENTS.CREDIT_SEIZED_DEAD,
-		sessionId,
+		gameState.sessionId,
 		gameState._id,
 		PLAYER_TYPE.MASTER,
 		PLAYER_TYPE.BANK,
