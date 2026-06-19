@@ -142,6 +142,17 @@ export class WebSocketService {
 				this.snackbarService.showNotif(this.i18nService.instant('SOCKET.RECONNECTED'));
 			}
 		});
+		this.socket.io.on('reconnect_attempt', (attempt: number) => {
+			console.log('Reconnection attempt:', attempt);
+		});
+		this.socket.io.on('reconnect_error', () => {
+			console.log('Reconnection error');
+		});
+		this.socket.io.on('reconnect_failed', () => {
+			console.log('Reconnection failed — all attempts exhausted');
+			this.dialog.closeAll();
+			this.showDisconnectedDialog();
+		});
 		this.socket.on('connect', () => {
 			console.log('Socket connect');
 			handleConnectedState();
@@ -153,35 +164,13 @@ export class WebSocketService {
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
-			this.dialog.closeAll();
-			this.showDisconnectedDialog();
 			this.updateDisconnectedStatus();
-			// this.socket?.io?.reconnection();
 		});
 		this.socket.on('disconnect', (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
 			this.showReconnectingDialog();
 			this.updateDisconnectedStatus();
-			//try reconnection
-			// this.socket?.io?.reconnection();
-		});
-		this.socket.on('reconnecting', (data: any) => {
-			this.snackbarService.showNotif(this.i18nService.instant('SOCKET.RECONNECTING'));
-			console.log('reconnecting...');
-		});
-		this.socket.on('connect_timeout', (data: any) => {
-			console.log('time out');
-			this.handleTimeout();
-			// this.socket?.io?.reconnection();
-		});
-		this.socket.on('reconnect_attempt', (attempt) => {
-			console.log('Reconnection attempt:', attempt);
-		});
-
-		this.socket.on('reconnect_error', () => {
-			this.snackbarService.showError(this.i18nService.instant('ERROR.IO_SOCKET_ERROR'));
-			console.log('Reconnection error');
 		});
 		this.socket.on('error', (error: any) => {
 			this.snackbarService.showError(this.i18nService.instant('ERROR.IO_SOCKET_ERROR'));
@@ -189,10 +178,6 @@ export class WebSocketService {
 			if (error && error.message && error.message.includes('timeout')) {
 				this.handleTimeout();
 			}
-		});
-		this.socket.on('reconnect_failed', () => {
-			this.snackbarService.showError(this.i18nService.instant('ERROR.IO_SOCKET_ERROR'));
-			console.log('Reconnection failed');
 		});
 	}
 
@@ -239,8 +224,7 @@ export class WebSocketService {
 			}
 			this.socket?.off(event, handler as any);
 		} else {
-			// Don't delete from map - handlers need to persist for socket reconnection
-			// Only remove from the actual socket
+			this.eventHandlers.delete(event);
 			this.socket?.off(event);
 		}
 	}

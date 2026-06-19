@@ -15,18 +15,23 @@
 		"OBJECTIVES": "Objectifs"
 	},
 	"DIALOG": {
-		"CREDIT_EXPIRED": {
+		"CREDIT_EXTENDED": {
 			"TITLE": "Le crédit est arrivé à expiration !",
-			"MESSAGE": "Rembourser l'intégralité ({{amount}}) ou prolonger de 5 min en payant l’intérêt de {{interest}}",
-			"BTN1": "Rembourser",
-			"BTN2": "Prolonger"
-		}
+			"MESSAGE": "Nous avons prélévé l'interet de {{interest}} et prolongé votre crédit de 5 minutes supplémentaires"
+		},
+        "CREDIT_SETTLE_EXTEND": {
+            "TITLE": "Prolonger ou rembourser le crédit ?",
+			"MESSAGE": "Vous pouvez rembourser l'intégralité du crédit en payant {{amount}} dés maintenant",
+            "MESSAGE2" : "ou prolonger de 5 min supplémentaires en payant l’intérêt de {{interest}}",
+			"BTN_SETTLE": "Rembourser",
+			"BTN_EXTEND": "Prolonger"
+        }
 	},
 	"CREDIT": {
         "IDLE": "En attente...",
 		"PAUSED": "Jeu en pause...",
 		"RUNNING": "En cours...",
-		"REQUEST": "Prolonger ?",
+		"REQUEST": "Demande...",
 		"DEFAULT": "Défaut de paiement",
 		"DONE": "Terminé",
 		"NEW": "Crédit obtenu (+{{amount}}💰)",

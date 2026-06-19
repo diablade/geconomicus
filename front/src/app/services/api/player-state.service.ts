@@ -111,6 +111,7 @@ export class PlayerStateService {
 	) {}
 
 	loadPlayerState(sessionId: string, gameStateId: string, avatarIdx: number, playerStateIdx: number): void {
+		this.offAll();
 		this.sessionId = sessionId;
 		this.gameStateId = gameStateId;
 		this.avatarIdx = avatarIdx;
@@ -200,6 +201,7 @@ export class PlayerStateService {
 	}
 	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
+			console.log('game started');
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PLAYING;
@@ -216,24 +218,8 @@ export class PlayerStateService {
 			this.snackbarService.showNotif(this.i18nService.instant('GAME.STARTED'));
 		});
 
-		this.wsService.on(IO.GAME.RESUMED, async () => {
-			const currentGameState = this.gameStateSubject.getValue();
-			if (currentGameState) {
-				currentGameState.status = GAME_STATUS.PLAYING;
-				this.gameStateSubject.next(currentGameState);
-			}
-			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((c) => {
-				if (c.status === CREDIT_STATUS.PAUSED) {
-					c.status = CREDIT_STATUS.RUNNING;
-				}
-				return c;
-			});
-			this.creditsSubject.next(updatedCredits);
-			this.snackbarService.showNotif(this.i18nService.instant('GAME.RESUMED'));
-		});
-
 		this.wsService.on(IO.GAME.PAUSED, async () => {
+			console.log('game paused');
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PAUSED;
@@ -251,6 +237,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.GAME.RESUMED, async () => {
+			console.log('game resumed');
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PLAYING;
@@ -268,6 +255,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.GAME.STOPPED, async () => {
+			console.log('game stopped');
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.STOPPED;
@@ -289,6 +277,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
+			console.log('game deleted', data);
 			if (data.gameStateId == this.gameStateId) {
 				//redirect to lobby
 				this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
@@ -301,6 +290,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.GAME.FIRST_DU, async (data: any) => {
+			console.log('first du', data);
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.currentDU = data.du;
@@ -339,6 +329,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
+			console.log('distrib du', data);
 			if (cb) {
 				cb({ status: 'ok', _ackId: data._ackId });
 			}
@@ -357,6 +348,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
+			console.log('prison ended', data);
 			cb({ status: 'ok', _ackId: data._ackId });
 			this.cardsSubject.next(data.cards);
 			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
@@ -402,6 +394,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
+			console.log('transaction done', data);
 			cb({ status: 'ok', _ackId: data._ackId });
 			if (Number(this.playerStateIdx) === Number(data.sellerIdx)) {
 				this.coinsSubject.next(data.coinsLK);
@@ -412,21 +405,23 @@ export class PlayerStateService {
 
 		// Credit events
 		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
+			console.log('new credit', data);
 			cb({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			currentCredits.push(data.credit);
 			this.creditsSubject.next(currentCredits);
-			this.coinsSubject.next(this.coinsSubject.getValue() + data.credit.amount);
+			this.coinsSubject.next(data.coinsLK);
 			this.audioService.playSound('coins');
 
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					message: this.i18nService.instant('CREDIT.NEW', { amount: data.credit.amount }),
+					message: this.i18nService.instant('CREDIT.NEW', { amount: data.credit.amount, interest: data.credit.interest }),
 				},
 			});
 		});
 
 		this.wsService.on(IO.CREDIT.FREE_MONEY, async (data: any, cb: (response: any) => void) => {
+			console.log('free money', data);
 			cb({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.coinsLK);
 			this.audioService.playSound('coins');
@@ -437,26 +432,29 @@ export class PlayerStateService {
 			});
 		});
 
-		this.wsService.on(IO.CREDIT.CANCELED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
-			console.log('credit canceled', data);
-			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((credit) => {
-				if (credit.id === data.credit.id) {
-					credit.status = data.credit.status;
-				}
-				return credit;
-			});
-			this.creditsSubject.next(updatedCredits);
-			this.coinsSubject.next(this.coinsSubject.getValue() - data.credit.amount);
-			this.audioService.playSound('interest');
+		this.wsService.on(
+			IO.CREDIT.CANCELED,
+			async (data: { credit: Credit, coinsLK: number, _ackId: any }, cb: (response: any) => void) => {
+				console.log('credit canceled', data);
+				cb({ status: 'ok', _ackId: data._ackId });
+				const currentCredits = this.creditsSubject.getValue();
+				const updatedCredits = currentCredits.map((credit) => {
+					if (credit.id === data.credit.id) {
+						credit.status = 'CANCELED';
+					}
+					return credit;
+				});
+				this.creditsSubject.next(updatedCredits);
+				this.coinsSubject.next(data.coinsLK);
+				this.audioService.playSound('interest');
 
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					message: this.i18nService.instant('CREDIT.CANCEL_SUCCESS', { amount: data.credit.amount }),
-				},
-			});
-		});
+				this.dialog.open(InformationDialogComponent, {
+					data: {
+						message: this.i18nService.instant('CREDIT.CANCEL_SUCCESS', { amount: data.credit.amount }),
+					},
+				});
+			}
+		);
 
 		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
 			cb({ status: 'ok', _ackId: data._ackId });
@@ -512,6 +510,7 @@ export class PlayerStateService {
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
+			this.coinsSubject.next(data.coinsLK);
 		});
 
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
@@ -537,8 +536,8 @@ export class PlayerStateService {
 			this.coinsSubject.next(data.coinsLK);
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					title: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.TITLE'),
-					message: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.MESSAGE', {
+					title: this.i18nService.instant('DIALOG.CREDIT_EXTENDED.TITLE'),
+					message: this.i18nService.instant('DIALOG.CREDIT_EXTENDED.MESSAGE', {
 						amount: data.credit.amount + data.credit.interest,
 						interest: data.credit.interest,
 					}),
@@ -562,20 +561,25 @@ export class PlayerStateService {
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
 		this.wsService.off(IO.PLAYER.DISTRIB_DU);
 		this.wsService.off(IO.GAME.STARTED);
+		this.wsService.off(IO.GAME.PAUSED);
+		this.wsService.off(IO.GAME.RESUMED);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.DELETED);
 		this.wsService.off(IO.GAME.RESET);
 		this.wsService.off(IO.GAME.FIRST_DU);
 		this.wsService.off(IO.SESSION.UPDATED_RULES);
 		this.wsService.off(IO.REFRESH_FORCE);
-		this.wsService.off(IO.TRANSACTION_DONE);
+		this.wsService.off(IO.PLAYER.TRANSACTION_DONE);
 		this.wsService.off(IO.CREDIT.NEW);
+		this.wsService.off(IO.CREDIT.FREE_MONEY);
+		this.wsService.off(IO.CREDIT.CANCELED);
 		this.wsService.off(IO.CREDIT.TIMEOUT);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
 		this.wsService.off(IO.CREDIT.FAULT);
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.CREDIT.SEIZURE);
+		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
 		this.wsService.off(IO.SHORT_CODE.BROADCAST);
 		this.wsService.off(IO.SHORT_CODE.CONFIRMED);
 	}
@@ -652,6 +656,52 @@ export class PlayerStateService {
 	}
 
 	settleCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
+		return new Observable((observer) => {
+			if (
+				this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
+				this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
+			) {
+				observer.next({ success: false, error: 'PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING' });
+				observer.complete();
+				return;
+			}
+
+			const coins = this.coinsSubject.getValue();
+			if (coins < credit.amount + credit.interest) {
+				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
+				observer.complete();
+				return;
+			}
+
+			this.bankService.settleCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
+				next: (data) => {
+					if (data) {
+						const currentCredits = this.creditsSubject.getValue();
+						const updatedCredits = currentCredits.map((c) => {
+							if (c.id === data.id) {
+								c.status = data.status;
+								c.remainingTime = data.remainingTime;
+							}
+							return c;
+						});
+						this.creditsSubject.next(updatedCredits);
+						this.coinsSubject.next(data.coinsLK);
+
+						observer.next({ success: true, data });
+					} else {
+						observer.next({ success: false, error: 'PLAYER.SETTLE_FAILED' });
+					}
+					observer.complete();
+				},
+				error: (err) => {
+					observer.next({ success: false, error: err });
+					observer.complete();
+				},
+			});
+		});
+	}
+
+	extendCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
 		return new Observable((observer) => {
 			if (
 				this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||

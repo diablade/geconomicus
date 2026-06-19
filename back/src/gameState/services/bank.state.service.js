@@ -55,6 +55,16 @@ const _seizeCards = (cards, targetAmount) => {
 	return seizedCards;
 };
 
+const _getBankIndicators = (gameState) => {
+	return {
+		currentMassMonetary: gameState.currentMassMonetary,
+		bankInterestEarned: gameState.bankInterestEarned,
+		bankMoneyLost: gameState.bankMoneyLost,
+		bankMoneyDestroyed: gameState.bankMoneyDestroyed,
+		bankGoodsEarned: gameState.bankGoodsEarned,
+	};
+};
+
 // Helper to instantiate a Timer object for a given credit
 const _createCreditTimer = (gameStateId, credit) => {
 	log.debug('[BankStateService] creating credit timer');
@@ -353,14 +363,15 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			)
 		);
 
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit });
+		// socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
 			credit,
+			coinsLK: playerState.coins,
 		});
 
 		return {
-			currentMassMonetary: gameState.currentMassMonetary || 0,
 			credit,
+			..._getBankIndicators(gameState),
 		};
 	});
 };
@@ -385,7 +396,7 @@ BankStateService.createCreditForAll = async (gameStateId) => {
 		}
 		return {
 			credits,
-			currentMassMonetary: gameState.currentMassMonetary,
+			..._getBankIndicators(gameState),
 		};
 	});
 };
@@ -417,7 +428,7 @@ BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
 			amount,
 		});
 
-		return { amount, playerStateIdx, currentMassMonetary: gameState.currentMassMonetary };
+		return { amount, playerStateIdx, ..._getBankIndicators(gameState) };
 	});
 };
 
@@ -445,7 +456,6 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 		credit.endAt = new Date();
 		creditTimerManager.stopAndRemoveTimer(credit.id);
 
-
 		events.push(
 			EventHelper.createEvent(
 				DB_EVENTS.CREDIT_CANCELED,
@@ -459,12 +469,16 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.CANCELED, {
 			credit,
+			coinsLK: playerState.coins,
 		});
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, { credit });
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, {
+			credit,
+			..._getBankIndicators(gameState),
+		});
 
 		return {
 			credit,
-			currentMassMonetary: gameState.currentMassMonetary,
+			..._getBankIndicators(gameState),
 		};
 	});
 };
@@ -741,19 +755,16 @@ BankStateService.settleCredit = async (gameStateId, creditId, playerStateIdx) =>
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.DONE, {
 			credit,
+			coinsLK: playerState.coins,
 		});
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.DONE, {
 			credit,
-			currentMassMonetary: gameState.currentMassMonetary,
-			bankInterestEarned: gameState.bankInterestEarned,
-			bankMoneyLost: gameState.bankMoneyLost,
-			bankMoneyDestroyed: gameState.bankMoneyDestroyed,
+			..._getBankIndicators(gameState),
 		});
 
 		return {
 			credit,
 			coinsLK: playerState.coins,
-			currentMassMonetary: gameState.currentMassMonetary,
 		};
 	});
 };

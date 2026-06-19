@@ -9,3 +9,4 @@
 .qodo
 shared/node_modules/*
 node_modules/*
+graphify-out/*

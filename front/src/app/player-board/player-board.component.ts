@@ -62,7 +62,31 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
-	credits$ = inject(PlayerStateService).credits$;
+	credits_NotOrdered$ = inject(PlayerStateService).credits$;
+
+	order = (status: string): number => {
+		switch (status) {
+			case CREDIT_STATUS.REQUESTING:
+				return 0;
+			case CREDIT_STATUS.RUNNING:
+				return 1;
+			case CREDIT_STATUS.PAUSED:
+				return 2;
+			case CREDIT_STATUS.IDLE:
+				return 3;
+			case CREDIT_STATUS.DONE:
+				return 4;
+			default:
+				return 999;
+		}
+	};
+	credits$ = this.credits_NotOrdered$.pipe(
+		map((credits) => {
+			return [...credits].sort((a, b) => {
+				return this.order(a.status) - this.order(b.status);
+			});
+		})
+	);
 	gameState$ = inject(PlayerStateService).gameState$;
 	rules$ = inject(PlayerStateService).rules$;
 
@@ -298,7 +322,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	settleCredit(credit: Credit) {
-        console.log('settle???');
 		this.playerStateService.settleCredit(credit).subscribe({
 			next: (result) => {
 				if (result.success) {
@@ -316,25 +339,71 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
+    extendCredit(credit: Credit) {
+        this.playerStateService.extendCredit(credit).subscribe({
+			next: (result) => {
+				if (result.success) {
+					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.PROLONGATE'));
+					this.audioService.playSound('interest');
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
+					this.audioService.playSound('error');
+				}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
+				this.audioService.playSound('error');
+			},
+		});
+    }
+
 	creditActionBtn($event: string, credit: Credit) {
 		if ($event == 'settle') {
-			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-				data: {
-					message: this.i18nService.instant('CREDIT.SETTLE_CREDIT', {
-						amount: credit.amount + credit.interest,
-					}),
-					labelBtn1: this.i18nService.instant('CREDIT.SETTLE_ALL'),
-					labelBtn2: this.i18nService.instant('DIALOG.CANCEL'),
-				},
-			});
-			confDialogRef.afterClosed().subscribe((result) => {
-				if (result && result == 'btnConfirm') {
-					this.settleCredit(credit);
-				}
-			});
+			this.confirmSettle(credit);
 		} else if ($event == 'answer') {
-			// deprecated this.requestingWhenCreditEnds(credit, false);
+			this.confirmSettleOrExtend(credit);
 		}
+	}
+
+	confirmSettle(credit: Credit) {
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				message: this.i18nService.instant('CREDIT.SETTLE_CREDIT', {
+					amount: credit.amount + credit.interest,
+				}),
+				labelBtn1: this.i18nService.instant('CREDIT.SETTLE_ALL'),
+				labelBtn2: this.i18nService.instant('DIALOG.CANCEL'),
+			},
+		});
+		confDialogRef.afterClosed().subscribe((result) => {
+			if (result && result == 'btnConfirm') {
+				this.settleCredit(credit);
+			}
+		});
+	}
+
+	confirmSettleOrExtend(credit: Credit) {
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+                title: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.TITLE'),
+				message: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE', {
+					amount: credit.amount + credit.interest
+                }),
+				message2: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE2', {
+                    interest: credit.interest
+				}),
+				labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_EXTEND'),
+				labelBtnCancel: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_SETTLE'),
+                requestBeep: true,
+			},
+		});
+		confDialogRef.afterClosed().subscribe((result) => {
+			if (result && result == 'btnConfirm') {
+				this.extendCredit(credit);
+			} else if (result && result === 'btnCancel') {
+				this.settleCredit(credit);
+			}
+		});
 	}
 
 	tryReincarnate() {

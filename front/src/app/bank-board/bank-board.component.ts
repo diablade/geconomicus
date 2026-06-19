@@ -94,7 +94,9 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 		),
 		closedCredits: this.credits$.pipe(
 			map((credits) =>
-				credits.filter((c) => c.status === CREDIT_STATUS.DONE || c.status === CREDIT_STATUS.CANCELED)
+				credits
+					.filter((c) => c.status === CREDIT_STATUS.DONE || c.status === CREDIT_STATUS.CANCELED)
+					.sort((a, b) => new Date(b.endAt).getTime() - new Date(a.endAt).getTime())
 			)
 		),
 		debts: this.credits$.pipe(

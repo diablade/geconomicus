@@ -17,18 +17,20 @@ export class ConfirmDialogComponent {
 	timerBtnConfirm = 5;
 	btn1Enable = true;
 	styleBtnConfirm = "";
+	styleBtnCancel = "";
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
-		this.title = data.title ? data.title : this.title;
-		this.message = data.message;
-		this.message2 = data.message2 || "";
-		this.labelBtnCancel = data.labelBtnCancel ? data.labelBtnCancel : this.labelBtnCancel;
-		this.labelBtnConfirm = data.labelBtnConfirm ? data.labelBtnConfirm : this.labelBtnConfirm;
+		this.title = data.title || this.title;
+		this.message = data.message || this.message;
+		this.message2 = data.message2 || this.message2;
+		this.labelBtnCancel = data.labelBtnCancel || this.labelBtnCancel;
+		this.labelBtnConfirm = data.labelBtnConfirm || this.labelBtnConfirm;
 		this.autoClickBtnConfirm = data.autoClickBtnConfirm;
 		this.timerBtnConfirm = data.timerBtnConfirm;
 		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;
-		this.styleBtnConfirm = data.styleBtnConfirm ? data.styleBtnConfirm : this.styleBtnConfirm;
-		if (data.beep) {
+		this.styleBtnConfirm = data.styleBtnConfirm || this.styleBtnConfirm;
+		this.styleBtnCancel = data.styleBtnCancel || this.styleBtnCancel;
+		if (data.requestBeep) {
 			this.audioService.playSound("request");
 		}
 	}

@@ -1,8 +1,11 @@
 <div class="confirmDialog m-2">
 	<h1 mat-dialog-title>{{ title | translate }}</h1>
-	<div mat-dialog-content>{{ message | translate }}</div>
+	<div mat-dialog-content>
+		{{ message | translate }}
+		<div *ngIf="message2">{{ message2 | translate }}</div>
+	</div>
 	<div *ngIf="btn1Enable" class="d-flex justify-content-between">
-		<button mat-button [mat-dialog-close]="'btn1'">
+		<button [color]="styleBtnCancel" mat-button [mat-dialog-close]="'btnCancel'">
 			{{ labelBtnCancel | translate }}
 		</button>
 		<button [color]="styleBtnConfirm" *ngIf="!autoClickBtnConfirm" mat-button [mat-dialog-close]="'btnConfirm'">

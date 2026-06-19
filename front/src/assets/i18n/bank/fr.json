@@ -42,7 +42,7 @@
 		"STARTED": "Débuté",
 		"PAUSED": "Jeu en pause...",
 		"RUNNING": "En cours...",
-		"REQUEST": "Prolonger ?",
+		"REQUEST": "Demande...",
 		"DEFAULT": "Défaut de paiement",
 		"DONE": "Terminé",
 		"NEW": "Crédit obtenu (+{{amount}}💰)",

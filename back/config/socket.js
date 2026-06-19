@@ -4,7 +4,7 @@ import PlayersStateConnectionManager from '../src/gameState/managers/PlayersStat
 import log from '#config/log';
 
 // Constants
-const CLEANUP_INTERVAL = 300000; // 30 minutes
+const CLEANUP_INTERVAL = 300000; // 5 minutes
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECTION_DELAY = 5000; // 5 seconds timeout for reconnection
 const PING_INTERVAL = 3000; // Send a ping every 3 seconds
@@ -20,7 +20,7 @@ export class SocketManager {
 			throw new Error('Use SocketManager.getInstance() to get the singleton instance.');
 		}
 		this.ioInstance = null;
-		this.connections = new Map(); // idPlayer -> { socket, lastActive, reconnectAttempts, idGame }
+		this.connections = new Map(); // idPlayer -> { socket, lastActive, idGame }
 		// Acknowledgment pool: idPlayer -> Map(eventId -> { event, data, timestamp })
 		this.ackPool = new Map();
 		// init connection store
@@ -30,15 +30,9 @@ export class SocketManager {
 		this.cleanupInterval = setInterval(() => {
 			const now = Date.now();
 			for (const [idPlayer, data] of this.connections.entries()) {
-				const { socket, lastActive, reconnectAttempts } = data;
+				const { lastActive } = data;
 
-				// Clean up if socket is disconnected and exceeded max reconnection attempts
-				if (!socket.connected && reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-					log.info(`[socket] Cleaning up socket for player ${idPlayer} - max reconnection attempts reached`);
-					this.cleanupConnection(idPlayer);
-				}
-				// Clean up if socket is stale (no activity for a long time)
-				else if (now - lastActive > 3600000) {
+				if (now - lastActive > 3600000) {
 					// 1 hour
 					log.info(`[socket] Cleaning up stale socket for player ${idPlayer}`);
 					this.cleanupConnection(idPlayer);
@@ -99,7 +93,6 @@ export class SocketManager {
 	}
 
 	setupConnectionHandlers() {
-		this.setupAckHandler();
 		this.ioInstance.on('connection', (socket) => {
 			const { publicChannel, privateChannel } = socket.handshake.query;
 
@@ -129,7 +122,6 @@ export class SocketManager {
 		const connectionData = {
 			socket,
 			lastActive: Date.now(),
-			reconnectAttempts: 0,
 			publicChannel,
 			privateChannel,
 			disconnectHandler: null,
@@ -155,12 +147,16 @@ export class SocketManager {
 			this.cleanupConnection(privateChannel);
 		}
 
-		// Set up event handlers
-		connectionData.disconnectHandler = (reason) => this.handleDisconnect(privateChannel, reason);
+		// Set up event handlers — capture socket.id so stale handlers from a
+		// previous socket don't accidentally clean up a newer connection that
+		// reused the same privateChannel key.
+		const socketId = socket.id;
+		connectionData.disconnectHandler = (reason) => this.handleDisconnect(privateChannel, socketId, reason);
 		connectionData.errorHandler = (error) => this.handleError(privateChannel, error);
 
 		// Store the new connection
 		this.connections.set(privateChannel, connectionData);
+		log.info(`[socket] Stored connection for ${privateChannel} -> socket ${socket.id}`);
 		// Join rooms
 		socket.join(publicChannel);
 		socket.join(privateChannel);
@@ -281,11 +277,22 @@ export class SocketManager {
 		socket.on('connect_timeout', (data) => log.error(`[socket] time out: `, data));
 		socket.on('timeout', (err) => log.error(`[socket] io socket time out!: `, err));
 		socket.on('reconnect_failed', (err) => log.error(`[socket] All reconnection attempts failed: `, err));
-		socket.on('reconnect_attempt', (attempt) => this.handleReconnect(privateChannel, attempt));
-		socket.on('reconnecting', (err) => log.error(`[socket] reconnecting...: `, err));
-		socket.on('reconnect', (attemptNumber) => log.info(`[socket] Reconnected after ${attemptNumber} attempts`));
-		socket.on('reconnect_error', (err) => log.error(`[socket] Reconnection error: `, err));
 		socket.on('error', (err) => log.error(`[socket] error io socket: `, err));
+		socket.on('acknowledge', (data, callback) => {
+			const { eventId } = data;
+			if (eventId) {
+				const wasRemoved = this.removeFromAckPool(privateChannel, eventId);
+				if (wasRemoved) {
+					log.info(`[socket] Received explicit ack for event ${eventId} from player ${privateChannel}`);
+					callback({ status: 'ok' });
+				} else {
+					log.warn(`[socket] Received ack for unknown event ${eventId} from player ${privateChannel}`);
+					callback({ status: 'error', message: 'Event not found' });
+				}
+			} else {
+				callback({ status: 'error', message: 'Invalid ack data' });
+			}
+		});
 
 		// Check for unacknowledged events
 		const unacknowledged = this.getUnacknowledgedEvents(privateChannel);
@@ -308,40 +315,26 @@ export class SocketManager {
 	}
 
 	// Handle disconnection
-	handleDisconnect(privateChannel, reason) {
+	handleDisconnect(privateChannel, socketId, reason) {
 		const connection = this.connections.get(privateChannel);
 		if (!connection) {
 			return;
 		}
 
-		const { socket, reconnectAttempts, publicChannel } = connection;
+		// Guard against a stale disconnect firing after a newer socket has
+		// already replaced this channel — avoids race on fast reconnects.
+		if (connection.socket.id !== socketId) {
+			log.debug(`[socket] Ignoring stale disconnect for socket ${socketId} (channel ${privateChannel} now owned by ${connection.socket.id})`);
+			return;
+		}
+
+		const { socket, publicChannel } = connection;
 
 		log.info(
-			`[socket] game ${publicChannel},Player ${privateChannel} disconnected. Reason: ${reason}. Reconnect attempt ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS}`
+			`[socket] game ${publicChannel},Player ${privateChannel} disconnected. Reason: ${reason}`
 		);
 
 		this.cleanupConnection(privateChannel);
-	}
-
-	// Handle reconnect
-	handleReconnect(roomId, attempt) {
-		const connection = this.connections.get(roomId);
-		if (!connection) {
-			return;
-		}
-		// Update reconnect attempts
-		connection.reconnectAttempts++;
-		connection.lastActive = Date.now();
-
-		this.connections.set(roomId, connection);
-
-		// If we've exceeded max reconnection attempts, clean up
-		if (connection.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-			log.warn(
-				`[socket] Reconnection attempts (${attempt}/${MAX_RECONNECT_ATTEMPTS}) reached for player ${roomId}. Cleaning up.`
-			);
-			this.cleanupConnection(roomId);
-		}
 	}
 
 	// Handle socket errors
@@ -362,8 +355,6 @@ export class SocketManager {
 
 		const { socket, disconnectHandler, errorHandler } = connection;
 
-		// Leave all rooms
-		socket.leaveAll();
 		// Remove event listeners
 		if (disconnectHandler) {
 			socket.off('disconnect', disconnectHandler);
@@ -425,42 +416,53 @@ export class SocketManager {
 		this.getIo().broadcast().to(roomId).emit(event, data);
 	}
 
-	emitAckTo(roomId, event, data) {
+	async emitAckTo(roomId, event, data) {
+		log.debug(`[socket] emitAckTo called - room: ${roomId}, event: ${event}`);
 		if (!this.ioInstance) return;
-		// Generate a unique ID for this event if not provided
+
 		const eventId = data?.eventId || `${event}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-		// Add the event to the ack pool for each player in the room
-		this.getIo()
-			.in(roomId)
-			.fetchSockets()
-			.then((sockets) => {
-				sockets.forEach((socket) => {
-					const playerData = Array.from(this.connections.values()).find(
-						(conn) => conn.socket.id === socket.id
-					);
+		let sockets;
+		try {
+			sockets = await this.getIo().in(roomId).fetchSockets();
+			log.debug(`[socket] emitAckTo - sockets found: ${sockets.length} in room ${roomId}`);
+		} catch (err) {
+			log.error(`[socket] fetchSockets failed for room ${roomId}:`, err);
+			return;
+		}
 
-					if (playerData) {
-						const privateChannel = playerData.privateChannel;
-						this.addToAckPool(privateChannel, eventId, event, data);
+		if (!sockets.length) {
+			log.warn(`[socket] emitAckTo: no sockets found in room ${roomId} for event ${event}`);
+			return;
+		}
 
-						// Emit with the eventId included
-						const eventData = {
-							...data,
-							_ackId: eventId,
-						};
+		for (const socket of sockets) {
+			// Recherche par socket.id dans les connections
+			const [privateChannel, playerData] =
+				Array.from(this.connections.entries()).find(([, conn]) => conn.socket.id === socket.id) ?? [];
 
-						socket.emit(event, eventData, (ack) => {
-							if (ack && ack.status === 'ok') {
-								log.debug(`[socket] Ack received from socket ${socket.id} for event ${ack._ackId}`);
-								this.removeFromAckPool(ack.idPlayer, ack._ackId);
-							} else {
-								log.error(`[socket] Ack failed from socket ${socket.id} for event ${ack._ackId}`);
-							}
-						});
-					}
-				});
+			if (!playerData) {
+				const knownIds = Array.from(this.connections.values()).map((c) => c.socket.id);
+				log.warn(
+					`[socket] emitAckTo: socket ${socket.id} in room ${roomId} not in connections map. ` +
+					`Known socket IDs: [${knownIds.join(', ')}]. Emitting without ack tracking.`
+				);
+				// Still deliver the event — skip ack tracking only
+				socket.emit(event, data);
+				continue;
+			}
+
+			this.addToAckPool(privateChannel, eventId, event, data);
+
+			socket.emit(event, { ...data, _ackId: eventId }, (ack) => {
+				if (ack?.status === 'ok') {
+					log.debug(`[socket] Ack ok from ${socket.id} for event ${ack._ackId}`);
+					this.removeFromAckPool(ack.idPlayer, ack._ackId);
+				} else {
+					log.error(`[socket] Ack failed/timeout from ${socket.id} for event ${eventId}`, ack);
+				}
 			});
+		}
 	}
 
 	// Getter for io instance (replaces previous io() function)
@@ -554,37 +556,6 @@ export class SocketManager {
 		}
 	}
 
-	setupAckHandler() {
-		this.getIo().on('connection', (socket) => {
-			socket.on('acknowledge', (data, callback) => {
-				const { eventId } = data;
-				const playerData = Array.from(this.connections.values()).find((conn) => conn.socket.id === socket.id);
-
-				if (playerData && eventId) {
-					const wasRemoved = this.removeFromAckPool(playerData.privateChannel, eventId);
-					if (wasRemoved) {
-						log.info(
-							`[socket] Received explicit ack for event ${eventId} from player ${playerData.privateChannel}`
-						);
-						callback({ status: 'ok' });
-					} else {
-						log.warn(
-							`[socket] Received ack for unknown event ${eventId} from player ${playerData.privateChannel}`
-						);
-						callback({
-							status: 'error',
-							message: 'Event not found',
-						});
-					}
-				} else {
-					callback({
-						status: 'error',
-						message: 'Invalid ack data',
-					});
-				}
-			});
-		});
-	}
 }
 
 // Create a singleton instance
