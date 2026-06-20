@@ -130,7 +130,7 @@ export class SocketManager {
 
 		// Handle previous connection if exists
 		const previousConnection = this.connections.get(privateChannel);
-		if (previousConnection && previousConnection.socket.connected && process.env.NODE_ENV === 'production') {
+		if (previousConnection && previousConnection.socket.connected) {
 			// Clean up previous connection
 			try {
 				log.info(`[socket] Replacing previous socket for player ${privateChannel}`);
@@ -246,6 +246,12 @@ export class SocketManager {
 							`[socket] Player ${playerStateIdx} (avatar ${avatarIdx}) joined to gameState ${gameStateId}`
 						);
 					}
+				} else if (avatarIdx === 'master') {
+					const snapshot = PlayersStateConnectionManager.getPlayersConnectionStatus(gameStateId);
+					socket.emit(IO.PLAYER.CONNECTIONS_SNAPSHOT, snapshot);
+					log.info(
+						`[socket] Sent connection snapshot to master for game ${gameStateId}: ${snapshot.length} players`
+					);
 				} else {
 					log.info(
 						`[socket] Room type: ${roomType}, gameStateId: ${gameStateId}, playerType: ${avatarIdx} joined`
@@ -448,7 +454,7 @@ export class SocketManager {
 					`Known socket IDs: [${knownIds.join(', ')}]. Emitting without ack tracking.`
 				);
 				// Still deliver the event — skip ack tracking only
-				socket.emit(event, data);
+				socket.emit(event, { ...data, _ackId: eventId });
 				continue;
 			}
 

@@ -103,18 +103,19 @@ export const IO = {
 		DISTRIB_DU: 'du',
 		CONNECTED: 'pc',
 		DISCONNECTED: 'pdc',
+		CONNECTIONS_SNAPSHOT: 'pcs',
 	},
 	CREDIT: {
 		NEW: 'cn',
 		FREE_MONEY: 'cfm',
 		STARTED: 'cs',
 		PROGRESS: 'cp',
-		TIMEOUT: 'ct',
 		FAULT: 'cf',
 		DONE: 'cdone',
 		CANCELED: 'ccan',
+		REQUEST: 'creq',
 		SEIZURE: 'csq',
-		PAYED_INTEREST: 'cpi',
+		EXTENDED: 'cext',
 	},
 	SHORT_CODE: {
 		EMIT: 'sce',
@@ -156,10 +157,10 @@ export const DB_EVENTS = {
 	FREE_MONEY: 'free-money',
 	CREDIT_NEW: 'credit-new',
 	CREDIT_REQUEST: 'credit-request',
+	CREDIT_EXTENDED: 'credit-extended',
 	CREDIT_SETTLED: 'credit-settled',
 	CREDIT_FAULT: 'credit-fault',
 	CREDIT_CANCELED: 'credit-canceled',
-	CREDIT_PAYED_INTEREST: 'credit-payed-interest',
 	CREDIT_SEIZED_DEAD: 'credit-seized-dead',
 } as const;
 

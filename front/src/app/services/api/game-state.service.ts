@@ -294,6 +294,16 @@ export class GameStateService {
 			console.log('room disconnected ws:', data);
 			this.updatePlayerConnectionStatus(data, false);
 		});
+
+		this.wsService.on(IO.PLAYER.CONNECTIONS_SNAPSHOT, (snapshot: { idx: number; isConnected: boolean; lastSeen: Date }[]) => {
+			console.log('connections snapshot ws:', snapshot);
+			const current = this.connectedPlayersSubject.getValue();
+			const updated = current.map((conn) => {
+				const found = snapshot.find((s) => s.idx === conn.idx);
+				return found ? { ...conn, isConnected: found.isConnected, lastSeen: found.lastSeen } : conn;
+			});
+			this.connectedPlayersSubject.next(updated);
+		});
 		this.wsService.on(IO.PLAYER.DISTRIB_DU, async (data: any) => {
 			console.log('room distrib du ws:', data);
 		});
@@ -342,14 +352,7 @@ export class GameStateService {
 				}
 			});
 		});
-		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any) => {
-			_.forEach(this.creditsSubject.getValue(), (c) => {
-				if (c.id == data.id) {
-					c.status = data.status;
-				}
-			});
-		});
-		this.wsService.on(IO.CREDIT.PAYED_INTEREST, async (data: any) => {
+		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any) => {
 			const currentStates = this.gameStateSubject.getValue();
 			const credits = this.creditsSubject.getValue();
 			_.forEach(credits, (c) => {
@@ -364,6 +367,16 @@ export class GameStateService {
 			});
 			this.creditsSubject.next(credits);
 			this.gameStateSubject.next(currentStates);
+		});
+		this.wsService.on(IO.CREDIT.REQUEST, async (data: any) => {
+			const credits = this.creditsSubject.getValue();
+			_.forEach(credits, (c) => {
+				if (c.id == data.credit.id) {
+					c.status = data.credit.status;
+					c.remainingTime = data.credit.remainingTime;
+				}
+			});
+			this.creditsSubject.next(credits);
 		});
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any) => {
 			_.forEach(this.creditsSubject.getValue(), (c) => {
@@ -381,6 +394,7 @@ export class GameStateService {
 		this.wsService.off(IO.AVATAR.UPDATED);
 		this.wsService.off(IO.PLAYER.CONNECTED);
 		this.wsService.off(IO.PLAYER.DISCONNECTED);
+		this.wsService.off(IO.PLAYER.CONNECTIONS_SNAPSHOT);
 		this.wsService.off(IO.TIMER_LEFT);
 		this.wsService.off(IO.GAME.STOPPED);
 		this.wsService.off(IO.GAME.STARTED);
@@ -389,10 +403,9 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.CURRENT_DU);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
-		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
+		this.wsService.off(IO.CREDIT.EXTENDED);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
-		this.wsService.off(IO.CREDIT.TIMEOUT);
 		this.wsService.off(IO.CREDIT.FAULT);
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);

@@ -90,18 +90,19 @@ export declare const IO: {
         readonly DISTRIB_DU: "du";
         readonly CONNECTED: "pc";
         readonly DISCONNECTED: "pdc";
+        readonly CONNECTIONS_SNAPSHOT: "pcs";
     };
     readonly CREDIT: {
         readonly NEW: "cn";
         readonly FREE_MONEY: "cfm";
         readonly STARTED: "cs";
         readonly PROGRESS: "cp";
-        readonly TIMEOUT: "ct";
         readonly FAULT: "cf";
         readonly DONE: "cdone";
         readonly CANCELED: "ccan";
+        readonly REQUEST: "creq";
         readonly SEIZURE: "csq";
-        readonly PAYED_INTEREST: "cpi";
+        readonly EXTENDED: "cext";
     };
     readonly SHORT_CODE: {
         readonly EMIT: "sce";
@@ -139,10 +140,10 @@ export declare const DB_EVENTS: {
     readonly FREE_MONEY: "free-money";
     readonly CREDIT_NEW: "credit-new";
     readonly CREDIT_REQUEST: "credit-request";
+    readonly CREDIT_EXTENDED: "credit-extended";
     readonly CREDIT_SETTLED: "credit-settled";
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
-    readonly CREDIT_PAYED_INTEREST: "credit-payed-interest";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
 };
 export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];

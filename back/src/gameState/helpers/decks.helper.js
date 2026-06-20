@@ -163,8 +163,9 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	playerState.cards = [...playerState.cards, ...cardsDraw];
 
 	return {
-		gameState,
-		cardsDraw,
+		cardsLK: playerState.cards,
+		newCards: newCards,
+		producedCard: newCardSup,
 	};
 };
 

@@ -18,6 +18,8 @@ import { I18nService } from '../i18n.service';
 import { AudioService } from '../audio.service';
 import { InformationDialogComponent } from 'src/app/dialogs/information-dialog/information-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from 'src/app/dialogs/confirm-dialog/confirm-dialog.component';
+import { CongratsDialogComponent } from 'src/app/dialogs/congrats-dialog/congrats-dialog.component';
 
 @Injectable({
 	providedIn: 'root',
@@ -49,6 +51,7 @@ export class PlayerStateService {
 	private roomGameState = '';
 	private roomPlayerState = '';
 
+	private isProducing = false;
 	public shortCode: ShortCode | undefined;
 
 	typeTheme$ = inject(ThemesService).typeTheme$;
@@ -107,6 +110,7 @@ export class PlayerStateService {
 		private deckService: DeckService,
 		private snackbarService: SnackbarService,
 		private i18nService: I18nService,
+		private themeService: ThemesService,
 		private router: Router
 	) {}
 
@@ -147,6 +151,11 @@ export class PlayerStateService {
 
 				this.gameStateSubject.next(data.gameState);
 				this.rulesSubject.next(data.rules);
+
+				const requestingCredits = data.credits.filter((c: Credit) => c.status === CREDIT_STATUS.REQUESTING);
+				for (const credit of requestingCredits) {
+					this.confirmSettleOrExtend(credit);
+				}
 			});
 		this.setupMiscSocketListeners();
 		this.setupGameSocketListeners();
@@ -189,7 +198,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.loadPlayerState(this.sessionId, this.gameStateId, this.avatarIdx, this.playerStateIdx);
 		});
 
@@ -301,7 +310,7 @@ export class PlayerStateService {
 	private setupPlayerSocketListeners(): void {
 		this.wsService.on(IO.PLAYER.INIT, async (data: any, cb: (response: any) => void) => {
 			console.log('PLAYER.INIT', data);
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.playerState.coins);
 			this.cardsSubject.next(data.playerState.cards);
 
@@ -331,7 +340,7 @@ export class PlayerStateService {
 		this.wsService.on(IO.PLAYER.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
 			console.log('distrib du', data);
 			if (cb) {
-				cb({ status: 'ok', _ackId: data._ackId });
+				cb?.({ status: 'ok', _ackId: data._ackId });
 			}
 			this.coinsSubject.next(data.coinsLK);
 			this.audioService.playSound('du');
@@ -349,7 +358,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			console.log('prison ended', data);
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.cardsSubject.next(data.cards);
 			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
 		});
@@ -395,7 +404,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			console.log('transaction done', data);
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			if (Number(this.playerStateIdx) === Number(data.sellerIdx)) {
 				this.coinsSubject.next(data.coinsLK);
 				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
@@ -406,7 +415,7 @@ export class PlayerStateService {
 		// Credit events
 		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			console.log('new credit', data);
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			currentCredits.push(data.credit);
 			this.creditsSubject.next(currentCredits);
@@ -415,14 +424,17 @@ export class PlayerStateService {
 
 			this.dialog.open(InformationDialogComponent, {
 				data: {
-					message: this.i18nService.instant('CREDIT.NEW', { amount: data.credit.amount, interest: data.credit.interest }),
+					message: this.i18nService.instant('CREDIT.NEW', {
+						amount: data.credit.amount,
+						interest: data.credit.interest,
+					}),
 				},
 			});
 		});
 
 		this.wsService.on(IO.CREDIT.FREE_MONEY, async (data: any, cb: (response: any) => void) => {
 			console.log('free money', data);
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.coinsLK);
 			this.audioService.playSound('coins');
 			this.dialog.open(InformationDialogComponent, {
@@ -434,13 +446,13 @@ export class PlayerStateService {
 
 		this.wsService.on(
 			IO.CREDIT.CANCELED,
-			async (data: { credit: Credit, coinsLK: number, _ackId: any }, cb: (response: any) => void) => {
+			async (data: { credit: Credit; coinsLK: number; _ackId: any }, cb: (response: any) => void) => {
 				console.log('credit canceled', data);
-				cb({ status: 'ok', _ackId: data._ackId });
+				cb?.({ status: 'ok', _ackId: data._ackId });
 				const currentCredits = this.creditsSubject.getValue();
 				const updatedCredits = currentCredits.map((credit) => {
 					if (credit.id === data.credit.id) {
-						credit.status = 'CANCELED';
+						credit.status = data.credit.status;
 					}
 					return credit;
 				});
@@ -455,18 +467,6 @@ export class PlayerStateService {
 				});
 			}
 		);
-
-		this.wsService.on(IO.CREDIT.TIMEOUT, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
-			const currentCredits = this.creditsSubject.getValue();
-			const updatedCredits = currentCredits.map((c) => {
-				if (c.id === data.credit.id) {
-					c.status = data.credit.status;
-				}
-				return c;
-			});
-			this.creditsSubject.next(updatedCredits);
-		});
 
 		this.wsService.on(IO.CREDIT.STARTED, async (data: { id: string }) => {
 			const currentCredits = this.creditsSubject.getValue();
@@ -490,7 +490,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
 				if (c.id === data.credit.id) {
 					c.status = data.credit.status;
@@ -501,11 +501,11 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.DONE, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
 				if (c.id === data.credit.id) {
-					c.status = CREDIT_STATUS.DONE;
+					c.status = data.credit.status;
 				}
 				return c;
 			});
@@ -514,25 +514,25 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			const updatedCards = this.cardsSubject
 				.getValue()
 				.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
 				if (c.id === data.credit.id) {
-					c.status = CREDIT_STATUS.DONE;
+					c.status = data.credit.status;
 				}
 				return c;
 			});
 
 			this.cardsSubject.next(updatedCards);
 			this.creditsSubject.next(updatedCredits);
-			this.coinsSubject.next(this.coinsSubject.getValue() - data.seizure.coins);
+			this.coinsSubject.next(data.coinsLK);
 		});
 
-		this.wsService.on(IO.CREDIT.PAYED_INTEREST, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', _ackId: data._ackId });
+		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.coinsLK);
 			this.dialog.open(InformationDialogComponent, {
 				data: {
@@ -541,12 +541,14 @@ export class PlayerStateService {
 						amount: data.credit.amount + data.credit.interest,
 						interest: data.credit.interest,
 					}),
-					// labelBtn1: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN1'),
-					// labelBtn2: this.i18nService.instant('DIALOG.CREDIT_EXPIRED.BTN2'),
-					// autoClickBtn2: true,
-					// timerBtn2: '14', //en secondes
 				},
 			});
+		});
+
+		this.wsService.on(IO.CREDIT.REQUEST, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data._ackId });
+			this.coinsSubject.next(data.coinsLK);
+			this.confirmSettleOrExtend(data.credit);
 		});
 	}
 
@@ -573,15 +575,41 @@ export class PlayerStateService {
 		this.wsService.off(IO.CREDIT.NEW);
 		this.wsService.off(IO.CREDIT.FREE_MONEY);
 		this.wsService.off(IO.CREDIT.CANCELED);
-		this.wsService.off(IO.CREDIT.TIMEOUT);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
 		this.wsService.off(IO.CREDIT.FAULT);
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.CREDIT.SEIZURE);
-		this.wsService.off(IO.CREDIT.PAYED_INTEREST);
+		this.wsService.off(IO.CREDIT.EXTENDED);
 		this.wsService.off(IO.SHORT_CODE.BROADCAST);
 		this.wsService.off(IO.SHORT_CODE.CONFIRMED);
+	}
+
+	confirmSettleOrExtend(credit: Credit) {
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			disableClose: true,
+			data: {
+				title: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.TITLE'),
+				message: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE', {
+					amount: credit.amount + credit.interest,
+				}),
+				message2: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE2', {
+					interest: credit.interest,
+				}),
+				labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_EXTEND'),
+				labelBtnCancel: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_SETTLE'),
+				requestBeep: true,
+                styleBtnConfirm:"primary",
+                styleBtnCancel: "warn"
+			},
+		});
+		confDialogRef.afterClosed().subscribe((result) => {
+			if (result && result == 'btnConfirm') {
+				this.extendCredit(credit);
+			} else if (result && result === 'btnCancel') {
+				this.settleCredit(credit);
+			}
+		});
 	}
 
 	transaction(gameStateId: string, buyerIdx: string, sellerIdx: any, cardKey: any): Observable<any> {
@@ -655,149 +683,149 @@ export class PlayerStateService {
 		});
 	}
 
-	settleCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
-		return new Observable((observer) => {
-			if (
-				this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
-				this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
-			) {
-				observer.next({ success: false, error: 'PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING' });
-				observer.complete();
-				return;
-			}
+	settleCredit(credit: Credit): void {
+		if (
+			this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
+			this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
+		) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING'));
+			return;
+		}
 
-			const coins = this.coinsSubject.getValue();
-			if (coins < credit.amount + credit.interest) {
-				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
-				observer.complete();
-				return;
-			}
+		const coins = this.coinsSubject.getValue();
+		if (coins < credit.amount + credit.interest) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.INSUFFICIENT_FUNDS'));
+			return;
+		}
 
-			this.bankService.settleCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
-				next: (data) => {
-					if (data) {
-						const currentCredits = this.creditsSubject.getValue();
-						const updatedCredits = currentCredits.map((c) => {
-							if (c.id === data.id) {
-								c.status = data.status;
-								c.remainingTime = data.remainingTime;
-							}
-							return c;
-						});
-						this.creditsSubject.next(updatedCredits);
-						this.coinsSubject.next(data.coinsLK);
-
-						observer.next({ success: true, data });
-					} else {
-						observer.next({ success: false, error: 'PLAYER.SETTLE_FAILED' });
-					}
-					observer.complete();
-				},
-				error: (err) => {
-					observer.next({ success: false, error: err });
-					observer.complete();
-				},
-			});
+		this.bankService.settleCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
+			next: (data) => {
+				if (data) {
+					const currentCredits = this.creditsSubject.getValue();
+					const updatedCredits = currentCredits.map((c) => {
+						if (c.id === data.id) {
+							c.status = data.status;
+							c.remainingTime = data.remainingTime;
+						}
+						return c;
+					});
+					this.creditsSubject.next(updatedCredits);
+					this.coinsSubject.next(data.coinsLK);
+					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.CREDIT_SETTLED'));
+					this.audioService.playSound('interest');
+				} else {
+					this.snackbarService.showError(this.i18nService.instant('PLAYER.SETTLE_FAILED'));
+				}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
+				this.audioService.playSound('error');
+			},
 		});
 	}
 
-	extendCredit(credit: Credit): Observable<{ success: boolean; error?: string; data?: any }> {
-		return new Observable((observer) => {
-			if (
-				this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
-				this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
-			) {
-				observer.next({ success: false, error: 'PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING' });
-				observer.complete();
-				return;
-			}
+	extendCredit(credit: Credit): void {
+		if (
+			this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING &&
+			this.gameStateSubject.getValue().status !== GAME_STATUS.PAUSED &&
+			this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
+		) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING'));
+			return;
+		}
 
-			const coins = this.coinsSubject.getValue();
-			if (coins < credit.amount + credit.interest) {
-				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_FUNDS' });
-				observer.complete();
-				return;
-			}
+		console.log('extendCredit', credit);
+		const coins = this.coinsSubject.getValue();
+		if (coins < credit.interest) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.INSUFFICIENT_FUNDS'));
+			return;
+		}
 
-			this.bankService.settleCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
-				next: (data) => {
-					if (data) {
-						const currentCredits = this.creditsSubject.getValue();
-						const updatedCredits = currentCredits.map((c) => {
-							if (c.id === data.id) {
-								c.status = data.status;
-								c.remainingTime = data.remainingTime;
-							}
-							return c;
-						});
-						this.creditsSubject.next(updatedCredits);
-						this.coinsSubject.next(data.coinsLK);
-
-						observer.next({ success: true, data });
-					} else {
-						observer.next({ success: false, error: 'PLAYER.SETTLE_FAILED' });
-					}
-					observer.complete();
-				},
-				error: (err) => {
-					observer.next({ success: false, error: err });
-					observer.complete();
-				},
-			});
+		this.bankService.extendCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
+			next: (data) => {
+				if (data) {
+					const currentCredits = this.creditsSubject.getValue();
+					const updatedCredits = currentCredits.map((c) => {
+						if (c.id === data.credit.id) {
+							c.status = data.credit.status;
+							c.remainingTime = data.credit.remainingTime;
+						}
+						return c;
+					});
+					this.creditsSubject.next(updatedCredits);
+					this.coinsSubject.next(data.coinsLK);
+					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.EXTENDED'));
+					this.audioService.playSound('interest');
+				} else {
+					this.snackbarService.showError(this.i18nService.instant('PLAYER.EXTEND_FAILED'));
+				}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
+				this.audioService.playSound('error');
+			},
 		});
 	}
 
-	produce(letter: string, weight: number): Observable<{ success: boolean; error?: string; data?: any }> {
-		return new Observable((observer) => {
-			const rules = this.rulesSubject.getValue();
-			const cards = this.cardsSubject.getValue();
+	produce(letter: string, weight: number): void {
+		const rules = this.rulesSubject.getValue();
+		const cards = this.cardsSubject.getValue();
 
-			if (!rules || !cards) {
-				observer.next({ success: false, error: 'PLAYER.INVALID_STATE' });
-				observer.complete();
-				return;
-			}
+		if (!rules || !cards) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.INVALID_STATE'));
+			return;
+		}
 
-			const identicalCards = cards.filter((c) => c.letter === letter && c.weight === weight);
+		const identicalCards = cards.filter((c) => c.letter === letter && c.weight === weight);
 
-			if (identicalCards.length < rules.amountCardsForProd) {
-				observer.next({ success: false, error: 'PLAYER.INSUFFICIENT_CARDS' });
-				observer.complete();
-				return;
-			}
+		if (identicalCards.length < rules.amountCardsForProd) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.INSUFFICIENT_CARDS'));
+			return;
+		}
 
-			const cardsForProd = identicalCards.slice(0, rules.amountCardsForProd);
-			const gameStateId = this.gameStateId;
+		const cardsForProd = identicalCards.slice(0, rules.amountCardsForProd);
+		const gameStateId = this.gameStateId;
 
-			if (!gameStateId || !this.playerStateIdx) {
-				observer.next({ success: false, error: 'PLAYER.INVALID_IDS' });
-				observer.complete();
-				return;
-			}
+		if (!gameStateId || !this.playerStateIdx) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.INVALID_IDS'));
+			return;
+		}
 
-			this.deckService.produce(gameStateId, this.playerStateIdx.toString(), cardsForProd).subscribe({
-				next: (newCards) => {
-					if (newCards) {
-						// Remove the used cards
-						const updatedCards = cards.filter((c) => !cardsForProd.some((used) => used.key === c.key));
+		this.isProducing = true;
+		this.deckService.produce(gameStateId, this.playerStateIdx.toString(), cardsForProd).subscribe({
+			next: (result: any) => {
+				if (result.status === 'ok') {
+					this.showProduction(result.producedCard, result.newCard);
+					this.cardsSubject.next(result.cardsLK);
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
+					this.audioService.playSound('error');
+				}
+				this.isProducing = false;
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
+				this.audioService.playSound('error');
+				this.isProducing = false;
+			},
+		});
+	}
 
-						// Add the new cards
-						const allCards = [...updatedCards, ...newCards];
-
-						// Check for gift card
-						const cardGift = newCards.find((c) => c.weight === weight + 1);
-
-						observer.next({ success: true, data: { newCards, cardGift } });
-					} else {
-						observer.next({ success: false, error: 'PLAYER.PRODUCE_FAILED' });
-					}
-					observer.complete();
-				},
-				error: (err) => {
-					observer.next({ success: false, error: err });
-					observer.complete();
-				},
-			});
+	showProduction(producedCard: Card, newCards: Card[]) {
+		this.dialog.open(CongratsDialogComponent, {
+			hasBackdrop: true,
+			backdropClass: 'bgBlur',
+			data: {
+				text:
+					producedCard.weight > 2
+						? this.i18nService.instant('EVENTS.TECHNOLOGY')
+						: this.i18nService.instant('EVENTS.GIFT'),
+				producedCard,
+				newCards,
+				theme: this.themeService.getCurrentTheme(),
+			},
+			width: '10px',
+			height: '10px',
 		});
 	}
 }

@@ -46,6 +46,7 @@ export const environment = {
 		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
 		GIVE_FREE_MONEY: 'game-state/bank-state/free-money',
 		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',
+		EXTEND_CREDIT: 'game-state/bank-state/extend-credit',
 	},
 	SURVEY: {
 		ADD_FEEDBACK: 'survey/feedback',

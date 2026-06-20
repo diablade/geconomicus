@@ -22,7 +22,8 @@
 		"END_GAME": "Manche terminée",
 		"STOP_ROUND": "Manche terminée",
 		"PAUSED": "Partie en pause",
-		"STARTED": "Partie démarrée"
+		"STARTED": "Partie démarrée",
+		"RESUMED": "Partie reprise"
 	},
 	"CARD": {
 		"LV1": "Alimentation",
@@ -101,14 +102,11 @@
 		"DISMISS": "Fermer",
 		"RESUME": "Continuer",
 		"INFORMATION": {
-			"TITLE": "Information !",
-			"BTN1": "Ok"
+			"TITLE": "Information !"
 		},
 		"CONFIRM": {
 			"TITLE": "Confirmer ?",
-			"MESSAGE": "Confirmez-vous ?",
-			"BTN1": "Annuler",
-			"BTN2": "Oui"
+			"MESSAGE": "Êtes-vous sûr ?"
 		},
 		"CREATE_GAME": {
 			"TITLE": "Créer une partie",

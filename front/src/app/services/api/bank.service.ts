@@ -76,10 +76,10 @@ export class BankService {
 			);
 	}
 
-	payInterest(credit: Credit): Observable<any> {
+	extendCredit(gameStateId: string, playerStateIdx: number, creditId: string): Observable<any> {
 		return this.http
-			.post(environment.API_HOST + environment.BANK.PAY_INTEREST, { credit })
-			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.PAY_INTEREST')));
+			.post(environment.API_HOST + environment.BANK_STATE.EXTEND_CREDIT, { gameStateId, playerStateIdx, creditId })
+			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.EXTEND_CREDIT')));
 	}
 
 	giveFreeMoney(gameStateId: string, playerStateIdx: number, amount: number): Observable<any> {

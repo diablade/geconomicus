@@ -89,7 +89,7 @@ export class AvatarService {
 
 		// Session events
 		this.wsService.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			cb?.({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
 			const currentSession = this.sessionSubject.getValue();
 			if (currentSession) {
 				this.sessionSubject.next({
@@ -127,7 +127,7 @@ export class AvatarService {
 		});
 
 		this.wsService.on(IO.GAME.CREATED, async (data: any, cb: (response: any) => void) => {
-			cb({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			cb?.({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
 			const currentSession = this.sessionSubject.getValue();
 			if (currentSession) {
 				this.sessionSubject.next({

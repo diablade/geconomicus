@@ -224,23 +224,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	showGift(card: Card) {
-		this.dialog.open(CongratsDialogComponent, {
-			hasBackdrop: true,
-			backdropClass: 'bgBlur',
-			data: {
-				text:
-					card.weight > 2
-						? this.i18nService.instant('EVENTS.TECHNOLOGY')
-						: this.i18nService.instant('EVENTS.GIFT'),
-				card: card,
-				theme: this.theme,
-			},
-			width: '10px',
-			height: '10px',
-		});
-	}
-
 	flipCoins() {
 		this.flipCoin = true;
 		setTimeout(() => {
@@ -253,26 +236,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			return; // Prevent double-clicks
 		}
 		this.isProducing = true;
-
-		this.playerStateService.produce($event.letter, $event.weight).subscribe({
-			next: (result) => {
-				if (result.success) {
-					if (result.data.cardGift) {
-						this.showGift(result.data.cardGift);
-					}
-					this.audioService.playSound('cardFlipBack');
-				} else {
-					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
-					this.audioService.playSound('error');
-				}
-				this.isProducing = false;
-			},
-			error: (err) => {
-				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
-				this.audioService.playSound('error');
-				this.isProducing = false;
-			},
-		});
+		this.playerStateService.produce($event.letter, $event.weight);
 	}
 
 	scan() {
@@ -321,89 +285,25 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	settleCredit(credit: Credit) {
-		this.playerStateService.settleCredit(credit).subscribe({
-			next: (result) => {
-				if (result.success) {
-					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.CREDIT_SETTLED'));
-					this.audioService.playSound('interest');
-				} else {
-					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
-					this.audioService.playSound('error');
-				}
-			},
-			error: (err) => {
-				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
-				this.audioService.playSound('error');
-			},
-		});
-	}
-
-    extendCredit(credit: Credit) {
-        this.playerStateService.extendCredit(credit).subscribe({
-			next: (result) => {
-				if (result.success) {
-					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.PROLONGATE'));
-					this.audioService.playSound('interest');
-				} else {
-					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
-					this.audioService.playSound('error');
-				}
-			},
-			error: (err) => {
-				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
-				this.audioService.playSound('error');
-			},
-		});
-    }
-
 	creditActionBtn($event: string, credit: Credit) {
 		if ($event == 'settle') {
-			this.confirmSettle(credit);
+            const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                    message: this.i18nService.instant('DIALOG.CREDIT_SETTLE.MESSAGE', {
+                        amount: credit.amount + credit.interest,
+                    }),
+                    labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE.BTN_CONFIRM'),
+                    styleBtnConfirm: 'warn',
+                },
+            });
+            confDialogRef.afterClosed().subscribe((result) => {
+                if (result && result == 'btnConfirm') {
+                    this.playerStateService.settleCredit(credit);
+                }
+            });
 		} else if ($event == 'answer') {
-			this.confirmSettleOrExtend(credit);
+			this.playerStateService.confirmSettleOrExtend(credit);
 		}
-	}
-
-	confirmSettle(credit: Credit) {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				message: this.i18nService.instant('CREDIT.SETTLE_CREDIT', {
-					amount: credit.amount + credit.interest,
-				}),
-				labelBtn1: this.i18nService.instant('CREDIT.SETTLE_ALL'),
-				labelBtn2: this.i18nService.instant('DIALOG.CANCEL'),
-			},
-		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btnConfirm') {
-				this.settleCredit(credit);
-			}
-		});
-	}
-
-	confirmSettleOrExtend(credit: Credit) {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-                title: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.TITLE'),
-				message: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE', {
-					amount: credit.amount + credit.interest
-                }),
-				message2: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE2', {
-                    interest: credit.interest
-				}),
-				labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_EXTEND'),
-				labelBtnCancel: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_SETTLE'),
-                requestBeep: true,
-			},
-		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btnConfirm') {
-				this.extendCredit(credit);
-			} else if (result && result === 'btnCancel') {
-				this.settleCredit(credit);
-			}
-		});
 	}
 
 	tryReincarnate() {
@@ -446,7 +346,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	whoHaveCard(ingredient: Ingredient) {
-		this.snackbarService.showNotif(this.i18nService.instant('ERROR.INSUFFICIENT_FUNDS'));
+		// this.snackbarService.showNotif(this.i18nService.instant('ERROR.INSUFFICIENT_FUNDS'));
 		// const cardName = this.themesService.getIcon(ingredient.key) + ' ' + this.i18nService.instant(ingredient.key);
 		// this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
 		// 	this.dialog.open(InformationDialogComponent, {

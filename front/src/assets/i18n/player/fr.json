@@ -20,11 +20,20 @@
 			"MESSAGE": "Nous avons prélévé l'interet de {{interest}} et prolongé votre crédit de 5 minutes supplémentaires"
 		},
         "CREDIT_SETTLE_EXTEND": {
-            "TITLE": "Prolonger ou rembourser le crédit ?",
+            "TITLE": "Rembourser ou prolonger le crédit ?",
 			"MESSAGE": "Vous pouvez rembourser l'intégralité du crédit en payant {{amount}} dés maintenant",
             "MESSAGE2" : "ou prolonger de 5 min supplémentaires en payant l’intérêt de {{interest}}",
 			"BTN_SETTLE": "Rembourser",
 			"BTN_EXTEND": "Prolonger"
+		},
+        "CREDIT_SETTLE": {
+            "TITLE": "Rembourser le crédit ?",
+            "MESSAGE": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?",
+            "BTN_CONFIRM": "Rembourser intégralement"
+        },
+        "CREDIT_FAULT":{
+            "TITLE": "Rembourser le crédit ?",
+            "MESSAGE": "!!! UN CRÉDIT EST EN DÉFAUT DE PAIEMENT !!!"
         }
 	},
 	"CREDIT": {
@@ -48,9 +57,6 @@
 		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
 		"DONE_AT": "Clos le",
 		"EXTENDED": "Prolongé",
-		"DEFAULT_CREDIT_MESSAGE": "!!! UN CRÉDIT EST EN DÉFAUT DE PAIEMENT !!!",
-		"CREDIT_SETTLED": "Crédit remboursé",
-		"SETTLE_ALL": "Rembourser intégralement",
-		"SETTLE_CREDIT": "Confirmez-vous le remboursement de votre crédit, par le paiement de {{amount}} € ?"
+		"CREDIT_SETTLED": "Crédit remboursé"
 	}
 }

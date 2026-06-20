@@ -11,13 +11,13 @@ export class ConfirmDialogComponent {
 	title = "DIALOG.CONFIRM.TITLE";
 	message = "DIALOG.CONFIRM.MESSAGE";
 	message2 = "";
-	labelBtnCancel = "DIALOG.CONFIRM.BTN1";
-	labelBtnConfirm = "DIALOG.CONFIRM.BTN2";
+	labelBtnCancel = "DIALOG.CANCEL";
+	labelBtnConfirm = "DIALOG.YES";
 	autoClickBtnConfirm = false;
 	timerBtnConfirm = 5;
 	btn1Enable = true;
-	styleBtnConfirm = "";
-	styleBtnCancel = "";
+	styleBtnConfirm = "warn";
+	styleBtnCancel = "accent";
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
 		this.title = data.title || this.title;
