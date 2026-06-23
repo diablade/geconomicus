@@ -84,9 +84,12 @@ const _payInterest = async (playerState, credit, entry) => {
 	log.debug('[BankStateService] paying interest for credit');
 	const { gameState, rules, events } = entry;
 	const interest = credit.interest;
+
 	playerState.coins -= interest;
+	gameState.currentMassMonetary -= interest;
+	gameState.bankInterestEarned += interest;
+
 	credit.extended++;
-	credit.endAt = Date.now() + rules.durationCredit * minute;
 	credit.remainingTime = rules.durationCredit * minute;
 	credit.status = CREDIT_STATUS.RUNNING;
 
@@ -256,10 +259,7 @@ const _creditTimeoutCallback = async (timerInstance) => {
 					coinsLK: playerState.coins,
 				});
 			} else if (canExtend) {
-				// paying interest
 				await _payInterest(playerState, credit, entry);
-				// restart timer
-				credit.remainingTime = rules.durationCredit * minute;
 				const timer = _createCreditTimer(gameStateId, credit);
 				await creditTimerManager.startTimer(timer);
 				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.EXTENDED, {
@@ -311,11 +311,6 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 
 const BankStateService = {};
 
-/**
- * Create a credit for a player.
- * Adds coins (amount) to player, pushes credit into state.credits,
- * updates currentMassMonetary, starts a debt timer.
- */
 BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, interest) => {
 	log.info(
 		`[BankStateService] creating credit for p:${playerStateIdx} in g:${gameStateId} / c:${amount}, i:${interest}`
@@ -787,16 +782,8 @@ BankStateService.extendCredit = async (gameStateId, creditId, playerStateIdx) =>
 			throw new Error('ERROR.NOT_ENOUGH_COINS');
 		}
 
-		const interest = credit.interest;
-
-		gameState.currentMassMonetary -= interest;
-		gameState.bankInterestEarned += interest;
-		playerState.coins -= interest;
-
-		credit.status = CREDIT_STATUS.RUNNING;
-		credit.remainingTime = rules.creditDuration;
+		await _payInterest(playerState, credit, entry);
 		creditTimerManager.stopAndRemoveTimer(credit.id);
-
 		if (gameState.status === GAME_STATUS.PLAYING) {
 			const timer = _createCreditTimer(gameStateId, credit);
 			creditTimerManager.startTimer(timer);
@@ -816,10 +803,6 @@ BankStateService.extendCredit = async (gameStateId, creditId, playerStateIdx) =>
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.EXTENDED, {
 			credit,
 			..._getBankIndicators(gameState),
-		});
-		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.EXTENDED, {
-			credit,
-			coinsLK: playerState.coins,
 		});
 
 		return {

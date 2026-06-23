@@ -685,7 +685,8 @@ export class PlayerStateService {
 
 	settleCredit(credit: Credit): void {
 		if (
-			this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING ||
+			this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING &&
+			this.gameStateSubject.getValue().status !== GAME_STATUS.PAUSED &&
 			this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE
 		) {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE_OR_GAME_NOT_PLAYING'));
@@ -734,7 +735,6 @@ export class PlayerStateService {
 			return;
 		}
 
-		console.log('extendCredit', credit);
 		const coins = this.coinsSubject.getValue();
 		if (coins < credit.interest) {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.INSUFFICIENT_FUNDS'));
@@ -742,18 +742,18 @@ export class PlayerStateService {
 		}
 
 		this.bankService.extendCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
-			next: (data) => {
-				if (data) {
+            next: (response) => {
+                if (response) {
 					const currentCredits = this.creditsSubject.getValue();
 					const updatedCredits = currentCredits.map((c) => {
-						if (c.id === data.credit.id) {
-							c.status = data.credit.status;
-							c.remainingTime = data.credit.remainingTime;
+						if (c.id === response.data.credit.id) {
+							c.status = response.data.credit.status;
+							c.remainingTime = response.data.credit.remainingTime;
 						}
 						return c;
 					});
 					this.creditsSubject.next(updatedCredits);
-					this.coinsSubject.next(data.coinsLK);
+					this.coinsSubject.next(response.data.coinsLK);
 					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.EXTENDED'));
 					this.audioService.playSound('interest');
 				} else {

@@ -20,7 +20,6 @@ PlayerStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, ava
 		return -1;
 	});
 };
-
 PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules } = entry;

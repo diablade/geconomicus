@@ -9,8 +9,8 @@ import { AudioService } from '../../services/audio.service';
 	styleUrls: ['./information-dialog.component.scss'],
 })
 export class InformationDialogComponent {
-	title = '';
-	labelBtn = '';
+	title = 'DIALOG.INFORMATION.TITLE';
+	labelBtn = 'DIALOG.CLOSE';
 	timerBtn = 5;
 	disableClose = false;
 	message = '';
@@ -22,12 +22,12 @@ export class InformationDialogComponent {
 		private i18nService: I18nService,
 		private audioService: AudioService
 	) {
-		this.message = data.message;
-		this.message2 = data.message2;
-		this.title = data.title ? data.title : this.i18nService.instant('DIALOG.INFORMATION.TITLE');
-		this.labelBtn = data.labelBtn ? data.labelBtn : this.i18nService.instant('DIALOG.INFORMATION.BTN1');
-		this.disableClose = data.disableClose == undefined ? false : data.disableClose;
-		this.timerBtn = data.timerBtn ? data.timerBtn : 5;
+		this.message = data.message || '';
+		this.message2 = data.message2 || '';
+		this.title = data.title || this.title;
+		this.labelBtn = data.labelBtn || this.labelBtn;
+		this.disableClose = data.disableClose === undefined ? false : data.disableClose;
+		this.timerBtn = data.timerBtn || this.timerBtn;
 		if (data.sound) {
 			this.audioService.playSound(data.sound);
 		}
