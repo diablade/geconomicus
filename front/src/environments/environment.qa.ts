@@ -4,6 +4,62 @@ export const environment = {
 	API_HOST: 'http://localhost:8080/',
 	WEB_HOST: 'http://localhost:4200/',
 
+	SESSION: {
+		GET_ALL: 'session/all',
+		GET_BY_ID: 'session/',
+		GET_BY_SHORT_ID: 'session/short/',
+		CREATE: 'session/create',
+		UPDATE: 'session/update',
+		DELETE: 'session/delete',
+		START: 'session/start',
+		KILL_GAME: 'session/kill-game',
+	},
+	RULES: {
+		UPDATE: 'rules/update',
+		DEFAULT: 'rules/default',
+	},
+	AVATAR: {
+		JOIN: 'avatar/join',
+		GET: 'avatar/',
+		UPDATE: 'avatar/update',
+		DELETE: 'avatar/',
+		REFRESH: 'avatar/refresh',
+	},
+	GAME_STATE: {
+		CREATE: 'game-state/create/',
+		INIT: 'game-state/init/',
+		GET: 'game-state/',
+		RESET: 'game-state/reset/',
+		BUY_WITH_CODE: 'game-state/buy-with-code/',
+		START: 'game-state/start',
+		RESUME: 'game-state/resume',
+		PAUSE: 'game-state/pause',
+		STOP: 'game-state/stop',
+	},
+	PLAYER_STATE: {
+		GET: 'game-state/player-state/',
+		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state/',
+		TRANSACTION: 'game-state/player-state/transaction',
+	},
+	BANK_STATE: {
+		CREATE_CREDIT: 'game-state/bank-state/create-credit',
+		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
+		GIVE_FREE_MONEY: 'game-state/bank-state/free-money',
+		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',
+		EXTEND_CREDIT: 'game-state/bank-state/extend-credit',
+	},
+	SURVEY: {
+		ADD_FEEDBACK: 'survey/feedback',
+		ALLOW_REDO_SURVEY: 'survey/redo',
+		GET_AVATAR_GAME_FEEDBACK: 'survey/player',
+		GET_BY_SESSION_ID: 'survey/session/',
+		GET_BY_SESSION_GAME_STATE_AVATAR_ID: 'survey/game/',
+		GET_BY_GAME_STATE_ID: 'survey/game/',
+		REMOVE_ALL_BY_SESSION_ID: 'survey/session/',
+		REMOVE_ALL_BY_GAME_STATE_ID: 'survey/game/',
+	},
+
+	//LEGACY
 	PLAYER: {
 		JOIN: 'player/join/',
 		IS_REINCARNATED: 'player/isReincarnated/',
@@ -13,10 +69,10 @@ export const environment = {
 		GET: 'player/',
 		PRODUCE: 'player/produce',
 		TRANSACTION: 'player/transaction',
-		SURVEY: 'player/survey/'
+		SURVEY: 'player/survey/',
 	},
 	BANK: {
-		GET_CREDITS: 'bank/get-credits/',
+		GET_CREDITS: "bank/get-credits/",
 		CREATE_CREDIT: 'bank/create-credit',
 		DELETE_CREDIT: 'bank/delete-credit',
 		SETTLE_CREDIT: 'bank/settle-credit',
@@ -46,6 +102,7 @@ export const environment = {
 		STOP_ROUND: 'game/stop-round',
 		INTER_ROUND: 'game/inter-round',
 		END: 'game/end',
-		DELETE_GAME: "game/delete",
+		DELETE_GAME: 'game/delete',
 	},
 };
+
