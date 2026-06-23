@@ -1,8 +1,8 @@
 export const environment = {
 	production: true,
 
-	API_HOST: 'http://localhost:8080/',
-	WEB_HOST: 'http://localhost:4200/',
+	API_HOST: 'https://dev.api.geconomicus.fr/',
+	WEB_HOST: 'https://dev.geconomicus.fr/',
 
 	SESSION: {
 		GET_ALL: 'session/all',
