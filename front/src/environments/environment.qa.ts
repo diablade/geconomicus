@@ -1,7 +1,7 @@
 export const environment = {
 	production: true,
 
-	API_HOST: 'https://dev.api.geconomicus.fr/',
+	API_HOST: 'https://api.geco.ovh/',
 	WEB_HOST: 'https://geco.ovh/',
 
 	SESSION: {
