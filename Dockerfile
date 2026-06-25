@@ -2,6 +2,7 @@
 FROM node:22.22.1-alpine
 MAINTAINER Nicolas Markovic
 COPY ./back ./back
+COPY ./shared ./shared
 VOLUME /logs
 
 WORKDIR /back
@@ -9,5 +10,5 @@ ENV PATH /app/node_modules/.bin:$PATH
 RUN npm install && npm cache clean --force
 
 RUN npm run cleanProd
-CMD ["node","./src/app.js"]
+CMD ["node","./src/server.js"]
 EXPOSE 8085
