@@ -118,6 +118,9 @@
                         "production": {
                             "browserTarget": "front:build:production"
                         },
+                        "qa": {
+                            "browserTarget": "front:build:qa"
+                        },
                         "development": {
                             "browserTarget": "front:build:development"
                         }

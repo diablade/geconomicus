@@ -26,7 +26,6 @@ services:
     networks:
       - backnet
 
-  # ✅ Partage de la même MongoDB et Mongo Express
   mongodb:
     container_name: mongodb
     image: mongo:8.0.9-noble
