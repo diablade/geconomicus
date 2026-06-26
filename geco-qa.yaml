@@ -1,5 +1,6 @@
 services:
   geco-qa:
+    container_name: geco-api-qa
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,8 +15,7 @@ services:
       GECO_DB_CONFIG_COLLECTION: ${GECO_DB_CONFIG_COLLECTION}
       GECO_DB_CONFIG_USER: ${GECO_DB_CONFIG_USER}
       GECO_DB_CONFIG_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
-    image: geconomicus-api:${GECO_VERSION}
-    container_name: geco-api-qa
+    image: geco-api-qa:${GECO_VERSION}
     restart: always
     ports:
       - "8086:${GECO_PORT_NODE}"
