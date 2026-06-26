@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: geco-api-qa:${GECO_VERSION}
+    restart: always
     environment:
       GECO_NODE_ENV: ${GECO_NODE_ENV}
       GECO_VERSION: ${GECO_VERSION}
@@ -15,14 +17,13 @@ services:
       GECO_DB_CONFIG_COLLECTION: ${GECO_DB_CONFIG_COLLECTION}
       GECO_DB_CONFIG_USER: ${GECO_DB_CONFIG_USER}
       GECO_DB_CONFIG_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
-    image: geco-api-qa:${GECO_VERSION}
-    restart: always
     ports:
       - "8086:${GECO_PORT_NODE}"
     volumes:
       - /volume1/docker/geco/logs-qa:/logs
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
     networks:
       - backnet
 
