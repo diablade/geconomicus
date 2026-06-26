@@ -22,7 +22,7 @@ app.set('trust proxy', true);
 // app.use(cors())
 app.use(
 	cors({
-		origin: ['http://localhost:4200', 'https://geconomicus.fr'],
+		origin: ['http://localhost:4200', 'https://geconomicus.fr', 'https://geco.ovh'],
 		credentials: false,
 	})
 );
