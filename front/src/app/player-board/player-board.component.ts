@@ -368,4 +368,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.produceLevelUp({ letter: recipe.letter, weight: recipe.weight });
 		}
 	}
+
+	trackByCard(index: number, card: Card): string {
+		return card.key;
+	}
 }

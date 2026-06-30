@@ -100,8 +100,7 @@
 				</button>
 			</div>
 			<div *ngIf="vm.typeTheme === 'CARD'" @list class="d-flex flex-row flex-wrap">
-				<ng-container *ngFor="let card of cards$ | async">
-					<!-- {{ card | json }} -->
+				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
 					<app-card
 						@item
 						*ngIf="card.displayed"
@@ -119,8 +118,7 @@
 				</ng-container>
 			</div>
 			<div *ngIf="vm.typeTheme !== 'CARD'" @list class="d-flex flex-row flex-wrap justify-content-center">
-				<ng-container *ngFor="let card of cards$ | async">
-					<!-- {{ card | json }} -->
+				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
 					<app-item
 						@item
 						[card]="card"

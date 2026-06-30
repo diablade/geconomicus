@@ -79,26 +79,33 @@ export class PlayerStateService {
 			return true;
 		}),
 		map(({ cards, typeTheme }: { cards: Card[]; typeTheme: string }) => {
-			if (typeTheme !== 'CARD') return cards;
-
-			const sorted = _.orderBy(cards, ['weight', 'letter']);
-			const countByResult = _.countBy(sorted, (c: Card) => `${c.weight}-${c.letter}`);
-			const keyDuplicates: string[] = [];
-
-			for (const c of sorted) {
-				const countKey = `${c.weight}-${c.letter}`;
-				c.count = countByResult[countKey] || 0;
-				const existCountKey = keyDuplicates.find((k) => k === countKey);
-				if (c.count > 1 && existCountKey) c.displayed = false;
-				if (c.count >= 1 && !existCountKey) {
-					keyDuplicates.push(countKey);
-					c.displayed = true;
-				}
+			if (typeTheme !== 'CARD') {
+				return _.orderBy(cards, ['letter', 'weight'], ['asc', 'asc']);
 			}
 
-			return _.orderBy(sorted, ['count'], 'desc');
+			const countByResult = _.countBy(cards, (c: Card) => this.cardKeyCount(c));
+			const keyDuplicates: string[] = [];
+
+			const annotated = _.orderBy(cards, ['letter', 'weight'], ['asc', 'asc']).map((c) => {
+				const countKey = this.cardKeyCount(c);
+				const count = countByResult[countKey] || 0;
+				const existCountKey = keyDuplicates.find((k) => k === countKey);
+				let displayed = c.displayed;
+				if (count > 1 && existCountKey) displayed = false;
+				if (count >= 1 && !existCountKey) {
+					keyDuplicates.push(countKey);
+					displayed = true;
+				}
+				return { ...c, count, displayed };
+			});
+
+			return _.orderBy(annotated, ['count', 'letter', 'weight'], ['desc', 'asc', 'asc']);
 		})
 	);
+
+	cardKeyCount(card: Card): string {
+		return `${card.weight}-${card.letter}`;
+	}
 
 	constructor(
 		private http: HttpClient,
@@ -599,8 +606,8 @@ export class PlayerStateService {
 				labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_EXTEND'),
 				labelBtnCancel: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_SETTLE'),
 				requestBeep: true,
-                styleBtnConfirm:"primary",
-                styleBtnCancel: "warn"
+				styleBtnConfirm: 'primary',
+				styleBtnCancel: 'warn',
 			},
 		});
 		confDialogRef.afterClosed().subscribe((result) => {
@@ -742,8 +749,8 @@ export class PlayerStateService {
 		}
 
 		this.bankService.extendCredit(this.gameStateId, this.playerStateIdx, credit.id).subscribe({
-            next: (response) => {
-                if (response) {
+			next: (response) => {
+				if (response) {
 					const currentCredits = this.creditsSubject.getValue();
 					const updatedCredits = currentCredits.map((c) => {
 						if (c.id === response.data.credit.id) {
