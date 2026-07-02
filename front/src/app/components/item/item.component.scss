@@ -102,6 +102,65 @@
 
 .price {
 	font-family: Times, Arial, serif;
+	&-eq {
+		font-size: 0.4rem;
+		margin-left: 2px;
+	}
+}
+
+.recipe-section {
+	padding: 2px 2px;
+	font-size: 0.7rem;
+
+    justify-content: center;
+}
+
+.recipe-title {
+	font-weight: bold;
+	font-size: 0.7rem;
+	margin-bottom: 1px;
+	opacity: 0.8;
+    text-align: center;
+}
+
+.recipe-ingredients {
+	display: flex;
+	flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+	// gap: 1px;
+}
+
+.recipe-ingredient {
+    width: 45%;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+	// gap: 1px;
+	// padding: 1px 2px;
+	// border-radius: 3px;
+
+	.ingredient-name {
+		font-size: 0.5rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&.have {
+		opacity: 1;
+		font-weight: 600;
+	}
+
+	&.missing {
+		opacity: 0.45;
+	}
+}
+
+.recipe-completed {
+	text-align: center;
+	font-size: 1rem;
+	margin-top: 2px;
 }
 
 .red {

@@ -1,10 +1,11 @@
 import log from '#config/log';
 import _ from 'lodash';
 import GameStateManager from '../managers/GameStateManager.js';
+import SessionService from '../../session/session.service.js';
 import EventHelper from '../helpers/event.helper.js';
 import BankStateService from './bank.state.service.js';
 import creditTimerManager from '../managers/CreditTimerManager.js';
-import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, PLAYER_TYPE, IO, ROOMS } from '@geco/shared';
+import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, PLAYER_TYPE, IO, ROOMS, GAME_STATUS } from '@geco/shared';
 import socket from '#config/socket';
 
 const PlayerStateService = {};
@@ -21,27 +22,40 @@ PlayerStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, ava
 	});
 };
 PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, playerStateIdx) => {
-	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules } = entry;
-		const playerState = gameState.playersStates.find((p) => p.idx == playerStateIdx && p.avatarIdx == avatarIdx);
-		if (!playerState) return null;
+	const [queueResult, session] = await Promise.all([
+		GameStateManager.withQueue(gameStateId, async (entry) => {
+			const { gameState, rules } = entry;
+			const playerState = gameState.playersStates.find((p) => p.idx == playerStateIdx && p.avatarIdx == avatarIdx);
+			if (!playerState) return null;
 
-		const credits = (gameState.credits || []).filter((c) => c.playerStateIdx == playerStateIdx);
-		const defaultCredit = credits.some((c) => c.status === 'default-credit');
+			const credits = (gameState.credits || []).filter((c) => c.playerStateIdx == playerStateIdx);
+			const defaultCredit = credits.some((c) => c.status === 'default-credit');
 
-		return {
-			playerState,
-			gameState: {
-				typeMoney: gameState.typeMoney,
-				status: gameState.status,
-				currentDU: gameState.currentDU || 0,
-				currentMassMonetary: gameState.currentMassMonetary || 0,
-			},
-			rules,
-			credits,
-			defaultCredit,
-		};
-	});
+            if(gameState.status === GAME_STATUS.CREATED) {
+                playerState.actionTokens = rules.startingTokens;
+            }
+
+			return {
+				playerState,
+				gameState: {
+					typeMoney: gameState.typeMoney,
+					status: gameState.status,
+					currentDU: gameState.currentDU || 0,
+					currentMassMonetary: gameState.currentMassMonetary || 0,
+				},
+				rules,
+				credits,
+				defaultCredit,
+			};
+		}),
+		SessionService.getById(sessionId, false).catch(() => null),
+	]);
+
+	if (!queueResult) return null;
+	return {
+		...queueResult,
+		avatars: (session?.avatars || []).map((a) => ({ idx: a.idx, name: a.name, image: a.image })),
+	};
 };
 
 PlayerStateService.killPlayer = async (gameStateId, playerStateIdx) => {

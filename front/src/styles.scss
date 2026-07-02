@@ -333,6 +333,14 @@ html {
 	cursor: pointer;
 }
 
+.action-dialog-panel .mat-mdc-dialog-surface,
+.action-dialog-panel .mat-dialog-container {
+	background: #1e1e2e !important;
+	color: #e0e0f0 !important;
+	border-radius: 12px !important;
+	padding: 0 !important;
+}
+
 .red {
 	background-color: #e8a7a6;
 
@@ -419,9 +427,58 @@ html {
 	100% {
 		transform: rotateY(360deg);
 	}
-	// 100% {
-	// 	transform: rotateY(0deg);
-    // }
+}
+
+@keyframes rotate {
+	0% {
+		transform: rotateZ(0deg);
+	}
+	100% {
+		transform: rotateZ(360deg);
+	}
+}
+
+
+.giftBounce {
+	font-size: 1.3em;
+	padding: 10px 20px;
+	border-radius: 22px;
+	animation: pulse 1.5s infinite;
+}
+
+.wheel-container {
+    // height: 100%;
+    // width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.wheel {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: conic-gradient(
+		#ff990000 0% 8.33%,
+		#ffe179c2 8.33% 16.66%,
+		#ff000000 16.66% 25%,
+		#ffe179c2 25% 33.33%,
+		#ff000000 33.33% 41.66%,
+		#ffe179c2 41.66% 50%,
+		#ffffff00 50% 58.33%,
+		#ffe179c2 58.33% 66.66%,
+		#ffffff00 66.66% 75%,
+		#ffe179c2 75% 83.33%,
+		#ffffff00 83.33% 91.66%,
+		#ffe179c2 91.66% 100%
+	);
+	position: absolute;
+	top: 0;
+	left: 0;
+	transition: transform 1s ease-out;
+	animation: rotate 6s linear infinite;
+	opacity: 0.5;
 }
 
 
@@ -447,11 +504,11 @@ mat-chip {
 }
 
 .z1 {
-	z-index: 1;
+	z-index: 1 !important;
 }
 
 .z2 {
-	z-index: 2;
+	z-index: 2 !important;
 }
 
 

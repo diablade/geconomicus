@@ -5,6 +5,7 @@ import { AudioService } from 'src/app/services/audio.service';
 import { GAME_TYPE } from '@geco/shared';
 import { animations } from '../../services/animations';
 import { ThemesService } from '../../services/themes.service';
+import { Recipe, getRecipeForCard } from '../../models/recipe';
 
 @Component({
 	selector: 'app-item',
@@ -30,16 +31,20 @@ export class ItemComponent implements OnChanges {
 	@Input() currentDU: number | undefined;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
-	@Input() height : string | undefined;
-	@Input() width : string | undefined;
-	@Input() iconSize : string | undefined;
-	@Input() letterSize : string | undefined;
-	@Input() textSize : string | undefined;
-	@Input() priceSize : string | undefined;
+	@Input() height: string | undefined;
+	@Input() width: string | undefined;
+	@Input() iconSize: string | undefined;
+	@Input() letterSize: string | undefined;
+	@Input() textSize: string | undefined;
+	@Input() priceSize: string | undefined;
 	@Input() flippable = true;
 	@Input() typeTheme: string | null = '';
-	smallPriceSize : string | undefined;
+	@Input() allCards: Card[] = [];
+	@Input() amountCardsForProd = 4;
+	@Input() generatedIdenticalLetters = 5;
+	smallPriceSize: string | undefined;
 	state = 'default';
+	recipe: Recipe | null = null;
 	translateX = 0;
 	translateY = 0;
 	code = '';
@@ -52,21 +57,21 @@ export class ItemComponent implements OnChanges {
 		private themesService: ThemesService
 	) {}
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes['screenWidth'] || changes['screenHeight']) {
-            this.recalculateSizes();
-        }
-    }
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['screenWidth'] || changes['screenHeight']) {
+			this.recalculateSizes();
+		}
+	}
 
 	private recalculateSizes() {
 		const isPortrait = this.screenWidth < this.screenHeight;
-		this.height = this.height ? this.height : (isPortrait ? '28vw' : '28vh');
-		this.width = this.width ? this.width : (isPortrait ? '28vw' : '28vh');
-		this.iconSize = this.iconSize ? this.iconSize : (isPortrait ? '16vw' : '16vh');
-		this.letterSize = this.letterSize ? this.letterSize : (isPortrait ? '2rem' : '2rem');
-		this.textSize = this.textSize ? this.textSize : (isPortrait ? '1rem' : '1rem');
-		this.priceSize = this.priceSize ? this.priceSize : (isPortrait ? '1rem' : '1rem');
-		this.smallPriceSize = this.smallPriceSize ? this.smallPriceSize : (isPortrait ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)');
+		this.height = this.height || (isPortrait ? '28vw' : '28vh');
+		this.width = this.width || (isPortrait ? '28vw' : '28vh');
+		this.iconSize = this.iconSize || (isPortrait ? '16vw' : '16vh');
+		this.letterSize = this.letterSize || '3rem';
+		this.textSize = this.textSize || (isPortrait ? '1rem' : '1rem');
+		this.priceSize = this.priceSize || (isPortrait ? '1rem' : '1rem');
+		this.smallPriceSize = this.smallPriceSize || (isPortrait ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)');
 	}
 
 	closeCard() {
@@ -80,10 +85,17 @@ export class ItemComponent implements OnChanges {
 			if (this.state === 'default') {
 				this.state = 'flipped';
 				this.createShortCode();
+				this.recipe = getRecipeForCard(
+					this.card,
+					this.allCards,
+					this.amountCardsForProd,
+					this.generatedIdenticalLetters
+				);
 				this.audioService.playSound('cardFlipGet');
 			} else {
 				this.audioService.playSound('cardFlipBack');
 				this.state = 'default';
+				this.recipe = null;
 				this.deleteShortCode();
 			}
 		}

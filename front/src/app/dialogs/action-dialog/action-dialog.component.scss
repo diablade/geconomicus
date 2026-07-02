@@ -1,0 +1,315 @@
+.action-dialog {
+	// min-width: 320px;
+	max-width: 480px;
+	padding: 15px;
+	position: relative;
+	background: #1e1e2e;
+	color: #e0e0f0;
+	border-radius: 12px;
+}
+
+.dialog-header {
+	margin-bottom: 16px;
+	gap: 8px;
+
+	h2 {
+		flex: 1;
+		font-size: 1.1rem;
+	}
+}
+
+.header-spacer {
+	width: 40px;
+	flex-shrink: 0;
+}
+
+.token-badge {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	background: rgba(255, 255, 255, 0.15);
+	border-radius: 20px;
+	padding: 2px 10px;
+	font-weight: bold;
+	font-size: 1rem;
+	white-space: nowrap;
+
+	mat-icon {
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+		color: gold;
+	}
+}
+
+// ── Shop ─────────────────────────────────────────────────────────────────────
+
+.shop-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.action-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 12px;
+	padding: 12px 14px;
+	cursor: pointer;
+	transition: background 0.15s, border-color 0.15s;
+
+	&:hover:not(.disabled) {
+		background: rgba(255, 255, 255, 0.14);
+		border-color: rgba(255, 255, 255, 0.28);
+	}
+
+	&.disabled {
+		opacity: 0.38;
+		cursor: not-allowed;
+	}
+}
+
+.action-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.action-label {
+	font-size: 0.95rem;
+	font-weight: 600;
+	margin-bottom: 2px;
+}
+
+.action-desc {
+	font-size: 0.75rem;
+	opacity: 0.65;
+	line-height: 1.3;
+}
+
+.action-cost {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	font-weight: bold;
+	font-size: 1rem;
+	color: gold;
+	flex-shrink: 0;
+	min-width: 36px;
+
+	mat-icon {
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+	}
+}
+
+// ── Step wrapper (who-have, pick-target, pick-card) ───────────────────────────
+
+.step-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.step-actions {
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 4px;
+}
+
+// ── Who have card ─────────────────────────────────────────────────────────────
+
+.family-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 2px;
+}
+
+.family-grid-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	width: 64px;
+	height: 64px;
+	border-radius: 10px;
+	border: 2px solid rgba(255, 255, 255, 0.15);
+	background: rgba(255, 255, 255, 0.06);
+	cursor: pointer;
+	transition: border-color 0.15s, background 0.15s;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.14);
+		border-color: rgba(255, 255, 255, 0.4);
+	}
+
+	&.selected {
+		border-color: #7c4dff;
+		background: rgba(124, 77, 255, 0.15);
+	}
+}
+
+.family-icon {
+	font-size: 1.8rem;
+	line-height: 1;
+}
+
+.family-level {
+	font-size: 0.7rem;
+	opacity: 0.6;
+}
+
+.shop-hint {
+	font-size: 0.8rem;
+	opacity: 0.55;
+	margin: 0 0 4px 0;
+	font-style: italic;
+}
+
+// ── Players ───────────────────────────────────────────────────────────────────
+
+.player-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.player-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 2px solid rgba(255, 255, 255, 0.1);
+	cursor: pointer;
+	transition: background 0.15s, border-color 0.15s;
+
+	&:hover:not(.excluded) {
+		background: rgba(255, 255, 255, 0.14);
+	}
+
+	&.selected {
+		border-color: #7c4dff;
+		background: rgba(124, 77, 255, 0.15);
+	}
+
+	&.excluded {
+		opacity: 0.25;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
+.player-name {
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+// ── Cards grid ────────────────────────────────────────────────────────────────
+
+.card-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: 2px;
+}
+
+.card-grid-item {
+	cursor: pointer;
+	border-radius: 6px;
+	border: 2px solid transparent;
+	transition: border-color 0.15s, transform 0.1s;
+	position: relative;
+
+	&:hover {
+		transform: scale(1.05);
+		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+	&.selected {
+		border-color: #7c4dff;
+	}
+
+	&.ong-disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
+.card-check {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	z-index: 10;
+	color: #7c4dff;
+	background: white;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	mat-icon {
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+	}
+}
+
+// ── ONG section ───────────────────────────────────────────────────────────────
+
+.ong-section {
+	display: flex;
+	flex-direction: column;
+}
+
+.ong-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+
+.hint {
+	font-size: 0.85rem;
+	opacity: 0.7;
+	margin-bottom: 8px;
+}
+
+.error-msg {
+	color: #f44336;
+	font-size: 0.85rem;
+	text-align: center;
+	padding: 4px 0;
+}
+
+.empty-msg {
+	text-align: center;
+	opacity: 0.5;
+	padding: 16px;
+}
+
+.loading-overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 8px;
+}

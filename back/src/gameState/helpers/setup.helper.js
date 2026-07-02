@@ -41,6 +41,7 @@ export async function setupGameJune(gameState, rules) {
 		const cards = _.pullAt(decks[0], rules.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
 		playerState.cards = cards;
 		playerState.status = PLAYER_STATUS.ALIVE;
+		playerState.actionTokens = rules.startingTokens ?? 1;
 
 		if (rules.inequalityStart) {
 			if (classes[0] >= 1) {
@@ -77,6 +78,7 @@ export async function setupGameDebt(gameState, rules) {
 		playerState.cards = cards;
 		playerState.status = PLAYER_STATUS.ALIVE;
 		playerState.coins = 0;
+		playerState.actionTokens = rules.startingTokens ?? 1;
 	}
 	gameState.decks = decks;
 	gameState.status = GAME_STATUS.INITIALIZED;

@@ -8,6 +8,7 @@ import SessionService from '../session/session.service.js';
 import RulesService from '../session/rules/rules.service.js';
 import BankStateService from './services/bank.state.service.js';
 import DecksStateService from './services/decks.state.service.js';
+import ActionStateService from './services/action.state.service.js';
 
 const GameStateController = {};
 
@@ -197,7 +198,8 @@ GameStateController.getPlayerState = async (req, res, next) => {
 };
 GameStateController.produce = async (req, res, next) => {
 	try {
-		const result = await DecksStateService.produce(req.body);
+		const { gameStateId, playerIdx, cards } = req.body;
+		const result = await DecksStateService.produce(gameStateId, playerIdx, cards);
 		return res.status(200).json({
 			status: 'ok',
 			result,
@@ -405,5 +407,94 @@ GameStateController.extendCredit = async (req, res, next) => {
 // 		});
 // 	}
 // };
+
+GameStateController.actionGetTargetCards = async (req, res, next) => {
+	const { gameStateId, targetIdx } = req.body;
+	try {
+		const result = await ActionStateService.getTargetCards(gameStateId, targetIdx);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionGetTargetCards error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionGetAvailablePlayers = async (req, res, next) => {
+	const { gameStateId, excludeIdx } = req.body;
+	try {
+		const result = await ActionStateService.getAvailablePlayers(gameStateId, excludeIdx);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionGetAvailablePlayers error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionWhoHaveCard = async (req, res, next) => {
+	const { gameStateId, playerStateIdx, cardKey } = req.body;
+	try {
+		const result = await ActionStateService.whoHaveCard(gameStateId, playerStateIdx, cardKey);
+		log.debug('actionWhoHaveCard result:', result);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionWhoHaveCard error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionGive = async (req, res, next) => {
+	const { gameStateId, giverIdx, receiverIdx, cardKey } = req.body;
+	try {
+		const result = await ActionStateService.give(gameStateId, giverIdx, receiverIdx, cardKey);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionGive error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionSteal = async (req, res, next) => {
+	const { gameStateId, stealerIdx, victimIdx, cardKey } = req.body;
+	try {
+		const result = await ActionStateService.steal(gameStateId, stealerIdx, victimIdx, cardKey);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionSteal error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionSilentSteal = async (req, res, next) => {
+	const { gameStateId, stealerIdx, victimIdx, cardKey } = req.body;
+	try {
+		const result = await ActionStateService.silentSteal(gameStateId, stealerIdx, victimIdx, cardKey);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionSilentSteal error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionWar = async (req, res, next) => {
+	const { gameStateId, attackerIdx, victim1Idx, victim2Idx } = req.body;
+	try {
+		const result = await ActionStateService.war(gameStateId, attackerIdx, victim1Idx, victim2Idx);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionWar error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
+
+GameStateController.actionOng = async (req, res, next) => {
+	const { gameStateId, giverIdx, cardKeys, manualTargetIdxs } = req.body;
+	try {
+		const result = await ActionStateService.ong(gameStateId, giverIdx, cardKeys, manualTargetIdxs);
+		return res.status(200).json(result);
+	} catch (err) {
+		log.error('[GameStateController] actionOng error:', err);
+		return res.status(500).json({ status: 'ko', message: err.message });
+	}
+};
 
 export default GameStateController;

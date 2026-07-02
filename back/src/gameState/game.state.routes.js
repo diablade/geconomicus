@@ -28,6 +28,15 @@ router.get('/player-state/:sessionId/:gameStateId/:avatarIdx', validate(stateSan
 router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', validate(stateSanitize.getPlayerState, 'params'), gameStateController.getPlayerState);
 router.post('/player-state/transaction', validate(stateSanitize.transaction), gameStateController.transaction);
 
+router.post('/action/get-target-cards', validate(stateSanitize.actionGetTargetCards), gameStateController.actionGetTargetCards);
+router.post('/action/available-players', validate(stateSanitize.actionGetAvailablePlayers), gameStateController.actionGetAvailablePlayers);
+router.post('/action/give', validate(stateSanitize.actionGive), gameStateController.actionGive);
+router.post('/action/steal', validate(stateSanitize.actionSteal), gameStateController.actionSteal);
+router.post('/action/silent-steal', validate(stateSanitize.actionSilentSteal), gameStateController.actionSilentSteal);
+router.post('/action/war', validate(stateSanitize.actionWar), gameStateController.actionWar);
+router.post('/action/ong', validate(stateSanitize.actionOng), gameStateController.actionOng);
+router.post('/action/who-have-card', validate(stateSanitize.actionWhoHaveCard), gameStateController.actionWhoHaveCard);
+
 
 router.post('/bank-state/free-money', validate(stateSanitize.freeMoney), gameStateController.freeMoney);
 router.post('/bank-state/create-credit', validate(stateSanitize.createCredit), gameStateController.createCredit);

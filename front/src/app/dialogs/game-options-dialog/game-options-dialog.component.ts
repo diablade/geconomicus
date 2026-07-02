@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-// @ts-ignore
 import { GAME_TYPE } from '@geco/shared';
 import { I18nService } from '../../services/i18n.service';
 import { Rules } from 'src/app/models/rules';
@@ -24,6 +23,7 @@ import { Rules } from 'src/app/models/rules';
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
 		this.i18n.loadNamespace('option');
+		this.i18n.loadNamespace('action');
 		this.rules = data.rules;
 		this.playersLength = data.playersLength;
 		this.devMode = data.devMode;

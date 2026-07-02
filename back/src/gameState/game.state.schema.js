@@ -37,6 +37,7 @@ let PlayerState = new Schema(
 		status: { type: String, required: true, enum: Object.values(PLAYER_STATUS) },
 		coins: { type: Number, required: true },
 		cards: { type: [CardSchema], required: true },
+		actionTokens: { type: Number, required: true, default: 1 },
 	},
 	{ _id: false }
 );

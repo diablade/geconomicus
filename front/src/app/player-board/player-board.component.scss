@@ -51,12 +51,7 @@
 }
 
 .buy {
-	height: 50px;
-	width: 50px;
-	//background-color: white
-	backdrop-filter: blur(15px);
-	border: solid gray 2px;
-	padding: 5px;
+	height: 50px !important;
 }
 
 .credits {
@@ -73,16 +68,52 @@
 	animation: ease 1s;
 }
 
-.bottomBtn {
+.bottom-btn {
 	position: absolute;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	display: flex;
-	justify-content: space-around;
-	padding: 15px;
+	padding: 20px;
 	z-index: 2;
 	font-size: 1.5rem;
+
+	.bottom {
+        padding: 20px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+		&-left {
+			justify-content: flex-start;
+		}
+		&-right {
+
+			justify-content: flex-end;
+		}
+		&-center {
+			justify-content: center;
+		}
+	}
+	.size {
+		width: 50px !important;
+		height: 50px !important;
+		&-center {
+			height: 50px !important;
+		}
+	}
+	.styleBtn {
+		border-radius: 25px;
+		backdrop-filter: blur(15px);
+		border: solid gray 2px;
+		padding: 5px;
+		font-size: 1.5rem;
+		&-label {
+			font-size: 1rem;
+			text-transform: capitalize;
+		}
+	}
 }
 
 .blocked {

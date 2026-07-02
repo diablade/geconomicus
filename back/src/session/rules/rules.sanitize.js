@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import {isValidObjectId, isValidNanoId4} from '../../misc/validate.tool.js';
-import { GAME_TYPE,CREDIT_STATUS } from '@geco/shared';
+import { isValidObjectId, isValidNanoId4 } from '../../misc/validate.tool.js';
+import { GAME_TYPE, CREDIT_STATUS } from '@geco/shared';
 
 export const sanitize = {
 	create: Joi.object({
@@ -93,6 +93,19 @@ export const sanitize = {
 			seizureType: Joi.string().optional(),
 			seizureCosts: Joi.number().optional(),
 			seizureDecote: Joi.number().optional(),
+
+			startingTokens: Joi.number().optional(),
+			actions: Joi.array()
+				.items(
+					Joi.object({
+						key: Joi.string().required(),
+						labelKey: Joi.string().required(),
+						descriptionKey: Joi.string().required(),
+						cost: Joi.number().required(),
+						enabled: Joi.boolean().required(),
+					})
+				)
+				.optional(),
 		}).required(),
 		sessionId: Joi.string().custom(isValidObjectId).required().messages({
 			'any.invalid': 'Invalid session ID format',

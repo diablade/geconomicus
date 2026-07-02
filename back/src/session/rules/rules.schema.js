@@ -54,6 +54,29 @@ let RulesSchema = new Schema(
 		},
 		seizureCosts: { type: Number, required: true, default: 2 },
 		seizureDecote: { type: Number, required: true, default: 33 },
+
+		//actions
+		startingTokens: { type: Number, required: true, default: 1 },
+		actions: {
+			type: [
+				{
+					key: { type: String, required: true },
+					labelKey: { type: String, required: true },
+					descriptionKey: { type: String, required: true },
+					cost: { type: Number, required: true },
+					enabled: { type: Boolean, required: true, default: true },
+					_id: false,
+				},
+			],
+			default: [
+				{ key: 'whoHaveCard', labelKey: 'ACTION.WHO_HAVE_CARD.LABEL', descriptionKey: 'ACTION.WHO_HAVE_CARD.DESC', cost: 1, enabled: true },
+				{ key: 'give', labelKey: 'ACTION.GIVE.LABEL', descriptionKey: 'ACTION.GIVE.DESC', cost: 2, enabled: true },
+				{ key: 'steal', labelKey: 'ACTION.STEAL.LABEL', descriptionKey: 'ACTION.STEAL.DESC', cost: 2, enabled: true },
+				{ key: 'silentSteal', labelKey: 'ACTION.SILENT_STEAL.LABEL', descriptionKey: 'ACTION.SILENT_STEAL.DESC', cost: 3, enabled: true },
+				{ key: 'war', labelKey: 'ACTION.WAR.LABEL', descriptionKey: 'ACTION.WAR.DESC', cost: 6, enabled: true },
+				{ key: 'ong', labelKey: 'ACTION.ONG.LABEL', descriptionKey: 'ACTION.ONG.DESC', cost: 6, enabled: true },
+			],
+		},
 	},
 	{ _id: false }
 );

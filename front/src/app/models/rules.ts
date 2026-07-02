@@ -41,6 +41,26 @@ export class Rules {
 	seizureType = '';
 	seizureCosts = 0;
 	seizureDecote = 0;
+
+	//actions
+	startingTokens = 1;
+	actions: ActionConfig[] = [
+		{ key: 'whoHaveCard', labelKey: 'ACTION.WHO_HAVE_CARD.LABEL', descriptionKey: 'ACTION.WHO_HAVE_CARD.DESC', cost: 1, enabled: true },
+		{ key: 'give', labelKey: 'ACTION.GIVE.LABEL', descriptionKey: 'ACTION.GIVE.DESC', cost: 2, enabled: true },
+		{ key: 'steal', labelKey: 'ACTION.STEAL.LABEL', descriptionKey: 'ACTION.STEAL.DESC', cost: 2, enabled: true },
+		{ key: 'silentSteal', labelKey: 'ACTION.SILENT_STEAL.LABEL', descriptionKey: 'ACTION.SILENT_STEAL.DESC', cost: 3, enabled: true },
+		{ key: 'war', labelKey: 'ACTION.WAR.LABEL', descriptionKey: 'ACTION.WAR.DESC', cost: 6, enabled: true },
+		{ key: 'ong', labelKey: 'ACTION.ONG.LABEL', descriptionKey: 'ACTION.ONG.DESC', cost: 6, enabled: true },
+	];
+
 	modifiedAt = new Date();
 	createdAt: Date = new Date();
+}
+
+export class ActionConfig {
+	key = '';
+	labelKey = '';
+	descriptionKey = '';
+	cost = 0;
+	enabled = true;
 }

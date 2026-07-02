@@ -1,0 +1,49 @@
+{
+	"ACTION": {
+		"TITLE": "Actions",
+		"PICK_TARGET": "Choisir un joueur",
+		"PICK_TARGET2": "Choisir un deuxième joueur",
+		"PICK_CARD": "Choisir une carte",
+		"PICK_ONG_CARDS": "Choisir 4 cartes à donner",
+		"CONFIRMING": "En cours...",
+		"CONFIRM": "Confirmer",
+		"NO_CARDS": "Aucune carte disponible",
+		"ONG_SELECT_HINT": "{{selected}}/4 cartes sélectionnées",
+		"ONG_AUTO_TARGET": "Donner aux 2 joueurs les plus pauvres",
+		"RECEIVED_GIVE": "{{fromName}} vous a donné une carte !",
+		"RECEIVED_ONG": "{{fromName}} vous a fait don de {{count}} carte(s) (action ONG) !",
+		"ROBBED_STEAL": "Quelqu'un vous a volé une carte !",
+		"ROBBED_WAR": "Vous avez été attaqué(e) ! 2 cartes vous ont été prises.",
+		"SHOP_HINT": "Produisez un carré pour marquer des points !",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Qui a cette carte ?",
+			"DESC": "Découvrez qui possède une carte de la famille qui vous manque. Coûte 1 jeton.",
+			"PICK": "Choisir la famille à localiser",
+			"HINT": "Sélectionnez la famille de la carte que vous recherchez, et vous saurez qui en possède une",
+			"SEARCH": "Rechercher",
+			"RESULT_PLAYER": "{{name}} possède une carte de cette famille.",
+			"RESULT_DECK": "Une carte de cette famille est dans le deck.",
+			"RESULT_UNKNOWN": "Personne ne possède de carte de cette famille pour l'instant."
+		},
+		"GIVE": {
+			"LABEL": "Donner une carte",
+			"DESC": "Offrez l'une de vos cartes à un joueur de votre choix."
+		},
+		"STEAL": {
+			"LABEL": "Voler une carte",
+			"DESC": "Prenez une carte à un autre joueur. Il sera notifié."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Vol silencieux",
+			"DESC": "Prenez une carte sans que l'autre joueur soit notifié."
+		},
+		"WAR": {
+			"LABEL": "Guerre",
+			"DESC": "Volez 2 cartes aléatoires à chacun de 2 joueurs."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Donnez 4 de vos cartes aux 2 joueurs les plus pauvres (2 chacun)."
+		}
+	}
+}

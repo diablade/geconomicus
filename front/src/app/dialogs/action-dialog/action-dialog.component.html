@@ -1,0 +1,217 @@
+<div class="action-dialog">
+	<div class="dialog-header d-flex justify-content-between align-items-center">
+		<button mat-icon-button (click)="back()" *ngIf="step !== 'shop'">
+			<mat-icon>arrow_back</mat-icon>
+		</button>
+		<div class="header-spacer" *ngIf="step === 'shop'"></div>
+		<h2 class="m-0">
+			<span *ngIf="step === 'shop'">{{ 'ACTION.TITLE' | translate }}</span>
+			<span *ngIf="step === 'pick-who-card'">{{ 'ACTION.WHO_HAVE_CARD.PICK' | translate }}</span>
+			<span *ngIf="step === 'pick-target'">{{ 'ACTION.PICK_TARGET' | translate }}</span>
+			<span *ngIf="step === 'pick-target2'">{{ 'ACTION.PICK_TARGET2' | translate }}</span>
+			<span *ngIf="step === 'pick-card'">{{ 'ACTION.PICK_CARD' | translate }}</span>
+			<span *ngIf="step === 'pick-ong-cards'">{{ 'ACTION.PICK_ONG_CARDS' | translate }}</span>
+			<span *ngIf="step === 'confirming'">{{ 'ACTION.CONFIRMING' | translate }}</span>
+		</h2>
+		<div class="token-badge">
+			<mat-icon>bolt</mat-icon>
+			{{ data.actionTokens }}
+		</div>
+		<button mat-icon-button (click)="close()">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+
+	<!-- SHOP STEP -->
+	<div *ngIf="step === 'shop'" class="shop-list">
+		<p class="shop-hint">{{ 'ACTION.SHOP_HINT' | translate }}</p>
+		<ng-container *ngFor="let action of data.actions">
+			<div
+				*ngIf="action.enabled"
+				class="action-row"
+				[class.disabled]="!canAfford(action) || data.gameStatus !== 'playing'"
+				(click)="selectAction(action)">
+				<div class="action-info">
+					<div class="action-label">{{ action.labelKey | translate }}</div>
+					<div class="action-desc">{{ action.descriptionKey | translate }}</div>
+				</div>
+				<div class="action-cost">
+					<mat-icon>bolt</mat-icon>
+					{{ action.cost }}
+				</div>
+			</div>
+		</ng-container>
+	</div>
+
+	<!-- WHO HAVE CARD STEP -->
+	<div *ngIf="step === 'pick-who-card'" class="step-section">
+		<p class="hint">{{ 'ACTION.WHO_HAVE_CARD.HINT' | translate }}</p>
+		<div class="family-grid">
+			<div
+				*ngFor="let card of data.myCards"
+				class="family-grid-item"
+				[class.selected]="selectedCard?.key === card.key"
+				(click)="selectWhoHaveCard(card)">
+				<span class="family-icon">{{ getFamilyIcon(card) }}</span>
+				<span class="family-level">{{ card.letter | translate }}</span>
+			</div>
+		</div>
+		<div *ngIf="whoHaveCardLoading" class="text-center p-3">
+			<mat-spinner diameter="40"></mat-spinner>
+		</div>
+		<div class="step-actions" *ngIf="!whoHaveCardLoading">
+			<button mat-raised-button color="accent" [disabled]="!selectedCard" (click)="confirmWhoHaveCard()">
+				{{ 'ACTION.WHO_HAVE_CARD.SEARCH' | translate }}
+			</button>
+		</div>
+	</div>
+
+	<!-- PICK TARGET STEP -->
+	<div *ngIf="step === 'pick-target' || step === 'pick-target2'" class="step-section">
+		<div *ngIf="playersLoading" class="text-center p-3">
+			<mat-spinner diameter="40"></mat-spinner>
+		</div>
+		<div *ngIf="playersError" class="error-msg">{{ playersError | translate }}</div>
+		<div class="player-list">
+			<div
+				*ngFor="let player of availablePlayers"
+				class="player-item"
+				[class.selected]="isTargetSelected(player)"
+				[class.excluded]="step === 'pick-target2' && player.idx === selectedTarget1?.idx"
+				(click)="highlightTarget(player)">
+				<avatar
+					[avatar]="getAvatar(player.avatarIdx)!"
+					width="40px"
+					height="40px"
+					[namePosition]="'right'"></avatar>
+			</div>
+		</div>
+		<div class="step-actions" *ngIf="!playersLoading">
+			<button
+				mat-raised-button
+				color="accent"
+				[disabled]="step === 'pick-target' ? !selectedTarget1 : !selectedTarget2"
+				(click)="confirmTarget()">
+				{{ 'ACTION.CONFIRM' | translate }}
+			</button>
+		</div>
+	</div>
+
+	<!-- PICK CARD STEP (steal / silent-steal: target's cards; give: own cards) -->
+	<div *ngIf="step === 'pick-card'" class="step-section">
+		<ng-container *ngIf="selectedAction?.key === 'give'">
+			<div class="card-grid">
+				<div
+					*ngFor="let card of data.myCards"
+					class="card-grid-item"
+					[class.selected]="selectedCard?.key === card.key"
+					(click)="highlightCard(card)">
+					<div class="card-check" *ngIf="selectedCard?.key === card.key">
+						<mat-icon>check_circle</mat-icon>
+					</div>
+					<app-item
+						[card]="card"
+						[typeMoney]="data.typeMoney"
+						[currentDU]="data.currentDU"
+						[typeTheme]="data.typeTheme"
+						[gameStateId]="data.gameStateId"
+						[flippable]="false"
+						width="70px"
+						height="70px"
+						iconSize="36px"
+						letterSize="0.8rem"
+						textSize="0.5rem"
+						priceSize="0.5rem"></app-item>
+				</div>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="selectedAction?.key !== 'give'">
+			<div *ngIf="targetCardsLoading" class="text-center p-3 w-100">
+				<mat-spinner diameter="40"></mat-spinner>
+			</div>
+			<div *ngIf="targetCardsError" class="error-msg w-100">{{ targetCardsError | translate }}</div>
+			<div class="card-grid">
+				<div
+					*ngFor="let card of targetCards"
+					class="card-grid-item"
+					[class.selected]="selectedCard?.key === card.key"
+					(click)="highlightCard(card)">
+					<div class="card-check" *ngIf="selectedCard?.key === card.key">
+						<mat-icon>check_circle</mat-icon>
+					</div>
+					<app-item
+						[card]="card"
+						[typeMoney]="data.typeMoney"
+						[currentDU]="data.currentDU"
+						[typeTheme]="data.typeTheme"
+						[gameStateId]="data.gameStateId"
+						[flippable]="false"
+						width="70px"
+						height="70px"
+						iconSize="36px"
+						letterSize="0.8rem"
+						textSize="0.5rem"
+						priceSize="0.5rem"></app-item>
+				</div>
+			</div>
+			<div *ngIf="!targetCardsLoading && !targetCardsError && targetCards.length === 0" class="empty-msg w-100">
+				{{ 'ACTION.NO_CARDS' | translate }}
+			</div>
+		</ng-container>
+		<div class="step-actions" *ngIf="!targetCardsLoading && !loading">
+			<button mat-raised-button color="accent" [disabled]="!selectedCard" (click)="confirmCard()">
+				{{ 'ACTION.CONFIRM' | translate }}
+			</button>
+		</div>
+	</div>
+
+	<!-- ONG CARDS STEP -->
+	<div *ngIf="step === 'pick-ong-cards'" class="step-section">
+		<p class="hint">{{ 'ACTION.ONG_SELECT_HINT' | translate: { selected: selectedOngCards.length } }}</p>
+		<div class="card-grid">
+			<div
+				*ngFor="let card of data.myCards"
+				class="card-grid-item"
+				[class.selected]="isOngCardSelected(card)"
+				[class.ong-disabled]="!isOngCardSelected(card) && selectedOngCards.length >= 4"
+				(click)="toggleOngCard(card)">
+				<div class="card-check" *ngIf="isOngCardSelected(card)">
+					<mat-icon>check_circle</mat-icon>
+				</div>
+				<app-item
+					[card]="card"
+					[typeMoney]="data.typeMoney"
+					[currentDU]="data.currentDU"
+					[typeTheme]="data.typeTheme"
+					[gameStateId]="data.gameStateId"
+					[flippable]="false"
+					width="70px"
+					height="70px"
+					iconSize="36px"
+					letterSize="0.8rem"
+					textSize="0.5rem"
+					priceSize="0.5rem"></app-item>
+			</div>
+		</div>
+		<div class="step-actions ong-actions" *ngIf="selectedOngCards.length === 4">
+			<button mat-raised-button color="accent" [disabled]="loading" (click)="confirmOng(true)">
+				{{ 'ACTION.ONG_AUTO_TARGET' | translate }}
+			</button>
+		</div>
+	</div>
+
+	<!-- CONFIRMING (war in progress) -->
+	<div *ngIf="step === 'confirming'" class="text-center p-4">
+		<mat-spinner diameter="50" class="mx-auto"></mat-spinner>
+	</div>
+
+	<!-- ERROR -->
+	<div *ngIf="error" class="error-msg mt-2">
+		{{ error | translate }}
+	</div>
+
+	<!-- LOADING overlay for card actions -->
+	<div *ngIf="loading && step !== 'confirming'" class="loading-overlay">
+		<mat-spinner diameter="40"></mat-spinner>
+	</div>
+</div>

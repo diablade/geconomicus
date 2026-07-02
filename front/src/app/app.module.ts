@@ -55,6 +55,7 @@ import { CdkMenuTrigger } from '@angular/cdk/menu';
 import { SeizureDialogComponent } from './dialogs/seizure-dialog/seizure-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CongratsDialogComponent } from './dialogs/congrats-dialog/congrats-dialog.component';
+import { ActionDialogComponent } from './dialogs/action-dialog/action-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { LOAD_WASM, NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 import { ShortcodeDialogComponent } from './dialogs/shortcode-dialog/shortcode-dialog.component';
@@ -123,6 +124,7 @@ LOAD_WASM().subscribe();
 		BtnTimerAutoClickComponent,
 		SeizureDialogComponent,
 		CongratsDialogComponent,
+		ActionDialogComponent,
 		ShortcodeDialogComponent,
 		GameDeleteDialog,
 		MasterAdminComponent,

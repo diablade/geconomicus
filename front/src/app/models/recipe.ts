@@ -24,6 +24,17 @@ export class Recipe {
 	}
 }
 
+export function getRecipeForCard(card: Card, allCards: Card[], amountCardsForProd: number, generatedIdenticalLetters: number): Recipe {
+	const recipe = new Recipe(card.letter, card.weight);
+	recipe.generateIngredients(generatedIdenticalLetters);
+	recipe.ingredients.forEach((ingredient) => {
+		ingredient.have = allCards.filter((c) => c.key === ingredient.key).length;
+	});
+	const have = recipe.ingredients.filter((i) => i.have > 0).length;
+	recipe.completed = have >= amountCardsForProd;
+	return recipe;
+}
+
 export function getAvailableRecipes(items: Card[], amountCardsForProd: number, generatedIdenticalLetters: number) {
 	let recipes: Recipe[] = [];
 	_.forEach(items, item => {

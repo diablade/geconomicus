@@ -10,6 +10,7 @@ import { SnackbarService } from '../services/snackbar.service';
 // import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { CongratsDialogComponent } from '../dialogs/congrats-dialog/congrats-dialog.component';
+import { ActionDialogComponent } from '../dialogs/action-dialog/action-dialog.component';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
 import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import { ShortCode } from '../models/shortCode';
@@ -57,6 +58,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	typeTheme$ = inject(ThemesService).typeTheme$;
 	theme: string = this.themesService.getCurrentTheme();
 	avatar$ = inject(AvatarService).avatar$;
+	session$ = inject(AvatarService).session$;
 	playerStatus$ = inject(PlayerStateService).playerStatus$;
 	playerConnection$ = inject(PlayerStateService).playerConnection$;
 
@@ -94,6 +96,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		return this.credits$.pipe(map((credits) => credits.some((credit) => credit.status === CREDIT_STATUS.FAULT)));
 	}
 
+	actionTokens$ = inject(PlayerStateService).actionTokens$;
+	sessionAvatars$ = inject(PlayerStateService).avatars$;
+
 	vm$ = combineLatest({
 		playerStatus: this.playerStatus$,
 		coins: this.coins$,
@@ -102,7 +107,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		rules: this.rules$,
 		credits: this.credits$,
 		avatar: this.avatar$,
+		session: this.session$,
 		typeTheme: this.typeTheme$,
+		actionTokens: this.actionTokens$,
+		sessionAvatars: this.sessionAvatars$,
 	});
 
 	scanV3 = true;
@@ -154,6 +162,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		private playerStateService: PlayerStateService
 	) {
 		this.i18nService.loadNamespace('player');
+		this.i18nService.loadNamespace('action');
+
 	}
 
 	ngOnDestroy(): void {
@@ -308,6 +318,29 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	tryReincarnate() {
 		// TODO: Implement reincarnation flow
+	}
+
+	openActionDialog(vm: any) {
+		this.dialog.open(ActionDialogComponent, {
+			data: {
+				gameStateId: this.gameStateId,
+                gameStatus: vm.gameState.status,
+				sessionId: this.sessionId,
+				playerStateIdx: this.playerStateIdx,
+				actionTokens: vm.actionTokens,
+				actions: vm.rules.actions || [],
+				myCards: _.uniqBy(vm.cards, 'letter'),
+				typeMoney: vm.gameState.typeMoney,
+				currentDU: vm.gameState.currentDU,
+				typeTheme: vm.typeTheme,
+				sessionAvatars: vm.sessionAvatars || [],
+			},
+			panelClass: 'action-dialog-panel',
+		}).afterClosed().subscribe((result) => {
+			if (result?.success) {
+				this.playerStateService.refreshActionResult(result);
+			}
+		});
 	}
 
 	onChangedShortCode($event: any) {

@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 import { Avatar } from '../../models/avatar';
 import { ConnectionStatus } from 'src/app/models/gameState';
 import { PLAYER_STATUS, PlayerStatus } from '@geco/shared';
-import { Observable } from 'rxjs';
 
 @Component({
 	selector: 'avatar',
@@ -10,6 +9,7 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./avatar.component.scss'],
 })
 export class AvatarComponent implements AfterViewInit {
+	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	@ViewChild('svgContainer') svgContainer!: ElementRef;
 	@Input() width!: string;
 	@Input() height!: string;
@@ -18,21 +18,16 @@ export class AvatarComponent implements AfterViewInit {
 	@Input() playerStatus: PlayerStatus | null = null;
 	@Input() connection: ConnectionStatus | null = null;
 	@Input() onlineStatus = false;
-
-	protected readonly DEAD = PLAYER_STATUS.DEAD;
-
-	private _avatar: Avatar = new Avatar();
-
 	@Input()
-	set avatar(value: Avatar | undefined) {
+	set avatar(value: Partial<Avatar> | undefined) {
 		if (!value) return;
-		this._avatar = value;
+		this._avatar = { ...this._avatar, ...value };
 		this.renderSvg();
 	}
-
-	get avatar(): Avatar {
+	get avatar(): Partial<Avatar> {
 		return this._avatar;
 	}
+	private _avatar: Partial<Avatar> = {};
 
 	ngAfterViewInit() {
 		// Au cas où l'avatar arrive avant que la vue soit prête

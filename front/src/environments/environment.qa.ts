@@ -41,6 +41,16 @@ export const environment = {
 		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state/',
 		TRANSACTION: 'game-state/player-state/transaction',
 	},
+	ACTION: {
+		GET_TARGET_CARDS: 'game-state/action/get-target-cards',
+		AVAILABLE_PLAYERS: 'game-state/action/available-players',
+		WHO_HAVE_CARD: 'game-state/action/who-have-card',
+		GIVE: 'game-state/action/give',
+		STEAL: 'game-state/action/steal',
+		SILENT_STEAL: 'game-state/action/silent-steal',
+		WAR: 'game-state/action/war',
+		ONG: 'game-state/action/ong',
+	},
 	BANK_STATE: {
 		CREATE_CREDIT: 'game-state/bank-state/create-credit',
 		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',

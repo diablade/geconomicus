@@ -218,6 +218,7 @@ GameStateService.initGame = async (gameStateId) => {
 
 	// then store in memory with rules
 	GameStateManager.store(gameStateId, initializedGame, rules);
+    log.debug(rules);
 
 	// emit to connected players their initial state
 	log.debug(`[GameStateService] Emitting PLAYER_INIT to all players for game: ${gameStateId}`);

@@ -14,11 +14,11 @@ const populateStatusForGameRules = async (session) => {
 	const sessionObj = populatedSession.toObject();
 	sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
 		...rule,
-		gameStateId: rule.gameStateId?._id ?? rule.gameStateId,
-		gameStatus: rule.gameStateId?.status ?? rule.gameStatus,
+		gameStateId: rule?.gameStateId?._id ?? rule?.gameStateId,
+		gameStatus: rule?.gameStateId?.status ?? rule?.gameStatus,
 	}));
 	log.debug(
-		`[SessionService] getById populated: ${sessionObj.gamesRules[0].gameStatus}, ${sessionObj.gamesRules[1].gameStatus}`
+		`[SessionService] getById populated: ${sessionObj.gamesRules[0]?.gameStatus}, ${sessionObj.gamesRules[1]?.gameStatus}`
 	);
 	return sessionObj;
 };
@@ -58,6 +58,11 @@ SessionService.getById = async (id, tryPopulate = false) => {
 SessionService.getByShortId = async (shortId) => {
 	return SessionModel.findOne({ shortId, status: SESSION_STATUS.OPEN }).exec();
 };
+
+SessionService.getAvatarsBySessionId = async (sessionId) => {
+	return SessionModel.find({ _id: sessionId }).select('avatars').exec();
+};
+
 SessionService.getAll = async () => {
 	//TODO pagination  one day and with filters in req
 	//and aggregate with status of gamesState

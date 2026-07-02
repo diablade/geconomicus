@@ -128,18 +128,16 @@
 						[typeTheme]="vm.typeTheme"
 						[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
 						[currentDU]="vm.gameState.currentDU"
+						[allCards]="vm.cards"
+						[amountCardsForProd]="vm.rules.amountCardsForProd"
+						[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
 						(shortCodeChanged)="onChangedShortCode($event)"
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"></app-item>
 				</ng-container>
 			</div>
-			<div
-				class="credits w-100 d-flex flex-row"
-				[ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen' : ''">
-				<div
-					class="d-flex flex-row overflow-auto"
-					*ngIf="panelCreditOpenState"
-					[ngClass]="panelRecipeOpenState ? 'w-50' : 'w-100'">
+			<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
+				<div class="d-flex flex-row overflow-auto w-100" *ngIf="panelCreditOpenState">
 					<app-credit
 						*ngFor="let credit of vm.credits"
 						[small]="true"
@@ -147,63 +145,57 @@
 						[credit]="credit"
 						(actionBtn)="creditActionBtn($event, credit)"></app-credit>
 				</div>
-				<div *ngIf="panelCreditOpenState && panelRecipeOpenState" class="separator"></div>
-				<div
-					class="d-flex flex-row overflow-auto"
-					*ngIf="panelRecipeOpenState"
-					[ngClass]="panelCreditOpenState ? 'w-50' : 'w-100'">
-					<div class="m-1" *ngFor="let recipe of recipies(vm.cards, vm.rules)">
-						<app-recipe
-							[recipe]="recipe"
-							[typeTheme]="vm.typeTheme"
-							[width]="screenWidth < screenHeight ? '36vw' : '36vh'"
-							[height]="screenWidth < screenHeight ? 'calc(35vw * 1.5)' : 'calc(35vh * 1.5)'"
-							(onReceipeCompleted)="recipeCompleted($event)"
-							(onIngredientClick)="whoHaveCard($event)"></app-recipe>
-					</div>
-				</div>
 			</div>
-			<div class="bottomBtn d-flex flex-row justify-content-between">
-				<button
-					*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
-					class="buy box-shadowed"
-					mat-icon-button
-					color="primary"
-					(click)="togglePanel('credit')">
-					<fa-icon *ngIf="!panelCreditOpenState" [icon]="faFileContract"></fa-icon>
-				</button>
-				<button
-					*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
-					class="buy box-shadowed"
-					mat-fab
-					color="primary"
-					(click)="togglePanel('credit')">
-					<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
-				</button>
-				<button
-					*ngIf="vm.typeTheme !== 'CARD' && !panelRecipeOpenState"
-					class="buy box-shadowed"
-					mat-icon-button
-					color="primary"
-					(click)="togglePanel('recipe')">
-					<mat-icon *ngIf="!panelRecipeOpenState">menu_book</mat-icon>
-				</button>
-				<button
-					*ngIf="vm.typeTheme !== 'CARD' && panelRecipeOpenState"
-					class="buy box-shadowed"
-					mat-fab
-					color="primary"
-					(click)="togglePanel('recipe')">
-					<mat-icon *ngIf="panelRecipeOpenState">menu_book</mat-icon>
-				</button>
-				<button
-					class="buy box-shadowed ms-auto"
-					mat-fab
-					color="accent"
-					[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
-					(click)="buyWith()">
-					<fa-icon [icon]="faCreditCardAlt"></fa-icon>
-				</button>
+			<div class="bottom-btn">
+				<!-- Left: credit toggle (debt only) -->
+				<div class="bottom-left bottom">
+					<button
+						*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
+						class="styleBtn size box-shadowed z2"
+						mat-icon-button
+						color="primary"
+						(click)="togglePanel('credit')">
+						<fa-icon [icon]="faFileContract"></fa-icon>
+					</button>
+					<button
+						*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
+						class="styleBtn size box-shadowed z2"
+						mat-fab
+						color="primary"
+						(click)="togglePanel('credit')">
+						<fa-icon [icon]="faFileContract"></fa-icon>
+					</button>
+					<div *ngIf="vm.gameState.typeMoney === JUNE"></div>
+				</div>
+				<!-- Center: button -->
+				<div class="bottom-center bottom">
+					<button
+						class="styleBtn size-center box-shadowed z2"
+						mat-raised-button
+						color="accent"
+						[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
+						(click)="buyWith()">
+						<div class="d-flex flex-row gap-1 align-items-center">
+							<div class="styleBtn-label">{{ 'PLAYER.BUY' | translate }}</div>
+							<div>
+								<fa-icon [icon]="faCreditCardAlt"></fa-icon>
+							</div>
+						</div>
+					</button>
+				</div>
+				<!-- Right: button -->
+				<div class="bottom-right bottom">
+					<button
+						class="styleBtn size box-shadowed z2"
+						mat-fab
+						color="warn"
+						[matBadge]="vm.actionTokens"
+						matBadgeColor="accent"
+						matBadgePosition="above after"
+						(click)="openActionDialog(vm)">
+						<mat-icon>flash_on</mat-icon>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

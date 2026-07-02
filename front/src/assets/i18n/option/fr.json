@@ -2,6 +2,9 @@
 	"OPTION": {
 		"TITLE": "Options",
 		"TITLE_ADV": "Options avancées",
+		"TITLE_DU": "Options monnaie libre",
+		"TITLE_DEBT": "Options monnaie dette",
+		"TITLE_CARDS": "Options cartes",
 		"SURVEY_Q": "Sondage de fin de partie ?",
 		"WARNING": "⚠️ Attention ⚠️, modifiez uniquement si vous savez ce que vous faites !!!!\nSinon, en cas d'erreur, cliquez sur <span class=\"red\"> \"valeur par défaut\"</span> !",
 		"DURATION": "Durée de la manche en minutes",
@@ -11,7 +14,7 @@
 		"SAVE_INTERVAL": "Sauvegarde toutes les (secondes)",
 		"DU_INTERVAL": "Dividende universel toutes les (secondes)",
 		"DEATH_MINUTES": "Passage de la mort toutes les {{deathMinute}} minutes",
-		"DEATH_MINUTES_FORMULA": "(durée de la manche/ nombre de joueurs)",
+		"DEATH_MINUTES_FORMULA": "(durée de la manche/ nombre de joueurs+1)",
 		"DU_RATES": "Taux de croissance du dividende universel",
 		"START_MONEY_AMOUNT": "Bourse de départ (classe moyenne)",
 		"START_MONEY_INEQUALITY": "Début inégal en monnaie libre",
@@ -36,12 +39,62 @@
 		"PLAYERS_16+": "( 16 joueurs et plus)",
 		"PLAYERS_6+": "(6 joueurs et plus)",
 		"START_DISTRIB_CARDS": "Nombre de cartes distribuées aux joueurs en début de manche",
-		"BUILD_AMOUNT": "Nombre de cartes identiques attendues pour obtenir une carte de valeur supérieure :"
+		"BUILD_AMOUNT": "Nombre de cartes identiques attendues pour obtenir une carte de valeur supérieure :",
+		"ACTIONS_TITLE": "Actions",
+		"STARTING_TOKENS": "Jetons de départ",
+		"COST": "Coût"
 	},
 	"CARD": {
 		"LV1": "Alimentation",
 		"LV2": "Savoir",
 		"LV3": "Énergie",
 		"LV4": "Technologie"
+	},
+	"ACTION": {
+		"TITLE": "Actions",
+		"CONFIRM": "Valider",
+		"PICK_TARGET": "Choisir un joueur",
+		"PICK_TARGET2": "Choisir un deuxième joueur",
+		"PICK_CARD": "Choisir une carte",
+		"PICK_ONG_CARDS": "Choisir 4 cartes à donner",
+		"CONFIRMING": "En cours...",
+		"NO_CARDS": "Aucune carte disponible",
+		"ONG_SELECT_HINT": "{{selected}}/4 cartes sélectionnées",
+		"ONG_AUTO_TARGET": "Donner aux 2 joueurs les plus pauvres",
+		"RECEIVED_GIVE": "{{fromName}} vous a donné une carte !",
+		"RECEIVED_ONG": "{{fromName}} vous a fait don de {{count}} carte(s) (action ONG) !",
+		"ROBBED_STEAL": "Quelqu'un vous a volé une carte !",
+		"ROBBED_WAR": "Vous avez été attaqué(e) ! 2 cartes vous ont été prises.",
+		"SHOP_HINT": "Produisez un carré pour marquer des points !",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Qui a cette famille ?",
+			"DESC": "Découvrez qui possède une carte de la famille qu'il vous manque. Coûte 1 jeton.",
+			"PICK": "Choisir une famille à localiser",
+			"HINT": "Sélectionnez une carte — vous saurez qui possède une carte de la même famille.",
+			"SEARCH": "Rechercher",
+			"RESULT_PLAYER": "{{name}} possède une carte de cette famille.",
+			"RESULT_DECK": "Une carte de cette famille est dans le deck.",
+			"RESULT_UNKNOWN": "Personne ne possède de carte de cette famille pour l'instant."
+		},
+		"GIVE": {
+			"LABEL": "Donner une carte",
+			"DESC": "Offrez l'une de vos cartes à un joueur de votre choix."
+		},
+		"STEAL": {
+			"LABEL": "Voler une carte",
+			"DESC": "Prenez une carte à un autre joueur. Il sera notifié."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Vol silencieux",
+			"DESC": "Prenez une carte sans que l'autre joueur soit notifié."
+		},
+		"WAR": {
+			"LABEL": "Guerre",
+			"DESC": "Volez 2 cartes aléatoires à chacun de 2 joueurs."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Donnez 4 de vos cartes aux 2 joueurs les plus pauvres (2 chacun)."
+		}
 	}
 }

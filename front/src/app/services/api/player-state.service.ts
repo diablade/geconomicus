@@ -35,6 +35,8 @@ export class PlayerStateService {
 	coins$ = this.coinsSubject.asObservable();
 	private cardsSubject = new BehaviorSubject<Card[]>([]);
 	rawCards$ = this.cardsSubject.asObservable();
+	private actionTokensSubject = new BehaviorSubject<number>(1);
+	actionTokens$ = this.actionTokensSubject.asObservable();
 	private creditsSubject = new BehaviorSubject<Credit[]>([]);
 	credits$ = this.creditsSubject.asObservable();
 
@@ -42,6 +44,8 @@ export class PlayerStateService {
 	gameState$ = this.gameStateSubject.asObservable();
 	private rulesSubject = new BehaviorSubject<Rules>(new Rules());
 	rules$ = this.rulesSubject.asObservable();
+	private avatarsSubject = new BehaviorSubject<{ idx: number; name: string; image: string }[]>([]);
+	avatars$ = this.avatarsSubject.asObservable();
 
 	private sessionId = '';
 	private gameStateId = '';
@@ -154,7 +158,9 @@ export class PlayerStateService {
 				this.playerStatusSubject.next(data.playerState.status);
 				this.typeMoneySubject.next(data.playerState.typeMoney);
 				this.cardsSubject.next(data.playerState.cards);
+				this.actionTokensSubject.next(data.playerState.actionTokens ?? 1);
 				this.creditsSubject.next(data.credits);
+				if (data.avatars) this.avatarsSubject.next(data.avatars);
 
 				this.gameStateSubject.next(data.gameState);
 				this.rulesSubject.next(data.rules);
@@ -419,6 +425,47 @@ export class PlayerStateService {
 			}
 		});
 
+		// Action events
+		this.wsService.on(IO.PLAYER.ACTION_DONE, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data._ackId });
+			// card arriving (give / ong)
+			if (data.card) {
+				const cards = this.cardsSubject.getValue();
+				this.cardsSubject.next([...cards, data.card]);
+				this.dialog.open(InformationDialogComponent, {
+					data: {
+						message: this.i18nService.instant('ACTION.RECEIVED_GIVE', { fromName: data.fromName }),
+					},
+				});
+			}
+			if (data.cards) {
+				const cards = this.cardsSubject.getValue();
+				this.cardsSubject.next([...cards, ...data.cards]);
+				this.dialog.open(InformationDialogComponent, {
+					data: {
+						message: this.i18nService.instant('ACTION.RECEIVED_ONG', {
+							fromName: data.fromName,
+							count: data.cards.length,
+						}),
+					},
+				});
+			}
+		});
+
+		this.wsService.on(IO.PLAYER.ACTION_ROBBED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data._ackId });
+			// Remove stolen card(s) from local state
+			const stolenKeys: string[] = data.card ? [data.card.key] : (data.cards || []).map((c: Card) => c.key);
+			const updatedCards = this.cardsSubject.getValue().filter((c: Card) => !stolenKeys.includes(c.key));
+			this.cardsSubject.next(updatedCards);
+			if (!data.silent) {
+				const msgKey = data.actionKey === 'war' ? 'ACTION.ROBBED_WAR' : 'ACTION.ROBBED_STEAL';
+				this.dialog.open(InformationDialogComponent, {
+					data: { message: this.i18nService.instant(msgKey) },
+				});
+			}
+		});
+
 		// Credit events
 		this.wsService.on(IO.CREDIT.NEW, async (data: any, cb: (response: any) => void) => {
 			console.log('new credit', data);
@@ -579,6 +626,8 @@ export class PlayerStateService {
 		this.wsService.off(IO.SESSION.UPDATED_RULES);
 		this.wsService.off(IO.REFRESH_FORCE);
 		this.wsService.off(IO.PLAYER.TRANSACTION_DONE);
+		this.wsService.off(IO.PLAYER.ACTION_DONE);
+		this.wsService.off(IO.PLAYER.ACTION_ROBBED);
 		this.wsService.off(IO.CREDIT.NEW);
 		this.wsService.off(IO.CREDIT.FREE_MONEY);
 		this.wsService.off(IO.CREDIT.CANCELED);
@@ -804,6 +853,9 @@ export class PlayerStateService {
 				if (result.status === 'ok') {
 					this.showProduction(result.producedCard, result.newCard);
 					this.cardsSubject.next(result.cardsLK);
+					if (result.result?.actionTokens != null) {
+						this.actionTokensSubject.next(result.result.actionTokens);
+					}
 				} else {
 					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
 					this.audioService.playSound('error');
@@ -816,6 +868,16 @@ export class PlayerStateService {
 				this.isProducing = false;
 			},
 		});
+	}
+
+	refreshActionResult(result: { actionKey: string; result: any }) {
+		if (!result?.result) return;
+		if (result.result.cardsLK != null) {
+			this.cardsSubject.next(result.result.cardsLK);
+		}
+		if (result.result.actionTokens != null) {
+			this.actionTokensSubject.next(result.result.actionTokens);
+		}
 	}
 
 	showProduction(producedCard: Card, newCards: Card[]) {

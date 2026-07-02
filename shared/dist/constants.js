@@ -92,6 +92,9 @@ export const IO = {
         CONNECTED: 'pc',
         DISCONNECTED: 'pdc',
         CONNECTIONS_SNAPSHOT: 'pcs',
+        ACTION_DONE: 'pad',
+        ACTION_ROBBED: 'par',
+        ACTION_TOKENS_UPDATED: 'patu',
     },
     CREDIT: {
         NEW: 'cn',
@@ -142,6 +145,11 @@ export const DB_EVENTS = {
     CREDIT_FAULT: 'credit-fault',
     CREDIT_CANCELED: 'credit-canceled',
     CREDIT_SEIZED_DEAD: 'credit-seized-dead',
+    ACTION_GIVE: 'action-give',
+    ACTION_STEAL: 'action-steal',
+    ACTION_SILENT_STEAL: 'action-silent-steal',
+    ACTION_WAR: 'action-war',
+    ACTION_ONG: 'action-ong',
 };
 export const ROOMS = {
     session: (sessionId) => `s:${sessionId}`,

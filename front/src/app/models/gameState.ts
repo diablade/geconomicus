@@ -33,6 +33,7 @@ export class PlayerState {
 	coins = 0;
 	cards = [];
 	progressPrison = 0;
+	actionTokens = 1;
 }
 
 export class ConnectionStatus {

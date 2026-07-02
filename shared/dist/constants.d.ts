@@ -91,6 +91,9 @@ export declare const IO: {
         readonly CONNECTED: "pc";
         readonly DISCONNECTED: "pdc";
         readonly CONNECTIONS_SNAPSHOT: "pcs";
+        readonly ACTION_DONE: "pad";
+        readonly ACTION_ROBBED: "par";
+        readonly ACTION_TOKENS_UPDATED: "patu";
     };
     readonly CREDIT: {
         readonly NEW: "cn";
@@ -145,6 +148,11 @@ export declare const DB_EVENTS: {
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
+    readonly ACTION_GIVE: "action-give";
+    readonly ACTION_STEAL: "action-steal";
+    readonly ACTION_SILENT_STEAL: "action-silent-steal";
+    readonly ACTION_WAR: "action-war";
+    readonly ACTION_ONG: "action-ong";
 };
 export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];
 export declare const ROOMS: {
