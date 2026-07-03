@@ -78,6 +78,7 @@ import { ItemComponent } from './components/item/item.component';
 import { RecipeComponent } from './components/recipe/recipe.component';
 import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
+import { TutorialDialogComponent } from './dialogs/tutorial-dialog/tutorial-dialog.component';
 import { ReJoinQrDialogComponent } from './dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { SessionEditDialogComponent } from './dialogs/session-edit/session-edit-dialog.component';
@@ -143,6 +144,7 @@ LOAD_WASM().subscribe();
 		RecipeComponent,
 		LobbyMasterComponent,
 		LobbyPlayerComponent,
+		TutorialDialogComponent,
 		ReJoinQrDialogComponent,
 		AvatarComponent,
 		CoinComponent,

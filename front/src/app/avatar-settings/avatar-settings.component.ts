@@ -10,6 +10,7 @@ import {
 	createSvg,
 	properties,
 	getBackgroundStyle,
+	getRandomBackgroundBoard,
 	hairPalette,
 	skinPalette,
 	boardPalette,
@@ -27,6 +28,7 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	protected readonly skinPalette = skinPalette;
 	protected readonly hairPalette = hairPalette;
 	getBackgroundStyle = getBackgroundStyle;
+	getRandomBackgroundBoard = getRandomBackgroundBoard;
 	sessionId = '';
 	avatarIdx = 0;
 	avatar: Avatar | undefined;
@@ -67,6 +69,7 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 						this.avatar = { ...avatar };
 						if (this.avatar?.image === '' || this.avatar?.image === undefined) {
 							this.randomize();
+							this.randomizeBg();
 						} else {
 							this.skin = '#' + this.avatar.skinColor;
 							this.hairColor = '#' + this.avatar.hairColor;
@@ -226,5 +229,9 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		this.avatar!.skinColor = this.skin.replace('#', '');
 		this.avatar!.hairColor = this.hairColor.replace('#', '');
 		this.avatar = { ...this.avatar!, image: createSvg(this.avatar!) };
+	}
+
+	randomizeBg() {
+		this.avatar = { ...this.avatar!, boardConf: getRandomBackgroundBoard() };
 	}
 }

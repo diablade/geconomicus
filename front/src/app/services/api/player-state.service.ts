@@ -865,6 +865,7 @@ export class PlayerStateService {
 			return;
 		}
 
+		if (this.isProducing) return;
 		this.isProducing = true;
 		this.deckService.produce(gameStateId, this.playerStateIdx.toString(), cardsForProd).subscribe({
 			next: (result: any) => {

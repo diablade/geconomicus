@@ -9,6 +9,7 @@ import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { getBackgroundStyle } from '../services/avatarTools';
 import { AudioService } from '../services/audio.service';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
+import { TutorialDialogComponent } from '../dialogs/tutorial-dialog/tutorial-dialog.component';
 
 @Component({
 	selector: 'app-lobby-player',
@@ -93,6 +94,14 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			rule.rotate = false;
 		}, 500);
+	}
+
+	openTutorial() {
+		this.dialog.open(TutorialDialogComponent, {
+			data: {},
+			maxWidth: '700px',
+			width: '95vw',
+		});
 	}
 
 	modifyFeedback(gameStateId: string) {

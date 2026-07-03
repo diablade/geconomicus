@@ -40,10 +40,10 @@ export class CardComponent implements OnChanges {
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (changes['screenWidth'] || changes['screenHeight']) {
-			const prevIsPortrait = changes['screenWidth']?.previousValue < changes['screenHeight']?.previousValue;
-			const nowIsPortrait = this.screenWidth < this.screenHeight;
-			const orientationChanged = changes['screenWidth'] && changes['screenHeight'] &&
-				prevIsPortrait !== nowIsPortrait;
+			const prevW = changes['screenWidth']?.previousValue;
+			const prevH = changes['screenHeight']?.previousValue;
+			const hadPrevious = prevW != null && prevH != null;
+			const orientationChanged = hadPrevious && (prevW < prevH) !== (this.screenWidth < this.screenHeight);
 			if (orientationChanged && this.state === 'flipped') {
 				this.closeCard();
 			}

@@ -5,7 +5,7 @@
 		[ngClass]="avatar!.boardConf"
 		[ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)">
 		<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
-		<avatar [avatar]="avatar!" [width]="'200px'" [height]="'200px'" class="mx-auto"></avatar>
+		<avatar [avatar]="avatar!" [width]="'180px'" [height]="'180px'" class="mx-auto"></avatar>
 		<div class="text-center mt-2">
 			<mat-form-field appearance="fill" *ngIf="avatar">
 				<mat-label>{{ 'AVATAR.NAME' | translate }}</mat-label>

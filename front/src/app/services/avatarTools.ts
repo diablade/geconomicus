@@ -108,3 +108,10 @@ export function getBackgroundStyle(boardConf = '', boardColor = '#8e6beeab') {
     }
     return {};
 }
+
+export function getRandomBackgroundBoard() {
+    const boards = ['bgWood', 'bgGreen', 'bgGradien1', 'bgGradien2', 'bgGradien3', 'bgGradien4', 'bgGradien5', 'bgGradien6', 'bgGradien7'];
+    const randomIndex = _.random(0, boards.length - 1, false);
+    return boards[randomIndex];
+}
+

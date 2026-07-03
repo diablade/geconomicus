@@ -135,10 +135,10 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	}
 
 	const cardsToExchange = playerState.cards.filter((card) => idsToFilter.includes(card.key));
-	const weight = cardsToExchange[0].weight;
 	if (cardsToExchange.length !== amountCardsForProd) {
 		throw new Error('ERROR.NOT_ENOUGH_CARDS');
 	}
+	const weight = cardsToExchange[0].weight;
 	if (cardsToExchange.map((card) => card.weight).some((w) => w !== weight)) {
 		throw new Error('ERROR.CARDS_MUST_HAVE_SAME_WEIGHT');
 	}

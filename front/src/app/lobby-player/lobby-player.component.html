@@ -6,10 +6,10 @@
 		<div class="d-flex flex-row justify-content-between align-items-center m-2">
 			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 		</div>
-		<div class="shadowed text-center fs-1 m-5" (click)="refresh()">
+		<div class="shadowed text-center fs-1 m-1" (click)="refresh()">
 			{{ 'AVATAR.LOBBY' | translate }}
 		</div>
-		<div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
+		<div class="d-flex flex-row flex-wrap gap-4 m-1 justify-content-center">
 			<div class="shadowed text-center fs-6" (click)="refresh()">
 				{{ vm.session?.name }}
 			</div>
@@ -19,21 +19,29 @@
 			</div>
 		</div>
 		<app-notice-btn
-			class="text-center d-block m-4"
+			class="text-center d-block m-3"
 			[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
 			[stroked]="true"
 			[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
-		<div class="mt-4 d-flex flex-row flex-wrap gap-4 justify-content-center">
+		<div class="text-center">
+			<button class="blur box-shadowed" [ngClass]="'blackBtn'" mat-stroked-button (click)="openTutorial()">
+				<mat-icon class="outlined">joystick</mat-icon>
+				{{ 'TUTORIAL' | translate }}
+			</button>
+		</div>
+		<!-- /* : 'blackBtn'" */ -->
+
+		<div class="mt-3 d-flex flex-row flex-wrap gap-2 justify-content-center">
 			<div class="d-flex flex-column align-items-center avatar-item mousePointer" (click)="goToAvatarSettings()">
 				<avatar [avatar]="vm.avatar" [width]="'150px'" [height]="'150px'"></avatar>
-				<div class="m-4 d-flex flex-row text-center">
+				<div class="m-1 d-flex flex-row text-center">
 					<div class="shadowed fs-3" (click)="refresh()">
 						{{ vm.avatar?.name }}
 					</div>
 					<fa-icon [icon]="faPencil" class="ms-3 fs-4"></fa-icon>
 				</div>
 			</div>
-			<div class="d-flex flex-row gap-1">
+			<div class="d-flex flex-row">
 				<div class="d-flex flex-column align-items-center" *ngFor="let game of vm.session?.gamesRules">
 					<coin
 						(click)="flipCoin(game)"
@@ -43,7 +51,7 @@
 					<button
 						*ngIf="game.gameStatus !== GAME_STOPPED"
 						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus === undefined"
-						class="m-2 box-shadowed"
+						class="m-1 box-shadowed"
 						mat-raised-button
 						color="primary"
 						(click)="joinGame(game.gameStateId)">
@@ -52,7 +60,7 @@
 					</button>
 					<button
 						*ngIf="game.gameStatus === GAME_STOPPED"
-						class="m-2 box-shadowed"
+						class="m-1 box-shadowed"
 						mat-raised-button
 						color="primary"
 						(click)="modifyFeedback(game.gameStateId)">

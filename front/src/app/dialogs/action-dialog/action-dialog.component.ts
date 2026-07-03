@@ -58,7 +58,7 @@ export class ActionDialogComponent {
 
 	selectedOngCards: Card[] = [];
 
-    famillyCards = _.uniqBy(this.data.myCards, 'letter');
+    get famillyCards(): Card[] { return _.uniqBy(this.data.myCards, 'letter'); }
 
 	whoHaveCardLoading = false;
 
