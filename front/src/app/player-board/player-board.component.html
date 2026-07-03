@@ -83,14 +83,22 @@
 		</div>
 		<div class="btn-credit marginArround">
 			<button
+				[matBadge]="vm.credits.length"
+				[matBadgeColor]="'warn'"
+				[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
 				*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
 				class="styleBtn size box-shadowed z2"
 				mat-icon-button
+				[style.color]="'#117fd0'"
 				color="primary"
 				(click)="togglePanel('credit')">
 				<fa-icon [icon]="faFileContract"></fa-icon>
 			</button>
 			<button
+				[matBadge]="vm.credits.length"
+				[matBadgeColor]="'warn'"
+				[style.background-color]="'#117fd0'"
+				[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
 				*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
 				class="styleBtn size box-shadowed z2"
 				mat-fab
@@ -106,9 +114,14 @@
 				color="accent"
 				[matBadge]="vm.actionTokens"
 				matBadgeColor="warn"
-				matBadgePosition="above before"
+				[matBadgePosition]="isLandscape ? 'below before' : 'above before'"
 				(click)="openActionDialog(vm)">
-				<mat-icon>bolt</mat-icon>
+				<mat-icon class="fs-2">bolt</mat-icon>
+				<!-- <div class="d-flex flex-row justify-content-center align-items-center"> -->
+				<!-- <div class="" [style.font-weight]="'bold'">
+						{{ vm.actionTokens }}
+					</div> -->
+				<!-- </div> -->
 			</button>
 		</div>
 		<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
