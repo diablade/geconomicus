@@ -1,0 +1,83 @@
+<div class="tutorial-dialog d-flex flex-column">
+
+	<!-- Header -->
+	<div class="dialog-header d-flex justify-content-between align-items-center p-3">
+		<h2 class="m-0 slide-title">{{ currentSlide.title | translate }}</h2>
+		<div class="d-flex align-items-center gap-2">
+			<span class="step-counter text-muted">{{ currentIndex + 1 }} / {{ slides.length }}</span>
+			<button mat-icon-button (click)="close()" [attr.aria-label]="'CLOSE' | translate">
+				<mat-icon>close</mat-icon>
+			</button>
+		</div>
+	</div>
+
+	<!-- Carousel viewport -->
+	<div class="carousel-viewport">
+		<div
+			class="carousel-track"
+			[style.transform]="'translateX(-' + currentIndex * (100 / slides.length) + '%)'"
+			[style.width.%]="slides.length * 100">
+
+			<div
+				class="carousel-slide"
+				*ngFor="let slide of slides; let i = index"
+				[style.width.%]="100 / slides.length">
+
+				<video
+					#videoEl
+					[src]="slide.videoSrc"
+					muted
+					loop
+					playsinline
+					class="slide-video">
+				</video>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Description -->
+	<div class="slide-description p-3">
+		<p class="m-0">{{ currentSlide.description | translate }}</p>
+	</div>
+
+	<!-- Dot indicators -->
+	<div class="dot-row d-flex justify-content-center gap-2 pb-2">
+		<button
+			*ngFor="let slide of slides; let i = index"
+			class="dot"
+			[class.dot--active]="i === currentIndex"
+			(click)="goTo(i)"
+			[attr.aria-label]="'TUTORIAL.GO_TO' | translate: { n: i + 1 }">
+		</button>
+	</div>
+
+	<!-- Navigation -->
+	<div class="nav-row d-flex justify-content-between align-items-center p-3">
+		<button
+			mat-stroked-button
+			[disabled]="isFirst"
+			(click)="goTo(currentIndex - 1)">
+			<mat-icon>arrow_back</mat-icon>
+			{{ 'TUTORIAL.PREV' | translate }}
+		</button>
+
+		<button
+			*ngIf="!isLast"
+			mat-stroked-button
+			(click)="goTo(currentIndex + 1)">
+			{{ 'TUTORIAL.NEXT' | translate }}
+			<mat-icon>arrow_forward</mat-icon>
+		</button>
+
+		<button
+			*ngIf="isLast"
+			mat-raised-button
+			color="primary"
+			(click)="close()">
+			{{ 'TUTORIAL.FINISH' | translate }}
+			<mat-icon>check</mat-icon>
+		</button>
+	</div>
+
+</div>

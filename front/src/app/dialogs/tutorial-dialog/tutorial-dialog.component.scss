@@ -1,0 +1,73 @@
+.tutorial-dialog {
+	width: 100%;
+	max-width: 680px;
+}
+
+.slide-title {
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.step-counter {
+	font-size: 0.85rem;
+}
+
+// Carousel
+.carousel-viewport {
+	overflow: hidden;
+	width: 100%;
+	background: #000;
+}
+
+.carousel-track {
+	display: flex;
+	transition: transform 0.35s ease-in-out;
+	will-change: transform;
+}
+
+.carousel-slide {
+	flex-shrink: 0;
+}
+
+.slide-video {
+	width: 100%;
+	display: block;
+	max-height: 640px;
+	object-fit: contain;
+}
+
+// Description
+.slide-description {
+	min-height: 60px;
+	font-size: 0.95rem;
+	line-height: 1.5;
+}
+
+// Dots
+.dot-row {
+	padding-bottom: 4px;
+}
+
+.dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid var(--primary-color, #6200ea);
+	background: transparent;
+	padding: 0;
+	cursor: pointer;
+	transition: background 0.2s;
+
+	&--active {
+		background: var(--primary-color, #6200ea);
+	}
+
+	&:hover:not(.dot--active) {
+		background: rgba(98, 0, 234, 0.2);
+	}
+}
+
+// Nav row
+.nav-row {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

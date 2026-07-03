@@ -8,6 +8,7 @@
 	"GAME_NOTICE": "Notice du jeu",
 	"BY_DEFAULT": "par défaut",
 	"PUBLIC_KEY": "Clef publique :",
+    "TUTORIAL": "Comment jouer ?",
 	"LAST_SEEN": "Dernière connexion : {{lastSeen}}",
 	"VALUES_BY_DEFAULT": "Valeurs par défaut",
 	"BACK_TO_LOBBY": "Retour en salle d'attente",

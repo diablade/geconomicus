@@ -1,0 +1,45 @@
+{
+    "TUTORIAL": {
+		"OPEN": "Comment jouer ?",
+		"PREV": "Précédent",
+		"NEXT": "Suivant",
+		"FINISH": "Terminé",
+		"GO_TO": "Aller à la diapo {{n}}",
+		"CARDS": {
+			"TITLE": "Les cartes ressources",
+			"DESC": "Chaque carte représente une ressource : Alimentation (rouge, 1), Savoir (jaune, 2), Énergie (verte, 4), Technologie (bleue, 8). Chaque famille de cartes porte une lettre (A, B, C…). Votre richesse = vos pièces + la valeur de vos cartes."
+		},
+		"WEALTH": {
+			"TITLE": "L'objectif : s'enrichir",
+			"DESC": "Accumulez un maximum de richesse (pièces + valeur des cartes) avant la fin de la partie. Le classement récompense le joueur le plus riche, celui qui a le plus de pièces, le plus de ressources, et le plus actif."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Les transactions",
+			"DESC": "Tout joueur peut vendre une carte en la retournant (QR code ou code court). L'acheteur scanne ou saisit le code pour acheter au prix de la ressource. C'est ainsi que la richesse circule entre joueurs."
+		},
+		"PRODUCTION": {
+			"TITLE": "La production",
+			"DESC": "Réunissez 4 cartes de même lettre ET même niveau → appuyez sur Produire → vous recevez 1 carte du niveau supérieur + 4 nouvelles cartes. Alimentation×4 → 1 Savoir. Chaque production vous donne aussi +1 jeton d'action."
+		},
+		"ACTIONS": {
+			"TITLE": "Les actions",
+			"DESC": "Dépensez vos jetons d'action pour interagir avec les autres joueurs : chercher qui a une carte, en donner une, en voler une, déclencher un conflit… Vous commencez avec 1 jeton et en gagnez à chaque production."
+		},
+		"JUNE": {
+			"TITLE": "Mode Monnaie Libre (JUNE)",
+			"DESC": "Chaque minute, une quantité de monnaie (le Dividende Universel) est distribuée équitablement à tous les joueurs vivants. Les prix des cartes s'ajustent avec le DU. Pas de banque, pas de dette — la monnaie est créée et partagée automatiquement."
+		},
+		"DEBT": {
+			"TITLE": "Mode Monnaie Dette",
+			"DESC": "Vous commencez avec 0 pièce. Vous devez emprunter à la banque pour jouer. Chaque crédit : vous recevez des pièces, vous devez rembourser le principal + les intérêts dans le délai imparti."
+		},
+		"REPAYMENT": {
+			"TITLE": "Rembourser ou prolonger",
+			"DESC": "À l'échéance : remboursez tout (crédit soldé), ou payez uniquement les intérêts pour prolonger la durée (vous devez toujours le principal). Si vous ne pouvez pas payer → saisie."
+		},
+		"SEIZURE": {
+			"TITLE": "Saisie et prison",
+			"DESC": "En cas de défaut de paiement, la banque saisit vos cartes (avec une décote de 33%) et vos pièces pour récupérer la dette. Si ça ne suffit pas, vous allez en prison pour quelques minutes — exclu du jeu jusqu'à la fin de la peine."
+		}
+	}
+}
