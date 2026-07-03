@@ -128,22 +128,16 @@
 		<!-- Card area (scrollable, goes edge to edge, padding accounts for fixed chrome) -->
 		<div class="card-area">
 			<div *ngIf="vm.gameState.status !== PLAYING" class="w-100 text-center">
-				<div class="text-center m-5 fs-1">⌛</div>
-				<div class="text-center shadowed fs-1 m-2">
+				<div class="text-center m-4 fs-1">⌛</div>
+				<div class="text-center shadowed fs-1 m-3">
 					{{
 						vm.gameState.status !== STOPPED
 							? ('PLAYER.WAITING' | translate)
 							: ('PLAYER.GAME_OVER' | translate)
 					}}
 				</div>
-				<app-notice-btn
-					class="text-center d-block m-4"
-					[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
-					[stroked]="true"
-					[durationCredit]="vm.rules.durationCredit || 0"
-					*ngIf="vm.gameState.status !== STOPPED"></app-notice-btn>
 				<button
-					class="ms-1"
+					class="text-center ms-1"
 					*ngIf="vm.gameState.status === STOPPED"
 					[routerLink]="['/avatar', sessionId, avatarIdx]"
 					mat-raised-button

@@ -40,6 +40,7 @@ export const environment = {
 		GET: 'game-state/player-state/',
 		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state/',
 		TRANSACTION: 'game-state/player-state/transaction',
+		PRODUCTION: 'game-state/player-state/produce',
 	},
 	ACTION: {
 		GET_TARGET_CARDS: 'game-state/action/get-target-cards',
@@ -82,7 +83,7 @@ export const environment = {
 		SURVEY: 'player/survey/',
 	},
 	BANK: {
-		GET_CREDITS: "bank/get-credits/",
+		GET_CREDITS: 'bank/get-credits/',
 		CREATE_CREDIT: 'bank/create-credit',
 		DELETE_CREDIT: 'bank/delete-credit',
 		SETTLE_CREDIT: 'bank/settle-credit',
@@ -106,7 +107,7 @@ export const environment = {
 		EVENTS: 'game/events/',
 		GET_FEEDBACKS: 'game/feedbacks/',
 		DELETE_PLAYER: 'game/delete-player',
-		KILL_PLAYER: "game/kill-player",
+		KILL_PLAYER: 'game/kill-player',
 		RESET: 'game/reset',
 		START_ROUND: 'game/start-round',
 		STOP_ROUND: 'game/stop-round',
@@ -115,4 +116,3 @@ export const environment = {
 		DELETE_GAME: 'game/delete',
 	},
 };
-

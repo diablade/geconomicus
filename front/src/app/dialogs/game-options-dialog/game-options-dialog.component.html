@@ -124,6 +124,7 @@
 					*ngFor="let action of rules.actions; let i = index"
 					class="d-flex justify-content-center align-items-center gap-1">
 					<mat-checkbox [(ngModel)]="rules.actions[i].enabled"></mat-checkbox>
+					<span class="fs-4">{{ getActionIcon(action.key) }}</span>
 					<span class="action-text">{{ action.labelKey | translate }}</span>
 					<mat-form-field class="input" appearance="fill">
 						<mat-label>{{ 'OPTION.COST' | translate }}</mat-label>

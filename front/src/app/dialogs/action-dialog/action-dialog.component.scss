@@ -78,6 +78,14 @@
 	}
 }
 
+.action-icon {
+	font-size: 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	flex-shrink: 0;
+    margin: 5px;
+}
+
 .action-info {
 	flex: 1;
 	min-width: 0;

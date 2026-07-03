@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GAME_TYPE } from '@geco/shared';
 import { I18nService } from '../../services/i18n.service';
-import { Rules } from 'src/app/models/rules';
+import { getActionIcon, Rules } from 'src/app/models/rules';
 
 @Component({
 	selector: 'app-game-options-dialog',
@@ -33,4 +33,6 @@ import { Rules } from 'src/app/models/rules';
 	getTranslate(key: string): string {
 		return this.i18n.instant(key);
 	}
+
+	getActionIcon = getActionIcon;
 }

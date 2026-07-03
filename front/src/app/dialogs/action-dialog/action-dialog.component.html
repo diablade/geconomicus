@@ -31,6 +31,7 @@
 				class="action-row"
 				[class.disabled]="!canAfford(action) || data.gameStatus !== 'playing'"
 				(click)="selectAction(action)">
+				<div class="action-icon">{{ getActionIcon(action.key) }}</div>
 				<div class="action-info">
 					<div class="action-label">{{ action.labelKey | translate }}</div>
 					<div class="action-desc">{{ action.descriptionKey | translate }}</div>

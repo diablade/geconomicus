@@ -57,6 +57,26 @@ export class Rules {
 	createdAt: Date = new Date();
 }
 
+//getActionIcon
+export function getActionIcon(actionKey: string): string {
+	switch (actionKey){
+		case 'whoHaveCard':
+			return '🔎';
+		case 'give':
+			return '🫴';
+		case 'steal':
+			return '💥';
+		case 'silentSteal':
+			return '🤫';
+		case 'war':
+			return '⚔️';
+		case 'ong':
+			return '🤝';
+		default:
+			return '-';
+	}
+}
+
 export class ActionConfig {
 	key = '';
 	labelKey = '';

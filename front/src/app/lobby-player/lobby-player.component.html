@@ -18,6 +18,11 @@
 				{{ 'AVATAR.ANIMATOR' | translate: { name: vm.session?.animator } }}
 			</div>
 		</div>
+		<app-notice-btn
+			class="text-center d-block m-4"
+			[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
+			[stroked]="true"
+			[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
 		<div class="mt-4 d-flex flex-row flex-wrap gap-4 justify-content-center">
 			<div class="d-flex flex-column align-items-center avatar-item mousePointer" (click)="goToAvatarSettings()">
 				<avatar [avatar]="vm.avatar" [width]="'150px'" [height]="'150px'"></avatar>

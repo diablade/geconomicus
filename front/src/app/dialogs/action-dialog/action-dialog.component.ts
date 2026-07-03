@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActionService } from '../../services/api/action.service';
-import { ActionConfig } from '../../models/rules';
+import { ActionConfig, getActionIcon } from '../../models/rules';
 import { Card } from '../../models/gameState';
 import { I18nService } from '../../services/i18n.service';
 import { ThemesService } from '../../services/themes.service';
@@ -80,6 +80,8 @@ export class ActionDialogComponent {
 	) {
 		this.i18n.loadNamespace('action');
 	}
+
+    getActionIcon = getActionIcon;
 
 	getAvatar(avatarIdx: number): SessionAvatar | undefined {
 		return this.data.sessionAvatars.find((a) => +a.idx === +avatarIdx);
