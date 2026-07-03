@@ -17,6 +17,16 @@
 		height: 100%;
 		padding: 5px;
 		text-wrap: auto;
+		&-back {
+			font-size: 0.5rem;
+			line-height: 0.7rem;
+			line-break: auto;
+			font-weight: bold;
+			text-wrap: auto;
+			text-align: end;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
 	}
 
 	&-icon {
@@ -29,8 +39,8 @@
 		position: absolute;
 
 		&-back {
-			font-size: 1rem;
-			line-height: 1rem;
+			font-size: 1.2rem;
+			line-height: 1.2rem;
 		}
 	}
 
@@ -40,6 +50,12 @@
 		right: 0;
 		bottom: 0;
 		margin: 5px;
+		letter-spacing: -2px;
+		&-back {
+			font-size: 1.5rem;
+			line-height: 1.5rem;
+			letter-spacing: -2px;
+		}
 	}
 }
 
@@ -58,7 +74,6 @@
 	backface-visibility: hidden;
 	transform: rotateY(180deg);
 }
-
 
 .shortCode {
 	position: absolute;
@@ -100,24 +115,24 @@
 }
 
 .recipe-title {
-    line-height: 1rem;
+	line-height: 1rem;
 	font-weight: bold;
 	font-size: 0.4rem;
-    text-align: center;
+	text-align: center;
 }
 
 .recipe-ingredients {
 	display: flex;
 	flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
+	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .recipe-ingredient {
-    width: 45%;
+	width: 45%;
 	display: flex;
 	align-items: center;
-    justify-content: center;
+	justify-content: center;
 
 	.ingredient-name {
 		font-size: 0.35rem;
@@ -136,8 +151,8 @@
 	}
 }
 
-.check{
-    font-size: 0.4rem;
+.check {
+	font-size: 0.4rem;
 }
 
 .red {

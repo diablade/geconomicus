@@ -23,12 +23,12 @@
 		[ngClass]="[card.color]"
 		*ngIf="state === 'flipped'"
 		(click)="cardClicked()">
-		<div class="d-flex flex-row justify-content-between w-100">
+		<div class="d-flex flex-row justify-content-between align-items-center w-100 p-1">
 			<div class="card-icon-back emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 				{{ getIcon(card.key) }}
 			</div>
-			<div class="card-text">{{ card.key | translate }}</div>
-			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
+			<div class="card-text-back">{{ card.key | translate }}</div>
+			<div class="contour card-letter-back">&nbsp;{{ card.letter }}&nbsp;</div>
 		</div>
 		<div class="prices d-flex flex-row justify-content-between">
 			<div class="price">
