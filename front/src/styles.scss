@@ -196,10 +196,20 @@ html {
 		4px 4px 1px black;
 }
 
+.overlay {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.3);
+}
+
 .frame {
 	border-radius: 10px;
 	backdrop-filter: blur(10px);
-	padding: 15px;
+	padding: 0.5em;
 
 	&-light {
 		border: 1px solid #dfdfdf;

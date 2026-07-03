@@ -38,23 +38,28 @@ export class CardComponent implements OnChanges {
 		private audioService: AudioService
 	) {}
 
-        ngOnChanges(changes: SimpleChanges) {
-            if (changes['screenWidth'] || changes['screenHeight']) {
-                this.recalculateSizes();
-            }
-        }
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['screenWidth'] || changes['screenHeight']) {
+			const prevIsPortrait = changes['screenWidth']?.previousValue < changes['screenHeight']?.previousValue;
+			const nowIsPortrait = this.screenWidth < this.screenHeight;
+			const orientationChanged = changes['screenWidth'] && changes['screenHeight'] &&
+				prevIsPortrait !== nowIsPortrait;
+			if (orientationChanged && this.state === 'flipped') {
+				this.closeCard();
+			}
+			this.recalculateSizes();
+		}
+	}
 
 	private recalculateSizes() {
 		const isPortrait = this.screenWidth < this.screenHeight;
-		this.height = this.height ? this.height : isPortrait ? 'calc(28vw * 1.5)' : 'calc(28vh * 1.5)';
-		this.width = this.width ? this.width : isPortrait ? '28vw' : '28vh';
-		this.letterSize = this.letterSize ? this.letterSize : isPortrait ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)';
-		this.priceSize = this.priceSize ? this.priceSize : isPortrait ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)';
-		this.smallPriceSize = this.smallPriceSize
-			? this.smallPriceSize
-			: isPortrait
-				? 'calc(6vw * 0.2)'
-				: 'calc(6vh * 0.2)';
+		const unit = isPortrait ? 'vw' : 'vh';
+		// width = 30vw/vh clamped, height = 1.5x for 2:3 ratio
+		this.width = `clamp(80px, 30${unit}, 150px)`;
+		this.height = `clamp(120px, 45${unit}, 225px)`;
+		this.letterSize = `clamp(10px, 6${unit}, 28px)`;
+		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
+		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
 	}
 
 	closeCard() {

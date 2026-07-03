@@ -21,15 +21,13 @@ export class DeckService {
 	}
 
 	produce(gameStateId: string | undefined, playerStateIdx: string | undefined, cards: Card[]): Observable<Card[]> {
-		return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER.PRODUCE, {
+		return this.http.post<Card[]>(environment.API_HOST + environment.PLAYER_STATE.PRODUCTION, {
 			gameStateId,
 			playerStateIdx,
 			cards: cards.map(card => ({
 				key: card.key,
 				letter: card.letter,
-				color: card.color,
-				weight: card.weight,
-				price: card.price
+				weight: card.weight
 			}))
 		}).pipe(catchError(err => this.errorService.handleError(err, ERROR_RELOAD, "ERROR.EXCHANGE")));
 	}

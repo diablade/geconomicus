@@ -1,120 +1,247 @@
-.avatar {
-	// width: 69px;
-	height: 69px;
-}
-
-.sold {
-	font-size: 1.5rem;
-	line-height: 100%;
-	font-weight: bold;
-	&-small {
-		font-size: 0.7rem;
-		line-height: 100%;
-		margin: 5px;
-		font-weight: bold;
-		text-align: end;
-	}
-	&-container {
-		padding: 0px !important;
-		height: 70px;
-	}
-}
-
-.currency {
-	font-size: 1.5rem;
-}
-
-.titleBar {
-	height: 50px;
-	margin-bottom: 25px;
-}
-
-.username {
-	max-width: 100px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-}
-
 .game {
 	width: 100vw;
 	height: 100vh;
 	background-size: cover;
+	overflow: hidden;
+	position: relative;
 }
 
-.btnCredits {
-	position: fixed;
-	bottom: 0;
-	padding: 15px;
-	left: 0;
-	z-index: 2;
+// ── Portrait layout ───────────────────────────────────────────────────────────
+
+.game:not(.landscape) {
+	display: flex;
+	flex-direction: column;
+
+	.card-area {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 2.5vw;
+		padding-top: calc(clamp(50px, 8vmin, 80px) + 2.5vw);
+		padding-bottom: calc(clamp(44px, 10vmin, 60px) + 5vw);
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 2.5vw;
+		align-content: flex-start;
+		justify-content: center;
+	}
+
+	.btn-credit {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+	}
+	.btn-buy {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+	.btn-action {
+		position: fixed;
+		bottom: 0;
+		right: 0;
+	}
+	.styleBtn-label {
+		display: block;
+	}
+
+	.sold-container {
+		position: fixed;
+		display: flex;
+		top: 0;
+		right: 0;
+		z-index: 10;
+	}
+	.avatar-wrap {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 10;
+	}
+
+	.sold-2 {
+		margin-left: 5px;
+	}
+
+	.credits {
+		left: 0;
+	}
 }
 
-.buy {
-	height: 50px !important;
+// ── Landscape layout ──────────────────────────────────────────────────────────
+
+.game.landscape {
+	display: flex;
+	flex-direction: row;
+
+	.card-area {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 2.5vh;
+		padding-left: calc(clamp(50px, 8vmin, 80px) + 2.5vh);
+		padding-right: calc(clamp(44px, 10vmin, 60px) + 5vh);
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 2.5vh;
+		align-content: flex-start;
+		justify-content: center;
+	}
+
+	.btn-credit {
+		position: fixed;
+		bottom: 0;
+		right: 0;
+		z-index: 10;
+	}
+	.btn-buy {
+		position: fixed;
+		right: 0;
+		display: flex;
+		align-items: center;
+		height: 100%;
+		z-index: 9 !important;
+	}
+	.btn-action {
+		position: fixed;
+		top: 0;
+		right: 0;
+		z-index: 10;
+	}
+	.styleBtn-label {
+		display: none;
+	}
+
+	.sold-container {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 10;
+	}
+	.avatar-wrap {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		z-index: 10;
+	}
+	.sold-1 {
+		order: 2;
+	}
+	.sold-2 {
+		order: 1;
+		margin-right: 5px;
+	}
+
+	.credits {
+		right: 0;
+	}
+
+	.creditsLandscape {
+		justify-content: flex-end;
+	}
+}
+
+// ________other stuff _____________________
+
+.marginArround {
+	margin: 1.6vw;
+	z-index: 20;
 }
 
 .credits {
 	position: fixed;
-	bottom: 80px;
-	left: 0;
-	z-index: 2;
-	visibility: hidden;
+	bottom: 60px;
+	z-index: 5;
+	visibility: visible;
 	overflow: auto;
 }
+
+.sold-container {
+	height: clamp(50px, 8vmin, 80px);
+}
+.sold {
+	font-size: 1.2em;
+	line-height: 100%;
+	font-weight: bold;
+
+	&-small {
+		font-size: 0.7em;
+		line-height: 100%;
+		font-weight: bold;
+	}
+
+	&-container {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		cursor: pointer;
+	}
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+.styleBtn {
+	font-size: 1.5em;
+	border-radius: 99px;
+	backdrop-filter: blur(15px);
+	border: solid gray 2px;
+	padding: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// Force Material FAB/icon-button content to center
+	::ng-deep .mat-button-wrapper,
+	::ng-deep .mat-mdc-button-persistent-ripple,
+	::ng-deep .mdc-button__label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	fa-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&-label {
+		font-size: 0.7em;
+		text-transform: capitalize;
+	}
+}
+
+.size {
+	width: clamp(44px, 10vmin, 60px) !important;
+	height: clamp(44px, 10vmin, 60px) !important;
+	min-width: unset !important;
+
+	&-center {
+		height: clamp(44px, 10vmin, 60px) !important;
+	}
+}
+
+// ── Credits panel ─────────────────────────────────────────────────────────────
 
 .panelOpen {
 	visibility: visible;
 	animation: ease 1s;
 }
 
-.bottom-btn {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	display: flex;
-	padding: 20px;
-	z-index: 2;
-	font-size: 1.5rem;
-
-	.bottom {
-        padding: 20px;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        display: flex;
-		&-left {
-			justify-content: flex-start;
-		}
-		&-right {
-
-			justify-content: flex-end;
-		}
-		&-center {
-			justify-content: center;
-		}
-	}
-	.size {
-		width: 50px !important;
-		height: 50px !important;
-		&-center {
-			height: 50px !important;
-		}
-	}
-	.styleBtn {
-		border-radius: 25px;
-		backdrop-filter: blur(15px);
-		border: solid gray 2px;
-		padding: 5px;
-		font-size: 1.5rem;
-		&-label {
-			font-size: 1rem;
-			text-transform: capitalize;
-		}
-	}
-}
+// ── Blocked overlays ──────────────────────────────────────────────────────────
 
 .blocked {
 	width: 100%;

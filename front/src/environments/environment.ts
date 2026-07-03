@@ -40,6 +40,7 @@ export const environment = {
 		GET: 'game-state/player-state/',
 		GET_PLAYER_CURRENT_STATE_IDX: 'game-state/player-state/',
 		TRANSACTION: 'game-state/player-state/transaction',
+		PRODUCTION: 'game-state/player-state/produce',
 	},
 	ACTION: {
 		GET_TARGET_CARDS: 'game-state/action/get-target-cards',

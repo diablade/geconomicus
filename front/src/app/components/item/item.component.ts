@@ -25,6 +25,7 @@ export class ItemComponent implements OnChanges {
 		count: 1,
 	};
 	@Input() ownerIdx: number | undefined;
+	@Input() shadow = true;
 	@Input() gameStateId: string | undefined;
 	@Input() typeMoney: string | undefined;
 	@Input() suffixShortCode: string | undefined;
@@ -59,19 +60,41 @@ export class ItemComponent implements OnChanges {
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (changes['screenWidth'] || changes['screenHeight']) {
+			const prevIsPortrait = changes['screenWidth']?.previousValue < changes['screenHeight']?.previousValue;
+			const nowIsPortrait = this.screenWidth < this.screenHeight;
+			const orientationChanged =
+				changes['screenWidth'] && changes['screenHeight'] && prevIsPortrait !== nowIsPortrait;
+			if (orientationChanged && this.state === 'flipped') {
+				this.closeCard();
+			}
 			this.recalculateSizes();
 		}
 	}
 
 	private recalculateSizes() {
 		const isPortrait = this.screenWidth < this.screenHeight;
-		this.height = this.height || (isPortrait ? '28vw' : '28vh');
-		this.width = this.width || (isPortrait ? '28vw' : '28vh');
-		this.iconSize = this.iconSize || (isPortrait ? '16vw' : '16vh');
-		this.letterSize = this.letterSize || '3rem';
-		this.textSize = this.textSize || (isPortrait ? '1rem' : '1rem');
-		this.priceSize = this.priceSize || (isPortrait ? '1rem' : '1rem');
-		this.smallPriceSize = this.smallPriceSize || (isPortrait ? 'calc(7vw * 0.2)' : 'calc(7vh * 0.2)');
+		const unit = isPortrait ? 'vw' : 'vh';
+		// 3 cards per row: (100 - 2*padding 2.5 - 2*gap 2.5) / 3 = 30, clamped 80px–150px
+		if (!this.height) {
+			this.height = `clamp(80px, 30${unit}, 150px)`;
+		}
+		if (!this.width) {
+			this.width = `clamp(80px, 30${unit}, 150px)`;
+		}
+
+		// Tailles calculées en % de width, seulement si non fournies via @Input
+		if (!this.iconSize) {
+			this.iconSize = `calc(${this.width} * 0.60)`; // ~60% de width
+		}
+		if (!this.letterSize) {
+			this.letterSize = `calc(${this.width} * 0.35)`; // ~35% de width
+		}
+		if (!this.textSize) {
+			this.textSize = `calc(${this.width} * 0.12)`; // ~12% de width
+		}
+
+		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
+		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
 	}
 
 	closeCard() {

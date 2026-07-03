@@ -70,7 +70,7 @@ ActionStateService.give = async (gameStateId, giverIdx, receiverIdx, cardKey) =>
 		socket.emitAckTo(ROOMS.playerState(gameStateId, receiverIdx), IO.PLAYER.ACTION_DONE, {
 			actionKey: 'give',
 			card,
-			fromName: giver.name,
+			fromAvatarIdx: giver.avatarIdx,
 		});
 
 		return { cardsLK: giver.cards, actionTokens: giver.actionTokens };
@@ -235,12 +235,12 @@ ActionStateService.ong = async (gameStateId, giverIdx, cardKeys, manualTargetIdx
 		socket.emitAckTo(ROOMS.playerState(gameStateId, targets[0].idx), IO.PLAYER.ACTION_DONE, {
 			actionKey: 'ong',
 			cards: batch1,
-			fromName: giver.name,
+			fromAvatarIdx: giver.avatarIdx,
 		});
 		socket.emitAckTo(ROOMS.playerState(gameStateId, targets[1].idx), IO.PLAYER.ACTION_DONE, {
 			actionKey: 'ong',
 			cards: batch2,
-			fromName: giver.name,
+			fromAvatarIdx: giver.avatarIdx,
 		});
 
 		return { cardsLK: giver.cards, actionTokens: giver.actionTokens };

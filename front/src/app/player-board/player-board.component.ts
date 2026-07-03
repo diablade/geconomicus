@@ -50,6 +50,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	screenWidth = 0;
 	screenHeight = 0;
 
+	get isLandscape(): boolean {
+		return this.screenWidth > this.screenHeight;
+	}
+
 	sessionId: string | undefined;
 	gameStateId: string | undefined;
 	avatarIdx: number | undefined;
@@ -167,10 +171,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		// Quitter les rooms du jeu
 		this.playerStateService.leaveRooms();
 		this.playerStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
+		window.removeEventListener('resize', this._resizeHandler);
 	}
 
 	ngOnInit(): void {
@@ -201,11 +205,14 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	updateScreenSize() {
-		// Listen for window resize events to update the dimensions if the screen size changes
+	private _resizeHandler = () => {
 		this.screenWidth = window.innerWidth;
 		this.screenHeight = window.innerHeight;
-		window.addEventListener('resize', this.updateScreenSize.bind(this));
+	};
+
+	updateScreenSize() {
+		this._resizeHandler();
+		window.addEventListener('resize', this._resizeHandler);
 	}
 
 	initPanels() {
@@ -242,10 +249,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	produceLevelUp($event: any) {
-		if (this.isProducing) {
-			return; // Prevent double-clicks
-		}
-		this.isProducing = true;
 		this.playerStateService.produce($event.letter, $event.weight);
 	}
 
@@ -329,7 +332,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				playerStateIdx: this.playerStateIdx,
 				actionTokens: vm.actionTokens,
 				actions: vm.rules.actions || [],
-				myCards: _.uniqBy(vm.cards, 'letter'),
+				myCards: vm.cards,
 				typeMoney: vm.gameState.typeMoney,
 				currentDU: vm.gameState.currentDU,
 				typeTheme: vm.typeTheme,

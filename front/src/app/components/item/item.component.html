@@ -2,7 +2,8 @@
 	<div class="overlay" (click)="closeCard()"></div>
 </ng-container>
 <div
-	class="card box-shadowed"
+	class="card"
+	[class.box-shadowed]="state === 'default' && shadow"
 	[ngClass]="[card.color]"
 	[@itemFlip]="{ value: state, params: { translateX: translateX, translateY: translateY, height, width } }">
 	<!-- FRONT -->
@@ -55,6 +56,7 @@
 						class="recipe-ingredient"
 						[class.have]="ingredient.have > 0"
 						[class.missing]="ingredient.have === 0">
+						<span class="check" *ngIf="ingredient.have > 0">✅</span>
 						<span class="emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 							{{ getIcon(ingredient.key) }}
 						</span>

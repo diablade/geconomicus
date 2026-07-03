@@ -98,7 +98,6 @@ DecksHelper.generateDecks = async (rules, length) => {
 	return tableDecks;
 };
 
-
 /**
  * Push cards back into the in-memory decks (no DB call).
  * Caller must hold the game lock (via InMemoryGameStateManager.withLock).
@@ -136,11 +135,14 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	}
 
 	const cardsToExchange = playerState.cards.filter((card) => idsToFilter.includes(card.key));
+	const weight = cardsToExchange[0].weight;
 	if (cardsToExchange.length !== amountCardsForProd) {
 		throw new Error('ERROR.NOT_ENOUGH_CARDS');
 	}
+	if (cardsToExchange.map((card) => card.weight).some((w) => w !== weight)) {
+		throw new Error('ERROR.CARDS_MUST_HAVE_SAME_WEIGHT');
+	}
 
-	const weight = cardsToExchange[0].weight;
 	if (weight >= 3) throw new Error('Technological change not yet implemented');
 
 	// Remove production cards from player's hand

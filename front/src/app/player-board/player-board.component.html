@@ -27,54 +27,107 @@
 			</button>
 		</div>
 	</div>
+
 	<div
-		class="p-2 w-100 h-100 game d-flex flex-column overflow-auto"
+		class="game"
+		[class.landscape]="isLandscape"
 		[ngClass]="vm.avatar?.boardConf"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
-		<div class="">
-			<div class="titleBar d-flex flex-row justify-content-between">
-				<div class="avatar-container">
-					<div class="d-flex flex-row align-items-center gap-2">
-						<avatar
-							[routerLink]="['/avatar', sessionId, avatarIdx]"
-							[avatar]="vm.avatar"
-							[width]="'69px'"
-							[height]="'69px'"
-							[namePosition]="'right'"
-							[onlineStatus]="true"
-							[connection]="playerConnection$ | async"
-							class="avatar"></avatar>
-					</div>
+		<!-- Title bar -->
+		<!-- Portrait: avatar left, coins right -->
+		<!-- Landscape: coins top, avatar bottom -->
+		<div class="marginArround sold-container frame frame-light" (click)="refresh()">
+			<div class="sold-1 d-flex flex-column">
+				<div class="sold contourText">
+					{{
+						(vm.gameState.typeMoney === DEBT ? vm.coins : vm.coins / vm.gameState.currentDU)
+							| number: '1.2-2'
+					}}
+					{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU') | translate }}
 				</div>
-				<div class="sold-container d-flex flex-row frame frame-light align-items-center" (click)="refresh()">
-					<div class="d-flex flex-column ms-2">
-						<div class="sold contourText">
-							{{
-								(vm.gameState.typeMoney === DEBT ? vm.coins : vm.coins / vm.gameState.currentDU)
-									| number: '1.2-2'
-							}}
-							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU') | translate }}
-						</div>
-						<div class="smallSold">
-							{{ vm.gameState.typeMoney === DEBT ? ('PLAYER.DEBT' | translate) + ':' : '' }}
-							{{
-								vm.gameState.typeMoney === DEBT
-									? currentDebts(vm.credits)
-									: (vm.coins | number: '1.2-2')
-							}}
-							{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE') | translate }}
-						</div>
-					</div>
-					<div class="flex-grow-1"></div>
-					<coin
-						class=""
-						[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
-						[height]="'50px'"
-						[width]="'50px'"
-						[forceRotate]="flipCoin"></coin>
+				<div class="sold-small">
+					{{ vm.gameState.typeMoney === DEBT ? ('PLAYER.DEBT' | translate) + ':' : '' }}
+					{{ vm.gameState.typeMoney === DEBT ? currentDebts(vm.credits) : (vm.coins | number: '1.2-2') }}
+					{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE') | translate }}
 				</div>
 			</div>
-			<div class="" *ngIf="vm.gameState.status !== PLAYING">
+			<coin
+				class="sold-2"
+				[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
+				[height]="'2.5em'"
+				[width]="'2.5em'"
+				[forceRotate]="flipCoin"></coin>
+		</div>
+		<div class="marginArround avatar-wrap">
+			<avatar
+				[routerLink]="['/avatar', sessionId, avatarIdx]"
+				[avatar]="vm.avatar"
+				[width]="'4em'"
+				[height]="'4em'"
+				[namePosition]="'right'"
+				[onlineStatus]="true"
+				[connection]="playerConnection$ | async"></avatar>
+		</div>
+		<div class="btn-buy marginArround">
+			<button
+				class="styleBtn size-center box-shadowed z2"
+				mat-raised-button
+				color="primary"
+				[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
+				(click)="buyWith()">
+				<div class="d-flex flex-row gap-1 align-items-center">
+					<span class="styleBtn-label">{{ 'PLAYER.BUY' | translate }}</span>
+					<fa-icon [icon]="faCreditCardAlt"></fa-icon>
+				</div>
+			</button>
+		</div>
+		<div class="btn-credit marginArround">
+			<button
+				*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
+				class="styleBtn size box-shadowed z2"
+				mat-icon-button
+				color="primary"
+				(click)="togglePanel('credit')">
+				<fa-icon [icon]="faFileContract"></fa-icon>
+			</button>
+			<button
+				*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
+				class="styleBtn size box-shadowed z2"
+				mat-fab
+				color="primary"
+				(click)="togglePanel('credit')">
+				<fa-icon [icon]="faFileContract"></fa-icon>
+			</button>
+		</div>
+		<div class="btn-action marginArround">
+			<button
+				class="styleBtn size box-shadowed z2"
+				mat-fab
+				color="accent"
+				[matBadge]="vm.actionTokens"
+				matBadgeColor="warn"
+				matBadgePosition="above before"
+				(click)="openActionDialog(vm)">
+				<mat-icon>bolt</mat-icon>
+			</button>
+		</div>
+		<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
+			<div
+				[class.creditsLandscape]="isLandscape"
+				class="d-flex flex-row overflow-auto w-100"
+				*ngIf="panelCreditOpenState">
+				<app-credit
+					*ngFor="let credit of vm.credits"
+					[small]="true"
+					[duration]="vm.rules.durationCredit"
+					[credit]="credit"
+					(actionBtn)="creditActionBtn($event, credit)"></app-credit>
+			</div>
+		</div>
+
+		<!-- Card area (scrollable, goes edge to edge, padding accounts for fixed chrome) -->
+		<div class="card-area">
+			<div *ngIf="vm.gameState.status !== PLAYING" class="w-100 text-center">
 				<div class="text-center m-5 fs-1">⌛</div>
 				<div class="text-center shadowed fs-1 m-2">
 					{{
@@ -89,7 +142,6 @@
 					[stroked]="true"
 					[durationCredit]="vm.rules.durationCredit || 0"
 					*ngIf="vm.gameState.status !== STOPPED"></app-notice-btn>
-
 				<button
 					class="ms-1"
 					*ngIf="vm.gameState.status === STOPPED"
@@ -99,7 +151,8 @@
 					{{ 'BACK_TO_LOBBY' | translate }}
 				</button>
 			</div>
-			<div *ngIf="vm.typeTheme === 'CARD'" @list class="d-flex flex-row flex-wrap">
+
+			<ng-container *ngIf="vm.typeTheme === 'CARD'">
 				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
 					<app-card
 						@item
@@ -116,8 +169,9 @@
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"></app-card>
 				</ng-container>
-			</div>
-			<div *ngIf="vm.typeTheme !== 'CARD'" @list class="d-flex flex-row flex-wrap justify-content-center">
+			</ng-container>
+
+			<ng-container *ngIf="vm.typeTheme !== 'CARD'">
 				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
 					<app-item
 						@item
@@ -135,68 +189,7 @@
 						[screenWidth]="screenWidth"
 						[screenHeight]="screenHeight"></app-item>
 				</ng-container>
-			</div>
-			<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
-				<div class="d-flex flex-row overflow-auto w-100" *ngIf="panelCreditOpenState">
-					<app-credit
-						*ngFor="let credit of vm.credits"
-						[small]="true"
-						[duration]="vm.rules.durationCredit"
-						[credit]="credit"
-						(actionBtn)="creditActionBtn($event, credit)"></app-credit>
-				</div>
-			</div>
-			<div class="bottom-btn">
-				<!-- Left: credit toggle (debt only) -->
-				<div class="bottom-left bottom">
-					<button
-						*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
-						class="styleBtn size box-shadowed z2"
-						mat-icon-button
-						color="primary"
-						(click)="togglePanel('credit')">
-						<fa-icon [icon]="faFileContract"></fa-icon>
-					</button>
-					<button
-						*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
-						class="styleBtn size box-shadowed z2"
-						mat-fab
-						color="primary"
-						(click)="togglePanel('credit')">
-						<fa-icon [icon]="faFileContract"></fa-icon>
-					</button>
-					<div *ngIf="vm.gameState.typeMoney === JUNE"></div>
-				</div>
-				<!-- Center: button -->
-				<div class="bottom-center bottom">
-					<button
-						class="styleBtn size-center box-shadowed z2"
-						mat-raised-button
-						color="accent"
-						[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
-						(click)="buyWith()">
-						<div class="d-flex flex-row gap-1 align-items-center">
-							<div class="styleBtn-label">{{ 'PLAYER.BUY' | translate }}</div>
-							<div>
-								<fa-icon [icon]="faCreditCardAlt"></fa-icon>
-							</div>
-						</div>
-					</button>
-				</div>
-				<!-- Right: button -->
-				<div class="bottom-right bottom">
-					<button
-						class="styleBtn size box-shadowed z2"
-						mat-fab
-						color="warn"
-						[matBadge]="vm.actionTokens"
-						matBadgeColor="accent"
-						matBadgePosition="above after"
-						(click)="openActionDialog(vm)">
-						<mat-icon>flash_on</mat-icon>
-					</button>
-				</div>
-			</div>
+			</ng-container>
 		</div>
 	</div>
 </ng-container>

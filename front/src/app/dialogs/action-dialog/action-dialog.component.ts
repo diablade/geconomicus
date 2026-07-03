@@ -6,6 +6,7 @@ import { Card } from '../../models/gameState';
 import { I18nService } from '../../services/i18n.service';
 import { ThemesService } from '../../services/themes.service';
 import { InformationDialogComponent } from '../information-dialog/information-dialog.component';
+import _ from 'lodash';
 
 export interface SessionAvatar {
 	idx: number;
@@ -57,10 +58,17 @@ export class ActionDialogComponent {
 
 	selectedOngCards: Card[] = [];
 
+    famillyCards = _.uniqBy(this.data.myCards, 'letter');
+
 	whoHaveCardLoading = false;
 
 	error = '';
 	loading = false;
+
+	readonly dialogCardSize = '70px';
+	readonly dialogIconSize = '45px';
+	readonly dialogLetterSize = '25px';
+	readonly dialogTextSize = '10px';
 
 	constructor(
 		public dialogRef: MatDialogRef<ActionDialogComponent>,

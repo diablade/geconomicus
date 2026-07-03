@@ -48,7 +48,7 @@
 		<p class="hint">{{ 'ACTION.WHO_HAVE_CARD.HINT' | translate }}</p>
 		<div class="family-grid">
 			<div
-				*ngFor="let card of data.myCards"
+				*ngFor="let card of famillyCards"
 				class="family-grid-item"
 				[class.selected]="selectedCard?.key === card.key"
 				(click)="selectWhoHaveCard(card)">
@@ -111,17 +111,17 @@
 					</div>
 					<app-item
 						[card]="card"
+						[shadow]="false"
 						[typeMoney]="data.typeMoney"
 						[currentDU]="data.currentDU"
 						[typeTheme]="data.typeTheme"
 						[gameStateId]="data.gameStateId"
+						[iconSize]="dialogIconSize"
+						[letterSize]="dialogLetterSize"
+						[textSize]="dialogTextSize"
 						[flippable]="false"
-						width="70px"
-						height="70px"
-						iconSize="36px"
-						letterSize="0.8rem"
-						textSize="0.5rem"
-						priceSize="0.5rem"></app-item>
+						[width]="dialogCardSize"
+						[height]="dialogCardSize"></app-item>
 				</div>
 			</div>
 		</ng-container>
@@ -141,17 +141,17 @@
 					</div>
 					<app-item
 						[card]="card"
+						[shadow]="false"
 						[typeMoney]="data.typeMoney"
 						[currentDU]="data.currentDU"
 						[typeTheme]="data.typeTheme"
 						[gameStateId]="data.gameStateId"
+						[iconSize]="dialogIconSize"
+						[letterSize]="dialogLetterSize"
+						[textSize]="dialogTextSize"
 						[flippable]="false"
-						width="70px"
-						height="70px"
-						iconSize="36px"
-						letterSize="0.8rem"
-						textSize="0.5rem"
-						priceSize="0.5rem"></app-item>
+						[width]="dialogCardSize"
+						[height]="dialogCardSize"></app-item>
 				</div>
 			</div>
 			<div *ngIf="!targetCardsLoading && !targetCardsError && targetCards.length === 0" class="empty-msg w-100">
@@ -180,17 +180,17 @@
 				</div>
 				<app-item
 					[card]="card"
+					[shadow]="false"
 					[typeMoney]="data.typeMoney"
 					[currentDU]="data.currentDU"
 					[typeTheme]="data.typeTheme"
 					[gameStateId]="data.gameStateId"
+					[iconSize]="dialogIconSize"
+					[letterSize]="dialogLetterSize"
+					[textSize]="dialogTextSize"
 					[flippable]="false"
-					width="70px"
-					height="70px"
-					iconSize="36px"
-					letterSize="0.8rem"
-					textSize="0.5rem"
-					priceSize="0.5rem"></app-item>
+					[width]="dialogCardSize"
+					[height]="dialogCardSize"></app-item>
 			</div>
 		</div>
 		<div class="step-actions ong-actions" *ngIf="selectedOngCards.length === 4">

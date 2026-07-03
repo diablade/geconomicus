@@ -198,8 +198,8 @@ GameStateController.getPlayerState = async (req, res, next) => {
 };
 GameStateController.produce = async (req, res, next) => {
 	try {
-		const { gameStateId, playerIdx, cards } = req.body;
-		const result = await DecksStateService.produce(gameStateId, playerIdx, cards);
+		const { gameStateId, playerStateIdx, cards } = req.body;
+		const result = await DecksStateService.produce(gameStateId, playerStateIdx, cards);
 		return res.status(200).json({
 			status: 'ok',
 			result,

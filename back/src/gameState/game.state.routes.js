@@ -17,13 +17,13 @@ router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
 
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
-router.post('/produce', validate(stateSanitize.produce), gameStateController.produce);
 router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
 // router.post('/kill-player', validate(sanitize.killPlayer), gameStateController.killPlayer);
 // router.post('/refresh-force-all-players', validate(sanitize.refreshForceAllPlayers), gameStateController.refreshForceAllPlayers);
 // router.post('/refresh-player', validate(sanitize.refreshPlayer), gameStateController.refreshPlayer);
 
 
+router.post('/player-state/produce', validate(stateSanitize.produce), gameStateController.produce);
 router.get('/player-state/:sessionId/:gameStateId/:avatarIdx', validate(stateSanitize.getCurrentPlayerStateIdx, 'params'), gameStateController.getCurrentPlayerStateIdx);
 router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', validate(stateSanitize.getPlayerState, 'params'), gameStateController.getPlayerState);
 router.post('/player-state/transaction', validate(stateSanitize.transaction), gameStateController.transaction);

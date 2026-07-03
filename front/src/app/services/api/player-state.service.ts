@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, from, map, Observable } from 'rxjs';
 import { GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
@@ -83,27 +83,36 @@ export class PlayerStateService {
 			return true;
 		}),
 		map(({ cards, typeTheme }: { cards: Card[]; typeTheme: string }) => {
+			let annotated;
+            const countByResult = _.countBy(cards, (c: Card) => this.cardKeyCount(c));
+            const keyDuplicates: string[] = [];
+
 			if (typeTheme !== 'CARD') {
-				return _.orderBy(cards, ['letter', 'weight'], ['asc', 'asc']);
+				annotated = _.orderBy(cards, ['weight', 'letter'], ['asc', 'asc']).map((c) => {
+					const countKey = this.cardKeyCount(c);
+					const count = countByResult[countKey] || 0;
+					const existCountKey = keyDuplicates.find((k) => k === countKey);
+					if (count >= 1 && !existCountKey) {
+						keyDuplicates.push(countKey);
+					}
+					return { ...c, count };
+				});
+			} else {
+				annotated = _.orderBy(cards, ['letter', 'weight'], ['asc', 'asc']).map((c) => {
+					const countKey = this.cardKeyCount(c);
+					const count = countByResult[countKey] || 0;
+					const existCountKey = keyDuplicates.find((k) => k === countKey);
+					let displayed = c.displayed;
+					if (count > 1 && existCountKey) displayed = false;
+					if (count >= 1 && !existCountKey) {
+						keyDuplicates.push(countKey);
+						displayed = true;
+					}
+					return { ...c, count, displayed };
+				});
 			}
 
-			const countByResult = _.countBy(cards, (c: Card) => this.cardKeyCount(c));
-			const keyDuplicates: string[] = [];
-
-			const annotated = _.orderBy(cards, ['letter', 'weight'], ['asc', 'asc']).map((c) => {
-				const countKey = this.cardKeyCount(c);
-				const count = countByResult[countKey] || 0;
-				const existCountKey = keyDuplicates.find((k) => k === countKey);
-				let displayed = c.displayed;
-				if (count > 1 && existCountKey) displayed = false;
-				if (count >= 1 && !existCountKey) {
-					keyDuplicates.push(countKey);
-					displayed = true;
-				}
-				return { ...c, count, displayed };
-			});
-
-			return _.orderBy(annotated, ['count', 'letter', 'weight'], ['desc', 'asc', 'asc']);
+			return _.orderBy(annotated, ['count', 'weight', 'letter'], ['desc', 'asc', 'asc']);
 		})
 	);
 
@@ -429,12 +438,13 @@ export class PlayerStateService {
 		this.wsService.on(IO.PLAYER.ACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			// card arriving (give / ong)
+            const avatar = this.avatarsSubject.getValue().find(a => a.idx==data.fromAvatarIdx);
 			if (data.card) {
 				const cards = this.cardsSubject.getValue();
 				this.cardsSubject.next([...cards, data.card]);
 				this.dialog.open(InformationDialogComponent, {
 					data: {
-						message: this.i18nService.instant('ACTION.RECEIVED_GIVE', { fromName: data.fromName }),
+						message: this.i18nService.instant('ACTION.RECEIVED_GIVE', { fromName: avatar?.name }),
 					},
 				});
 			}
@@ -444,7 +454,7 @@ export class PlayerStateService {
 				this.dialog.open(InformationDialogComponent, {
 					data: {
 						message: this.i18nService.instant('ACTION.RECEIVED_ONG', {
-							fromName: data.fromName,
+							fromName: avatar?.name,
 							count: data.cards.length,
 						}),
 					},
@@ -826,9 +836,17 @@ export class PlayerStateService {
 	produce(letter: string, weight: number): void {
 		const rules = this.rulesSubject.getValue();
 		const cards = this.cardsSubject.getValue();
-
 		if (!rules || !cards) {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.INVALID_STATE'));
+			return;
+		}
+
+		if (this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE'));
+			return;
+		}
+		if (this.gameStateSubject.getValue().status !== GAME_STATUS.PLAYING) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.GAME_NOT_PLAYING'));
 			return;
 		}
 
