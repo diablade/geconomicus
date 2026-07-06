@@ -4,13 +4,18 @@
 			<!-- ── Header ── -->
 			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
 				<div class="d-flex flex-row align-items-center gap-3 flex-wrap">
+					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
+						🔄️ {{ 'BACK_TO_MASTER_BOARD' | translate }}
+					</button>
 					<img class="geco glow" src="./assets/images/geconomicus.png" alt="Geconomicus" />
 					<div>
 						<div class="title geconomicusFont contourText ombreText">
 							{{ vm.session.name }} -
 							{{ vm.rules.typeMoney === JUNE ? ('FREE_MONEY' | translate) : ('DEBT_MONEY' | translate) }}
 						</div>
-						<div class="subtitle white">Vue animateur &middot; table de contr&ocirc;le &middot; {{ vm.gameState.status }}</div>
+						<div class="subtitle white">
+							Vue animateur &middot; table de contr&ocirc;le &middot; {{ vm.gameState.status }}
+						</div>
 					</div>
 				</div>
 				<div class="d-flex flex-row align-items-center gap-2">
@@ -24,33 +29,74 @@
 			<!-- ── Stats strip ── -->
 			<div class="d-flex flex-row flex-wrap gap-2 mt-2">
 				<div class="chip frame frame-light box-shadowed">
-					&#128101; <b>{{ vm.alive.length }} / {{ vm.rows.length }}</b> joueurs en vie
+					&#128101;
+					<b>{{ vm.alive.length }} / {{ vm.rows.length }}</b>
+					joueurs en vie
 				</div>
 				<div class="chip frame frame-light box-shadowed">
-					&#128994; <b>{{ vm.connectedCount }}</b> connect&eacute;s &middot; &#128308;
+					&#128994;
+					<b>{{ vm.connectedCount }}</b>
+					connect&eacute;s &middot; &#128308;
 					{{ vm.alive.length - vm.connectedCount }} d&eacute;connect&eacute;s
 				</div>
 				<div class="chip frame frame-light box-shadowed">
-					&#9201; <b>{{ vm.minutes }}:{{ vm.seconds }}</b> &middot; {{ vm.rules.roundMinutes }} min
+					&#9201;
+					<b>{{ vm.minutes }}:{{ vm.seconds }}</b>
+					&middot; {{ vm.rules.roundMinutes }} min
 				</div>
 				<div class="chip frame frame-light box-shadowed">
-					&#128176; <b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b> masse mon&eacute;taire
+					&#128176;
+					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
+					masse mon&eacute;taire
 				</div>
 				<div class="chip frame frame-light box-shadowed">
-					&#9889; <b>{{ vm.totalTokens }}</b> jetons d'action en jeu
+					&#9889;
+					<b>{{ vm.totalTokens }}</b>
+					jetons d'action en jeu
 				</div>
 				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					&#128220; <b>{{ vm.activeCreditsCount }}</b> cr&eacute;dits actifs
+					&#128220;
+					<b>{{ vm.activeCreditsCount }}</b>
+					cr&eacute;dits actifs
 				</div>
 				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					&#127974; <b>{{ vm.gameState.bankInterestEarned }}</b> int&eacute;r&ecirc;ts &middot;
-					{{ vm.gameState.bankGoodsEarned }} biens saisis
+					&#127974;
+					<b>{{ vm.gameState.bankInterestEarned }}</b>
+					int&eacute;r&ecirc;ts &middot; {{ vm.gameState.bankGoodsEarned }} biens saisis
 				</div>
 				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE">
-					&#9728;&#65039; <b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b> DU courant
+					&#9728;&#65039;
+					<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
+					DU courant
 				</div>
 			</div>
 
+			<div class="frame frame-light box-shadowed mt-2">
+				<div class="panelTitle geconomicusFont contourText ombreText">Decks</div>
+				<div class="d-flex flex-row justify-content-between gap-2">
+					<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
+						<div class="deckHead">
+							<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
+							<b>Niveau {{ i + 1 }}</b>
+							<span class="muted">&middot; {{ deck.length }} cartes</span>
+						</div>
+						<div class="deckCards">
+							<ng-container *ngFor="let card of deck; trackBy: trackByCard">
+								<app-card
+									*ngIf="card.displayed"
+									[card]="card"
+									[typeMoney]="''"
+									[height]="'43px'"
+									[width]="'26px'"
+									[priceSize]="'5px'"
+									[letterSize]="'10px'"
+									[amountCardsForProd]="100"
+									[flippable]="false"></app-card>
+							</ng-container>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- ── Main: players table + sidebar ── -->
 			<div class="d-flex flex-row flex-wrap align-items-start gap-3 mt-3">
 				<!-- Players table -->
@@ -60,11 +106,17 @@
 							Joueur ({{ vm.alive.length }} en vie &middot; {{ vm.dead.length }} &#129702;) &#8645;
 						</button>
 						<div class="text-center">&#9889;</div>
-						<button class="sortBtn" [class.active]="(sortBy$ | async) === 'coins'" (click)="setSort('coins')">
+						<button
+							class="sortBtn"
+							[class.active]="(sortBy$ | async) === 'coins'"
+							(click)="setSort('coins')">
 							Solde &#8645;
 						</button>
 						<div>Cr&eacute;dits</div>
-						<button class="sortBtn" [class.active]="(sortBy$ | async) === 'cards'" (click)="setSort('cards')">
+						<button
+							class="sortBtn"
+							[class.active]="(sortBy$ | async) === 'cards'"
+							(click)="setSort('cards')">
 							Main &#8645;
 						</button>
 					</div>
@@ -90,7 +142,11 @@
 						<div>
 							<div class="coins">
 								{{ row.coins | number: '1.2-2' }}
-								{{ vm.rules.typeMoney === JUNE ? ('CURRENCY.DU' | translate) : ('CURRENCY.EURO' | translate) }}
+								{{
+									vm.rules.typeMoney === JUNE
+										? ('CURRENCY.DU' | translate)
+										: ('CURRENCY.EURO' | translate)
+								}}
 							</div>
 							<div
 								class="debtLabel"
@@ -104,7 +160,9 @@
 									class="creditChip"
 									*ngFor="let credit of row.credits"
 									[ngClass]="creditChipClass(credit.status)"
-									[title]="'Cr&eacute;dit ' + credit.amount + ' + int&eacute;r&ecirc;t ' + credit.interest">
+									[title]="
+										'Cr&eacute;dit ' + credit.amount + ' + int&eacute;r&ecirc;t ' + credit.interest
+									">
 									&#128220; {{ credit.amount }}+{{ credit.interest }} &middot;
 									{{ creditChipLabel(credit.status) }}
 								</div>
@@ -136,43 +194,25 @@
 				<!-- Sidebar: decks + rules -->
 				<div class="sidebar">
 					<div class="frame frame-light box-shadowed sidePanel">
-						<div class="panelTitle geconomicusFont contourText ombreText">Decks</div>
-						<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
-							<div class="deckHead">
-								<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
-								<b>Niveau {{ i + 1 }}</b>
-								<span class="muted">&middot; {{ deck.length }} cartes</span>
-							</div>
-							<div class="deckCards">
-								<ng-container *ngFor="let card of deck; trackBy: trackByCard">
-									<app-card
-										*ngIf="card.displayed"
-										[card]="card"
-										[typeMoney]="''"
-										[height]="'43px'"
-										[width]="'26px'"
-										[priceSize]="'5px'"
-										[letterSize]="'10px'"
-										[amountCardsForProd]="100"
-										[flippable]="false"></app-card>
-								</ng-container>
-							</div>
+						<div class="panelTitle geconomicusFont contourText ombreText">
+							R&egrave;gles &amp; param&egrave;tres
 						</div>
-					</div>
-
-					<div class="frame frame-light box-shadowed sidePanel mt-3">
-						<div class="panelTitle geconomicusFont contourText ombreText">R&egrave;gles &amp; param&egrave;tres</div>
 
 						<div class="ruleGroup">
 							<div class="ruleTitle">&#127922; Partie</div>
-							<div class="ruleRow"><span>Statut</span><b>{{ vm.gameState.status }}</b></div>
+							<div class="ruleRow">
+								<span>Statut</span>
+								<b>{{ vm.gameState.status }}</b>
+							</div>
 							<div class="ruleRow">
 								<span>Manche</span>
 								<b>{{ vm.rules.roundMax }} &middot; {{ vm.rules.roundMinutes }} min</b>
 							</div>
 							<div class="ruleRow">
 								<span>Mort automatique</span>
-								<b>{{ vm.rules.autoDeath ? 'oui' : 'non' }} &middot; {{ vm.rules.deathPassTimer }} min</b>
+								<b>
+									{{ vm.rules.autoDeath ? 'oui' : 'non' }} &middot; {{ vm.rules.deathPassTimer }} min
+								</b>
 							</div>
 							<div class="ruleRow">
 								<span>Sondage</span>
@@ -201,10 +241,22 @@
 
 						<div class="ruleGroup">
 							<div class="ruleTitle">&#128182; Prix des niveaux</div>
-							<div class="ruleRow"><span>Niveau 1</span><b>{{ vm.rules.priceWeight1 }}</b></div>
-							<div class="ruleRow"><span>Niveau 2</span><b>{{ vm.rules.priceWeight2 }}</b></div>
-							<div class="ruleRow"><span>Niveau 3</span><b>{{ vm.rules.priceWeight3 }}</b></div>
-							<div class="ruleRow"><span>Niveau 4</span><b>{{ vm.rules.priceWeight4 }}</b></div>
+							<div class="ruleRow">
+								<span>Niveau 1</span>
+								<b>{{ vm.rules.priceWeight1 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Niveau 2</span>
+								<b>{{ vm.rules.priceWeight2 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Niveau 3</span>
+								<b>{{ vm.rules.priceWeight3 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Niveau 4</span>
+								<b>{{ vm.rules.priceWeight4 }}</b>
+							</div>
 						</div>
 
 						<div class="ruleGroup">
@@ -225,13 +277,25 @@
 							<div class="ruleTitle">&#127974; Banque &amp; cr&eacute;dit</div>
 							<div class="ruleRow">
 								<span>Cr&eacute;dit par d&eacute;faut</span>
-								<b>{{ vm.rules.defaultCreditAmount }} + {{ vm.rules.defaultInterestAmount }} int&eacute;r&ecirc;t</b>
+								<b>
+									{{ vm.rules.defaultCreditAmount }} +
+									{{ vm.rules.defaultInterestAmount }} int&eacute;r&ecirc;t
+								</b>
 							</div>
-							<div class="ruleRow"><span>Dur&eacute;e du cr&eacute;dit</span><b>{{ vm.rules.durationCredit }} min</b></div>
-							<div class="ruleRow"><span>Prison</span><b>{{ vm.rules.timerPrison }} min</b></div>
+							<div class="ruleRow">
+								<span>Dur&eacute;e du cr&eacute;dit</span>
+								<b>{{ vm.rules.durationCredit }} min</b>
+							</div>
+							<div class="ruleRow">
+								<span>Prison</span>
+								<b>{{ vm.rules.timerPrison }} min</b>
+							</div>
 							<div class="ruleRow">
 								<span>Saisie</span>
-								<b>{{ vm.rules.seizureType }} {{ vm.rules.seizureDecote }}% &middot; frais {{ vm.rules.seizureCosts }}</b>
+								<b>
+									{{ vm.rules.seizureType }} {{ vm.rules.seizureDecote }}% &middot; frais
+									{{ vm.rules.seizureCosts }}
+								</b>
 							</div>
 							<div class="ruleRow">
 								<span>Banque manuelle</span>
@@ -245,17 +309,38 @@
 								<span>Masse mon&eacute;taire</span>
 								<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
 							</div>
-							<div class="ruleRow"><span>Int&eacute;r&ecirc;ts gagn&eacute;s</span><b>{{ vm.gameState.bankInterestEarned }}</b></div>
-							<div class="ruleRow"><span>Biens saisis</span><b>{{ vm.gameState.bankGoodsEarned }}</b></div>
-							<div class="ruleRow"><span>Monnaie perdue</span><b>{{ vm.gameState.bankMoneyLost }}</b></div>
-							<div class="ruleRow"><span>Monnaie d&eacute;truite</span><b>{{ vm.gameState.bankMoneyDestroyed }}</b></div>
+							<div class="ruleRow">
+								<span>Int&eacute;r&ecirc;ts gagn&eacute;s</span>
+								<b>{{ vm.gameState.bankInterestEarned }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Biens saisis</span>
+								<b>{{ vm.gameState.bankGoodsEarned }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Monnaie perdue</span>
+								<b>{{ vm.gameState.bankMoneyLost }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Monnaie d&eacute;truite</span>
+								<b>{{ vm.gameState.bankMoneyDestroyed }}</b>
+							</div>
 						</div>
 
 						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === JUNE">
 							<div class="ruleTitle">&#9728;&#65039; Monnaie libre</div>
-							<div class="ruleRow"><span>DU courant</span><b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b></div>
-							<div class="ruleRow"><span>Taux de croissance</span><b>{{ vm.rules.tauxCroissance }} %</b></div>
-							<div class="ruleRow"><span>Coins de d&eacute;part</span><b>{{ vm.rules.startAmountCoins }}</b></div>
+							<div class="ruleRow">
+								<span>DU courant</span>
+								<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Taux de croissance</span>
+								<b>{{ vm.rules.tauxCroissance }} %</b>
+							</div>
+							<div class="ruleRow">
+								<span>Coins de d&eacute;part</span>
+								<b>{{ vm.rules.startAmountCoins }}</b>
+							</div>
 							<div class="ruleRow">
 								<span>D&eacute;part in&eacute;galitaire</span>
 								<b>
@@ -267,10 +352,22 @@
 
 						<div class="ruleGroup">
 							<div class="ruleTitle">&#8505;&#65039; Session</div>
-							<div class="ruleRow"><span>Nom</span><b>{{ vm.session.name }}</b></div>
-							<div class="ruleRow"><span>Animateur</span><b>{{ vm.session.animator }}</b></div>
-							<div class="ruleRow"><span>Lieu</span><b>{{ vm.session.location }}</b></div>
-							<div class="ruleRow"><span>Code</span><b>{{ vm.session.shortId }}</b></div>
+							<div class="ruleRow">
+								<span>Nom</span>
+								<b>{{ vm.session.name }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Animateur</span>
+								<b>{{ vm.session.animator }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Lieu</span>
+								<b>{{ vm.session.location }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>Code</span>
+								<b>{{ vm.session.shortId }}</b>
+							</div>
 						</div>
 					</div>
 				</div>

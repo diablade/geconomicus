@@ -1,5 +1,6 @@
 .tableBoard {
 	min-height: 100vh;
+	width: 100%;
 }
 
 .geco {
@@ -189,13 +190,13 @@
 	flex: 1 1 300px;
 	max-width: 430px;
 	position: sticky;
-	top: 12px;
+	// top: 12px;
 	max-height: calc(100vh - 24px);
 	overflow: auto;
 }
 
 .sidePanel {
-	padding: 12px !important;
+	// padding: 12px !important;
 }
 
 .panelTitle {
@@ -205,6 +206,8 @@
 
 .deckBlock {
 	margin-bottom: 10px;
+	display: flex;
+	flex-direction: column;
 }
 
 .deckHead {
@@ -243,6 +246,7 @@
 .deckCards {
 	display: flex;
 	flex-wrap: wrap;
+    flex-direction: row;
 	gap: 6px 5px;
 }
 
