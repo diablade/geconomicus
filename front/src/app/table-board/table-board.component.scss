@@ -1,0 +1,278 @@
+.tableBoard {
+	min-height: 100vh;
+}
+
+.geco {
+	width: 150px;
+	margin-top: 10px;
+}
+
+.title {
+	font-size: 23px;
+}
+
+.subtitle {
+	font-size: 13px;
+	text-shadow: 1px 1px 0 black;
+}
+
+.chip {
+	padding: 6px 12px !important;
+	font-size: 13px;
+	white-space: nowrap;
+
+	b {
+		font-size: 14px;
+	}
+}
+
+// ── players table ─────────────────────────────────────────────────────────────
+
+.playersTable {
+	flex: 999 1 620px;
+	min-width: 0;
+	overflow-x: auto;
+	padding: 0 !important;
+}
+
+.tRow {
+	min-width: 640px;
+	display: grid;
+	grid-template-columns: 215px 52px 118px 165px minmax(120px, 1fr);
+	align-items: center;
+	gap: 8px;
+	padding: 7px 12px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+
+	&:not(.tHead):hover {
+		background: rgba(255, 255, 255, 0.25);
+	}
+}
+
+.tHead {
+	background: rgba(0, 0, 0, 0.14);
+	border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.sortBtn {
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: bold;
+	border: none;
+	background: transparent;
+	border-radius: 6px;
+	padding: 3px 8px;
+	cursor: pointer;
+	text-align: left;
+
+	&.active {
+		background: #ffc107;
+	}
+}
+
+.deadRow {
+	opacity: 0.55;
+	filter: grayscale(0.7);
+}
+
+.playerLink {
+	text-decoration: none;
+	color: inherit;
+}
+
+.tokenPill {
+	display: inline-flex;
+	align-items: center;
+	background: #ffe14d;
+	border: 1.5px solid #333;
+	border-radius: 20px;
+	padding: 1px 7px;
+	font-size: 12.5px;
+	font-weight: bold;
+	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+}
+
+.coins {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.debtLabel {
+	font-size: 11.5px;
+	color: #a30f19;
+	font-weight: bold;
+}
+
+.cell-credits {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.creditChip {
+	font-size: 11px;
+	border-radius: 20px;
+	padding: 1px 7px;
+	border: 1.5px solid rgba(0, 0, 0, 0.5);
+	background: #a2cba2;
+
+	&.running {
+		background: #a2cba2;
+	}
+
+	&.requesting {
+		background: #ffaf4d;
+	}
+
+	&.paused {
+		background: #fff04b;
+	}
+
+	&.credit-done {
+		background: #a4a4a4;
+	}
+
+	&.canceled {
+		background: #d10606bd;
+		color: white;
+	}
+
+	&.fault {
+		background: #ff706e;
+		color: white;
+		animation: cops 1s infinite ease;
+	}
+
+	&.prison {
+		background: #3153ff;
+		color: white;
+		animation: cops 1s infinite ease;
+	}
+}
+
+@keyframes cops {
+	0% {
+		background-color: #3153ff;
+	}
+	50% {
+		background-color: #ff0000;
+	}
+	100% {
+		background-color: #3153ff;
+	}
+}
+
+.noChip {
+	font-size: 11.5px;
+	color: #444;
+}
+
+.cell-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 5px;
+	align-items: center;
+	padding: 3px 0;
+}
+
+.cardCount {
+	font-size: 11.5px;
+	color: #333;
+	margin-left: 2px;
+}
+
+// ── sidebar ───────────────────────────────────────────────────────────────────
+
+.sidebar {
+	flex: 1 1 300px;
+	max-width: 430px;
+	position: sticky;
+	top: 12px;
+	max-height: calc(100vh - 24px);
+	overflow: auto;
+}
+
+.sidePanel {
+	padding: 12px !important;
+}
+
+.panelTitle {
+	font-size: 19px;
+	margin-bottom: 8px;
+}
+
+.deckBlock {
+	margin-bottom: 10px;
+}
+
+.deckHead {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	margin-bottom: 6px;
+	font-size: 13.5px;
+
+	.muted {
+		color: #333;
+		font-size: 12px;
+	}
+}
+
+.deckDot {
+	width: 13px;
+	height: 13px;
+	border-radius: 3px;
+	border: 1.5px solid rgba(0, 0, 0, 0.4);
+
+	&.lvl1 {
+		background: #e8a7a6;
+	}
+	&.lvl2 {
+		background: #f3efad;
+	}
+	&.lvl3 {
+		background: #a2cba2;
+	}
+	&.lvl4 {
+		background: #bbdae3;
+	}
+}
+
+.deckCards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 5px;
+}
+
+// ── rules ─────────────────────────────────────────────────────────────────────
+
+.ruleGroup {
+	margin-bottom: 11px;
+}
+
+.ruleTitle {
+	font-weight: bold;
+	font-size: 13px;
+	border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+	padding-bottom: 3px;
+	margin-bottom: 5px;
+}
+
+.ruleRow {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+	font-size: 12.5px;
+	padding: 1px 0;
+
+	span {
+		color: #333;
+	}
+
+	b {
+		text-align: right;
+		flex-shrink: 0;
+	}
+}

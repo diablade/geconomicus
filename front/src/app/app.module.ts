@@ -85,6 +85,7 @@ import { SessionEditDialogComponent } from './dialogs/session-edit/session-edit-
 import { CoinComponent } from './components/coin/coin.component';
 import { BulleComponent } from './components/bulle/bulle.component';
 import { OnlineStatusComponent } from './components/online-status/online-status.component';
+import { TableBoardComponent } from './table-board/table-board.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -150,6 +151,7 @@ LOAD_WASM().subscribe();
 		CoinComponent,
 		BulleComponent,
 		OnlineStatusComponent,
+		TableBoardComponent,
 	],
 	imports: [
 		HttpClientModule,

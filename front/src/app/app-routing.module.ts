@@ -14,6 +14,7 @@ import {ModuleGalileoComponent} from "./components/module-galileo/module-galileo
 import {ModuleWealthDistribComponent} from "./components/module-wealth-distrib/module-wealth-distrib.component";
 import {LobbyMasterComponent} from "./lobby-master/lobby-master.component";
 import {LobbyPlayerComponent} from "./lobby-player/lobby-player.component";
+import {TableBoardComponent} from "./table-board/table-board.component";
 
 const routes: Routes = [
 	{path: '', component: HomeComponent},
@@ -27,7 +28,7 @@ const routes: Routes = [
 	{path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent},
 	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
 	{path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent},
-	{path: 'table/:sessionId/:gameStateId', component: MasterAdminComponent},
+	{path: 'table/:sessionId/:gameStateId', component: TableBoardComponent},
 	{path: 'module/galileo', component: ModuleGalileoComponent},
 	{path: 'module/gini', component: ModuleWealthDistribComponent},
 	//deprecated routes below
