@@ -106,7 +106,7 @@ app.use((req, res, next) => {
 });
 
 // handle errors
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
 	log.error(err);
 
 	// Set error response

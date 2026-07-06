@@ -1,0 +1,9 @@
+{
+    "TABLE": {
+        "TITLE": "Table de jeu",
+        "RULES": "Règles",
+        "REFRESH_PLAYERS": "Rafraîchir les joueurs",
+        "ALIVE_PLAYERS": "Joueurs en vie",
+        "DEAD_PLAYERS": "Joueurs morts"
+    }
+}

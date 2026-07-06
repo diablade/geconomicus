@@ -1,29 +1,29 @@
-import {Component, OnInit} from '@angular/core';
-import {DeprecatedBackService} from "../services/deprecated-back.service";
-import { SESSION_STATUS, GAME_TYPE} from "@geco/shared";
+import { Component, OnInit } from '@angular/core';
+import { DeprecatedBackService } from '../services/deprecated-back.service';
+import { SESSION_STATUS, GAME_TYPE } from '@geco/shared';
 // @ts-ignore
-import * as C from "../../../../back/config/constantes_deprecated.cjs";
+import * as C from '../../../../back/config/constantes_deprecated.cjs';
 
 import * as _ from 'lodash-es';
-import {faTrashCan, faArrowUpWideShort, faArrowDownShortWide} from "@fortawesome/free-solid-svg-icons";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {SnackbarService} from "../services/snackbar.service";
-import {I18nService} from '../services/i18n.service';
-import {SessionService} from '../services/api/session.service';
-import {Session} from '../models/session';
-import {ThemesService} from '../services/themes.service';
+import { faTrashCan, faArrowUpWideShort, faArrowDownShortWide } from '@fortawesome/free-solid-svg-icons';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SnackbarService } from '../services/snackbar.service';
+import { I18nService } from '../services/i18n.service';
+import { SessionService } from '../services/api/session.service';
+import { Session } from '../models/session';
+import { ThemesService } from '../services/themes.service';
 
 @Component({
 	selector: 'app-history-games',
 	templateUrl: './history-games.component.html',
-	styleUrls: ['./history-games.component.scss']
+	styleUrls: ['./history-games.component.scss'],
 })
 export class HistoryGamesComponent implements OnInit {
-    protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly OPEN = SESSION_STATUS.OPEN;
 	protected readonly IN_PROGRESS = SESSION_STATUS.IN_PROGRESS;
-    protected readonly ENDED = SESSION_STATUS.ENDED;
+	protected readonly ENDED = SESSION_STATUS.ENDED;
 	C = C;
 	faTrashCan = faTrashCan;
 	faArrowUpWideShort = faArrowUpWideShort;
@@ -31,101 +31,109 @@ export class HistoryGamesComponent implements OnInit {
 	deleteGames = false;
 	games: any;
 	sessions: Session[] = [];
-	filterByName = "";
-	filterByStatus = "";
-	sortBy = "createdAt";
-	sortOrder: "asc" | "desc" = "desc";
+	filterByName = '';
+	filterByStatus = '';
+	sortBy = 'createdAt';
+	sortOrder: 'asc' | 'desc' = 'desc';
 
-	constructor(private backService: DeprecatedBackService,
-	            public dialog: MatDialog,
-	            private snackbarService: SnackbarService,
-	            private i18nService: I18nService,
-	            private themesService: ThemesService,
-	            private sessionService: SessionService) {
-		this.i18nService.loadNamespace("history");
+	constructor(
+		private backService: DeprecatedBackService,
+		public dialog: MatDialog,
+		private snackbarService: SnackbarService,
+		private i18nService: I18nService,
+		private themesService: ThemesService,
+		private sessionService: SessionService
+	) {
+		this.i18nService.loadNamespace('history');
 	}
 
 	get filteredSessions(): Session[] {
-		return _.orderBy(_.filter(this.sessions, (session: any) =>
-			(!this.filterByName || session.name.includes(this.filterByName)) &&
-			(!this.filterByStatus || session.status === this.filterByStatus)
-		), this.sortBy, this.sortOrder) as Session[];
+		return _.orderBy(
+			_.filter(
+				this.sessions,
+				(session: any) =>
+					(!this.filterByName || session.name.includes(this.filterByName)) &&
+					(!this.filterByStatus || session.status === this.filterByStatus)
+			),
+			this.sortBy,
+			this.sortOrder
+		) as Session[];
 	}
 
 	ngOnInit() {
-		this.backService.getGames().subscribe(async data => {
-			this.games = _.orderBy(data.games, "created", "desc");
+		this.backService.getGames().subscribe(async (data) => {
+			this.games = _.orderBy(data.games, 'created', 'desc');
 		});
-		this.sessionService.getAll().subscribe(async data => {
+		this.sessionService.getAll().subscribe(async (data) => {
 			this.sessions = data;
-			this.sessions = _.orderBy(data, "createdAt", "desc");
+			this.sessions = _.orderBy(data, 'createdAt', 'desc');
 		});
 	}
 
-    getThemeName(theme: string): string {
-        const themeName = this.themesService.getThemeName(theme);
-        return themeName || theme;
-    }
+	getThemeName(theme: string): string {
+		const themeName = this.themesService.getThemeName(theme);
+		return themeName || theme;
+	}
 
 	getStatus(status: string): string {
 		switch (status) {
 			case this.ENDED:
-				return "HISTORY.STATUS.ENDED";
+				return 'HISTORY.STATUS.ENDED';
 			case this.OPEN:
-				return "HISTORY.STATUS.OPEN";
+				return 'HISTORY.STATUS.OPEN';
 			case this.IN_PROGRESS:
-				return "HISTORY.STATUS.IN_PROGRESS";
+				return 'HISTORY.STATUS.IN_PROGRESS';
 			default:
-				return "-";
+				return '-';
 		}
 	}
 
 	getStatusClass(status: string): string {
 		switch (status) {
 			case this.ENDED:
-				return "statusClosed";
+				return 'statusClosed';
 			case this.OPEN:
-				return "statusOpen";
+				return 'statusOpen';
 			case this.IN_PROGRESS:
-				return "statusOnGoing";
+				return 'statusOnGoing';
 			default:
-				return "";
+				return '';
 		}
 	}
 
 	getStatusLegacy(status: string): string {
 		switch (status) {
 			case C.ENDED:
-				return "HISTORY.STATUS.ENDED";
+				return 'HISTORY.STATUS.ENDED';
 			case C.OPEN:
-				return "HISTORY.STATUS.OPEN";
+				return 'HISTORY.STATUS.OPEN';
 			case C.IN_PROGRESS:
-				return "HISTORY.STATUS.IN_PROGRESS";
+				return 'HISTORY.STATUS.IN_PROGRESS';
 			default:
-				return "-";
+				return '-';
 		}
 	}
 
 	getStatusClassLegacy(status: string): string {
 		switch (status) {
 			case C.ENDED:
-				return "statusClosed";
+				return 'statusClosed';
 			case C.OPEN:
-				return "statusOpen";
+				return 'statusOpen';
 			case C.IN_PROGRESS:
-				return "statusOnGoing";
+				return 'statusOnGoing';
 			default:
-				return "";
+				return '';
 		}
 	}
 
 	onDeleteGame(game: any) {
 		const dialogRef = this.dialog.open(GameDeleteDialog, {});
-		dialogRef.afterClosed().subscribe(dataRaw => {
+		dialogRef.afterClosed().subscribe((dataRaw) => {
 			if (dataRaw) {
-				this.backService.deleteGame(game._id, dataRaw).subscribe(async data => {
-					this.snackbarService.showSuccess(this.i18nService.instant("HISTORY.DELETE_GAME"));
-					this.games = _.filter(this.games, g => g._id !== game._id);
+				this.backService.deleteGame(game._id, dataRaw).subscribe(async (data) => {
+					this.snackbarService.showSuccess(this.i18nService.instant('HISTORY.DELETE_GAME'));
+					this.games = _.filter(this.games, (g) => g._id !== game._id);
 				});
 			}
 		});
@@ -133,11 +141,11 @@ export class HistoryGamesComponent implements OnInit {
 
 	onDeleteSession(session: Session) {
 		const dialogRef = this.dialog.open(GameDeleteDialog, {});
-		dialogRef.afterClosed().subscribe(dataRaw => {
+		dialogRef.afterClosed().subscribe((dataRaw) => {
 			if (dataRaw) {
-				this.sessionService.delete(session._id, dataRaw).subscribe(async _data => {
-					this.snackbarService.showSuccess(this.i18nService.instant("HISTORY.DELETE_SESSION"));
-					this.sessions = _.filter(this.sessions, s => s._id !== session._id);
+				this.sessionService.delete(session._id, dataRaw).subscribe(async (_data) => {
+					this.snackbarService.showSuccess(this.i18nService.instant('HISTORY.DELETE_SESSION'));
+					this.sessions = _.filter(this.sessions, (s) => s._id !== session._id);
 				});
 			}
 		});
@@ -149,8 +157,7 @@ export class HistoryGamesComponent implements OnInit {
 	templateUrl: './game-delete-dialog.html',
 })
 export class GameDeleteDialog {
-	value = "";
+	value = '';
 
-	constructor(public dialogRef: MatDialogRef<GameDeleteDialog>) {
-	}
+	constructor(public dialogRef: MatDialogRef<GameDeleteDialog>) {}
 }

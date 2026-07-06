@@ -16,25 +16,42 @@ import db from '#configTest/database';
 /* ================= SETUP ================= */
 const agent = request.agent(app);
 let sessionId;
-let shortId;
+let ruleIdx;
+let gameStateId;
 
 /* ================= HOOKS ================= */
 beforeAll(async () => {
     await db.connect();
-    const res = await agent.post('/session/create').send({
-        name:     'test-avatar-session',
-        animator: 'test-avatar-animator',
-        location: 'test-avatar-location'
+
+    // Create a test session
+    const sessionRes = await agent.post('/session/create').send({
+        name:     'test-game-state-session',
+        animator: 'test-animator',
+        location: 'test-location'
     });
-    expect(res.body).toBeTruthy();
-    expect(res.body._id).toBeTruthy();
-    session = res.body;
+    expect(sessionRes.status).toBe(200);
+    expect(sessionRes.body._id).toBeTruthy();
+    sessionId = sessionRes.body._id;
+
+    // Create a rule set for the session
+    const ruleRes = await agent.post('/rules/create').send({
+        sessionId: sessionId,
+        rules: {
+            typeMoney: 'euro',
+            initialMoneyPerPlayer: 100,
+            maxRound: 10,
+        }
+    });
+    expect(ruleRes.status).toBe(200);
+    expect(ruleRes.body.idx).toBeTruthy();
+    ruleIdx = ruleRes.body.idx;
 });
-// afterEach(async () => await db.clear());
+
 beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    // ioServer.mockClear();
+    // Clear mocks before each test
+    jest.clearAllMocks();
 });
+
 afterAll(async () => {
     await db.clear();
     await db.close();
@@ -44,66 +61,62 @@ afterAll(async () => {
 
 /* ================= TESTS ================= */
 describe("GAME STATE controller tests", () => {
+    let createdGameStateId;
+
     describe("GAME STATE CREATE", () => {
         test("should create a game state from a rule of a session successfully", async () => {
-            const res = await agent.post("/").send({
-
+            const res = await agent.post("/game-state/create").send({
+                sessionId: sessionId,
+                ruleIdx: ruleIdx
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
+            expect(res.body._id).toBeTruthy();
+            createdGameStateId = res.body._id;
         });
     });
+
     describe("GAME STATE GET BY ID", () => {
         test("should get GAME STATE by id successfully", async () => {
-            const res = await agent.get("/").send();
+            const res = await agent.get(`/game-state/${createdGameStateId}`);
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
+            expect(res.body._id).toBe(createdGameStateId);
         });
     });
-    describe("SESSION GET BY SHORT ID", () => {
-        test("should get session by short id successfully", async () => {
-            const res = await agent.get("/session/short/" + shortId).send();
-            expect(res.status).toBe(200);
-            expect(res.body).toBeTruthy();
-            expect(res.body._id).toBe(sessionId);
-            expect(res.body.shortId).toBe(shortId);
-        });
-    });
-    describe("SESSION GET ALL", () => {
-        test("should get all sessions successfully", async () => {
-            const res = await agent.get("/session/all").send();
-            expect(res.status).toBe(200);
-            expect(res.body).toBeTruthy();
-            expect(res.body.length).toBe(1);
-        });
-    });
-    describe("SESSION UPDATE", () => {
-        test("should update session successfully", async () => {
-            const res = await agent.put("/session/update").send({
-                sessionId: sessionId,
-                updates:   {
-                    name:     "test-name-session-updated",
-                    animator: "test-session-animator-updated",
-                    location: "test-session-location-updated",
-                },
+
+    describe("GAME STATE INIT", () => {
+        test("should initialize a game state successfully", async () => {
+            const res = await agent.post("/game-state/init").send({
+                gameStateId: createdGameStateId,
+                players: [
+                    { name: "Player 1", avatarIdx: 0 },
+                    { name: "Player 2", avatarIdx: 1 },
+                    { name: "Player 3", avatarIdx: 2 }
+                ]
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body.acknowledged).toBeTruthy();
-            expect(res.body.modifiedCount).toBe(1);
         });
     });
-    describe("SESSION DELETE", () => {
-        test("should delete session successfully", async () => {
-            const res = await agent.delete("/session/" + sessionId).send();
+
+    describe("GAME STATE START", () => {
+        test("should start a game state successfully", async () => {
+            const res = await agent.post("/game-state/start").send({
+                gameStateId: createdGameStateId
+            });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body.name).toBe("test-name-session-updated");
-            expect(res.body.animator).toBe("test-session-animator-updated");
-            expect(res.body.location).toBe("test-session-location-updated");
-            expect(res.body.shortId).toBe(shortId);
-            expect(res.body._id).toBe(sessionId);
+        });
+    });
+
+    describe("GAME STATE STOP", () => {
+        test("should stop a game state successfully", async () => {
+            const res = await agent.post("/game-state/stop").send({
+                gameStateId: createdGameStateId
+            });
+            expect(res.status).toBe(200);
+            expect(res.body).toBeTruthy();
         });
     });
 });
-
