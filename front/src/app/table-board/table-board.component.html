@@ -71,9 +71,12 @@
 				</div>
 			</div>
 
-			<div class="frame frame-light box-shadowed mt-2">
-				<div class="panelTitle geconomicusFont contourText ombreText">Decks</div>
-				<div class="d-flex flex-row justify-content-between gap-2">
+			<div class="frame frame-light box-shadowed mt-2 rowPanel">
+				<button class="panelHead" type="button" (click)="decksOpen = !decksOpen">
+					<span class="panelTitle geconomicusFont contourText ombreText">Decks</span>
+					<span class="foldChip">{{ decksOpen ? '&#9662; replier' : '&#9656; d&eacute;plier' }}</span>
+				</button>
+				<div class="decksRow" *ngIf="decksOpen">
 					<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
 						<div class="deckHead">
 							<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
@@ -97,10 +100,212 @@
 					</div>
 				</div>
 			</div>
-			<!-- ── Main: players table + sidebar ── -->
-			<div class="d-flex flex-row flex-wrap align-items-start gap-3 mt-3">
+			<!-- ── Rules row ── -->
+			<div class="frame frame-light box-shadowed mt-2 rowPanel">
+				<button class="panelHead" type="button" (click)="rulesOpen = !rulesOpen">
+					<span class="panelTitle geconomicusFont contourText ombreText">
+						R&egrave;gles &amp; param&egrave;tres
+					</span>
+					<span class="foldChip">{{ rulesOpen ? '&#9662; replier' : '&#9656; d&eacute;plier' }}</span>
+				</button>
+				<div class="rulesGrid" *ngIf="rulesOpen">
+					<div class="ruleGroup">
+						<div class="ruleTitle">&#127922; Partie</div>
+						<div class="ruleRow">
+							<span>Statut</span>
+							<b>{{ vm.gameState.status }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Manche</span>
+							<b>{{ vm.rules.roundMax }} &middot; {{ vm.rules.roundMinutes }} min</b>
+						</div>
+						<div class="ruleRow">
+							<span>Mort automatique</span>
+							<b>{{ vm.rules.autoDeath ? 'oui' : 'non' }} &middot; {{ vm.rules.deathPassTimer }} min</b>
+						</div>
+						<div class="ruleRow">
+							<span>Sondage</span>
+							<b>{{ vm.rules.surveyEnabled ? 'activ&eacute;' : 'd&eacute;sactiv&eacute;' }}</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup">
+						<div class="ruleTitle">&#127183; Cartes &amp; production</div>
+						<div class="ruleRow">
+							<span>Cartes pour produire</span>
+							<b>{{ vm.rules.amountCardsForProd }} identiques</b>
+						</div>
+						<div class="ruleRow">
+							<span>Distribution initiale</span>
+							<b>{{ vm.rules.distribInitCards }} cartes</b>
+						</div>
+						<div class="ruleRow">
+							<span>Lettres</span>
+							<b>
+								{{ vm.rules.generateLettersAuto ? 'auto' : vm.rules.generateLettersInDeck }}
+								&middot; {{ vm.rules.generatedIdenticalLetters }} identiques
+							</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup">
+						<div class="ruleTitle">&#128182; Prix des niveaux</div>
+						<div class="ruleRow">
+							<span>Niveau 1</span>
+							<b>{{ vm.rules.priceWeight1 }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Niveau 2</span>
+							<b>{{ vm.rules.priceWeight2 }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Niveau 3</span>
+							<b>{{ vm.rules.priceWeight3 }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Niveau 4</span>
+							<b>{{ vm.rules.priceWeight4 }}</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup">
+						<div class="ruleTitle">&#9889; Actions (co&ucirc;t en jetons)</div>
+						<div class="ruleRow" *ngFor="let action of vm.rules.actions">
+							<ng-container *ngIf="action.enabled">
+								<span>{{ getActionIcon(action.key) }} {{ action.labelKey | translate }}</span>
+								<b>&#9889; {{ action.cost }}</b>
+							</ng-container>
+						</div>
+						<div class="ruleRow">
+							<span>Jetons de d&eacute;part</span>
+							<b>&#9889; {{ vm.rules.startingTokens }}</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
+						<div class="ruleTitle">&#127974; Banque &amp; cr&eacute;dit</div>
+						<div class="ruleRow">
+							<span>Cr&eacute;dit par d&eacute;faut</span>
+							<b>
+								{{ vm.rules.defaultCreditAmount }} +
+								{{ vm.rules.defaultInterestAmount }} int&eacute;r&ecirc;t
+							</b>
+						</div>
+						<div class="ruleRow">
+							<span>Dur&eacute;e du cr&eacute;dit</span>
+							<b>{{ vm.rules.durationCredit }} min</b>
+						</div>
+						<div class="ruleRow">
+							<span>Prison</span>
+							<b>{{ vm.rules.timerPrison }} min</b>
+						</div>
+						<div class="ruleRow">
+							<span>Saisie</span>
+							<b>
+								{{ vm.rules.seizureType }} {{ vm.rules.seizureDecote }}% &middot; frais
+								{{ vm.rules.seizureCosts }}
+							</b>
+						</div>
+						<div class="ruleRow">
+							<span>Banque manuelle</span>
+							<b>{{ vm.rules.manualBank ? 'oui' : 'non' }}</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
+						<div class="ruleTitle">&#128202; Comptes banque</div>
+						<div class="ruleRow">
+							<span>Masse mon&eacute;taire</span>
+							<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Int&eacute;r&ecirc;ts gagn&eacute;s</span>
+							<b>{{ vm.gameState.bankInterestEarned }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Biens saisis</span>
+							<b>{{ vm.gameState.bankGoodsEarned }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Monnaie perdue</span>
+							<b>{{ vm.gameState.bankMoneyLost }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Monnaie d&eacute;truite</span>
+							<b>{{ vm.gameState.bankMoneyDestroyed }}</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup" *ngIf="vm.rules.typeMoney === JUNE">
+						<div class="ruleTitle">&#9728;&#65039; Monnaie libre</div>
+						<div class="ruleRow">
+							<span>DU courant</span>
+							<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Taux de croissance</span>
+							<b>{{ vm.rules.tauxCroissance }} %</b>
+						</div>
+						<div class="ruleRow">
+							<span>Coins de d&eacute;part</span>
+							<b>{{ vm.rules.startAmountCoins }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>D&eacute;part in&eacute;galitaire</span>
+							<b>
+								{{ vm.rules.inequalityStart ? 'oui' : 'non' }} &middot; {{ vm.rules.pctPoor }}% /
+								{{ vm.rules.pctRich }}%
+							</b>
+						</div>
+					</div>
+
+					<div class="ruleGroup">
+						<div class="ruleTitle">&#8505;&#65039; Session</div>
+						<div class="ruleRow">
+							<span>Nom</span>
+							<b>{{ vm.session.name }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Animateur</span>
+							<b>{{ vm.session.animator }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Lieu</span>
+							<b>{{ vm.session.location }}</b>
+						</div>
+						<div class="ruleRow">
+							<span>Code</span>
+							<b>{{ vm.session.shortId }}</b>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ── Players: table / boards toggle ── -->
+			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
+				<div class="viewToggle frame frame-light box-shadowed">
+					<button type="button" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
+						&#128203; Tableau
+					</button>
+					<button type="button" [class.active]="viewMode === 'boards'" (click)="setViewMode('boards')">
+						&#127183; Plateaux
+					</button>
+				</div>
+				<div class="sortBar frame frame-light box-shadowed" *ngIf="viewMode === 'boards'">
+					<span class="muted">Trier :</span>
+					<button class="sortBtn" [class.active]="(sortBy$ | async) === 'coins'" (click)="setSort('coins')">
+						&#128176; Solde
+					</button>
+					<button class="sortBtn" [class.active]="(sortBy$ | async) === 'cards'" (click)="setSort('cards')">
+						&#127183; Cartes
+					</button>
+					<button class="sortBtn" [class.active]="(sortBy$ | async) === 'name'" (click)="setSort('name')">
+						&#128292; Nom
+					</button>
+				</div>
+			</div>
+			<div class="mt-2">
 				<!-- Players table -->
-				<div class="playersTable frame frame-light box-shadowed">
+				<div class="playersTable frame frame-light box-shadowed" *ngIf="viewMode === 'table'">
 					<div class="tRow tHead">
 						<button class="sortBtn" [class.active]="(sortBy$ | async) === 'name'" (click)="setSort('name')">
 							Joueur ({{ vm.alive.length }} en vie &middot; {{ vm.dead.length }} &#129702;) &#8645;
@@ -191,183 +396,74 @@
 					</div>
 				</div>
 
-				<!-- Sidebar: decks + rules -->
-				<div class="sidebar">
-					<div class="frame frame-light box-shadowed sidePanel">
-						<div class="panelTitle geconomicusFont contourText ombreText">
-							R&egrave;gles &amp; param&egrave;tres
-						</div>
-
-						<div class="ruleGroup">
-							<div class="ruleTitle">&#127922; Partie</div>
-							<div class="ruleRow">
-								<span>Statut</span>
-								<b>{{ vm.gameState.status }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Manche</span>
-								<b>{{ vm.rules.roundMax }} &middot; {{ vm.rules.roundMinutes }} min</b>
-							</div>
-							<div class="ruleRow">
-								<span>Mort automatique</span>
-								<b>
-									{{ vm.rules.autoDeath ? 'oui' : 'non' }} &middot; {{ vm.rules.deathPassTimer }} min
-								</b>
-							</div>
-							<div class="ruleRow">
-								<span>Sondage</span>
-								<b>{{ vm.rules.surveyEnabled ? 'activ&eacute;' : 'd&eacute;sactiv&eacute;' }}</b>
-							</div>
-						</div>
-
-						<div class="ruleGroup">
-							<div class="ruleTitle">&#127183; Cartes &amp; production</div>
-							<div class="ruleRow">
-								<span>Cartes pour produire</span>
-								<b>{{ vm.rules.amountCardsForProd }} identiques</b>
-							</div>
-							<div class="ruleRow">
-								<span>Distribution initiale</span>
-								<b>{{ vm.rules.distribInitCards }} cartes</b>
-							</div>
-							<div class="ruleRow">
-								<span>Lettres</span>
-								<b>
-									{{ vm.rules.generateLettersAuto ? 'auto' : vm.rules.generateLettersInDeck }}
-									&middot; {{ vm.rules.generatedIdenticalLetters }} identiques
-								</b>
+				<!-- Players boards (player-board style cards) -->
+				<div class="boardsGrid" *ngIf="viewMode === 'boards'">
+					<div
+						class="playerBoardCard box-shadowed"
+						[ngClass]="row.avatar?.boardConf"
+						[ngStyle]="getBackgroundStyle(row.avatar!.boardConf, row.avatar!.boardColor)"
+						*ngFor="let row of vm.rows; trackBy: trackByRow"
+						[class.deadBoard]="row.status === DEAD">
+						<div class="pbHead">
+							<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
+								<avatar
+									[avatar]="row.avatar"
+									width="52px"
+									height="52px"
+									[namePosition]="'right'"
+									[onlineStatus]="true"
+									[connection]="row.connection || null"
+									[playerStatus]="row.status"></avatar>
+							</a>
+							<div class="pbRight">
+								<div class="pbCoins white contourText">
+									{{ row.coins | number: '1.2-2' }}
+									{{
+										vm.rules.typeMoney === JUNE
+											? ('CURRENCY.DU' | translate)
+											: ('CURRENCY.EURO' | translate)
+									}}
+								</div>
+								<div class="tokenPill" title="Jetons d'action">&#9889;{{ row.actionTokens }}</div>
 							</div>
 						</div>
-
-						<div class="ruleGroup">
-							<div class="ruleTitle">&#128182; Prix des niveaux</div>
-							<div class="ruleRow">
-								<span>Niveau 1</span>
-								<b>{{ vm.rules.priceWeight1 }}</b>
+						<div class="pbChips">
+							<div
+								class="creditChip debtChip"
+								*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
+								Dette {{ row.debt }} {{ 'CURRENCY.EURO' | translate }}
 							</div>
-							<div class="ruleRow">
-								<span>Niveau 2</span>
-								<b>{{ vm.rules.priceWeight2 }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Niveau 3</span>
-								<b>{{ vm.rules.priceWeight3 }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Niveau 4</span>
-								<b>{{ vm.rules.priceWeight4 }}</b>
-							</div>
-						</div>
-
-						<div class="ruleGroup">
-							<div class="ruleTitle">&#9889; Actions (co&ucirc;t en jetons)</div>
-							<div class="ruleRow" *ngFor="let action of vm.rules.actions">
-								<ng-container *ngIf="action.enabled">
-									<span>{{ getActionIcon(action.key) }} {{ action.labelKey | translate }}</span>
-									<b>&#9889; {{ action.cost }}</b>
-								</ng-container>
-							</div>
-							<div class="ruleRow">
-								<span>Jetons de d&eacute;part</span>
-								<b>&#9889; {{ vm.rules.startingTokens }}</b>
+							<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
+								<div
+									class="creditChip"
+									*ngFor="let credit of row.credits"
+									[ngClass]="creditChipClass(credit.status)">
+									&#128220; {{ credit.amount }}+{{ credit.interest }} &middot;
+									{{ creditChipLabel(credit.status) }}
+								</div>
+							</ng-container>
+							<div class="creditChip prison" *ngIf="row.status === PRISON">
+								&#128658; Prison {{ row.progressPrison }}%
 							</div>
 						</div>
-
-						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
-							<div class="ruleTitle">&#127974; Banque &amp; cr&eacute;dit</div>
-							<div class="ruleRow">
-								<span>Cr&eacute;dit par d&eacute;faut</span>
-								<b>
-									{{ vm.rules.defaultCreditAmount }} +
-									{{ vm.rules.defaultInterestAmount }} int&eacute;r&ecirc;t
-								</b>
-							</div>
-							<div class="ruleRow">
-								<span>Dur&eacute;e du cr&eacute;dit</span>
-								<b>{{ vm.rules.durationCredit }} min</b>
-							</div>
-							<div class="ruleRow">
-								<span>Prison</span>
-								<b>{{ vm.rules.timerPrison }} min</b>
-							</div>
-							<div class="ruleRow">
-								<span>Saisie</span>
-								<b>
-									{{ vm.rules.seizureType }} {{ vm.rules.seizureDecote }}% &middot; frais
-									{{ vm.rules.seizureCosts }}
-								</b>
-							</div>
-							<div class="ruleRow">
-								<span>Banque manuelle</span>
-								<b>{{ vm.rules.manualBank ? 'oui' : 'non' }}</b>
-							</div>
+						<div class="pbHand">
+							<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+								<app-card
+									*ngIf="card.displayed"
+									[card]="card"
+									[typeMoney]="''"
+									[height]="'63px'"
+									[width]="'38px'"
+									[priceSize]="'6px'"
+									[letterSize]="'14px'"
+									[amountCardsForProd]="100"
+									[flippable]="false"></app-card>
+							</ng-container>
+							<div class="noChip whiteNote" *ngIf="row.nbCards === 0">Aucune carte en main</div>
 						</div>
-
-						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
-							<div class="ruleTitle">&#128202; Comptes banque</div>
-							<div class="ruleRow">
-								<span>Masse mon&eacute;taire</span>
-								<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Int&eacute;r&ecirc;ts gagn&eacute;s</span>
-								<b>{{ vm.gameState.bankInterestEarned }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Biens saisis</span>
-								<b>{{ vm.gameState.bankGoodsEarned }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Monnaie perdue</span>
-								<b>{{ vm.gameState.bankMoneyLost }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Monnaie d&eacute;truite</span>
-								<b>{{ vm.gameState.bankMoneyDestroyed }}</b>
-							</div>
-						</div>
-
-						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === JUNE">
-							<div class="ruleTitle">&#9728;&#65039; Monnaie libre</div>
-							<div class="ruleRow">
-								<span>DU courant</span>
-								<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Taux de croissance</span>
-								<b>{{ vm.rules.tauxCroissance }} %</b>
-							</div>
-							<div class="ruleRow">
-								<span>Coins de d&eacute;part</span>
-								<b>{{ vm.rules.startAmountCoins }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>D&eacute;part in&eacute;galitaire</span>
-								<b>
-									{{ vm.rules.inequalityStart ? 'oui' : 'non' }} &middot; {{ vm.rules.pctPoor }}% /
-									{{ vm.rules.pctRich }}%
-								</b>
-							</div>
-						</div>
-
-						<div class="ruleGroup">
-							<div class="ruleTitle">&#8505;&#65039; Session</div>
-							<div class="ruleRow">
-								<span>Nom</span>
-								<b>{{ vm.session.name }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Animateur</span>
-								<b>{{ vm.session.animator }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Lieu</span>
-								<b>{{ vm.session.location }}</b>
-							</div>
-							<div class="ruleRow">
-								<span>Code</span>
-								<b>{{ vm.session.shortId }}</b>
-							</div>
+						<div class="pbDead" *ngIf="row.status === DEAD">
+							<div class="pbDeadIcon">&#129702;</div>
+							<div>D&eacute;c&eacute;d&eacute; &middot; cartes retourn&eacute;es aux decks</div>
 						</div>
 					</div>
 				</div>

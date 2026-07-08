@@ -280,3 +280,187 @@
 		flex-shrink: 0;
 	}
 }
+
+// ── row panels (decks / rules, collapsible) ───────────────────────────────────
+
+.rowPanel {
+	width: 100%;
+}
+
+.panelHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	width: 100%;
+	border: none;
+	background: transparent;
+	padding: 0;
+	cursor: pointer;
+	font-family: inherit;
+	text-align: left;
+
+	.panelTitle {
+		margin-bottom: 0;
+	}
+}
+
+.foldChip {
+	font-size: 12.5px;
+	font-weight: bold;
+	border: 1.5px solid rgba(0, 0, 0, 0.45);
+	border-radius: 20px;
+	padding: 2px 10px;
+	background: rgba(255, 255, 255, 0.55);
+}
+
+.decksRow {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 12px 22px;
+	margin-top: 8px;
+
+	.deckBlock {
+		flex: 1 1 220px;
+		min-width: 0;
+		margin-bottom: 0;
+	}
+}
+
+.rulesGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	gap: 4px 24px;
+	margin-top: 8px;
+
+	.ruleGroup {
+		margin-bottom: 7px;
+	}
+}
+
+// ── view toggle + sort bar ────────────────────────────────────────────────────
+
+.viewToggle {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px !important;
+
+	button {
+		font-family: inherit;
+		font-size: 13px;
+		font-weight: bold;
+		border: none;
+		background: transparent;
+		border-radius: 6px;
+		padding: 5px 11px;
+		cursor: pointer;
+
+		&.active {
+			background: #ffc107;
+			box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+		}
+	}
+}
+
+.sortBar {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 8px !important;
+	font-size: 13px;
+
+	.muted {
+		color: #333;
+	}
+}
+
+// ── player boards view ────────────────────────────────────────────────────────
+
+.boardsGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+	gap: 16px;
+}
+
+.playerBoardCard {
+	position: relative;
+	border-radius: 12px;
+	border: 2px solid #222;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	min-height: 210px;
+    max-height: 210px;
+    max-width: 320px;
+}
+
+.pbHead {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 9px 10px 4px 10px;
+}
+
+.pbRight {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+}
+
+.pbCoins {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.pbChips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	padding: 2px 10px 0 10px;
+	min-height: 2px;
+
+	.debtChip {
+		background: #ce1421;
+		color: white;
+	}
+}
+
+.pbHand {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px 6px;
+	padding: 9px 10px 12px 10px;
+	align-content: flex-start;
+	flex-grow: 1;
+}
+
+.whiteNote {
+	color: white;
+	text-shadow: 1px 1px 0 black, 0 0 3px black;
+	align-self: center;
+	font-size: 12.5px;
+}
+
+.pbDead {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	color: white;
+	font-size: 12.5px;
+	text-shadow: 1px 1px 0 black;
+	text-align: center;
+
+	.pbDeadIcon {
+		font-size: 38px;
+	}
+}

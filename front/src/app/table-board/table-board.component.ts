@@ -9,8 +9,12 @@ import { Avatar } from '../models/avatar';
 import { getActionIcon } from '../models/rules';
 import { CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
+import { getBackgroundStyle } from '../services/avatarTools';
 
 type SortKey = 'coins' | 'cards' | 'name';
+type ViewMode = 'table' | 'boards';
+
+const VIEW_MODE_STORAGE_KEY = 'geco-table-board-view';
 
 export interface TableRow extends PlayerState {
 	avatar?: Avatar;
@@ -33,11 +37,16 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
 	protected readonly getActionIcon = getActionIcon;
 
+    getBackgroundStyle = getBackgroundStyle;
+
 	sessionId = '';
 	gameStateId = '';
 	private subscription: Subscription | undefined;
 
 	sortBy$ = new BehaviorSubject<SortKey>('coins');
+	viewMode: ViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) === 'boards' ? 'boards' : 'table';
+	decksOpen = true;
+	rulesOpen = true;
 
 	masterConnection$ = this.gameStateService.masterConnection$;
 	minutes$ = this.gameStateService.minutes$;
@@ -202,6 +211,11 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	setSort(key: SortKey): void {
 		this.sortBy$.next(key);
+	}
+
+	setViewMode(mode: ViewMode): void {
+		this.viewMode = mode;
+		localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
 	}
 
 	refresh(): void {
