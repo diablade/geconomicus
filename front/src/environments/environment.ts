@@ -59,13 +59,17 @@ export const environment = {
 		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',
 		EXTEND_CREDIT: 'game-state/bank-state/extend-credit',
 	},
-	SURVEY: {
+    EVENT: {
+        GET_BY_SESSION_ID: 'events/session/',
+        GET_BY_GAME_STATE_ID: 'events/game/',
+    },
+    SURVEY: {
+        GET_BY_SESSION_ID: 'survey/session/',
+        GET_BY_GAME_STATE_ID: 'survey/game/',
 		ADD_FEEDBACK: 'survey/feedback',
 		ALLOW_REDO_SURVEY: 'survey/redo',
 		GET_AVATAR_GAME_FEEDBACK: 'survey/player',
-		GET_BY_SESSION_ID: 'survey/session/',
 		GET_BY_SESSION_GAME_STATE_AVATAR_ID: 'survey/game/',
-		GET_BY_GAME_STATE_ID: 'survey/game/',
 		REMOVE_ALL_BY_SESSION_ID: 'survey/session/',
 		REMOVE_ALL_BY_GAME_STATE_ID: 'survey/game/',
 	},

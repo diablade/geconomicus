@@ -1,0 +1,49 @@
+// Panneau évènements v2 — styles alignés sur le DC 2a (frame-light + box-shadowed hérités de styles.scss)
+
+.ev2 {
+	width: 340px;
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	.ev2-head {
+		display: flex; align-items: baseline; gap: 8px;
+		.ev2-title { font-family: 'Geconomicus'; font-size: 22px; color: #fff;
+			text-shadow: 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 0 1.5px 0 #000,
+				1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000, -1.5px -1.5px 0 #000; }
+		.ev2-count { font-size: 12px; color: #fff; opacity: .85; }
+	}
+
+	.ev2-game-tabs { display: flex; gap: 6px;
+		button { flex: 1; cursor: pointer; font-family: 'GecoFont10'; font-size: 13px; padding: 6px 4px;
+			border-radius: 20px; border: 2px solid #14142b; background: rgba(255,255,255,.85);
+			color: #14142b; font-weight: 700;
+			&.on { background: #14142b; color: #fff; } } }
+
+	.ev2-chips { display: flex; flex-wrap: wrap; gap: 5px;
+		button { cursor: pointer; font-family: 'GecoFont10'; font-size: 12px; padding: 4px 10px;
+			border-radius: 14px; border: 1.5px solid #14142b; background: rgba(255,255,255,.85); color: #14142b;
+			&.on { background: #14142b; color: #fff; } } }
+
+	.ev2-actors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+		label { font-size: 11px; color: #fff; display: flex; flex-direction: column; gap: 3px; }
+		select { font-family: 'GecoFont10'; font-size: 13px; padding: 5px; border-radius: 8px;
+			border: 1.5px solid #14142b; background: #fff; } }
+
+	.ev2-list { display: flex; flex-direction: column; gap: 5px; max-height: 800px; overflow: auto; padding-right: 2px;
+
+		.ev2-event { background: rgba(255,255,255,.9); border-radius: 8px; border-left: 5px solid #2c7fb8; padding: 6px 8px;
+			.ev2-line { display: flex; align-items: center; gap: 8px;
+				.t { font-size: 11px; color: rgba(20,20,43,.5); width: 36px; flex: none; }
+				.badge { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 9px; color: #fff; }
+				.who { flex: 1; font-size: 12.5px; color: #14142b; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+				.amt { flex: none; font-size: 12px; font-weight: 700; color: #14142b; font-family: 'GecoFont7'; } }
+			.ev2-cards { display: flex; align-items: center; gap: 3px; margin: 5px 0 1px 44px;
+				.mini { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 22px;
+					border-radius: 4px; border: 1.5px solid #14142b; font-size: 12px; font-weight: 800;
+					color: #14142b; font-family: 'GecoFont7';
+					&.arrow { border: none; background: transparent; } } } }
+
+		.ev2-empty { font-size: 12.5px; color: #fff; text-align: center; padding: 14px 0; } }
+}

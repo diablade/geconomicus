@@ -1,0 +1,247 @@
+// Design 2a — see Comparaison Résultats v2.dc.html (#2a) for the exact target.
+// Reuses v2 styles.scss: .bgGradien7, .frame-light, .box-shadowed, Geconomicus font.
+
+.compare-page {
+	min-height: 100vh;
+	padding-bottom: 36px;
+}
+
+.geco-title {
+	font-family: 'Geconomicus', serif;
+	color: #fff;
+	text-shadow:
+		0 -1.5px 0 #000,
+		1.5px -1.5px 0 #000,
+		1.5px 0 0 #000,
+		0 1.5px 0 #000,
+		1.5px 1.5px 0 #000,
+		-1.5px 1.5px 0 #000,
+		-1.5px 0 0 #000,
+		-1.5px -1.5px 0 #000,
+		2px 2px 0 #000,
+		3px 3px 0 #000;
+	margin: 0 0 8px 4px;
+	font-size: 26px;
+	&.collapsible {
+		cursor: pointer;
+		user-select: none;
+	}
+}
+
+.cp-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+    padding: 16px 26px 10px;
+
+	.cp-logo {
+		width: 220px;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
+	}
+	.cp-title {
+		font-size: 34px;
+	}
+	.cp-sub {
+		font-size: 16px;
+	}
+	.cp-events-toggle {
+		font-family: 'GecoFont10';
+		font-size: 15px;
+		cursor: pointer;
+		border: 2px solid #000;
+		border-radius: 10px;
+		padding: 8px 14px;
+		background: #ffe9b3;
+		box-shadow: 4px 4px 0 #000;
+	}
+	.cp-guny {
+		width: 86px;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
+	}
+}
+
+.cp-barEvent{
+
+}
+
+.cp-body {
+	display: flex;
+	gap: 18px;
+	padding: 6px 24px 0;
+	align-items: flex-start;
+}
+.cp-main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+.cp-two-cols {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	align-items: start;
+	.col2 {
+		grid-column: 2;
+	}
+}
+
+/* le panneau évènements est un composant dédié : app-events-v2 (events-v2/) */
+.cp-events {
+	flex: none;
+}
+
+/* synthesis table */
+.cp-table {
+	overflow: hidden;
+	.cp-thead {
+		display: grid;
+		grid-template-columns: 1fr 175px 175px;
+		background: #14142b;
+		color: #fff;
+		padding: 7px 16px;
+		gap: 8px;
+		div:first-child {
+			font-size: 12.5px;
+			letter-spacing: 0.4px;
+		}
+		.dette {
+			font-weight: 800;
+			text-align: center;
+			color: #9fd0f5;
+		}
+		.libre {
+			font-weight: 800;
+			text-align: center;
+			color: #ffcf8a;
+		}
+	}
+	// rows: grid 1fr 175px 175px, padding 4px 16px, dashed bottom border,
+	// (i) tip button 19px circle → yellow dashed tip box when open.
+}
+
+/* podium */
+.cp-podium {
+	padding: 14px 18px;
+	h3 {
+		font-size: 14px;
+		font-weight: 800;
+		margin: 0 0 10px;
+	}
+	.pod-row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		border: 2px solid #14142b;
+		border-radius: 11px;
+		padding: 7px 12px;
+		box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+		margin-bottom: 7px;
+		background: rgba(255, 255, 255, 0.85);
+		.avatar {
+			flex: none;
+			width: 38px;
+			height: 38px;
+			border-radius: 50%;
+			border: 2px solid #14142b;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 800;
+			color: #fff;
+			text-shadow: 1px 1px 0 #000;
+		}
+		.name {
+			flex: 1;
+			text-align: center;
+			font-size: 15.5px;
+			font-weight: 800;
+			small {
+				display: block;
+				font-weight: 400;
+				font-family: 'GecoFont7';
+				color: rgba(20, 20, 43, 0.75);
+			}
+		}
+		.medal {
+			flex: none;
+			font-size: 28px;
+			filter: drop-shadow(1.5px 1.5px 0 rgba(0, 0, 0, 0.5));
+		}
+	}
+	.most-active {
+		margin-top: 9px;
+		font-size: 13px;
+	}
+}
+
+/* actions */
+.cp-actions {
+	h3 {
+		font-size: 15px;
+		font-weight: 800;
+		margin: 0 0 12px;
+		&.good {
+			color: #1e7a3c;
+		}
+		&.bad {
+			color: #b3261e;
+		}
+	}
+	> div {
+		padding: 14px 18px;
+	}
+	.bar-dette {
+		background: #2c7fb8;
+	}
+	.bar-libre {
+		background: #f0932a;
+	}
+	// bars: height 16px, border 1.5px solid #14142b, radius 4px, count label after.
+}
+
+/* chart cards */
+.cp-chart {
+	padding: 12px 14px;
+	header {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 6px;
+		font-size: 14.5px;
+		font-weight: 800;
+		color: #fff;
+		text-shadow: 1px 1px 0 #000;
+		button {
+			margin-left: auto;
+			cursor: pointer;
+			font-family: 'GecoFont10';
+			font-size: 12px;
+			padding: 4px 10px;
+			border-radius: 14px;
+			border: 1.5px solid #14142b;
+			background: rgba(255, 255, 255, 0.9);
+		}
+	}
+	canvas {
+		background: rgba(255, 255, 255, 0.85);
+		border-radius: 8px;
+		padding: 6px;
+	}
+}
+
+@media (max-width: 1100px) {
+	.cp-body {
+		flex-direction: column;
+	}
+	.cp-events {
+		width: 100%;
+	}
+	.cp-two-cols {
+		grid-template-columns: 1fr;
+		.col2 {
+			grid-column: 1;
+		}
+	}
+}

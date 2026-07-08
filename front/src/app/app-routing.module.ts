@@ -1,52 +1,53 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {PlayerBoardComponent} from './player-board/player-board.component';
-import {MasterBoardComponent} from './master-board/master-board.component';
-import {HomeComponent} from "./home/home.component";
-import {JoinComponent} from "./join/join.component";
-import {AvatarSettingsComponent} from "./avatar-settings/avatar-settings.component";
-import {ResultsComponent} from "./results/results.component";
-import {HistoryGamesComponent} from "./history-games/history-games.component";
-import {SurveyComponent} from "./survey/survey.component";
-import {BankBoardComponent} from "./bank-board/bank-board.component";
-import {MasterAdminComponent} from "./master-admin/master-admin.component";
-import {ModuleGalileoComponent} from "./components/module-galileo/module-galileo.component";
-import {ModuleWealthDistribComponent} from "./components/module-wealth-distrib/module-wealth-distrib.component";
-import {LobbyMasterComponent} from "./lobby-master/lobby-master.component";
-import {LobbyPlayerComponent} from "./lobby-player/lobby-player.component";
-import {TableBoardComponent} from "./table-board/table-board.component";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { PlayerBoardComponent } from './player-board/player-board.component';
+import { MasterBoardComponent } from './master-board/master-board.component';
+import { HomeComponent } from './home/home.component';
+import { JoinComponent } from './join/join.component';
+import { AvatarSettingsComponent } from './avatar-settings/avatar-settings.component';
+import { ResultsComponent } from './results/results.component';
+import { HistoryGamesComponent } from './history-games/history-games.component';
+import { SurveyComponent } from './survey/survey.component';
+import { BankBoardComponent } from './bank-board/bank-board.component';
+import { MasterAdminComponent } from './master-admin/master-admin.component';
+import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
+import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
+import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
+import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
+import { TableBoardComponent } from './table-board/table-board.component';
+import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 
 const routes: Routes = [
-	{path: '', component: HomeComponent},
-	{path: 'history', component: HistoryGamesComponent},
-	{path: 'results/:sessionId', component: ResultsComponent},
-	{path: 'session/:sessionId', component: LobbyMasterComponent},
-	{path: 'join/:sessionId', component: JoinComponent},
-	{path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent},
-	{path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent},
-	{path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent},
-	{path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent},
-	{path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent},
-	{path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent},
-	{path: 'table/:sessionId/:gameStateId', component: TableBoardComponent},
-	{path: 'module/galileo', component: ModuleGalileoComponent},
-	{path: 'module/gini', component: ModuleWealthDistribComponent},
+	{ path: '', component: HomeComponent },
+	{ path: 'history', component: HistoryGamesComponent },
+	{ path: 'session/:sessionId', component: LobbyMasterComponent },
+	{ path: 'join/:sessionId', component: JoinComponent },
+	{ path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent },
+	{ path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent },
+	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent },
+	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent },
+	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent },
+	{ path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent },
+	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent },
+	{ path: 'results/:sessionId', component: SessionResultsCompareComponent },
+
+	{ path: 'module/galileo', component: ModuleGalileoComponent },
+	{ path: 'module/gini', component: ModuleWealthDistribComponent },
 	//deprecated routes below
-	{path: 'ogame/:idGame/admin', component: MasterAdminComponent},
-	{path: 'ogame/:idGame/master', component: MasterBoardComponent},
-	{path: 'ogame/:idGame/reset', component: MasterBoardComponent},
-	{path: 'ogame/:idGame/bank', component: BankBoardComponent},
-	{path: 'ogame/:idGame/join/:fromId/:name', component: JoinComponent},
-	{path: 'ogame/:idGame/join', component: JoinComponent},
-	{path: 'ogame/:idGame/results', component: ResultsComponent},
-	{path: 'ogame/:idGame/player/:idPlayer', component: PlayerBoardComponent},
-	{path: 'ogame/:idGame/player/:idPlayer/settings', component: AvatarSettingsComponent},
-	{path: '**', redirectTo: '/'},
+	{ path: 'ogame/:idGame/admin', component: MasterAdminComponent },
+	{ path: 'ogame/:idGame/master', component: MasterBoardComponent },
+	{ path: 'ogame/:idGame/reset', component: MasterBoardComponent },
+	{ path: 'ogame/:idGame/bank', component: BankBoardComponent },
+	{ path: 'ogame/:idGame/join/:fromId/:name', component: JoinComponent },
+	{ path: 'ogame/:idGame/join', component: JoinComponent },
+	{ path: 'ogame/:idGame/results', component: ResultsComponent },
+	{ path: 'ogame/:idGame/player/:idPlayer', component: PlayerBoardComponent },
+	{ path: 'ogame/:idGame/player/:idPlayer/settings', component: AvatarSettingsComponent },
+	{ path: '**', redirectTo: '/' },
 ];
 
 @NgModule({
 	imports: [RouterModule.forRoot(routes)],
-	exports: [RouterModule]
+	exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

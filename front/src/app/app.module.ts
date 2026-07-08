@@ -86,6 +86,8 @@ import { CoinComponent } from './components/coin/coin.component';
 import { BulleComponent } from './components/bulle/bulle.component';
 import { OnlineStatusComponent } from './components/online-status/online-status.component';
 import { TableBoardComponent } from './table-board/table-board.component';
+import { EventsV2Component } from './events-v2/events-v2.component';
+import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -152,6 +154,8 @@ LOAD_WASM().subscribe();
 		BulleComponent,
 		OnlineStatusComponent,
 		TableBoardComponent,
+        EventsV2Component,
+        SessionResultsCompareComponent,
 	],
 	imports: [
 		HttpClientModule,
