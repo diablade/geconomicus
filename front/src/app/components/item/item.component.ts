@@ -1,20 +1,37 @@
-import { Component, ElementRef, EventEmitter, SimpleChanges, Input, Output, OnChanges } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	EventEmitter,
+	SimpleChanges,
+	Input,
+	Output,
+	OnChanges,
+	OnDestroy,
+	ViewChild,
+	TemplateRef,
+	ViewContainerRef,
+} from '@angular/core';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
 import { Card } from '../../models/gameState';
 import { ShortCode } from '../../models/shortCode';
 import { AudioService } from 'src/app/services/audio.service';
 import { GAME_TYPE } from '@geco/shared';
-import { animations } from '../../services/animations';
 import { ThemesService } from '../../services/themes.service';
 import { Recipe, getRecipeForCard } from '../../models/recipe';
+
+// Doit matcher la durée de transition dans item.component.scss (.flip-card)
+const FLIP_DURATION_MS = 450;
 
 @Component({
 	selector: 'app-item',
 	templateUrl: './item.component.html',
 	styleUrls: ['./item.component.scss'],
-	animations,
 })
-export class ItemComponent implements OnChanges {
+export class ItemComponent implements OnChanges, OnDestroy {
 	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly FLIP_DURATION_MS = FLIP_DURATION_MS;
+
 	@Input() card: Card = {
 		key: '',
 		color: '',
@@ -43,19 +60,30 @@ export class ItemComponent implements OnChanges {
 	@Input() allCards: Card[] = [];
 	@Input() amountCardsForProd = 4;
 	@Input() generatedIdenticalLetters = 5;
+
 	smallPriceSize: string | undefined;
-	state = 'default';
+
+	/** default = carte dans la grille | flipped = carte affichée dans l'overlay */
+	state: 'default' | 'flipped' = 'default';
+	/** front = face visible | back = dos visible (piloté en CSS pur) */
+	flipState: 'front' | 'back' = 'front';
+
 	recipe: Recipe | null = null;
-	translateX = 0;
-	translateY = 0;
 	code = '';
+
+	@ViewChild('flippedTemplate') private flippedTemplate!: TemplateRef<unknown>;
+	private overlayRef: OverlayRef | null = null;
+	private openTimer: ReturnType<typeof setTimeout> | null = null;
+	private closeTimer: ReturnType<typeof setTimeout> | null = null;
 
 	@Output() shortCodeChanged: EventEmitter<ShortCode> = new EventEmitter<ShortCode>();
 
 	constructor(
 		private elementRef: ElementRef,
 		private audioService: AudioService,
-		private themesService: ThemesService
+		private themesService: ThemesService,
+		private overlay: Overlay,
+		private viewContainerRef: ViewContainerRef
 	) {}
 
 	ngOnChanges(changes: SimpleChanges) {
@@ -71,57 +99,100 @@ export class ItemComponent implements OnChanges {
 		}
 	}
 
+	ngOnDestroy() {
+		this.clearTimers();
+		this.overlayRef?.dispose();
+	}
+
 	private recalculateSizes() {
 		const isPortrait = this.screenWidth < this.screenHeight;
 		const unit = isPortrait ? 'vw' : 'vh';
-		// 3 cards per row: (100 - 2*padding 2.5 - 2*gap 2.5) / 3 = 30, clamped 80px–150px
 		if (!this.height) {
 			this.height = `clamp(80px, 30${unit}, 150px)`;
 		}
 		if (!this.width) {
 			this.width = `clamp(80px, 30${unit}, 150px)`;
 		}
-
-		// Tailles calculées en % de width, seulement si non fournies via @Input
 		if (!this.iconSize) {
-			this.iconSize = `calc(${this.width} * 0.60)`; // ~60% de width
+			this.iconSize = `calc(${this.width} * 0.60)`;
 		}
 		if (!this.letterSize) {
-			this.letterSize = `calc(${this.width} * 0.35)`; // ~35% de width
+			this.letterSize = `calc(${this.width} * 0.35)`;
 		}
 		if (!this.textSize) {
-			this.textSize = `calc(${this.width} * 0.12)`; // ~12% de width
+			this.textSize = `calc(${this.width} * 0.12)`;
 		}
-
 		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
 		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
 	}
 
-	closeCard() {
-		this.audioService.playSound('cardFlipBack');
-		this.state = 'default';
+	private clearTimers() {
+		if (this.openTimer) clearTimeout(this.openTimer);
+		if (this.closeTimer) clearTimeout(this.closeTimer);
+		this.openTimer = null;
+		this.closeTimer = null;
 	}
 
 	cardClicked() {
-		if (this.flippable) {
-			this.calculatePosition();
-			if (this.state === 'default') {
-				this.state = 'flipped';
-				this.createShortCode();
-				this.recipe = getRecipeForCard(
-					this.card,
-					this.allCards,
-					this.amountCardsForProd,
-					this.generatedIdenticalLetters
-				);
-				this.audioService.playSound('cardFlipGet');
-			} else {
-				this.audioService.playSound('cardFlipBack');
-				this.state = 'default';
-				this.recipe = null;
-				this.deleteShortCode();
-			}
+		if (!this.flippable || this.state === 'flipped') {
+			return;
 		}
+		this.clearTimers();
+
+		this.state = 'flipped';
+		this.flipState = 'front'; // repart toujours de la face avant
+		this.createShortCode();
+		this.recipe = getRecipeForCard(
+			this.card,
+			this.allCards,
+			this.amountCardsForProd,
+			this.generatedIdenticalLetters
+		);
+		this.audioService.playSound('cardFlipGet');
+		this.openOverlay();
+
+		// Laisse le navigateur peindre l'état "front" une frame avant de
+		// démarrer la transition CSS vers "back" (sinon pas de transition visible).
+		this.openTimer = setTimeout(() => {
+			this.flipState = 'back';
+		});
+	}
+
+	closeCard() {
+		if (this.state !== 'flipped') {
+			return;
+		}
+		this.clearTimers();
+
+		this.audioService.playSound('cardFlipBack');
+		this.flipState = 'front';
+		this.recipe = null;
+		this.deleteShortCode();
+
+		// On attend la fin de la transition CSS avant de détruire l'overlay,
+		// pour voir le retour à la face avant.
+		this.closeTimer = setTimeout(() => {
+			this.overlayRef?.dispose();
+			this.overlayRef = null;
+			this.state = 'default';
+		}, FLIP_DURATION_MS);
+	}
+
+	private openOverlay() {
+		const positionStrategy = this.overlay.position().global().centerHorizontally().centerVertically();
+
+		this.overlayRef = this.overlay.create({
+			positionStrategy,
+			hasBackdrop: true,
+			backdropClass: 'item-overlay-backdrop',
+			panelClass: 'item-overlay-panel',
+			scrollStrategy: this.overlay.scrollStrategies.block(),
+		});
+
+		this.overlayRef.backdropClick().subscribe(() => this.closeCard());
+
+		const portal = new TemplatePortal(this.flippedTemplate, this.viewContainerRef);
+		this.overlayRef.attach(portal);
 	}
 
 	getData() {
@@ -140,19 +211,6 @@ export class ItemComponent implements OnChanges {
 
 	getIcon(icon: string) {
 		return this.themesService.getIcon(icon);
-	}
-
-	calculatePosition() {
-		const element = this.elementRef.nativeElement as HTMLElement;
-		const rect = element.getBoundingClientRect();
-
-		const positionX = rect.left;
-		const positionY = rect.top;
-		const width = rect.width;
-		const height = rect.height;
-
-		this.translateY = this.screenHeight / 2 - (positionY + height / 2);
-		this.translateX = this.screenWidth / 2 - (positionX + width / 2);
 	}
 
 	createShortCode() {

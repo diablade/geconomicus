@@ -88,6 +88,7 @@ import { OnlineStatusComponent } from './components/online-status/online-status.
 import { TableBoardComponent } from './table-board/table-board.component';
 import { EventsV2Component } from './events-v2/events-v2.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -186,6 +187,7 @@ LOAD_WASM().subscribe();
 		MatCardModule,
 		MatExpansionModule,
 		CdkMenuTrigger,
+        OverlayModule,
 		DragDropModule,
 		NgxScannerQrcodeModule,
 		TranslateModule,

@@ -84,7 +84,7 @@ export const animations = [
 		state(
 			'flipped',
 			style({
-				transform: 'rotateY(180deg) scale(2.5)',
+				transform: 'rotateY(180deg) scale(2)',
 				zIndex: '99',
 				top: '{{translateY}}px',
 				left: '{{translateX}}px',

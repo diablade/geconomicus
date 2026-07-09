@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '@angular/cdk/overlay-prebuilt.css';
 @import 'simple-keyboard/build/css/index.css';
 
 body {
@@ -196,14 +197,20 @@ html {
 		4px 4px 1px black;
 }
 
-.overlay {
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-	z-index: 2;
-	top: 0;
-	left: 0;
-	background: rgba(0, 0, 0, 0.3);
+// .overlay {
+// 	width: 100vw;
+// 	height: 100vh;
+// 	position: fixed;
+// 	z-index: 10;
+// 	top: 0;
+// 	left: 0;
+// 	background: rgba(0, 0, 0, 0.3);
+// }
+.item-overlay-backdrop {
+	background: rgba(0, 0, 0, 0.4);
+}
+.item-overlay-panel {
+	// rien de spécial requis, CDK gère déjà le centrage
 }
 
 .frame {
@@ -519,6 +526,10 @@ mat-chip {
 
 .z2 {
 	z-index: 2 !important;
+}
+
+.z3 {
+	z-index: 3 !important;
 }
 
 

@@ -3,11 +3,10 @@
 	border-radius: 5px;
 	cursor: pointer;
 	position: relative;
-	transform-style: preserve-3d;
 
 	&-text {
 		position: relative;
-		z-index: 2;
+		z-index: 1;
 		font-size: 0.5rem;
 		line-break: auto;
 		line-height: 0.7rem;
@@ -18,17 +17,13 @@
 		padding: 5px;
 		text-wrap: auto;
 		&-back {
-			font-size: 0.5rem;
-			line-height: 0.7rem;
+			font-size: 0.7rem;
+			line-height: 0.9rem;
 			line-break: auto;
 			font-weight: bold;
 			text-wrap: auto;
-			text-align: end;
-			text-overflow: ellipsis;
-			overflow: hidden;
 		}
 	}
-
 	&-icon {
 		z-index: 1;
 		display: flex;
@@ -37,13 +32,11 @@
 		height: 100%;
 		width: 100%;
 		position: absolute;
-
 		&-back {
-			font-size: 1.2rem;
-			line-height: 1.2rem;
+			font-size: 1.6rem;
+			line-height: 1.6rem;
 		}
 	}
-
 	&-letter {
 		z-index: 2;
 		position: absolute;
@@ -52,8 +45,8 @@
 		margin: 5px;
 		letter-spacing: -2px;
 		&-back {
-			font-size: 1.5rem;
-			line-height: 1.5rem;
+			font-size: 1.8rem;
+			line-height: 1.8rem;
 			letter-spacing: -2px;
 		}
 	}
@@ -67,12 +60,73 @@
 	background-size: contain;
 }
 
-.back {
+// Occupe la place de la carte dans la grille pendant qu'elle est dans l'overlay
+.card-placeholder {
+	visibility: hidden;
+}
+
+// ── Flip 3D ──────────────────────────────────────────────────────────────
+.flip-scene {
+	perspective: 1400px;
+	margin: 0 auto;
+	transform: scale(2); // grossissement de la carte dans l'overlay
+}
+
+.flip-card {
+	position: relative;
+	transform-style: preserve-3d;
 	border-radius: 5px;
-	width: 100%;
-	height: 100%;
+	transform: rotateY(0deg);
+	transition: transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.is-back {
+		transform: rotateY(180deg);
+	}
+}
+
+.flip-face {
+	position: absolute;
+	inset: 0;
 	backface-visibility: hidden;
+	border-radius: inherit;
+	overflow: hidden;
+    z-index: 3;
+}
+
+.flip-face-back {
 	transform: rotateY(180deg);
+	cursor: pointer;
+}
+
+// ── Groupe complet dans l'overlay ───────────────────────────────────────
+.flipped-group {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	padding: 48px 0; // marge pour compenser le scale(2) de .flip-scene
+}
+
+.back-header,
+.back-footer {
+	border-radius: 5px;
+	background: inherit;
+	width: clamp(220px, 60vw, 340px);
+	opacity: 0;
+	transform: translateY(-6px);
+	transition: opacity 200ms ease-out 150ms, transform 200ms ease-out 150ms;
+
+	&.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.back-footer {
+	transform: translateY(6px);
+	&.is-visible {
+		transform: translateY(0);
+	}
 }
 
 .shortCode {
@@ -93,6 +147,7 @@
 }
 
 .qrcodeWrapper {
+	position: relative;
 	height: 100%;
 	width: 100%;
 	padding: 0 15px;
@@ -105,84 +160,57 @@
 .price {
 	font-family: Times, Arial, serif;
 	&-eq {
-		font-size: 0.4rem;
-		margin-left: 2px;
+		font-size: 0.6rem;
 	}
 }
 
 .recipe-section {
 	line-height: 1.2rem;
 }
-
 .recipe-title {
-	line-height: 1rem;
+	line-height: 1.2rem;
 	font-weight: bold;
-	font-size: 0.4rem;
+	font-size: 0.7rem;
 	text-align: center;
 }
-
 .recipe-ingredients {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	flex-wrap: wrap;
 }
-
 .recipe-ingredient {
 	width: 45%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
 	.ingredient-name {
-		font-size: 0.35rem;
+		font-size: 0.65rem;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-
 	&.have {
 		opacity: 1;
 		font-weight: 600;
 	}
-
 	&.missing {
 		opacity: 0.5;
 	}
 }
-
 .check {
-	font-size: 0.4rem;
+	font-size: 0.65rem;
 }
 
 .red {
 	background-color: #e8a7a6;
-
-	.mat-badge-content {
-		background: #ce1421;
-	}
 }
-
 .yellow {
 	background-color: #f3efad;
-
-	.mat-badge-content {
-		background: #c4bb13;
-	}
 }
-
 .green {
 	background-color: #a2cba2;
-
-	.mat-badge-content {
-		background: #14a549;
-	}
 }
-
 .blue {
 	background-color: #bbdae3;
-
-	.mat-badge-content {
-		background: #3c8fa2;
-	}
 }
