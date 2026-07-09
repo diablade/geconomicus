@@ -18,9 +18,8 @@ import _ from 'lodash';
 const minute = 60 * 1000;
 const TIMER_HEARTBEAT_INTERVAL = 10000; // 10 seconds
 
-// PRIVATE METHODS
 //--------------------------
-
+// PRIVATE METHODS
 /**
  * Start the round countdown timer.
  * Creates a timer that emits TIMER_LEFT events every second and stops the game when done.
@@ -52,7 +51,6 @@ const _createTimer = async (gameState, rules) => {
 	);
 	return timer;
 };
-
 const syncTimerWithGameState = async (gameState, rules) => {
 	if (gameState.status !== GAME_STATUS.PLAYING) return null; // PAUSED = pas de timer, rien à sync
 
@@ -73,9 +71,9 @@ const syncTimerWithGameState = async (gameState, rules) => {
 	await gameTimerManager.startTimer(freshTimer);
 	return gameTimerManager.getTimer(gameStateId);
 };
+//--------------------------
 
 // TIMER CALLBACK METHODS
-//--------------------------
 /**
  * Checks for deaths in the game state and updates player statuses.
  * @param {object} timerInstance - Timer instance containing game state ID.
@@ -110,7 +108,6 @@ const _timerSaveCallback = async (timerInstance) => {
 		}
 	});
 };
-
 const _timerDUCallback = async (timerInstance) => {
 	log.debug(`[GameStateService] callback DU for game: ${timerInstance.data.gameStateId}`);
 	const gameStateId = timerInstance.data.gameStateId;
@@ -432,10 +429,6 @@ GameStateService.resume = async (gameStateId) => {
 	});
 };
 
-/**
- * Stop the round and clean up timers.
- * @param {string} gameStateId
- */
 GameStateService.stop = async (gameStateId) => {
 	log.debug(`[GameStateService] Stopping game: ${gameStateId}`);
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);

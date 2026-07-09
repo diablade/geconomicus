@@ -3,9 +3,6 @@ import gameStateController from './game.state.controller.js';
 import {stateSanitize} from './sanitizers/game.state.sanitize.js';
 import {validate} from '../misc/validate.tool.js';
 
-// import bank from './bank.controller.js';
-// import {bankSanitize} from './bank.sanitize.js';
-
 const router = express.Router();
 
 router.post('/create', validate(stateSanitize.create), gameStateController.create);
@@ -18,8 +15,10 @@ router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
 
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
 router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
+
+//TODOs
 // router.post('/kill-player', validate(sanitize.killPlayer), gameStateController.killPlayer);
-// router.post('/refresh-force-all-players', validate(sanitize.refreshForceAllPlayers), gameStateController.refreshForceAllPlayers);
+// router.post('/refresh-all', validate(sanitize.refreshAllPlayers), gameStateController.refreshAllPlayers);
 // router.post('/refresh-player', validate(sanitize.refreshPlayer), gameStateController.refreshPlayer);
 
 
@@ -45,9 +44,9 @@ router.post('/bank-state/cancel-credit', validate(stateSanitize.cancelCredit), g
 router.post('/bank-state/settle-credit', validate(stateSanitize.settleCredit), gameStateController.settleCredit);
 router.post('/bank-state/extend-credit', validate(stateSanitize.extendCredit), gameStateController.extendCredit);
 
-// router.get('/get-credits/:idGame/:idPlayer', bank.getCreditsByIdPlayer);
-// router.post('/seizure', validate(schemas.seizure), bank.seizure);
-// router.post('/prison-break', validate(schemas.prisonBreak), bank.iveGotToBreakFree);
-// router.post('/lock-down-player', validate(schemas.lockDownPlayer), bank.lockDownPlayer);
+//TODOs
+// router.post('/bank-state/seizure', validate(schemas.seizure), gameStateController.seizure);
+// router.post('/bank-state/prison-free', validate(schemas.prisonFree), gameStateController.prisonFree);
+// router.post('/bank-state/prison', validate(schemas.prison), gameStateController.prison);
 
 export default router;

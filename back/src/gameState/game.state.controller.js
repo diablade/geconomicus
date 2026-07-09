@@ -367,46 +367,12 @@ GameStateController.extendCredit = async (req, res, next) => {
 };
 
 
-// GameStateController.refreshForceAllPlayers = async (req, res, next) => {
-// 	try {
-// 		const done = await GameStateService.refreshForceAllPlayers(req.body.gameStateId);
-// 		if (done) {
-// 			return res.status(200).json({
-// 				status: 'refresh done',
-// 			});
-// 		} else {
-// 			return res.status(500).json({
-// 				message: 'Game refresh error',
-// 			});
-// 		}
-// 	} catch (err) {
-// 		log.error(`Game refresh error: `, err);
-// 		next({
-// 			status: 400,
-// 			message: 'ERROR.REFRESH',
-// 		});
-// 	}
-// };
-// GameStateController.refreshPlayer = async (req, res, next) => {
-// 	try {
-// 		const done = await GameStateService.refreshPlayer(req.body.gameStateId, req.body.idPlayer);
-// 		if (done) {
-// 			return res.status(200).json({
-// 				status: 'refresh done',
-// 			});
-// 		} else {
-// 			return res.status(500).json({
-// 				message: 'Game refresh error',
-// 			});
-// 		}
-// 	} catch (err) {
-// 		log.error(`Game refresh error: `, err);
-// 		next({
-// 			status: 400,
-// 			message: 'Game refresh error',
-// 		});
-// 	}
-// };
+GameStateController.refreshAllPlayers = async (req, res, next) => {
+// 	TODO call game state service
+};
+GameStateController.refreshPlayer = async (req, res, next) => {
+// 	TODO call game state service
+};
 
 GameStateController.actionGetTargetCards = async (req, res, next) => {
 	const { gameStateId, targetIdx } = req.body;
