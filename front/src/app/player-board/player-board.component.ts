@@ -49,6 +49,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	screenWidth = 0;
 	screenHeight = 0;
+    giftReceived=false;
 
 	get isLandscape(): boolean {
 		return this.screenWidth > this.screenHeight;
@@ -95,6 +96,31 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	);
 	gameState$ = inject(PlayerStateService).gameState$;
 	rules$ = inject(PlayerStateService).rules$;
+
+	// Carrés complets (4 cartes distinctes même lettre / même niveau), thème item/emoji uniquement.
+	// Les cartes d'un groupe complet sont retirées de `remaining` : elles ne sont donc rendues
+	// qu'une seule fois, à l'intérieur de la zone chantier — jamais dans la grille normale.
+	// Le thème CARD garde son propre bouton de construction existant, inchangé.
+	cardsView$ = combineLatest([this.cards$, this.rules$]).pipe(
+		map(([cards, rules]) => {
+			const recipes = getAvailableRecipes(
+				cards,
+				rules.amountCardsForProd,
+				rules.generatedIdenticalLetters
+			).filter((r) => r.completed);
+
+			const usedKeys = new Set<string>();
+			const groups = recipes.map((recipe) => {
+				const matchKeys = new Set(recipe.ingredients.filter((i) => i.have > 0).map((i) => i.key));
+				const groupCards = cards.filter((c) => matchKeys.has(c.key)).slice(0, rules.amountCardsForProd);
+				groupCards.forEach((c) => usedKeys.add(c.key));
+				return { recipe, cards: groupCards };
+			});
+
+			const remaining = cards.filter((c) => !usedKeys.has(c.key));
+			return { groups, remaining };
+		})
+	);
 
 	get warningCredit$() {
 		return this.credits$.pipe(map((credits) => credits.some((credit) => credit.status === CREDIT_STATUS.FAULT)));
@@ -250,6 +276,30 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	produceLevelUp($event: any) {
 		this.playerStateService.produce($event.letter, $event.weight);
+	}
+
+	buildSquare(recipe: Recipe) {
+		this.produceLevelUp({ letter: recipe.letter, weight: recipe.weight });
+	}
+
+	getSquareIcon(key: string) {
+		return this.themesService.getIcon(key);
+	}
+
+	getSquareBuildText(weight: number) {
+		switch (weight) {
+			case 0:
+				return 'CARD.BUILD_UP_0';
+			case 1:
+				return 'CARD.BUILD_UP_1';
+			case 2:
+				return 'CARD.BUILD_UP_2';
+		}
+		return 'CARD.BUILD_UP';
+	}
+
+	trackByRecipe(index: number, recipe: Recipe): string {
+		return recipe.letter + recipe.weight;
 	}
 
 	scan() {
