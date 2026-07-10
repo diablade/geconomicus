@@ -469,6 +469,18 @@ export class GameStateService {
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.PAUSE_GAME')));
 	}
 
+	refreshPlayer(gameStateId: string, playerStateIdx: number): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.REFRESH_PLAYER, { gameStateId, playerStateIdx })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.REFRESH')));
+	}
+
+	refreshAllPlayers(gameStateId: string): Observable<any> {
+		return this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.REFRESH_ALL, { gameStateId })
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.REFRESH')));
+	}
+
 	/**
 	 * Handle TIMER_LEFT socket event.
 	 */

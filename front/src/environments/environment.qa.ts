@@ -35,6 +35,8 @@ export const environment = {
 		RESUME: 'game-state/resume',
 		PAUSE: 'game-state/pause',
 		STOP: 'game-state/stop',
+		REFRESH_PLAYER: 'game-state/refresh-player',
+		REFRESH_ALL: 'game-state/refresh-all',
 	},
 	PLAYER_STATE: {
 		GET: 'game-state/player-state/',

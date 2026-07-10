@@ -216,12 +216,25 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 
 		// update avatars
 		for (let i = 0; i < playersWithChangedColor.length; i++) {
+			console.log(playersWithChangedColor[i]);
 			this.avatarService.updateAvatar(
 				this.sessionId,
 				playersWithChangedColor[i].idx,
 				playersWithChangedColor[i],
 				true
-			);
+			).subscribe({
+			next: (result) => {
+				if (result.success) {
+					this.snackbarService.showSuccess(this.i18nService.instant('AVATAR.UPDATED'));
+					// this.close();
+				} else {
+					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
+				}
+			},
+			error: (err) => {
+				this.snackbarService.showError(this.i18nService.instant(err.error || 'ERROR.UNKNOWN'));
+			},
+		});
 		}
 	}
 

@@ -19,10 +19,11 @@ router.post('/stop', validate(stateSanitize.stop), gameStateController.stop);
 router.get('/:gameStateId', validate(stateSanitize.getById, 'params'), gameStateController.getById);
 router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHaveCard, 'params'), gameStateController.whoHaveCard);
 
+router.post('/refresh-player', validate(playerStateSanitize.refreshPlayer), gameStateController.refreshPlayer);
+router.post('/refresh-all', validate(playerStateSanitize.refreshAllPlayers), gameStateController.refreshAllPlayers);
+
 //TODOs
 // router.post('/kill-player', validate(sanitize.killPlayer), gameStateController.killPlayer);
-// router.post('/refresh-all', validate(sanitize.refreshAllPlayers), gameStateController.refreshAllPlayers);
-// router.post('/refresh-player', validate(sanitize.refreshPlayer), gameStateController.refreshPlayer);
 
 
 router.post('/player-state/produce', validate(playerStateSanitize.produce), gameStateController.produce);

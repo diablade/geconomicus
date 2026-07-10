@@ -106,6 +106,28 @@ GameStateController.stop = asyncHandler(async (req, res) => {
 	return res.status(200).json({ status: GAME_STATUS.STOPPED });
 });
 
+GameStateController.refreshPlayer = asyncHandler(async (req, res) => {
+	const { gameStateId, playerStateIdx } = req.body;
+	log.info('[GameStateController] refreshing player', { gameStateId, playerStateIdx });
+	await socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.REFRESH_FORCE, { force: true });
+	return res.status(200).json({ status: 'ok' });
+});
+
+GameStateController.refreshAllPlayers = asyncHandler(async (req, res) => {
+	const { gameStateId } = req.body;
+	log.info('[GameStateController] refreshing all players', { gameStateId });
+	const payload = await GameStateService.getById(gameStateId, false);
+	if (!payload?.gameState) {
+		throw new AppError('Game state not found', 404, { gameStateId });
+	}
+	await Promise.all(
+		payload.gameState.playersStates.map((playerState) =>
+			socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.REFRESH_FORCE, { force: true })
+		)
+	);
+	return res.status(200).json({ status: 'ok' });
+});
+
 GameStateController.getCurrentPlayerStateIdx = asyncHandler(async (req, res) => {
 	const { sessionId, gameStateId, avatarIdx } = req.params;
 	const idx = await PlayerStateService.getCurrentPlayerStateIdx(sessionId, gameStateId, avatarIdx);

@@ -69,7 +69,7 @@ AvatarController.refresh = async (req, res, next) => {
             sessionId,
             avatarIdx
         } = req.body;
-        socket.emitTo(ROOMS.avatar(sessionId, avatarIdx), IO.REFRESH_FORCE);
+        socket.emitTo(ROOMS.lobbyAvatar(sessionId, avatarIdx), IO.REFRESH_FORCE);
         return res.status(200).json({status: 'ok'});
     }
     catch (err) {
