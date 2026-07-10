@@ -2,7 +2,7 @@ import express from 'express';
 import env from '#config/env';
 import morgan from 'morgan';
 import cors from 'cors';
-import log from '#config/log';
+import { errorHandler } from './middleware/errorHandler.middleware.js';
 
 // IMPORT ROUTES
 import legacyGameRoutes from './legacy/game/game.routes.js';
@@ -105,14 +105,7 @@ app.use((req, res, next) => {
 	return res.status(404).json({ not: 'Found' });
 });
 
-// handle errors
-app.use((err, req, res, next) => {
-	log.error(err);
-
-	// Set error response
-	return res.status(err.status || 500).json({
-		message: err.message || err || 'Something looks wrong :(',
-	});
-});
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 export default app;
