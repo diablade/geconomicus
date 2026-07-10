@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription, combineLatest, map } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { I18nService } from '../services/i18n.service';
+import { SnackbarService } from '../services/snackbar.service';
 import { environment } from '../../environments/environment';
 import { Card, ConnectionStatus, Credit, PlayerState } from '../models/gameState';
 import { Avatar } from '../models/avatar';
@@ -89,10 +90,12 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	constructor(
 		private route: ActivatedRoute,
 		private gameStateService: GameStateService,
-		private i18nService: I18nService
+		private i18nService: I18nService,
+		private snackbarService: SnackbarService
 	) {
 		this.i18nService.loadNamespace('action');
 		this.i18nService.loadNamespace('master');
+		this.i18nService.loadNamespace('table');
 	}
 
 	ngOnInit(): void {
@@ -189,19 +192,19 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	creditChipLabel(status: string): string {
 		switch (status) {
 			case CREDIT_STATUS.RUNNING:
-				return 'en cours';
+				return 'TABLE.CREDIT_RUNNING';
 			case CREDIT_STATUS.REQUESTING:
-				return 'demande';
+				return 'TABLE.CREDIT_REQUESTING';
 			case CREDIT_STATUS.PAUSED:
-				return 'en pause';
+				return 'TABLE.CREDIT_PAUSED';
 			case CREDIT_STATUS.IDLE:
-				return 'en attente';
+				return 'TABLE.CREDIT_IDLE';
 			case CREDIT_STATUS.FAULT:
-				return 'DEFAUT';
+				return 'TABLE.CREDIT_FAULT';
 			case CREDIT_STATUS.CANCELED:
-				return 'annule';
+				return 'TABLE.CREDIT_CANCELED';
 			case CREDIT_STATUS.DONE:
-				return 'solde';
+				return 'TABLE.CREDIT_DONE';
 			default:
 				return status;
 		}
@@ -220,6 +223,18 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	refresh(): void {
 		window.location.reload();
+	}
+
+	refreshPlayer(row: TableRow): void {
+		this.gameStateService.refreshPlayer(this.gameStateId, row.idx).subscribe(() => {
+			this.snackbarService.showSuccess(this.i18nService.instant('AVATAR.UPDATED'));
+		});
+	}
+
+	refreshAllPlayers(): void {
+		this.gameStateService.refreshAllPlayers(this.gameStateId).subscribe(() => {
+			this.snackbarService.showSuccess(this.i18nService.instant('AVATAR.UPDATED'));
+		});
 	}
 
 	getPlayerStateUrl(row: TableRow): string {
