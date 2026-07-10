@@ -1,6 +1,7 @@
 import express from 'express';
 import gameStateController from './game.state.controller.js';
 import {stateSanitize} from './sanitizers/game.state.sanitize.js';
+import {bankStateSanitize} from './sanitizers/bank.state.sanitizer.js';
 import {validate} from '../misc/validate.tool.js';
 
 const router = express.Router();
@@ -37,13 +38,13 @@ router.post('/action/ong', validate(stateSanitize.actionOng), gameStateControlle
 router.post('/action/who-have-card', validate(stateSanitize.actionWhoHaveCard), gameStateController.actionWhoHaveCard);
 
 
-router.post('/bank-state/free-money', validate(stateSanitize.freeMoney), gameStateController.freeMoney);
-router.post('/bank-state/create-credit', validate(stateSanitize.createCredit), gameStateController.createCredit);
-router.post('/bank-state/credit-for-all', validate(stateSanitize.creditForAll), gameStateController.creditForAll);
-router.post('/bank-state/cancel-credit', validate(stateSanitize.cancelCredit), gameStateController.cancelCredit);
-router.post('/bank-state/settle-credit', validate(stateSanitize.settleCredit), gameStateController.settleCredit);
-router.post('/bank-state/extend-credit', validate(stateSanitize.extendCredit), gameStateController.extendCredit);
-router.post('/bank-state/seizure', validate(stateSanitize.seizure), gameStateController.seizure);
-router.post('/bank-state/prison-break', validate(stateSanitize.prisonBreak), gameStateController.prisonBreak);
+router.post('/bank-state/free-money', validate(bankStateSanitize.freeMoney), gameStateController.freeMoney);
+router.post('/bank-state/create-credit', validate(bankStateSanitize.createCredit), gameStateController.createCredit);
+router.post('/bank-state/credit-for-all', validate(bankStateSanitize.creditForAll), gameStateController.creditForAll);
+router.post('/bank-state/cancel-credit', validate(bankStateSanitize.cancelCredit), gameStateController.cancelCredit);
+router.post('/bank-state/settle-credit', validate(bankStateSanitize.settleCredit), gameStateController.settleCredit);
+router.post('/bank-state/extend-credit', validate(bankStateSanitize.extendCredit), gameStateController.extendCredit);
+router.post('/bank-state/seizure', validate(bankStateSanitize.seizure), gameStateController.seizure);
+router.post('/bank-state/prison-break', validate(bankStateSanitize.prisonBreak), gameStateController.prisonBreak);
 
 export default router;
