@@ -17,11 +17,12 @@
 		padding: 5px;
 		text-wrap: auto;
 		&-back {
-			font-size: 0.7rem;
-			line-height: 0.9rem;
+			font-size: 1rem;
+			line-height: 1rem;
 			line-break: auto;
 			font-weight: bold;
 			text-wrap: auto;
+            margin-bottom: 6px;
 		}
 	}
 	&-icon {
@@ -33,8 +34,8 @@
 		width: 100%;
 		position: absolute;
 		&-back {
-			font-size: 1.6rem;
-			line-height: 1.6rem;
+			font-size: 3rem;
+			line-height: 3rem;
 		}
 	}
 	&-letter {
@@ -45,10 +46,17 @@
 		margin: 5px;
 		letter-spacing: -2px;
 		&-back {
-			font-size: 1.8rem;
-			line-height: 1.8rem;
+			font-size: 3rem;
+			line-height: 3rem;
 			letter-spacing: -2px;
 		}
+	}
+}
+.price {
+	font-family: Times, Arial, serif;
+    font-size: 1.7rem;
+	&-eq {
+		font-size: 0.8rem;
 	}
 }
 
@@ -66,10 +74,24 @@
 }
 
 // ── Flip 3D ──────────────────────────────────────────────────────────────
+.flip-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.flip-scene-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .flip-scene {
 	perspective: 1400px;
 	margin: 0 auto;
-	transform: scale(2); // grossissement de la carte dans l'overlay
+	transform: scale(2);
 }
 
 .flip-card {
@@ -96,37 +118,6 @@
 .flip-face-back {
 	transform: rotateY(180deg);
 	cursor: pointer;
-}
-
-// ── Groupe complet dans l'overlay ───────────────────────────────────────
-.flipped-group {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 12px;
-	padding: 48px 0; // marge pour compenser le scale(2) de .flip-scene
-}
-
-.back-header,
-.back-footer {
-	border-radius: 5px;
-	background: inherit;
-	width: clamp(220px, 60vw, 340px);
-	opacity: 0;
-	transform: translateY(-6px);
-	transition: opacity 200ms ease-out 150ms, transform 200ms ease-out 150ms;
-
-	&.is-visible {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.back-footer {
-	transform: translateY(6px);
-	&.is-visible {
-		transform: translateY(0);
-	}
 }
 
 .shortCode {
@@ -157,35 +148,24 @@
 	contain: content;
 }
 
-.price {
-	font-family: Times, Arial, serif;
-	&-eq {
-		font-size: 0.6rem;
-	}
-}
-
-.recipe-section {
-	line-height: 1.2rem;
-}
 .recipe-title {
-	line-height: 1.2rem;
+	font-size: 1.7rem;
+	line-height: 2rem;
 	font-weight: bold;
-	font-size: 0.7rem;
 	text-align: center;
 }
 .recipe-ingredients {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: center;
 	flex-wrap: wrap;
 }
 .recipe-ingredient {
-	width: 45%;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+    gap:2px;
 	.ingredient-name {
-		font-size: 0.65rem;
+		font-size: 1rem;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -195,11 +175,11 @@
 		font-weight: 600;
 	}
 	&.missing {
-		opacity: 0.5;
+		opacity: 0.8;
 	}
 }
 .check {
-	font-size: 0.65rem;
+	font-size: 1rem;
 }
 
 .red {

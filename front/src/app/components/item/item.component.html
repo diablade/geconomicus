@@ -22,11 +22,12 @@
 
 <!-- Contenu affiché dans le CDK Overlay -->
 <ng-template #flippedTemplate>
-	<div class="flipped-group" [ngClass]="[card.color]">
+	<div class="flip-container">
 		<!-- Header -->
-		<!-- <div
-			class="back-header frame frame-light d-flex flex-row justify-content-between align-items-center p-2"
-			[class.is-visible]="flipState === 'back'">
+		<div
+			class="frame frame-light d-flex flex-row justify-content-between align-items-center p-2"
+			*ngIf="flipState === 'back'"
+			[style.top]="gapBackItems + 'px'">
 			<div class="card-icon-back emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 				{{ getIcon(card.key) }}
 			</div>
@@ -44,40 +45,52 @@
 				</div>
 			</div>
 			<div class="contour card-letter-back">&nbsp;{{ card.letter }}&nbsp;</div>
-		</div> -->
+		</div>
 
 		<!-- Carte qui flip en 3D -->
-		<div class="flip-scene" [style.width]="width">
-			<div class="flip-card" [style.width]="width" [style.height]="height" [class.is-back]="flipState === 'back'">
-				<div class="flip-face flip-face-front" [ngClass]="[card.color]">
-					<div
-						[style.font-size]="iconSize"
-						class="card-icon emoji"
-						[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
-						{{ getIcon(card.key) }}
+		<div
+			class="flip-scene-wrapper"
+			[style.width]="'calc(' + width + ' * 2)'"
+			[style.height]="'calc(' + height + ' * 2)'">
+			<div class="flip-scene" [style.width]="width">
+				<div
+					class="flip-card"
+					[style.width]="width"
+					[style.height]="height"
+					[class.is-back]="flipState === 'back'">
+					<div class="flip-face flip-face-front" [ngClass]="[card.color]">
+						<div
+							[style.font-size]="iconSize"
+							class="card-icon emoji"
+							[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+							{{ getIcon(card.key) }}
+						</div>
+						<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
+						<div
+							[style.font-size]="letterSize"
+							[style.line-height]="letterSize"
+							class="card-letter contour">
+							&nbsp;{{ card.letter }}&nbsp;
+						</div>
 					</div>
-					<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
-					<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">
-						&nbsp;{{ card.letter }}&nbsp;
-					</div>
-				</div>
 
-				<div class="flip-face flip-face-back" [ngClass]="[card.color]" (click)="closeCard()">
-					<div class="qrcodeWrapper">
-						<div class="shortCode" *ngIf="code">{{ code }}</div>
-						<ngx-kjua
-							[text]="getData()"
-							[minVersion]="1"
-							[crisp]="true"
-							[ecLevel]="'M'"
-							[render]="'svg'"></ngx-kjua>
+					<div class="flip-face flip-face-back" [ngClass]="[card.color]" (click)="closeCard()">
+						<div class="qrcodeWrapper">
+							<div class="shortCode" *ngIf="code">{{ code }}</div>
+							<ngx-kjua
+								[text]="getData()"
+								[minVersion]="1"
+								[crisp]="true"
+								[ecLevel]="'M'"
+								[render]="'svg'"></ngx-kjua>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Footer -->
-		<!-- <div class="back-footer frame frame-light recipe-section p-2" [class.is-visible]="flipState === 'back'">
+		<div *ngIf="flipState === 'back'" class="frame frame-light p-2">
 			<div class="recipe-title">{{ card.letter | translate }}</div>
 			<div class="recipe-ingredients">
 				<div
@@ -85,13 +98,13 @@
 					class="recipe-ingredient"
 					[class.have]="ingredient.have > 0"
 					[class.missing]="ingredient.have === 0">
-					<span class="check" *ngIf="ingredient.have > 0">✅</span>
 					<span class="emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 						{{ getIcon(ingredient.key) }}
 					</span>
 					<span class="ingredient-name">{{ ingredient.key | translate }}</span>
+					<span class="check" *ngIf="ingredient.have > 0">✅</span>
 				</div>
 			</div>
-		</div> -->
+		</div>
 	</div>
 </ng-template>

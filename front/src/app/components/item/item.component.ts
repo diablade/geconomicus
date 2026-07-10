@@ -71,6 +71,8 @@ export class ItemComponent implements OnChanges, OnDestroy {
 	recipe: Recipe | null = null;
 	code = '';
 
+    gapBackItems='';
+
 	@ViewChild('flippedTemplate') private flippedTemplate!: TemplateRef<unknown>;
 	private overlayRef: OverlayRef | null = null;
 	private openTimer: ReturnType<typeof setTimeout> | null = null;
@@ -124,6 +126,8 @@ export class ItemComponent implements OnChanges, OnDestroy {
 		}
 		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
 		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
+
+        this.gapBackItems= this.height;
 	}
 
 	private clearTimers() {
@@ -151,8 +155,6 @@ export class ItemComponent implements OnChanges, OnDestroy {
 		this.audioService.playSound('cardFlipGet');
 		this.openOverlay();
 
-		// Laisse le navigateur peindre l'état "front" une frame avant de
-		// démarrer la transition CSS vers "back" (sinon pas de transition visible).
 		this.openTimer = setTimeout(() => {
 			this.flipState = 'back';
 		});
