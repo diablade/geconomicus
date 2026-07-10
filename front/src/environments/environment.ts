@@ -58,6 +58,8 @@ export const environment = {
 		GIVE_FREE_MONEY: 'game-state/bank-state/free-money',
 		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',
 		EXTEND_CREDIT: 'game-state/bank-state/extend-credit',
+		SEIZURE: 'game-state/bank-state/seizure',
+		PRISON_BREAK: 'game-state/bank-state/prison-break',
 	},
     EVENT: {
         GET_BY_SESSION_ID: 'events/session/',

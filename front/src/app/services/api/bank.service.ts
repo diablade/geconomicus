@@ -50,22 +50,31 @@ export class BankService {
 		);
 	}
 
-	seizure(seizure: any, credit: any): Observable<any> {
-		return this.http.post(environment.API_HOST + environment.BANK.SEIZURE, { seizure, credit }).pipe(
-			catchError((error) => {
-				this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.SEIZURE');
-				throw error;
+	seizure(gameStateId: string, creditId: string, playerStateIdx: number, seizure: any): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.SEIZURE, {
+				gameStateId,
+				creditId,
+				playerStateIdx,
+				seizure,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.SEIZURE');
+					throw error;
+				})
+			);
 	}
 
-	breakFree(playerIdx: string): Observable<any> {
-		return this.http.post(environment.API_HOST + environment.BANK.BREAK_FREE, { playerIdx }).pipe(
-			catchError((error) => {
-				this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.BREAK_FREE');
-				throw error;
-			})
-		);
+	prisonBreak(gameStateId: string, playerStateIdx: number): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.PRISON_BREAK, { gameStateId, playerStateIdx })
+			.pipe(
+				catchError((error) => {
+					this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.PRISON_BREAK');
+					throw error;
+				})
+			);
 	}
 
 	settleCredit(gameStateId: string, playerStateIdx: number, creditId: string): Observable<any> {

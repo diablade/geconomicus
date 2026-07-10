@@ -134,6 +134,14 @@
 											class="progress-bar overflow-visible progress-bar-striped progress-bar-animated"
 											[style.width.%]="prisoner.progressPrison"></div>
 									</div>
+									<button
+										class="box-shadowed"
+										mat-raised-button
+										color="primary"
+										(click)="breakFree(prisoner.idx)">
+										<mat-icon>lock_open</mat-icon>
+										{{ 'BANK.BREAK_FREE' | translate }}
+									</button>
 								</div>
 							</div>
 						</div>

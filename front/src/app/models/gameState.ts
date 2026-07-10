@@ -49,6 +49,7 @@ export class DeathState {
 }
 
 export class GameState {
+    _id='';
 	typeMoney = '';
 	sessionId = '';
 	ruleIdx = 0;
@@ -62,7 +63,7 @@ export class GameState {
 	currentDU = 0;
 	//state debt
 	creditIndexSeq = 0;
-	credits = [];
+	credits : Credit[] = [];
 	bankInterestEarned = 0;
 	bankGoodsEarned = 0;
 	bankMoneyLost = 0;

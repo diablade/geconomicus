@@ -1,25 +1,26 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Card, Credit, Player } from '../../models/game';
+import { Card, Credit } from '../../models/gameState';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CREDIT_STATUS } from '@geco/shared';
-import { DeprecatedBackService } from '../../services/deprecated-back.service';
 import * as _ from 'lodash-es';
 import { faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { getBackgroundStyle } from '../../services/avatarTools';
+import { Avatar } from 'src/app/models/avatar';
 
 @Component({
 	selector: 'app-seizure-dialog',
 	templateUrl: './seizure-dialog.component.html',
 	styleUrls: ['./seizure-dialog.component.scss'],
 })
-export class SeizureDialogComponent implements OnInit {
+export class SeizureDialogComponent {
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	credit: Credit | undefined;
-	player: Player = new Player();
 	playerCards: Card[] = [];
 	seizureCards: Card[] = [];
 	seizureCoins = 0;
+	playerCoins = 0;
+	avatar: Avatar = new Avatar();
 	faLandMark = faLandmark;
 	faArrowTurnDown = faArrowTurnDown;
 	faInfoCircle = faInfoCircle;
@@ -31,7 +32,6 @@ export class SeizureDialogComponent implements OnInit {
 	timerPrisonMax = 5;
 
 	constructor(
-		private backService: DeprecatedBackService,
 		public dialogRef: MatDialogRef<SeizureDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any
 	) {
@@ -39,13 +39,11 @@ export class SeizureDialogComponent implements OnInit {
 		this.seizureType = data.seizureType;
 		this.seizureCost = data.seizureCosts;
 		this.seizureDecote = data.seizureDecote;
-	}
-
-	ngOnInit(): void {
-		this.backService.getPlayer(this.credit?.idGame, this.credit?.idPlayer).subscribe(async (data) => {
-			this.player = data.player;
-			this.playerCards = data.player.cards;
-		});
+		this.timerPrisonMax = data.timerPrison ?? 5;
+		// Use player state passed from bank-board (current snapshot)
+		this.playerCards = data.playerCards ?? [];
+		this.playerCoins = data.playerCoins ?? 0;
+		this.avatar = data.avatar ?? new Avatar();
 	}
 
 	onDrop(event: CdkDragDrop<Card[]>) {
@@ -62,8 +60,7 @@ export class SeizureDialogComponent implements OnInit {
 	}
 
 	seizeCoins() {
-		this.seizureCoins = this.player.coins;
-		this.player.coins = 0;
+		this.seizureCoins = this.playerCoins;
 	}
 
 	getSeizure() {

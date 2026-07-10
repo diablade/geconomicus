@@ -192,28 +192,7 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 		});
 		dialogRef.afterClosed().subscribe((result) => {
 			if (result === 'btnConfirm') {
-				// this.gameState.playersStates
-				// 	.filter((p) => p.status === PLAYER_STATUS.ALIVE)
-				// 	.forEach((p) => {
-				// 		this.bankService
-				// 			.contract({
-				// 				playerStateIdx: p.idx,
-				// 				amount: this.rules.defaultCreditAmount,
-				// 				interest: this.rules.defaultInterestAmount,
-				// 				gameStateId: this.gameStateId,
-				// 				startNow: this.gameState.status == GAME_STATUS.PLAYING,
-				// 			})
-				// 			.subscribe((credit: Credit) => {
-				// 				this.snackbarService.showSuccess(
-				// 					this.i18nService.instant('CONTRACT.CREDIT_SUCCESS', {
-				// 						player: this.getAvatar(credit.playerStateIdx)?.name,
-				// 					})
-				// 				);
-				// 				this.gameState.credits.push(credit);
-				// 				this.gameState.currentMassMonetary += credit.amount;
-				// 			});
-				// 	});
-				// // 	this.snackbarService.showSuccess(this.i18nService.instant("BANK.CREDIT_FOR_ALL_SUCCESS"));
+				// TODO
 			}
 		});
 	}
@@ -234,23 +213,41 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 	}
 
 	seizureProcedure(credit: Credit) {
-		this.rules$.pipe(take(1)).subscribe((rules) => {
-			const confDialogRef = this.dialog.open(SeizureDialogComponent, {
-				data: {
-					credit: credit,
-					seizureType: rules.seizureType,
-					seizureCosts: rules.seizureCosts,
-					seizureDecote: rules.seizureDecote,
-				},
-			});
-			confDialogRef.afterClosed().subscribe((seizure) => {
-				if (seizure) {
-					this.gameStateService.seizureOnCredit(seizure, credit);
-				} else {
-					this.snackbarService.showError('ERROR.SEIZURE_CANCELLED');
+		combineLatest({
+			rules: this.rules$,
+			playersAC: this.playersAC$,
+		})
+			.pipe(take(1))
+			.subscribe(({ rules, playersAC }) => {
+				// Get the target player's current state
+				const targetPlayer = playersAC.find((p) => p.idx === credit.playerStateIdx);
+				if (!targetPlayer) {
+					this.snackbarService.showError('ERROR.PLAYER_NOT_FOUND');
+					return;
 				}
+
+				const confDialogRef = this.dialog.open(SeizureDialogComponent, {
+					data: {
+						credit: credit,
+						seizureType: rules.seizureType,
+						seizureCosts: rules.seizureCosts,
+						seizureDecote: rules.seizureDecote,
+						timerPrison: rules.timerPrison,
+						// Pass player's current state snapshot
+						playerState: targetPlayer,
+						playerCards: targetPlayer.cards || [],
+						playerCoins: targetPlayer.coins || 0,
+						avatar: targetPlayer.avatar,
+					},
+				});
+				confDialogRef.afterClosed().subscribe((seizure) => {
+					if (seizure) {
+						this.gameStateService.seizureOnCredit(seizure, credit);
+					} else {
+						this.snackbarService.showError('ERROR.SEIZURE_CANCELLED');
+					}
+				});
 			});
-		});
 	}
 
 	actionBtn($event: string, credit: Credit) {
@@ -259,9 +256,7 @@ export class BankBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	breakFree(idPlayerToFree: number) {
-		this.bankService.breakFree(idPlayerToFree.toString()).subscribe(() => {
-			this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.BREAK_FREE'));
-		});
+	breakFree(playerStateIdx: number) {
+		this.gameStateService.prisonBreak(playerStateIdx);
 	}
 }

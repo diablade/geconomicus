@@ -7,19 +7,19 @@
 				id="player-cards"
 				(cdkDropListDropped)="onDrop($event)"
 				[cdkDropListData]="playerCards"
-				[ngClass]="player.boardConf"
-				[ngStyle]="getBackgroundStyle(player.boardConf, player.boardColor)"
+				[ngClass]="avatar.boardConf"
+				[ngStyle]="getBackgroundStyle(avatar.boardConf, avatar.boardColor)"
 				class="d-flex flex-column player-board m-2">
 				<div class="header-board d-flex flex-row p-2">
 					<div class="user d-flex">
-						<avatar [avatar]="player"></avatar>
+						<avatar [avatar]="avatar"></avatar>
 					</div>
 					<div class="d-flex flex-column align-items-center flex-grow-1">
-						<div class="fs-6 shadowed">{{ player.name }}</div>
+						<div class="fs-6 shadowed">{{ avatar.name }}</div>
 						<div class="sold">
-							{{ 'DIALOG.SEIZURE.SOLD' | translate: { amount: player.coins | number: '1.2-2' } }}
+							{{ 'DIALOG.SEIZURE.SOLD' | translate: { amount: playerCoins | number: '1.2-2' } }}
 						</div>
-						<button *ngIf="player.coins > 0" mat-raised-button color="primary" (click)="seizeCoins()">
+						<button *ngIf="playerCoins > 0" mat-raised-button color="primary" (click)="seizeCoins()">
 							{{ 'DIALOG.SEIZURE.SEIZE' | translate }}
 							<fa-icon [icon]="faSackDollar"></fa-icon>
 						</button>
@@ -30,8 +30,8 @@
 						<app-card
 							[card]="card"
 							[typeMoney]="'debt'"
-							[ownerIdx]="player.idx"
-							[gameStateId]="credit?.idGame"
+							[ownerIdx]=""
+							[gameStateId]=""
 							[height]="'75px'"
 							[width]="'50px'"
 							[priceSize]="'10px'"
@@ -93,8 +93,8 @@
 						<app-card
 							[card]="card"
 							[typeMoney]="'debt'"
-							[ownerIdx]="player.idx"
-							[gameStateId]="credit?.idGame"
+							[ownerIdx]=""
+							[gameStateId]=""
 							[height]="'75px'"
 							[width]="'50px'"
 							[priceSize]="'10px'"

@@ -603,23 +603,32 @@ export class GameStateService {
 	}
 
 	seizureOnCredit(seizure: any, credit: Credit) {
-		this.bankService.seizure(seizure, credit).subscribe((data: any) => {
+		const playerStateIdx = credit.playerStateIdx;
+		this.bankService.seizure(this.gameStateId, credit.id, playerStateIdx, seizure).subscribe((data: any) => {
 			this.snackbarService.showSuccess(this.i18n.instant('DIALOG.SEIZURE.SUCCESS'));
-			if (data) {
-				// this.gameState.credits = _.map(this.gameState.credits, (c) => {
-				// if (c.idx == data.credit.idx) {
-				// return data.credit;
-				// } else {
-				// return c;
-				// }
-				// });
-				// if (data.prisoner) {
-				// this.prisoners.push(data.prisoner);
-				// }
-				// if (data.seizure) {
-				// this.gameState.currentMassMonetary -= seizure.coins;
-				// }
+			if (data?.data) {
+				const response = data.data;
+				// Update credit status to DONE
+				const currentGameState = this.gameStateSubject.value;
+				if (currentGameState.credits) {
+					const creditIdx = currentGameState.credits.findIndex((c) => c.id === credit.id);
+					if (creditIdx >= 0) {
+						currentGameState.credits[creditIdx].status = CREDIT_STATUS.DONE;
+						currentGameState.credits[creditIdx].endAt = new Date();
+					}
+				}
+				// Update mass monetary
+				if (currentGameState.currentMassMonetary && response.seizure) {
+					currentGameState.currentMassMonetary -= response.seizure.coins;
+				}
+				this.gameStateSubject.next(currentGameState);
 			}
 		});
 	}
+
+    prisonBreak(playerStateIdx: number){
+        this.bankService.prisonBreak(this.gameStateId, playerStateIdx).subscribe(() => {
+			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.BREAK_FREE'));
+		});
+    }
 }
