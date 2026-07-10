@@ -123,109 +123,73 @@ const _whatCanDoCredit = (credit, playerState) => {
 	};
 };
 
-const _getOut = async (idGame, idPlayer) => {
-	//     try {
-	//         let game = await GameModel.findById(idGame);
-	//         const shuffledDeck = _.shuffle(game.decks[0]);
-	//         // Draw new cards for the player
-	//         const newCards = shuffledDeck.slice(0, 4); //same weight
-	//         // draw newCards in bdd
-	//         await GameModel.updateOne({_id: idGame}, {
-	//             $pull: {
-	//                 [`decks.${0}`]: {_id: {$in: newCards.map((c) => _id)}},
-	//             },
-	//         });
-	//         // and Add new cards to player's hand and event
-	//         let newEvent = constructor.event(PRISON_ENDED, MASTER, idPlayer, 0, newCards, Date.now());
-	//         await GameModel.updateOne({
-	//             _id:           idGame,
-	//             "players._id": idPlayer
-	//         }, {
-	//             $set:  {"players.$.status": ALIVE},
-	//             $push: {
-	//                 "players.$.cards": {$each: newCards},
-	//                 events:            newEvent,
-	//             },
-	//         });
-	//         socket.emitTo(idGame + EVENT, EVENT, newEvent);
-	//         socket.emitAckTo(idPlayer, PRISON_ENDED, {cards: newCards});
-	//         socket.emitTo(idGame + BANK, PRISON_ENDED, {
-	//             idPlayer: idPlayer,
-	//             cards:    newCards,
-	//         });
-	//     }
-	//     catch (err) {
-	//         log.error(err);
-	//     }
+// Helper to create a prison timer
+const _createPrisonTimer = (gameStateId, playerStateIdx, prisonTimeMinutes) => {
+	log.debug('[BankStateService] creating prison timer', { gameStateId, playerStateIdx, prisonTimeMinutes });
+	return new Timer(
+		`${gameStateId}-${playerStateIdx}`,
+		{ gameStateId, playerStateIdx },
+		prisonTimeMinutes * minute,
+		_prisonEndCallback,
+		fiveSeconds,
+		_prisonProgressCallback
+	);
 };
 
-const lockDownPlayer = async (idPlayer, idGame, prisonTime) => {
-	//     let event = constructor.event(PRISON, BANK, idPlayer, prisonTime, [], Date.now());
-	//     const updatedGame = await GameModel.findOneAndUpdate({
-	//         _id:           idGame,
-	//         "players._id": idPlayer
-	//     }, {
-	//         $set:  {"players.$.status": PRISON},
-	//         $push: {events: event},
-	//     }, {new: true});
-	//     let prisoner = updatedGame.players.find(p => p._id.toString() === idPlayer);
-	//     addPrisonTimer(idPlayer, prisonTime, {
-	//         idPlayer: idPlayer,
-	//         idGame:   idGame,
-	//     });
-	//     return {
-	//         prisoner,
-	//         event
-	//     };
+// Shared prison release logic (called by both timeout and manual prisonBreak)
+const _releasePlayer = async (entry, playerStateIdx) => {
+	const { gameState, events, rules } = entry;
+	const playerState = _findPlayer(gameState, playerStateIdx);
+
+	if (playerState.status !== PLAYER_STATUS.PRISON) {
+		log.debug('[BankStateService] player not in prison, skipping release', { playerStateIdx });
+		return null;
+	}
+
+	// Draw 4 cards from deck 0 (same weight as produce action)
+	const newCards = gameState.decks[0].splice(0, 4);
+	playerState.cards.push(...newCards);
+	playerState.status = PLAYER_STATUS.ALIVE;
+
+	const event = EventHelper.createEvent(
+		DB_EVENTS.PRISON_ENDED,
+		gameState.sessionId,
+		gameState._id,
+		PLAYER_TYPE.BANK,
+		playerStateIdx,
+		{ cards: newCards }
+	);
+	events.push(event);
+
+	log.info('[BankStateService] player released from prison', { playerStateIdx, cardsCount: newCards.length });
+
+	socket.emitTo(ROOMS.gameStateBank(gameState._id), IO.EVENT, event);
+	socket.emitAckTo(ROOMS.playerState(gameState._id, playerStateIdx), IO.PLAYER.PRISON_ENDED, { cardsLK: newCards });
+
+	return { playerState, event, newCards };
 };
 
 const _prisonEndCallback = async (timerInstance) => {
 	log.info(
 		`[BankStateService] Prison ended for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`
 	);
-	// TODO: Implement prison end logic
-	// const getOut = async (idGame, idPlayer) => {
-	//     try {
-	//         let game = await GameModel.findById(idGame);
-	//         const shuffledDeck = _.shuffle(game.decks[0]);
-	//         // Draw new cards for the player
-	//         const newCards = shuffledDeck.slice(0, 4); //same weight
-	//         // draw newCards in bdd
-	//         await GameModel.updateOne({_id: idGame}, {
-	//             $pull: {
-	//                 [`decks.${0}`]: {_id: {$in: newCards.map((c) => _id)}},
-	//             },
-	//         });
-	//         // and Add new cards to player's hand and event
-	//         let newEvent = constructor.event(PRISON_ENDED, MASTER, idPlayer, 0, newCards, Date.now());
-	//         await GameModel.updateOne({
-	//             _id:           idGame,
-	//             "players._id": idPlayer
-	//         }, {
-	//             $set:  {"players.$.status": ALIVE},
-	//             $push: {
-	//                 "players.$.cards": {$each: newCards},
-	//                 events:            newEvent,
-	//             },
-	//         });
-	//         socket.emitTo(idGame + EVENT, EVENT, newEvent);
-	//         socket.emitAckTo(idPlayer, PRISON_ENDED, {cards: newCards});
-	//         socket.emitTo(idGame + BANK, PRISON_ENDED, {
-	//             idPlayer: idPlayer,
-	//             cards:    newCards,
-	//         });
-	//     }
-	//     catch (err) {
-	//         log.error(err);
-	//     }
-	// }
+	const { gameStateId, playerStateIdx } = timerInstance.data;
+	try {
+		await GameStateManager.withQueue(gameStateId, async (entry) => {
+			await _releasePlayer(entry, playerStateIdx);
+		});
+	} catch (err) {
+		log.error('[BankStateService] error in _prisonEndCallback', { error: err.message, playerStateIdx, gameStateId });
+	}
 };
 
 const _prisonProgressCallback = async (timerInstance) => {
-	log.info(
-		`[BankStateService] Prison progress for player ${timerInstance.data.playerStateIdx} in game ${timerInstance.data.gameStateId}`
-	);
-	// TODO: Implement prison progress logic
+	const { gameStateId, playerStateIdx } = timerInstance.data;
+	const remainingMs = timerInstance.getRemainingMs();
+	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs });
+
+	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.PLAYER.PROGRESS_PRISON, { playerStateIdx, remainingTime: remainingMs });
+	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.PROGRESS_PRISON, { remainingTime: remainingMs });
 };
 
 // ─── Timer callbacks ───────────────────────────────────────────────────────────
@@ -625,98 +589,137 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 	events.push(event);
 };
 
-BankStateService.seizure = async (gameStateId, creditIdx, playerStateIdx, seizure) => {
-	// let { credit, canPay } = await getCreditOnActionPayment(idGame, idPlayer, idCredit, SEIZURE);
-	// if (!canPay) {
-	// 	throw new Error('wrong credit');
-	// }
-	// let newEvent = constructor.event(SEIZURE, idPlayer, BANK, seizure.coins, seizure.cards, Date.now());
-	// let interestSeized = seizure.interest >= seizure.coins ? seizure.interest : 0;
-	// let cardsValue = seizure.cards.reduce((acc, c) => price + acc, 0);
-	// // remove card and coins of player
-	// await GameModel.updateOne(
-	// 	{
-	// 		_id: idGame,
-	// 		'players._id': idPlayer,
-	// 	},
-	// 	{
-	// 		$pull: {
-	// 			'players.$.cards': {
-	// 				_id: { $in: seizure.cards.map((c) => _id) },
-	// 			},
-	// 		},
-	// 		$inc: { 'players.$.coins': -seizure.coins },
-	// 		$push: { events: newEvent },
-	// 	}
-	// );
-	// //PUT BACK CARDS IN THE DECKs
-	// await decksService.pushCardsInDecks(idGame, seizure.cards);
-	// // remove coins MMonetary and update status credit
-	// await GameModel.updateOne(
-	// 	{
-	// 		_id: idGame,
-	// 		'credits._id': idCredit,
-	// 	},
-	// 	{
-	// 		$inc: {
-	// 			currentMassMonetary: -seizure.coins,
-	// 			bankInterestEarned: +interestSeized,
-	// 			bankGoodsEarned: cardsValue,
-	// 		},
-	// 		$set: {
-	// 			'credits.$.status': CREDIT_DONE,
-	// 			'credits.$.endDate': Date.now(),
-	// 		},
-	// 	}
-	// );
-	// credit.status = CREDIT_DONE;
-	// credit.endDate = Date.now();
-	// socket.emitTo(ROOMS.gameStateMaster(gameStateId), EVENT, newEvent);
-	// // PRISON OU PAS ...
-	// const addPrisonTimer = (id, duration, data) => {
-	//     bankTimerManager.addTimer(new Timer(id, duration * minute, fiveSeconds, data, (timer) => {
-	//         let remainingTime = differenceInMilliseconds(timer.endTime, new Date());
-	//         let totalTime = differenceInMilliseconds(timer.endTime, timer.startTime);
-	//         const progress = 100 - Math.floor((remainingTime / totalTime) * 100);
-	//         socket.emitTo(timer.data.idGame + BANK, PROGRESS_PRISON, {
-	//             id,
-	//             progress,
-	//             remainingTime,
-	//         });
-	//         socket.emitTo(timer.data.idPlayer, PROGRESS_PRISON, {
-	//             id,
-	//             progress,
-	//             remainingTime,
-	//         });
-	//     }, (timer) => {
-	//         timeoutPrison(timer);
-	//     }), true);
-	// }
-	// if (seizure.prisonTime && seizure.prisonTime > 0) {
-	// 	const result = await lockDownPlayer(idPlayer, idGame, seizure.prisonTime);
-	// 	socket.emitTo(ROOMS.gameStateBank(gameStateId), EVENT, result.event);
-	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), SEIZURE, {
-	// 		credit: credit,
-	// 		seizure: seizure,
-	// 		prisoner: result.prisoner,
-	// 	});
-	// 	return {
-	// 		credit: credit,
-	// 		seizure: seizure,
-	// 		prisoner: result.prisoner,
-	// 	};
-	// } else {
-	// 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), SEIZURE, {
-	// 		credit: credit,
-	// 		seizure: seizure,
-	// 		prisoner: undefined,
-	// 	});
-	// 	return {
-	// 		credit: credit,
-	// 		seizure: seizure,
-	// 		prisoner: undefined,
-	// 	};
-	// }
+BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure) => {
+	log.debug(`[BankStateService] Seizing credit:${creditId} from player:${playerStateIdx} in game:${gameStateId}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, events, rules } = entry;
+
+		const credit = _findCredit(gameState, creditId);
+		const playerState = _findPlayer(gameState, playerStateIdx);
+
+		if (Number(credit.playerStateIdx) !== Number(playerStateIdx)) {
+			throw new Error('ERROR.OWNERSHIP_CREDIT');
+		}
+		if (credit.status !== CREDIT_STATUS.FAULT) {
+			throw new Error('ERROR.CREDIT_NOT_IN_FAULT');
+		}
+		if (seizure.coins > playerState.coins) {
+			throw new Error('ERROR.SEIZURE_COINS_EXCEED_PLAYER_COINS');
+		}
+
+		// Validate card keys exist in player hand, and look up actual card data from hand
+		const seizedCardKeys = new Set(seizure.cards.map((c) => c.key));
+		const seizedCardsFromHand = playerState.cards.filter((c) => seizedCardKeys.has(c.key));
+
+		if (seizedCardsFromHand.length !== seizure.cards.length) {
+			throw new Error('ERROR.CARD_NOT_FOUND_IN_HAND');
+		}
+
+		// Calculate value from actual card data (don't trust client prices)
+		const cardsValue = seizedCardsFromHand.reduce((acc, c) => acc + c.price, 0);
+		const interestSeized = seizure.coins >= credit.interest ? credit.interest : 0;
+
+		// Remove seized cards from player hand
+		playerState.cards = playerState.cards.filter((c) => !seizedCardKeys.has(c.key));
+		playerState.coins -= seizure.coins;
+
+		// Update bank monetary state
+		gameState.currentMassMonetary -= seizure.coins;
+		gameState.bankInterestEarned += interestSeized;
+		gameState.bankGoodsEarned += cardsValue;
+
+		// Return seized cards to deck
+		DecksHelper.pushCardsInDecks(gameState, seizedCardsFromHand);
+
+		// Mark credit as done and stop its timer
+		credit.status = CREDIT_STATUS.DONE;
+		credit.endAt = new Date();
+		creditTimerManager.stopAndRemoveTimer(credit.id);
+
+		// Create seizure event
+		const seizureEvent = EventHelper.createEvent(
+			DB_EVENTS.CREDIT_SEIZURE,
+			gameState.sessionId,
+			gameState._id,
+			PLAYER_TYPE.BANK,
+			playerStateIdx,
+			{ credit, coins: seizure.coins, cards: seizedCardsFromHand }
+		);
+		events.push(seizureEvent);
+
+		log.info('[BankStateService] seizure completed', {
+			gameStateId,
+			creditId,
+			playerStateIdx,
+			coinSeized: seizure.coins,
+			cardsSeized: seizedCardsFromHand.length,
+		});
+
+		socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, seizureEvent);
+
+		// Handle prison if specified
+		let prisonResult = null;
+		if (seizure.prisonTime && seizure.prisonTime > 0) {
+			const clampedPrisonTime = Math.min(seizure.prisonTime, rules.timerPrison);
+			playerState.status = PLAYER_STATUS.PRISON;
+
+			const prisonEvent = EventHelper.createEvent(
+				DB_EVENTS.PRISON,
+				gameState.sessionId,
+				gameState._id,
+				PLAYER_TYPE.BANK,
+				playerStateIdx,
+				{ prisonTime: clampedPrisonTime }
+			);
+			events.push(prisonEvent);
+
+			if (clampedPrisonTime > 0) {
+				const timer = _createPrisonTimer(gameStateId, playerStateIdx, clampedPrisonTime);
+				await prisonTimerManager.startTimer(timer);
+			}
+
+			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.EVENT, prisonEvent);
+			prisonResult = { playerState, event: prisonEvent };
+
+			log.info('[BankStateService] player imprisoned', {
+				gameStateId,
+				playerStateIdx,
+				prisonDuration: clampedPrisonTime,
+			});
+		}
+
+		// Emit seizure payload to player
+		const payload = {
+			credit,
+			seizure: { coins: seizure.coins, cards: seizedCardsFromHand },
+			coinsLK: playerState.coins,
+			prisoner: prisonResult?.playerState,
+		};
+		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, payload);
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, {
+			credit,
+			..._getBankIndicators(gameState),
+		});
+
+		return payload;
+	});
+};
+
+BankStateService.prisonBreak = async (gameStateId, playerStateIdx) => {
+	log.debug(`[BankStateService] Prison break for player:${playerStateIdx} in game:${gameStateId}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		// Stop the prison timer if it exists
+		await prisonTimerManager.releasePlayer(gameStateId, playerStateIdx);
+
+		// Release the player (draw new cards, set ALIVE status)
+		const result = await _releasePlayer(entry, playerStateIdx);
+		if (!result) {
+			throw new Error('ERROR.PLAYER_NOT_IN_PRISON');
+		}
+
+		log.info('[BankStateService] player released from prison via break', { gameStateId, playerStateIdx });
+		return result;
+	});
 };
 
 BankStateService.settleCredit = async (gameStateId, creditId, playerStateIdx) => {

@@ -242,4 +242,18 @@ GameStateController.actionOng = asyncHandler(async (req, res) => {
 	return res.status(200).json(result);
 });
 
+GameStateController.seizure = asyncHandler(async (req, res) => {
+	const { gameStateId, creditId, playerStateIdx, seizure } = req.body;
+	log.info('[GameStateController] seizure', { gameStateId, creditId, playerStateIdx });
+	const result = await BankStateService.seizure(gameStateId, creditId, playerStateIdx, seizure);
+	return res.status(200).json({ status: 'ok', message: 'CREDIT.SEIZURE_SUCCESS', data: result });
+});
+
+GameStateController.prisonBreak = asyncHandler(async (req, res) => {
+	const { gameStateId, playerStateIdx } = req.body;
+	log.info('[GameStateController] prison break', { gameStateId, playerStateIdx });
+	const result = await BankStateService.prisonBreak(gameStateId, playerStateIdx);
+	return res.status(200).json({ status: 'ok', message: 'PRISON.BREAK_SUCCESS', data: result });
+});
+
 export default GameStateController;

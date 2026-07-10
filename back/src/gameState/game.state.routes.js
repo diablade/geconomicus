@@ -43,10 +43,7 @@ router.post('/bank-state/credit-for-all', validate(stateSanitize.creditForAll), 
 router.post('/bank-state/cancel-credit', validate(stateSanitize.cancelCredit), gameStateController.cancelCredit);
 router.post('/bank-state/settle-credit', validate(stateSanitize.settleCredit), gameStateController.settleCredit);
 router.post('/bank-state/extend-credit', validate(stateSanitize.extendCredit), gameStateController.extendCredit);
-
-//TODOs
-// router.post('/bank-state/seizure', validate(schemas.seizure), gameStateController.seizure);
-// router.post('/bank-state/prison-free', validate(schemas.prisonFree), gameStateController.prisonFree);
-// router.post('/bank-state/prison', validate(schemas.prison), gameStateController.prison);
+router.post('/bank-state/seizure', validate(stateSanitize.seizure), gameStateController.seizure);
+router.post('/bank-state/prison-break', validate(stateSanitize.prisonBreak), gameStateController.prisonBreak);
 
 export default router;
