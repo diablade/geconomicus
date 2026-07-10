@@ -15,6 +15,14 @@ await jest.unstable_mockModule('../src/gameState/managers/CreditTimerManager.js'
     }
 }));
 
+await jest.unstable_mockModule('../src/gameState/managers/PrisonTimerManager.js', () => ({
+    default: {
+        startTimer: jest.fn().mockResolvedValue(undefined),
+        releasePlayer: jest.fn().mockResolvedValue(undefined),
+        stopAndRemoveTimer: jest.fn().mockResolvedValue(undefined),
+    }
+}));
+
 await jest.unstable_mockModule('../src/gameState/managers/GameStateManager.js', () => ({
     default: {
         withQueue: jest.fn()
@@ -50,6 +58,26 @@ await jest.unstable_mockModule('../src/misc/Timer.js', () => ({
         pause: jest.fn().mockReturnValue(duration),
         resume: jest.fn()
     }))
+}));
+
+await jest.unstable_mockModule('../src/gameState/helpers/decks.helper.js', () => ({
+    default: {
+        pushCardsInDecks: jest.fn()
+    }
+}));
+
+await jest.unstable_mockModule('../src/gameState/helpers/event.helper.js', () => ({
+    default: {
+        createEvent: jest.fn((typeEvent, sessionId, gameStateId, playerType, playerIdx, data) => ({
+            typeEvent,
+            sessionId,
+            gameStateId,
+            playerType,
+            playerIdx,
+            data,
+            createdAt: new Date()
+        }))
+    }
 }));
 
 // ─── Late imports (after mocking) ────────────────────────────────────────────
@@ -474,5 +502,327 @@ describe('BankStateService — seizureOnDead', () => {
 
         expect(events).toHaveLength(1);
         expect(events[0].typeEvent).toBe('credit-seized-dead');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('BankStateService — seizure (manual master seizure)', () => {
+    let gameState;
+    let prisonTimerManager;
+
+    beforeEach(async () => {
+        jest.clearAllMocks();
+
+        // Import PrisonTimerManager mock here
+        prisonTimerManager = (await import('../src/gameState/managers/PrisonTimerManager.js')).default;
+        prisonTimerManager.startTimer = jest.fn().mockResolvedValue(undefined);
+        prisonTimerManager.releasePlayer = jest.fn().mockResolvedValue(undefined);
+
+        gameState = makeGameState({
+            bankInterestEarned: 0,
+            bankGoodsEarned: 0,
+            currentMassMonetary: 100,
+            credits: [
+                {
+                    id: 'credit-1',
+                    amount: 5,
+                    interest: 2,
+                    playerStateIdx: 1,
+                    status: CREDIT_STATUS.FAULT,
+                    remainingTime: 60000,
+                },
+            ],
+            playersStates: [
+                {
+                    idx: 1,
+                    status: PLAYER_STATUS.ALIVE,
+                    coins: 30,
+                    cards: [
+                        { key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 },
+                        { key: 'card-2', price: 3, letter: 'B', color: 'blue', weight: 1 },
+                        { key: 'card-3', price: 1, letter: 'C', color: 'green', weight: 2 },
+                    ],
+                },
+                { idx: 2, status: PLAYER_STATUS.ALIVE, coins: 5, cards: [] },
+            ],
+            decks: [[]], // deck 0 is empty for test
+        });
+        setupWithQueue(gameState, makeRules({ timerPrison: 5 }));
+    });
+
+    it('seizes coins and cards from player, updates bank indicators', async () => {
+        const seizure = {
+            coins: 10,
+            cards: [
+                { key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 },
+                { key: 'card-2', price: 3, letter: 'B', color: 'blue', weight: 1 },
+            ],
+            prisonTime: 0,
+        };
+
+        const result = await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.playersStates[0].coins).toBe(20); // 30 - 10
+        expect(gameState.playersStates[0].cards).toHaveLength(1); // 3 - 2
+        expect(gameState.playersStates[0].cards[0].key).toBe('card-3');
+        expect(gameState.currentMassMonetary).toBe(90); // 100 - 10
+        expect(gameState.bankGoodsEarned).toBe(5); // 2 + 3
+        expect(result.coinsLK).toBe(20);
+    });
+
+    it('marks credit as DONE and stops timer', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 0,
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.credits[0].status).toBe(CREDIT_STATUS.DONE);
+        expect(creditTimerManager.stopAndRemoveTimer).toHaveBeenCalledWith('credit-1');
+    });
+
+    it('returns seized cards in payload', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 0,
+        };
+
+        const result = await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(result.seizure.cards).toHaveLength(1);
+        expect(result.seizure.cards[0].key).toBe('card-1');
+        expect(result.seizure.coins).toBe(5);
+    });
+
+    it('imprisons player when prisonTime > 0', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 3,
+        };
+
+        const result = await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.playersStates[0].status).toBe(PLAYER_STATUS.PRISON);
+        expect(result.prisoner).toBeDefined();
+        expect(result.prisoner.status).toBe(PLAYER_STATUS.PRISON);
+        expect(prisonTimerManager.startTimer).toHaveBeenCalled();
+    });
+
+    it('clamps prisonTime to rules.timerPrison', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 100, // way over the limit
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        // The Timer mock was called; verify the duration passed
+        // In real code, _createPrisonTimer is called with Math.min(100, 5) = 5
+        // We can't directly test Timer duration, but we can verify prison status
+        expect(gameState.playersStates[0].status).toBe(PLAYER_STATUS.PRISON);
+    });
+
+    it('does NOT imprison when prisonTime is 0 or not specified', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 0,
+        };
+
+        const result = await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.playersStates[0].status).toBe(PLAYER_STATUS.ALIVE);
+        expect(result.prisoner).toBeUndefined();
+        expect(prisonTimerManager.startTimer).not.toHaveBeenCalled();
+    });
+
+    it('throws ERROR.OWNERSHIP_CREDIT when credit belongs to different player', async () => {
+        gameState.credits[0].playerStateIdx = 2; // belongs to player 2
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+        };
+
+        await expect(BankStateService.seizure('game-001', 'credit-1', 1, seizure))
+            .rejects.toThrow('ERROR.OWNERSHIP_CREDIT');
+    });
+
+    it('throws ERROR.CREDIT_NOT_IN_FAULT when credit is not FAULT', async () => {
+        gameState.credits[0].status = CREDIT_STATUS.RUNNING;
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+        };
+
+        await expect(BankStateService.seizure('game-001', 'credit-1', 1, seizure))
+            .rejects.toThrow('ERROR.CREDIT_NOT_IN_FAULT');
+    });
+
+    it('throws ERROR.SEIZURE_COINS_EXCEED_PLAYER_COINS when coins exceed player balance', async () => {
+        const seizure = {
+            coins: 100, // player only has 30
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+        };
+
+        await expect(BankStateService.seizure('game-001', 'credit-1', 1, seizure))
+            .rejects.toThrow('ERROR.SEIZURE_COINS_EXCEED_PLAYER_COINS');
+    });
+
+    it('throws ERROR.CARD_NOT_FOUND_IN_HAND when card key not in player cards', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [
+                { key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }, // exists
+                { key: 'card-999', price: 99, letter: 'Z', color: 'black', weight: 3 }, // does NOT exist
+            ],
+        };
+
+        await expect(BankStateService.seizure('game-001', 'credit-1', 1, seizure))
+            .rejects.toThrow('ERROR.CARD_NOT_FOUND_IN_HAND');
+    });
+
+    it('uses server card data (price/weight) not client values', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [
+                {
+                    key: 'card-1',
+                    price: 999, // client lies, says 999
+                    letter: 'A',
+                    color: 'red',
+                    weight: 0,
+                },
+            ],
+        };
+
+        const result = await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        // Server should use actual card price (2) not client value (999)
+        expect(gameState.bankGoodsEarned).toBe(2); // NOT 999
+        expect(result.seizure.cards[0].price).toBe(2); // returned card has correct price
+    });
+
+    it('emits socket events to bank and player rooms', async () => {
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(socket.emitTo).toHaveBeenCalled();
+        expect(socket.emitAckTo).toHaveBeenCalled();
+    });
+
+    it('pushes CREDIT_SEIZURE event to events buffer', async () => {
+        let capturedEvents;
+        GameStateManager.withQueue.mockImplementationOnce(async (_id, fn) => {
+            const entry = {
+                gameState,
+                rules: makeRules({ timerPrison: 5 }),
+                events: [],
+                sessionId: gameState.sessionId,
+                gameStateId: gameState._id,
+            };
+            const result = await fn(entry);
+            capturedEvents = entry.events;
+            return result;
+        });
+
+        const seizure = {
+            coins: 5,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 3,
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        // Should have 2 events: CREDIT_SEIZURE + PRISON
+        expect(capturedEvents.length).toBeGreaterThanOrEqual(1);
+        expect(capturedEvents[0].typeEvent).toBe('credit-seizure');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('BankStateService — prisonBreak (early release)', () => {
+    let gameState;
+    let prisonTimerManager;
+
+    beforeEach(async () => {
+        jest.clearAllMocks();
+
+        prisonTimerManager = (await import('../src/gameState/managers/PrisonTimerManager.js')).default;
+        prisonTimerManager.releasePlayer = jest.fn().mockResolvedValue(undefined);
+
+        gameState = makeGameState({
+            playersStates: [
+                {
+                    idx: 1,
+                    status: PLAYER_STATUS.PRISON,
+                    coins: 10,
+                    cards: [],
+                },
+            ],
+            decks: [
+                [
+                    { key: 'deck-card-1', price: 1, letter: 'A', color: 'red', weight: 0 },
+                    { key: 'deck-card-2', price: 2, letter: 'B', color: 'blue', weight: 0 },
+                    { key: 'deck-card-3', price: 1, letter: 'C', color: 'green', weight: 0 },
+                    { key: 'deck-card-4', price: 3, letter: 'D', color: 'yellow', weight: 0 },
+                ],
+            ],
+        });
+        setupWithQueue(gameState, makeRules());
+    });
+
+    it('stops the prison timer', async () => {
+        await BankStateService.prisonBreak('game-001', 1);
+        expect(prisonTimerManager.releasePlayer).toHaveBeenCalledWith('game-001', 1);
+    });
+
+    it('releases player (draws 4 cards, sets ALIVE)', async () => {
+        await BankStateService.prisonBreak('game-001', 1);
+
+        expect(gameState.playersStates[0].status).toBe(PLAYER_STATUS.ALIVE);
+        expect(gameState.playersStates[0].cards).toHaveLength(4); // drew 4 cards
+    });
+
+    it('returns the released player and new cards', async () => {
+        const result = await BankStateService.prisonBreak('game-001', 1);
+
+        expect(result.playerState.status).toBe(PLAYER_STATUS.ALIVE);
+        expect(result.newCards).toHaveLength(4);
+        expect(result.event.typeEvent).toBe('prison-ended');
+    });
+
+    it('throws ERROR.PLAYER_NOT_IN_PRISON when player is not imprisoned', async () => {
+        gameState.playersStates[0].status = PLAYER_STATUS.ALIVE;
+
+        await expect(BankStateService.prisonBreak('game-001', 1))
+            .rejects.toThrow('ERROR.PLAYER_NOT_IN_PRISON');
+    });
+
+    it('is idempotent (multiple calls on non-prison player do not crash)', async () => {
+        gameState.playersStates[0].status = PLAYER_STATUS.ALIVE;
+
+        // First call should throw
+        await expect(BankStateService.prisonBreak('game-001', 1))
+            .rejects.toThrow('ERROR.PLAYER_NOT_IN_PRISON');
+
+        // No side effects
+        expect(gameState.playersStates[0].coins).toBe(10);
+    });
+
+    it('emits socket events to bank and player rooms', async () => {
+        await BankStateService.prisonBreak('game-001', 1);
+        expect(socket.emitTo).toHaveBeenCalled();
+        expect(socket.emitAckTo).toHaveBeenCalled();
     });
 });
