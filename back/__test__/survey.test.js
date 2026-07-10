@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { NEW_FEEDBACK } from '#constantes';
+import { IO, ROOMS } from '@geco/shared';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import db from '#configTest/database';
@@ -22,14 +22,12 @@ jest.unstable_mockModule('#config/socket', () => ({
 /* ================= IMPORTS AFTER MOCK ================= */
 const { default: app } = await import('../src/app.js');
 
-import { nanoId4 } from '../src/misc/misc.tool.js';
-
 /* ================= SETUP ================= */
 let sessionId = new mongoose.Types.ObjectId().toString();
 let gameStateId1 = new mongoose.Types.ObjectId().toString();
 let gameStateId2 = new mongoose.Types.ObjectId().toString();
-let avatarId1 = nanoId4();
-let avatarId2 = nanoId4();
+let avatarId1 = 1;
+let avatarId2 = 2;
 
 const agent = request.agent(app);
 
@@ -65,11 +63,10 @@ describe('SURVEY controller tests', () => {
 			// socket emit called
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
-				gameStateId1,
-				expect.stringContaining(NEW_FEEDBACK),
+				ROOMS.gameState(gameStateId1),
+				expect.stringContaining(IO.SESSION.NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarIdx: avatarId1,
-					depressedHappy: 0,
 				})
 			);
 		});
@@ -97,11 +94,10 @@ describe('SURVEY controller tests', () => {
 			// socket emit called
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
-				gameStateId1,
-				expect.stringContaining(NEW_FEEDBACK),
+				ROOMS.gameState(gameStateId1),
+				expect.stringContaining(IO.SESSION.NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarIdx: avatarId2,
-					depressedHappy: 1,
 				})
 			);
 		});
@@ -129,11 +125,10 @@ describe('SURVEY controller tests', () => {
 			// socket emit called
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
-				gameStateId2,
-				expect.stringContaining(NEW_FEEDBACK),
+				ROOMS.gameState(gameStateId2),
+				expect.stringContaining(IO.SESSION.NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarIdx: avatarId1,
-					depressedHappy: 2,
 				})
 			);
 		});
@@ -161,11 +156,10 @@ describe('SURVEY controller tests', () => {
 			// socket emit appelé
 			expect(mockEmitTo).toHaveBeenCalledTimes(1);
 			expect(mockEmitTo).toHaveBeenCalledWith(
-				gameStateId2,
-				expect.stringContaining(NEW_FEEDBACK),
+				ROOMS.gameState(gameStateId2),
+				expect.stringContaining(IO.SESSION.NEW_FEEDBACK),
 				expect.objectContaining({
 					avatarIdx: avatarId2,
-					depressedHappy: 3,
 				})
 			);
 		});
@@ -188,7 +182,7 @@ describe('SURVEY controller tests', () => {
 	});
 	describe('SURVEYS GET BY all IDs', () => {
 		test('should get survey by sessionId, gameStateId and avatarIdx successfully', async () => {
-			const res = await agent.get('/survey/' + sessionId + '/' + gameStateId1 + '/' + avatarId1).send();
+			const res = await agent.get('/survey/player/' + sessionId + '/' + gameStateId1 + '/' + avatarId1).send();
 			expect(res.status).toBe(200);
 			expect(res.body).toBeTruthy();
 			expect(res.body.sessionId).toBe(sessionId);

@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import { DELETED_AVATAR, NEW_AVATAR, UPDATED_AVATAR } from '#constantes';
+import { IO, ROOMS } from '@geco/shared';
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
@@ -59,7 +59,7 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(1);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(NEW_AVATAR), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.AVATAR.NEW), expect.objectContaining({
                 name: 'test-avatar-name',
                 avatar: {
                     idx: avatarIdx,
@@ -104,19 +104,21 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(2);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(UPDATED_AVATAR), expect.objectContaining({
-                name: 'test-avatar-name-updated',
-                idx: avatarIdx,
-                eyes: 2,
-                earrings: 2,
-                eyebrows: 2,
-                features: 2,
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.AVATAR.UPDATED), expect.objectContaining({
+                updatedAvatar: expect.objectContaining({
+                    name: 'test-avatar-name-updated',
+                    idx: avatarIdx,
+                    eyes: 2,
+                    earrings: 2,
+                    eyebrows: 2,
+                    features: 2,
+                }),
             }));
         });
     });
     describe("AVATAR GET BY ID", () => {
         test("should get avatar by id successfully", async () => {
-            const res = await agent.get("/avatar/" + session._id + "/" + avatarIdx).send();
+            const res = await agent.get("/avatar/" + session._id + "/" + avatarIdx + "/false").send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.avatar.name).toBe("test-avatar-name-updated");
@@ -141,7 +143,7 @@ describe('AVATAR controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(3);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(DELETED_AVATAR), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.AVATAR.DELETED), expect.objectContaining({
                 avatarIdx: avatarIdx,
             }));
         });

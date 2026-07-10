@@ -25,7 +25,7 @@
         "start": "node ./src/server.js",
         "prof": "node --prof ./src/server.js",
         "cleanProd": "npm ci --omit=dev && npm cache clean --force",
-        "test": "cross-env NODE_ENV=test && npx --no-warnings --experimental-vm-modules jest --forceExit --runInBand --detectOpenHandles"
+        "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest --forceExit --runInBand --detectOpenHandles"
     },
     "author": "Nicolas Markovic",
     "license": "ISC",
@@ -44,6 +44,7 @@
     "imports": {
         "#config/*": "./config/*.js",
         "#configTest/*": "./__test__/config/*.js",
+        "#constantes": "./config/constantes.js",
         "#constantes_legacy": "./config/constantes_deprecated.cjs"
     }
 }

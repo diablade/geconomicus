@@ -90,8 +90,9 @@ describe("SESSION controller tests", () => {
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body.acknowledged).toBeTruthy();
-            expect(res.body.modifiedCount).toBe(1);
+            expect(res.body.name).toBe("test-name-session-updated");
+            expect(res.body.animator).toBe("test-session-animator-updated");
+            expect(res.body.location).toBe("test-session-location-updated");
         });
     });
     describe("SESSION DELETE", () => {

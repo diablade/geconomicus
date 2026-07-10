@@ -334,10 +334,10 @@ describe('STRESS — GameTimerManager', () => {
 		expect(result).toBe(true);
 	});
 
-	test('resumeTimer with no stored timer starts fresh', async () => {
+	test('startTimer with no stored timer starts fresh', async () => {
 		jest.useFakeTimers();
 		const timer = new Timer('gtm3', { gameStateId: 'gtm3' }, 5000, jest.fn(), null, null, null, null, null, null);
-		await GameTimerManager.resumeTimer(timer);
+		await GameTimerManager.startTimer(timer);
 		// Since it wasn't stored, it should be started and stored
 		expect(GameTimerManager.getTimer('gtm3')).toBe(timer);
 		expect(timer.status).toBe('running');

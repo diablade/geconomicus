@@ -328,7 +328,7 @@ BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, inte
 			)
 		);
 
-		// socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
+		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
 			credit,
 			coinsLK: playerState.coins,
@@ -813,11 +813,6 @@ BankStateService.extendCredit = async (gameStateId, creditId, playerStateIdx) =>
 			coinsLK: playerState.coins,
 		};
 	});
-};
-
-BankStateService.prisonBreak = async (gameStateId, playerStateIdx) => {
-	const result = await prisonTimerManager.releasePlayer(gameStateId, playerStateIdx);
-	return result;
 };
 
 export default BankStateService;

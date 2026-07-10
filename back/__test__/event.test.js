@@ -56,7 +56,7 @@ describe('EVENT controller tests', () => {
         test('should return added events (200)', async () => {
             const gameStateId = new mongoose.Types.ObjectId().toString();
 
-            await EventService.create('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
+            await EventService.postNow('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
 
             const res = await agent.get(`/event/session/${sessionId}`).send();
             expect(res.status).toBe(200);
@@ -72,8 +72,8 @@ describe('EVENT controller tests', () => {
             const sessionId2 = new mongoose.Types.ObjectId().toString();
             const gameStateId = new mongoose.Types.ObjectId().toString();
 
-            await EventService.create('event-A', sessionId1, gameStateId, 'master', '-', { a: 1 });
-            await EventService.create('event-B', sessionId2, gameStateId, 'master', '-', { b: 2 });
+            await EventService.postNow('event-A', sessionId1, gameStateId, 'master', '-', { a: 1 });
+            await EventService.postNow('event-B', sessionId2, gameStateId, 'master', '-', { b: 2 });
 
             const res1 = await agent.get(`/event/session/${sessionId1}`).send();
             expect(res1.status).toBe(200);
@@ -122,7 +122,7 @@ describe('EVENT controller tests', () => {
             const sessionId = new mongoose.Types.ObjectId().toString();
             const gameStateId = new mongoose.Types.ObjectId().toString();
 
-            await EventService.create('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
+            await EventService.postNow('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
 
             const res = await agent.get(`/event/game/${gameStateId}`).send();
             expect(res.status).toBe(200);
@@ -138,8 +138,8 @@ describe('EVENT controller tests', () => {
             const gameStateId1 = new mongoose.Types.ObjectId().toString();
             const gameStateId2 = new mongoose.Types.ObjectId().toString();
 
-            await EventService.create('event-A', sessionId, gameStateId1, 'master', '-', { a: 1 });
-            await EventService.create('event-B', sessionId, gameStateId2, 'master', '-', { b: 2 });
+            await EventService.postNow('event-A', sessionId, gameStateId1, 'master', '-', { a: 1 });
+            await EventService.postNow('event-B', sessionId, gameStateId2, 'master', '-', { b: 2 });
 
             const res1 = await agent.get(`/event/game/${gameStateId1}`).send();
             expect(res1.status).toBe(200);

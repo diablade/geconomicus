@@ -1,5 +1,5 @@
 import { jest, describe, test, expect, beforeAll, afterAll } from '@jest/globals';
-import { DEBT, DELETED_RULES, JUNE, NEW_GAMES_RULES, UPDATED_RULES } from '#constantes';
+import { GAME_TYPE, IO, ROOMS } from '@geco/shared';
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
@@ -52,7 +52,7 @@ describe('RULES controller', () => {
             const res = await agent.post('/rules/create').send({
                 sessionId: session._id,
                 rules: {
-                    typeMoney: DEBT,
+                    typeMoney: GAME_TYPE.DEBT,
                     priceWeight1: 1,
                     priceWeight2: 2,
                     priceWeight3: 4,
@@ -65,9 +65,9 @@ describe('RULES controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(1);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(NEW_GAMES_RULES), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.SESSION.NEW_RULES), expect.objectContaining({
                 idx: ruleIdx,
-                typeMoney: DEBT,
+                typeMoney: GAME_TYPE.DEBT,
             }));
         });
     });
@@ -75,7 +75,7 @@ describe('RULES controller', () => {
         test("should update rules successfully", async () => {
             const res = await agent.put("/rules/update").send({
                 updates: {
-                    typeMoney: JUNE,
+                    typeMoney: GAME_TYPE.JUNE,
                 },
                 ruleIdx: ruleIdx,
                 sessionId: session._id,
@@ -86,9 +86,9 @@ describe('RULES controller', () => {
 
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(2);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(UPDATED_RULES), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.SESSION.UPDATED_RULES), expect.objectContaining({
                 idx: ruleIdx,
-                typeMoney: JUNE,
+                typeMoney: GAME_TYPE.JUNE,
             }));
         });
     });
@@ -97,7 +97,7 @@ describe('RULES controller', () => {
             const res = await agent.get("/rules/" + session._id + "/" + ruleIdx).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body.typeMoney).toBe(JUNE);
+            expect(res.body.typeMoney).toBe(GAME_TYPE.JUNE);
         });
     });
     describe("RULES REMOVE", () => {
@@ -109,7 +109,7 @@ describe('RULES controller', () => {
             expect(res.body.modifiedCount).toBe(1);
             // socket emit appelé
             expect(mockEmitTo).toHaveBeenCalledTimes(3);
-            expect(mockEmitTo).toHaveBeenCalledWith(session._id, expect.stringContaining(DELETED_RULES), expect.objectContaining({
+            expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.SESSION.DELETED_RULES), expect.objectContaining({
                 idx: ruleIdx,
             }));
         });

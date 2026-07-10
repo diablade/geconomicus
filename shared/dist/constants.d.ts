@@ -147,7 +147,10 @@ export declare const DB_EVENTS: {
     readonly CREDIT_SETTLED: "credit-settled";
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
+    readonly CREDIT_SEIZURE: "credit-seizure";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
+    readonly PRISON: "prison";
+    readonly PRISON_ENDED: "prison-ended";
     readonly ACTION_GIVE: "action-give";
     readonly ACTION_STEAL: "action-steal";
     readonly ACTION_SILENT_STEAL: "action-silent-steal";

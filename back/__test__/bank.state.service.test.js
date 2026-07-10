@@ -151,7 +151,7 @@ describe('BankStateService — createCredit', () => {
         expect(gameState.credits[0].amount).toBe(3);
         expect(gameState.credits[0].interest).toBe(1);
         expect(gameState.credits[0].playerStateIdx).toBe(1);
-        expect(result.currentMassMonetary).toBe(103); // 100 + 3
+        expect(result.bankIndicators.currentMassMonetary).toBe(103); // 100 + 3
     });
 
     it('sets credit status to RUNNING and starts timer when game is PLAYING', async () => {
@@ -315,7 +315,7 @@ describe('BankStateService — freeMoney', () => {
         expect(gameState.playersStates[0].coins).toBe(25); // 20 + 5
         expect(gameState.currentMassMonetary).toBe(105);
         expect(result.amount).toBe(5);
-        expect(result.currentMassMonetary).toBe(105);
+        expect(result.bankIndicators.currentMassMonetary).toBe(105);
     });
 
     it('emits socket event to player room', async () => {

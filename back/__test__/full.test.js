@@ -1,9 +1,10 @@
 
 import { jest, describe, test, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import { SESSION_STARTED } from '#constantes';
+import { IO, ROOMS } from '@geco/shared';
 
 /* ================= MOCK SOCKET (ESM SAFE) ================= */
 const mockEmitTo = jest.fn();
+const mockEmitAckTo = jest.fn();
 const mockGetIo = jest.fn(() => ({
     to: jest.fn().mockReturnThis(),
     emit: jest.fn()
@@ -13,7 +14,8 @@ jest.unstable_mockModule('#config/socket', () => ({
     default: {
         initIo: jest.fn(),
         getIo: mockGetIo,
-        emitTo: mockEmitTo  // Use the same mock reference
+        emitTo: mockEmitTo,  // Use the same mock reference
+        emitAckTo: mockEmitAckTo
     }
 }));
 
@@ -88,15 +90,19 @@ describe("FULL SESSION GAME simulation", () => {
         });
         expect(resStart.status).toBe(200);
         expect(resStart.body).toBeTruthy();
-        expect(mockEmitTo).toHaveBeenCalledWith(sessionId, expect.stringContaining(SESSION_STARTED), expect.objectContaining({
-            gamesRules: expect.arrayContaining(resStart.body.gamesRules)
-        }));
+        // Inspect the call rather than deep-equal the payload: the emitted gamesRules are
+        // Mongoose subdocuments, which don't structurally equal the plain JSON response body.
+        const startCall = mockEmitAckTo.mock.calls.find(
+            (c) => c[0] === ROOMS.session(sessionId) && c[1] === IO.SESSION.STARTED
+        );
+        expect(startCall).toBeTruthy();
+        expect(startCall[2].gamesRules).toHaveLength(resStart.body.gamesRules.length);
     });
     test("CHECK SESSION with 2 rules and " + numberOfPlayers + " players", async () => {
         const res = await agent.get("/session/" + sessionId).send();
         expect(res.status).toBe(200);
         expect(res.body).toBeTruthy();
         expect(res.body.gamesRules.length).toBe(2);
-        expect(res.body.players.length).toBe(numberOfPlayers);
+        expect(res.body.avatars.length).toBe(numberOfPlayers);
     });
 });

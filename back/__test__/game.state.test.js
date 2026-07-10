@@ -5,6 +5,7 @@ await jest.unstable_mockModule('#config/socket', () => ({
         initIo: jest.fn(),
         getIo:  jest.fn(),
         emitTo: jest.fn(),
+        emitAckTo: jest.fn(),
     }
 }));
 
@@ -37,7 +38,7 @@ beforeAll(async () => {
     const ruleRes = await agent.post('/rules/create').send({
         sessionId: sessionId,
         rules: {
-            typeMoney: 'euro',
+            typeMoney: 'debt',
             initialMoneyPerPlayer: 100,
             maxRound: 10,
         }
@@ -45,6 +46,10 @@ beforeAll(async () => {
     expect(ruleRes.status).toBe(200);
     expect(ruleRes.body.idx).toBeTruthy();
     ruleIdx = ruleRes.body.idx;
+
+    // A game state can only be created once the session is in progress
+    const startRes = await agent.post('/session/start').send({ sessionId });
+    expect(startRes.status).toBe(200);
 });
 
 beforeEach(() => {
@@ -71,8 +76,8 @@ describe("GAME STATE controller tests", () => {
             });
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body._id).toBeTruthy();
-            createdGameStateId = res.body._id;
+            expect(res.body.gameStateId).toBeTruthy();
+            createdGameStateId = res.body.gameStateId;
         });
     });
 
@@ -81,7 +86,7 @@ describe("GAME STATE controller tests", () => {
             const res = await agent.get(`/game-state/${createdGameStateId}`);
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
-            expect(res.body._id).toBe(createdGameStateId);
+            expect(res.body.gameState._id).toBe(createdGameStateId);
         });
     });
 
