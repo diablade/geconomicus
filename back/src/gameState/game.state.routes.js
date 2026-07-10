@@ -2,6 +2,7 @@ import express from 'express';
 import gameStateController from './game.state.controller.js';
 import {stateSanitize} from './sanitizers/game.state.sanitize.js';
 import {bankStateSanitize} from './sanitizers/bank.state.sanitizer.js';
+import {playerStateSanitize} from './sanitizers/player.state.sanitizer.js';
 import {validate} from '../misc/validate.tool.js';
 
 const router = express.Router();
@@ -23,10 +24,10 @@ router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHav
 // router.post('/refresh-player', validate(sanitize.refreshPlayer), gameStateController.refreshPlayer);
 
 
-router.post('/player-state/produce', validate(stateSanitize.produce), gameStateController.produce);
-router.get('/player-state/:sessionId/:gameStateId/:avatarIdx', validate(stateSanitize.getCurrentPlayerStateIdx, 'params'), gameStateController.getCurrentPlayerStateIdx);
-router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', validate(stateSanitize.getPlayerState, 'params'), gameStateController.getPlayerState);
-router.post('/player-state/transaction', validate(stateSanitize.transaction), gameStateController.transaction);
+router.post('/player-state/produce', validate(playerStateSanitize.produce), gameStateController.produce);
+router.get('/player-state/:sessionId/:gameStateId/:avatarIdx', validate(playerStateSanitize.getCurrentPlayerStateIdx, 'params'), gameStateController.getCurrentPlayerStateIdx);
+router.get('/player-state/:sessionId/:gameStateId/:avatarIdx/:playerStateIdx', validate(playerStateSanitize.getPlayerState, 'params'), gameStateController.getPlayerState);
+router.post('/player-state/transaction', validate(playerStateSanitize.transaction), gameStateController.transaction);
 
 router.post('/action/get-target-cards', validate(stateSanitize.actionGetTargetCards), gameStateController.actionGetTargetCards);
 router.post('/action/available-players', validate(stateSanitize.actionGetAvailablePlayers), gameStateController.actionGetAvailablePlayers);
