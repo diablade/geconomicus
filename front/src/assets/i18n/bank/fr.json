@@ -2,6 +2,7 @@
 	"BANK": {
 		"TITLE": "Banque",
 		"PRISON": "Prison",
+        "BREAK_FREE": "Liberer",
 		"GO_BACK_TO_GAME": "Retour au jeu en cours",
 		"SUB_TITLE_IND": "Indicateurs économiques courants",
 		"SUB_TITLE_CREDITS": "Nouveau crédit",

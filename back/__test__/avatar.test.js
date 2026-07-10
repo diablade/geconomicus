@@ -96,7 +96,6 @@ describe('AVATAR controller', () => {
                     features: 2,
                 },
             });
-            console.log(res.body);
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.name).toBe("test-avatar-name-updated");
