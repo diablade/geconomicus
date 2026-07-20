@@ -140,6 +140,7 @@ export declare const DB_EVENTS: {
     readonly PLAYER_INIT: "player-init";
     readonly PLAYER_JOINED: "player-joined";
     readonly PLAYER_DIED: "player-died";
+    readonly PRODUCTION: "production";
     readonly FREE_MONEY: "free-money";
     readonly CREDIT_NEW: "credit-new";
     readonly CREDIT_REQUEST: "credit-request";

@@ -91,6 +91,13 @@ export class SessionService {
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
 	}
 
+	/** Plain fetch of one session (with populated gamesRules) — no socket setup. */
+	getById(sessionId: string): Observable<Session> {
+		return this.http
+			.get<Session>(environment.API_HOST + environment.SESSION.GET_BY_ID + sessionId)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
+	}
+
 	getByShortId(shortId: string): Observable<any> {
 		return this.http
 			.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)

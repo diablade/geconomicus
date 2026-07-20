@@ -136,6 +136,7 @@ export const DB_EVENTS = {
     PLAYER_INIT: 'player-init',
     PLAYER_JOINED: 'player-joined',
     PLAYER_DIED: 'player-died',
+    PRODUCTION: 'production',
     // Credit events
     FREE_MONEY: 'free-money',
     CREDIT_NEW: 'credit-new',

@@ -1,6 +1,6 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<div class="tableBoard h-100" [ngClass]="vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg'">
-		<div class="h-100 overflow-auto px-3 pb-4">
+		<div class="h-100 overflow-auto px-3 pb-4 d-flex flex-column">
 			<!-- ── Header ── -->
 			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
 				<div class="d-flex flex-row align-items-center gap-3 flex-wrap">
@@ -8,7 +8,7 @@
 						<mat-icon>arrow_back</mat-icon>
 						{{ 'TABLE.BACK_TO_MASTER_BOARD' | translate }}
 					</button>
-					<img class="geco glow" src="./assets/images/geconomicus.png" alt="Geconomicus" />
+					<img class="geco" src="./assets/images/geconomicus.png" alt="Geconomicus" />
 					<div>
 						<div class="title geconomicusFont contourText ombreText">
 							{{ vm.session.name }} -
@@ -72,51 +72,13 @@
 				</div>
 			</div>
 
-			<div class="boardLayout mt-2" [class.rulesCollapsed]="!rulesOpen">
-				<div class="frame frame-light box-shadowed rowPanel decksPanel">
-					<button class="panelHead" type="button" (click)="decksOpen = !decksOpen">
-						<span class="panelTitle geconomicusFont contourText ombreText">
-							{{ 'TABLE.DECKS' | translate }}
-						</span>
-						<span class="foldChip">
-							{{ decksOpen ? '▾ ' + ('TABLE.FOLD' | translate) : '▸ ' + ('TABLE.UNFOLD' | translate) }}
-						</span>
-					</button>
-					<div class="decksRow" *ngIf="decksOpen">
-						<div *ngIf="vm.decks.length <= 0">
-							{{ 'TABLE.NO_DECKS' | translate }}
-						</div>
-						<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
-							<div class="deckHead">
-								<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
-								<b>{{ 'TABLE.LEVEL' | translate }} {{ i + 1 }}</b>
-								<span class="muted">&middot; {{ deck.length }} {{ 'TABLE.CARDS' | translate }}</span>
-							</div>
-							<div class="deckCards">
-								<ng-container *ngFor="let card of deck; trackBy: trackByCard">
-									<app-card
-										*ngIf="card.displayed"
-										[card]="card"
-										[typeMoney]="''"
-										[height]="'43px'"
-										[width]="'26px'"
-										[priceSize]="'5px'"
-										[letterSize]="'10px'"
-										[amountCardsForProd]="100"
-										[flippable]="false"></app-card>
-								</ng-container>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div class="boardLayout flex-grow-1 mt-2">
 				<!-- ── Rules: vertical panel on the right ── -->
-				<div class="frame frame-light box-shadowed rowPanel boardRules" [class.collapsed]="!rulesOpen">
+				<div class="rulesPanel frame frame-light box-shadowed" [class.rulesCollapsed]="!rulesOpen">
 					<button class="panelHead" type="button" (click)="rulesOpen = !rulesOpen">
 						<span class="panelTitle contourText ombreText">
+							<span>{{ rulesOpen ? '▾ ' : '▸ ' }}</span>
 							{{ 'TABLE.RULES_AND_PARAMS' | translate }}
-						</span>
-						<span class="foldChip">
-							{{ rulesOpen ? '▾ ' + ('TABLE.FOLD' | translate) : '▸ ' + ('TABLE.UNFOLD' | translate) }}
 						</span>
 					</button>
 					<div class="rulesGrid" *ngIf="rulesOpen">
@@ -303,182 +265,143 @@
 						</div>
 					</div>
 				</div>
-				<!-- ── Players: table / boards toggle ── -->
-				<div class="playersArea">
-					<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
-						<div class="viewToggle frame frame-light box-shadowed">
-							<button type="button" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
-								🧮 {{ 'TABLE.TABLE_VIEW' | translate }}
-							</button>
-							<button
-								type="button"
-								[class.active]="viewMode === 'boards'"
-								(click)="setViewMode('boards')">
-								🎴 {{ 'TABLE.BOARDS_VIEW' | translate }}
-							</button>
-						</div>
-						<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refreshAllPlayers()">
-							🔄️ {{ 'TABLE.REFRESH_PLAYERS' | translate }}
+				<div class="gamePanel">
+					<div class="decksPanel frame frame-light box-shadowed">
+						<button class="panelHead" type="button" (click)="decksOpen = !decksOpen">
+							<span class="panelTitle contourText ombreText">
+								<span>
+									{{ decksOpen ? '▾ ' : '▸ ' }}
+								</span>
+								{{ 'TABLE.DECKS' | translate }}
+							</span>
 						</button>
-						<div class="sortBar frame frame-light box-shadowed" *ngIf="viewMode === 'boards'">
-							<span class="muted">{{ 'TABLE.SORT' | translate }}</span>
-							<button
-								class="sortBtn"
-								[class.active]="(sortBy$ | async) === 'coins'"
-								(click)="setSort('coins')">
-								💰 {{ 'TABLE.BALANCE' | translate }}
-							</button>
-							<button
-								class="sortBtn"
-								[class.active]="(sortBy$ | async) === 'cards'"
-								(click)="setSort('cards')">
-								🀄 {{ 'TABLE.CARDS' | translate }}
-							</button>
-							<button
-								class="sortBtn"
-								[class.active]="(sortBy$ | async) === 'name'"
-								(click)="setSort('name')">
-								🔠 {{ 'TABLE.NAME' | translate }}
-							</button>
-						</div>
-					</div>
-					<div class="mt-2">
-						<!-- Players table -->
-						<div class="playersTable frame frame-light box-shadowed" *ngIf="viewMode === 'table'">
-							<div class="tRow tHead">
-								<button
-									class="sortBtn"
-									[class.active]="(sortBy$ | async) === 'name'"
-									(click)="setSort('name')">
-									{{ 'TABLE.PLAYER' | translate }} ({{ vm.alive.length }}
-									{{ 'TABLE.ALIVE' | translate }} &middot; {{ vm.dead.length }} 🦂) ↕
-								</button>
-								<div class="text-center">⚡</div>
-								<button
-									class="sortBtn"
-									[class.active]="(sortBy$ | async) === 'coins'"
-									(click)="setSort('coins')">
-									{{ 'TABLE.BALANCE' | translate }} ↕
-								</button>
-								<div>{{ 'TABLE.CREDITS' | translate }}</div>
-								<button
-									class="sortBtn"
-									[class.active]="(sortBy$ | async) === 'cards'"
-									(click)="setSort('cards')">
-									{{ 'TABLE.HAND' | translate }} ↕
-								</button>
+						<div class="decksRow" *ngIf="decksOpen">
+							<div *ngIf="vm.decks.length <= 0">
+								{{ 'TABLE.NO_DECKS' | translate }}
 							</div>
-							<div
-								class="tRow"
-								*ngFor="let row of vm.rows; trackBy: trackByRow"
-								[class.deadRow]="row.status === DEAD">
-								<div class="cell-player">
-									<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
-										<avatar
-											[avatar]="row.avatar"
-											width="42px"
-											height="42px"
-											[namePosition]="'right'"
-											[onlineStatus]="true"
-											[connection]="row.connection || null"
-											[playerStatus]="row.status"></avatar>
-									</a>
-									<button
-										type="button"
-										class="rowRefreshBtn"
-										[title]="'TABLE.REFRESH_PLAYER' | translate"
-										(click)="refreshPlayer(row)">
-										🔄️
-									</button>
+							<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
+								<div class="deckHead">
+									<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
+									<b>{{ 'TABLE.LEVEL' | translate }} {{ i + 1 }}</b>
+									<span class="muted">
+										&middot; {{ deck.length }} {{ 'TABLE.CARDS' | translate }}
+									</span>
 								</div>
-								<div>
-									<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
-										⚡{{ row.actionTokens }}
-									</div>
-								</div>
-								<div>
-									<div class="coins">
-										{{ row.coins | number: '1.2-2' }}
-										{{
-											vm.rules.typeMoney === JUNE
-												? ('CURRENCY.DU' | translate)
-												: ('CURRENCY.EURO' | translate)
-										}}
-									</div>
-									<div
-										class="debtLabel"
-										*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
-										{{ 'TABLE.DEBT' | translate }} {{ row.debt }} {{ 'CURRENCY.EURO' | translate }}
-									</div>
-								</div>
-								<div class="cell-credits">
-									<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
-										<div
-											class="creditChip"
-											*ngFor="let credit of row.credits"
-											[ngClass]="creditChipClass(credit.status)"
-											[title]="
-												('TABLE.CREDIT' | translate) +
-												' ' +
-												credit.amount +
-												' + ' +
-												('TABLE.INTEREST' | translate) +
-												' ' +
-												credit.interest
-											">
-											📜 {{ credit.amount }}+{{ credit.interest }} &middot;
-											{{ creditChipLabel(credit.status) | translate }}
-										</div>
-									</ng-container>
-									<div class="creditChip prison" *ngIf="row.status === PRISON">
-										🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
-									</div>
-									<div class="noChip" *ngIf="row.credits.length === 0 && row.status !== PRISON">
-										&mdash;
-									</div>
-								</div>
-								<div class="cell-cards">
-									<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+								<div class="deckCards">
+									<ng-container *ngFor="let card of deck; trackBy: trackByCard">
 										<app-card
 											*ngIf="card.displayed"
 											[card]="card"
 											[typeMoney]="''"
-											[height]="'47px'"
-											[width]="'28px'"
+											[height]="'43px'"
+											[width]="'26px'"
 											[priceSize]="'5px'"
-											[letterSize]="'11px'"
+											[letterSize]="'10px'"
 											[amountCardsForProd]="100"
 											[flippable]="false"></app-card>
 									</ng-container>
-									<div class="noChip" *ngIf="row.nbCards === 0">
-										{{ 'TABLE.NO_CARD' | translate }}
-									</div>
-									<div class="cardCount">({{ row.nbCards }})</div>
 								</div>
 							</div>
 						</div>
-
-						<!-- Players boards (player-board style cards) -->
-						<div class="boardsGrid" *ngIf="viewMode === 'boards'">
-							<div
-								class="playerBoardCard box-shadowed"
-								[ngClass]="row.avatar?.boardConf"
-								[ngStyle]="getBackgroundStyle(row.avatar!.boardConf, row.avatar!.boardColor)"
-								*ngFor="let row of vm.rows; trackBy: trackByRow"
-								[class.deadBoard]="row.status === DEAD">
-								<div class="pbHead">
-									<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
-										<avatar
-											[avatar]="row.avatar"
-											width="52px"
-											height="52px"
-											[namePosition]="'right'"
-											[onlineStatus]="true"
-											[connection]="row.connection || null"
-											[playerStatus]="row.status"></avatar>
-									</a>
-									<div class="pbRight">
-										<div class="pbCoins white contourText">
+					</div>
+					<!-- ── Players: table / boards toggle ── -->
+					<div class="playersArea">
+						<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
+							<div class="viewToggle frame frame-light box-shadowed">
+								<button
+									type="button"
+									[class.active]="viewMode === 'table'"
+									(click)="setViewMode('table')">
+									🧮 {{ 'TABLE.TABLE_VIEW' | translate }}
+								</button>
+								<button
+									type="button"
+									[class.active]="viewMode === 'boards'"
+									(click)="setViewMode('boards')">
+									🎴 {{ 'TABLE.BOARDS_VIEW' | translate }}
+								</button>
+							</div>
+							<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refreshAllPlayers()">
+								🔄️ {{ 'TABLE.REFRESH_PLAYERS' | translate }}
+							</button>
+							<div class="sortBar frame frame-light box-shadowed" *ngIf="viewMode === 'boards'">
+								<span class="muted">{{ 'TABLE.SORT' | translate }}</span>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'coins'"
+									(click)="setSort('coins')">
+									💰 {{ 'TABLE.BALANCE' | translate }}
+								</button>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'cards'"
+									(click)="setSort('cards')">
+									🀄 {{ 'TABLE.CARDS' | translate }}
+								</button>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'name'"
+									(click)="setSort('name')">
+									🔠 {{ 'TABLE.NAME' | translate }}
+								</button>
+							</div>
+						</div>
+						<div class="mt-2">
+							<!-- Players table -->
+							<div class="playersTable frame frame-light box-shadowed" *ngIf="viewMode === 'table'">
+								<div class="tRow tHead">
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'name'"
+										(click)="setSort('name')">
+										{{ 'TABLE.PLAYER' | translate }} ({{ vm.alive.length }}
+										{{ 'TABLE.ALIVE' | translate }} &middot; {{ vm.dead.length }} 🦂) ↕
+									</button>
+									<div class="text-center">⚡</div>
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'coins'"
+										(click)="setSort('coins')">
+										{{ 'TABLE.BALANCE' | translate }} ↕
+									</button>
+									<div>{{ 'TABLE.CREDITS' | translate }}</div>
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'cards'"
+										(click)="setSort('cards')">
+										{{ 'TABLE.HAND' | translate }} ↕
+									</button>
+								</div>
+								<div
+									class="tRow"
+									*ngFor="let row of vm.rows; trackBy: trackByRow"
+									[class.deadRow]="row.status === DEAD">
+									<div class="cell-player">
+										<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
+											<avatar
+												[avatar]="row.avatar"
+												width="42px"
+												height="42px"
+												[namePosition]="'right'"
+												[onlineStatus]="true"
+												[connection]="row.connection || null"
+												[playerStatus]="row.status"></avatar>
+										</a>
+										<button
+											type="button"
+											class="rowRefreshBtn"
+											[title]="'TABLE.REFRESH_PLAYER' | translate"
+											(click)="refreshPlayer(row)">
+											🔄️
+										</button>
+									</div>
+									<div>
+										<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
+											⚡{{ row.actionTokens }}
+										</div>
+									</div>
+									<div>
+										<div class="coins">
 											{{ row.coins | number: '1.2-2' }}
 											{{
 												vm.rules.typeMoney === JUNE
@@ -486,50 +409,134 @@
 													: ('CURRENCY.EURO' | translate)
 											}}
 										</div>
-										<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
-											⚡{{ row.actionTokens }}
-										</div>
-									</div>
-								</div>
-								<div class="pbChips">
-									<div
-										class="creditChip debtChip"
-										*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
-										{{ 'TABLE.DEBT' | translate }} {{ row.debt }} {{ 'CURRENCY.EURO' | translate }}
-									</div>
-									<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
 										<div
-											class="creditChip"
-											*ngFor="let credit of row.credits"
-											[ngClass]="creditChipClass(credit.status)">
-											📜 {{ credit.amount }}+{{ credit.interest }} &middot;
-											{{ creditChipLabel(credit.status) | translate }}
+											class="debtLabel"
+											*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
+											{{ 'TABLE.DEBT' | translate }} {{ row.debt }}
+											{{ 'CURRENCY.EURO' | translate }}
 										</div>
-									</ng-container>
-									<div class="creditChip prison" *ngIf="row.status === PRISON">
-										🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
+									</div>
+									<div class="cell-credits">
+										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
+											<div
+												class="creditChip"
+												*ngFor="let credit of row.credits"
+												[ngClass]="creditChipClass(credit.status)"
+												[title]="
+													('TABLE.CREDIT' | translate) +
+													' ' +
+													credit.amount +
+													' + ' +
+													('TABLE.INTEREST' | translate) +
+													' ' +
+													credit.interest
+												">
+												📜 {{ credit.amount }}+{{ credit.interest }} &middot;
+												{{ creditChipLabel(credit.status) | translate }}
+											</div>
+										</ng-container>
+										<div class="creditChip prison" *ngIf="row.status === PRISON">
+											🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
+										</div>
+										<div class="noChip" *ngIf="row.credits.length === 0 && row.status !== PRISON">
+											&mdash;
+										</div>
+									</div>
+									<div class="cell-cards">
+										<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+											<app-card
+												*ngIf="card.displayed"
+												[card]="card"
+												[typeMoney]="''"
+												[height]="'47px'"
+												[width]="'28px'"
+												[priceSize]="'5px'"
+												[letterSize]="'11px'"
+												[amountCardsForProd]="100"
+												[flippable]="false"></app-card>
+										</ng-container>
+										<div class="noChip" *ngIf="row.nbCards === 0">
+											{{ 'TABLE.NO_CARD' | translate }}
+										</div>
+										<div class="cardCount">({{ row.nbCards }})</div>
 									</div>
 								</div>
-								<div class="pbHand">
-									<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
-										<app-card
-											*ngIf="card.displayed"
-											[card]="card"
-											[typeMoney]="''"
-											[height]="'63px'"
-											[width]="'38px'"
-											[priceSize]="'6px'"
-											[letterSize]="'14px'"
-											[amountCardsForProd]="100"
-											[flippable]="false"></app-card>
-									</ng-container>
-									<div class="noChip whiteNote" *ngIf="row.nbCards === 0">
-										{{ 'TABLE.NO_CARD_IN_HAND' | translate }}
+							</div>
+
+							<!-- Players boards (player-board style cards) -->
+							<div class="boardsGrid" *ngIf="viewMode === 'boards'">
+								<div
+									class="playerBoardCard box-shadowed"
+									[ngClass]="row.avatar?.boardConf"
+									[ngStyle]="getBackgroundStyle(row.avatar!.boardConf, row.avatar!.boardColor)"
+									*ngFor="let row of vm.rows; trackBy: trackByRow"
+									[class.deadBoard]="row.status === DEAD">
+									<div class="pbHead">
+										<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
+											<avatar
+												[avatar]="row.avatar"
+												width="52px"
+												height="52px"
+												[namePosition]="'right'"
+												[onlineStatus]="true"
+												[connection]="row.connection || null"
+												[playerStatus]="row.status"></avatar>
+										</a>
+										<div class="pbRight">
+											<div class="pbCoins white contourText">
+												{{ row.coins | number: '1.2-2' }}
+												{{
+													vm.rules.typeMoney === JUNE
+														? ('CURRENCY.DU' | translate)
+														: ('CURRENCY.EURO' | translate)
+												}}
+											</div>
+											<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
+												⚡{{ row.actionTokens }}
+											</div>
+										</div>
 									</div>
-								</div>
-								<div class="pbDead" *ngIf="row.status === DEAD">
-									<div class="pbDeadIcon">🦂</div>
-									<div>{{ 'TABLE.DECEASED' | translate }}</div>
+									<div class="pbChips">
+										<div
+											class="creditChip debtChip"
+											*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
+											{{ 'TABLE.DEBT' | translate }} {{ row.debt }}
+											{{ 'CURRENCY.EURO' | translate }}
+										</div>
+										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
+											<div
+												class="creditChip"
+												*ngFor="let credit of row.credits"
+												[ngClass]="creditChipClass(credit.status)">
+												📜 {{ credit.amount }}+{{ credit.interest }} &middot;
+												{{ creditChipLabel(credit.status) | translate }}
+											</div>
+										</ng-container>
+										<div class="creditChip prison" *ngIf="row.status === PRISON">
+											🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
+										</div>
+									</div>
+									<div class="pbHand">
+										<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+											<app-card
+												*ngIf="card.displayed"
+												[card]="card"
+												[typeMoney]="''"
+												[height]="'63px'"
+												[width]="'38px'"
+												[priceSize]="'6px'"
+												[letterSize]="'14px'"
+												[amountCardsForProd]="100"
+												[flippable]="false"></app-card>
+										</ng-container>
+										<div class="noChip whiteNote" *ngIf="row.nbCards === 0">
+											{{ 'TABLE.NO_CARD_IN_HAND' | translate }}
+										</div>
+									</div>
+									<div class="pbDead" *ngIf="row.status === DEAD">
+										<div class="pbDeadIcon">🦂</div>
+										<div>{{ 'TABLE.DECEASED' | translate }}</div>
+									</div>
 								</div>
 							</div>
 						</div>

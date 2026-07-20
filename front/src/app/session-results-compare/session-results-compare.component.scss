@@ -31,47 +31,45 @@
 .cp-header {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-    padding: 16px 26px 10px;
+	gap: 18px;
+	padding: 16px 26px 6px;
 
 	.cp-logo {
-		width: 220px;
+		width: 180px;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
 	}
+	.cp-titles {
+		flex: 1;
+		min-width: 0;
+	}
 	.cp-title {
-		font-size: 34px;
+		font-size: 40px;
+		line-height: 1.05;
 	}
 	.cp-sub {
-		font-size: 16px;
-	}
-	.cp-events-toggle {
-		font-family: 'GecoFont10';
 		font-size: 15px;
-		cursor: pointer;
-		border: 2px solid #000;
-		border-radius: 10px;
-		padding: 8px 14px;
-		background: #ffe9b3;
-		box-shadow: 4px 4px 0 #000;
+		margin-top: 2px;
 	}
 	.cp-guny {
-		width: 86px;
+		width: 78px;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
 	}
 }
 
-.cp-barEvent{
-
-}
-
-.cp-body {
-	display: flex;
+/* main content + right events drawer */
+.cp-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 372px;
 	gap: 18px;
-	padding: 6px 24px 0;
-	align-items: flex-start;
+	padding: 4px 24px 0;
+	align-items: start;
+	transition: grid-template-columns 0.25s ease;
+
+	&.eventsCollapsed {
+		grid-template-columns: minmax(0, 1fr) 46px;
+	}
 }
 .cp-main {
-	flex: 1;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
@@ -87,9 +85,67 @@
 	}
 }
 
-/* le panneau évènements est un composant dédié : app-events-v2 (events-v2/) */
+/* ── events drawer (slide from right, like the rules panel in the table view) ── */
 .cp-events {
-	flex: none;
+	position: sticky;
+	top: 10px;
+	align-self: start;
+	max-height: calc(100vh - 20px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding: 8px;
+
+	.panelHead {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		padding: 6px 4px;
+	}
+	.panelTitle {
+		font-family: 'Geconomicus', serif;
+		font-size: 20px;
+		color: #fff;
+	}
+	.foldChip {
+		font-size: 12.5px;
+		font-weight: bold;
+		border: 1.5px solid rgba(0, 0, 0, 0.45);
+		border-radius: 10px;
+		padding: 3px 8px;
+		background: rgba(255, 255, 255, 0.85);
+		white-space: nowrap;
+	}
+	.cp-events-inner {
+		display: block;
+		overflow: auto;
+		margin-top: 6px;
+	}
+
+	// collapsed state: whole panel becomes a thin clickable vertical tab
+	&.collapsed {
+		padding: 0;
+		cursor: pointer;
+		.panelHead {
+			flex-direction: column;
+			height: 100%;
+			justify-content: flex-start;
+			padding: 12px 0;
+		}
+		.panelTitle {
+			writing-mode: vertical-rl;
+			text-orientation: mixed;
+			font-size: 18px;
+		}
+		.foldChip {
+			writing-mode: vertical-rl;
+		}
+	}
 }
 
 /* synthesis table */
@@ -117,8 +173,26 @@
 			color: #ffcf8a;
 		}
 	}
-	// rows: grid 1fr 175px 175px, padding 4px 16px, dashed bottom border,
-	// (i) tip button 19px circle → yellow dashed tip box when open.
+	.cp-trow {
+		display: grid;
+		grid-template-columns: 1fr 175px 175px;
+		gap: 8px;
+		padding: 5px 16px;
+		border-bottom: 1px dashed rgba(20, 20, 43, 0.25);
+		background: rgba(255, 255, 255, 0.85);
+		&:last-child {
+			border-bottom: none;
+		}
+		div:first-child {
+			font-size: 13.5px;
+			font-weight: 600;
+		}
+		.dette,
+		.libre {
+			text-align: center;
+			font-weight: 800;
+		}
+	}
 }
 
 /* podium */
@@ -170,6 +244,11 @@
 			filter: drop-shadow(1.5px 1.5px 0 rgba(0, 0, 0, 0.5));
 		}
 	}
+	.pod-empty {
+		font-size: 13px;
+		opacity: 0.7;
+		padding: 6px 0;
+	}
 	.most-active {
 		margin-top: 9px;
 		font-size: 13px;
@@ -192,13 +271,47 @@
 	> div {
 		padding: 14px 18px;
 	}
-	.bar-dette {
-		background: #2c7fb8;
+	.act-row {
+		margin-bottom: 12px;
+		.act-label {
+			display: block;
+			font-size: 13.5px;
+			font-weight: 700;
+			margin-bottom: 4px;
+		}
+		.act-bars {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+		.act-bar {
+			position: relative;
+			display: flex;
+			align-items: center;
+			height: 16px;
+			border: 1.5px solid #14142b;
+			border-radius: 4px;
+			background: rgba(255, 255, 255, 0.6);
+			overflow: hidden;
+			.fill {
+				display: block;
+				height: 100%;
+				transition: width 0.3s ease;
+			}
+			b {
+				position: absolute;
+				right: 6px;
+				font-size: 11px;
+				font-weight: 800;
+			}
+			&.dette .fill {
+				background: #2c7fb8;
+			}
+			&.libre .fill {
+				background: #f0932a;
+			}
+		}
 	}
-	.bar-libre {
-		background: #f0932a;
-	}
-	// bars: height 16px, border 1.5px solid #14142b, radius 4px, count label after.
 }
 
 /* chart cards */
@@ -228,15 +341,31 @@
 		background: rgba(255, 255, 255, 0.85);
 		border-radius: 8px;
 		padding: 6px;
+		height: 280px !important;
+		max-height: 280px;
 	}
 }
 
 @media (max-width: 1100px) {
-	.cp-body {
-		flex-direction: column;
+	.cp-layout,
+	.cp-layout.eventsCollapsed {
+		grid-template-columns: 1fr;
 	}
 	.cp-events {
-		width: 100%;
+		position: static;
+		max-height: none;
+		&.collapsed {
+			padding: 8px;
+			.panelHead {
+				flex-direction: row;
+				height: auto;
+				padding: 6px 4px;
+			}
+			.panelTitle,
+			.foldChip {
+				writing-mode: horizontal-tb;
+			}
+		}
 	}
 	.cp-two-cols {
 		grid-template-columns: 1fr;

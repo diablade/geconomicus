@@ -850,7 +850,13 @@ export class PlayerStateService {
 			return;
 		}
 
-		const identicalCards = cards.filter((c) => c.letter === letter && c.weight === weight);
+		// Backend requires amountCardsForProd distinct card keys (see decks.helper _areCardIdsUnique),
+		// which also matches the recipe-completion criterion (distinct ingredient keys). Dedupe by key
+		// so we never send duplicates when a player holds two cards sharing the same key.
+		const identicalCards = _.uniqBy(
+			cards.filter((c) => c.letter === letter && c.weight === weight),
+			'key'
+		);
 
 		if (identicalCards.length < rules.amountCardsForProd) {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.INSUFFICIENT_CARDS'));
