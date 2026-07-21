@@ -576,6 +576,67 @@
         "RESULTS": "ゲームの終了、結果の発表と2ラウンドの比較"
     },
     "MODULE": {
+        "FISCALITE": {
+            "TITLE": "Fiscalité par décile",
+            "SUB_TITLE": "40 ans de choix politiques et leur effet sur le patrimoine",
+            "SUMMARY": "Simuler l'impact de 40 ans de réformes fiscales françaises sur l'accumulation de patrimoine des dix déciles de revenu.",
+            "INTRO": "Ce module retrace quarante ans de politiques fiscales françaises (1983-2023) et leur effet sur l'accumulation de patrimoine des dix déciles de revenu. À partir d'un même point de départ — où le patrimoine initial est proportionnel au revenu et où l'épargne comme le rendement du capital sont identiques — seule la fiscalité varie selon la réforme choisie. Année après année, un taux effectif plus élevé ralentit la « boule de neige » patrimoniale d'un décile, tandis qu'un capital moins taxé l'accélère (r > g). Les écarts, imperceptibles la première année, deviennent spectaculaires au bout de quatre décennies.",
+            "DISCLAIMER": "Les presets s'appuient sur des repères historiques réels et documentés (taux marginaux, nombre de tranches, bouclier fiscal, contribution à 75 %, PFU/flat tax, bascule ISF/IFI ; sources IPP et INSEE). En revanche, les taux effectifs par décile, les taux d'épargne, les rendements du capital et les résultats de la simulation constituent un modèle pédagogique simplifié et ajustable : ils respectent des ordres de grandeur (données INSEE, travaux de Piketty) mais ne prétendent pas reconstituer exactement la charge fiscale de chaque ménage. Vous pouvez modifier tous les paramètres pour tester d'autres scénarios.",
+            "PRESETS_TITLE": "Repères historiques (taux réels documentés)",
+            "MARGINAL_TOP": "Taux marginal max",
+            "CUSTOM": "personnalisée",
+            "CUSTOM_HELP": "Vous avez ajusté manuellement les taux : scénario personnalisé. Cliquez sur un repère historique pour recharger un preset.",
+            "PRESETS": {
+                "mitterrand": {
+                    "LABEL": "Mitterrand 1983-1986",
+                    "BRACKETS": "14 tranches, TMI 65 %",
+                    "CONTEXT": "Au début du premier septennat de François Mitterrand, le barème de l'impôt sur le revenu compte 14 tranches et culmine à un taux marginal de 65 %, l'un des points hauts de la progressivité du barème moderne (le taux marginal supérieur avait dépassé 60 % avant-guerre et après 1945). Les revenus du capital sont alors imposés au barème. La tranche à 65 % est ramenée à 58 % à partir de l'imposition des revenus de 1986."
+                },
+                "sarkozy": {
+                    "LABEL": "Sarkozy 2007-2012",
+                    "BRACKETS": "TMI 40-41 % + bouclier fiscal 50 %",
+                    "CONTEXT": "Le bouclier fiscal, créé par la loi de finances pour 2006 (plafond des impôts directs à 60 % des revenus), est abaissé à 50 % et étendu aux prélèvements sociaux par la loi TEPA (août 2007) ; le taux marginal de l'IR se situe alors autour de 40-41 %. Très favorable aux plus hauts patrimoines, le dispositif est supprimé en 2011."
+                },
+                "hollande": {
+                    "LABEL": "Hollande 2012-2017",
+                    "BRACKETS": "TMI 45 % + contribution exceptionnelle 75 % (> 1 M€)",
+                    "CONTEXT": "Le quinquennat crée une tranche d'IR à 45 % et une contribution exceptionnelle de 75 % sur les revenus supérieurs à 1 M€. Censurée par le Conseil constitutionnel fin 2012 pour rupture d'égalité devant les charges publiques, cette taxe est réintroduite en 2013-2014 sous forme de contribution acquittée par les entreprises. La progressivité au sommet se redresse temporairement."
+                },
+                "macron": {
+                    "LABEL": "Macron 2017-auj.",
+                    "BRACKETS": "5 tranches, TMI 45 % + PFU 30 % sur le capital ; ISF → IFI",
+                    "CONTEXT": "Depuis 2018, le taux marginal du barème reste à 45 % sur les revenus du travail, mais les revenus du capital relèvent d'un prélèvement forfaitaire unique (« flat tax ») de 30 %, et l'ISF est remplacé par l'IFI, limité à l'immobilier. Les plus hauts revenus, tirés majoritairement du capital, voient leur taux effectif s'aplatir au sommet de la distribution."
+                }
+            },
+            "DECILES_TITLE": "Taux d'imposition effectif par décile",
+            "DECILES_HELP": "Réglez le taux effectif moyen appliqué à chaque décile, de D1 (les plus modestes) à D10 (les plus aisés). Le dégradé bleu → rouge visualise la progressivité.",
+            "TAX_RATE": "Taux d'imposition",
+            "POOREST": "D1 · plus modestes",
+            "RICHEST": "D10 · plus aisés",
+            "SIM_TITLE": "Paramètres de simulation",
+            "GROWTH": "Croissance économique annuelle",
+            "CAPITAL_RETURN": "Rendement du capital (déciles élevés)",
+            "CAPITAL_RETURN_HELP": "Rendement réel annuel du capital pour le décile le plus aisé. Quand ce rendement dépasse la croissance (r > g), le patrimoine du haut de la distribution fait « boule de neige ».",
+            "DURATION": "Durée de simulation",
+            "YEARS": "ans",
+            "EDIT_INCOMES": "Éditer les revenus de référence par décile",
+            "HIDE_INCOMES": "Masquer les revenus de référence",
+            "INCOME_REF": "Revenu annuel de référence par décile (€)",
+            "RESET_PARAMS": "Réinitialiser",
+            "VIZ_TITLE": "Patrimoine accumulé par décile",
+            "VIZ_LEGEND": "La taille de chaque bulle est proportionnelle au patrimoine cumulé (et non au revenu instantané).",
+            "YEAR": "Année",
+            "CURRENT_RATIO": "le décile le plus aisé (D10) détient <b>{{ratio}}×</b> le patrimoine du plus modeste (D1)",
+            "PLAY": "Lecture",
+            "PAUSE": "Pause",
+            "RESET_ANIM": "Revenir au départ",
+            "COMPARE_TOGGLE": "Comparer deux fiscalités",
+            "COMPARE_WITH": "Comparer avec",
+            "COMPARE_TITLE": "Lecture comparative",
+            "KEY_FIGURE": "Avec la fiscalité {{preset}}, le décile le plus aisé (D10) détient {{ratio}}× le patrimoine du décile le plus modeste (D1) après {{years}} ans.",
+            "SOURCES_TITLE": "Pour aller plus loin",
+            "GO_FURTHER": "Pour aller plus loin : comparez l'effet d'un même taux marginal affiché mais d'assiettes différentes (travail contre capital), ajustez vous-même les taux effectifs par décile, et observez comment le rendement net du capital — davantage que le barème lui-même — gouverne la concentration du patrimoine au sommet de la distribution sur le long terme."
+        },
         "BACK_HOME": "ホームに戻る",
         "GALILEO": {
             "TITLE": "自由な通貨のシミュレーション (Galilee module)",

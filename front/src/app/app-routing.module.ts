@@ -12,6 +12,7 @@ import { BankBoardComponent } from './bank-board/bank-board.component';
 import { MasterAdminComponent } from './master-admin/master-admin.component';
 import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
 import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
+import { ModuleFiscaliteComponent } from './components/module-fiscalite/module-fiscalite.component';
 import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TableBoardComponent } from './table-board/table-board.component';
@@ -33,6 +34,7 @@ const routes: Routes = [
 
 	{ path: 'module/galileo', component: ModuleGalileoComponent },
 	{ path: 'module/gini', component: ModuleWealthDistribComponent },
+	{ path: 'module/fiscalite', component: ModuleFiscaliteComponent },
 	//deprecated routes below
 	{ path: 'ogame/:idGame/admin', component: MasterAdminComponent },
 	{ path: 'ogame/:idGame/master', component: MasterBoardComponent },

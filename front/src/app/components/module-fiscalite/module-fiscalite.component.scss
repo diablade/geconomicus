@@ -1,0 +1,310 @@
+.module {
+	padding: 1rem;
+	background: white;
+}
+
+h2 {
+	font-size: 1.15rem;
+	margin-bottom: 0.75rem;
+}
+
+.block {
+	background: #f9f9f9;
+	padding: 1rem;
+	border-radius: 8px;
+	max-width: 1040px;
+	margin: 0.75rem auto;
+}
+
+.intro-wrap {
+	max-width: 900px;
+}
+
+.intro {
+	margin-bottom: 0;
+	line-height: 1.5;
+}
+
+.disclaimer {
+	font-size: 0.85rem;
+	color: #5b5b5b;
+	background: #fff8e6;
+	border: 1px solid #f0e2b8;
+	border-radius: 6px;
+	padding: 0.6rem 0.8rem;
+}
+
+.preset-btn {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-width: 170px;
+	padding: 0.5rem 0.8rem;
+	border: 2px solid;
+	border-radius: 8px;
+	background: transparent;
+	cursor: pointer;
+	transition: background-color 0.25s, color 0.25s;
+
+	.preset-label {
+		font-weight: bold;
+	}
+
+	.preset-brackets {
+		font-size: 0.72rem;
+		opacity: 0.85;
+	}
+}
+
+.preset-context {
+	margin-top: 1rem;
+	background: white;
+	border-left: 5px solid #ccc;
+	border-radius: 4px;
+	padding: 0.7rem 0.9rem;
+	line-height: 1.45;
+
+	&.custom {
+		font-style: italic;
+		color: #666;
+	}
+
+	.preset-context-top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.35rem;
+	}
+
+	.marginal-badge {
+		color: #fff;
+		font-size: 0.75rem;
+		font-weight: bold;
+		padding: 2px 8px;
+		border-radius: 10px;
+	}
+}
+
+.deciles-card {
+	flex: 1 1 480px;
+	max-width: 560px;
+}
+
+.sim-card {
+	flex: 1 1 320px;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+
+	label {
+		display: block;
+		margin: 0.6rem 0 0.2rem;
+		font-size: 0.9rem;
+	}
+
+	input[type="range"] {
+		width: 100%;
+	}
+
+	.year-range {
+		color: #888;
+		font-size: 0.8rem;
+		font-weight: normal;
+	}
+}
+
+.deciles-help,
+.income-help {
+	font-size: 0.82rem;
+	color: #666;
+	margin-bottom: 0.75rem;
+}
+
+.deciles {
+	gap: 4px;
+}
+
+.decile {
+	flex: 1;
+}
+
+.decile-value {
+	font-size: 0.72rem;
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+.decile-label {
+	font-size: 0.8rem;
+	font-weight: bold;
+	margin-top: 6px;
+}
+
+.vslider {
+	-webkit-appearance: slider-vertical;
+	appearance: slider-vertical;
+	writing-mode: vertical-lr;
+	direction: rtl;
+	width: 12px;
+	height: 155px;
+	cursor: pointer;
+}
+
+.deciles-scale {
+	margin-top: 0.4rem;
+	color: #777;
+}
+
+.link-btn {
+	align-self: flex-start;
+	background: none;
+	border: none;
+	color: #1976d2;
+	padding: 0.5rem 0;
+	cursor: pointer;
+	text-decoration: underline;
+	font-size: 0.85rem;
+}
+
+.incomes {
+	background: white;
+	border-radius: 6px;
+	padding: 0.6rem;
+
+	.income-grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.4rem;
+	}
+
+	.income-cell {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-size: 0.7rem;
+		font-weight: bold;
+		margin: 0;
+
+		input {
+			width: 100%;
+			max-width: 78px;
+			font-size: 0.75rem;
+			text-align: center;
+		}
+	}
+}
+
+.band-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	padding: 0 0.25rem 0.15rem;
+	border-bottom: 1px dashed #ddd;
+
+	.band-ratio {
+		font-size: 0.85rem;
+		font-weight: bold;
+	}
+}
+
+.bubbles {
+	width: 100%;
+	height: auto;
+	max-height: 320px;
+	display: block;
+
+	circle {
+		transition: r 0.18s linear;
+	}
+
+	.b-label {
+		font-size: 17px;
+		font-weight: bold;
+	}
+
+	.b-value {
+		font-size: 12px;
+		fill: #555;
+	}
+}
+
+.viz-legend {
+	font-size: 0.8rem;
+	color: #777;
+	text-align: center;
+	margin: 0.25rem 0 0.75rem;
+}
+
+.current-readout {
+	font-size: 0.95rem;
+	margin-bottom: 0.5rem;
+
+	.year-chip {
+		background: #1976d2;
+		color: #fff;
+		font-weight: bold;
+		padding: 2px 10px;
+		border-radius: 12px;
+	}
+}
+
+.timeline {
+	max-width: 720px;
+	margin: 0 auto 0.75rem;
+
+	.timeline-slider {
+		flex: 1;
+	}
+
+	small {
+		color: #777;
+		white-space: nowrap;
+	}
+}
+
+.key-figure {
+	background: white;
+	border-left: 5px solid #555;
+	border-radius: 4px;
+	padding: 0.8rem 1rem;
+	margin-bottom: 0.6rem;
+	font-size: 1.05rem;
+	line-height: 1.5;
+}
+
+.sources {
+	margin: 0.6rem 0 0;
+	padding-left: 1.2rem;
+
+	li {
+		margin-bottom: 0.3rem;
+	}
+
+	a {
+		color: #1976d2;
+		text-decoration: none;
+	}
+}
+
+@media (max-width: 600px) {
+	.vslider {
+		height: 120px;
+	}
+
+	.deciles-card,
+	.sim-card {
+		max-width: 100%;
+	}
+
+	.incomes .income-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.preset-btn {
+		min-width: 140px;
+		flex: 1;
+	}
+}

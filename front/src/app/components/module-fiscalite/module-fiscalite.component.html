@@ -1,0 +1,208 @@
+<div class="module">
+	<app-language-btn [cornerScreen]="true" [short]="true"></app-language-btn>
+	<button mat-raised-button [color]="" (click)="home()">{{ "MODULE.BACK_HOME" | translate }}</button>
+
+	<h1 class="text-center"><b>{{ "MODULE.FISCALITE.TITLE" | translate }}</b></h1>
+
+	<!-- Intro + avertissement pédagogique -->
+	<div class="intro-wrap d-flex flex-column gap-2 mx-auto">
+		<p class="intro" [innerHTML]="'MODULE.FISCALITE.INTRO' | translate"></p>
+		<div class="disclaimer d-flex flex-row gap-2 align-items-start">
+			<fa-icon [icon]="faCircleInfo"></fa-icon>
+			<span [innerHTML]="'MODULE.FISCALITE.DISCLAIMER' | translate"></span>
+		</div>
+	</div>
+
+	<!-- Presets : repères historiques réels -->
+	<mat-card class="card block presets-card">
+		<h2>{{ "MODULE.FISCALITE.PRESETS_TITLE" | translate }}</h2>
+		<div class="presets d-flex flex-row flex-wrap gap-2">
+			<button type="button" class="preset-btn" *ngFor="let p of presets"
+			        [class.active]="activePresetId === p.id"
+			        [style.borderColor]="p.accentColor"
+			        [style.backgroundColor]="activePresetId === p.id ? p.accentColor : 'transparent'"
+			        [style.color]="activePresetId === p.id ? '#fff' : p.accentColor"
+			        (click)="applyPreset(p)">
+				<span class="preset-label">{{ 'MODULE.FISCALITE.PRESETS.' + p.id + '.LABEL' | translate }}</span>
+				<small class="preset-brackets">{{ 'MODULE.FISCALITE.PRESETS.' + p.id + '.BRACKETS' | translate }}</small>
+			</button>
+		</div>
+
+		<div class="preset-context" *ngIf="activePreset as ap" [style.borderLeftColor]="ap.accentColor">
+			<div class="preset-context-top">
+				<b>{{ 'MODULE.FISCALITE.PRESETS.' + ap.id + '.LABEL' | translate }}</b>
+				<span class="marginal-badge" [style.backgroundColor]="ap.accentColor">
+					{{ "MODULE.FISCALITE.MARGINAL_TOP" | translate }} : {{ ap.marginalTopRate }} %
+				</span>
+			</div>
+			<div>{{ 'MODULE.FISCALITE.PRESETS.' + ap.id + '.CONTEXT' | translate }}</div>
+		</div>
+		<div class="preset-context custom" *ngIf="!activePreset">
+			{{ "MODULE.FISCALITE.CUSTOM_HELP" | translate }}
+		</div>
+	</mat-card>
+
+	<!-- Contrôles : sliders par décile + panneau de simulation -->
+	<div class="controls d-flex flex-row flex-wrap gap-3 justify-content-center">
+
+		<mat-card class="card block deciles-card">
+			<h2>{{ "MODULE.FISCALITE.DECILES_TITLE" | translate }}</h2>
+			<div class="deciles-help">{{ "MODULE.FISCALITE.DECILES_HELP" | translate }}</div>
+			<div class="deciles d-flex flex-row justify-content-between align-items-end">
+				<div class="decile d-flex flex-column align-items-center" *ngFor="let rate of taxRates; let i = index">
+					<span class="decile-value">{{ taxRates[i] | number:'1.0-0' }}%</span>
+					<input type="range" class="vslider" orient="vertical" [min]="0" [max]="70" [step]="1"
+					       [style.accent-color]="decileColor(i)"
+					       [attr.aria-label]="('MODULE.FISCALITE.TAX_RATE' | translate) + ' D' + (i + 1)"
+					       [(ngModel)]="taxRates[i]" (input)="onTaxRateChange()">
+					<span class="decile-label" [style.color]="decileColor(i)">D{{ i + 1 }}</span>
+				</div>
+			</div>
+			<div class="deciles-scale d-flex flex-row justify-content-between">
+				<small>{{ "MODULE.FISCALITE.POOREST" | translate }}</small>
+				<small>{{ "MODULE.FISCALITE.RICHEST" | translate }}</small>
+			</div>
+		</mat-card>
+
+		<mat-card class="card block sim-card">
+			<h2>{{ "MODULE.FISCALITE.SIM_TITLE" | translate }}</h2>
+
+			<label>{{ "MODULE.FISCALITE.GROWTH" | translate }} : <b>{{ growthRatePct | number:'1.0-1' }} %</b></label>
+			<input type="range" [min]="0" [max]="5" [step]="0.1" [(ngModel)]="growthRatePct" (input)="onGrowthChange()">
+
+			<label>{{ "MODULE.FISCALITE.CAPITAL_RETURN" | translate }} : <b>{{ topCapitalReturnPct | number:'1.0-1' }} %</b>
+				<fa-icon [icon]="faCircleInfo" [matTooltip]="'MODULE.FISCALITE.CAPITAL_RETURN_HELP' | translate"></fa-icon>
+			</label>
+			<input type="range" [min]="0" [max]="8" [step]="0.1" [(ngModel)]="topCapitalReturnPct" (input)="onTopReturnChange()">
+
+			<label>{{ "MODULE.FISCALITE.DURATION" | translate }} : <b>{{ years }} {{ "MODULE.FISCALITE.YEARS" | translate }}</b>
+				<span class="year-range">({{ startYear }} → {{ endYear }})</span>
+			</label>
+			<input type="range" [min]="1" [max]="40" [step]="1" [(ngModel)]="years" (input)="onDurationChange()">
+
+			<button type="button" class="link-btn" (click)="showAdvanced = !showAdvanced">
+				{{ (showAdvanced ? "MODULE.FISCALITE.HIDE_INCOMES" : "MODULE.FISCALITE.EDIT_INCOMES") | translate }}
+			</button>
+			<div class="incomes" *ngIf="showAdvanced">
+				<div class="income-help">{{ "MODULE.FISCALITE.INCOME_REF" | translate }}</div>
+				<div class="income-grid">
+					<label class="income-cell" *ngFor="let inc of decileIncome; let i = index">
+						<span [style.color]="decileColor(i)">D{{ i + 1 }}</span>
+						<input type="number" min="0" step="100" [(ngModel)]="decileIncome[i]" (input)="onIncomeChange()">
+					</label>
+				</div>
+			</div>
+
+			<button mat-raised-button [color]="'warn'" class="mt-2" (click)="resetAll()">
+				{{ "MODULE.FISCALITE.RESET_PARAMS" | translate }}
+			</button>
+		</mat-card>
+	</div>
+
+	<!-- Visualisation « bulles d'argent » -->
+	<mat-card class="card block viz-card">
+		<div class="viz-header d-flex flex-row flex-wrap justify-content-between align-items-center gap-2">
+			<h2>{{ "MODULE.FISCALITE.VIZ_TITLE" | translate }}</h2>
+			<mat-slide-toggle [checked]="compareEnabled" (change)="toggleCompare()">
+				<fa-icon [icon]="faArrowRightArrowLeft"></fa-icon>
+				{{ "MODULE.FISCALITE.COMPARE_TOGGLE" | translate }}
+			</mat-slide-toggle>
+		</div>
+
+		<div class="compare-picker d-flex flex-row align-items-center gap-2" *ngIf="compareEnabled">
+			<label class="mb-0">{{ "MODULE.FISCALITE.COMPARE_WITH" | translate }} :</label>
+			<select [(ngModel)]="comparePresetId" (change)="onComparePresetChange()">
+				<option *ngFor="let p of presets" [value]="p.id" [disabled]="p.id === activePresetId">{{ 'MODULE.FISCALITE.PRESETS.' + p.id + '.LABEL' | translate }}</option>
+			</select>
+		</div>
+
+		<!-- Bande A (scénario courant) -->
+		<div class="viz-band">
+			<div class="band-head" *ngIf="compareEnabled" [style.color]="activePreset ? activePreset.accentColor : '#555'">
+				<b>{{ scenarioLabelKeyA | translate }}</b>
+				<span class="band-ratio">D10 = {{ formatRatio(ratioCurrentA) }}× D1</span>
+			</div>
+			<svg class="bubbles" [attr.viewBox]="'0 0 ' + viewW + ' 300'" preserveAspectRatio="xMidYMid meet" role="img"
+			     [attr.aria-label]="'MODULE.FISCALITE.VIZ_TITLE' | translate">
+				<g *ngFor="let b of bubblesA">
+					<circle [attr.cx]="b.cx" [attr.cy]="b.cy" [attr.r]="b.r" [attr.fill]="b.color" fill-opacity="0.8"
+					        [attr.stroke]="b.color" stroke-width="1.5">
+						<title>{{ b.label }} : {{ b.valueLabel }}</title>
+					</circle>
+					<text class="b-label" [attr.x]="b.cx" y="255" text-anchor="middle" [attr.fill]="b.color">{{ b.label }}</text>
+					<text class="b-value" [attr.x]="b.cx" y="278" text-anchor="middle">{{ b.valueLabel }}</text>
+				</g>
+			</svg>
+		</div>
+
+		<!-- Bande B (comparaison) -->
+		<div class="viz-band" *ngIf="compareEnabled">
+			<div class="band-head" [style.color]="comparePreset.accentColor">
+				<b>{{ scenarioLabelKeyB | translate }}</b>
+				<span class="band-ratio">D10 = {{ formatRatio(ratioCurrentB) }}× D1</span>
+			</div>
+			<svg class="bubbles" [attr.viewBox]="'0 0 ' + viewW + ' 300'" preserveAspectRatio="xMidYMid meet" role="img"
+			     [attr.aria-label]="scenarioLabelKeyB | translate">
+				<g *ngFor="let b of bubblesB">
+					<circle [attr.cx]="b.cx" [attr.cy]="b.cy" [attr.r]="b.r" [attr.fill]="b.color" fill-opacity="0.8"
+					        [attr.stroke]="b.color" stroke-width="1.5">
+						<title>{{ b.label }} : {{ b.valueLabel }}</title>
+					</circle>
+					<text class="b-label" [attr.x]="b.cx" y="255" text-anchor="middle" [attr.fill]="b.color">{{ b.label }}</text>
+					<text class="b-value" [attr.x]="b.cx" y="278" text-anchor="middle">{{ b.valueLabel }}</text>
+				</g>
+			</svg>
+		</div>
+
+		<div class="viz-legend">{{ "MODULE.FISCALITE.VIZ_LEGEND" | translate }}</div>
+
+		<!-- Lecture : année courante + ratio live -->
+		<div class="current-readout d-flex flex-row flex-wrap justify-content-center align-items-center gap-2">
+			<span class="year-chip">{{ "MODULE.FISCALITE.YEAR" | translate }} {{ displayYear }}</span>
+			<span [innerHTML]="'MODULE.FISCALITE.CURRENT_RATIO' | translate: {ratio: formatRatio(ratioCurrentA)}"></span>
+		</div>
+
+		<!-- Timeline / scrubber -->
+		<div class="timeline d-flex flex-row align-items-center gap-2">
+			<small>{{ startYear }}</small>
+			<input type="range" class="timeline-slider" [min]="0" [max]="years" [step]="1"
+			       [(ngModel)]="currentYearIndex" (input)="onScrub()"
+			       [attr.aria-label]="'MODULE.FISCALITE.YEAR' | translate">
+			<small>{{ endYear }}</small>
+		</div>
+
+		<!-- Contrôles play/pause/reset -->
+		<div class="playback d-flex flex-row justify-content-center gap-2">
+			<button mat-raised-button [color]="'primary'" (click)="togglePlay()">
+				<fa-icon [icon]="isPlaying ? faPause : faPlay"></fa-icon>
+				{{ (isPlaying ? "MODULE.FISCALITE.PAUSE" : "MODULE.FISCALITE.PLAY") | translate }}
+			</button>
+			<button mat-stroked-button (click)="resetAnimation()">
+				<fa-icon [icon]="faRotateLeft"></fa-icon>
+				{{ "MODULE.FISCALITE.RESET_ANIM" | translate }}
+			</button>
+		</div>
+	</mat-card>
+
+	<!-- Lecture comparative : chiffre-clé -->
+	<mat-card class="card block keyfig-card">
+		<h2>{{ "MODULE.FISCALITE.COMPARE_TITLE" | translate }}</h2>
+		<div class="key-figure" [style.borderLeftColor]="activePreset ? activePreset.accentColor : '#555'">
+			{{ "MODULE.FISCALITE.KEY_FIGURE" | translate: {preset: (scenarioLabelKeyA | translate), ratio: formatRatio(ratioFinalA), years: years} }}
+		</div>
+		<div class="key-figure" *ngIf="compareEnabled" [style.borderLeftColor]="comparePreset.accentColor">
+			{{ "MODULE.FISCALITE.KEY_FIGURE" | translate: {preset: (scenarioLabelKeyB | translate), ratio: formatRatio(ratioFinalB), years: years} }}
+		</div>
+	</mat-card>
+
+	<!-- Pour aller plus loin -->
+	<mat-card class="card block sources-card">
+		<h2>{{ "MODULE.FISCALITE.SOURCES_TITLE" | translate }}</h2>
+		<p>{{ "MODULE.FISCALITE.GO_FURTHER" | translate }}</p>
+		<ul class="sources">
+			<li *ngFor="let s of sources">
+				<a [href]="s.url" target="_blank" rel="noopener noreferrer">{{ s.label }}</a>
+			</li>
+		</ul>
+	</mat-card>
+</div>

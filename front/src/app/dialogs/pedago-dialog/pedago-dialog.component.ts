@@ -23,4 +23,9 @@ export class PedagoDialogComponent {
 		this.router.navigate(['module/gini']);
 		this.dialogRef.close();
 	}
+
+	openFiscalite() {
+		this.router.navigate(['module/fiscalite']);
+		this.dialogRef.close();
+	}
 }

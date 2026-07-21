@@ -673,6 +673,67 @@
         "RESULTS": "End of the game, reveal the results and compare the two rounds"
     },
     "MODULE": {
+        "FISCALITE": {
+            "TITLE": "Taxation by decile",
+            "SUB_TITLE": "40 years of policy choices and their effect on wealth",
+            "SUMMARY": "Simulate the impact of 40 years of French tax reforms on wealth accumulation across the ten income deciles.",
+            "INTRO": "This module retraces forty years of French tax policy (1983-2023) and its effect on wealth accumulation across the ten income deciles. Starting from the same point — where initial wealth is proportional to income and where both savings and capital returns are identical — only taxation varies with the chosen reform. Year after year, a higher effective rate slows a decile's wealth \"snowball\", while less-taxed capital accelerates it (r > g). Gaps that are invisible in year one become dramatic after four decades.",
+            "DISCLAIMER": "The presets rest on real, documented historical benchmarks (marginal rates, number of brackets, the tax shield, the 75 % levy, the flat tax/PFU, the ISF-to-IFI shift; sources IPP and INSEE). By contrast, the per-decile effective rates, savings rates, capital returns and the simulation results are a simplified, adjustable teaching model: they respect orders of magnitude (INSEE data, Piketty's work) but do not claim to reproduce the exact tax burden of any given household. Every parameter can be edited to test alternative scenarios.",
+            "PRESETS_TITLE": "Historical benchmarks (documented real rates)",
+            "MARGINAL_TOP": "Top marginal rate",
+            "CUSTOM": "custom",
+            "CUSTOM_HELP": "You have manually adjusted the rates: custom scenario. Click a historical benchmark to reload a preset.",
+            "PRESETS": {
+                "mitterrand": {
+                    "LABEL": "Mitterrand 1983-1986",
+                    "BRACKETS": "14 brackets, top rate 65 %",
+                    "CONTEXT": "In the early years of François Mitterrand's presidency, the income-tax schedule had 14 brackets peaking at a 65 % top marginal rate, one of the high points of the modern schedule's progressivity (the top marginal rate had exceeded 60 % before WWII and after 1945). Capital income was then taxed under the ordinary schedule. The 65 % bracket was lowered to 58 % from 1986 income onward."
+                },
+                "sarkozy": {
+                    "LABEL": "Sarkozy 2007-2012",
+                    "BRACKETS": "Top rate 40-41 % + 50 % tax shield",
+                    "CONTEXT": "The \"tax shield\", created by the 2006 Finance Act (capping direct taxes at 60 % of income), was lowered to 50 % and extended to social levies by the TEPA law (August 2007); the top income-tax rate then stood around 40-41 %. Highly favourable to the wealthiest households, it was abolished in 2011."
+                },
+                "hollande": {
+                    "LABEL": "Hollande 2012-2017",
+                    "BRACKETS": "Top rate 45 % + 75 % exceptional levy (> €1M)",
+                    "CONTEXT": "This term created a 45 % top income-tax bracket and an exceptional 75 % levy on income above 1 M€. Struck down by the Constitutional Council in late 2012 for breaching equality before public charges, the tax was reinstated in 2013-2014 as a contribution paid by employers. Top-end progressivity briefly rebounded."
+                },
+                "macron": {
+                    "LABEL": "Macron 2017-now",
+                    "BRACKETS": "5 brackets, top rate 45 % + 30 % flat tax on capital; ISF → IFI",
+                    "CONTEXT": "Since 2018 the top schedule rate has remained 45 % on labour income, but capital income is taxed under a 30 % flat tax (PFU) and the wealth tax ISF has been replaced by the real-estate-only IFI. Top earners, whose income is largely capital-based, see their effective rate flatten at the very top of the distribution."
+                }
+            },
+            "DECILES_TITLE": "Effective tax rate by decile",
+            "DECILES_HELP": "Set the average effective rate applied to each decile, from D1 (poorest) to D10 (wealthiest). The blue → red gradient shows progressivity.",
+            "TAX_RATE": "Tax rate",
+            "POOREST": "D1 · poorest",
+            "RICHEST": "D10 · wealthiest",
+            "SIM_TITLE": "Simulation parameters",
+            "GROWTH": "Annual economic growth",
+            "CAPITAL_RETURN": "Return on capital (top deciles)",
+            "CAPITAL_RETURN_HELP": "Annual real return on capital for the wealthiest decile. When this return exceeds growth (r > g), top-end wealth snowballs.",
+            "DURATION": "Simulation length",
+            "YEARS": "years",
+            "EDIT_INCOMES": "Edit reference incomes by decile",
+            "HIDE_INCOMES": "Hide reference incomes",
+            "INCOME_REF": "Annual reference income by decile (€)",
+            "RESET_PARAMS": "Reset",
+            "VIZ_TITLE": "Accumulated wealth by decile",
+            "VIZ_LEGEND": "Each bubble's size is proportional to cumulative wealth (not instantaneous income).",
+            "YEAR": "Year",
+            "CURRENT_RATIO": "the wealthiest decile (D10) holds <b>{{ratio}}×</b> the wealth of the poorest (D1)",
+            "PLAY": "Play",
+            "PAUSE": "Pause",
+            "RESET_ANIM": "Back to start",
+            "COMPARE_TOGGLE": "Compare two tax systems",
+            "COMPARE_WITH": "Compare with",
+            "COMPARE_TITLE": "Comparative reading",
+            "KEY_FIGURE": "Under {{preset}} tax policy, the wealthiest decile (D10) holds {{ratio}}× the wealth of the poorest decile (D1) after {{years}} years.",
+            "SOURCES_TITLE": "Going further",
+            "GO_FURTHER": "To go further: compare the effect of the same headline marginal rate applied to different bases (labour vs. capital), adjust the per-decile effective rates yourself, and observe how the after-tax return on capital — more than the schedule itself — governs the long-run concentration of wealth at the top of the distribution."
+        },
         "BACK_HOME": "Back to home",
         "GALILEO": {
             "TITLE": "Simulation free currency (Galileo module)",

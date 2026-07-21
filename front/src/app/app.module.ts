@@ -67,6 +67,7 @@ import { GameInfosDialog, NoticeBtnComponent } from './components/notice-btn/not
 import { I18nService } from './services/i18n.service';
 import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
 import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
+import { ModuleFiscaliteComponent } from './components/module-fiscalite/module-fiscalite.component';
 import { PedagoDialogComponent } from './dialogs/pedago-dialog/pedago-dialog.component';
 import { PedagoBtnComponent } from './components/pedago-btn/pedago-btn.component';
 import { MatCardModule } from '@angular/material/card';
@@ -138,6 +139,7 @@ LOAD_WASM().subscribe();
 		ContributionsComponent,
 		ModuleWealthDistribComponent,
 		ModuleGalileoComponent,
+		ModuleFiscaliteComponent,
 		PedagoDialogComponent,
 		PedagoBtnComponent,
 		TaskListBtnComponent,
