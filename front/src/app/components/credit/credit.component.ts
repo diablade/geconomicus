@@ -28,6 +28,8 @@ export class CreditComponent implements OnChanges {
 	@Input() duration = 0;
 	@Input() bankOption = false;
 	@Input() small = false;
+	/** When true, suppress every action button — used by the credit-chip detail popover. */
+	@Input() readOnly = false;
 	@Output() actionBtn = new EventEmitter<string>();
 
 	ngOnChanges() {

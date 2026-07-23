@@ -168,15 +168,15 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	}
 
 	qrCodeBank(): void {
-		let username = '';
-		this.translate.get('BANK.TITLE').subscribe((text) => {
-			username = text;
+		let title = '';
+		this.translate.get('MASTER.GAME_TABLE_VIEW').subscribe((text) => {
+			title = text;
 		});
 
 		this.dialog.open(ReJoinQrDialogComponent, {
 			data: {
-				text: username,
-				url: environment.WEB_HOST + '/bank/' + this.gameStateId,
+				text: title,
+				url: environment.WEB_HOST + 'table/' + this.sessionId + '/' + this.gameStateId,
 			},
 		});
 	}

@@ -37,6 +37,7 @@ export const environment = {
 		STOP: 'game-state/stop',
 		REFRESH_PLAYER: 'game-state/refresh-player',
 		REFRESH_ALL: 'game-state/refresh-all',
+		KILL_PLAYER: 'game-state/kill-player',
 	},
 	PLAYER_STATE: {
 		GET: 'game-state/player-state/',
@@ -56,6 +57,7 @@ export const environment = {
 	},
 	BANK_STATE: {
 		CREATE_CREDIT: 'game-state/bank-state/create-credit',
+		CREDIT_FOR_ALL: 'game-state/bank-state/credit-for-all',
 		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
 		GIVE_FREE_MONEY: 'game-state/bank-state/free-money',
 		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',

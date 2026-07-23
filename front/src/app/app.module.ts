@@ -43,11 +43,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { GameDeleteDialog, HistoryGamesComponent } from './history-games/history-games.component';
 import { SurveyComponent } from './survey/survey.component';
 import { MatSliderModule } from '@angular/material/slider';
-import { BankBoardComponent } from './bank-board/bank-board.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ContractDialogComponent } from './dialogs/contract-dialog/contract-dialog.component';
 import { FreeMoneyDialogComponent } from './dialogs/free-money-dialog/free-money-dialog.component';
 import { CreditComponent } from './components/credit/credit.component';
+import { CreditChipComponent } from './components/credit-chip/credit-chip.component';
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
 import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -122,10 +122,10 @@ LOAD_WASM().subscribe();
 		ScannerQrCode,
 		HistoryGamesComponent,
 		SurveyComponent,
-		BankBoardComponent,
 		ContractDialogComponent,
 		FreeMoneyDialogComponent,
 		CreditComponent,
+		CreditChipComponent,
 		ConfirmDialogComponent,
 		BtnTimerAutoClickComponent,
 		SeizureDialogComponent,

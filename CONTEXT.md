@@ -55,3 +55,22 @@ A spendable resource on `PlayerState`. Resets to `startingTokens` (from Rules) o
 ## Action
 
 A player-initiated interaction (give, steal, silentSteal, war, ong, whoHaveCard) with a token cost. Configured per-game in `rules.actions[]`. Executed via `ActionStateService` on the backend.
+
+## Player Action Menu
+
+A `mat-menu` anchored to a player's avatar (in both the table and boards layouts of the table view), holding every per-*player* action: play (open player view), copy link, QR re-join, refresh, give credit, free money, release from prison, kill. Mirrors the avatar menu pattern on `master-board`. Menu items are enabled per player status (e.g. give credit only when `ALIVE`, release only when `PRISON`). Distinct from the Credit Chip menu, which carries per-*credit* actions (seize/cancel/details) since a player may hold several credits.
+
+## Locked Row
+
+A player who is out of play (`PRISON` or `DEAD`) has their row content (coins, credits, cards) covered by a disabled overlay layer. The avatar remains clickable to open the Player Action Menu; status-invalid items in that menu are disabled.
+
+## Credit Chip
+
+A compact inline element (`app-credit-chip`) rendering one Credit in the table view's per-player credits column. Has two modes:
+
+- **Active** (running/requesting/paused/idle/fault): a pill showing amount + interest, a status label, and a thin time-remaining progress bar coloured green→amber→red by elapsed fraction. Clicking opens a menu of the actions valid for that status (Cancel while active, Seize when `FAULT`).
+- **Closed** (`DONE`/`CANCELED`): greyed, icon-only. Clicking reveals the credit's detail.
+
+Detail (for closed chips, and via a "Details" menu entry on active chips) is shown in an anchored popover that renders the existing `app-credit` card read-only — not a modal dialog.
+
+The per-player credits cell shows *all* of a player's credits (active first, closed after) and scrolls when they overflow. The chip owns the credit status→colour/label mapping and progress math (previously duplicated in `table-board` and `app-credit`). Distinct from `app-credit`, the tall vertical credit card formerly used by the bank view.

@@ -49,6 +49,16 @@
 					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
 					{{ 'TABLE.MONETARY_MASS' | translate }}
 				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
+					⚖️
+					<b [class.warnNum]="vm.avgCurrency < 2">{{ vm.avgCurrency | number: '1.2-2' }}</b>
+					{{ 'BANK.AVG_PLAYERS' | translate }}
+				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
+					📈
+					<b>{{ vm.totalDebt }}</b>
+					{{ 'BANK.CURRENT_DEBT' | translate }}
+				</div>
 				<div class="chip frame frame-light box-shadowed">
 					⚡
 					<b>{{ vm.totalTokens }}</b>
@@ -304,6 +314,31 @@
 							</div>
 						</div>
 					</div>
+
+					<!-- ── Bank frame: global bank interventions (debt game only) ── -->
+					<div class="bankPanel frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
+						<button class="panelHead" type="button" (click)="bankOpen = !bankOpen">
+							<span class="panelTitle contourText ombreText">
+								<span>{{ bankOpen ? '▾ ' : '▸ ' }}</span>
+								🏦 {{ 'MASTER.BANK_BTN' | translate }}
+							</span>
+						</button>
+						<div class="bankActions" *ngIf="bankOpen">
+							<button class="box-shadowed" mat-raised-button color="accent" (click)="showContract()">
+								<mat-icon>paid</mat-icon>
+								{{ 'BANK.GIVE_CREDIT' | translate }}
+							</button>
+							<button class="box-shadowed" mat-raised-button color="primary" (click)="creditForAll()">
+								<mat-icon>groups</mat-icon>
+								{{ 'BANK.CREDIT_FOR_ALL' | translate }}
+							</button>
+							<button class="box-shadowed" mat-raised-button color="warn" (click)="freeMoney()">
+								<mat-icon>volunteer_activism</mat-icon>
+								{{ 'FREEMONEY.TITLE' | translate }}
+							</button>
+						</div>
+					</div>
+
 					<!-- ── Players: table / boards toggle ── -->
 					<div class="playersArea">
 						<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
@@ -375,25 +410,32 @@
 								<div
 									class="tRow"
 									*ngFor="let row of vm.rows; trackBy: trackByRow"
-									[class.deadRow]="row.status === DEAD">
+									[class.lockedRow]="row.status === DEAD || row.status === PRISON">
+									<!-- Locked overlay (prison / dead): covers row content, avatar stays above -->
+									<div class="rowLock" *ngIf="row.status === DEAD || row.status === PRISON">
+										<ng-container *ngIf="row.status === DEAD">
+											🦂 {{ 'TABLE.DECEASED' | translate }}
+										</ng-container>
+										<ng-container *ngIf="row.status === PRISON">
+											🚨 {{ 'TABLE.PRISON' | translate }}
+											<span class="lockProgress">
+												<span [style.width.%]="row.progressPrison"></span>
+											</span>
+											{{ row.progressPrison }}%
+										</ng-container>
+									</div>
 									<div class="cell-player">
-										<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
-											<avatar
-												[avatar]="row.avatar"
-												width="42px"
-												height="42px"
-												[namePosition]="'right'"
-												[onlineStatus]="true"
-												[connection]="row.connection || null"
-												[playerStatus]="row.status"></avatar>
-										</a>
-										<button
-											type="button"
-											class="rowRefreshBtn"
-											[title]="'TABLE.REFRESH_PLAYER' | translate"
-											(click)="refreshPlayer(row)">
-											🔄️
-										</button>
+										<avatar
+											class="avatarTrigger"
+											[avatar]="row.avatar"
+											width="42px"
+											height="42px"
+											[namePosition]="'right'"
+											[onlineStatus]="true"
+											[connection]="row.connection || null"
+											[playerStatus]="row.status"
+											[matMenuTriggerFor]="playerMenu"
+											[matMenuTriggerData]="{ row: row }"></avatar>
 									</div>
 									<div>
 										<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
@@ -418,27 +460,16 @@
 									</div>
 									<div class="cell-credits">
 										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
-											<div
-												class="creditChip"
-												*ngFor="let credit of row.credits"
-												[ngClass]="creditChipClass(credit.status)"
-												[title]="
-													('TABLE.CREDIT' | translate) +
-													' ' +
-													credit.amount +
-													' + ' +
-													('TABLE.INTEREST' | translate) +
-													' ' +
-													credit.interest
-												">
-												📜 {{ credit.amount }}+{{ credit.interest }} &middot;
-												{{ creditChipLabel(credit.status) | translate }}
-											</div>
+											<app-credit-chip
+												*ngFor="let credit of row.credits; trackBy: trackByCredit"
+												[credit]="credit"
+												[duration]="vm.rules.durationCredit"
+												[contractor]="row.avatar"
+												(action)="onChipAction($event)"></app-credit-chip>
 										</ng-container>
-										<div class="creditChip prison" *ngIf="row.status === PRISON">
-											🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
-										</div>
-										<div class="noChip" *ngIf="row.credits.length === 0 && row.status !== PRISON">
+										<div
+											class="noChip"
+											*ngIf="(vm.rules.typeMoney !== DEBT || row.credits.length === 0) && row.status !== PRISON">
 											&mdash;
 										</div>
 									</div>
@@ -472,16 +503,17 @@
 									*ngFor="let row of vm.rows; trackBy: trackByRow"
 									[class.deadBoard]="row.status === DEAD">
 									<div class="pbHead">
-										<a [href]="getPlayerStateUrl(row)" target="_blank" class="playerLink">
-											<avatar
-												[avatar]="row.avatar"
-												width="52px"
-												height="52px"
-												[namePosition]="'right'"
-												[onlineStatus]="true"
-												[connection]="row.connection || null"
-												[playerStatus]="row.status"></avatar>
-										</a>
+										<avatar
+											class="avatarTrigger"
+											[avatar]="row.avatar"
+											width="52px"
+											height="52px"
+											[namePosition]="'right'"
+											[onlineStatus]="true"
+											[connection]="row.connection || null"
+											[playerStatus]="row.status"
+											[matMenuTriggerFor]="playerMenu"
+											[matMenuTriggerData]="{ row: row }"></avatar>
 										<div class="pbRight">
 											<div class="pbCoins white contourText">
 												{{ row.coins | number: '1.2-2' }}
@@ -504,17 +536,13 @@
 											{{ 'CURRENCY.EURO' | translate }}
 										</div>
 										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
-											<div
-												class="creditChip"
-												*ngFor="let credit of row.credits"
-												[ngClass]="creditChipClass(credit.status)">
-												📜 {{ credit.amount }}+{{ credit.interest }} &middot;
-												{{ creditChipLabel(credit.status) | translate }}
-											</div>
+											<app-credit-chip
+												*ngFor="let credit of row.credits; trackBy: trackByCredit"
+												[credit]="credit"
+												[duration]="vm.rules.durationCredit"
+												[contractor]="row.avatar"
+												(action)="onChipAction($event)"></app-credit-chip>
 										</ng-container>
-										<div class="creditChip prison" *ngIf="row.status === PRISON">
-											🚨 {{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
-										</div>
 									</div>
 									<div class="pbHand">
 										<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
@@ -533,9 +561,13 @@
 											{{ 'TABLE.NO_CARD_IN_HAND' | translate }}
 										</div>
 									</div>
-									<div class="pbDead" *ngIf="row.status === DEAD">
-										<div class="pbDeadIcon">🦂</div>
+									<div class="pbLock" *ngIf="row.status === DEAD">
+										<div class="pbLockIcon">🦂</div>
 										<div>{{ 'TABLE.DECEASED' | translate }}</div>
+									</div>
+									<div class="pbLock prison" *ngIf="row.status === PRISON">
+										<div class="pbLockIcon">🚨</div>
+										<div>{{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%</div>
 									</div>
 								</div>
 							</div>
@@ -545,4 +577,44 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Shared per-player action menu (avatar trigger, both layouts) -->
+	<mat-menu #playerMenu="matMenu">
+		<ng-template matMenuContent let-row="row">
+			<button mat-menu-item (click)="playUser(row)">
+				<mat-icon>play_arrow</mat-icon>
+				<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="copyPlayerLink(row)">
+				<mat-icon>link</mat-icon>
+				<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="reJoin(row)">
+				<mat-icon>qr_code_2</mat-icon>
+				<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="refreshPlayer(row)">
+				<mat-icon>refresh</mat-icon>
+				<span>{{ 'TABLE.REFRESH_PLAYER' | translate }}</span>
+			</button>
+			<ng-container *ngIf="vm.rules.typeMoney === DEBT">
+				<button mat-menu-item (click)="showContract(row)" [disabled]="row.status !== ALIVE">
+					<mat-icon>paid</mat-icon>
+					<span>{{ 'BANK.GIVE_CREDIT' | translate }}</span>
+				</button>
+				<button mat-menu-item (click)="freeMoney(row)" [disabled]="row.status !== ALIVE">
+					<mat-icon>volunteer_activism</mat-icon>
+					<span>{{ 'FREEMONEY.TITLE' | translate }}</span>
+				</button>
+				<button mat-menu-item (click)="breakFree(row.idx)" [disabled]="row.status !== PRISON">
+					<mat-icon>lock_open</mat-icon>
+					<span>{{ 'BANK.BREAK_FREE' | translate }}</span>
+				</button>
+			</ng-container>
+			<button mat-menu-item (click)="killPlayer(row)" [disabled]="row.status === DEAD">
+				<mat-icon color="warn">person_remove</mat-icon>
+				<span>{{ 'MASTER.KILL_USER' | translate }}</span>
+			</button>
+		</ng-template>
+	</mat-menu>
 </ng-container>

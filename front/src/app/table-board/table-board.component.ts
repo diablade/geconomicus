@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Subscription, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, Subscription, combineLatest, map, take } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { GameStateService } from '../services/api/game-state.service';
 import { I18nService } from '../services/i18n.service';
 import { SnackbarService } from '../services/snackbar.service';
@@ -11,6 +12,11 @@ import { getActionIcon } from '../models/rules';
 import { CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
 import { getBackgroundStyle } from '../services/avatarTools';
+import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
+import { FreeMoneyDialogComponent } from '../dialogs/free-money-dialog/free-money-dialog.component';
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { SeizureDialogComponent } from '../dialogs/seizure-dialog/seizure-dialog.component';
+import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 
 type SortKey = 'coins' | 'cards' | 'name';
 type ViewMode = 'table' | 'boards';
@@ -34,11 +40,12 @@ export interface TableRow extends PlayerState {
 export class TableBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
 	protected readonly getActionIcon = getActionIcon;
 
-    getBackgroundStyle = getBackgroundStyle;
+	getBackgroundStyle = getBackgroundStyle;
 
 	sessionId = '';
 	gameStateId = '';
@@ -48,6 +55,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	viewMode: ViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) === 'boards' ? 'boards' : 'table';
 	decksOpen = true;
 	rulesOpen = true;
+	bankOpen = true;
 
 	masterConnection$ = this.gameStateService.masterConnection$;
 	minutes$ = this.gameStateService.minutes$;
@@ -74,28 +82,36 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		minutes: this.minutes$,
 		seconds: this.seconds$,
 	}).pipe(
-		map((vm) => ({
-			...vm,
-			alive: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD),
-			dead: vm.rows.filter((r) => r.status === PLAYER_STATUS.DEAD),
-			connectedCount: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD && r.connection?.isConnected).length,
-			totalTokens: vm.rows.reduce(
-				(sum, r) => (r.status !== PLAYER_STATUS.DEAD ? sum + (r.actionTokens ?? 0) : sum),
-				0
-			),
-			activeCreditsCount: vm.credits.filter((c) => this.isCreditActive(c)).length,
-		}))
+		map((vm) => {
+			const alive = vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD);
+			const totalDebt = vm.rows.reduce((sum, r) => sum + r.debt, 0);
+			return {
+				...vm,
+				alive,
+				dead: vm.rows.filter((r) => r.status === PLAYER_STATUS.DEAD),
+				connectedCount: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD && r.connection?.isConnected).length,
+				totalTokens: vm.rows.reduce(
+					(sum, r) => (r.status !== PLAYER_STATUS.DEAD ? sum + (r.actionTokens ?? 0) : sum),
+					0
+				),
+				activeCreditsCount: vm.credits.filter((c) => this.isCreditActive(c)).length,
+				totalDebt,
+				avgCurrency: alive.length ? (vm.gameState.currentMassMonetary || 0) / alive.length : 0,
+			};
+		})
 	);
 
 	constructor(
 		private route: ActivatedRoute,
 		private gameStateService: GameStateService,
 		private i18nService: I18nService,
-		private snackbarService: SnackbarService
+		private snackbarService: SnackbarService,
+		private dialog: MatDialog
 	) {
 		this.i18nService.loadNamespace('action');
 		this.i18nService.loadNamespace('master');
 		this.i18nService.loadNamespace('table');
+		this.i18nService.loadNamespace('bank');
 	}
 
 	ngOnInit(): void {
@@ -117,20 +133,18 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	private buildRows(players: any[], credits: Credit[], sortBy: SortKey): TableRow[] {
 		const rows: TableRow[] = players.map((ps) => {
-			const playerCredits = credits.filter(
-				(c) =>
-					c.playerStateIdx === ps.idx &&
-					c.status !== CREDIT_STATUS.DONE &&
-					c.status !== CREDIT_STATUS.CANCELED
-			);
+			const playerCredits = credits.filter((c) => c.playerStateIdx === ps.idx);
+			const active = playerCredits.filter((c) => this.isCreditActive(c));
+			const closed = playerCredits
+				.filter((c) => c.status === CREDIT_STATUS.DONE || c.status === CREDIT_STATUS.CANCELED)
+				.sort((a, b) => new Date(b.endAt).getTime() - new Date(a.endAt).getTime());
 			return {
 				...ps,
 				dedupedCards: this.countOccurrencesAndHideDuplicates([...(ps.cards ?? [])]),
 				nbCards: (ps.cards ?? []).length,
-				credits: playerCredits,
-				debt: playerCredits
-					.filter((c) => this.isCreditActive(c))
-					.reduce((sum, c) => sum + c.amount + c.interest, 0),
+				// active first, then closed (greyed) history
+				credits: [...active, ...closed],
+				debt: active.reduce((sum, c) => sum + c.amount + c.interest, 0),
 			};
 		});
 		return rows.sort((a, b) => {
@@ -169,45 +183,135 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	creditChipClass(status: string): string {
-		switch (status) {
-			case CREDIT_STATUS.RUNNING:
-				return 'running';
-			case CREDIT_STATUS.REQUESTING:
-				return 'requesting';
-			case CREDIT_STATUS.PAUSED:
-			case CREDIT_STATUS.IDLE:
-				return 'paused';
-			case CREDIT_STATUS.FAULT:
-				return 'fault';
-			case CREDIT_STATUS.CANCELED:
-				return 'canceled';
-			case CREDIT_STATUS.DONE:
-				return 'credit-done';
-			default:
-				return 'running';
+	private alivePlayers$() {
+		return this.gameStateService.playersAC$.pipe(map((players) => players.filter((p) => p.status === this.ALIVE)));
+	}
+
+	/** Chip menu callback: route the per-credit action to its dialog flow. */
+	onChipAction(event: { action: string; credit: Credit }): void {
+		if (event.action === 'cancel') {
+			this.cancelCredit(event.credit);
+		} else if (event.action === 'seize') {
+			this.seizureProcedure(event.credit);
 		}
 	}
 
-	creditChipLabel(status: string): string {
-		switch (status) {
-			case CREDIT_STATUS.RUNNING:
-				return 'TABLE.CREDIT_RUNNING';
-			case CREDIT_STATUS.REQUESTING:
-				return 'TABLE.CREDIT_REQUESTING';
-			case CREDIT_STATUS.PAUSED:
-				return 'TABLE.CREDIT_PAUSED';
-			case CREDIT_STATUS.IDLE:
-				return 'TABLE.CREDIT_IDLE';
-			case CREDIT_STATUS.FAULT:
-				return 'TABLE.CREDIT_FAULT';
-			case CREDIT_STATUS.CANCELED:
-				return 'TABLE.CREDIT_CANCELED';
-			case CREDIT_STATUS.DONE:
-				return 'TABLE.CREDIT_DONE';
-			default:
-				return status;
-		}
+	// ── bank actions ───────────────────────────────────────────────────────────────
+
+	/** Give a credit. When `player` is set (launched from a row) the target is pre-filled + locked. */
+	showContract(player?: any): void {
+		const dialogRef = this.dialog.open(ContractDialogComponent, {
+			data: {
+				rules: this.gameStateService.rules$,
+				players: this.alivePlayers$(),
+				player,
+			},
+		});
+		dialogRef.afterClosed().subscribe((contrat) => {
+			if (contrat) {
+				this.gameStateService.createCredit(contrat);
+			}
+		});
+	}
+
+	creditForAll(): void {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('BANK.CREDIT_FOR_ALL'),
+				message: this.i18nService.instant('BANK.CREDIT_FOR_ALL_MESSAGE'),
+			},
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result === 'btnConfirm') {
+				this.gameStateService.creditForAll();
+			}
+		});
+	}
+
+	/** Free money. When `player` is set (launched from a row) the target is pre-filled + locked. */
+	freeMoney(player?: any): void {
+		const dialogRef = this.dialog.open(FreeMoneyDialogComponent, {
+			data: {
+				players: this.alivePlayers$(),
+				player,
+			},
+		});
+		dialogRef.afterClosed().subscribe((give) => {
+			if (give && give.amount > 0) {
+				this.gameStateService.giveFreeMoney(give);
+			}
+		});
+	}
+
+	cancelCredit(credit: Credit): void {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('CREDIT.CANCEL'),
+				message: this.i18nService.instant('CREDIT.CANCEL_MESSAGE', {
+					amount: credit.amount,
+					username: this.gameStateService.getAvatar(credit.playerStateIdx)?.name,
+				}),
+				message2: this.i18nService.instant('CREDIT.CANCEL_MESSAGE2'),
+			},
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result === 'btnConfirm') {
+				this.gameStateService.cancelCredit(credit);
+			}
+		});
+	}
+
+	seizureProcedure(credit: Credit): void {
+		combineLatest({
+			rules: this.gameStateService.rules$,
+			playersAC: this.gameStateService.playersAC$,
+		})
+			.pipe(take(1))
+			.subscribe(({ rules, playersAC }) => {
+				const targetPlayer = playersAC.find((p) => p.idx === credit.playerStateIdx);
+				if (!targetPlayer) {
+					this.snackbarService.showError('ERROR.PLAYER_NOT_FOUND');
+					return;
+				}
+				const confDialogRef = this.dialog.open(SeizureDialogComponent, {
+					data: {
+						credit,
+						seizureType: rules.seizureType,
+						seizureCosts: rules.seizureCosts,
+						seizureDecote: rules.seizureDecote,
+						timerPrison: rules.timerPrison,
+						playerState: targetPlayer,
+						playerCards: targetPlayer.cards || [],
+						playerCoins: targetPlayer.coins || 0,
+						avatar: targetPlayer.avatar,
+					},
+				});
+				confDialogRef.afterClosed().subscribe((seizure) => {
+					if (seizure) {
+						this.gameStateService.seizureOnCredit(seizure, credit);
+					} else {
+						this.snackbarService.showError('ERROR.SEIZURE_CANCELLED');
+					}
+				});
+			});
+	}
+
+	breakFree(playerStateIdx: number): void {
+		this.gameStateService.prisonBreak(playerStateIdx);
+	}
+
+	killPlayer(row: TableRow): void {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('MASTER.KILL_USER'),
+				message: this.i18nService.instant('MASTER.KILL_CONFIRM', { username: row.avatar?.name }),
+			},
+		});
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result === 'btnConfirm') {
+				this.gameStateService.killPlayer(row.idx);
+			}
+		});
 	}
 
 	// ── ui ───────────────────────────────────────────────────────────────────────
@@ -237,6 +341,24 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	playUser(row: TableRow): void {
+		window.open(this.getPlayerStateUrl(row), '_blank');
+	}
+
+	copyPlayerLink(row: TableRow): void {
+		navigator.clipboard.writeText(this.getPlayerStateUrl(row));
+		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
+	}
+
+	reJoin(row: TableRow): void {
+		this.dialog.open(ReJoinQrDialogComponent, {
+			data: {
+				text: row.avatar?.name || '',
+				url: this.getPlayerStateUrl(row),
+			},
+		});
+	}
+
 	getPlayerStateUrl(row: TableRow): string {
 		return (
 			environment.WEB_HOST +
@@ -257,5 +379,9 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	trackByCard(index: number, card: Card): string {
 		return card.key;
+	}
+
+	trackByCredit(index: number, credit: Credit): string {
+		return credit.id;
 	}
 }

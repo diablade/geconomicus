@@ -634,3 +634,11 @@ mat-chip {
 		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
 		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
 }
+
+// credit-chip detail popover: let the app-credit card breathe inside the mat-menu panel
+.creditDetailMenu.mat-mdc-menu-panel {
+	max-width: none;
+	.mat-mdc-menu-content {
+		padding: 0;
+	}
+}

@@ -21,6 +21,8 @@ export class ContractDialogComponent {
 	selectedCreditOption = 'basic';
 	selectedPlayerIdx = -1;
 	selectedPlayer: any;
+	/** When launched from a player row the target is fixed: hide the picker. */
+	locked = false;
 	amount = 3;
 	interest = 1;
 	maxAmount = 10;
@@ -28,12 +30,17 @@ export class ContractDialogComponent {
 
 	constructor(
 		public dialogRef: MatDialogRef<ContractDialogComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { rules: Observable<Rules>; players: Observable<any[]> }
+		@Inject(MAT_DIALOG_DATA)
+		public data: { rules: Observable<Rules>; players: Observable<any[]>; player?: any }
 	) {
 		data.rules.subscribe((rules) => {
 			this.rules = rules;
 		});
 		this.players = data.players;
+		if (data.player) {
+			this.selectedPlayer = data.player;
+			this.locked = true;
+		}
 	}
 
 	cancel() {

@@ -159,9 +159,9 @@ GameStateController.transaction = asyncHandler(async (req, res) => {
 	return res.status(200).json(result);
 });
 GameStateController.killPlayer = asyncHandler(async (req, res) => {
-	const { gameStateId, playerStateId } = req.body;
-	log.info('[GameStateController] killing player', { gameStateId, playerStateId });
-	await PlayerStateService.killPlayer(gameStateId, playerStateId);
+	const { gameStateId, playerStateIdx } = req.body;
+	log.info('[GameStateController] killing player', { gameStateId, playerStateIdx });
+	await PlayerStateService.killPlayer(gameStateId, playerStateIdx);
 	return res.status(200).json({ status: 'done' });
 });
 GameStateController.whoHaveCard = asyncHandler(async (req, res) => {

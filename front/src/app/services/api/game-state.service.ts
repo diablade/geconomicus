@@ -643,4 +643,39 @@ export class GameStateService {
 			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.BREAK_FREE'));
 		});
     }
+
+	creditForAll() {
+		this.http
+			.post<any>(environment.API_HOST + environment.BANK_STATE.CREDIT_FOR_ALL, {
+				gameStateId: this.gameStateId,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.BANK.CONTRACT')))
+			.subscribe((res: any) => {
+				this.snackbarService.showSuccess(this.i18n.instant('BANK.CREDIT_FOR_ALL_SUCCESS'));
+				if (res?.data) {
+					const credits = this.creditsSubject.getValue();
+					const byId = new Map(credits.map((c) => [c.id, c]));
+					(res.data.credits ?? []).forEach((c: Credit) => byId.set(c.id, c));
+					this.creditsSubject.next(Array.from(byId.values()));
+					if (res.data.currentMassMonetary !== undefined) {
+						const gameState = this.gameStateSubject.getValue();
+						gameState.currentMassMonetary = res.data.currentMassMonetary;
+						this.gameStateSubject.next(gameState);
+					}
+				}
+			});
+	}
+
+	killPlayer(playerStateIdx: number) {
+		this.http
+			.post<any>(environment.API_HOST + environment.GAME_STATE.KILL_PLAYER, {
+				gameStateId: this.gameStateId,
+				playerStateIdx,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.KILL_PLAYER')))
+			.subscribe(() => {
+				// IO.PLAYER.DIED socket (master room) updates the player list live.
+				this.snackbarService.showSuccess(this.i18n.instant('MASTER.KILL_SUCCESS'));
+			});
+	}
 }

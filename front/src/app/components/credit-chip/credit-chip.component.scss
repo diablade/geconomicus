@@ -1,0 +1,75 @@
+@keyframes cops {
+	0% {
+		background: #3153ff;
+	}
+	50% {
+		background: #ff0000;
+	}
+	100% {
+		background: #3153ff;
+	}
+}
+
+.creditChip {
+	position: relative;
+	font-family: inherit;
+	font-size: 11px;
+	border-radius: 20px;
+	padding: 1px 7px;
+	border: 1.5px solid rgba(0, 0, 0, 0.5);
+	background: #a2cba2;
+	cursor: pointer;
+	overflow: hidden;
+	line-height: 1.4;
+
+	&.running {
+		background: #a2cba2;
+	}
+	&.requesting {
+		background: #ffaf4d;
+	}
+	&.paused {
+		background: #fff04b;
+	}
+	&.credit-done {
+		background: #a4a4a4;
+	}
+	&.canceled {
+		background: #d10606bd;
+		color: white;
+	}
+	&.fault {
+		background: #ff706e;
+		color: white;
+		animation: cops 1s infinite ease;
+	}
+
+	&.closed {
+		filter: grayscale(0.85);
+		opacity: 0.75;
+		border-style: dashed;
+		padding: 1px 6px;
+		animation: none;
+	}
+}
+
+// thin time-remaining fill sitting behind the label
+.chipProgress {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	z-index: 0;
+	opacity: 0.55;
+	border-radius: 20px 0 0 20px;
+}
+
+.chipLabel {
+	position: relative;
+	z-index: 1;
+	white-space: nowrap;
+}
+
+.creditDetailPanel {
+	padding: 4px;
+}

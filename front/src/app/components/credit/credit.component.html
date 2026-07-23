@@ -43,7 +43,7 @@
 		{{ credit.extended }}
 	</div>
 	<button
-		*ngIf="!bankOption && credit.status === RUNNING_CREDIT"
+		*ngIf="!readOnly && !bankOption && credit.status === RUNNING_CREDIT"
 		class="buttonContrat"
 		mat-raised-button
 		color="primary"
@@ -52,7 +52,7 @@
 		<fa-icon [icon]="faSackDollar"></fa-icon>
 	</button>
 	<button
-		*ngIf="!bankOption && credit.status === REQUEST_CREDIT"
+		*ngIf="!readOnly && !bankOption && credit.status === REQUEST_CREDIT"
 		class="buttonContrat"
 		mat-raised-button
 		color="accent"
@@ -61,7 +61,7 @@
 		<fa-icon [icon]="faCommentsDollar"></fa-icon>
 	</button>
 	<button
-		*ngIf="bankOption && credit.status === DEFAULT_CREDIT"
+		*ngIf="!readOnly && bankOption && credit.status === DEFAULT_CREDIT"
 		class="buttonContrat"
 		mat-raised-button
 		color="warn"

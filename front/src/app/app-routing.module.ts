@@ -8,7 +8,6 @@ import { AvatarSettingsComponent } from './avatar-settings/avatar-settings.compo
 import { ResultsComponent } from './results/results.component';
 import { HistoryGamesComponent } from './history-games/history-games.component';
 import { SurveyComponent } from './survey/survey.component';
-import { BankBoardComponent } from './bank-board/bank-board.component';
 import { MasterAdminComponent } from './master-admin/master-admin.component';
 import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
 import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
@@ -28,7 +27,6 @@ const routes: Routes = [
 	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent },
 	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent },
 	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent },
-	{ path: 'bank/:sessionId/:gameStateId', component: BankBoardComponent },
 	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent },
 	{ path: 'results/:sessionId', component: SessionResultsCompareComponent },
 
@@ -39,7 +37,6 @@ const routes: Routes = [
 	{ path: 'ogame/:idGame/admin', component: MasterAdminComponent },
 	{ path: 'ogame/:idGame/master', component: MasterBoardComponent },
 	{ path: 'ogame/:idGame/reset', component: MasterBoardComponent },
-	{ path: 'ogame/:idGame/bank', component: BankBoardComponent },
 	{ path: 'ogame/:idGame/join/:fromId/:name', component: JoinComponent },
 	{ path: 'ogame/:idGame/join', component: JoinComponent },
 	{ path: 'ogame/:idGame/results', component: ResultsComponent },

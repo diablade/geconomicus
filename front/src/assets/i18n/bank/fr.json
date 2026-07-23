@@ -18,6 +18,7 @@
 		"NO_BANK_FREE_MONEY": "Pas de banque en monnaie libre ;)",
 		"CREDIT_FOR_ALL": "Créditer tous les joueurs",
 		"CREDIT_FOR_ALL_MESSAGE": "Voulez-vous vraiment créditer tous les joueurs ? (Crédit par defaut)",
+		"CREDIT_FOR_ALL_SUCCESS": "Tous les joueurs vivants ont été crédités",
 		"GIVE_FREE_MONEY": "Donner de l'argent",
 		"GIVE_FREE_MONEY_MESSAGE": "Voulez-vous vraiment donner de l'argent gratuitement ?"
 	},
@@ -48,6 +49,7 @@
 		"DONE": "Terminé",
 		"NEW": "Crédit obtenu (+{{amount}}💰)",
 		"SEIZE": "Saisir",
+		"DETAILS": "Détails",
 		"ANSWER": "Répondre",
 		"SETTLE": "Rembourser",
 		"DEBT": "Dette",

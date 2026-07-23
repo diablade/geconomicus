@@ -216,7 +216,7 @@ describe('BankStateService — createCreditForAll', () => {
                 { idx: 3, status: PLAYER_STATUS.DEAD,  coins: 0,  cards: [] },
             ]
         });
-        const rules = makeRules({ creditAmount: 3, creditInterest: 1 });
+        const rules = makeRules({ defaultCreditAmount: 3, defaultInterestAmount: 1 });
 
         GameStateManager.withQueue
             // outer call (createCreditForAll)

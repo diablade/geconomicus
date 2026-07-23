@@ -1,7 +1,14 @@
 <div class="contract">
 	<div class="d-flex align-items-center flex-column">
 		<h2 class="fs-4 shadowed geconomicusFont">{{ 'CONTRACT.TITLE' | translate }}</h2>
-		<mat-form-field class="mt-2" appearance="fill">
+		<div *ngIf="locked" class="mt-2 d-flex flex-column align-items-center">
+			<avatar
+				[avatar]="selectedPlayer?.avatar"
+				[width]="'48px'"
+				[height]="'48px'"
+				[namePosition]="'bottom'"></avatar>
+		</div>
+		<mat-form-field *ngIf="!locked" class="mt-2" appearance="fill">
 			<mat-label>{{ 'CONTRACT.WITH_PLAYER' | translate }}</mat-label>
 			<mat-select [(value)]="selectedPlayer" [compareWith]="compareById">
 				<mat-select-trigger>

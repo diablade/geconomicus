@@ -1,0 +1,3 @@
+# Merge the bank into the table view
+
+The standalone bank view (`/bank/:sessionId/:gameStateId`, `bank-board`) is removed and all of its capabilities (economic indicators, give-credit / credit-for-all / free-money actions, seizure, credit cancel, prison management) are folded into the table view (`/table`), which becomes the single animator+banker cockpit. We accept losing the ability to hand the bank to a *separate person on their own device*: in practice the animator always runs both roles, so one consolidated screen beats maintaining bank action logic in two components that would drift apart. The bank QR code is retained but now points at the table view.

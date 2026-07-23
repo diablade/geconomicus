@@ -18,12 +18,19 @@ export class FreeMoneyDialogComponent {
 	players: Observable<any[]>;
 	selectedPlayerIdx = -1;
 	selectedPlayer: any;
+	/** When launched from a player row the target is fixed: hide the picker. */
+	locked = false;
 
 	constructor(
 		public dialogRef: MatDialogRef<FreeMoneyDialogComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: { rules: Observable<Rules>; players: Observable<any[]> }
+		@Inject(MAT_DIALOG_DATA)
+		public data: { rules: Observable<Rules>; players: Observable<any[]>; player?: any }
 	) {
 		this.players = data.players;
+		if (data.player) {
+			this.selectedPlayer = data.player;
+			this.locked = true;
+		}
 	}
 
 	cancel() {

@@ -51,6 +51,16 @@ export const playerStateSanitize = {
 			'any.required': 'Game state ID is required',
 		}),
 	}).required(),
+	killPlayer: Joi.object({
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+		playerStateIdx: Joi.number().integer().min(0).required().messages({
+			'any.invalid': 'Invalid player state index format',
+			'any.required': 'Player state index is required',
+		}),
+	}).required(),
 	getCurrentPlayerStateIdx: Joi.object({
 		sessionId: Joi.string().custom(isValidObjectId).required().messages({
 			'any.invalid': 'Invalid session ID format',

@@ -50,6 +50,8 @@
 		"KILL_GAME_CONFIRM": "⚠️ Voulez-vous vraiment supprimer définitivement la partie ?",
 		"KILL_GAME_CONFIRM_2": "Une fois supprimée, toutes les données de la partie seront définitivement perdues et ne pourront pas être récupérées.",
 		"KILL_USER": "Tuer ce joueur ?",
+		"KILL_CONFIRM": "⚠️ Voulez-vous vraiment tuer {{username}} ? Ses biens seront saisis.",
+		"KILL_SUCCESS": "Le joueur a été tué",
         "GAME_RESET": "Partie réinitialisée",
 		"STARTED": "Session démarrée !",
 		"OPEN": "Ouvrir",

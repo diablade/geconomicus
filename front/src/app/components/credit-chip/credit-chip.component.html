@@ -1,0 +1,54 @@
+<!-- Closed credit: greyed, icon-only, click reveals detail -->
+<button
+	*ngIf="isClosed"
+	type="button"
+	class="creditChip closed"
+	[ngClass]="statusClass()"
+	[matMenuTriggerFor]="detailMenu"
+	[title]="statusLabel() | translate">
+	📜
+</button>
+
+<!-- Active credit: pill with progress bar, click opens actions menu -->
+<button
+	*ngIf="!isClosed"
+	type="button"
+	class="creditChip active"
+	[ngClass]="statusClass()"
+	[matMenuTriggerFor]="actionsMenu">
+	<span
+		class="chipProgress"
+		*ngIf="progress > 0"
+		[style.width.%]="progress"
+		[style.background-color]="progressColor()"></span>
+	<span class="chipLabel">📜 {{ credit.amount }}+{{ credit.interest }} &middot; {{ statusLabel() | translate }}</span>
+</button>
+
+<!-- Actions menu (active chips) -->
+<mat-menu #actionsMenu="matMenu">
+	<button *ngIf="isFault" mat-menu-item (click)="emit('seize')">
+		<mat-icon color="warn">gavel</mat-icon>
+		<span>{{ 'CREDIT.SEIZE' | translate }}</span>
+	</button>
+	<button mat-menu-item (click)="emit('cancel')">
+		<mat-icon color="warn">cancel</mat-icon>
+		<span>{{ 'CREDIT.CANCEL' | translate }}</span>
+	</button>
+	<button mat-menu-item [matMenuTriggerFor]="detailMenu">
+		<mat-icon>info</mat-icon>
+		<span>{{ 'CREDIT.DETAILS' | translate }}</span>
+	</button>
+</mat-menu>
+
+<!-- Detail popover: renders the full app-credit card read-only -->
+<mat-menu #detailMenu="matMenu" class="creditDetailMenu">
+	<ng-template matMenuContent>
+		<div class="creditDetailPanel" (click)="$event.stopPropagation()">
+			<app-credit
+				[credit]="credit"
+				[duration]="duration"
+				[contractor]="contractor"
+				[readOnly]="true"></app-credit>
+		</div>
+	</ng-template>
+</mat-menu>

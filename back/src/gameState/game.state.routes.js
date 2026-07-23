@@ -22,8 +22,7 @@ router.get('/who-have-card/:gameStateId/:cardKey', validate(stateSanitize.whoHav
 router.post('/refresh-player', validate(playerStateSanitize.refreshPlayer), gameStateController.refreshPlayer);
 router.post('/refresh-all', validate(playerStateSanitize.refreshAllPlayers), gameStateController.refreshAllPlayers);
 
-//TODOs
-// router.post('/kill-player', validate(sanitize.killPlayer), gameStateController.killPlayer);
+router.post('/kill-player', validate(playerStateSanitize.killPlayer), gameStateController.killPlayer);
 
 
 router.post('/player-state/produce', validate(playerStateSanitize.produce), gameStateController.produce);

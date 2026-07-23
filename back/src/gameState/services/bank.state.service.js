@@ -354,8 +354,8 @@ BankStateService.createCreditForAll = async (gameStateId) => {
 			const credit = await BankStateService.createCredit(
 				gameStateId,
 				playerState.idx,
-				rules.creditAmount,
-				rules.creditInterest
+				rules.defaultCreditAmount,
+				rules.defaultInterestAmount
 			);
 			credits.push(credit);
 		}

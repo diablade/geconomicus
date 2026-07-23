@@ -78,12 +78,60 @@
 	filter: grayscale(0.7);
 }
 
+// locked (prison / dead): content covered by an overlay, avatar kept clickable above it
+.lockedRow {
+	position: relative;
+}
+
+.rowLock {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	font-weight: bold;
+	font-size: 13px;
+	color: white;
+	text-shadow: 1px 1px 0 black;
+	background: rgba(0, 0, 0, 0.42);
+	backdrop-filter: grayscale(0.6);
+	border-radius: 4px;
+	pointer-events: auto;
+}
+
+.lockProgress {
+	display: inline-block;
+	width: 90px;
+	height: 8px;
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.35);
+	overflow: hidden;
+
+	span {
+		display: block;
+		height: 100%;
+		background: #ff3b30;
+	}
+}
+
 .playerLink {
 	text-decoration: none;
 	color: inherit;
 }
 
+.avatarTrigger {
+	cursor: pointer;
+}
+
+.warnNum {
+	color: #b3261e;
+}
+
 .cell-player {
+	position: relative;
+	z-index: 3;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -132,7 +180,10 @@
 .cell-credits {
 	display: flex;
 	flex-wrap: wrap;
+	align-content: flex-start;
 	gap: 4px;
+	max-height: 96px;
+	overflow-y: auto;
 }
 
 .creditChip {
@@ -541,7 +592,9 @@
 	font-size: 12.5px;
 }
 
-.pbDead {
+// locked overlay for boards view (dead / prison). pointer-events none so the
+// avatar (higher stacking) stays clickable through the menu directive.
+.pbLock {
 	position: absolute;
 	inset: 0;
 	background: rgba(0, 0, 0, 0.5);
@@ -556,7 +609,32 @@
 	text-shadow: 1px 1px 0 black;
 	text-align: center;
 
-	.pbDeadIcon {
+	&.prison {
+		background: rgba(30, 40, 120, 0.55);
+	}
+
+	.pbLockIcon {
 		font-size: 38px;
 	}
+}
+
+// keep the avatar above the locked overlay so its menu trigger still works
+.pbHead {
+	position: relative;
+	z-index: 6;
+}
+
+// ── bank frame ────────────────────────────────────────────────────────────────
+
+.bankPanel {
+	margin-top: 12px;
+	padding: 10px;
+}
+
+.bankActions {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 8px;
 }
