@@ -55,7 +55,11 @@ const _endLife = async (entry, player) => {
 
 	// Seize the dead life's assets (debt game only). Any coins beyond the debts stay as ghost money.
 	if (gameState.typeMoney === GAME_TYPE.DEBT) {
-		await creditTimerManager.stopPlayerDebtsTimer(gameState._id, playerStateIdx);
+		// Stop this life's running credit timers (keyed by credit.id in the manager).
+		const playerCredits = (gameState.credits || []).filter((c) => c.playerStateIdx === playerStateIdx);
+		for (const c of playerCredits) {
+			await creditTimerManager.stopAndRemoveTimer(c.id);
+		}
 		await BankStateService.seizureOnDead(gameState, events, player);
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, { playerStateIdx });
 		socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, { playerStateIdx });

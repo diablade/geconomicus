@@ -163,6 +163,50 @@ describe('reincarnation card draw — reserve floor + level-1 substitution', () 
 	});
 });
 
+describe('reincarnatePlayer (Debt) — seizure on death', () => {
+	function makeDebtGame() {
+		return makeGame({
+			typeMoney: GAME_TYPE.DEBT,
+			playersStates: [
+				// coins (5) < debt (amount 10 + interest 2) → coins drained AND cards seized
+				{ idx: 0, avatarIdx: 0, status: PLAYER_STATUS.ALIVE, coins: 5, cards: [card(0), card(1), card(2)] },
+				{ idx: 1, avatarIdx: 1, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [card(0)] },
+			],
+			credits: [
+				{
+					id: 'c1',
+					amount: 10,
+					interest: 2,
+					playerStateIdx: 0,
+					status: 'running',
+					extended: 0,
+					createdAt: new Date(),
+					remainingTime: 1000,
+				},
+			],
+			currentMassMonetary: 300,
+		});
+	}
+
+	test('reincarnates through seizure without throwing (coins drained + cards seized)', async () => {
+		const { id, gameState } = makeDebtGame();
+
+		const result = await PlayerStateService.reincarnatePlayer(id, 0);
+
+		// New life exists and old one is the dead snapshot.
+		expect(result).toEqual({ oldPlayerStateIdx: 0, newPlayerStateIdx: 3 });
+		const lives = gameState.playersStates.filter((p) => p.avatarIdx === 0);
+		expect(lives.find((p) => p.idx === 0).status).toBe(PLAYER_STATUS.DEAD);
+		const fresh = lives.find((p) => p.status === PLAYER_STATUS.ALIVE);
+		expect(fresh.coins).toBe(0);
+		expect(fresh.cards.length).toBeGreaterThan(0);
+
+		// Credit resolved, coins seized removed from the mass (interest 2 + amount 3 = 5).
+		expect(gameState.credits.find((c) => c.id === 'c1').status).toBe('credit-done');
+		expect(gameState.currentMassMonetary).toBe(295);
+	});
+});
+
 describe('Force Death (manual kill)', () => {
 	test('first death: reincarnates, drops the avatar from the queue', async () => {
 		const { id, gameState } = makeGame();

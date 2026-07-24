@@ -7,14 +7,12 @@ import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
 import { faClipboardCheck, faFileContract, faCreditCardAlt } from '@fortawesome/free-solid-svg-icons';
 import { SnackbarService } from '../services/snackbar.service';
-// import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
-import { CongratsDialogComponent } from '../dialogs/congrats-dialog/congrats-dialog.component';
 import { ActionDialogComponent } from '../dialogs/action-dialog/action-dialog.component';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
 import { AssistMode, ASSIST_MODE, CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import { ShortCode } from '../models/shortCode';
-import { Recipe, Ingredient, getAvailableRecipes } from '../models/recipe';
+import { Recipe, getAvailableRecipes } from '../models/recipe';
 import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
 import { GameInfosDialog } from '../components/notice-btn/notice-btn.component';
 import createCountdown from '../services/countDown';
@@ -150,7 +148,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	isReincarnating = false;
 	reincarnatePhase: 'death' | 'rebirth' = 'death';
 	private reincarnationSub: Subscription | undefined;
-	private readonly REINCARNATE_OVERLAY_MS = 2500;
+	private readonly REINCARNATE_OVERLAY_MS = 4000;
 
 	scanV3 = true;
 	flipCoin = false;
@@ -402,25 +400,24 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	 * Full-screen skull→sprout transition, then auto-navigate to the reborn life.
 	 * The overlay covers the brief DEAD flash so the player only sees "you died → new life begins".
 	 */
-	private playReincarnationOverlay(newPlayerStateIdx: number) {
+	private async playReincarnationOverlay(newPlayerStateIdx: number) {
 		if (this.isReincarnating) return;
+		this.audioService.playSound('dead');
 		this.isReincarnating = true;
 		this.reincarnatePhase = 'death';
-		this.audioService.playSound('dead');
 
 		// Cross-fade to the rebirth glyph partway through.
-		setTimeout(() => {
+		await setTimeout(() => {
 			this.reincarnatePhase = 'rebirth';
 			this.audioService.playSound('angel');
-		}, this.REINCARNATE_OVERLAY_MS / 2);
-
-		setTimeout(() => {
-			this.router
+            setTimeout(() => {
+                this.router
 				.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
 				.finally(() => {
 					// New life is loading via route params; drop the overlay on the next beat.
 					setTimeout(() => (this.isReincarnating = false), 300);
 				});
+            }, this.REINCARNATE_OVERLAY_MS);
 		}, this.REINCARNATE_OVERLAY_MS);
 	}
 
@@ -498,24 +495,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	onRecipeCompleted(recipe: Recipe) {
 		console.log(recipe);
-	}
-
-	whoHaveCard(ingredient: Ingredient) {
-		// this.snackbarService.showNotif(this.i18nService.instant('ERROR.INSUFFICIENT_FUNDS'));
-		// const cardName = this.themesService.getIcon(ingredient.key) + ' ' + this.i18nService.instant(ingredient.key);
-		// this.deckService.whoHaveCard(this.gameStateId, ingredient.key).subscribe((payload: any) => {
-		// 	this.dialog.open(InformationDialogComponent, {
-		// 		data: {
-		// 			message:
-		// 				payload.status == 'deck'
-		// 					? this.i18nService.instant('CARD.IN_DECK', { cardName })
-		// 					: this.i18nService.instant('CARD.IN_PLAYER', {
-		// 							player: payload.name,
-		// 							cardName,
-		// 						}),
-		// 		},
-		// 	});
-		// });
 	}
 
 	recipeCompleted(recipe: Recipe) {

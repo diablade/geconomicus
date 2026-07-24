@@ -1,13 +1,8 @@
 <!-- Death → rebirth overlay: skull cross-fades to sprout, then the board navigates to the new life. -->
-<div
-	class="reincarnate-overlay"
-	*ngIf="isReincarnating"
-	[class.june]="(gameState$ | async)?.typeMoney === JUNE"
-	[class.debt]="(gameState$ | async)?.typeMoney === DEBT"
-	[class.phase-rebirth]="reincarnatePhase === 'rebirth'">
+<div class="reincarnate-overlay" *ngIf="isReincarnating" [class.phase-rebirth]="reincarnatePhase === 'rebirth'">
 	<div class="reincarnate-glyph">
-		<span class="glyph glyph-death">☠️</span>
-		<span class="glyph glyph-rebirth">🌱</span>
+		<span class="glyph glyph-death" *ngIf="reincarnatePhase === 'death'">☠️</span>
+		<span class="glyph glyph-rebirth">👶</span>
 	</div>
 	<div class="reincarnate-text">
 		{{ (reincarnatePhase === 'rebirth' ? 'PLAYER.GO_TO_SECOND_LIFE' : 'PLAYER.THIS_LIFE_IS_GONE') | translate }}
@@ -145,11 +140,6 @@
 				[matBadgePosition]="isLandscape ? 'below before' : 'above before'"
 				(click)="openActionDialog(vm)">
 				<mat-icon class="fs-2">bolt</mat-icon>
-				<!-- <div class="d-flex flex-row justify-content-center align-items-center"> -->
-				<!-- <div class="" [style.font-weight]="'bold'">
-						{{ vm.actionTokens }}
-					</div> -->
-				<!-- </div> -->
 			</button>
 		</div>
 		<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
@@ -178,6 +168,14 @@
 					}}
 				</div>
 				<button
+					class="text-center m-1"
+					*ngIf="vm.gameState.status === STOPPED"
+					[routerLink]="['/survey', sessionId, gameStateId, avatarIdx, 'false']"
+					mat-raised-button
+					color="accent">
+					{{ 'PLAYER.ANSWER_SURVEY' | translate }}
+				</button>
+				<button
 					class="text-center ms-1"
 					*ngIf="vm.gameState.status === STOPPED"
 					[routerLink]="['/avatar', sessionId, avatarIdx]"
@@ -186,7 +184,6 @@
 					{{ 'BACK_TO_LOBBY' | translate }}
 				</button>
 			</div>
-
 			<ng-container *ngIf="vm.typeTheme === 'CARD'">
 				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
 					<app-card
@@ -205,7 +202,6 @@
 						[screenHeight]="screenHeight"></app-card>
 				</ng-container>
 			</ng-container>
-
 			<ng-container *ngIf="vm.typeTheme !== 'CARD'">
 				<ng-container *ngIf="cardsView$ | async as cardsView">
 					<!-- Carré complet (chantier) : les cartes réelles se regroupent ici, elles ne sont plus rendues plus bas -->

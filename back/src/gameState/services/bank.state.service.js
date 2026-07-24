@@ -567,8 +567,9 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 
 	//PUT BACK seized CARDS IN THE DECKs
 	await DecksHelper.pushCardsInDecks(gameState, totalSeizedCards);
-	// remove seized cards from player's hand
-	player.cards = player.cards.filter((card) => !totalSeizedCards.some((c) => c._id.equals(card._id)));
+	// remove seized cards from player's hand (embedded cards have no _id — match by key)
+	const seizedKeys = new Set(totalSeizedCards.map((c) => c.key));
+	player.cards = player.cards.filter((card) => !seizedKeys.has(card.key));
 
 	const event = EventHelper.createEvent(
 		DB_EVENTS.CREDIT_SEIZED_DEAD,

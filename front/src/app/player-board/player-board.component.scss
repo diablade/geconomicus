@@ -308,7 +308,9 @@
 		color: #fff;
 		background: #2e7d32;
 		cursor: pointer;
-		transition: transform 0.08s ease, background 0.2s ease;
+		transition:
+			transform 0.08s ease,
+			background 0.2s ease;
 
 		&:hover {
 			background: #276b2a;
@@ -467,10 +469,10 @@
 		gap: 8px;
 	}
 
-    &-card{
-        animation: squareZoneGlow 1.8s ease-in-out infinite;
-        border-radius: 6px;
-    }
+	&-card {
+		animation: squareZoneGlow 1.8s ease-in-out infinite;
+		border-radius: 6px;
+	}
 
 	&-btn {
 		position: relative;
@@ -533,6 +535,7 @@
 	color: #fff;
 	text-align: center;
 	animation: reincarnate-fade-in 0.35s ease-out;
+	background: radial-gradient(circle at center, rgba(10, 25, 40, 0.92), rgba(0, 5, 10, 0.97));
 
 	.reincarnate-glyph {
 		position: relative;
@@ -547,13 +550,15 @@
 			justify-content: center;
 			font-size: 26vmin;
 			line-height: 1;
-			transition: opacity 0.8s ease, transform 0.8s ease;
+			transition:
+				opacity 0.8s ease,
+				transform 0.8s ease;
 			filter: drop-shadow(0 0 3vmin rgba(255, 255, 255, 0.25));
 		}
 		.glyph-death {
 			opacity: 1;
 			transform: scale(1);
-			animation: reincarnate-pulse 1.2s ease-in-out infinite;
+			animation: reincarnate-pulse 4s ease-in-out;
 		}
 		.glyph-rebirth {
 			opacity: 0;
@@ -570,40 +575,51 @@
 	}
 
 	/* Rebirth phase: cross-fade skull → sprout and bloom. */
-	&.phase-rebirth {
-		.glyph-death {
-			opacity: 0;
-			transform: scale(1.4);
-			animation: none;
-		}
-		.glyph-rebirth {
-			opacity: 1;
-			transform: scale(1);
-			animation: reincarnate-bloom 0.8s ease-out;
-		}
-	}
+}
 
-	/* Theming accents. */
-	&.june {
-		background: radial-gradient(circle at center, rgba(60, 40, 10, 0.92), rgba(10, 5, 0, 0.97));
-		.glyph { filter: drop-shadow(0 0 3.5vmin rgba(255, 205, 90, 0.5)); }
+.phase-rebirth {
+	.glyph-death {
+		opacity: 0;
+		transform: scale(1);
+		animation: none;
 	}
-	&.debt {
-		background: radial-gradient(circle at center, rgba(10, 25, 40, 0.92), rgba(0, 5, 10, 0.97));
-		.glyph { filter: drop-shadow(0 0 3.5vmin rgba(120, 200, 255, 0.45)); }
+	.glyph-rebirth {
+		opacity: 1;
+		transform: scale(1.4);
+		animation: reincarnate-bloom 4s ease-in;
 	}
 }
 
 @keyframes reincarnate-fade-in {
-	from { opacity: 0; }
-	to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 @keyframes reincarnate-pulse {
-	0%, 100% { transform: scale(1); opacity: 1; }
-	50% { transform: scale(1.08); opacity: 0.75; }
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.08);
+		opacity: 0.75;
+	}
 }
 @keyframes reincarnate-bloom {
-	0% { transform: scale(0.4); opacity: 0; }
-	60% { transform: scale(1.2); opacity: 1; }
-	100% { transform: scale(1); opacity: 1; }
+	0% {
+		transform: scale(0.4);
+		opacity: 0;
+	}
+	60% {
+		transform: scale(1.2);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
 }
