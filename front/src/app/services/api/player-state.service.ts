@@ -310,18 +310,23 @@ export class PlayerStateService {
 				currentGameState.status = GAME_STATUS.STOPPED;
 				this.gameStateSubject.next(currentGameState);
 			}
+			const surveyEnabled = this.rulesSubject.getValue().surveyEnabled;
 			this.dialog
 				.open(InformationDialogComponent, {
 					data: {
 						title: this.i18nService.instant('EVENTS.GAME_ENDED'),
 						message: this.i18nService.instant('EVENTS.GAME_ENDED_MESSAGE'),
-						message2: this.i18nService.instant('EVENTS.SURVEY_MESSAGE'),
+						message2: surveyEnabled ? this.i18nService.instant('EVENTS.SURVEY_MESSAGE') : undefined,
 						disableClose: true,
 					},
 				})
 				.afterClosed()
 				.subscribe(() => {
-					this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx, 'false']);
+					if (surveyEnabled) {
+						this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx, 'false']);
+					} else {
+						this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
+					}
 				});
 		});
 

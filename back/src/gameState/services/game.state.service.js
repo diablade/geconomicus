@@ -89,9 +89,14 @@ const _timerDeathCallback = async (timerInstance) => {
 	log.debug(`[GameStateService] callback death for game: ${timerInstance.data.gameStateId}`);
 	const gameStateId = timerInstance.data.gameStateId;
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState } = entry;
+		const { gameState, rules } = entry;
 		if (!gameState) {
 			log.error(`[GameStateService] Game state not in memory — no-op : ${gameStateId}`);
+			return;
+		}
+		// autoDeath off = no scheduled death at all: nobody dies unless the animator
+		// manually kills a player via Force Death. The timer still ticks; it just no-ops here.
+		if (!rules?.autoDeath) {
 			return;
 		}
 		const deathState = gameState.gameTimers?.deathState;
