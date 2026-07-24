@@ -44,7 +44,7 @@ let PlayerState = new Schema(
 
 let DeathState = new Schema(
 	{
-		intervalDeathMs: { type: Number, required: true, default: 0 },
+		deathIntervalMs: { type: Number, required: true, default: 0 },
 		intervalDeathLeft: { type: Number, required: true, default: 0 },
 		deathQueue: { type: Array, required: true, default: [] },
 	},

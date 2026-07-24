@@ -49,6 +49,12 @@ const _createTimer = async (gameState, rules) => {
 		deathIntervalMs,
 		_timerDeathCallback
 	);
+	// Resume the death interval mid-cycle: preserve time-to-next-death saved at pause.
+	// On a fresh start intervalDeathLeft == deathIntervalMs, so this is a no-op there.
+	const intervalDeathLeft = gameState.gameTimers.deathState.intervalDeathLeft;
+	if (intervalDeathLeft != null) {
+		timer.setFirstDelayInterval4(intervalDeathLeft);
+	}
 	return timer;
 };
 const syncTimerWithGameState = async (gameState, rules) => {
@@ -193,7 +199,8 @@ GameStateService.initGame = async (gameStateId) => {
 	// Compute timer duration
 	const remainingTime = rules.roundMinutes * 60 * 1000;
 	const deathIntervalMs = remainingTime / (initializedGame.playersStates.length + 1);
-	const deathQueue = _.shuffle(initializedGame.playersStates.map((p) => p.idx));
+	// Death queue holds avatarIdx (stable across reincarnation); each avatar dies exactly once.
+	const deathQueue = _.shuffle(initializedGame.playersStates.map((p) => p.avatarIdx));
 	log.debug(`[GameStateService] Death queue: ${JSON.stringify(deathQueue)}`);
 
 	// Initialize gameTimers
@@ -202,6 +209,7 @@ GameStateService.initGame = async (gameStateId) => {
 		remainingTime,
 		deathState: {
 			deathIntervalMs,
+			intervalDeathLeft: deathIntervalMs,
 			deathQueue,
 		},
 	};
@@ -300,7 +308,12 @@ GameStateService.start = async (gameStateId) => {
 		const roundMinutes = entry.rules.roundMinutes;
 		let remainingTimeMs = roundMinutes * minute;
 		const deathIntervalMs = remainingTimeMs / (entry.gameState.playersStates.length + 1);
-		const deathQueue = entry.gameState.playersStates;
+		// Reuse the avatarIdx queue built at init; rebuild only if it is missing.
+		const existingQueue = entry.gameState.gameTimers?.deathState?.deathQueue;
+		const deathQueue =
+			Array.isArray(existingQueue) && existingQueue.length
+				? existingQueue
+				: _.shuffle(entry.gameState.playersStates.map((p) => p.avatarIdx));
 
 		// Update game status to PLAYING
 		entry.gameState.status = GAME_STATUS.PLAYING;
@@ -311,6 +324,7 @@ GameStateService.start = async (gameStateId) => {
 			remainingTime: remainingTimeMs,
 			deathState: {
 				deathIntervalMs,
+				intervalDeathLeft: deathIntervalMs,
 				deathQueue,
 			},
 		};
@@ -358,6 +372,12 @@ GameStateService.pause = async (gameStateId) => {
 			return null;
 		}
 
+		// Capture time-to-next-death before the timer is torn down, so resume restarts mid-cycle.
+		const runningTimer = gameTimerManager.getTimer(gameStateId);
+		const intervalDeathLeft = runningTimer
+			? runningTimer.getRemainingInterval4Ms()
+			: entry.gameState.gameTimers?.deathState?.deathIntervalMs;
+
 		const remainingTimeMs = await gameTimerManager.pauseTimer(gameStateId);
 		if (!remainingTimeMs) {
 			log.warn(`[GameStateService] No remaining time for: ${gameStateId}`);
@@ -368,6 +388,9 @@ GameStateService.pause = async (gameStateId) => {
 
 		entry.gameState.status = GAME_STATUS.PAUSED;
 		entry.gameState.gameTimers.remainingTime = remainingTimeMs;
+		if (entry.gameState.gameTimers.deathState) {
+			entry.gameState.gameTimers.deathState.intervalDeathLeft = intervalDeathLeft;
+		}
 
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
 			//save all credits remaining time

@@ -94,6 +94,7 @@ export const IO = {
 		INIT: 'pi',
 		JOINED: 'pj',
 		DIED: 'pd',
+		REINCARNATED: 'preinc',
 		FEEDBACK: 'pf',
 		PROD_DISCARDS: 'ppd',
 		PROD_DRAW_CARDS: 'ppdc',

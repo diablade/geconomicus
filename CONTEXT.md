@@ -48,6 +48,52 @@ Size: `clamp(44px, 10vmin, 60px)` (44px minimum touch target). Icons `1.5em`. Ba
 
 Sized as `%` of their zone container, not `vw`. Action dialog: items at `~22%` of dialog width (4 per row). Seizure dialog: 2 cards per row per zone, each card `~45%` of zone width. Zones are scrollable. Seizure dialog has two equal zones (player hand / bank); layout is vertical on mobile, horizontal on desktop.
 
+## Avatar
+
+The persistent player identity within a game, identified by `avatarIdx`. Survives across deaths — an avatar has 1..N Lives over the course of a single gameState. Avatars (and their lives) are scoped to one gameState; the June game and the debt game are independent and do not share lives.
+
+## Life (Incarnation)
+
+One `PlayerState` element (identified by `idx`, the `playerStateIdx`). An Avatar owns one or more Lives; **exactly one Life per avatar is `ALIVE` at any moment**. A Life carries its own coins, cards, and actionTokens. When a Life ends it is frozen as a `DEAD` snapshot and never mutated again — it *is* the historical record. Credits are keyed to the `playerStateIdx` of the Life that took them.
+
+## Reincarnate
+
+Ending an Avatar's current Life and opening a new one within the same gameState. The dying Life is marked `DEAD` and left untouched (its coins + cards remain as a snapshot); a fresh `PlayerState` is appended to `playersStates[]` with a new `idx` drawn from `playerStateIndexSeq`, the same `avatarIdx`, and status `ALIVE`. The new Life starts with **coins = 0 (both game types)**, cards freshly dealt from the deck exactly like initial setup, and `actionTokens = startingTokens`. The player's device moves from the old Life to the new one.
+
+Reincarnation happens on an Avatar's **first death only**, whether triggered automatically by the Death Queue timer or forced early by the animator's manual **Force Death** (the "kill" tool predates the auto-death timer and manually triggers the scheduled death). A subsequent death — only reachable by manually killing an already-reincarnated Avatar — is **terminal**: DEAD + seized + cards returned + snapshot, but no further Life. Every death (reincarnating or terminal) seizes credits (debt game) and returns cards to the deck. Death never routes through PRISON — prison is exclusively a credit-FAULT seizure outcome. If a scheduled death lands on a Life that is currently in `PRISON`, that Life still reincarnates (a new `ALIVE` Life is born) and its running prison timer is cancelled — death overrides imprisonment.
+
+## Death Queue
+
+The shuffled list of `avatarIdx` scheduled to die during the round, held at `gameTimers.deathState.deathQueue`. The death timer fires every `deathIntervalMs` and pops one avatar, reincarnating its currently-`ALIVE` Life. Each avatar appears exactly once; reincarnated (new) Lives are never enqueued, so every avatar dies exactly once — always its first Life. A **Force Death** (animator manual kill of a not-yet-reincarnated avatar) consumes that avatar's death early: it removes the avatar from the queue and **resets the death interval** (recomputed over the remaining round time and remaining queue) so the surviving scheduled deaths stay evenly spaced. `intervalDeathLeft` tracks ms remaining until the next death so a pause/resume preserves time-to-next-death rather than restarting the interval. The queue (planned death order) is surfaced to the animator in the table view as an avatar-list popover.
+
+## Ghost Money
+
+Coins that remain in a `DEAD` Life's frozen snapshot and are never reclaimed by anyone. Death never destroys these coins — they persist inside `currentMassMonetary` in **both** game types. In the June game there is no seizure, so *all* of a dead life's coins become ghost money. In the debt game, `seizureOnDead` claws back only up to the outstanding credit obligation (interest + principal, from coins then cards); any coins the dead player held **beyond** their debts are left on the snapshot and stay in the money mass — those excess coins are ghost money too. Ghost money is tracked per session so results can compare it across games; in the June game it is valued in **last-DU-equivalent** (ghost coins ÷ final DU) since June money is only meaningful relative to the DU.
+
+## Seat
+
+A player's live presence at the table — the link between one device and an Avatar's currently-`ALIVE` Life. Normally held by the player's own device. The animator can attach an **Assist Session** to any Seat via *play the user*; a second cockpit device attaches to the master Seat the same way.
+
+## Assist Session
+
+A secondary connection the animator opens onto a Seat — a player's (via *play the user*) or the master cockpit's — from another device or tab. Unlike a spectator it is **fully able to act**: the game grants it the same powers as the primary device (dual control). Its presence is invisible to the player-connection indicator, since it belongs to the animator, not the player. When *play the user* is opened on a Seat whose player is currently live, a dialog offers three relationships — **Co-exist**, **Take-over**, or **Kick**; when the player is not live, the session simply opens. A second master cockpit always attaches as **Co-exist**, silently (no dialog).
+
+## Co-exist
+
+An Assist Session relationship in which the player's own device stays fully active: animator and player both act at once. Safe despite "two hands on one Seat" because game mutations are serialised per game and re-validated on apply, so simultaneous actions cannot corrupt state — the loser of a race is simply rejected. The default (and only) relationship for a second master cockpit.
+
+## Take-over
+
+An Assist Session relationship in which the player's device is covered by a blocking overlay ("someone else is playing") while the animator drives. The player still sees the game update live but cannot act until they **Retake**. Used to help a player, or to demonstrate on a shared screen without the player interfering.
+
+## Retake
+
+The player reclaiming their Seat from a Take-over, via a button on the overlay. Reclaiming is **hard**: it ends the animator's Assist Session outright (the animator's tab drops back to the table) and clears the player's overlay.
+
+## Kick
+
+An Assist Session relationship (and the mechanism behind an ordinary reconnection) that **hard-disconnects** the displaced device, which must re-join to return. Distinguished from Take-over by being irreversible from the displaced side — no overlay, no Retake. Distinct from **kill**, which ends a Life, not a session.
+
 ## Action Token
 
 A spendable resource on `PlayerState`. Resets to `startingTokens` (from Rules) on each new life (death-and-respawn only, not round boundary). Gains +1 per production.

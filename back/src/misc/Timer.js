@@ -47,10 +47,31 @@ export default class Timer {
 		this._interval2 = null;
 		this._interval3 = null;
 		this._interval4 = null;
+		this._interval4First = null; // one-shot setTimeout used to resume interval4 mid-cycle
+
+		// interval4 (death interval) phase tracking, so a pause/resume preserves time-to-next-tick.
+		this._firstDelayInterval4 = null; // ms until the FIRST interval4 fire (null = use full duration)
+		this._nextFireInterval4 = null; // absolute timestamp of the next scheduled interval4 fire
 
 		this.startTime = null;
 		this.remainingMs = duration;
 		this.status = 'idle'; // idle | running | paused | stopped
+	}
+
+	/**
+	 * Set the delay (ms) until the FIRST interval4 tick after start/resume.
+	 * Used to preserve time-to-next-death across a pause without losing partial progress.
+	 * Must be called before start(). A value >= durationInterval4 (or null) means "use the full interval".
+	 */
+	setFirstDelayInterval4(ms) {
+		this._firstDelayInterval4 = ms;
+	}
+
+	/** Remaining ms until the next interval4 (death) tick, or the full duration if not yet running. */
+	getRemainingInterval4Ms() {
+		if (!this.durationInterval4) return 0;
+		if (this._nextFireInterval4 == null) return this._firstDelayInterval4 ?? this.durationInterval4;
+		return Math.max(0, this._nextFireInterval4 - Date.now());
 	}
 
 	start() {
@@ -154,13 +175,32 @@ export default class Timer {
 
 	_startInterval4() {
 		if (!this.durationInterval4 || !this.callbackInterval4) return;
-		this._interval4 = setInterval(async () => {
+
+		const fire = async () => {
+			this._nextFireInterval4 = Date.now() + this.durationInterval4;
 			try {
 				await this.callbackInterval4(this);
 			} catch (err) {
 				log.error(`[Timer] ${this.id} callbackInterval4 error: `, err);
 			}
-		}, this.durationInterval4);
+		};
+
+		const startRecurring = () => {
+			this._nextFireInterval4 = Date.now() + this.durationInterval4;
+			this._interval4 = setInterval(fire, this.durationInterval4);
+		};
+
+		const firstDelay = this._firstDelayInterval4;
+		// Resume mid-cycle: fire once after the preserved remaining time, then fall back to the normal cadence.
+		if (firstDelay != null && firstDelay >= 0 && firstDelay < this.durationInterval4) {
+			this._nextFireInterval4 = Date.now() + firstDelay;
+			this._interval4First = setTimeout(async () => {
+				await fire();
+				startRecurring();
+			}, firstDelay);
+		} else {
+			startRecurring();
+		}
 	}
 
 	_launchTimers() {
@@ -179,10 +219,12 @@ export default class Timer {
 		if (this._interval2) clearInterval(this._interval2);
 		if (this._interval3) clearInterval(this._interval3);
 		if (this._interval4) clearInterval(this._interval4);
+		if (this._interval4First) clearTimeout(this._interval4First);
 		this._timer = null;
 		this._interval1 = null;
 		this._interval2 = null;
 		this._interval3 = null;
 		this._interval4 = null;
+		this._interval4First = null;
 	}
 }

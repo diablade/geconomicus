@@ -1,0 +1,15 @@
+# Reincarnation as appended lives driven by the death timer
+
+During a round, every avatar is automatically killed exactly once and immediately reborn with a fresh start. We model each life as a separate `PlayerState` appended to `playersStates[]`: on death the dying life is marked `DEAD` and left **untouched** as a permanent snapshot (its post-seizure coins and cards are the historical record), and a new `PlayerState` is appended with a fresh `idx` from `playerStateIndexSeq`, the **same `avatarIdx`**, `coins = 0` (both game types), cards freshly dealt like initial setup, and `actionTokens = startingTokens`. Kill + reincarnate happen as one atomic `withQueue` op, so an avatar never has zero live lives; the server then emits `IO.PLAYER.REINCARNATED { newPlayerStateIdx }` to the old player room and the device navigates (via a death→rebirth overlay) to the new life. Death is scheduled by the round death-timer, which pops one `avatarIdx` per `deathIntervalMs` tick from a shuffled `deathQueue`; reincarnated lives are never re-enqueued, giving "exactly once" for free.
+
+## Considered options
+
+- **Mutate the `PlayerState` in place and store history elsewhere** — rejected: the schema already carries `playerStateIndexSeq` and keys `credits` by `playerStateIdx`, so appended lives keep credits, events, and the graph naturally partitioned per life, and the snapshot needs no separate store.
+- **Legacy manual re-join** (dead player re-scans a QR, a new player record is created with `reincarnateFromId`, 0 coins) — rejected: a dead player who doesn't tap stalls the game, and the once-per-avatar accounting is cleaner fully server-side. The new model is automatic and atomic. (The legacy `results.component.ts` and its `reincarnateFromId` merge are left untouched; the v2 graph will group lives by `avatarIdx`.)
+- **Destroy a dead life's money** — rejected: money persists as **ghost money** in `currentMassMonetary` in both games (see [CONTEXT.md](../../CONTEXT.md) → Ghost Money). June has no seizure so all of a dead life's coins persist; debt's `seizureOnDead` already claws back only up to the credit obligation, leaving any excess as ghost money. This matches libre-money pedagogy and the legacy `REMIND_DEAD` behavior.
+
+## Consequences
+
+- Ghost money inflates the DU average (June) and avg-currency (debt) because dead accounts keep counting toward the mass while the reborn life holds 0. This is intended and is surfaced/tracked for the results comparison (June valued in last-DU-equivalent).
+- Manual "kill" is the pre-existing **Force Death** tool: it reincarnates an avatar that hasn't reincarnated yet (removing it from the queue and resetting the death interval so remaining deaths stay evenly spaced), but is **terminal** on an already-reincarnated avatar. A scheduled death that lands on a `PRISON` life still reincarnates and cancels the prison timer.
+- Two schema/plumbing bugs are fixed as part of this: the `deathState` field-name mismatch (`intervalDeathMs` vs `deathIntervalMs`) and the inconsistent `deathQueue` initialization (idx numbers vs full objects). Pause now persists `intervalDeathLeft`.

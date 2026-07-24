@@ -81,6 +81,7 @@ export declare const IO: {
         readonly INIT: "pi";
         readonly JOINED: "pj";
         readonly DIED: "pd";
+        readonly REINCARNATED: "preinc";
         readonly FEEDBACK: "pf";
         readonly PROD_DISCARDS: "ppd";
         readonly PROD_DRAW_CARDS: "ppdc";
