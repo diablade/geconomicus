@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { IO, ROOMS } from '@geco/shared';
+import { IO, ROOMS, ASSIST_MODE, KICK_REASON } from '@geco/shared';
 import PlayersStateConnectionManager from '../src/gameState/managers/PlayersStateConnectionManager.js';
 import log from '#config/log';
 
@@ -94,14 +94,14 @@ export class SocketManager {
 
 	setupConnectionHandlers() {
 		this.ioInstance.on('connection', (socket) => {
-			const { publicChannel, privateChannel } = socket.handshake.query;
+			const { publicChannel, privateChannel, assist, assistTarget } = socket.handshake.query;
 
 			if (!this.validateConnection(publicChannel, privateChannel)) {
 				socket.disconnect();
 				return;
 			}
 
-			this.handleNewConnection(socket, publicChannel, privateChannel);
+			this.handleNewConnection(socket, publicChannel, privateChannel, assist, assistTarget);
 		});
 	}
 
@@ -113,9 +113,13 @@ export class SocketManager {
 		return true;
 	}
 
-	handleNewConnection(socket, publicChannel, privateChannel) {
+	handleNewConnection(socket, publicChannel, privateChannel, assistMode = null, assistTarget = null) {
+		const isAssist = !!assistMode;
+		socket.data = socket.data || {};
+		socket.data.isAssist = isAssist;
 		log.info(
-			`[socket] New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}`
+			`[socket] New connection - Public: ${publicChannel}, Private: ${privateChannel}, Socket: ${socket.id}` +
+				(isAssist ? ` [assist:${assistMode} → ${assistTarget}]` : '')
 		);
 
 		// Store connection data with timestamp and reconnect attempts
@@ -126,25 +130,38 @@ export class SocketManager {
 			privateChannel,
 			disconnectHandler: null,
 			errorHandler: null,
+			isAssist,
+			assistMode: assistMode || null,
+			assistTarget: assistTarget || null,
 		};
 
-		// Handle previous connection if exists
+		// Handle previous connection if exists.
+		// Assist sessions use a unique identity (they never collide), and master
+		// cockpits are allowed to co-exist — in both cases we do NOT displace the
+		// incumbent. See docs/adr/0002-animator-assist-sessions.md
 		const previousConnection = this.connections.get(privateChannel);
+		const isMaster = typeof privateChannel === 'string' && privateChannel.endsWith(':master');
 		if (previousConnection && previousConnection.socket.connected) {
-			// Clean up previous connection
-			try {
-				log.info(`[socket] Replacing previous socket for player ${privateChannel}`);
-				previousConnection.socket.emit('kicked', {
-					reason: 'another_connection',
-					timestamp: Date.now(),
-					privateChannel: previousConnection.privateChannel,
-					publicChannel: previousConnection.publicChannel,
-				});
-			} catch (e) {
-				log.warn(`[socket] Failed to notify kicked socket for player ${privateChannel}: ${e}`);
-			}
+			if (isAssist || isMaster) {
+				log.info(
+					`[socket] Co-existing connection for ${privateChannel} (assist=${isAssist}, master=${isMaster})`
+				);
+			} else {
+				// Standard single-session replacement
+				try {
+					log.info(`[socket] Replacing previous socket for player ${privateChannel}`);
+					previousConnection.socket.emit('kicked', {
+						reason: KICK_REASON.ANOTHER_CONNECTION,
+						timestamp: Date.now(),
+						privateChannel: previousConnection.privateChannel,
+						publicChannel: previousConnection.publicChannel,
+					});
+				} catch (e) {
+					log.warn(`[socket] Failed to notify kicked socket for player ${privateChannel}: ${e}`);
+				}
 
-			this.cleanupConnection(privateChannel);
+				this.cleanupConnection(privateChannel);
+			}
 		}
 
 		// Set up event handlers — capture socket.id so stale handlers from a
@@ -160,6 +177,11 @@ export class SocketManager {
 		// Join rooms
 		socket.join(publicChannel);
 		socket.join(privateChannel);
+
+		// Assist session: act on the device currently holding the target Seat.
+		if (isAssist && assistTarget) {
+			this._signalIncumbent(assistMode, assistTarget);
+		}
 
 		// Send connection confirmation with server timestamp
 		socket.emit('connected', {
@@ -188,7 +210,7 @@ export class SocketManager {
 						avatarIdx !== 'results'
 					) {
 						const playerIdx = parseInt(playerStateIdx);
-						if (playerIdx >= 0) {
+						if (playerIdx >= 0 && !socket.data?.isAssist) {
 							this.emitDisconnecting(gameStateId, avatarIdx, playerIdx);
 						}
 					}
@@ -233,7 +255,10 @@ export class SocketManager {
 					avatarIdx !== 'results'
 				) {
 					const playerIdx = parseInt(playerStateIdx);
-					if (playerIdx >= 0) {
+					// Assist sessions (animator's "play the user" tab) join the same
+					// gameplay rooms but must NOT flip the player's online indicator —
+					// they belong to the animator, not the player.
+					if (playerIdx >= 0 && !socket.data?.isAssist) {
 						const lastSeen = new Date();
 						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, {
 							isConnected: true,
@@ -267,7 +292,7 @@ export class SocketManager {
 				const [roomType, gameStateId, avatarIdx, playerStateIdx] = room.split(':');
 				if (roomType === 'gs' && avatarIdx !== 'master' && avatarIdx !== 'bank' && avatarIdx !== 'results') {
 					const playerIdx = parseInt(playerStateIdx);
-					if (playerIdx >= 0) {
+					if (playerIdx >= 0 && !socket.data?.isAssist) {
 						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
@@ -276,6 +301,24 @@ export class SocketManager {
 							`[socket] Player ${playerIdx} (avatar ${avatarIdx}) disconnected from gameState ${gameStateId}`
 						);
 					}
+				}
+			}
+		});
+		// Player reclaims their Seat from an animator take-over: drop every assist
+		// session pointed at this Seat (a hard reclaim — see ADR-0002).
+		socket.on(IO.PLAYER.RETAKE, (data) => {
+			const { sessionId, avatarIdx } = data || {};
+			if (!sessionId || avatarIdx === undefined || avatarIdx === null) return;
+			const targetChannel = ROOMS.lobbyAvatar(sessionId, parseInt(avatarIdx));
+			log.info(`[socket] Retake requested for ${targetChannel}; dropping assist sessions`);
+			for (const [channel, conn] of this.connections.entries()) {
+				if (conn.isAssist && conn.assistTarget === targetChannel && conn.socket.connected) {
+					try {
+						conn.socket.emit('kicked', { reason: KICK_REASON.RETAKEN, timestamp: Date.now() });
+					} catch (e) {
+						log.warn(`[socket] retake kick failed for ${channel}: ${e}`);
+					}
+					this.cleanupConnection(channel);
 				}
 			}
 		});
@@ -318,6 +361,31 @@ export class SocketManager {
 			// Or just clear the ack pool for this player
 			this.ackPool.delete(privateChannel);
 		}
+	}
+
+	// Act on the device currently holding a Seat when an animator opens an
+	// assist session onto it. Coexist = do nothing (both act); Take-over =
+	// overlay the incumbent (it stays connected); Kick = hard-disconnect it.
+	_signalIncumbent(mode, targetChannel) {
+		const incumbent = this.connections.get(targetChannel);
+		if (!incumbent || !incumbent.socket.connected) return;
+
+		if (mode === ASSIST_MODE.KICK) {
+			try {
+				incumbent.socket.emit('kicked', {
+					reason: KICK_REASON.KICKED_BY_ANIMATOR,
+					timestamp: Date.now(),
+				});
+			} catch (e) {
+				log.warn(`[socket] Failed to notify kicked incumbent ${targetChannel}: ${e}`);
+			}
+			this.cleanupConnection(targetChannel);
+			log.info(`[socket] Assist KICK displaced incumbent ${targetChannel}`);
+		} else if (mode === ASSIST_MODE.TAKEOVER) {
+			incumbent.socket.emit(IO.PLAYER.TAKEN_OVER, { timestamp: Date.now() });
+			log.info(`[socket] Assist TAKE-OVER overlaid incumbent ${targetChannel}`);
+		}
+		// ASSIST_MODE.COEXIST: leave the incumbent untouched
 	}
 
 	// Handle disconnection

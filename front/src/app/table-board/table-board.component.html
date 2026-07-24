@@ -44,36 +44,35 @@
 					👥
 					<b>{{ 'TABLE.DEAD_PLAYERS' | translate: { count: vm.dead.length } }}</b>
 				</div>
+				<!-- Death queue: transparent progress fill behind the label + countdown, popover lists the order -->
+				<div
+					class="chip frame frame-light box-shadowed deathQueueChip"
+					*ngIf="vm.deathQueueCount > 0"
+					[matMenuTriggerFor]="deathQueueMenu">
+					<span class="deathProgressFill" [style.width.%]="vm.deathProgressPct"></span>
+					<span class="deathChipContent">
+						💀
+						<b>{{ 'TABLE.DEATHS_TO_COME' | translate: { count: vm.deathQueueCount } }}</b>
+						<span *ngIf="vm.nextDeathLabel" class="nextDeath">&middot; ⏳ {{ vm.nextDeathLabel }}</span>
+					</span>
+				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.ghostMoney > 0">
+					👻💰
+					<b>{{ vm.ghostMoney | number: '1.0-2' }}</b>
+					<span *ngIf="vm.rules.typeMoney === JUNE">
+						&middot; {{ vm.ghostMoneyDU | number: '1.2-2' }} {{ 'TABLE.DU_EQ' | translate }}
+					</span>
+					{{ 'TABLE.GHOST_MONEY' | translate }}
+				</div>
 				<div class="chip frame frame-light box-shadowed">
 					💰
 					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
 					{{ 'TABLE.MONETARY_MASS' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					⚖️
-					<b [class.warnNum]="vm.avgCurrency < 2">{{ vm.avgCurrency | number: '1.2-2' }}</b>
-					{{ 'BANK.AVG_PLAYERS' | translate }}
-				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					📈
-					<b>{{ vm.totalDebt }}</b>
-					{{ 'BANK.CURRENT_DEBT' | translate }}
-				</div>
 				<div class="chip frame frame-light box-shadowed">
 					⚡
 					<b>{{ vm.totalTokens }}</b>
 					{{ 'TABLE.ACTION_TOKENS_IN_PLAY' | translate }}
-				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					📜
-					<b>{{ vm.activeCreditsCount }}</b>
-					{{ 'TABLE.ACTIVE_CREDITS' | translate }}
-				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
-					🏦
-					<b>{{ vm.gameState.bankInterestEarned }}</b>
-					{{ 'TABLE.INTERESTS' | translate }} &middot; {{ vm.gameState.bankGoodsEarned }}
-					{{ 'TABLE.GOODS_SEIZED' | translate }}
 				</div>
 				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE">
 					☀️
@@ -323,6 +322,35 @@
 								🏦 {{ 'MASTER.BANK_BTN' | translate }}
 							</span>
 						</button>
+						<div class="d-flex flex-row gap-2 mt-2">
+							<div
+								class="chip frame frame-light box-shadowed"
+								[class.good]="vm.avgCurrency >= 2"
+								[class.warn]="vm.avgCurrency < 2"
+								[class.danger]="vm.avgCurrency < 1">
+								⚖️
+								<b>{{ vm.avgCurrency | number: '1.2-2' }}</b>
+								{{ 'BANK.AVG_PLAYERS' | translate }}
+								<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate"></fa-icon>
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								📈
+								<b>{{ vm.totalDebt }}</b>
+								{{ 'BANK.CURRENT_DEBT' | translate }}
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								📜
+								<b>{{ vm.activeCreditsCount }}</b>
+								{{ 'TABLE.ACTIVE_CREDITS' | translate }}
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								🏦
+								<b>{{ vm.gameState.bankInterestEarned }}</b>
+								{{ 'TABLE.INTERESTS' | translate }} &middot; {{ vm.gameState.bankGoodsEarned }}
+								{{ 'TABLE.GOODS_SEIZED' | translate }}
+							</div>
+						</div>
+
 						<div class="bankActions" *ngIf="bankOpen">
 							<button class="box-shadowed" mat-raised-button color="accent" (click)="showContract()">
 								<mat-icon>paid</mat-icon>
@@ -469,7 +497,10 @@
 										</ng-container>
 										<div
 											class="noChip"
-											*ngIf="(vm.rules.typeMoney !== DEBT || row.credits.length === 0) && row.status !== PRISON">
+											*ngIf="
+												(vm.rules.typeMoney !== DEBT || row.credits.length === 0) &&
+												row.status !== PRISON
+											">
 											&mdash;
 										</div>
 									</div>
@@ -616,5 +647,20 @@
 				<span>{{ 'MASTER.KILL_USER' | translate }}</span>
 			</button>
 		</ng-template>
+	</mat-menu>
+
+	<!-- Death queue popover: planned death order (next-to-die first) -->
+	<mat-menu #deathQueueMenu="matMenu" class="deathQueuePanel">
+		<div class="deathQueueHead" (click)="$event.stopPropagation()">
+			💀 {{ 'TABLE.DEATH_ORDER' | translate }}
+		</div>
+		<div class="deathQueueList" (click)="$event.stopPropagation()">
+			<div class="deathQueueItem" *ngFor="let r of vm.deathQueueRows; let i = index" [class.next]="i === 0">
+				<span class="pos">{{ i + 1 }}</span>
+				<avatar class="qAvatar" [avatar]="r.avatar" width="34px" height="34px"></avatar>
+				<span class="qName">{{ r.avatar?.name }}</span>
+				<span class="qNext" *ngIf="i === 0 && vm.nextDeathLabel">⏳ {{ vm.nextDeathLabel }}</span>
+			</div>
+		</div>
 	</mat-menu>
 </ng-container>

@@ -160,9 +160,10 @@ GameStateController.transaction = asyncHandler(async (req, res) => {
 });
 GameStateController.killPlayer = asyncHandler(async (req, res) => {
 	const { gameStateId, playerStateIdx } = req.body;
-	log.info('[GameStateController] killing player', { gameStateId, playerStateIdx });
-	await PlayerStateService.killPlayer(gameStateId, playerStateIdx);
-	return res.status(200).json({ status: 'done' });
+	log.info('[GameStateController] force death on player', { gameStateId, playerStateIdx });
+	// Manual "kill" = Force Death: reincarnates a not-yet-reincarnated avatar, terminal otherwise.
+	const result = await PlayerStateService.forceDeath(gameStateId, playerStateIdx);
+	return res.status(200).json({ status: 'done', ...result });
 });
 GameStateController.whoHaveCard = asyncHandler(async (req, res) => {
 	const { gameStateId, cardKey } = req.params;

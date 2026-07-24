@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, from, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, from, map, Observable, Subject } from 'rxjs';
 import { GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
@@ -46,6 +46,13 @@ export class PlayerStateService {
 	rules$ = this.rulesSubject.asObservable();
 	private avatarsSubject = new BehaviorSubject<{ idx: number; name: string; image: string }[]>([]);
 	avatars$ = this.avatarsSubject.asObservable();
+	// Emitted when this device's life dies and is reborn — carries the new life's idx to navigate to.
+	private reincarnationSubject = new Subject<{ oldPlayerStateIdx: number; newPlayerStateIdx: number; avatarIdx: number }>();
+	reincarnation$ = this.reincarnationSubject.asObservable();
+	// True while an animator has taken over this Seat: the board shows a blocking
+	// overlay with a Retake button until the player reclaims control (ADR-0002).
+	private takenOverSubject = new BehaviorSubject<boolean>(false);
+	takenOver$ = this.takenOverSubject.asObservable();
 
 	private sessionId = '';
 	private gameStateId = '';
@@ -229,6 +236,17 @@ export class PlayerStateService {
 				window.location.reload();
 			}
 		});
+
+		// An animator opened a take-over on this Seat → block the board.
+		this.wsService.on(IO.PLAYER.TAKEN_OVER, () => {
+			this.takenOverSubject.next(true);
+		});
+	}
+
+	/** Player reclaims their Seat from an animator take-over (hard reclaim — ADR-0002). */
+	retake(): void {
+		this.wsService.emit(IO.PLAYER.RETAKE, { sessionId: this.sessionId, avatarIdx: this.avatarIdx });
+		this.takenOverSubject.next(false);
 	}
 	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
@@ -387,6 +405,11 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.DIED, async () => {
 			this.playerStatusSubject.next(PLAYER_STATUS.DEAD);
+		});
+
+		this.wsService.on(IO.PLAYER.REINCARNATED, async (data: any) => {
+			// The board plays the death→rebirth overlay and navigates to the new life.
+			this.reincarnationSubject.next(data);
 		});
 	}
 	private setupMoneySocketListeners(): void {
@@ -623,6 +646,7 @@ export class PlayerStateService {
 		this.wsService.off('resync');
 		this.wsService.off(IO.PLAYER.INIT);
 		this.wsService.off(IO.PLAYER.DIED);
+		this.wsService.off(IO.PLAYER.REINCARNATED);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
 		this.wsService.off(IO.PLAYER.DISTRIB_DU);

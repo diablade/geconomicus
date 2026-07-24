@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
 import { ThemesService } from '../themes.service';
-import { IO, ROOMS } from '@geco/shared';
+import { AssistMode, IO, ROOMS } from '@geco/shared';
 import { I18nService } from '../i18n.service';
 import { SnackbarService } from '../snackbar.service';
 import { AudioService } from '../audio.service';
@@ -22,6 +22,9 @@ export class AvatarService {
 	session$ = this.sessionSubject.asObservable();
 	private sessionId: string | undefined;
 	private avatarIdx: number | undefined;
+	// Unique per browser tab, so an animator's "play the user" tab connects with a
+	// non-colliding identity and never kicks the player's own device.
+	private readonly assistNonce = Math.random().toString(36).slice(2);
 	private surveyRedoSubject = new BehaviorSubject<boolean>(false);
 	surveyRedo$ = this.surveyRedoSubject.asObservable();
 
@@ -35,7 +38,12 @@ export class AvatarService {
 		private i18n: I18nService
 	) {}
 
-	loadAvatar(sessionId: string, avatarIdx: number, fetchSession = false): Observable<any> {
+	loadAvatar(
+		sessionId: string,
+		avatarIdx: number,
+		fetchSession = false,
+		assistMode: AssistMode | null = null
+	): Observable<any> {
 		return new Observable( (observer: any) => {
 			this.http
 				.get<any>(
@@ -56,18 +64,29 @@ export class AvatarService {
 					observer.complete();
 				});
 			if (sessionId !== this.sessionId || avatarIdx !== this.avatarIdx) {
-				this.initializeSocket(sessionId, avatarIdx);
+				this.initializeSocket(sessionId, avatarIdx, assistMode);
 			}
 		});
 	}
 
-	initializeSocket(sessionId: string, avatarIdx: number): void {
+	initializeSocket(sessionId: string, avatarIdx: number, assistMode: AssistMode | null = null): void {
 		this.sessionId = sessionId;
 		this.avatarIdx = avatarIdx;
-		this.wsService.initializeSocket({
-			publicChannel: ROOMS.session(sessionId),
-			privateChannel: ROOMS.lobbyAvatar(sessionId, avatarIdx),
-		});
+		const seat = ROOMS.lobbyAvatar(sessionId, avatarIdx);
+		this.wsService.initializeSocket(
+			assistMode
+				? {
+						publicChannel: ROOMS.session(sessionId),
+						// Unique identity → no collision with the player's device.
+						privateChannel: `${seat}:assist:${this.assistNonce}`,
+						assist: assistMode,
+						assistTarget: seat,
+				  }
+				: {
+						publicChannel: ROOMS.session(sessionId),
+						privateChannel: seat,
+				  }
+		);
 		this.setupSocketListeners();
 	}
 

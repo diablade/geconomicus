@@ -12,6 +12,7 @@ import log from '#config/log';
 import PlayersStateConnectionManager from '../managers/PlayersStateConnectionManager.js';
 import MoneyHelper from '../helpers/money.helper.js';
 import BankStateService from './bank.state.service.js';
+import PlayerStateService from './player.state.service.js';
 import EventHelper from '../helpers/event.helper.js';
 import _ from 'lodash';
 
@@ -88,13 +89,22 @@ const _timerDeathCallback = async (timerInstance) => {
 	log.debug(`[GameStateService] callback death for game: ${timerInstance.data.gameStateId}`);
 	const gameStateId = timerInstance.data.gameStateId;
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules, events } = entry;
+		const { gameState } = entry;
 		if (!gameState) {
 			log.error(`[GameStateService] Game state not in memory — no-op : ${gameStateId}`);
 			return;
 		}
-		log.error(`[GameStateService] Game state death passing by on game ${gameStateId}`);
-		// TODO: Implement death logic
+		const deathState = gameState.gameTimers?.deathState;
+		const queue = deathState?.deathQueue;
+		if (!Array.isArray(queue) || queue.length === 0) {
+			// Everyone scheduled has already died — nothing left to do.
+			return;
+		}
+		// Refresh time-to-next-death so a save/crash-recovery keeps a full interval.
+		deathState.intervalDeathLeft = deathState.deathIntervalMs;
+		const avatarIdx = queue.shift();
+		log.info(`[GameStateService] death tick: reincarnating avatar ${avatarIdx} in game ${gameStateId}`);
+		await PlayerStateService.reincarnateWithinLock(entry, avatarIdx);
 	});
 };
 const _timerSaveCallback = async (timerInstance) => {
@@ -463,6 +473,11 @@ GameStateService.stop = async (gameStateId) => {
 		entry.gameState.status = GAME_STATUS.STOPPED;
 		if (entry.gameState.gameTimers) {
 			entry.gameState.gameTimers.remainingTime = 0;
+			// Round over: clear any avatars still scheduled to die — they simply never die.
+			if (entry.gameState.gameTimers.deathState) {
+				entry.gameState.gameTimers.deathState.deathQueue = [];
+				entry.gameState.gameTimers.deathState.intervalDeathLeft = 0;
+			}
 		}
 		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState }, { new: true }).lean();
 		await EventService.postMany(entry.events, gameStateId);

@@ -91,6 +91,10 @@ export class GameStateService {
 	private timerTickSubject = new Subject<void>();
 	timerTick$ = this.timerTickSubject.asObservable();
 
+	// Emitted (to the animator cockpit) when a player dies and is reborn.
+	private reincarnationSubject = new Subject<{ avatarIdx: number; oldPlayerStateIdx: number; newPlayerStateIdx: number }>();
+	reincarnation$ = this.reincarnationSubject.asObservable();
+
 	private sessionId = '';
 	private gameStateId = '';
 	private roomGameState = '';
@@ -247,9 +251,10 @@ export class GameStateService {
 		console.log('setup Player SocketListeners');
 
 		this.wsService.on(IO.PLAYER.DIED, (event: any) => {
+			const deadIdx = event.playerStateIdx ?? event.receiver;
 			const currentStates = this.playersStatesSubject.getValue();
 			const updated = currentStates.map((p) => {
-				if (p.idx == event.receiver) {
+				if (p.idx == deadIdx) {
 					return { ...p, status: PLAYER_STATUS.DEAD };
 				}
 				return p;
@@ -258,11 +263,18 @@ export class GameStateService {
 
 			const credits = this.creditsSubject.getValue();
 			credits.map((c) => {
-				if (c.playerStateIdx === event.receiver && c.status === CREDIT_STATUS.FAULT) {
+				if (c.playerStateIdx === deadIdx && c.status === CREDIT_STATUS.FAULT) {
 					this.dialog.closeAll();
 				}
 				return c;
 			});
+		});
+
+		this.wsService.on(IO.PLAYER.REINCARNATED, (event: any) => {
+			// A life died and a new one was appended server-side: re-pull to add the new life
+			// and reflect the shrunk death queue, then notify the cockpit for a snackbar.
+			this.refreshMasterState();
+			this.reincarnationSubject.next(event);
 		});
 
 		this.wsService.on(IO.AVATAR.UPDATED, () => {
@@ -403,6 +415,7 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.CURRENT_DU);
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
+		this.wsService.off(IO.PLAYER.REINCARNATED);
 		this.wsService.off(IO.CREDIT.EXTENDED);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
@@ -422,6 +435,21 @@ export class GameStateService {
 		return this.http
 			.get<any>(environment.API_HOST + environment.GAME_STATE.GET + gameStateId + '?enriched=' + enriched)
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND')));
+	}
+
+	/**
+	 * Re-pull the master's state (players, credits, deathQueue) without re-wiring sockets.
+	 * Used after a reincarnation, which appends a new life and shrinks the death queue.
+	 */
+	refreshMasterState(): void {
+		if (!this.gameStateId) return;
+		this.get(this.gameStateId, true).subscribe((payload) => {
+			if (!payload?.gameState) return;
+			this.gameStateSubject.next(payload.gameState);
+			this.playersStatesSubject.next(payload.gameState.playersStates);
+			if (payload.connectedPlayers) this.connectedPlayersSubject.next(payload.connectedPlayers);
+			if (payload.gameState.credits) this.creditsSubject.next(payload.gameState.credits);
+		});
 	}
 
 	init(gameStateId: string): Observable<any> {

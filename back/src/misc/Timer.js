@@ -74,6 +74,21 @@ export default class Timer {
 		return Math.max(0, this._nextFireInterval4 - Date.now());
 	}
 
+	/**
+	 * Re-space the interval4 (death) cadence on the fly — used when a Force Death removes an avatar
+	 * from the queue and the remaining scheduled deaths must be redistributed over the remaining time.
+	 */
+	resetInterval4(newDurationMs, firstDelayMs = null) {
+		if (this._interval4) clearInterval(this._interval4);
+		if (this._interval4First) clearTimeout(this._interval4First);
+		this._interval4 = null;
+		this._interval4First = null;
+		this.durationInterval4 = newDurationMs;
+		this._firstDelayInterval4 = firstDelayMs;
+		this._nextFireInterval4 = null;
+		if (this.status === 'running') this._startInterval4();
+	}
+
 	start() {
 		if (this.status !== 'idle') return;
 		this.data.startedAt = new Date();

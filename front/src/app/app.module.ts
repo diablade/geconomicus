@@ -81,6 +81,7 @@ import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TutorialDialogComponent } from './dialogs/tutorial-dialog/tutorial-dialog.component';
 import { ReJoinQrDialogComponent } from './dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
+import { AssistModeDialogComponent } from './dialogs/assist-mode-dialog/assist-mode-dialog.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { SessionEditDialogComponent } from './dialogs/session-edit/session-edit-dialog.component';
 import { CoinComponent } from './components/coin/coin.component';
@@ -132,6 +133,7 @@ LOAD_WASM().subscribe();
 		CongratsDialogComponent,
 		ActionDialogComponent,
 		ShortcodeDialogComponent,
+		AssistModeDialogComponent,
 		GameDeleteDialog,
 		MasterAdminComponent,
 		LanguageBtnComponent,

@@ -259,6 +259,66 @@
 	align-items: center;
 }
 
+// ── Take-over overlay (animator is driving this Seat) ─────────────────────────
+.takenover-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 2000; // above every board layer, including .blocked (1000)
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(0, 0, 0, 0.72);
+	backdrop-filter: blur(3px);
+	user-select: none;
+
+	.takenover-card {
+		background: #fff;
+		color: #222;
+		max-width: 86vw;
+		width: 340px;
+		border-radius: 20px;
+		padding: 26px 22px;
+		text-align: center;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+	}
+
+	.takenover-icon {
+		font-size: 46px;
+		line-height: 1;
+	}
+
+	.takenover-title {
+		font-size: 20px;
+		font-weight: 700;
+		margin: 12px 0 6px;
+	}
+
+	.takenover-text {
+		font-size: 15px;
+		opacity: 0.8;
+		margin-bottom: 20px;
+	}
+
+	.takenover-btn {
+		border: none;
+		border-radius: 999px;
+		padding: 12px 28px;
+		font-size: 16px;
+		font-weight: 700;
+		color: #fff;
+		background: #2e7d32;
+		cursor: pointer;
+		transition: transform 0.08s ease, background 0.2s ease;
+
+		&:hover {
+			background: #276b2a;
+		}
+		&:active {
+			transform: scale(0.96);
+		}
+	}
+}
+
 .prison {
 	background-image: url('/assets/images/prison.png');
 	background-size: cover;
@@ -457,4 +517,93 @@
 .separator {
 	width: 2px;
 	background-color: #673ab7;
+}
+
+/* ── Death → rebirth overlay ─────────────────────────────────────────── */
+.reincarnate-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 3000;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4vmin;
+	background: radial-gradient(circle at center, rgba(20, 10, 30, 0.92), rgba(0, 0, 0, 0.97));
+	color: #fff;
+	text-align: center;
+	animation: reincarnate-fade-in 0.35s ease-out;
+
+	.reincarnate-glyph {
+		position: relative;
+		width: 34vmin;
+		height: 34vmin;
+
+		.glyph {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 26vmin;
+			line-height: 1;
+			transition: opacity 0.8s ease, transform 0.8s ease;
+			filter: drop-shadow(0 0 3vmin rgba(255, 255, 255, 0.25));
+		}
+		.glyph-death {
+			opacity: 1;
+			transform: scale(1);
+			animation: reincarnate-pulse 1.2s ease-in-out infinite;
+		}
+		.glyph-rebirth {
+			opacity: 0;
+			transform: scale(0.6);
+		}
+	}
+
+	.reincarnate-text {
+		font-size: clamp(18px, 4.5vmin, 34px);
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-shadow: 0 0 2vmin rgba(0, 0, 0, 0.8);
+		opacity: 0.9;
+	}
+
+	/* Rebirth phase: cross-fade skull → sprout and bloom. */
+	&.phase-rebirth {
+		.glyph-death {
+			opacity: 0;
+			transform: scale(1.4);
+			animation: none;
+		}
+		.glyph-rebirth {
+			opacity: 1;
+			transform: scale(1);
+			animation: reincarnate-bloom 0.8s ease-out;
+		}
+	}
+
+	/* Theming accents. */
+	&.june {
+		background: radial-gradient(circle at center, rgba(60, 40, 10, 0.92), rgba(10, 5, 0, 0.97));
+		.glyph { filter: drop-shadow(0 0 3.5vmin rgba(255, 205, 90, 0.5)); }
+	}
+	&.debt {
+		background: radial-gradient(circle at center, rgba(10, 25, 40, 0.92), rgba(0, 5, 10, 0.97));
+		.glyph { filter: drop-shadow(0 0 3.5vmin rgba(120, 200, 255, 0.45)); }
+	}
+}
+
+@keyframes reincarnate-fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+@keyframes reincarnate-pulse {
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.08); opacity: 0.75; }
+}
+@keyframes reincarnate-bloom {
+	0% { transform: scale(0.4); opacity: 0; }
+	60% { transform: scale(1.2); opacity: 1; }
+	100% { transform: scale(1); opacity: 1; }
 }

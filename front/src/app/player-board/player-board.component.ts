@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { combineLatest, map, Subscription, withLatestFrom } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
@@ -12,7 +12,7 @@ import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog
 import { CongratsDialogComponent } from '../dialogs/congrats-dialog/congrats-dialog.component';
 import { ActionDialogComponent } from '../dialogs/action-dialog/action-dialog.component';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
-import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
+import { AssistMode, ASSIST_MODE, CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import { ShortCode } from '../models/shortCode';
 import { Recipe, Ingredient, getAvailableRecipes } from '../models/recipe';
 import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
@@ -59,6 +59,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	gameStateId: string | undefined;
 	avatarIdx: number | undefined;
 	playerStateIdx: number | undefined;
+	// Set when this tab is an animator's assist session (?assist=coexist|takeover|kick).
+	assistMode: AssistMode | null = null;
 
 	typeTheme$ = inject(ThemesService).typeTheme$;
 	theme: string = this.themesService.getCurrentTheme();
@@ -66,6 +68,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	session$ = inject(AvatarService).session$;
 	playerStatus$ = inject(PlayerStateService).playerStatus$;
 	playerConnection$ = inject(PlayerStateService).playerConnection$;
+	takenOver$ = inject(PlayerStateService).takenOver$;
 
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
@@ -143,6 +146,12 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		sessionAvatars: this.sessionAvatars$,
 	});
 
+	// Death→rebirth overlay state (skull → sprout, ~2.5s, then auto-navigate to the new life).
+	isReincarnating = false;
+	reincarnatePhase: 'death' | 'rebirth' = 'death';
+	private reincarnationSub: Subscription | undefined;
+	private readonly REINCARNATE_OVERLAY_MS = 2500;
+
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
@@ -181,6 +190,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		public dialog: MatDialog,
 		private localStorageService: LocalStorageService,
 		private deckService: DeckService,
@@ -200,6 +210,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.playerStateService.leaveRooms();
 		this.playerStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
+		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -210,6 +221,18 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem('scanV3');
+
+		// Death → rebirth: play the overlay, then move this device to the new life.
+		this.reincarnationSub = this.playerStateService.reincarnation$.subscribe((data) => {
+			this.playReincarnationOverlay(data.newPlayerStateIdx);
+		});
+
+		const rawAssist = this.route.snapshot.queryParamMap.get('assist');
+		this.assistMode =
+			rawAssist && Object.values(ASSIST_MODE).includes(rawAssist as AssistMode)
+				? (rawAssist as AssistMode)
+				: null;
+
 		this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			this.avatarIdx = params['avatarIdx'];
@@ -225,10 +248,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 					this.avatarIdx,
 					this.playerStateIdx
 				);
-				// then get avatar and connect to sockets
-				this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true).subscribe();
+				// then get avatar and connect to sockets — an assist session connects
+				// with a non-colliding identity so it never kicks the player's device.
+				this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true, this.assistMode).subscribe();
 			}
 		});
+	}
+
+	/** Player taps "retake play" on the take-over overlay to reclaim their Seat. */
+	retake(): void {
+		this.playerStateService.retake();
 	}
 
 	private _resizeHandler = () => {
@@ -369,8 +398,48 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Full-screen skull→sprout transition, then auto-navigate to the reborn life.
+	 * The overlay covers the brief DEAD flash so the player only sees "you died → new life begins".
+	 */
+	private playReincarnationOverlay(newPlayerStateIdx: number) {
+		if (this.isReincarnating) return;
+		this.isReincarnating = true;
+		this.reincarnatePhase = 'death';
+		this.audioService.playSound('dead');
+
+		// Cross-fade to the rebirth glyph partway through.
+		setTimeout(() => {
+			this.reincarnatePhase = 'rebirth';
+			this.audioService.playSound('angel');
+		}, this.REINCARNATE_OVERLAY_MS / 2);
+
+		setTimeout(() => {
+			this.router
+				.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
+				.finally(() => {
+					// New life is loading via route params; drop the overlay on the next beat.
+					setTimeout(() => (this.isReincarnating = false), 300);
+				});
+		}, this.REINCARNATE_OVERLAY_MS);
+	}
+
+	/**
+	 * Manual fallback if the REINCARNATED socket was missed (reconnect / offline at death):
+	 * resolve this avatar's current ALIVE life and jump to it.
+	 */
 	tryReincarnate() {
-		// TODO: Implement reincarnation flow
+		if (!this.sessionId || !this.gameStateId || this.avatarIdx == undefined) return;
+		this.avatarService.getCurrentPlayerStateIdx(this.sessionId, this.gameStateId, this.avatarIdx).subscribe({
+			next: (data) => {
+				if (data?.idx != undefined && data.idx !== -1 && data.idx != this.playerStateIdx) {
+					this.router.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, data.idx]);
+				} else {
+					this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN'));
+				}
+			},
+			error: () => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
+		});
 	}
 
 	openActionDialog(vm: any) {

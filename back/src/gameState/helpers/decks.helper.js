@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import log from '#config/log';
 import { PLAYER_STATUS } from '@geco/shared';
 
 const letters = [
@@ -109,6 +110,53 @@ DecksHelper.pushCardsInDecks = (gameState, cards) => {
 		gameState.decks[card.weight].push(card);
 	});
 	return gameState;
+};
+
+// Minimum number of level-0 cards to leave in decks[0] so a "square" (production) can always shuffle+draw.
+DecksHelper.REINCARNATION_RESERVE_FLOOR = 4;
+
+/**
+ * Draw a reincarnated life's opening hand, expressed in level-0-equivalent units.
+ * Draws level-0 cards from decks[0] one unit each, but never below the reserve floor;
+ * any remaining units are covered by level-1 cards from decks[1] at 2 units each (odd remainder rounds up).
+ * Never throws: if decks[1] is also short, deals what is available and warns.
+ * Caller must hold the game lock.
+ *
+ * @param {object} gameState - mutable in-memory game state
+ * @param {number} units     - target endowment in level-0-equivalent units (3 or 4)
+ * @returns {Array} the cards dealt
+ */
+DecksHelper.drawReincarnationCards = (gameState, units) => {
+	const drawn = [];
+	let unitsNeeded = units;
+
+	const deck0 = gameState.decks[0] || [];
+	// Shuffle so returned/late cards aren't handed back in a fixed order.
+	gameState.decks[0] = _.shuffle(deck0);
+	const available0 = Math.max(0, gameState.decks[0].length - DecksHelper.REINCARNATION_RESERVE_FLOOR);
+	const take0 = Math.min(unitsNeeded, available0);
+	if (take0 > 0) {
+		drawn.push(...gameState.decks[0].splice(0, take0));
+		unitsNeeded -= take0;
+	}
+
+	// Cover the shortfall from level-1 at 2 units each (round up on odd remainder).
+	if (unitsNeeded > 0) {
+		const deck1 = gameState.decks[1] || [];
+		gameState.decks[1] = _.shuffle(deck1);
+		const wantLevel1 = Math.ceil(unitsNeeded / 2);
+		const take1 = Math.min(wantLevel1, gameState.decks[1].length);
+		if (take1 > 0) {
+			drawn.push(...gameState.decks[1].splice(0, take1));
+		}
+		if (take1 < wantLevel1) {
+			log.warn(
+				`[DecksHelper] reincarnation draw short: decks[0] and decks[1] exhausted, dealt ${drawn.length} card(s) for target ${units} units`
+			);
+		}
+	}
+
+	return drawn;
 };
 
 /**

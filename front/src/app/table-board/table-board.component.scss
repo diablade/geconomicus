@@ -125,8 +125,14 @@
 	cursor: pointer;
 }
 
-.warnNum {
-	color: #b3261e;
+.good{
+    background-color: #a2cba2;
+}
+.warn {
+	background-color: #df830b;
+}
+.danger{
+    background-color: #b3261e;
 }
 
 .cell-player {
@@ -637,4 +643,74 @@
 	flex-wrap: wrap;
 	gap: 10px;
 	margin-top: 8px;
+}
+
+/* ── Death queue chip + ghost money ──────────────────────────────────── */
+.deathQueueChip {
+	position: relative;
+	overflow: hidden;
+	cursor: pointer;
+	user-select: none;
+
+	.deathProgressFill {
+		position: absolute;
+		inset: 0 auto 0 0;
+		height: 100%;
+		background: rgba(220, 60, 60, 0.18); /* subtle transparent loading strip */
+		transition: width 0.9s linear;
+		z-index: 0;
+		pointer-events: none;
+	}
+	.deathChipContent {
+		position: relative;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35em;
+	}
+	.nextDeath {
+		opacity: 0.85;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.deathQueuePanel {
+	.deathQueueHead {
+		font-weight: 700;
+		padding: 8px 14px 4px;
+		opacity: 0.9;
+	}
+	.deathQueueList {
+		max-height: 320px;
+		overflow-y: auto;
+		padding: 4px 6px 8px;
+	}
+	.deathQueueItem {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 5px 8px;
+		border-radius: 8px;
+
+		&.next {
+			background: rgba(220, 60, 60, 0.14);
+			font-weight: 700;
+		}
+		.pos {
+			min-width: 1.4em;
+			text-align: center;
+			opacity: 0.6;
+			font-variant-numeric: tabular-nums;
+		}
+		.qName {
+			flex: 1;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.qNext {
+			opacity: 0.85;
+			font-variant-numeric: tabular-nums;
+		}
+	}
 }

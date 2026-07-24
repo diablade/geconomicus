@@ -12,7 +12,10 @@
 		"DEBT": "Dettes",
 		"BUY": "Acheter",
 		"CREDITS": "CRÉDITS",
-		"OBJECTIVES": "Objectifs"
+		"OBJECTIVES": "Objectifs",
+		"TAKEN_OVER_TITLE": "L'animateur pilote votre plateau",
+		"TAKEN_OVER_TEXT": "Quelqu'un joue à votre place pour le moment. Reprenez la main quand vous voulez.",
+		"RETAKE": "Reprendre la main"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

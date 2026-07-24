@@ -86,6 +86,21 @@
         "CREDIT_IDLE": "en attente",
         "CREDIT_FAULT": "DÉFAUT",
         "CREDIT_CANCELED": "annulé",
-        "CREDIT_DONE": "soldé"
+        "CREDIT_DONE": "soldé",
+        "DEATHS_TO_COME": "{{count}} à venir",
+        "DEATH_ORDER": "Ordre des morts",
+        "GHOST_MONEY": "monnaie fantôme",
+        "DU_EQ": "DU",
+        "PLAYER_REINCARNATED": "💀 {{name}} est mort et renaît",
+        "ASSIST": {
+            "TITLE": "{{name}} est déjà connecté",
+            "SUBTITLE": "Ce joueur joue sur son propre appareil. Comment voulez-vous ouvrir sa vue ?",
+            "COEXIST": "Coexister",
+            "COEXIST_DESC": "Le joueur garde la main ; vous jouez aussi, en même temps.",
+            "TAKEOVER": "Prendre la main",
+            "TAKEOVER_DESC": "L'écran du joueur est bloqué (il peut la reprendre) ; vous pilotez.",
+            "KICK": "Déconnecter",
+            "KICK_DESC": "Le joueur est déconnecté et doit se reconnecter."
+        }
     }
 }

@@ -59,6 +59,24 @@ export const CREDIT_STATUS = {
 } as const;
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
 
+// ─── ASSIST SESSIONS ──────────────────────────────────────────────────────────
+// How an animator's secondary connection ("play the user" / 2nd cockpit) relates
+// to the device already holding a Seat. See docs/adr/0002-animator-assist-sessions.md
+export const ASSIST_MODE = {
+	COEXIST: 'coexist', // both devices act at once
+	TAKEOVER: 'takeover', // player screen overlaid + Retake; animator drives
+	KICK: 'kick', // hard-disconnect the player's device
+} as const;
+export type AssistMode = (typeof ASSIST_MODE)[keyof typeof ASSIST_MODE];
+
+// Reason sent with the 'kicked' event so the displaced device shows the right message.
+export const KICK_REASON = {
+	ANOTHER_CONNECTION: 'another_connection', // ordinary single-session replacement
+	KICKED_BY_ANIMATOR: 'kicked_by_animator', // animator chose Kick
+	RETAKEN: 'retaken', // player reclaimed their Seat from a take-over
+} as const;
+export type KickReason = (typeof KICK_REASON)[keyof typeof KICK_REASON];
+
 // ─── SOCKET EVENTS (short for bandwidth optimization) ─────────────────────────
 export const IO = {
 	SESSION: {
@@ -108,6 +126,8 @@ export const IO = {
 		ACTION_DONE: 'pad',
 		ACTION_ROBBED: 'par',
 		ACTION_TOKENS_UPDATED: 'patu',
+		TAKEN_OVER: 'pto', // server → player device: an animator is driving; show overlay
+		RETAKE: 'prt', // player device → server: reclaim my Seat from the animator
 	},
 	CREDIT: {
 		NEW: 'cn',

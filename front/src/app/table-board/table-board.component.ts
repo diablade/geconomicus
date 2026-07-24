@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription, combineLatest, map, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { GameStateService } from '../services/api/game-state.service';
 import { I18nService } from '../services/i18n.service';
 import { SnackbarService } from '../services/snackbar.service';
@@ -9,7 +10,7 @@ import { environment } from '../../environments/environment';
 import { Card, ConnectionStatus, Credit, PlayerState } from '../models/gameState';
 import { Avatar } from '../models/avatar';
 import { getActionIcon } from '../models/rules';
-import { CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
+import { AssistMode, CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
 import { getBackgroundStyle } from '../services/avatarTools';
 import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
@@ -17,6 +18,7 @@ import { FreeMoneyDialogComponent } from '../dialogs/free-money-dialog/free-mone
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { SeizureDialogComponent } from '../dialogs/seizure-dialog/seizure-dialog.component';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
+import { AssistModeDialogComponent } from '../dialogs/assist-mode-dialog/assist-mode-dialog.component';
 
 type SortKey = 'coins' | 'cards' | 'name';
 type ViewMode = 'table' | 'boards';
@@ -44,12 +46,14 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
 	protected readonly getActionIcon = getActionIcon;
+	faCircleInfo = faCircleInfo;
 
 	getBackgroundStyle = getBackgroundStyle;
 
 	sessionId = '';
 	gameStateId = '';
 	private subscription: Subscription | undefined;
+	private avatars: Avatar[] = [];
 
 	sortBy$ = new BehaviorSubject<SortKey>('coins');
 	viewMode: ViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) === 'boards' ? 'boards' : 'table';
@@ -84,11 +88,43 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	}).pipe(
 		map((vm) => {
 			const alive = vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD);
+			const dead = vm.rows.filter((r) => r.status === PLAYER_STATUS.DEAD);
 			const totalDebt = vm.rows.reduce((sum, r) => sum + r.debt, 0);
+
+			// ── Death queue (planned death order) mapped to avatars ──
+			const deathState: any = (vm.gameState as any)?.gameTimers?.deathState;
+			const deathQueue: number[] = deathState?.deathQueue ?? [];
+			const deathIntervalMs: number = deathState?.deathIntervalMs ?? 0;
+			// Resolve each queued avatarIdx to its current (non-dead) life row for display.
+			const rowByAvatar = new Map<number, TableRow>();
+			for (const r of vm.rows) {
+				const existing = rowByAvatar.get(r.avatarIdx);
+				if (!existing || (existing.status === PLAYER_STATUS.DEAD && r.status !== PLAYER_STATUS.DEAD)) {
+					rowByAvatar.set(r.avatarIdx, r);
+				}
+			}
+			const deathQueueRows = deathQueue.map((ai) => rowByAvatar.get(ai)).filter((r): r is TableRow => !!r);
+
+			// ── Ghost money = coins frozen on dead lives (persist in the mass) ──
+			const ghostMoney = dead.reduce((sum, r) => sum + (r.coins || 0), 0);
+			const currentDU = vm.gameState.currentDU || 0;
+			const ghostMoneyDU = currentDU > 0 ? ghostMoney / currentDU : 0;
+
+			// ── Approx countdown to the next scheduled death (from round-time elapsed) ──
+			const totalRoundMs = (vm.rules.roundMinutes || 0) * 60000;
+			const remainingMs = ((parseInt(vm.minutes, 10) || 0) * 60 + (parseInt(vm.seconds, 10) || 0)) * 1000;
+			let nextDeathInMs = 0;
+			let deathProgress = 0;
+			if (deathIntervalMs > 0 && deathQueue.length > 0 && remainingMs > 0) {
+				const intoInterval = Math.max(0, totalRoundMs - remainingMs) % deathIntervalMs;
+				nextDeathInMs = deathIntervalMs - intoInterval;
+				deathProgress = intoInterval / deathIntervalMs;
+			}
+
 			return {
 				...vm,
 				alive,
-				dead: vm.rows.filter((r) => r.status === PLAYER_STATUS.DEAD),
+				dead,
 				connectedCount: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD && r.connection?.isConnected).length,
 				totalTokens: vm.rows.reduce(
 					(sum, r) => (r.status !== PLAYER_STATUS.DEAD ? sum + (r.actionTokens ?? 0) : sum),
@@ -97,6 +133,12 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				activeCreditsCount: vm.credits.filter((c) => this.isCreditActive(c)).length,
 				totalDebt,
 				avgCurrency: alive.length ? (vm.gameState.currentMassMonetary || 0) / alive.length : 0,
+				deathQueueRows,
+				deathQueueCount: deathQueue.length,
+				ghostMoney,
+				ghostMoneyDU,
+				nextDeathLabel: this.formatDeathCountdown(nextDeathInMs),
+				deathProgressPct: Math.round(deathProgress * 100),
 			};
 		})
 	);
@@ -121,12 +163,37 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 			// isBank=true so credit socket events keep the credits column live
 			this.gameStateService.loadForMaster(this.sessionId, this.gameStateId, true);
 		});
+
+		// Keep a local avatar list for snackbar naming.
+		this.subscription.add(this.gameStateService.session$.subscribe((s) => (this.avatars = s?.avatars ?? [])));
+
+		// Announce each death/reincarnation to the animator.
+		this.subscription.add(
+			this.gameStateService.reincarnation$.subscribe((e) => {
+				const name = this.avatarName(e.avatarIdx);
+				this.snackbarService.showNotif(this.i18nService.instant('TABLE.PLAYER_REINCARNATED', { name }));
+			})
+		);
 	}
 
 	ngOnDestroy(): void {
 		this.gameStateService.leaveRooms();
 		this.gameStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
+	}
+
+	/** mm:ss (or ss) countdown label for the next scheduled death. */
+	formatDeathCountdown(ms: number): string {
+		if (!ms || ms <= 0) return '';
+		const total = Math.ceil(ms / 1000);
+		const m = Math.floor(total / 60);
+		const s = total % 60;
+		return m > 0 ? `${m}:${s.toString().padStart(2, '0')}` : `${s}s`;
+	}
+
+	/** Best-effort avatar display name for snackbars. */
+	private avatarName(avatarIdx: number): string {
+		return this.avatars.find((a) => a.idx === avatarIdx)?.name || `#${avatarIdx}`;
 	}
 
 	// ── rows ─────────────────────────────────────────────────────────────────────
@@ -342,7 +409,20 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	}
 
 	playUser(row: TableRow): void {
-		window.open(this.getPlayerStateUrl(row), '_blank');
+		// If the player is live on their own device, ask how to attach: co-exist,
+		// take-over, or kick (ADR-0002). Otherwise just open their board.
+		if (row.connection?.isConnected) {
+			this.dialog
+				.open(AssistModeDialogComponent, { data: { playerName: row.avatar?.name } })
+				.afterClosed()
+				.subscribe((mode: AssistMode | undefined) => {
+					if (mode) {
+						window.open(this.getPlayerStateUrl(row, mode), '_blank');
+					}
+				});
+		} else {
+			window.open(this.getPlayerStateUrl(row), '_blank');
+		}
 	}
 
 	copyPlayerLink(row: TableRow): void {
@@ -359,8 +439,8 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	getPlayerStateUrl(row: TableRow): string {
-		return (
+	getPlayerStateUrl(row: TableRow, assistMode?: AssistMode): string {
+		const url =
 			environment.WEB_HOST +
 			'player/' +
 			this.sessionId +
@@ -369,8 +449,8 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 			'/' +
 			this.gameStateId +
 			'/' +
-			row.idx
-		);
+			row.idx;
+		return assistMode ? `${url}?assist=${assistMode}` : url;
 	}
 
 	trackByRow(index: number, row: TableRow): number {

@@ -204,7 +204,13 @@ export class WebSocketService {
 			this.updateDisconnectedStatus();
 		}
 
-		this.connect({ privateChannel: query.privateChannel, publicChannel: query.publicChannel });
+		this.connect({
+			privateChannel: query.privateChannel,
+			publicChannel: query.publicChannel,
+			// Assist sessions ("play the user" tab) carry the mode + the incumbent
+			// Seat they target, so the server knows how to treat the collision.
+			...(query.assist ? { assist: query.assist, assistTarget: query.assistTarget } : {}),
+		});
 	}
 
 	on(event: string, handler: (...args: any[]) => void): void {

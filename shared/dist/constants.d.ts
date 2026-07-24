@@ -47,6 +47,18 @@ export declare const CREDIT_STATUS: {
     readonly DONE: "credit-done";
 };
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
+export declare const ASSIST_MODE: {
+    readonly COEXIST: "coexist";
+    readonly TAKEOVER: "takeover";
+    readonly KICK: "kick";
+};
+export type AssistMode = (typeof ASSIST_MODE)[keyof typeof ASSIST_MODE];
+export declare const KICK_REASON: {
+    readonly ANOTHER_CONNECTION: "another_connection";
+    readonly KICKED_BY_ANIMATOR: "kicked_by_animator";
+    readonly RETAKEN: "retaken";
+};
+export type KickReason = (typeof KICK_REASON)[keyof typeof KICK_REASON];
 export declare const IO: {
     readonly SESSION: {
         readonly STARTED: "ss";
@@ -95,6 +107,8 @@ export declare const IO: {
         readonly ACTION_DONE: "pad";
         readonly ACTION_ROBBED: "par";
         readonly ACTION_TOKENS_UPDATED: "patu";
+        readonly TAKEN_OVER: "pto";
+        readonly RETAKE: "prt";
     };
     readonly CREDIT: {
         readonly NEW: "cn";
