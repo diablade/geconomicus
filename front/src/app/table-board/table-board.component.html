@@ -651,15 +651,16 @@
 
 	<!-- Death queue popover: planned death order (next-to-die first) -->
 	<mat-menu #deathQueueMenu="matMenu" class="deathQueuePanel">
-		<div class="deathQueueHead" (click)="$event.stopPropagation()">
-			💀 {{ 'TABLE.DEATH_ORDER' | translate }}
-		</div>
+		<div class="deathQueueHead" (click)="$event.stopPropagation()">💀 {{ 'TABLE.DEATH_ORDER' | translate }}</div>
 		<div class="deathQueueList" (click)="$event.stopPropagation()">
-			<div class="deathQueueItem" *ngFor="let r of vm.deathQueueRows; let i = index" [class.next]="i === 0">
-				<span class="pos">{{ i + 1 }}</span>
-				<avatar class="qAvatar" [avatar]="r.avatar" width="34px" height="34px"></avatar>
-				<span class="qName">{{ r.avatar?.name }}</span>
-				<span class="qNext" *ngIf="i === 0 && vm.nextDeathLabel">⏳ {{ vm.nextDeathLabel }}</span>
+			<div
+				class="deathQueueItem d-flex align-items-center"
+				*ngFor="let r of vm.deathQueueRows; let i = index"
+				[class.next]="i === 0">
+				<span class="pos ms-1">{{ i + 1 }}</span>
+				<avatar class="qAvatar ms-1" [avatar]="r.avatar" width="34px" height="34px"></avatar>
+				<span class="qName ms-1">{{ r.avatar?.name }}</span>
+				<span class="qNext ms-1" *ngIf="i === 0 && vm.nextDeathLabel">⏳ {{ vm.nextDeathLabel }}</span>
 			</div>
 		</div>
 	</mat-menu>
