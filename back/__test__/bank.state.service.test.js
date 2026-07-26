@@ -209,26 +209,15 @@ describe('BankStateService — createCreditForAll', () => {
     it('creates a credit for every ALIVE player', async () => {
         const gameState = makeGameState({
             status: GAME_STATUS.PLAYING,
-            // createCreditForAll uses gameState.playerStates (no s)
-            playerStates: [
+            playersStates: [
                 { idx: 1, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [] },
                 { idx: 2, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [] },
                 { idx: 3, status: PLAYER_STATUS.DEAD,  coins: 0,  cards: [] },
             ]
         });
         const rules = makeRules({ defaultCreditAmount: 3, defaultInterestAmount: 1 });
-
-        GameStateManager.withQueue
-            // outer call (createCreditForAll)
-            .mockImplementationOnce(async (_id, fn) => {
-                const entry = { gameState, rules, events: [], sessionId: gameState.sessionId, gameStateId: gameState._id };
-                return fn(entry);
-            })
-            // two inner calls (one per ALIVE player)
-            .mockImplementation(async (_id, fn) => {
-                const entry = { gameState, rules, events: [], sessionId: gameState.sessionId, gameStateId: gameState._id };
-                return fn(entry);
-            });
+        // Single queued op — createCreditForAll now creates each credit in-entry (no re-enqueue).
+        setupWithQueue(gameState, rules);
 
         const result = await BankStateService.createCreditForAll('game-001');
 
@@ -238,14 +227,12 @@ describe('BankStateService — createCreditForAll', () => {
 
     it('skips dead / prison players', async () => {
         const gameState = makeGameState({
-            playerStates: [
-                { idx: 1, status: PLAYER_STATUS.DEAD, coins: 0, cards: [] }
+            playersStates: [
+                { idx: 1, status: PLAYER_STATUS.DEAD, coins: 0, cards: [] },
+                { idx: 2, status: PLAYER_STATUS.PRISON, coins: 0, cards: [] },
             ]
         });
-        GameStateManager.withQueue.mockImplementationOnce(async (_id, fn) => {
-            const entry = { gameState, rules: makeRules(), events: [], sessionId: 's', gameStateId: 'g' };
-            return fn(entry);
-        });
+        setupWithQueue(gameState, makeRules());
 
         const result = await BankStateService.createCreditForAll('game-001');
         expect(result.credits).toHaveLength(0);

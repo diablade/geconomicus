@@ -59,6 +59,61 @@ export const CREDIT_STATUS = {
 } as const;
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
 
+// ─── AUTO-BANK ────────────────────────────────────────────────────────────────
+// Preset that selects the Rate Schedule when the `autoBank` toggle is on.
+// See docs/adr/0003-auto-bank-rate-board.md
+export const BANK_PROFILE = {
+	NORMAL: 'normal',
+	AGGRESSIVE: 'aggressive',
+	CUSTOM: 'custom',
+} as const;
+export type BankProfile = (typeof BANK_PROFILE)[keyof typeof BANK_PROFILE];
+
+// One step of the Rate Schedule: below `threshold` average money, credit is
+// offered at `amount` for `interest` (rate = interest/amount). `allowDouble`
+// enables the ×2 option on that tier (the 0% relief tier disables it).
+export interface RateTier {
+	threshold: number;
+	amount: number;
+	interest: number;
+	allowDouble: boolean;
+}
+
+// Built-in Rate Schedules. Tiers are ordered by descending threshold; the
+// deepest crossed tier wins. The last tier is a 0%, no-double relief loan that
+// keeps the game alive when money nearly vanishes.
+export const RATE_SCHEDULE_PRESETS: Record<'normal' | 'aggressive', RateTier[]> = {
+	normal: [
+		{ threshold: 1.5, amount: 4, interest: 1, allowDouble: true },
+		{ threshold: 1.4, amount: 5, interest: 1, allowDouble: true },
+		{ threshold: 1.0, amount: 6, interest: 1, allowDouble: true },
+		{ threshold: 0.4, amount: 3, interest: 0, allowDouble: false },
+	],
+	aggressive: [
+		{ threshold: 1.0, amount: 4, interest: 1, allowDouble: true },
+		{ threshold: 0.7, amount: 5, interest: 1, allowDouble: true },
+		{ threshold: 0.5, amount: 6, interest: 1, allowDouble: true },
+		{ threshold: 0.3, amount: 3, interest: 0, allowDouble: false },
+	],
+};
+
+// How a credit came to exist — tags every created credit for the per-game panel.
+export const CREDIT_ORIGIN = {
+	ANIMATOR: 'animator', // manual contract dialog
+	FIRST_QUESTION: 'first-question', // opening First Credit Question
+	PLAYER_REQUEST: 'player-request', // self-service Credit Request
+} as const;
+export type CreditOrigin = (typeof CREDIT_ORIGIN)[keyof typeof CREDIT_ORIGIN];
+
+// A player's answer to the opening First Credit Question (stored as data).
+export const CREDIT_QUESTION_ANSWER = {
+	ACCEPT_SINGLE: 'accept-single',
+	ACCEPT_DOUBLE: 'accept-double',
+	DECLINE: 'decline',
+	NO_ANSWER: 'no-answer', // round started before the player answered
+} as const;
+export type CreditQuestionAnswer = (typeof CREDIT_QUESTION_ANSWER)[keyof typeof CREDIT_QUESTION_ANSWER];
+
 // ─── ASSIST SESSIONS ──────────────────────────────────────────────────────────
 // How an animator's secondary connection ("play the user" / 2nd cockpit) relates
 // to the device already holding a Seat. See docs/adr/0002-animator-assist-sessions.md
@@ -140,6 +195,9 @@ export const IO = {
 		REQUEST: 'creq',
 		SEIZURE: 'csq',
 		EXTENDED: 'cext',
+		RATE: 'crate', // auto-bank effective rate changed (broadcast to players)
+		REFUSED: 'cref', // a player's Credit Request was refused (insolvent)
+		QUESTION: 'cq', // opening First Credit Question prompt / answer round-trip
 	},
 	SHORT_CODE: {
 		EMIT: 'sce',
@@ -188,6 +246,8 @@ export const DB_EVENTS = {
 	CREDIT_CANCELED: 'credit-canceled',
 	CREDIT_SEIZURE: 'credit-seizure',
 	CREDIT_SEIZED_DEAD: 'credit-seized-dead',
+	CREDIT_QUESTION_ANSWERED: 'credit-question-answered',
+	CREDIT_REFUSED: 'credit-refused',
 	PRISON: 'prison',
 	PRISON_ENDED: 'prison-ended',
 	ACTION_GIVE: 'action-give',

@@ -186,6 +186,17 @@ GameStateController.creditForAll = asyncHandler(async (req, res) => {
 	const result = await BankStateService.createCreditForAll(gameStateId);
 	return res.status(200).json({ status: 'ok', message: 'CREDIT_FOR_ALL_CREATED', data: result });
 });
+GameStateController.quoteCredit = asyncHandler(async (req, res) => {
+	const { gameStateId, playerStateIdx } = req.body;
+	const result = await BankStateService.quoteCredit(gameStateId, playerStateIdx);
+	return res.status(200).json({ status: 'ok', message: 'CREDIT_QUOTED', data: result });
+});
+GameStateController.requestCredit = asyncHandler(async (req, res) => {
+	const { gameStateId, playerStateIdx, double } = req.body;
+	log.info('[GameStateController] credit request', { gameStateId, playerStateIdx, double });
+	const result = await BankStateService.requestCredit(gameStateId, playerStateIdx, double);
+	return res.status(200).json({ status: 'ok', message: result.refused ? 'CREDIT_REFUSED' : 'CREDIT_CREATED', data: result });
+});
 GameStateController.freeMoney = asyncHandler(async (req, res) => {
 	const { gameStateId, playerStateIdx, amount } = req.body;
 	log.info('[GameStateController] sending free money', { gameStateId, playerStateIdx, amount });

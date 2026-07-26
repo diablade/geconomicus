@@ -47,6 +47,32 @@ export declare const CREDIT_STATUS: {
     readonly DONE: "credit-done";
 };
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
+export declare const BANK_PROFILE: {
+    readonly NORMAL: "normal";
+    readonly AGGRESSIVE: "aggressive";
+    readonly CUSTOM: "custom";
+};
+export type BankProfile = (typeof BANK_PROFILE)[keyof typeof BANK_PROFILE];
+export interface RateTier {
+    threshold: number;
+    amount: number;
+    interest: number;
+    allowDouble: boolean;
+}
+export declare const RATE_SCHEDULE_PRESETS: Record<'normal' | 'aggressive', RateTier[]>;
+export declare const CREDIT_ORIGIN: {
+    readonly ANIMATOR: "animator";
+    readonly FIRST_QUESTION: "first-question";
+    readonly PLAYER_REQUEST: "player-request";
+};
+export type CreditOrigin = (typeof CREDIT_ORIGIN)[keyof typeof CREDIT_ORIGIN];
+export declare const CREDIT_QUESTION_ANSWER: {
+    readonly ACCEPT_SINGLE: "accept-single";
+    readonly ACCEPT_DOUBLE: "accept-double";
+    readonly DECLINE: "decline";
+    readonly NO_ANSWER: "no-answer";
+};
+export type CreditQuestionAnswer = (typeof CREDIT_QUESTION_ANSWER)[keyof typeof CREDIT_QUESTION_ANSWER];
 export declare const ASSIST_MODE: {
     readonly COEXIST: "coexist";
     readonly TAKEOVER: "takeover";
@@ -121,6 +147,9 @@ export declare const IO: {
         readonly REQUEST: "creq";
         readonly SEIZURE: "csq";
         readonly EXTENDED: "cext";
+        readonly RATE: "crate";
+        readonly REFUSED: "cref";
+        readonly QUESTION: "cq";
     };
     readonly SHORT_CODE: {
         readonly EMIT: "sce";
@@ -165,6 +194,8 @@ export declare const DB_EVENTS: {
     readonly CREDIT_CANCELED: "credit-canceled";
     readonly CREDIT_SEIZURE: "credit-seizure";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
+    readonly CREDIT_QUESTION_ANSWERED: "credit-question-answered";
+    readonly CREDIT_REFUSED: "credit-refused";
     readonly PRISON: "prison";
     readonly PRISON_ENDED: "prison-ended";
     readonly ACTION_GIVE: "action-give";

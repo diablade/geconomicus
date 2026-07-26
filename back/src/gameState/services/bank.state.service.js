@@ -6,9 +6,20 @@ import socket from '#config/socket';
 import log from '#config/log';
 import Timer from '../../misc/Timer.js';
 import { differenceInMilliseconds } from 'date-fns';
-import { CREDIT_STATUS, GAME_STATUS, PLAYER_TYPE, PLAYER_STATUS, ROOMS, IO, DB_EVENTS } from '@geco/shared';
+import {
+	CREDIT_STATUS,
+	GAME_STATUS,
+	GAME_TYPE,
+	PLAYER_TYPE,
+	PLAYER_STATUS,
+	CREDIT_ORIGIN,
+	ROOMS,
+	IO,
+	DB_EVENTS,
+} from '@geco/shared';
 import EventHelper from '../helpers/event.helper.js';
 import DecksHelper from '../helpers/decks.helper.js';
+import { computeAverageMoney, computeEffectiveRate, computeSolvency } from '../helpers/bank.helper.js';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -275,87 +286,195 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 
 const BankStateService = {};
 
-BankStateService.createCredit = async (gameStateId, playerStateIdx, amount, interest) => {
-	log.info(
-		`[BankStateService] creating credit for p:${playerStateIdx} in g:${gameStateId} / c:${amount}, i:${interest}`
+// In-memory per-life rate quotes: snapshotted when a player opens the request
+// dialog and honoured for a short window so a rate that tightens while they
+// decide doesn't change their terms. Keyed `${gameStateId}:${playerStateIdx}`.
+const _creditQuotes = new Map();
+const QUOTE_TTL = 3 * minute;
+const _quoteKey = (gameStateId, playerStateIdx) => `${gameStateId}:${playerStateIdx}`;
+
+// The credit terms on offer right now: base rate unless the game is PLAYING with
+// autoBank on, in which case the deepest crossed avg-tier wins.
+const _currentRate = (gameState, rules) => {
+	if (rules.typeMoney !== GAME_TYPE.DEBT || !rules.autoBank || gameState.status !== GAME_STATUS.PLAYING) {
+		// base rate (tierIndex -1): pass an avg above every threshold
+		return computeEffectiveRate(Number.POSITIVE_INFINITY, rules.rateSchedule, rules);
+	}
+	return computeEffectiveRate(computeAverageMoney(gameState), rules.rateSchedule, rules);
+};
+
+// Core credit creation — runs inside an already-held queue entry (no re-enqueue),
+// so callers that already hold the queue (createCreditForAll, requestCredit) reuse
+// it without deadlocking.
+const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, interest, origin) => {
+	const { gameState, rules, events } = entry;
+	const playerState = _findPlayer(gameState, playerStateIdx);
+	if (!playerState) {
+		throw new Error('Player not found');
+	}
+	if (playerState.status !== PLAYER_STATUS.ALIVE) {
+		throw new Error('Player is not alive or in prison');
+	}
+
+	const startNow = gameState.status === GAME_STATUS.PLAYING;
+
+	gameState.creditIndexSeq++;
+	const timerId = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
+	const now = new Date();
+	const credit = {
+		id: timerId,
+		amount,
+		interest,
+		playerStateIdx,
+		status: startNow ? CREDIT_STATUS.RUNNING : CREDIT_STATUS.IDLE,
+		extended: 0,
+		createdAt: now,
+		startedAt: startNow ? now : null,
+		endAt: null,
+		remainingTime: rules.durationCredit * minute,
+	};
+
+	// update gameState
+	gameState.credits.push(credit);
+	gameState.currentMassMonetary += amount;
+	playerState.coins += amount;
+
+	if (startNow) {
+		const timer = _createCreditTimer(gameStateId, credit);
+		creditTimerManager.startTimer(timer);
+	}
+
+	events.push(
+		EventHelper.createEvent(
+			DB_EVENTS.CREDIT_NEW,
+			entry.sessionId,
+			entry.gameStateId,
+			PLAYER_TYPE.BANK,
+			playerStateIdx,
+			{ ...credit, origin } // origin lives in the event stream, not on the persisted credit
+		)
 	);
+
+	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
+	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
+		credit,
+		coinsLK: playerState.coins,
+	});
+
+	return {
+		credit,
+		..._getBankIndicators(gameState),
+	};
+};
+
+BankStateService.createCredit = async (
+	gameStateId,
+	playerStateIdx,
+	amount,
+	interest,
+	origin = CREDIT_ORIGIN.ANIMATOR
+) => {
+	log.info(
+		`[BankStateService] creating credit for p:${playerStateIdx} in g:${gameStateId} / c:${amount}, i:${interest}, o:${origin}`
+	);
+	return await GameStateManager.withQueue(gameStateId, async (entry) =>
+		_createCreditInEntry(entry, gameStateId, playerStateIdx, amount, interest, origin)
+	);
+};
+
+// Snapshot the current rate for a life (quote-lock) and report its solvency.
+BankStateService.quoteCredit = async (gameStateId, playerStateIdx) => {
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules } = entry;
+		const playerState = _findPlayer(gameState, playerStateIdx);
+		const rate = _currentRate(gameState, rules);
+		const solvency = computeSolvency(playerState, _findCreditsOfPlayer(gameState, playerStateIdx));
+		_creditQuotes.set(_quoteKey(gameStateId, playerStateIdx), { rate, at: Date.now() });
+		return { rate, solvency };
+	});
+};
+
+// Self-service Credit Request (pull). Honours a fresh quote if the rate tightened
+// while the player decided, checks coins+cards solvency, then creates or refuses.
+BankStateService.requestCredit = async (gameStateId, playerStateIdx, wantDouble = false) => {
+	log.info(`[BankStateService] credit request p:${playerStateIdx} g:${gameStateId} double:${wantDouble}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
 		const playerState = _findPlayer(gameState, playerStateIdx);
-		if (!playerState) {
-			throw new Error('Player not found');
-		}
 		if (playerState.status !== PLAYER_STATUS.ALIVE) {
-			throw new Error('Player is not alive or in prison');
+			throw new Error('ERROR.PLAYER_NOT_ALIVE');
+		}
+		if (gameState.status !== GAME_STATUS.PLAYING) {
+			throw new Error('ERROR.GAME_NOT_PLAYING');
 		}
 
-		const startNow = gameState.status === GAME_STATUS.PLAYING;
+		// Quote-lock: keep the opened rate if it has since tightened (shallower tier).
+		const current = _currentRate(gameState, rules);
+		const key = _quoteKey(gameStateId, playerStateIdx);
+		const quoted = _creditQuotes.get(key);
+		let rate = current;
+		if (quoted && Date.now() - quoted.at <= QUOTE_TTL && quoted.rate.tierIndex > current.tierIndex) {
+			rate = quoted.rate;
+		}
+		_creditQuotes.delete(key);
 
-		gameState.creditIndexSeq++;
-		const timerId = `credit-${gameStateId}-${playerStateIdx}-${gameState.creditIndexSeq}`;
-		const now = new Date();
-		const credit = {
-			id: timerId,
+		const useDouble = wantDouble && rate.allowDouble;
+		const amount = useDouble ? rate.amount * 2 : rate.amount;
+		const interest = useDouble ? rate.interest * 2 : rate.interest;
+
+		// Solvency: coins + card value must cover every obligation, this one included.
+		const solvency = computeSolvency(
+			playerState,
+			_findCreditsOfPlayer(gameState, playerStateIdx),
 			amount,
-			interest,
-			playerStateIdx,
-			status: startNow ? CREDIT_STATUS.RUNNING : CREDIT_STATUS.IDLE,
-			extended: 0,
-			createdAt: now,
-			startedAt: startNow ? now : null,
-			endAt: null,
-			remainingTime: rules.durationCredit * minute,
-		};
-
-		// update gameState
-		gameState.credits.push(credit);
-		gameState.currentMassMonetary += amount;
-		playerState.coins += amount;
-
-		if (startNow) {
-			const timer = _createCreditTimer(gameStateId, credit);
-			creditTimerManager.startTimer(timer);
-		}
-
-		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_NEW,
-				entry.sessionId,
-				entry.gameStateId,
+			interest
+		);
+		if (!solvency.solvent) {
+			const event = EventHelper.createEvent(
+				DB_EVENTS.CREDIT_REFUSED,
+				gameState.sessionId,
+				gameState._id,
 				PLAYER_TYPE.BANK,
 				playerStateIdx,
-				credit
-			)
+				{ amount, interest, ...solvency }
+			);
+			events.push(event);
+			socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.REFUSED, {
+				amount,
+				interest,
+				solvency,
+			});
+			return { refused: true, amount, interest, solvency };
+		}
+
+		const result = await _createCreditInEntry(
+			entry,
+			gameStateId,
+			playerStateIdx,
+			amount,
+			interest,
+			CREDIT_ORIGIN.PLAYER_REQUEST
 		);
-
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
-		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
-			credit,
-			coinsLK: playerState.coins,
-		});
-
-		return {
-			credit,
-			..._getBankIndicators(gameState),
-		};
+		return { refused: false, ...result };
 	});
 };
 
 BankStateService.createCreditForAll = async (gameStateId) => {
 	log.debug(`[BankStateService] Creating credit for all in game state ${gameStateId}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules, events } = entry;
-		const playerStates = gameState.playerStates;
+		const { gameState, rules } = entry;
 		const credits = [];
-		for (const playerState of playerStates) {
+		for (const playerState of gameState.playersStates) {
 			if (playerState.status !== PLAYER_STATUS.ALIVE) {
 				continue;
 			}
-			const credit = await BankStateService.createCredit(
+			const credit = await _createCreditInEntry(
+				entry,
 				gameStateId,
 				playerState.idx,
 				rules.defaultCreditAmount,
-				rules.defaultInterestAmount
+				rules.defaultInterestAmount,
+				CREDIT_ORIGIN.ANIMATOR
 			);
 			credits.push(credit);
 		}

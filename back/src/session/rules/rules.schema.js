@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { GAME_TYPE, GAME_STATUS, CREDIT_STATUS } from '@geco/shared';
+import { GAME_TYPE, GAME_STATUS, CREDIT_STATUS, BANK_PROFILE, RATE_SCHEDULE_PRESETS } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
@@ -45,7 +45,28 @@ let RulesSchema = new Schema(
 		defaultInterestAmount: { type: Number, required: true, default: 1 },
 		durationCredit: { type: Number, required: true, default: 5 },
 		timerPrison: { type: Number, required: true, default: 5 },
-		manualBank: { type: Boolean, required: true, default: false },
+		manualBank: { type: Boolean, required: true, default: false }, // deprecated — superseded by autoBank
+
+		//auto-bank (see docs/adr/0003-auto-bank-rate-board.md)
+		autoBank: { type: Boolean, required: true, default: false },
+		bankProfile: {
+			type: String,
+			required: true,
+			enum: Object.values(BANK_PROFILE),
+			default: BANK_PROFILE.NORMAL,
+		},
+		rateSchedule: {
+			type: [
+				{
+					threshold: { type: Number, required: true },
+					amount: { type: Number, required: true },
+					interest: { type: Number, required: true },
+					allowDouble: { type: Boolean, required: true, default: true },
+					_id: false,
+				},
+			],
+			default: () => RATE_SCHEDULE_PRESETS.normal,
+		},
 		seizureType: {
 			type: String,
 			required: true,

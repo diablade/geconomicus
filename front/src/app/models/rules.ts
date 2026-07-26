@@ -1,3 +1,5 @@
+import { BankProfile, BANK_PROFILE, RateTier, RATE_SCHEDULE_PRESETS } from '@geco/shared';
+
 export class Rules {
 	idx = 0;
 	gameStateId = '';
@@ -38,6 +40,9 @@ export class Rules {
 	durationCredit = 0;
 	timerPrison = 0;
 	manualBank = false;
+	autoBank = false;
+	bankProfile: BankProfile = BANK_PROFILE.NORMAL;
+	rateSchedule: RateTier[] = RATE_SCHEDULE_PRESETS.normal.map((t) => ({ ...t }));
 	seizureType = '';
 	seizureCosts = 0;
 	seizureDecote = 0;

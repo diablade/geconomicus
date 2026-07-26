@@ -1,6 +1,13 @@
 import Joi from 'joi';
 import { isValidObjectId, isValidNanoId4 } from '../../misc/validate.tool.js';
-import { GAME_TYPE, CREDIT_STATUS } from '@geco/shared';
+import { GAME_TYPE, CREDIT_STATUS, BANK_PROFILE } from '@geco/shared';
+
+const rateTier = Joi.object({
+	threshold: Joi.number().required(),
+	amount: Joi.number().min(0).required(),
+	interest: Joi.number().min(0).required(),
+	allowDouble: Joi.boolean().default(true),
+});
 
 export const sanitize = {
 	create: Joi.object({
@@ -39,6 +46,11 @@ export const sanitize = {
 			durationCredit: Joi.number().default(5),
 			timerPrison: Joi.number().default(5),
 			manualBank: Joi.boolean().default(false),
+			autoBank: Joi.boolean().default(false),
+			bankProfile: Joi.string()
+				.valid(...Object.values(BANK_PROFILE))
+				.default(BANK_PROFILE.NORMAL),
+			rateSchedule: Joi.array().items(rateTier).optional(),
 			seizureType: Joi.string().default(CREDIT_STATUS.DECOTE),
 			seizureCosts: Joi.number().default(2),
 			seizureDecote: Joi.number().default(33),
@@ -90,6 +102,11 @@ export const sanitize = {
 			durationCredit: Joi.number().optional(),
 			timerPrison: Joi.number().optional(),
 			manualBank: Joi.boolean().optional(),
+			autoBank: Joi.boolean().optional(),
+			bankProfile: Joi.string()
+				.valid(...Object.values(BANK_PROFILE))
+				.optional(),
+			rateSchedule: Joi.array().items(rateTier).optional(),
 			seizureType: Joi.string().optional(),
 			seizureCosts: Joi.number().optional(),
 			seizureDecote: Joi.number().optional(),

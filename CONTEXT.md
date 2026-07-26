@@ -124,3 +124,51 @@ A compact inline element (`app-credit-chip`) rendering one Credit in the table v
 Detail (for closed chips, and via a "Details" menu entry on active chips) is shown in an anchored popover that renders the existing `app-credit` card read-only — not a modal dialog.
 
 The per-player credits cell shows *all* of a player's credits (active first, closed after) and scrolls when they overflow. The chip owns the credit status→colour/label mapping and progress math (previously duplicated in `table-board` and `app-credit`). Distinct from `app-credit`, the tall vertical credit card formerly used by the bank view.
+
+## Auto-Bank
+
+The debt game's automated credit facility. Instead of the animator issuing every loan by hand, the bank sets the *price of credit* from the money supply and lets players borrow on demand. Configured per game by a Bank Profile. Debt game only — the June game has no bank.
+
+## Bank Profile
+
+The Auto-Bank's behaviour preset for a game: **Normal**, **Aggressive**, or **Custom**, chosen when the `autoBank` toggle is on (off = manual, today's hand-issued behaviour, superseding the old `manualBank` flag). Selects the Rate Schedule; Aggressive holds players at the Base Rate until money is much scarcer before relenting; Custom lets the animator edit the tiers directly. The manual contract dialog stays available whatever the mode. *Avoid*: bank mode, bank type.
+
+## Base Rate
+
+The starting credit terms (default 3 for 1). Offered at the First Credit Question and whenever Average Money sits above the profile's highest threshold. Can be taken single or Double. Reuses the existing `defaultCreditAmount` / `defaultInterestAmount`.
+
+## Double
+
+The option to take any credit at twice the current terms (e.g. 6 for 2 against a 3-for-1 base). Always offered alongside the single amount, at the start and during the round.
+
+## Rate Schedule / Tier
+
+The ordered list of tiers a Bank Profile defines — each an Average-Money threshold paired with credit terms (amount + interest). As money grows scarce the Auto-Bank descends the schedule; the **deepest crossed threshold wins**, so credit becomes larger and cheaper the scarcer money gets. *Avoid*: rate table, ladder.
+
+## Effective Rate
+
+The credit terms currently on offer: the Base Rate while Average Money is above every threshold, otherwise the deepest crossed tier. Recomputed whenever the money mass or alive count changes, and it moves **both ways** — terms improve as money drains and tighten again as borrowing re-injects it. Rate changes are **live-down, silent-up**: only an *improvement* notifies players (with amount, interest, and %); a tightening happens silently. Because tightening is silent, the current Effective Rate is shown persistently as a small chip beside the credit button on the player board (amount / interest / %) so a borrower always sees the true rate before committing.
+
+## Average Money
+
+Total money mass ÷ living players — the scarcity metric that drives the Auto-Bank, already surfaced in the table view (`avgCurrency`). Includes Ghost Money, so it overstates money held in living hands. *Avoid*: avg per player, average currency.
+
+## First Credit Question
+
+The opening ceremony of a debt game: every player is asked once whether to take a starting credit (Base Rate, single or Double). The answer is recorded as experimental data whatever the player does afterward. The animator then persuades the room toward roughly 2 Average Money before starting the round — there is no automatic floor.
+
+## Credit Request
+
+A player-initiated ask for a credit — the "pull" path, distinct from the animator's manual contract. Reached from a button inside the opened credit panel; the player picks single or Double. The Effective Rate is **quoted when the request dialog opens and held for as long as it stays open**, so a rate that tightens while the player is deciding does not change the terms they were shown. Auto-approved when the player is Solvent, otherwise refused with a prompt to **negotiate with the animator** (who can still grant it via the manual contract). Do **not** confuse with the existing `IO.CREDIT.REQUEST` / `DB_EVENTS.CREDIT_REQUEST`, which is the opposite thing — the bank calling a player to settle at maturity (the **Settlement Call**). *Avoid*: loan application.
+
+## Settlement Call
+
+The bank asking a player to repay (settle) or pay interest when a credit's timer expires — the maturity event carried today by `IO.CREDIT.REQUEST`. Named here only to keep it distinct from a player's Credit Request. *Avoid*: credit request (ambiguous).
+
+## Credit Origin
+
+A tag on every created credit recording how it came to be: `animator` (manual contract), `first-question` (the opening First Credit Question), or `player-request` (a self-service Credit Request). Lets the per-game results panel break credit behaviour down by source.
+
+## Solvency
+
+A player's total outstanding obligation — amount + interest summed across their active credits — measured against their wealth (coins + total card value). Determines auto-approval of a Credit Request; also shown on the animator's manual contract dialog to inform a risk / higher-rate decision (informational there, never an auto-refusal).
