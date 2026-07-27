@@ -35,7 +35,12 @@
 		"DEFAULT_INTEREST_AMOUNT": "1 par défaut",
 		"CREDIT_SUCCESS": "Crédit accordé à {{player}}",
 		"QUICK_CREDIT": "Crédit de {{amount}}, intérêt à {{interest}}",
-		"MANUAL_CREDIT": "Saisie manuelle d'un crédit"
+		"MANUAL_CREDIT": "Saisie manuelle d'un crédit",
+		"SOLVENCY": "Solvabilité",
+		"WEALTH": "Patrimoine (pièces + cartes)",
+		"OBLIGATION": "Dettes en cours",
+		"AFTER_CREDIT": "Marge après ce crédit",
+		"INSOLVENT_WARN": "Ce crédit dépasse le patrimoine du joueur — risque de défaut."
 	},
 	"CREDIT": {
         "IDLE": "En attente...",

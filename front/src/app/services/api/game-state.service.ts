@@ -626,6 +626,11 @@ export class GameStateService {
 		});
 	}
 
+	// Auto-bank: animator broadcasts the opening First Credit Question to all players.
+	askFirstCreditQuestion(gameStateId: string) {
+		return this.bankService.askFirstCreditQuestion(gameStateId);
+	}
+
 	giveFreeMoney(give: any) {
 		this.bankService.giveFreeMoney(this.gameStateId, give.playerStateIdx, give.amount).subscribe((data: any) => {
 			this.snackbarService.showSuccess(

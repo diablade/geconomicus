@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GAME_TYPE } from '@geco/shared';
+import { GAME_TYPE, CREDIT_ORIGIN, CREDIT_QUESTION_ANSWER, DB_EVENTS } from '@geco/shared';
 import {
 	ActionPayload,
 	CreditPayload,
@@ -76,6 +76,9 @@ export interface GameSynthesis {
 	interestPaid?: number;
 	seizures?: number;
 	bankFinalCoins?: number;
+	// debt only — auto-bank credit-decision telemetry (from CREDIT_QUESTION_ANSWERED /
+	// CREDIT_NEW origin / CREDIT_REFUSED events). See CONTEXT.md → Credit Origin.
+	creditDecisions?: CreditDecisions;
 	// june only
 	duFinal?: number;
 	duCount?: number;
@@ -85,6 +88,20 @@ export interface ActionUsage {
 	typeEvent: string; // DB_EVENTS.ACTION_*
 	good: boolean; // give/ong left column, steal/war right column
 	count: number;
+}
+
+/** Auto-bank credit behaviour of one (debt) game, aggregated from the event stream. */
+export interface CreditDecisions {
+	// First Credit Question responses (the opening blocking prompt)
+	acceptSingle: number;
+	acceptDouble: number;
+	decline: number;
+	// created credits broken down by how they came to be (Credit Origin)
+	fromAnimator: number;
+	fromFirstQuestion: number;
+	fromPlayerRequest: number;
+	// self-service requests the bank refused on insolvency
+	refused: number;
 }
 
 export interface PodiumEntry {
@@ -139,6 +156,10 @@ export class SessionResultsService {
 		let duCount = 0;
 		const txByPlayer = new Map<string, number>();
 		const actionCounts = new Map<string, number>();
+		// auto-bank credit-decision telemetry (debt only)
+		const firstQ = { acceptSingle: 0, acceptDouble: 0, decline: 0 };
+		const origin = { animator: 0, firstQuestion: 0, playerRequest: 0 };
+		let creditsRefused = 0;
 
 		const pushCoin = (idx: string | undefined, at: string, lkVal: number | undefined, foldDelta: number) => {
 			if (!idx || !byIdx.has(idx)) return;
@@ -162,6 +183,16 @@ export class SessionResultsService {
 			const group = groupOfEvent(ev.typeEvent);
 			const p = (ev.payload ?? {}) as LkSnapshot & Record<string, any>;
 
+			// Auto-bank first-credit-question responses + refusals (SYSTEM group — not in the switch).
+			if (ev.typeEvent === DB_EVENTS.CREDIT_QUESTION_ANSWERED) {
+				const a = p['answer'];
+				if (a === CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE) firstQ.acceptSingle++;
+				else if (a === CREDIT_QUESTION_ANSWER.ACCEPT_DOUBLE) firstQ.acceptDouble++;
+				else if (a === CREDIT_QUESTION_ANSWER.DECLINE) firstQ.decline++;
+			} else if (ev.typeEvent === DB_EVENTS.CREDIT_REFUSED) {
+				creditsRefused++;
+			}
+
 			switch (group) {
 				case EVENT_GROUP.TRANSACTION: {
 					const tp = p as TransactionPayload;
@@ -180,6 +211,12 @@ export class SessionResultsService {
 					const cp = p as CreditPayload;
 					if (ev.typeEvent.includes('new') || ev.typeEvent.includes('free-money')) {
 						creditsTaken += ev.typeEvent.includes('new') ? 1 : 0;
+						if (ev.typeEvent.includes('new')) {
+							const o = cp.origin;
+							if (o === CREDIT_ORIGIN.FIRST_QUESTION) origin.firstQuestion++;
+							else if (o === CREDIT_ORIGIN.PLAYER_REQUEST) origin.playerRequest++;
+							else origin.animator++; // ANIMATOR or legacy events without an origin
+						}
 						pushCoin(ev.receiver, ev.at, cp.receiverCoinsLK, +(cp.amount ?? 0));
 						pushMass(ev.at, cp, +(cp.amount ?? 0));
 					} else if (ev.typeEvent.includes('settled')) {
@@ -290,6 +327,15 @@ export class SessionResultsService {
 							interestPaid,
 							seizures,
 							bankFinalCoins: undefined, // TODO(back): bankCoinsLK on last credit event, or ship gameState.bank in results payload
+							creditDecisions: {
+								acceptSingle: firstQ.acceptSingle,
+								acceptDouble: firstQ.acceptDouble,
+								decline: firstQ.decline,
+								fromAnimator: origin.animator,
+								fromFirstQuestion: origin.firstQuestion,
+								fromPlayerRequest: origin.playerRequest,
+								refused: creditsRefused,
+							},
 						}),
 			},
 			actions,

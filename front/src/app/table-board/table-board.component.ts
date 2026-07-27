@@ -272,6 +272,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				rules: this.gameStateService.rules$,
 				players: this.alivePlayers$(),
 				player,
+				gameStateId: this.gameStateId,
 			},
 		});
 		dialogRef.afterClosed().subscribe((contrat) => {

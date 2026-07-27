@@ -58,6 +58,10 @@ export const environment = {
 	BANK_STATE: {
 		CREATE_CREDIT: 'game-state/bank-state/create-credit',
 		CREDIT_FOR_ALL: 'game-state/bank-state/credit-for-all',
+		GET_RATE: 'game-state/bank-state/get-rate',
+		REQUEST_CREDIT: 'game-state/bank-state/request-credit',
+		ASK_FIRST_CREDIT: 'game-state/bank-state/ask-first-credit',
+		ANSWER_FIRST_CREDIT: 'game-state/bank-state/answer-first-credit',
 		CANCEL_CREDIT: 'game-state/bank-state/cancel-credit',
 		GIVE_FREE_MONEY: 'game-state/bank-state/free-money',
 		SETTLE_CREDIT: 'game-state/bank-state/settle-credit',

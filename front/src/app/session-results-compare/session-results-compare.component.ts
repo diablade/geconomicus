@@ -181,6 +181,20 @@ export class SessionResultsCompareComponent implements OnInit {
 			{ label: '☀️ DU final', dette: '-', libre: l.duFinal ?? '-' },
 			{ label: '☀️ Nombre de DU', dette: '-', libre: l.duCount ?? '-' },
 		];
+		// Auto-bank: credit-decision breakdown (debt only). Only shown when the auto-bank
+		// actually produced data (a first-question response, a refusal, or a self-service credit).
+		const cd = d.creditDecisions;
+		if (cd && (cd.acceptSingle || cd.acceptDouble || cd.decline || cd.fromFirstQuestion || cd.fromPlayerRequest || cd.refused)) {
+			this.synthesisRows.push(
+				{ label: '🙋 1er crédit — oui (simple)', dette: cd.acceptSingle, libre: '-' },
+				{ label: '🙌 1er crédit — oui (×2)', dette: cd.acceptDouble, libre: '-' },
+				{ label: '🙅 1er crédit — non', dette: cd.decline, libre: '-' },
+				{ label: '🧑‍🏫 Crédits (animateur)', dette: cd.fromAnimator, libre: '-' },
+				{ label: '❓ Crédits (1re question)', dette: cd.fromFirstQuestion, libre: '-' },
+				{ label: '🛎️ Crédits (auto-service)', dette: cd.fromPlayerRequest, libre: '-' },
+				{ label: '⛔ Crédits refusés', dette: cd.refused, libre: '-' }
+			);
+		}
 	}
 
 	private buildActions(): void {

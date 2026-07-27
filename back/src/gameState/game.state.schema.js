@@ -111,6 +111,13 @@ let GameStateSchema = new Schema(
 			type: [Credit],
 			default: [],
 		},
+		// Auto-bank: the deepest avg-money rate tier last broadcast to players
+		// (-1 = base rate). Persisted so live-down / silent-up change detection
+		// survives a memory reload. null = never computed yet.
+		currentRateTierIndex: {
+			type: Number,
+			default: null,
+		},
 		bankInterestEarned: {
 			type: Number,
 			default: 0,

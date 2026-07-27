@@ -231,6 +231,85 @@
 						[(ngModel)]="rules.durationCredit" />
 				</mat-form-field>
 			</div>
+			<!-- Auto-bank: profile + variable-length rate schedule -->
+			<div *ngIf="rules.typeMoney === DEBT" class="mt-2 d-flex flex-column">
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.autoBank">
+					{{ 'OPTION.AUTO_BANK' | translate }}
+				</mat-checkbox>
+				<div class="m-auto fs-7 infoLabel" [innerHTML]="'OPTION.AUTO_BANK_INFO' | translate"></div>
+
+				<div *ngIf="rules.autoBank" class="mt-2 d-flex flex-column align-items-center">
+					<mat-label class="fw-bold">{{ 'OPTION.BANK_PROFILE' | translate }}</mat-label>
+					<mat-radio-group [ngModel]="rules.bankProfile" (ngModelChange)="onProfileChange($event)">
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.NORMAL">
+							{{ 'OPTION.PROFILE_NORMAL' | translate }}
+						</mat-radio-button>
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.AGGRESSIVE">
+							{{ 'OPTION.PROFILE_AGGRESSIVE' | translate }}
+						</mat-radio-button>
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.CUSTOM">
+							{{ 'OPTION.PROFILE_CUSTOM' | translate }}
+						</mat-radio-button>
+					</mat-radio-group>
+
+					<div class="tier-editor w-100 mt-2">
+						<div class="d-flex flex-row gap-2 fs-7 fw-bold justify-content-center">
+							<span class="tier-col">{{ 'OPTION.TIER_THRESHOLD' | translate }}</span>
+							<span class="tier-col">{{ 'OPTION.TIER_AMOUNT' | translate }}</span>
+							<span class="tier-col">{{ 'OPTION.TIER_INTEREST' | translate }}</span>
+							<span class="tier-col">%</span>
+							<span class="tier-col">×2</span>
+							<span class="tier-col"></span>
+						</div>
+						<div
+							*ngFor="let tier of rules.rateSchedule; let i = index"
+							class="d-flex flex-row align-items-center gap-2 justify-content-center">
+							<input
+								type="number"
+								step="0.1"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.threshold" />
+							<input
+								type="number"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.amount" />
+							<input
+								type="number"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.interest" />
+							<span class="tier-col fs-7">
+								{{ tier.amount ? ((tier.interest / tier.amount) * 100 | number: '1.0-0') : 0 }}%
+							</span>
+							<mat-checkbox
+								class="tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.allowDouble"></mat-checkbox>
+							<button
+								class="tier-col"
+								*ngIf="rules.bankProfile === BANK_PROFILE.CUSTOM"
+								mat-button
+								color="warn"
+								(click)="removeTier(i)">
+								✕
+							</button>
+						</div>
+						<button
+							*ngIf="rules.bankProfile === BANK_PROFILE.CUSTOM"
+							mat-stroked-button
+							class="mt-1"
+							(click)="addTier()">
+							+ {{ 'OPTION.TIER_ADD' | translate }}
+						</button>
+					</div>
+					<div class="m-auto fs-7 infoLabel mt-1">{{ 'OPTION.TIER_HELP' | translate }}</div>
+				</div>
+			</div>
 			<div *ngIf="rules.typeMoney === DEBT" class="w-100">
 				<mat-label>{{ 'OPTION.BANKROUTE_WTD' | translate }}</mat-label>
 				<mat-radio-group class="w-100" [(ngModel)]="rules.seizureType">

@@ -43,8 +43,10 @@ router.post('/action/who-have-card', validate(actionSanitize.whoHaveCard), gameS
 router.post('/bank-state/free-money', validate(bankStateSanitize.freeMoney), gameStateController.freeMoney);
 router.post('/bank-state/create-credit', validate(bankStateSanitize.createCredit), gameStateController.createCredit);
 router.post('/bank-state/credit-for-all', validate(bankStateSanitize.creditForAll), gameStateController.creditForAll);
-router.post('/bank-state/quote-credit', validate(bankStateSanitize.quoteCredit), gameStateController.quoteCredit);
+router.post('/bank-state/get-rate', validate(bankStateSanitize.getRate), gameStateController.getRate);
 router.post('/bank-state/request-credit', validate(bankStateSanitize.requestCredit), gameStateController.requestCredit);
+router.post('/bank-state/ask-first-credit', validate(bankStateSanitize.askFirstCredit), gameStateController.askFirstCredit);
+router.post('/bank-state/answer-first-credit', validate(bankStateSanitize.answerFirstCredit), gameStateController.answerFirstCredit);
 router.post('/bank-state/cancel-credit', validate(bankStateSanitize.cancelCredit), gameStateController.cancelCredit);
 router.post('/bank-state/settle-credit', validate(bankStateSanitize.settleCredit), gameStateController.settleCredit);
 router.post('/bank-state/extend-credit', validate(bankStateSanitize.extendCredit), gameStateController.extendCredit);

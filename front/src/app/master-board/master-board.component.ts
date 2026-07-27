@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subscription, take } from 'rxjs';
+import { combineLatest, map, Subscription, take } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,6 +31,8 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly environment = environment;
+	// Auto-bank: target average money per player the animator aims for before starting.
+	protected readonly AVG_MONEY_TARGET = 2;
 
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
@@ -51,6 +53,13 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	minutes$ = this.gameStateService.minutes$;
 	seconds$ = this.gameStateService.seconds$;
 	playersAC$ = this.gameStateService.playersAC$;
+	// Auto-bank: average money per living player (drives the low-money warning near Start).
+	avgMoney$ = combineLatest([this.gameState$, this.playersAC$]).pipe(
+		map(([gs, players]) => {
+			const alive = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
+			return alive.length ? (gs?.currentMassMonetary || 0) / alive.length : 0;
+		})
+	);
 
 	vm$ = combineLatest({
 		gameState: this.gameState$,
@@ -59,6 +68,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		timerProgress: this.timerProgress$,
 		minutes: this.minutes$,
 		seconds: this.seconds$,
+		avgMoney: this.avgMoney$,
 	});
 
 	constructor(
@@ -203,6 +213,14 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			error: (err: any) => {
 				this.snackbarService.showError(this.i18nService.instant('ERROR.DISTRIBUTE_CARDS'));
 			},
+		});
+	}
+
+	// Auto-bank: broadcast the opening First Credit Question to all players.
+	askFirstCredit() {
+		this.gameStateService.askFirstCreditQuestion(this.gameStateId).subscribe({
+			next: () => this.snackbarService.showSuccess(this.i18nService.instant('MASTER.FIRST_CREDIT_SENT')),
+			error: (err: any) => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
 		});
 	}
 

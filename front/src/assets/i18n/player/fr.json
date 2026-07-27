@@ -37,9 +37,17 @@
         "CREDIT_FAULT":{
             "TITLE": "Rembourser le crédit ?",
             "MESSAGE": "!!! UN CRÉDIT EST EN DÉFAUT DE PAIEMENT !!!"
+        },
+        "REQUEST_CREDIT":{
+            "TITLE": "Confirmez la demande de crédit",
+            "MESSAGE": "Pour un versement de {{amount}} € et {{interest}} € d'intérêt",
+            "MESSAGE2": "Pour un total de {{total}} € à rembourser ?  (soit {{rate}}% taux d'intérêt)",
+            "BTN_CONFIRM": "Demander"
         }
 	},
 	"CREDIT": {
+        "SIMPLE": "simple",
+        "DOUBLE": "double",
         "IDLE": "En attente...",
 		"PAUSED": "Jeu en pause...",
 		"RUNNING": "En cours...",
@@ -60,6 +68,11 @@
 		"NOTICE_INTEREST": "Intérêt, payable pour prolonger de {{ interestMinutes }} minutes",
 		"DONE_AT": "Clos le",
 		"EXTENDED": "Prolongé",
-		"CREDIT_SETTLED": "Crédit remboursé"
+		"CREDIT_SETTLED": "Crédit remboursé",
+		"BORROW": "Emprunter",
+		"REFUSED_NEGOTIATE": "Crédit refusé — négociez avec l'animateur",
+		"RATE_CHANGED": "Nouveau taux : {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Voulez-vous prendre un premier crédit ?",
+		"DECLINE": "Non merci"
 	}
 }

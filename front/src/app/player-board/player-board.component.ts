@@ -5,12 +5,20 @@ import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
-import { faClipboardCheck, faFileContract, faCreditCardAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardCheck, faFileContract, faCreditCardAlt, faFileSignature } from '@fortawesome/free-solid-svg-icons';
 import { SnackbarService } from '../services/snackbar.service';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { ActionDialogComponent } from '../dialogs/action-dialog/action-dialog.component';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
-import { AssistMode, ASSIST_MODE, CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
+import {
+	AssistMode,
+	ASSIST_MODE,
+	CREDIT_QUESTION_ANSWER,
+	CREDIT_STATUS,
+	GAME_STATUS,
+	GAME_TYPE,
+	PLAYER_STATUS,
+} from '@geco/shared';
 import { ShortCode } from '../models/shortCode';
 import { Recipe, getAvailableRecipes } from '../models/recipe';
 import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
@@ -36,18 +44,21 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	protected readonly PLAYING = GAME_STATUS.PLAYING;
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
+	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
+	protected readonly ANSWER = CREDIT_QUESTION_ANSWER;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly faFileContract = faFileContract;
 	protected readonly faClipboardCheck = faClipboardCheck;
 	protected readonly faCreditCardAlt = faCreditCardAlt;
+	protected readonly faFileSignature = faFileSignature;
 	protected readonly getBackgroundStyle = getBackgroundStyle;
 	private subscription: Subscription | undefined;
 
 	screenWidth = 0;
 	screenHeight = 0;
-    giftReceived=false;
+	giftReceived = false;
 
 	get isLandscape(): boolean {
 		return this.screenWidth > this.screenHeight;
@@ -71,6 +82,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
 	credits_NotOrdered$ = inject(PlayerStateService).credits$;
+	// Auto-bank: current effective rate on offer (for the persistent rate chip).
+	rate$ = inject(PlayerStateService).rate$;
+	// Auto-bank: opening First Credit Question prompt (drives the blocking overlay).
+	firstCreditQuestion$ = inject(PlayerStateService).firstCreditQuestion$;
 
 	order = (status: string): number => {
 		switch (status) {
@@ -142,6 +157,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		typeTheme: this.typeTheme$,
 		actionTokens: this.actionTokens$,
 		sessionAvatars: this.sessionAvatars$,
+		rate: this.rate$,
 	});
 
 	// Death→rebirth overlay state (skull → sprout, ~2.5s, then auto-navigate to the new life).
@@ -201,7 +217,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	) {
 		this.i18nService.loadNamespace('player');
 		this.i18nService.loadNamespace('action');
-
 	}
 
 	ngOnDestroy(): void {
@@ -290,6 +305,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				} else {
 					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
 				}
+				// Auto-bank: seed the persistent rate chip for the debt game.
+				this.playerStateService.refreshRate();
 			}
 		});
 	}
@@ -377,23 +394,51 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	creditActionBtn($event: string, credit: Credit) {
 		if ($event == 'settle') {
-            const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-                data: {
-                    message: this.i18nService.instant('DIALOG.CREDIT_SETTLE.MESSAGE', {
-                        amount: credit.amount + credit.interest,
-                    }),
-                    labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE.BTN_CONFIRM'),
-                    styleBtnConfirm: 'warn',
-                },
-            });
-            confDialogRef.afterClosed().subscribe((result) => {
-                if (result && result == 'btnConfirm') {
-                    this.playerStateService.settleCredit(credit);
-                }
-            });
+			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+				data: {
+					message: this.i18nService.instant('DIALOG.CREDIT_SETTLE.MESSAGE', {
+						amount: credit.amount + credit.interest,
+					}),
+					labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE.BTN_CONFIRM'),
+					styleBtnConfirm: 'warn',
+				},
+			});
+			confDialogRef.afterClosed().subscribe((result) => {
+				if (result && result == 'btnConfirm') {
+					this.playerStateService.settleCredit(credit);
+				}
+			});
 		} else if ($event == 'answer') {
 			this.playerStateService.confirmSettleOrExtend(credit);
 		}
+	}
+
+	/** Auto-bank self-service: borrow the shown terms (contract; ×2 already doubled by the caller). */
+	requestCredit(amount: number, interest: number) {
+		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('DIALOG.REQUEST_CREDIT.TITLE'),
+				message: this.i18nService.instant('DIALOG.REQUEST_CREDIT.MESSAGE', {
+					amount, interest
+				}),
+				message2: this.i18nService.instant('DIALOG.REQUEST_CREDIT.MESSAGE2', {
+					total: amount + interest,
+					rate: Math.floor(interest / amount * 100)
+				}),
+				labelBtnConfirm: this.i18nService.instant('DIALOG.REQUEST_CREDIT.BTN_CONFIRM'),
+				styleBtnConfirm: 'warn',
+			},
+		});
+		confDialogRef.afterClosed().subscribe((result) => {
+			if (result && result == 'btnConfirm') {
+				this.playerStateService.requestCredit(amount, interest);
+			}
+		});
+	}
+
+	/** Auto-bank opening ceremony: answer the First Credit Question. */
+	answerFirstCredit(answer: string) {
+		this.playerStateService.answerFirstCreditQuestion(answer);
 	}
 
 	/**
@@ -410,14 +455,14 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		await setTimeout(() => {
 			this.reincarnatePhase = 'rebirth';
 			this.audioService.playSound('angel');
-            setTimeout(() => {
-                this.router
-				.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
-				.finally(() => {
-					// New life is loading via route params; drop the overlay on the next beat.
-					setTimeout(() => (this.isReincarnating = false), 300);
-				});
-            }, this.REINCARNATE_OVERLAY_MS);
+			setTimeout(() => {
+				this.router
+					.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
+					.finally(() => {
+						// New life is loading via route params; drop the overlay on the next beat.
+						setTimeout(() => (this.isReincarnating = false), 300);
+					});
+			}, this.REINCARNATE_OVERLAY_MS);
 		}, this.REINCARNATE_OVERLAY_MS);
 	}
 
@@ -440,26 +485,29 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	openActionDialog(vm: any) {
-		this.dialog.open(ActionDialogComponent, {
-			data: {
-				gameStateId: this.gameStateId,
-                gameStatus: vm.gameState.status,
-				sessionId: this.sessionId,
-				playerStateIdx: this.playerStateIdx,
-				actionTokens: vm.actionTokens,
-				actions: vm.rules.actions || [],
-				myCards: vm.cards,
-				typeMoney: vm.gameState.typeMoney,
-				currentDU: vm.gameState.currentDU,
-				typeTheme: vm.typeTheme,
-				sessionAvatars: vm.sessionAvatars || [],
-			},
-			panelClass: 'action-dialog-panel',
-		}).afterClosed().subscribe((result) => {
-			if (result?.success) {
-				this.playerStateService.refreshActionResult(result);
-			}
-		});
+		this.dialog
+			.open(ActionDialogComponent, {
+				data: {
+					gameStateId: this.gameStateId,
+					gameStatus: vm.gameState.status,
+					sessionId: this.sessionId,
+					playerStateIdx: this.playerStateIdx,
+					actionTokens: vm.actionTokens,
+					actions: vm.rules.actions || [],
+					myCards: vm.cards,
+					typeMoney: vm.gameState.typeMoney,
+					currentDU: vm.gameState.currentDU,
+					typeTheme: vm.typeTheme,
+					sessionAvatars: vm.sessionAvatars || [],
+				},
+				panelClass: 'action-dialog-panel',
+			})
+			.afterClosed()
+			.subscribe((result) => {
+				if (result?.success) {
+					this.playerStateService.refreshActionResult(result);
+				}
+			});
 	}
 
 	onChangedShortCode($event: any) {
@@ -487,6 +535,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (panel == 'credit') {
 			this.panelCreditOpenState = !this.panelCreditOpenState;
 			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+			if (this.panelCreditOpenState) this.playerStateService.refreshRate();
 		} else if (panel == 'recipe') {
 			this.panelRecipeOpenState = !this.panelRecipeOpenState;
 			this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);

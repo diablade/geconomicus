@@ -186,16 +186,28 @@ GameStateController.creditForAll = asyncHandler(async (req, res) => {
 	const result = await BankStateService.createCreditForAll(gameStateId);
 	return res.status(200).json({ status: 'ok', message: 'CREDIT_FOR_ALL_CREATED', data: result });
 });
-GameStateController.quoteCredit = asyncHandler(async (req, res) => {
+GameStateController.getRate = asyncHandler(async (req, res) => {
 	const { gameStateId, playerStateIdx } = req.body;
-	const result = await BankStateService.quoteCredit(gameStateId, playerStateIdx);
-	return res.status(200).json({ status: 'ok', message: 'CREDIT_QUOTED', data: result });
+	const result = await BankStateService.getRate(gameStateId, playerStateIdx);
+	return res.status(200).json({ status: 'ok', message: 'RATE', data: result });
 });
 GameStateController.requestCredit = asyncHandler(async (req, res) => {
-	const { gameStateId, playerStateIdx, double } = req.body;
-	log.info('[GameStateController] credit request', { gameStateId, playerStateIdx, double });
-	const result = await BankStateService.requestCredit(gameStateId, playerStateIdx, double);
+	const { gameStateId, playerStateIdx, amount, interest } = req.body;
+	log.info('[GameStateController] credit request', { gameStateId, playerStateIdx, amount, interest });
+	const result = await BankStateService.requestCredit(gameStateId, playerStateIdx, amount, interest);
 	return res.status(200).json({ status: 'ok', message: result.refused ? 'CREDIT_REFUSED' : 'CREDIT_CREATED', data: result });
+});
+GameStateController.askFirstCredit = asyncHandler(async (req, res) => {
+	const { gameStateId } = req.body;
+	log.info('[GameStateController] asking first credit question', { gameStateId });
+	const result = await BankStateService.askFirstCreditQuestion(gameStateId);
+	return res.status(200).json({ status: 'ok', message: 'FIRST_CREDIT_ASKED', data: result });
+});
+GameStateController.answerFirstCredit = asyncHandler(async (req, res) => {
+	const { gameStateId, playerStateIdx, answer } = req.body;
+	log.info('[GameStateController] answering first credit question', { gameStateId, playerStateIdx, answer });
+	const result = await BankStateService.answerFirstCreditQuestion(gameStateId, playerStateIdx, answer);
+	return res.status(200).json({ status: 'ok', message: 'FIRST_CREDIT_ANSWERED', data: result });
 });
 GameStateController.freeMoney = asyncHandler(async (req, res) => {
 	const { gameStateId, playerStateIdx, amount } = req.body;

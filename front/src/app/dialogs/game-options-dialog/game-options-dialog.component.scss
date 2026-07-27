@@ -45,3 +45,19 @@
 .red {
 	color: red;
 }
+
+// Auto-bank rate-schedule editor
+.tier-editor {
+	max-width: 360px;
+	margin: 0 auto;
+
+	.tier-col {
+		width: 4.2em;
+		text-align: center;
+		flex: 0 0 auto;
+	}
+
+	input.tier-col {
+		width: 4.2em;
+	}
+}

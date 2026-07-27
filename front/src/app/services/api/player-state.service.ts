@@ -39,6 +39,14 @@ export class PlayerStateService {
 	actionTokens$ = this.actionTokensSubject.asObservable();
 	private creditsSubject = new BehaviorSubject<Credit[]>([]);
 	credits$ = this.creditsSubject.asObservable();
+	// Auto-bank: current effective rate on offer { amount, interest, allowDouble, pct, tierIndex }
+	// for the persistent rate chip on the player board (null when autoBank is off).
+	private rateSubject = new BehaviorSubject<any>(null);
+	rate$ = this.rateSubject.asObservable();
+	// Auto-bank: the opening First Credit Question prompt { amount, interest, allowDouble }
+	// (null when there is none). Drives the blocking overlay on the player board.
+	private firstCreditQuestionSubject = new BehaviorSubject<any>(null);
+	firstCreditQuestion$ = this.firstCreditQuestionSubject.asObservable();
 
 	private gameStateSubject = new BehaviorSubject<GameState>(new GameState());
 	gameState$ = this.gameStateSubject.asObservable();
@@ -251,6 +259,9 @@ export class PlayerStateService {
 	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
 			console.log('game started');
+			// Round started: drop any unanswered First Credit Question overlay (no-answer).
+			this.firstCreditQuestionSubject.next(null);
+			this.refreshRate();
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.status = GAME_STATUS.PLAYING;
@@ -578,14 +589,16 @@ export class PlayerStateService {
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
-			//TODO if progress is 80% give warning to player
+			//TODO if progress is 50% give warning to player
 		});
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
-			cb?.({ status: 'ok', _ackId: data._ackId });
+            cb?.({ status: 'ok', _ackId: data._ackId });
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
-				if (c.id === data.credit.id) {
-					c.status = data.credit.status;
+                if (c.id === data.credit.id) {
+                    c.status = data.credit.status;
+					c.remainingTime = 0;
+                    c.progress = 0;
 				}
 				return c;
 			});
@@ -642,6 +655,36 @@ export class PlayerStateService {
 			this.coinsSubject.next(data.coinsLK);
 			this.confirmSettleOrExtend(data.credit);
 		});
+
+		// Auto-bank: the effective rate tier changed. The server pushes on BOTH
+		// directions so the chip always reflects reality; `improved` (live-down —
+		// cheaper credit as money got scarcer) is the only case we notify on.
+		this.wsService.on(IO.CREDIT.RATE, async (data: any) => {
+			if (data?.rate) {
+				this.rateSubject.next(data.rate);
+				if (data.improved) {
+					const pct = Math.round((data.rate.pct ?? 0) * 100);
+					this.snackbarService.showNotif(
+						this.i18nService.instant('CREDIT.RATE_CHANGED', {
+							amount: data.rate.amount,
+							interest: data.rate.interest,
+							pct,
+						})
+					);
+				}
+			}
+		});
+
+		// Auto-bank: this player's credit request was refused (insolvent).
+		this.wsService.on(IO.CREDIT.REFUSED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data._ackId });
+			this.snackbarService.showError(this.i18nService.instant('CREDIT.REFUSED_NEGOTIATE'));
+		});
+
+		// Auto-bank: the opening First Credit Question — show the blocking overlay.
+		this.wsService.on(IO.CREDIT.QUESTION, async (data: any) => {
+			this.firstCreditQuestionSubject.next(data?.rate ?? null);
+		});
 	}
 
 	// Remove all event listeners to prevent memory leaks
@@ -676,6 +719,9 @@ export class PlayerStateService {
 		this.wsService.off(IO.CREDIT.DONE);
 		this.wsService.off(IO.CREDIT.SEIZURE);
 		this.wsService.off(IO.CREDIT.EXTENDED);
+		this.wsService.off(IO.CREDIT.RATE);
+		this.wsService.off(IO.CREDIT.REFUSED);
+		this.wsService.off(IO.CREDIT.QUESTION);
 		this.wsService.off(IO.SHORT_CODE.BROADCAST);
 		this.wsService.off(IO.SHORT_CODE.CONFIRMED);
 	}
@@ -775,6 +821,33 @@ export class PlayerStateService {
 				observer.next({ success: false, error: 'parse_error' });
 				observer.complete();
 			}
+		});
+	}
+
+	// Auto-bank: refresh the persistent rate chip (pull; no quote-lock).
+	refreshRate(): void {
+		const rules = this.rulesSubject.getValue();
+		if (rules.typeMoney !== GAME_TYPE.DEBT || !rules.autoBank) return;
+		this.bankService.getRate(this.gameStateId, this.playerStateIdx).subscribe((res: any) => {
+			this.rateSubject.next(res?.data?.rate ?? null);
+		});
+	}
+
+	// Auto-bank: self-service credit request. Accepted → IO.CREDIT.NEW updates the UI;
+	// refused → IO.CREDIT.REFUSED shows the "negotiate with the animator" snackbar.
+	requestCredit(amount: number, interest: number): void {
+		if (this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE) {
+			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE'));
+			return;
+		}
+		this.bankService.requestCredit(this.gameStateId, this.playerStateIdx, amount, interest).subscribe(() => this.refreshRate());
+	}
+
+	// Auto-bank: answer the opening First Credit Question, then clear the overlay.
+	// Accepted → IO.CREDIT.NEW adds the credit; the answer is recorded server-side.
+	answerFirstCreditQuestion(answer: string): void {
+		this.bankService.answerFirstCredit(this.gameStateId, this.playerStateIdx, answer).subscribe(() => {
+			this.firstCreditQuestionSubject.next(null);
 		});
 	}
 

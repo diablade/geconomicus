@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { isValidObjectId } from '../../misc/validate.tool.js';
+import { CREDIT_QUESTION_ANSWER } from '@geco/shared';
 
 export const bankStateSanitize = {
 	freeMoney: Joi.object({
@@ -40,7 +41,7 @@ export const bankStateSanitize = {
 			'any.required': 'Game state ID is required',
 		}),
 	}).required(),
-	quoteCredit: Joi.object({
+	getRate: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
 			'any.invalid': 'Invalid game state ID format',
 			'any.required': 'Game state ID is required',
@@ -59,7 +60,33 @@ export const bankStateSanitize = {
 			'any.invalid': 'Invalid player state index format',
 			'any.required': 'Player state index is required',
 		}),
-		double: Joi.boolean().default(false),
+		amount: Joi.number().min(0).required().messages({
+			'any.invalid': 'Invalid amount format',
+			'any.required': 'Amount is required',
+		}),
+		interest: Joi.number().min(0).required().messages({
+			'any.invalid': 'Invalid interest format',
+			'any.required': 'Interest is required',
+		}),
+	}).required(),
+	askFirstCredit: Joi.object({
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+	}).required(),
+	answerFirstCredit: Joi.object({
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+		playerStateIdx: Joi.number().integer().min(0).required().messages({
+			'any.invalid': 'Invalid player state index format',
+			'any.required': 'Player state index is required',
+		}),
+		answer: Joi.string()
+			.valid(...Object.values(CREDIT_QUESTION_ANSWER))
+			.required(),
 	}).required(),
 	cancelCredit: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required().messages({

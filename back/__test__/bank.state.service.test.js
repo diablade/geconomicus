@@ -25,7 +25,8 @@ await jest.unstable_mockModule('../src/gameState/managers/PrisonTimerManager.js'
 
 await jest.unstable_mockModule('../src/gameState/managers/GameStateManager.js', () => ({
     default: {
-        withQueue: jest.fn()
+        withQueue: jest.fn(),
+        onAfterMutation: jest.fn()
     }
 }));
 
@@ -811,5 +812,128 @@ describe('BankStateService — prisonBreak (early release)', () => {
         await BankStateService.prisonBreak('game-001', 1);
         expect(socket.emitTo).toHaveBeenCalled();
         expect(socket.emitAckTo).toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('BankStateService — pause / resume credit timers', () => {
+    // durationCredit 5 min → full duration fallback = 300000ms
+    const rules = makeRules({ durationCredit: 5 });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    describe('pauseAllTimersCreditGame', () => {
+        it('captures the remaining time and marks a RUNNING credit as PAUSED', async () => {
+            creditTimerManager.stopAndGetRemaining.mockReturnValue(42000);
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.RUNNING, remainingTime: 300000 };
+
+            await BankStateService.pauseAllTimersCreditGame('game-001', [credit]);
+
+            expect(credit.status).toBe(CREDIT_STATUS.PAUSED);
+            expect(credit.remainingTime).toBe(42000);
+        });
+
+        it('still parks a RUNNING credit as PAUSED when its timer is missing (returns null)', async () => {
+            // The bug: timer lost (e.g. after a server restart) → stopAndGetRemaining
+            // returns null → credit used to stay RUNNING and could never be resumed.
+            creditTimerManager.stopAndGetRemaining.mockReturnValue(null);
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.RUNNING, remainingTime: 120000 };
+
+            await BankStateService.pauseAllTimersCreditGame('game-001', [credit]);
+
+            expect(credit.status).toBe(CREDIT_STATUS.PAUSED);
+            expect(credit.remainingTime).toBe(120000); // keeps last known value
+        });
+
+        it('does not overwrite remainingTime with a zero remaining', async () => {
+            creditTimerManager.stopAndGetRemaining.mockReturnValue(0);
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.RUNNING, remainingTime: 90000 };
+
+            await BankStateService.pauseAllTimersCreditGame('game-001', [credit]);
+
+            expect(credit.status).toBe(CREDIT_STATUS.PAUSED);
+            expect(credit.remainingTime).toBe(90000); // not reset to 0
+        });
+
+        it('skips credits that are not RUNNING', async () => {
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.REQUESTING, remainingTime: 1000 };
+
+            await BankStateService.pauseAllTimersCreditGame('game-001', [credit]);
+
+            expect(credit.status).toBe(CREDIT_STATUS.REQUESTING);
+            expect(creditTimerManager.stopAndGetRemaining).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('resumeAllTimersCreditGame', () => {
+        it('restarts a PAUSED credit', async () => {
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.PAUSED, remainingTime: 42000 };
+
+            await BankStateService.resumeAllTimersCreditGame('game-001', [credit], rules);
+
+            expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
+            expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
+        });
+
+        it('restarts an IDLE credit', async () => {
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.IDLE, remainingTime: 300000 };
+
+            await BankStateService.resumeAllTimersCreditGame('game-001', [credit], rules);
+
+            expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
+            expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
+        });
+
+        it('restarts a RUNNING credit whose timer went missing (recovery path)', async () => {
+            // The bug: a RUNNING-but-timerless credit used to be skipped by resume and
+            // stayed frozen — its timer never started back.
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.RUNNING, remainingTime: 42000 };
+
+            await BankStateService.resumeAllTimersCreditGame('game-001', [credit], rules);
+
+            expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
+            expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
+        });
+
+        it('resets an invalid / zeroed remainingTime to a full credit duration before restarting', async () => {
+            const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.PAUSED, remainingTime: 0 };
+
+            await BankStateService.resumeAllTimersCreditGame('game-001', [credit], rules);
+
+            expect(credit.remainingTime).toBe(5 * 60 * 1000); // durationCredit(5) * minute
+            expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
+            expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
+        });
+
+        it('does NOT restart FAULT / REQUESTING / DONE / CANCELED credits', async () => {
+            const credits = [
+                { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.FAULT, remainingTime: 1000 },
+                { id: 'c2', playerStateIdx: 1, status: CREDIT_STATUS.REQUESTING, remainingTime: 1000 },
+                { id: 'c3', playerStateIdx: 1, status: CREDIT_STATUS.DONE, remainingTime: 1000 },
+                { id: 'c4', playerStateIdx: 1, status: CREDIT_STATUS.CANCELED, remainingTime: 1000 },
+            ];
+
+            await BankStateService.resumeAllTimersCreditGame('game-001', credits, rules);
+
+            expect(creditTimerManager.startTimer).not.toHaveBeenCalled();
+        });
+    });
+
+    it('pause then resume of a RUNNING credit with a missing timer round-trips back to RUNNING', async () => {
+        // End-to-end of the reported bug: timer missing at pause, credit must still
+        // come back RUNNING with a live timer after resume.
+        creditTimerManager.stopAndGetRemaining.mockReturnValue(null);
+        const credit = { id: 'c1', playerStateIdx: 1, status: CREDIT_STATUS.RUNNING, remainingTime: 120000 };
+
+        await BankStateService.pauseAllTimersCreditGame('game-001', [credit]);
+        expect(credit.status).toBe(CREDIT_STATUS.PAUSED);
+
+        await BankStateService.resumeAllTimersCreditGame('game-001', [credit], rules);
+        expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
+        expect(credit.remainingTime).toBe(120000);
+        expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
     });
 });

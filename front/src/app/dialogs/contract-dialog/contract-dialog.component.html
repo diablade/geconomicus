@@ -10,7 +10,10 @@
 		</div>
 		<mat-form-field *ngIf="!locked" class="mt-2" appearance="fill">
 			<mat-label>{{ 'CONTRACT.WITH_PLAYER' | translate }}</mat-label>
-			<mat-select [(value)]="selectedPlayer" [compareWith]="compareById">
+			<mat-select
+				[value]="selectedPlayer"
+				(valueChange)="onPlayerChange($event)"
+				[compareWith]="compareById">
 				<mat-select-trigger>
 					<avatar
 						[avatar]="selectedPlayer?.avatar"
@@ -80,6 +83,27 @@
 			<br />
 			-
 			<span [innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.durationCredit }"></span>
+		</div>
+		<!-- Auto-bank: informational solvency of the target (coins + card value vs debts). Never blocks signing. -->
+		<div *ngIf="rules.typeMoney === DEBT && solvency" class="solvency mt-2 p-2 w-100">
+			<div class="fw-bold mb-1">{{ 'CONTRACT.SOLVENCY' | translate }}</div>
+			<div class="d-flex justify-content-between">
+				<span>{{ 'CONTRACT.WEALTH' | translate }}</span>
+				<b>{{ solvency.wealth }} €</b>
+			</div>
+			<div class="d-flex justify-content-between">
+				<span>{{ 'CONTRACT.OBLIGATION' | translate }}</span>
+				<b>{{ solvency.obligation }} €</b>
+			</div>
+			<div class="d-flex justify-content-between">
+				<span>{{ 'CONTRACT.AFTER_CREDIT' | translate }}</span>
+				<b [class.text-danger]="solvency.wealth - solvency.obligation - amount - interest < 0">
+					{{ solvency.wealth - solvency.obligation - amount - interest | number: '1.0-2' }} €
+				</b>
+			</div>
+			<div *ngIf="solvency.wealth - solvency.obligation - amount - interest < 0" class="text-danger mt-1">
+				⚠️ {{ 'CONTRACT.INSOLVENT_WARN' | translate }}
+			</div>
 		</div>
 		<div>
 			<button class="m-2" mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>

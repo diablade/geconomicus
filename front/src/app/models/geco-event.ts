@@ -75,6 +75,8 @@ export interface CreditPayload extends LkSnapshot {
 	creditId?: string;
 	amount: number;
 	interest: number;
+	/** CREDIT_ORIGIN on a credit-new event: how the credit came to be. */
+	origin?: string;
 }
 
 export interface DistribDuPayload extends LkSnapshot {

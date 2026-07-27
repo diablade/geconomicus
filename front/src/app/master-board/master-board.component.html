@@ -1,7 +1,7 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<div class="h-100" [ngClass]="[vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg']">
 		<div class="h-100 overflow-auto">
-			<div class="d-flex flex-row justify-content-between">
+			<div class="d-flex flex-row justify-content-between flex-wrap">
 				<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 				<div class="d-flex flex-row align-items-center">
 					<online-status [connection]="(masterConnection$ | async) || null"></online-status>
@@ -106,6 +106,18 @@
 							<mat-icon class="outlined">playing_cards</mat-icon>
 							{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
 						</button>
+						<!-- Auto-bank: send the opening First Credit Question (after cards distributed) -->
+						<button
+							*ngIf="
+								vm.gameState.status === INITIALIZED && vm.rules.typeMoney === DEBT && vm.rules.autoBank
+							"
+							class="ms-2 box-shadowed"
+							mat-raised-button
+							color="accent"
+							(click)="askFirstCredit()">
+							<mat-icon class="outlined">contact_support</mat-icon>
+							{{ 'MASTER.ASK_FIRST_CREDIT' | translate }}
+						</button>
 						<button
 							*ngIf="vm.gameState.status === INITIALIZED || vm.gameState.status === PAUSED"
 							class="ms-2 box-shadowed"
@@ -119,6 +131,22 @@
 									: ('MASTER.RESUME_GAME' | translate)
 							}}
 						</button>
+						<!-- Auto-bank: warn the animator that average money is still below target -->
+						<span
+							*ngIf="
+								vm.gameState.status === INITIALIZED &&
+								vm.rules.typeMoney === DEBT &&
+								vm.rules.autoBank &&
+								vm.avgMoney < AVG_MONEY_TARGET
+							"
+							class="avg-warning ms-2 d-inline-flex align-items-center"
+							[matTooltip]="
+								'MASTER.LOW_AVG_WARNING'
+									| translate: { avg: (vm.avgMoney | number: '1.2-2'), target: AVG_MONEY_TARGET }
+							">
+							<mat-icon color="warn">warning</mat-icon>
+							<b class="ms-1">{{ vm.avgMoney | number: '1.2-2' }} €</b>
+						</span>
 						<button
 							*ngIf="vm.gameState.status === PLAYING"
 							mat-raised-button

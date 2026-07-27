@@ -13,6 +13,7 @@ import {
 	PLAYER_TYPE,
 	PLAYER_STATUS,
 	CREDIT_ORIGIN,
+	CREDIT_QUESTION_ANSWER,
 	ROOMS,
 	IO,
 	DB_EVENTS,
@@ -286,13 +287,6 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 
 const BankStateService = {};
 
-// In-memory per-life rate quotes: snapshotted when a player opens the request
-// dialog and honoured for a short window so a rate that tightens while they
-// decide doesn't change their terms. Keyed `${gameStateId}:${playerStateIdx}`.
-const _creditQuotes = new Map();
-const QUOTE_TTL = 3 * minute;
-const _quoteKey = (gameStateId, playerStateIdx) => `${gameStateId}:${playerStateIdx}`;
-
 // The credit terms on offer right now: base rate unless the game is PLAYING with
 // autoBank on, in which case the deepest crossed avg-tier wins.
 const _currentRate = (gameState, rules) => {
@@ -382,45 +376,114 @@ BankStateService.createCredit = async (
 	);
 };
 
-// Snapshot the current rate for a life (quote-lock) and report its solvency.
-BankStateService.quoteCredit = async (gameStateId, playerStateIdx) => {
+// Auto-bank rate broadcast: after a money/alive change, re-price credit from the
+// new average money and, if the deepest-crossed tier moved, push IO.CREDIT.RATE to
+// every alive player. The chip updates both ways; `improved` (a move to a DEEPER
+// tier — cheaper relief as money gets scarcer) flags a live-down so the client
+// notifies, while a climb back up is silent. No-op unless debt + autoBank + PLAYING.
+// Registered as a GameStateManager afterMutation hook, so it runs after every
+// mutation inside the already-held queue entry — it never re-enqueues.
+BankStateService.refreshRateBroadcast = (entry) => {
+	const { gameState, rules } = entry;
+	if (!rules || rules.typeMoney !== GAME_TYPE.DEBT || !rules.autoBank) return;
+	if (gameState.status !== GAME_STATUS.PLAYING) return;
+
+	const rate = computeEffectiveRate(computeAverageMoney(gameState), rules.rateSchedule, rules);
+	const prev = Number.isInteger(gameState.currentRateTierIndex) ? gameState.currentRateTierIndex : -1;
+	if (rate.tierIndex === prev) return;
+
+	gameState.currentRateTierIndex = rate.tierIndex;
+	const payload = { rate, improved: rate.tierIndex > prev };
+	for (const p of gameState.playersStates) {
+		if (p.status !== PLAYER_STATUS.ALIVE) continue;
+		socket.emitTo(ROOMS.playerState(gameState._id, p.idx), IO.CREDIT.RATE, payload);
+	}
+	log.info(`[BankStateService] rate tier ${prev}→${rate.tierIndex} improved:${payload.improved} g:${gameState._id}`);
+};
+GameStateManager.onAfterMutation(BankStateService.refreshRateBroadcast);
+
+// Read-only current rate + solvency for a life — feeds the persistent rate chip.
+BankStateService.getRate = async (gameStateId, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules } = entry;
 		const playerState = _findPlayer(gameState, playerStateIdx);
 		const rate = _currentRate(gameState, rules);
 		const solvency = computeSolvency(playerState, _findCreditsOfPlayer(gameState, playerStateIdx));
-		_creditQuotes.set(_quoteKey(gameStateId, playerStateIdx), { rate, at: Date.now() });
 		return { rate, solvency };
 	});
 };
 
-// Self-service Credit Request (pull). Honours a fresh quote if the rate tightened
-// while the player decided, checks coins+cards solvency, then creates or refuses.
-BankStateService.requestCredit = async (gameStateId, playerStateIdx, wantDouble = false) => {
-	log.info(`[BankStateService] credit request p:${playerStateIdx} g:${gameStateId} double:${wantDouble}`);
+// First Credit Question: broadcast the opening prompt (base rate) to every alive
+// player. Their answer is captured by answerFirstCreditQuestion.
+BankStateService.askFirstCreditQuestion = async (gameStateId) => {
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules } = entry;
+		const rate = _currentRate(gameState, rules); // not PLAYING yet → base rate
+		const payload = { rate: { amount: rate.amount, interest: rate.interest, allowDouble: rate.allowDouble } };
+		let asked = 0;
+		for (const p of gameState.playersStates) {
+			if (p.status !== PLAYER_STATUS.ALIVE) continue;
+			socket.emitTo(ROOMS.playerState(gameStateId, p.idx), IO.CREDIT.QUESTION, payload);
+			asked++;
+		}
+		log.info(`[BankStateService] first credit question asked to ${asked} players in g:${gameStateId}`);
+		return { asked, ...payload };
+	});
+};
+
+// First Credit Question: record a player's answer (research data) and, on accept,
+// create the opening credit at the base rate — no solvency gate at the ceremony.
+BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx, answer) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
+		_findPlayer(gameState, playerStateIdx); // validate the life exists (throws otherwise)
+		const base = _currentRate(gameState, rules);
+
+		events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.CREDIT_QUESTION_ANSWERED,
+				gameState.sessionId,
+				gameState._id,
+				PLAYER_TYPE.BANK,
+				playerStateIdx,
+				{ answer, amount: base.amount, interest: base.interest }
+			)
+		);
+
+		let result = { answer };
+		if (answer === CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE || answer === CREDIT_QUESTION_ANSWER.ACCEPT_DOUBLE) {
+			const useDouble = answer === CREDIT_QUESTION_ANSWER.ACCEPT_DOUBLE && base.allowDouble;
+			const amount = useDouble ? base.amount * 2 : base.amount;
+			const interest = useDouble ? base.interest * 2 : base.interest;
+			const created = await _createCreditInEntry(
+				entry,
+				gameStateId,
+				playerStateIdx,
+				amount,
+				interest,
+				CREDIT_ORIGIN.FIRST_QUESTION
+			);
+			result = { ...result, ...created };
+		}
+		return result;
+	});
+};
+
+// Self-service Credit Request (pull). The client sends the amount+interest it was
+// shown (the contract — "what you saw when you opened the panel is what you get",
+// ×2 already baked in); the bank only checks coins+cards solvency, then creates or
+// refuses. No re-quote against the live rate: the displayed terms are honoured.
+BankStateService.requestCredit = async (gameStateId, playerStateIdx, amount, interest) => {
+	log.info(`[BankStateService] credit request p:${playerStateIdx} g:${gameStateId} a:${amount} i:${interest}`);
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, events } = entry;
 		const playerState = _findPlayer(gameState, playerStateIdx);
 		if (playerState.status !== PLAYER_STATUS.ALIVE) {
 			throw new Error('ERROR.PLAYER_NOT_ALIVE');
 		}
-		if (gameState.status !== GAME_STATUS.PLAYING) {
+		if (gameState.status !== GAME_STATUS.PLAYING && gameState.status !== GAME_STATUS.INITIALIZED && gameState.status !== GAME_STATUS.PAUSED) {
 			throw new Error('ERROR.GAME_NOT_PLAYING');
 		}
-
-		// Quote-lock: keep the opened rate if it has since tightened (shallower tier).
-		const current = _currentRate(gameState, rules);
-		const key = _quoteKey(gameStateId, playerStateIdx);
-		const quoted = _creditQuotes.get(key);
-		let rate = current;
-		if (quoted && Date.now() - quoted.at <= QUOTE_TTL && quoted.rate.tierIndex > current.tierIndex) {
-			rate = quoted.rate;
-		}
-		_creditQuotes.delete(key);
-
-		const useDouble = wantDouble && rate.allowDouble;
-		const amount = useDouble ? rate.amount * 2 : rate.amount;
-		const interest = useDouble ? rate.interest * 2 : rate.interest;
 
 		// Solvency: coins + card value must cover every obligation, this one included.
 		const solvency = computeSolvency(
@@ -584,20 +647,46 @@ BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits) => {
 	for (const credit of credits) {
 		if (credit.status !== CREDIT_STATUS.RUNNING) continue;
 		const remaining = creditTimerManager.stopAndGetRemaining(credit.id);
-		if (remaining !== null) {
+		// remaining === null means the timer was missing from the manager (e.g. the
+		// credit was RUNNING but its in-memory timer was lost after a server restart).
+		// Only overwrite remainingTime when we actually read a positive value; keep the
+		// last known value otherwise so resume doesn't restart from 0.
+		if (remaining !== null && remaining > 0) {
 			credit.remainingTime = remaining;
-			credit.status = CREDIT_STATUS.PAUSED;
-			log.debug(
-				`[BankStateService] Paused credit ${credit.id} for player ${credit.playerStateIdx}, remainingTime: ${credit.remainingTime}`
-			);
 		}
+		// Always park a RUNNING credit as PAUSED — even when its timer was missing —
+		// so resume can restart it. Leaving it RUNNING would strand it forever
+		// (resume never touched RUNNING credits).
+		credit.status = CREDIT_STATUS.PAUSED;
+		log.debug(
+			`[BankStateService] Paused credit ${credit.id} for player ${credit.playerStateIdx}, remainingTime: ${credit.remainingTime}`
+		);
 	}
 };
 
-BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits) => {
+BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules) => {
 	log.debug(`[BankStateService] Resuming all credit timers for game ${gameStateId}`);
+	const fullDurationMs = (rules?.durationCredit ?? 0) * minute;
 	for (const credit of credits) {
-		if (credit.status !== CREDIT_STATUS.PAUSED && credit.status !== CREDIT_STATUS.IDLE) continue;
+		// Restart every credit that should be actively counting down. PAUSED/IDLE are
+		// the normal cases; RUNNING here is a recovery case — a credit that never got
+		// parked (timer lost to a restart, or a pause that couldn't read its timer).
+		// Restart it too so it isn't frozen forever.
+		if (
+			credit.status !== CREDIT_STATUS.PAUSED &&
+			credit.status !== CREDIT_STATUS.IDLE &&
+			credit.status !== CREDIT_STATUS.RUNNING
+		) {
+			continue;
+		}
+		// Guard against a lost or zeroed remaining time so we never spawn a timer that
+		// fires instantly (reset-to-0) or with a bogus duration.
+		if (!(credit.remainingTime > 0) && fullDurationMs > 0) {
+			log.warn(
+				`[BankStateService] credit ${credit.id} had invalid remainingTime (${credit.remainingTime}), resetting to full duration ${fullDurationMs}ms`
+			);
+			credit.remainingTime = fullDurationMs;
+		}
 		// On recrée depuis le credit (remainingTime est la source de vérité)
 		const timer = _createCreditTimer(gameStateId, credit);
 		await creditTimerManager.startTimer(timer);

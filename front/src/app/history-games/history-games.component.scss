@@ -1,38 +1,38 @@
-
-.date{
-  font-size: small;
-  color: gray;
+.date {
+	font-size: small;
+	color: gray;
 }
-.name{
-  margin-right: 10px;
-  color: #191919;
-  font-weight: bold;
-  font-size: large;
+.name {
+	margin-right: 10px;
+	color: #191919;
+	font-weight: bold;
+	font-size: large;
 }
-.items{
-  height: 500px;
-  overflow: auto;
+.items {
+	height: 500px;
+	overflow: auto;
 }
 
 .item {
-  min-height: 72px;
-  margin: 10px;
+	min-height: 72px;
+	margin: 10px;
+	color: #1d1d1d;
 }
-.status{
-  font-size: small;
-  border-radius: 10px;
-  color:#1D1D1D;
-  padding: 2px 10px;
-}
-
-.statusOnGoing{
-  background: #edbb00;
+.status {
+	font-size: small;
+	border-radius: 10px;
+	color: #1d1d1d;
+	padding: 2px 10px;
 }
 
-.statusOpen{
-  background: #31c531;
+.statusOnGoing {
+	background: #edbb00;
 }
 
-.statusClosed{
-  background: #ff6565;
+.statusOpen {
+	background: #31c531;
+}
+
+.statusClosed {
+	background: #ff6565;
 }

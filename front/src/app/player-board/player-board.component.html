@@ -50,6 +50,25 @@
 			</button>
 		</div>
 	</div>
+	<!-- Auto-bank: opening First Credit Question (blocking until answered) -->
+	<div class="blocked" *ngIf="firstCreditQuestion$ | async as fq">
+		<div class="question-first-credit d-flex flex-column align-items-center gap-2">
+			<div class="shadowed fs-3">{{ 'CREDIT.FIRST_Q_TITLE' | translate }}</div>
+			<button mat-raised-button color="accent" (click)="answerFirstCredit(ANSWER.ACCEPT_SINGLE)">
+				{{ 'CREDIT.BORROW' | translate }} · {{ fq.amount }}/{{ fq.interest }}
+			</button>
+			<button
+				*ngIf="fq.allowDouble"
+				mat-stroked-button
+				color="accent"
+				(click)="answerFirstCredit(ANSWER.ACCEPT_DOUBLE)">
+				×2 · {{ fq.amount * 2 }}/{{ fq.interest * 2 }}
+			</button>
+			<button mat-button (click)="answerFirstCredit(ANSWER.DECLINE)">
+				{{ 'CREDIT.DECLINE' | translate }}
+			</button>
+		</div>
+	</div>
 
 	<div
 		class="game"
@@ -104,7 +123,7 @@
 				</div>
 			</button>
 		</div>
-		<div class="btn-credit marginArround">
+		<div class="btn-credit marginArround gap-2">
 			<button
 				[matBadge]="vm.credits.length"
 				[matBadgeColor]="'warn'"
@@ -129,6 +148,14 @@
 				(click)="togglePanel('credit')">
 				<fa-icon [icon]="faFileContract"></fa-icon>
 			</button>
+			<!-- Auto-bank: persistent current-rate chip beside the credit button -->
+			<div
+				*ngIf="vm.gameState.typeMoney === DEBT && vm.rules.autoBank && vm.rate"
+				[class.flex-reverse-column]="!isLandscape"
+				class="rate-chip box-shadowed">
+				{{ vm.rate.amount }}/{{ vm.rate.interest }}
+				<span class="rate-pct">{{ vm.rate.pct * 100 | number: '1.0-0' }}%</span>
+			</div>
 		</div>
 		<div class="btn-action marginArround">
 			<button
@@ -143,10 +170,31 @@
 			</button>
 		</div>
 		<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
+			<!-- Auto-bank: self-service request buttons, shown with the open credit panel -->
 			<div
 				[class.creditsLandscape]="isLandscape"
 				class="d-flex flex-row overflow-auto w-100"
 				*ngIf="panelCreditOpenState">
+				<div
+					*ngIf="panelCreditOpenState && vm.rules.autoBank && vm.playerStatus === ALIVE"
+					class="request-credit frame frame-light d-flex flex-column align-items-center justify-content-center">
+					<button
+						mat-raised-button
+						color="accent"
+						(click)="requestCredit(vm.rate.amount, vm.rate.interest)">
+						<fa-icon [icon]="faFileSignature"></fa-icon>
+						{{ 'CREDIT.BORROW' | translate }} · {{ vm.rate.amount }}/{{ vm.rate.interest }}
+					</button>
+					<button
+						*ngIf="vm.rate.allowDouble"
+						mat-stroked-button
+						color="primary"
+						class="mt-1"
+						(click)="requestCredit(vm.rate.amount * 2, vm.rate.interest * 2)">
+						<fa-icon [icon]="faFileSignature"></fa-icon>
+						{{ 'CREDIT.DOUBLE' | translate }} · {{ vm.rate.amount * 2 }}/{{ vm.rate.interest * 2 }}
+					</button>
+				</div>
 				<app-credit
 					*ngFor="let credit of vm.credits"
 					[small]="true"

@@ -35,6 +35,9 @@
 		position: fixed;
 		bottom: 0;
 		left: 0;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
 	}
 	.btn-buy {
 		position: fixed;
@@ -106,6 +109,9 @@
 		bottom: 0;
 		right: 0;
 		z-index: 10;
+		display: flex;
+		align-items: center;
+		flex-direction: column-reverse;
 	}
 	.btn-buy {
 		position: fixed;
@@ -146,7 +152,8 @@
 	}
 
 	.credits {
-		right: 0;
+		right: 100px;
+		bottom: 0px;
 	}
 
 	.creditsLandscape {
@@ -329,6 +336,16 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.question-first-credit {
+	background: white;
+	width: 300px;
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+	padding: 10px;
+	justify-content: space-around;
 }
 
 .default-credit {
@@ -622,4 +639,31 @@
 		transform: scale(1);
 		opacity: 1;
 	}
+}
+
+// Auto-bank: persistent current-rate chip beside the credit button.
+.rate-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25em;
+	margin-top: 0.25em;
+	padding: 0.15em 0.6em;
+	border-radius: 1em;
+	background: #117fd0;
+	color: #fff;
+	font-weight: 700;
+	font-size: 0.8em;
+	white-space: nowrap;
+
+	.rate-pct {
+		opacity: 0.85;
+		font-weight: 500;
+	}
+}
+
+// Auto-bank: self-service request buttons inside the open credit panel.
+.request-credit {
+	gap: 0.25rem;
+	padding: 0 0.5rem;
+	flex: 0 0 auto;
 }

@@ -91,6 +91,39 @@ export class BankService {
 			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.EXTEND_CREDIT')));
 	}
 
+	// Auto-bank: read the current effective rate for the chip (no quote-lock).
+	getRate(gameStateId: string, playerStateIdx: number): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.GET_RATE, { gameStateId, playerStateIdx })
+			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.GET_RATE')));
+	}
+
+	// Auto-bank: self-service credit request. The client sends the exact amount+interest
+	// it displayed (the contract; ×2 already baked in); the server checks solvency only.
+	requestCredit(gameStateId: string, playerStateIdx: number, amount: number, interest: number): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.REQUEST_CREDIT, { gameStateId, playerStateIdx, amount, interest })
+			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.REQUEST_CREDIT')));
+	}
+
+	// Auto-bank: animator broadcasts the opening First Credit Question to all players.
+	askFirstCreditQuestion(gameStateId: string): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.ASK_FIRST_CREDIT, { gameStateId })
+			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.ASK_FIRST_CREDIT')));
+	}
+
+	// Auto-bank: a player answers the First Credit Question (accept-single/double/decline).
+	answerFirstCredit(gameStateId: string, playerStateIdx: number, answer: string): Observable<any> {
+		return this.http
+			.post(environment.API_HOST + environment.BANK_STATE.ANSWER_FIRST_CREDIT, {
+				gameStateId,
+				playerStateIdx,
+				answer,
+			})
+			.pipe(catchError((error) => this.errorService.handleError(error, ERROR_RELOAD, 'ERROR.BANK.ANSWER_FIRST_CREDIT')));
+	}
+
 	giveFreeMoney(gameStateId: string, playerStateIdx: number, amount: number): Observable<any> {
 		return this.http
 			.post(environment.API_HOST + environment.BANK_STATE.GIVE_FREE_MONEY, {

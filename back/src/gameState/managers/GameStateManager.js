@@ -24,9 +24,23 @@ class GameStateManager {
 		if (!GameStateManager.instance) {
 			// Map<gameStateId, { gameState: POJO, rules: POJO, events: object[] }>
 			this._games = new Map();
+			// Hooks run (in order) after every successful withQueue mutation, with the
+			// entry still under lock. Registered once at import time (e.g. the auto-bank
+			// rate-change broadcast). Array so it stays mutable under Object.freeze.
+			this._afterMutations = [];
 			GameStateManager.instance = this;
 		}
 		return GameStateManager.instance;
+	}
+
+	/**
+	 * Register a post-mutation hook: fn(entry) is awaited after each withQueue fn
+	 * resolves, inside the same lock. A throwing hook is logged, never propagated,
+	 * so it cannot break the mutation it observes.
+	 * @param {function({ gameState: object, rules: object, events: object[] }): (void|Promise<void>)} fn
+	 */
+	onAfterMutation(fn) {
+		if (typeof fn === 'function') this._afterMutations.push(fn);
 	}
 
 	/**
@@ -160,7 +174,15 @@ class GameStateManager {
 		return gameQueueManager.enqueue(gameStateId, async () => {
 			let entry = await this.getOrReload(gameStateId);
 			if (!entry) throw new Error(`[GameStateManager] Game ${gameStateId} still not found after reload`);
-			return fn(entry);
+			const result = await fn(entry);
+			for (const hook of this._afterMutations) {
+				try {
+					await hook(entry);
+				} catch (err) {
+					log.error(`[GameStateManager] afterMutation hook failed: ${err.message}`);
+				}
+			}
+			return result;
 		});
 	}
 }

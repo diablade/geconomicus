@@ -159,7 +159,7 @@ The opening ceremony of a debt game: every player is asked once whether to take 
 
 ## Credit Request
 
-A player-initiated ask for a credit — the "pull" path, distinct from the animator's manual contract. Reached from a button inside the opened credit panel; the player picks single or Double. The Effective Rate is **quoted when the request dialog opens and held for as long as it stays open**, so a rate that tightens while the player is deciding does not change the terms they were shown. Auto-approved when the player is Solvent, otherwise refused with a prompt to **negotiate with the animator** (who can still grant it via the manual contract). Do **not** confuse with the existing `IO.CREDIT.REQUEST` / `DB_EVENTS.CREDIT_REQUEST`, which is the opposite thing — the bank calling a player to settle at maturity (the **Settlement Call**). *Avoid*: loan application.
+A player-initiated ask for a credit — the "pull" path, distinct from the animator's manual contract. Reached from a button inside the opened credit panel; the player picks single or Double. It is **contract-based**: the borrow request carries the exact amount + interest the player was shown, and the bank honours those terms — **what you saw when you opened the panel is what you get**, even if the live rate has since moved. Auto-approved when the player is Solvent, otherwise refused with a prompt to **negotiate with the animator** (who can still grant it via the manual contract). Do **not** confuse with the existing `IO.CREDIT.REQUEST` / `DB_EVENTS.CREDIT_REQUEST`, which is the opposite thing — the bank calling a player to settle at maturity (the **Settlement Call**). *Avoid*: loan application.
 
 ## Settlement Call
 
