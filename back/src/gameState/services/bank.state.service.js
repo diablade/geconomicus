@@ -176,7 +176,12 @@ const _releasePlayer = async (entry, playerStateIdx) => {
 	log.info('[BankStateService] player released from prison', { playerStateIdx, cardsCount: newCards.length });
 
 	socket.emitTo(ROOMS.gameStateBank(gameState._id), IO.EVENT, event);
-	socket.emitAckTo(ROOMS.playerState(gameState._id, playerStateIdx), IO.PLAYER.PRISON_ENDED, { cardsLK: newCards });
+	// Player gets its full refreshed hand (cardsLK convention); the table gets the idx so it can
+	// flip the row back to ALIVE and clear the prison bar.
+	socket.emitAckTo(ROOMS.playerState(gameState._id, playerStateIdx), IO.PLAYER.PRISON_ENDED, {
+		cardsLK: playerState.cards,
+	});
+	socket.emitTo(ROOMS.gameStateBank(gameState._id), IO.PLAYER.PRISON_ENDED, { playerStateIdx });
 
 	return { playerState, event, newCards };
 };
@@ -198,10 +203,23 @@ const _prisonEndCallback = async (timerInstance) => {
 const _prisonProgressCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
 	const remainingMs = timerInstance.getRemainingMs();
-	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs });
+	const totalMs = timerInstance.duration;
+	// Percent of prison time still remaining (drives the table's countdown bar and the player's spinner).
+	const progress = totalMs > 0 ? Math.max(0, Math.min(100, Math.round((remainingMs / totalMs) * 100))) : 0;
+	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs, progress });
 
-	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.PLAYER.PROGRESS_PRISON, { playerStateIdx, remainingTime: remainingMs });
-	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.PROGRESS_PRISON, { remainingTime: remainingMs });
+	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.PLAYER.PROGRESS_PRISON, {
+		playerStateIdx,
+		remainingTime: remainingMs,
+		totalTime: totalMs,
+		progress,
+	});
+	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.PROGRESS_PRISON, {
+		playerStateIdx,
+		remainingTime: remainingMs,
+		totalTime: totalMs,
+		progress,
+	});
 };
 
 // ─── Timer callbacks ───────────────────────────────────────────────────────────
@@ -868,6 +886,8 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 
 		// Handle prison if specified
 		let prisonResult = null;
+		let prisonRemainingMs = 0;
+		let prisonTotalMs = 0;
 		if (seizure.prisonTime && seizure.prisonTime > 0) {
 			const clampedPrisonTime = Math.min(seizure.prisonTime, rules.timerPrison);
 			playerState.status = PLAYER_STATUS.PRISON;
@@ -885,6 +905,12 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			if (clampedPrisonTime > 0) {
 				const timer = _createPrisonTimer(gameStateId, playerStateIdx, clampedPrisonTime);
 				await prisonTimerManager.startTimer(timer);
+				// Push an initial progress tick right away so the player enters prison mode and the
+				// table shows the prisoner with a live countdown — the recurring interval only fires
+				// after the first 5s, which would otherwise leave both stuck on the default display.
+				prisonRemainingMs = timer.getRemainingMs();
+				prisonTotalMs = timer.duration;
+				await _prisonProgressCallback(timer);
 			}
 
 			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.EVENT, prisonEvent);
@@ -903,6 +929,8 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			seizure: { coins: seizure.coins, cards: seizedCardsFromHand },
 			coinsLK: playerState.coins,
 			prisoner: prisonResult?.playerState,
+			prisonRemainingTime: prisonRemainingMs,
+			prisonTotalTime: prisonTotalMs,
 		};
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, payload);
 		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, {

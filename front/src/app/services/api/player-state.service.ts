@@ -29,6 +29,10 @@ export class PlayerStateService {
 	typeMoney$ = this.typeMoneySubject.asObservable();
 	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
 	playerStatus$ = this.playerStatusSubject.asObservable();
+	// Prison countdown state, re-synced from the server (seizure payload, 5s progress heartbeat,
+	// or a refresh). null when the player is not imprisoned. Drives the board's countdown/spinner.
+	private prisonSubject = new BehaviorSubject<{ remainingTime: number; totalTime: number } | null>(null);
+	prison$ = this.prisonSubject.asObservable();
 	playerConnection$ = inject(WebSocketService).connectionStatus$;
 
 	private coinsSubject = new BehaviorSubject<number>(0);
@@ -192,6 +196,10 @@ export class PlayerStateService {
 			.subscribe((data) => {
 				this.coinsSubject.next(data.playerState.coins);
 				this.playerStatusSubject.next(data.playerState.status);
+				// Restore the prison countdown on load/refresh (server sends the running timer's state).
+				this.prisonSubject.next(
+					data.playerState.status === PLAYER_STATUS.PRISON && data.prison ? data.prison : null
+				);
 				this.typeMoneySubject.next(data.playerState.typeMoney);
 				this.cardsSubject.next(data.playerState.cards);
 				this.actionTokensSubject.next(data.playerState.actionTokens ?? 1);
@@ -423,13 +431,17 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			// Handle prison progress - emit event for component to handle timer
+			// 5s heartbeat from the prison timer: keep the board in prison mode and re-sync the countdown.
+			this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
+			this.prisonSubject.next({ remainingTime: data.remainingTime, totalTime: data.totalTime });
 		});
 
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			console.log('prison ended', data);
 			cb?.({ status: 'ok', _ackId: data._ackId });
-			this.cardsSubject.next(data.cards);
+			// Server sends the full refreshed hand under cardsLK (4 new cards already merged in).
+			if (data.cardsLK) this.cardsSubject.next(data.cardsLK);
+			this.prisonSubject.next(null);
 			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
 		});
 
@@ -634,12 +646,14 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
+			// Death-path seizures emit a bare { playerStateIdx } — nothing to reconcile here.
+			if (!data?.seizure?.cards) return;
 			const updatedCards = this.cardsSubject
 				.getValue()
 				.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (c.id === data.credit.id) {
+				if (data.credit && c.id === data.credit.id) {
 					c.status = data.credit.status;
 				}
 				return c;
@@ -648,6 +662,18 @@ export class PlayerStateService {
 			this.cardsSubject.next(updatedCards);
 			this.creditsSubject.next(updatedCredits);
 			this.coinsSubject.next(data.coinsLK);
+
+			// Seizure with prison time → enter prison mode immediately and seed the countdown, so the
+			// player doesn't have to refresh and the timer starts from the real remaining time.
+			if (data.prisoner) {
+				this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
+				if (data.prisonTotalTime) {
+					this.prisonSubject.next({
+						remainingTime: data.prisonRemainingTime,
+						totalTime: data.prisonTotalTime,
+					});
+				}
+			}
 		});
 
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {
@@ -818,6 +844,7 @@ export class PlayerStateService {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			disableClose: true,
 			data: {
+                beep: true,
 				title: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.TITLE'),
 				message: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE', {
 					amount: credit.amount + credit.interest,
@@ -827,7 +854,6 @@ export class PlayerStateService {
 				}),
 				labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_EXTEND'),
 				labelBtnCancel: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.BTN_SETTLE'),
-				requestBeep: true,
 				styleBtnConfirm: 'primary',
 				styleBtnCancel: 'warn',
 			},

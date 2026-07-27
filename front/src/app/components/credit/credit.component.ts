@@ -26,8 +26,6 @@ export class CreditComponent implements OnChanges, OnDestroy {
 
 	/** Seconds shown in the final-minute countdown label; null outside the final minute. */
 	countdownSeconds: number | null = null;
-	/** Flipped each tick to restart the label's pulse animation. */
-	pulseToggle = false;
 	private ticker: ReturnType<typeof setInterval> | undefined;
 
 	@Input() credit!: Credit;
@@ -82,7 +80,6 @@ export class CreditComponent implements OnChanges, OnDestroy {
 				return;
 			}
 			this.countdownSeconds--;
-			this.pulseToggle = !this.pulseToggle; // swap keyframe → restart the pulse
 		}, 1000);
 	}
 

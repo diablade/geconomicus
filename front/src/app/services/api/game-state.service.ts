@@ -135,6 +135,10 @@ export class GameStateService {
 			this.roomBank = ROOMS.gameStateBank(gameStateId);
 		}
 
+		// Singleton service: clear any timer left over from a previously-viewed game
+		// so its stale countdown/interval never bleeds into this board.
+		this.stopTimer();
+
 		this.sessionService.initializeSocket(sessionId);
 		this.get(gameStateId, true).subscribe((payload) => {
 			this.gameStateSubject.next(payload.gameState);
@@ -148,12 +152,14 @@ export class GameStateService {
 				this.creditsSubject.next(payload.gameState.credits);
 			}
 
-			// Auto-resume or display paused timer from backend state
-			if (payload.gameState.status === GAME_STATUS.PLAYING && payload.gameState.gameTimers?.remainingTime > 0) {
-				this.startTimer(payload.gameState.gameTimers.remainingTime);
-			} else if (payload.gameState.gameTimers?.remainingTime > 0) {
-				console.log('game paused, remaining time: ', payload.gameState.gameTimers.remainingTime);
-				this.setPausedTimer(payload.gameState.gameTimers.remainingTime);
+			// Auto-resume, display paused timer, or fall back to the full round from rules.
+			const remainingTime = payload.gameState.gameTimers?.remainingTime ?? 0;
+			if (payload.gameState.status === GAME_STATUS.PLAYING && remainingTime > 0) {
+				this.startTimer(remainingTime);
+			} else if (remainingTime > 0) {
+				this.setPausedTimer(remainingTime);
+			} else {
+				this.resetTimerToRules();
 			}
 		});
 		if (this.wsService.isConnected()) {
@@ -165,6 +171,9 @@ export class GameStateService {
 	}
 
 	leaveRooms(): void {
+		// The service is a singleton but its countdown belongs to the board being torn
+		// down: stop it so no stale interval survives into the next game view.
+		this.stopTimer();
 		if (this.gameStateId) {
 			this.wsService.leaveRoom(this.roomGameState);
 			this.wsService.leaveRoom(this.roomMaster);
@@ -282,20 +291,22 @@ export class GameStateService {
 			window.location.reload();
 		});
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
-				if (p.idx == data.idx) {
-					p.progressPrison = data.progress;
-				}
-			});
+			// Server sends { playerStateIdx, progress } every 5s (and once immediately on imprisonment).
+			// Rebuild the array immutably + re-emit so playersAC$ (distinctUntilChanged) recomputes the
+			// rows; also force the row into PRISON so the table reflects it live and after a refresh.
+			const updated = this.playersStatesSubject.getValue().map((p) =>
+				p.idx == data.playerStateIdx
+					? { ...p, status: PLAYER_STATUS.PRISON, progressPrison: data.progress }
+					: p
+			);
+			this.playersStatesSubject.next(updated);
 		});
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any) => {
 			this.snackbarService.showSuccess(this.i18n.instant('EVENTS.PRISON_ENDED'));
-			_.forEach(this.gameStateSubject.getValue().playersStates, (p) => {
-				if (p.idx == data.idx) {
-					p.status = PLAYER_STATUS.ALIVE;
-					p.progressPrison = 0;
-				}
-			});
+			const updated = this.playersStatesSubject.getValue().map((p) =>
+				p.idx == data.playerStateIdx ? { ...p, status: PLAYER_STATUS.ALIVE, progressPrison: 0 } : p
+			);
+			this.playersStatesSubject.next(updated);
 		});
 		this.wsService.on(IO.PLAYER.CONNECTED, (data) => {
 			console.log('room connected ws:', data);
@@ -533,10 +544,11 @@ export class GameStateService {
 			{
 				listen: ({ hh, mm, ss, s, h, m }: any) => {
 					const rules = this.rulesSubject.getValue();
+					const totalRoundSeconds = (rules.roundMinutes || 0) * 60;
 					const secondsRemaining = s + m * 60;
 					this.minutesSubject.next(mm);
 					this.secondsSubject.next(ss);
-					this.timerProgressSubject.next((secondsRemaining / (rules.roundMinutes * 60)) * 100);
+					this.timerProgressSubject.next(totalRoundSeconds > 0 ? (secondsRemaining / totalRoundSeconds) * 100 : 0);
 				},
 				done: () => {
 					// Timer done - component can subscribe to this event
@@ -562,6 +574,18 @@ export class GameStateService {
 	 */
 	pauseTimer(): void {
 		this.timer.stop();
+	}
+
+	/**
+	 * Show the full round from the rules when the gameState has no timer yet
+	 * (game not started / reset). Clears any running interval first.
+	 */
+	resetTimerToRules(): void {
+		const rules = this.rulesSubject.getValue();
+		const totalSeconds = (rules?.roundMinutes || 0) * 60;
+		this.timer.stop();
+		this.timer.set({ h: 0, m: 0, s: totalSeconds });
+		this.timer.reset();
 	}
 
 	/**

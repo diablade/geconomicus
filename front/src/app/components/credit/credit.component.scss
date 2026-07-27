@@ -65,6 +65,14 @@
 	border-radius: 20px;
 	z-index: 1;
 	overflow: hidden;
+
+	> div {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .progress {
@@ -79,7 +87,7 @@
 .statusLabel {
 	position: relative;
 	font-weight: bold;
-	vertical-align: middle;
+	text-align: center;
 	z-index: 2;
 }
 
@@ -87,27 +95,16 @@
    (green → amber → red). Pulses once per second by alternating two identical keyframes. */
 .countdown {
 	display: inline-block;
+	transform-origin: center center;
 	color: #fff;
 	font-weight: 800;
 	text-shadow:
 		0 0 4px rgba(0, 0, 0, 0.9),
 		0 1px 2px rgba(0, 0, 0, 0.9);
-	animation-duration: 0.9s;
-	animation-timing-function: ease-out;
+	animation: countdown-pulse 1s infinite ease-out;
 }
 
-@keyframes countdown-pulse-a {
-	0% {
-		transform: scale(1);
-	}
-	30% {
-		transform: scale(1.4);
-	}
-	100% {
-		transform: scale(1);
-	}
-}
-@keyframes countdown-pulse-b {
+@keyframes countdown-pulse {
 	0% {
 		transform: scale(1);
 	}

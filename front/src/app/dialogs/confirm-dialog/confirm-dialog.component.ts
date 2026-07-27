@@ -18,6 +18,7 @@ export class ConfirmDialogComponent {
 	btn1Enable = true;
 	styleBtnConfirm = "warn";
 	styleBtnCancel = "accent";
+    beep = false;
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
 		this.title = data.title || this.title;
@@ -30,7 +31,8 @@ export class ConfirmDialogComponent {
 		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;
 		this.styleBtnConfirm = data.styleBtnConfirm || this.styleBtnConfirm;
 		this.styleBtnCancel = data.styleBtnCancel || this.styleBtnCancel;
-		if (data.requestBeep) {
+        this.beep = data.beep || this.beep;
+		if (this.beep) {
 			this.audioService.playSound("request");
 		}
 	}

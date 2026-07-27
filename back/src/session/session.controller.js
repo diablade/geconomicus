@@ -1,7 +1,7 @@
 import env from '#config/env';
 import log from '#config/log';
 import socket from '#config/socket';
-import { IO, DB_EVENTS, PLAYER_TYPE, ROOMS } from '@geco/shared';
+import { IO, DB_EVENTS, PLAYER_TYPE, ROOMS, GAME_STATUS } from '@geco/shared';
 
 import SessionService from './session.service.js';
 import RulesService from './rules/rules.service.js';
@@ -122,12 +122,12 @@ SessionController.delete = async (req, res, next) => {
 SessionController.killGame = async (req, res, next) => {
 	try {
 		const { sessionId, ruleIdx, gameStateId } = req.body;
-		const sessionUpdated = await RulesService.resetDefault(sessionId, ruleIdx);
+		await RulesService.update(sessionId, ruleIdx, { gameStatus: GAME_STATUS.NONE });
 		await GameStateService.delete(gameStateId);
 		await EventService.removeAllByGameStateId(gameStateId);
 		let response = {
 			gameStateId: gameStateId,
-			ruleStatus: sessionUpdated.gameStatus,
+			ruleStatus: GAME_STATUS.NONE,
 			ruleIdx: ruleIdx,
 		};
 		socket.emitAckTo(ROOMS.session(sessionId), IO.GAME.DELETED, response);

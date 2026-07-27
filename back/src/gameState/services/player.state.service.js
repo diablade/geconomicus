@@ -179,8 +179,19 @@ PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, pl
                 playerState.actionTokens = rules.startingTokens;
             }
 
+			// On refresh, restore the live prison countdown from the running timer (if any) so the
+			// board doesn't fall back to the default display until the next 5s progress tick.
+			let prison = null;
+			if (playerState.status === PLAYER_STATUS.PRISON) {
+				const prisonTimer = prisonTimerManager.getTimer(`${gameStateId}-${playerStateIdx}`);
+				if (prisonTimer) {
+					prison = { remainingTime: prisonTimer.getRemainingMs(), totalTime: prisonTimer.duration };
+				}
+			}
+
 			return {
 				playerState,
+				prison,
 				gameState: {
 					typeMoney: gameState.typeMoney,
 					status: gameState.status,

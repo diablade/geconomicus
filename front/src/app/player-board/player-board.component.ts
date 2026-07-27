@@ -169,7 +169,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	// Final-minute credit alarm: ⏰ full-screen flash (~2s), then the credit panel force-opens.
 	creditAlarm = false;
 	private finalMinuteSub: Subscription | undefined;
-	private readonly CREDIT_ALARM_MS = 2000;
+	private readonly CREDIT_ALARM_MS = 4000;
 
 	// Faulty-credit police overlay: state-derived (survives refresh), un-skippable —
 	// stays up with a looping siren until the animator's seizure clears the FAULT.
@@ -184,6 +184,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	prisonProgress = 0;
 	minutesPrison = 5;
 	secondsPrison = 0;
+	private prisonTotalMs = 0;
+	private prisonSub: Subscription | undefined;
 	shortCode: ShortCode | undefined;
 	isBuying = false;
 	isProducing = false;
@@ -202,15 +204,34 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	prisonTimer = createCountdown(
 		{ h: 0, m: 0, s: 0 },
 		{
-			listen: ({ hh, mm, ss, s, h, m }) => {
+			listen: ({ s, h, m }) => {
 				this.minutesPrison = m;
 				this.secondsPrison = s;
+				const remainingSec = h * 3600 + m * 60 + s;
+				const totalSec = this.prisonTotalMs / 1000;
+				this.prisonProgress = totalSec > 0 ? Math.max(0, Math.min(100, (remainingSec / totalSec) * 100)) : 0;
 			},
 			done: () => {
-				this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.PRISON_END'));
+				// The server (PRISON_ENDED) is authoritative for the actual release; just settle the UI.
+				this.minutesPrison = 0;
+				this.secondsPrison = 0;
+				this.prisonProgress = 0;
 			},
 		}
 	);
+
+	/**
+	 * (Re)start the local prison countdown from an authoritative server remaining/total time.
+	 * Called on entry (seizure), on each 5s heartbeat, and on refresh — each call re-syncs so the
+	 * per-second display stays smooth without drifting from the server timer.
+	 */
+	private syncPrison(remainingTime: number, totalTime: number): void {
+		this.prisonTotalMs = totalTime || remainingTime;
+		const remainingSec = Math.max(0, Math.round(remainingTime / 1000));
+		this.prisonTimer.reset();
+		this.prisonTimer.set({ h: 0, m: 0, s: remainingSec });
+		this.prisonTimer.start();
+	}
 
 	constructor(
 		private route: ActivatedRoute,
@@ -236,6 +257,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
 		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
+		if (this.prisonSub) this.prisonSub.unsubscribe();
+		this.prisonTimer.stop();
 		// this.audioService.stopSound('police');
 		window.removeEventListener('resize', this._resizeHandler);
 	}
@@ -256,6 +279,15 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		// A credit entered its final minute → force-open the panel (+ flash on a live crossing).
 		this.finalMinuteSub = this.playerStateService.finalMinute$.subscribe(({ flash }) => {
 			this.onCreditFinalMinute(flash);
+		});
+
+		// Prison countdown: (re)sync the local timer from the server state; stop it on release.
+		this.prisonSub = this.playerStateService.prison$.subscribe((prison) => {
+			if (prison) {
+				this.syncPrison(prison.remainingTime, prison.totalTime);
+			} else {
+				this.prisonTimer.stop();
+			}
 		});
 
 		// A credit defaulted → raise the un-skippable police overlay + siren; drop both on seizure.

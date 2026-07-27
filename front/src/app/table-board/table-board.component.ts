@@ -125,7 +125,8 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				...vm,
 				alive,
 				dead,
-				connectedCount: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD && r.connection?.isConnected).length,
+				connectedCount: vm.rows.filter((r) => r.status !== PLAYER_STATUS.DEAD && r.connection?.isConnected)
+					.length,
 				totalTokens: vm.rows.reduce(
 					(sum, r) => (r.status !== PLAYER_STATUS.DEAD ? sum + (r.actionTokens ?? 0) : sum),
 					0
@@ -319,7 +320,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 					amount: credit.amount,
 					username: this.gameStateService.getAvatar(credit.playerStateIdx)?.name,
 				}),
-				message2: this.i18nService.instant('CREDIT.CANCEL_MESSAGE2'),
+				message2: this.i18nService.instant('CREDIT.CANCEL_MESSAGE2', { amount: credit.amount }),
 			},
 		});
 		dialogRef.afterClosed().subscribe((result) => {
