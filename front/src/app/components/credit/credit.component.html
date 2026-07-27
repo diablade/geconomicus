@@ -7,7 +7,15 @@
 				role="progressbar"
 				[style.background-color]="getStatusColor(progress)"
 				[style.width.%]="progress"></div>
-			<div class="statusLabel">{{ getStatus(credit.status) | translate }}</div>
+			<div
+				*ngIf="inFinalMinute; else statusLabelTpl"
+				class="statusLabel countdown"
+				[style.animation-name]="pulseToggle ? 'countdown-pulse-a' : 'countdown-pulse-b'">
+				{{ countdownSeconds }}s
+			</div>
+			<ng-template #statusLabelTpl>
+				<div class="statusLabel">{{ getStatus(credit.status) | translate }}</div>
+			</ng-template>
 		</div>
 	</div>
 	<div *ngIf="!small" class="d-flex flex-row align-content-center">

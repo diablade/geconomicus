@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CREDIT_STATUS } from '@geco/shared';
 import { Credit } from '../../models/gameState';
 import { Avatar } from '../../models/avatar';
@@ -18,7 +18,7 @@ import { Avatar } from '../../models/avatar';
 	templateUrl: './credit-chip.component.html',
 	styleUrls: ['./credit-chip.component.scss'],
 })
-export class CreditChipComponent implements OnChanges {
+export class CreditChipComponent {
 	protected readonly RUNNING = CREDIT_STATUS.RUNNING;
 	protected readonly REQUESTING = CREDIT_STATUS.REQUESTING;
 	protected readonly PAUSED = CREDIT_STATUS.PAUSED;
@@ -34,15 +34,18 @@ export class CreditChipComponent implements OnChanges {
 	/** Emitted when the animator picks an action from the chip menu ('cancel' | 'seize'). */
 	@Output() action = new EventEmitter<{ action: string; credit: Credit }>();
 
-	progress = 0;
-
-	ngOnChanges(): void {
+	/**
+	 * Live getter (not ngOnChanges-cached): credit socket handlers mutate credits in place,
+	 * so ngOnChanges does not fire on status transitions (e.g. FAULT). Reading remainingTime
+	 * each change-detection pass keeps the bar in sync — and lets it clear the moment a fault
+	 * zeroes remainingTime, uncovering the blinking FAULT animation.
+	 */
+	get progress(): number {
 		if (this.credit && this.credit.remainingTime > 0 && this.duration > 0) {
 			const durationMs = this.duration * 60 * 1000;
-			this.progress = ((durationMs - this.credit.remainingTime) / durationMs) * 100;
-		} else {
-			this.progress = 0;
+			return ((durationMs - this.credit.remainingTime) / durationMs) * 100;
 		}
+		return 0;
 	}
 
 	get isClosed(): boolean {

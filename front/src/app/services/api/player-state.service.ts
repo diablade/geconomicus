@@ -48,6 +48,18 @@ export class PlayerStateService {
 	private firstCreditQuestionSubject = new BehaviorSubject<any>(null);
 	firstCreditQuestion$ = this.firstCreditQuestionSubject.asObservable();
 
+	// ── Credit maturity pressure (client-derived from the 5s progress heartbeat) ──
+	// Per-credit "already fired" latches for the current cycle, keyed by credit id.
+	// Re-armed on extend (a fresh cycle) and re-initialised from remainingTime on load.
+	private halfwayFired = new Set<string>();
+	private finalFired = new Set<string>();
+	// Emitted when a credit enters its final minute: player-board force-opens the credit
+	// panel and, when `flash` is true (a live crossing, not a reconnect), plays the ⏰ overlay.
+	private finalMinuteSubject = new Subject<{ credit: Credit; flash: boolean }>();
+	finalMinute$ = this.finalMinuteSubject.asObservable();
+	private readonly WARN_FRACTION = 0.5;
+	private readonly FINAL_MS = 60_000;
+
 	private gameStateSubject = new BehaviorSubject<GameState>(new GameState());
 	gameState$ = this.gameStateSubject.asObservable();
 	private rulesSubject = new BehaviorSubject<Rules>(new Rules());
@@ -188,6 +200,8 @@ export class PlayerStateService {
 
 				this.gameStateSubject.next(data.gameState);
 				this.rulesSubject.next(data.rules);
+
+				this.initMaturityLatches(data.credits, data.rules?.durationCredit ?? 0);
 
 				const requestingCredits = data.credits.filter((c: Credit) => c.status === CREDIT_STATUS.REQUESTING);
 				for (const credit of requestingCredits) {
@@ -589,7 +603,7 @@ export class PlayerStateService {
 				return c;
 			});
 			this.creditsSubject.next(updatedCredits);
-			//TODO if progress is 50% give warning to player
+			this.checkMaturityPressure(data.id, data.remainingTime, updatedCredits);
 		});
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
@@ -639,6 +653,9 @@ export class PlayerStateService {
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.coinsLK);
+			// Extend = a fresh cycle on the same credit id: re-arm both maturity warnings.
+			this.halfwayFired.delete(data.credit.id);
+			this.finalFired.delete(data.credit.id);
 			this.dialog.open(InformationDialogComponent, {
 				data: {
 					title: this.i18nService.instant('DIALOG.CREDIT_EXTENDED.TITLE'),
@@ -685,6 +702,77 @@ export class PlayerStateService {
 		this.wsService.on(IO.CREDIT.QUESTION, async (data: any) => {
 			this.firstCreditQuestionSubject.next(data?.rate ?? null);
 		});
+	}
+
+	/**
+	 * Initialise the maturity latches from each credit's current remaining time (on load /
+	 * reconnect). Thresholds already passed start "fired" so we never replay a stale toast;
+	 * a credit already inside its final minute restores the countdown state (panel open) but
+	 * without the ⏰ flash.
+	 */
+	private initMaturityLatches(credits: Credit[], durationCreditMinutes: number): void {
+		this.halfwayFired.clear();
+		this.finalFired.clear();
+		const durationMs = durationCreditMinutes * 60 * 1000;
+		if (durationMs <= 0) return;
+		const halfMs = durationMs * this.WARN_FRACTION;
+		let restore: Credit | null = null;
+		for (const c of credits) {
+			if (c.status !== CREDIT_STATUS.RUNNING) continue;
+			const rt = c.remainingTime ?? 0;
+			if (rt <= halfMs) this.halfwayFired.add(c.id);
+			if (rt > 0 && rt <= this.FINAL_MS) {
+				this.finalFired.add(c.id);
+				this.halfwayFired.add(c.id);
+				restore = c;
+			}
+		}
+		if (restore) this.finalMinuteSubject.next({ credit: restore, flash: false });
+	}
+
+	/**
+	 * Fire the maturity warnings for one credit off a progress heartbeat: a one-shot toast at
+	 * 50% elapsed and a one-shot final-minute alarm (⏰ overlay + panel + label countdown),
+	 * each latched per credit id. The half-mark toast is suppressed when it would land inside
+	 * the final minute (durationCredit ≤ 2 min).
+	 */
+	private checkMaturityPressure(id: string, remainingTime: number, credits: Credit[]): void {
+		const durationMs = (this.rulesSubject.getValue()?.durationCredit ?? 0) * 60 * 1000;
+		if (durationMs <= 0 || remainingTime <= 0) return;
+		const halfMs = durationMs * this.WARN_FRACTION;
+
+		// Final-minute alarm — takes precedence, fires once per cycle.
+		if (remainingTime <= this.FINAL_MS && !this.finalFired.has(id)) {
+			this.finalFired.add(id);
+			this.halfwayFired.add(id); // a passed half-mark must never fire afterwards
+			const credit = credits.find((c) => c.id === id);
+			if (credit) this.finalMinuteSubject.next({ credit, flash: true });
+			return;
+		}
+
+		// Halfway nudge — once per cycle, above the final minute, and only when the half-mark
+		// sits clear of it (credit long enough that the two warnings don't collide).
+		if (
+			halfMs > this.FINAL_MS &&
+			remainingTime <= halfMs &&
+			remainingTime > this.FINAL_MS &&
+			!this.halfwayFired.has(id)
+		) {
+			this.halfwayFired.add(id);
+			this.snackbarService.showNotif(
+				this.i18nService.instant('CREDIT.HALFWAY_NUDGE', {
+					remaining: this.formatRemaining(remainingTime),
+				})
+			);
+		}
+	}
+
+	/** Format a remaining duration as "2mn05s" (or "45s" under a minute). */
+	private formatRemaining(ms: number): string {
+		const totalSec = Math.round(ms / 1000);
+		const m = Math.floor(totalSec / 60);
+		const s = totalSec % 60;
+		return m > 0 ? `${m}mn${s.toString().padStart(2, '0')}s` : `${s}s`;
 	}
 
 	// Remove all event listeners to prevent memory leaks

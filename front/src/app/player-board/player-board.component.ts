@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { combineLatest, map, Subscription, withLatestFrom } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Subscription, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog } from '@angular/material/dialog';
@@ -166,6 +166,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private reincarnationSub: Subscription | undefined;
 	private readonly REINCARNATE_OVERLAY_MS = 4000;
 
+	// Final-minute credit alarm: ⏰ full-screen flash (~2s), then the credit panel force-opens.
+	creditAlarm = false;
+	private finalMinuteSub: Subscription | undefined;
+	private readonly CREDIT_ALARM_MS = 2000;
+
+	// Faulty-credit police overlay: state-derived (survives refresh), un-skippable —
+	// stays up with a looping siren until the animator's seizure clears the FAULT.
+	creditFault = false;
+	private creditFaultSub: Subscription | undefined;
+
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
@@ -224,6 +234,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.playerStateService.offAll();
 		if (this.subscription) this.subscription.unsubscribe();
 		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
+		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
+		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
+		// this.audioService.stopSound('police');
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -239,6 +252,17 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.reincarnationSub = this.playerStateService.reincarnation$.subscribe((data) => {
 			this.playReincarnationOverlay(data.newPlayerStateIdx);
 		});
+
+		// A credit entered its final minute → force-open the panel (+ flash on a live crossing).
+		this.finalMinuteSub = this.playerStateService.finalMinute$.subscribe(({ flash }) => {
+			this.onCreditFinalMinute(flash);
+		});
+
+		// A credit defaulted → raise the un-skippable police overlay + siren; drop both on seizure.
+		// State-derived so a refresh re-raises it, and only the animator's seizure ends it.
+		this.creditFaultSub = this.warningCredit$
+			.pipe(distinctUntilChanged())
+			.subscribe((fault) => this.onCreditFault(fault));
 
 		const rawAssist = this.route.snapshot.queryParamMap.get('assist');
 		this.assistMode =
@@ -464,6 +488,37 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 					});
 			}, this.REINCARNATE_OVERLAY_MS);
 		}, this.REINCARNATE_OVERLAY_MS);
+	}
+
+	/**
+	 * A credit entered its final minute: force-open the credit panel so its countdown label
+	 * is visible, and — only on a live crossing (`flash`), not a reconnect restore — play the
+	 * ⏰ alarm overlay. A single flash covers concurrent finals (rare); both never overlap.
+	 */
+	private onCreditFinalMinute(flash: boolean): void {
+		if (!this.panelCreditOpenState) {
+			this.panelCreditOpenState = true;
+			this.localStorageService.setItem('panelCredit', true);
+		}
+		if (flash && !this.creditAlarm) {
+			this.creditAlarm = true;
+			setTimeout(() => (this.creditAlarm = false), this.CREDIT_ALARM_MS);
+		}
+	}
+
+	/**
+	 * A credit is in FAULT: raise the full-screen police overlay and loop the siren; when the
+	 * animator's seizure clears the fault (credits$ re-derives false), drop the overlay and stop
+	 * the siren. Purely state-driven, so there is no player-side dismiss — even on refresh it
+	 * comes straight back until the seizure lands.
+	 */
+	private onCreditFault(fault: boolean): void {
+		this.creditFault = fault;
+		if (fault) {
+			this.audioService.playSound('police');
+		} else {
+			this.audioService.stopSound('police');
+		}
 	}
 
 	/**

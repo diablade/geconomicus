@@ -172,3 +172,22 @@ A tag on every created credit recording how it came to be: `animator` (manual co
 ## Solvency
 
 A player's total outstanding obligation — amount + interest summed across their active credits — measured against their wealth (coins + total card value). Determines auto-approval of a Credit Request; also shown on the animator's manual contract dialog to inform a risk / higher-rate decision (informational there, never an auto-refusal).
+
+## Maturity Pressure
+
+The escalating, player-facing cues that warn a borrower a running credit is nearing settlement — a Halfway Nudge at 50% elapsed and a Final-Minute Alarm in the last 60s. Computed entirely on the client from the existing credit progress heartbeat; debt game only, and shown only in the player's own view (never the animator's). The runway to the Settlement Call.
+
+## Halfway Nudge
+
+A transient snackbar shown **once** when a running credit passes 50% of its duration, naming the time left (e.g. "Crédit à mi-parcours - 2mn30s restant"). Suppressed when `durationCredit ≤ 2 min` so it can't collide with the Final-Minute Alarm. Re-armed if the credit is extended.
+*Avoid*: half-time warning, mi-temps.
+
+## Final-Minute Alarm
+
+The last-60-seconds treatment of a running credit: a brief full-screen flash (reincarnate-overlay style, ⏰, ~2s) that then force-opens the credit panel and replaces that credit's "en cours" label with a per-second countdown (`59s`…`0s`, pulsing each tick; the progress bar underneath is unchanged). Fires once per credit cycle, re-arms on extend, and on reconnect the countdown state is restored but the flash is not replayed.
+*Avoid*: countdown, final warning, last call.
+
+## Fault Lockout
+
+The player-view treatment once a credit reaches FAULT (the borrower failed to settle at maturity): a full-screen blue↔red police-strobe overlay (🚨, looping `police.mp3` siren) that blocks the whole board and tells the player to see the animator. Unlike the Final-Minute Alarm it is **un-skippable and state-derived** — it is rendered from the presence of any FAULT credit, so it re-raises on refresh and can only be cleared by the animator performing a Seizure (which moves the credit out of FAULT). Highest-priority overlay (z-index above reincarnate/alarm/take-over).
+*Avoid*: default screen, blocked overlay, GO_TO_BANK.

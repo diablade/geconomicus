@@ -73,6 +73,10 @@
 		"REFUSED_NEGOTIATE": "Crédit refusé — négociez avec l'animateur",
 		"RATE_CHANGED": "Nouveau taux : {{amount}}/{{interest}} ({{pct}}%)",
 		"FIRST_Q_TITLE": "Voulez-vous prendre un premier crédit ?",
-		"DECLINE": "Non merci"
+		"DECLINE": "Non merci",
+		"HALFWAY_NUDGE": "Crédit à mi-parcours - {{remaining}} restant",
+		"FINAL_MINUTE": "Plus qu'une minute ! Rembourse ton crédit, vite !",
+		"FAULT_OVERLAY_TITLE": "Crédit en défaut",
+		"FAULT_OVERLAY_TEXT": "Tu n'as pas remboursé à temps. Va voir l'animateur pour la saisie."
 	}
 }

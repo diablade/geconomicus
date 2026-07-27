@@ -82,3 +82,39 @@
 	vertical-align: middle;
 	z-index: 2;
 }
+
+/* Final-minute countdown: white + strong shadow so it reads over any progress-bar colour
+   (green → amber → red). Pulses once per second by alternating two identical keyframes. */
+.countdown {
+	display: inline-block;
+	color: #fff;
+	font-weight: 800;
+	text-shadow:
+		0 0 4px rgba(0, 0, 0, 0.9),
+		0 1px 2px rgba(0, 0, 0, 0.9);
+	animation-duration: 0.9s;
+	animation-timing-function: ease-out;
+}
+
+@keyframes countdown-pulse-a {
+	0% {
+		transform: scale(1);
+	}
+	30% {
+		transform: scale(1.4);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+@keyframes countdown-pulse-b {
+	0% {
+		transform: scale(1);
+	}
+	30% {
+		transform: scale(1.4);
+	}
+	100% {
+		transform: scale(1);
+	}
+}

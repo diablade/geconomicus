@@ -391,11 +391,16 @@ export class GameStateService {
 			this.creditsSubject.next(credits);
 		});
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any) => {
-			_.forEach(this.creditsSubject.getValue(), (c) => {
-				if (c.playerStateIdx == data.playerStateIdx) {
-					c.status = data.status;
+			// Backend emits { credit } per faulted credit (same shape as the player room).
+			// Rebuild immutably + zero the timer so the chip's progress bar clears and the
+			// blinking FAULT state shows; emitting is what makes the table's rows$ recompute.
+			const updatedCredits = this.creditsSubject.getValue().map((c) => {
+				if (c.id === data.credit.id) {
+					return { ...c, status: data.credit.status, remainingTime: 0, progress: 0 };
 				}
+				return c;
 			});
+			this.creditsSubject.next(updatedCredits);
 			this.snackbarService.showError(this.i18n.instant('CREDIT.DEFAULT_CREDIT_MESSAGE'));
 		});
 	}

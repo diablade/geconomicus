@@ -9,6 +9,19 @@
 	</div>
 </div>
 
+<!-- Final-minute credit alarm: ⏰ flash (~2s), then the credit panel force-opens with a live countdown. -->
+<div class="credit-alarm-overlay" *ngIf="creditAlarm">
+	<div class="credit-alarm-glyph">⏰</div>
+	<div class="credit-alarm-text">{{ 'CREDIT.FINAL_MINUTE' | translate }}</div>
+</div>
+
+<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable — only the animator's seizure clears it. -->
+<div class="police-overlay" *ngIf="creditFault">
+	<div class="police-glyph">🚨</div>
+	<div class="police-title">{{ 'CREDIT.FAULT_OVERLAY_TITLE' | translate }}</div>
+	<div class="police-text">{{ 'CREDIT.FAULT_OVERLAY_TEXT' | translate }}</div>
+</div>
+
 <!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it. -->
 <div class="takenover-overlay" *ngIf="takenOver$ | async">
 	<div class="takenover-card">
