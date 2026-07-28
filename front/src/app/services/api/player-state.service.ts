@@ -1081,9 +1081,6 @@ export class PlayerStateService {
 			return;
 		}
 
-		// Backend requires amountCardsForProd distinct card keys (see decks.helper _areCardIdsUnique),
-		// which also matches the recipe-completion criterion (distinct ingredient keys). Dedupe by key
-		// so we never send duplicates when a player holds two cards sharing the same key.
 		const identicalCards = _.uniqBy(
 			cards.filter((c) => c.letter === letter && c.weight === weight),
 			'key'

@@ -378,30 +378,6 @@
 // normale (voir cardsView$) — donc jamais dupliquées.
 // Détection automatique (réactive), construction toujours manuelle via le bouton.
 
-@keyframes squareZoneGlow {
-	0%,
-	100% {
-		box-shadow:
-			0 0 0 2px #ffd54a,
-			0 0 10px 2px rgba(255, 213, 74, 0.5);
-	}
-	50% {
-		box-shadow:
-			0 0 0 3px #ffe79a,
-			0 0 22px 7px rgba(255, 213, 74, 0.9);
-	}
-}
-
-@keyframes squareZoneBtnPulse {
-	0%,
-	100% {
-		transform: scale(1);
-	}
-	50% {
-		transform: scale(1.04);
-	}
-}
-
 .square-zone {
 	position: relative;
 	display: flex;
@@ -607,40 +583,6 @@
 	}
 }
 
-@keyframes reincarnate-fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-@keyframes reincarnate-pulse {
-	0%,
-	100% {
-		transform: scale(1);
-		opacity: 1;
-	}
-	50% {
-		transform: scale(1.08);
-		opacity: 0.75;
-	}
-}
-@keyframes reincarnate-bloom {
-	0% {
-		transform: scale(0.4);
-		opacity: 0;
-	}
-	60% {
-		transform: scale(1.2);
-		opacity: 1;
-	}
-	100% {
-		transform: scale(1);
-		opacity: 1;
-	}
-}
-
 /* ── Final-minute credit alarm overlay (⏰, ~2s, strobing red) ──────────── */
 .credit-alarm-overlay {
 	position: fixed;
@@ -667,25 +609,6 @@
 		font-weight: 700;
 		letter-spacing: 0.04em;
 		text-shadow: 0 0 2vmin rgba(0, 0, 0, 0.8);
-	}
-}
-
-@keyframes credit-alarm-flash {
-	0%,
-	100% {
-		background: radial-gradient(circle at center, rgba(120, 10, 10, 0.92), rgba(20, 0, 0, 0.97));
-	}
-	50% {
-		background: radial-gradient(circle at center, rgba(200, 30, 30, 0.95), rgba(60, 0, 0, 0.98));
-	}
-}
-@keyframes credit-alarm-shake {
-	0%,
-	100% {
-		transform: rotate(-8deg) scale(1);
-	}
-	50% {
-		transform: rotate(8deg) scale(1.12);
 	}
 }
 
@@ -725,25 +648,6 @@
 		letter-spacing: 0.03em;
 		max-width: 80vw;
 		text-shadow: 0 0 2vmin rgba(0, 0, 0, 0.85);
-	}
-}
-
-@keyframes police-flash {
-	0%,
-	100% {
-		background: radial-gradient(circle at center, rgba(12, 30, 170, 0.94), rgba(0, 0, 20, 0.98));
-	}
-	50% {
-		background: radial-gradient(circle at center, rgba(190, 12, 12, 0.95), rgba(25, 0, 0, 0.98));
-	}
-}
-@keyframes police-shake {
-	0%,
-	100% {
-		transform: rotate(-10deg) scale(1);
-	}
-	50% {
-		transform: rotate(10deg) scale(1.15);
 	}
 }
 

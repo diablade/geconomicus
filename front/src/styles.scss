@@ -2,6 +2,7 @@
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '@angular/cdk/overlay-prebuilt.css';
 @import 'simple-keyboard/build/css/index.css';
+@import 'styles/keyframes';
 
 body {
 	margin: 0;
@@ -139,29 +140,6 @@ html {
 	animation: shadow-rotate 2s linear infinite;
 	filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
 		drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
-}
-
-@keyframes shadow-rotate {
-	0% {
-		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
-			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
-	}
-	25% {
-		filter: drop-shadow(2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px -2px 2px rgba(255, 28, 141, 0.77))
-			drop-shadow(-2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px 2px 2px rgba(27, 31, 253, 0.77));
-	}
-	50% {
-		filter: drop-shadow(0px 2px 2px rgb(255, 230, 0)) drop-shadow(2px 0px 2px rgba(255, 28, 141, 0.77))
-			drop-shadow(0px -2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(-2px 0px 2px rgba(27, 31, 253, 0.77));
-	}
-	75% {
-		filter: drop-shadow(-2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px 2px 2px rgba(255, 28, 141, 0.77))
-			drop-shadow(2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px -2px 2px rgba(27, 31, 253, 0.77));
-	}
-	100% {
-		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
-			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
-	}
 }
 
 .box-shadowed {
@@ -407,54 +385,9 @@ html {
 	}
 }
 
-@keyframes pulse {
-	0% {
-		transform: scale(1.5);
-	}
-
-	50% {
-		transform: scale(2.5);
-	}
-
-	100% {
-		transform: scale(1.5);
-	}
-}
-
 .spinning {
     animation: spin 200ms ease-in-out infinite;
 }
-
-@keyframes spin {
-	0% {
-		transform: rotateY(0deg);
-	}
-	100% {
-		transform: rotateY(360deg);
-	}
-}
-
-@keyframes rotate {
-	0% {
-		transform: rotateZ(0deg);
-	}
-	100% {
-		transform: rotateZ(360deg);
-	}
-}
-
-@keyframes cops {
-	0% {
-		background-color: #3153ff;
-	}
-	50% {
-		background-color: #ff0000;
-	}
-	100% {
-		background-color: #3153ff;
-	}
-}
-
 
 .giftBounce {
 	font-size: 1.3em;

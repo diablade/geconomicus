@@ -1,0 +1,202 @@
+// Centralized @keyframes for the whole app.
+// Angular does not scope @keyframes names per component (emulated encapsulation
+// only scopes selectors), so these are global no matter which file declares them.
+
+@keyframes shadow-rotate {
+	0% {
+		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+	25% {
+		filter: drop-shadow(2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px -2px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(-2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px 2px 2px rgba(27, 31, 253, 0.77));
+	}
+	50% {
+		filter: drop-shadow(0px 2px 2px rgb(255, 230, 0)) drop-shadow(2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px -2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(-2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+	75% {
+		filter: drop-shadow(-2px 0px 2px rgb(255, 230, 0)) drop-shadow(0px 2px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(2px 0px 2px rgba(149, 36, 255, 0.77)) drop-shadow(0px -2px 2px rgba(27, 31, 253, 0.77));
+	}
+	100% {
+		filter: drop-shadow(0px -2px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+			drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+	}
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1.5);
+	}
+	50% {
+		transform: scale(2.5);
+	}
+	100% {
+		transform: scale(1.5);
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotateY(0deg);
+	}
+	100% {
+		transform: rotateY(360deg);
+	}
+}
+
+@keyframes rotate {
+	0% {
+		transform: rotateZ(0deg);
+	}
+	100% {
+		transform: rotateZ(360deg);
+	}
+}
+
+@keyframes cops {
+	0% {
+		background: #3153ff;
+	}
+	50% {
+		background: #ff0000;
+	}
+	100% {
+		background: #3153ff;
+	}
+}
+
+@keyframes countdown-pulse {
+	0% {
+		transform: scale(1);
+	}
+	30% {
+		transform: scale(1.4);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+}
+
+@keyframes squareZoneGlow {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 2px #ffd54a,
+			0 0 10px 2px rgba(255, 213, 74, 0.5);
+	}
+	50% {
+		box-shadow:
+			0 0 0 3px #ffe79a,
+			0 0 22px 7px rgba(255, 213, 74, 0.9);
+	}
+}
+
+@keyframes squareZoneBtnPulse {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.04);
+	}
+}
+
+@keyframes reincarnate-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes reincarnate-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.08);
+		opacity: 0.75;
+	}
+}
+
+@keyframes reincarnate-bloom {
+	0% {
+		transform: scale(0.4);
+		opacity: 0;
+	}
+	60% {
+		transform: scale(1.2);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes credit-alarm-flash {
+	0%,
+	100% {
+		background: radial-gradient(circle at center, rgba(120, 10, 10, 0.92), rgba(20, 0, 0, 0.97));
+	}
+	50% {
+		background: radial-gradient(circle at center, rgba(200, 30, 30, 0.95), rgba(60, 0, 0, 0.98));
+	}
+}
+
+@keyframes credit-alarm-shake {
+	0%,
+	100% {
+		transform: rotate(-8deg) scale(1);
+	}
+	50% {
+		transform: rotate(8deg) scale(1.12);
+	}
+}
+
+@keyframes police-flash {
+	0%,
+	100% {
+		background: radial-gradient(circle at center, rgba(12, 30, 170, 0.94), rgba(0, 0, 20, 0.98));
+	}
+	50% {
+		background: radial-gradient(circle at center, rgba(190, 12, 12, 0.95), rgba(25, 0, 0, 0.98));
+	}
+}
+
+@keyframes police-shake {
+	0%,
+	100% {
+		transform: rotate(-10deg) scale(1);
+	}
+	50% {
+		transform: rotate(10deg) scale(1.15);
+	}
+}
