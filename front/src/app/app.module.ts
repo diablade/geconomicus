@@ -76,7 +76,6 @@ import { TaskListBtnComponent, AnimatorTaskListDialog } from './components/taskl
 import { JoinShortDialogComponent } from './dialogs/join-short-dialog/join-short-dialog.component';
 import { ResumeSessionPromptComponent } from './dialogs/resume-session-prompt/resume-session-prompt.component';
 import { ItemComponent } from './components/item/item.component';
-import { RecipeComponent } from './components/recipe/recipe.component';
 import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TutorialDialogComponent } from './dialogs/tutorial-dialog/tutorial-dialog.component';
@@ -149,7 +148,6 @@ LOAD_WASM().subscribe();
 		JoinShortDialogComponent,
 		ResumeSessionPromptComponent,
 		ItemComponent,
-		RecipeComponent,
 		LobbyMasterComponent,
 		LobbyPlayerComponent,
 		TutorialDialogComponent,

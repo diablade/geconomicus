@@ -324,7 +324,10 @@ html {
 	padding: 0 !important;
 }
 
-.red {
+// .card.<color> selectors carry extra specificity so they beat Bootstrap's own
+// .card { background-color } rule (bootstrap.css loads after this file).
+.red,
+.card.red {
 	background-color: #e8a7a6;
 
 	.mat-badge-content {
@@ -332,7 +335,8 @@ html {
 	}
 }
 
-.yellow {
+.yellow,
+.card.yellow {
 	background-color: #f3efad;
 
 	.mat-badge-content {
@@ -340,7 +344,8 @@ html {
 	}
 }
 
-.green {
+.green,
+.card.green {
 	background-color: #a2cba2;
 
 	.mat-badge-content {
@@ -348,7 +353,8 @@ html {
 	}
 }
 
-.blue {
+.blue,
+.card.blue {
 	background-color: #bbdae3;
 
 	.mat-badge-content {
