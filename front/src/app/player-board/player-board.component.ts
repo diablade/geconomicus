@@ -258,7 +258,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
 		if (this.prisonSub) this.prisonSub.unsubscribe();
 		this.prisonTimer.stop();
-		// this.audioService.stopSound('police');
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 

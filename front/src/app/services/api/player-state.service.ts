@@ -29,8 +29,7 @@ export class PlayerStateService {
 	typeMoney$ = this.typeMoneySubject.asObservable();
 	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
 	playerStatus$ = this.playerStatusSubject.asObservable();
-	// Prison countdown state, re-synced from the server (seizure payload, 5s progress heartbeat,
-	// or a refresh). null when the player is not imprisoned. Drives the board's countdown/spinner.
+	// Prison countdown/spinner.
 	private prisonSubject = new BehaviorSubject<{ remainingTime: number; totalTime: number } | null>(null);
 	prison$ = this.prisonSubject.asObservable();
 	playerConnection$ = inject(WebSocketService).connectionStatus$;
@@ -431,7 +430,6 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			// 5s heartbeat from the prison timer: keep the board in prison mode and re-sync the countdown.
 			this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
 			this.prisonSubject.next({ remainingTime: data.remainingTime, totalTime: data.totalTime });
 		});
@@ -646,10 +644,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
-			// Death-path seizures emit a bare { playerStateIdx } — nothing to reconcile here.
 			if (!data?.seizure?.cards) return;
-			// Manual seizure sends a single `credit`; Auto Seizure resolves a whole FIFO batch and
-			// sends `credits` (docs/adr/0005-auto-seizure.md) — normalize to one array either way.
 			const resolvedCredits: Credit[] = data.credits ?? (data.credit ? [data.credit] : []);
 			const resolvedIds = new Set(resolvedCredits.map((c) => c.id));
 
@@ -669,9 +664,6 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 			this.coinsSubject.next(data.coinsLK);
 
-			// Seizure Confirmation: a tap-to-dismiss summary of what was seized, shown for both the
-			// manual and Auto Seizure paths alike (today's manual path was silent). Prison lockout
-			// begins only once the player dismisses this dialog, not before.
 			const cardsCount = data.seizure.cards.length;
 			const cardsValue = data.seizure.cards.reduce((acc: number, c: any) => acc + c.price, 0);
 			const prisonMinutes = data.prisoner && data.prisonTotalTime ? Math.round(data.prisonTotalTime / 60000) : 0;
