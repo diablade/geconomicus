@@ -84,5 +84,9 @@
 		"FAULT_OVERLAY_TITLE": "Crédit en défaut",
 		"FAULT_OVERLAY_TEXT": "Tu n'as pas remboursé à temps. Va voir l'animateur pour la saisie.",
 		"FAULT_OVERLAY_TEXT_AUTO": "Tu n'as pas remboursé à temps. Saisie en cours..."
+	},
+	"PRODUCTION": {
+		"REVEAL_TITLE": "Construit !",
+		"REVEAL_HINT": "{{count}} cartes Niv. {{level}} repiochées... +1 jeton d'action"
 	}
 }

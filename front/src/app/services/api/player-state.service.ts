@@ -19,7 +19,6 @@ import { AudioService } from '../audio.service';
 import { InformationDialogComponent } from 'src/app/dialogs/information-dialog/information-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from 'src/app/dialogs/confirm-dialog/confirm-dialog.component';
-import { CongratsDialogComponent } from 'src/app/dialogs/congrats-dialog/congrats-dialog.component';
 
 @Injectable({
 	providedIn: 'root',
@@ -29,7 +28,6 @@ export class PlayerStateService {
 	typeMoney$ = this.typeMoneySubject.asObservable();
 	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
 	playerStatus$ = this.playerStatusSubject.asObservable();
-	// Prison countdown/spinner.
 	private prisonSubject = new BehaviorSubject<{ remainingTime: number; totalTime: number } | null>(null);
 	prison$ = this.prisonSubject.asObservable();
 	playerConnection$ = inject(WebSocketService).connectionStatus$;
@@ -42,22 +40,12 @@ export class PlayerStateService {
 	actionTokens$ = this.actionTokensSubject.asObservable();
 	private creditsSubject = new BehaviorSubject<Credit[]>([]);
 	credits$ = this.creditsSubject.asObservable();
-	// Auto-bank: current effective rate on offer { amount, interest, allowDouble, pct, tierIndex }
-	// for the persistent rate chip on the player board (null when autoBank is off).
 	private rateSubject = new BehaviorSubject<any>(null);
 	rate$ = this.rateSubject.asObservable();
-	// Auto-bank: the opening First Credit Question prompt { amount, interest, allowDouble }
-	// (null when there is none). Drives the blocking overlay on the player board.
 	private firstCreditQuestionSubject = new BehaviorSubject<any>(null);
 	firstCreditQuestion$ = this.firstCreditQuestionSubject.asObservable();
-
-	// ── Credit maturity pressure (client-derived from the 5s progress heartbeat) ──
-	// Per-credit "already fired" latches for the current cycle, keyed by credit id.
-	// Re-armed on extend (a fresh cycle) and re-initialised from remainingTime on load.
 	private halfwayFired = new Set<string>();
 	private finalFired = new Set<string>();
-	// Emitted when a credit enters its final minute: player-board force-opens the credit
-	// panel and, when `flash` is true (a live crossing, not a reconnect), plays the ⏰ overlay.
 	private finalMinuteSubject = new Subject<{ credit: Credit; flash: boolean }>();
 	finalMinute$ = this.finalMinuteSubject.asObservable();
 	private readonly WARN_FRACTION = 0.5;
@@ -69,11 +57,11 @@ export class PlayerStateService {
 	rules$ = this.rulesSubject.asObservable();
 	private avatarsSubject = new BehaviorSubject<{ idx: number; name: string; image: string }[]>([]);
 	avatars$ = this.avatarsSubject.asObservable();
-	// Emitted when this device's life dies and is reborn — carries the new life's idx to navigate to.
 	private reincarnationSubject = new Subject<{ oldPlayerStateIdx: number; newPlayerStateIdx: number; avatarIdx: number }>();
 	reincarnation$ = this.reincarnationSubject.asObservable();
-	// True while an animator has taken over this Seat: the board shows a blocking
-	// overlay with a Retake button until the player reclaims control (ADR-0002).
+	private productionRevealSubject = new Subject<{ letter: string; weight: number; producedCard: Card; newCards: Card[] }>();
+	productionReveal$ = this.productionRevealSubject.asObservable();
+	private pendingProduction: { cardsLK: Card[]; actionTokens: number } | null = null;
 	private takenOverSubject = new BehaviorSubject<boolean>(false);
 	takenOver$ = this.takenOverSubject.asObservable();
 
@@ -160,7 +148,6 @@ export class PlayerStateService {
 		private deckService: DeckService,
 		private snackbarService: SnackbarService,
 		private i18nService: I18nService,
-		private themeService: ThemesService,
 		private router: Router
 	) {}
 
@@ -186,7 +173,6 @@ export class PlayerStateService {
 			)
 			.pipe(
 				catchError((err) => {
-					// Redirect to lobby-player on error
 					this.errorService.handleError(err, ERROR, 'ERROR.GAME_NOT_FOUND');
 					this.router.navigate(['/avatar', sessionId, avatarIdx]);
 					return [];
@@ -195,7 +181,6 @@ export class PlayerStateService {
 			.subscribe((data) => {
 				this.coinsSubject.next(data.playerState.coins);
 				this.playerStatusSubject.next(data.playerState.status);
-				// Restore the prison countdown on load/refresh (server sends the running timer's state).
 				this.prisonSubject.next(
 					data.playerState.status === PLAYER_STATUS.PRISON && data.prison ? data.prison : null
 				);
@@ -265,14 +250,11 @@ export class PlayerStateService {
 				window.location.reload();
 			}
 		});
-
-		// An animator opened a take-over on this Seat → block the board.
 		this.wsService.on(IO.PLAYER.TAKEN_OVER, () => {
 			this.takenOverSubject.next(true);
 		});
 	}
 
-	/** Player reclaims their Seat from an animator take-over (hard reclaim — ADR-0002). */
 	retake(): void {
 		this.wsService.emit(IO.PLAYER.RETAKE, { sessionId: this.sessionId, avatarIdx: this.avatarIdx });
 		this.takenOverSubject.next(false);
@@ -280,7 +262,6 @@ export class PlayerStateService {
 	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
 			console.log('game started');
-			// Round started: drop any unanswered First Credit Question overlay (no-answer).
 			this.firstCreditQuestionSubject.next(null);
 			this.refreshRate();
 			const currentGameState = this.gameStateSubject.getValue();
@@ -365,13 +346,11 @@ export class PlayerStateService {
 		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
 			console.log('game deleted', data);
 			if (data.gameStateId == this.gameStateId) {
-				//redirect to lobby
 				this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
 			}
 		});
 
 		this.wsService.on(IO.GAME.RESET, async (data: any) => {
-			// Handle game reset
 			window.location.reload();
 		});
 
@@ -437,7 +416,6 @@ export class PlayerStateService {
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
 			console.log('prison ended', data);
 			cb?.({ status: 'ok', _ackId: data._ackId });
-			// Server sends the full refreshed hand under cardsLK (4 new cards already merged in).
 			if (data.cardsLK) this.cardsSubject.next(data.cardsLK);
 			this.prisonSubject.next(null);
 			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
@@ -448,7 +426,6 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.REINCARNATED, async (data: any) => {
-			// The board plays the death→rebirth overlay and navigates to the new life.
 			this.reincarnationSubject.next(data);
 		});
 	}
@@ -500,7 +477,6 @@ export class PlayerStateService {
 		// Action events
 		this.wsService.on(IO.PLAYER.ACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
-			// card arriving (give / ong)
             const avatar = this.avatarsSubject.getValue().find(a => a.idx==data.fromAvatarIdx);
 			if (data.card) {
 				const cards = this.cardsSubject.getValue();
@@ -527,7 +503,6 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.ACTION_ROBBED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
-			// Remove stolen card(s) from local state
 			const stolenKeys: string[] = data.card ? [data.card.key] : (data.cards || []).map((c: Card) => c.key);
 			const updatedCards = this.cardsSubject.getValue().filter((c: Card) => !stolenKeys.includes(c.key));
 			this.cardsSubject.next(updatedCards);
@@ -674,7 +649,7 @@ export class PlayerStateService {
 					title: this.i18nService.instant('DIALOG.SEIZURE_RESULT.TITLE'),
 					message: this.i18nService.instant('DIALOG.SEIZURE_RESULT.MESSAGE', { coins: data.seizure.coins, cardsCount, cardsValue }),
 					message2: prisonMinutes > 0 ? this.i18nService.instant('DIALOG.SEIZURE_RESULT.PRISON', { minutes: prisonMinutes }) : '',
-					timerBtn: 0, // no auto-dismiss — the player must acknowledge this one
+					timerBtn: 0,
 				},
 			});
 
@@ -694,7 +669,6 @@ export class PlayerStateService {
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.coinsSubject.next(data.coinsLK);
-			// Extend = a fresh cycle on the same credit id: re-arm both maturity warnings.
 			this.halfwayFired.delete(data.credit.id);
 			this.finalFired.delete(data.credit.id);
 			this.dialog.open(InformationDialogComponent, {
@@ -714,9 +688,6 @@ export class PlayerStateService {
 			this.confirmSettleOrExtend(data.credit);
 		});
 
-		// Auto-bank: the effective rate tier changed. The server pushes on BOTH
-		// directions so the chip always reflects reality; `improved` (live-down —
-		// cheaper credit as money got scarcer) is the only case we notify on.
 		this.wsService.on(IO.CREDIT.RATE, async (data: any) => {
 			if (data?.rate) {
 				this.rateSubject.next(data.rate);
@@ -733,24 +704,16 @@ export class PlayerStateService {
 			}
 		});
 
-		// Auto-bank: this player's credit request was refused (insolvent).
 		this.wsService.on(IO.CREDIT.REFUSED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.snackbarService.showError(this.i18nService.instant('CREDIT.REFUSED_NEGOTIATE'));
 		});
 
-		// Auto-bank: the opening First Credit Question — show the blocking overlay.
 		this.wsService.on(IO.CREDIT.QUESTION, async (data: any) => {
 			this.firstCreditQuestionSubject.next(data?.rate ?? null);
 		});
 	}
 
-	/**
-	 * Initialise the maturity latches from each credit's current remaining time (on load /
-	 * reconnect). Thresholds already passed start "fired" so we never replay a stale toast;
-	 * a credit already inside its final minute restores the countdown state (panel open) but
-	 * without the ⏰ flash.
-	 */
 	private initMaturityLatches(credits: Credit[], durationCreditMinutes: number): void {
 		this.halfwayFired.clear();
 		this.finalFired.clear();
@@ -771,12 +734,6 @@ export class PlayerStateService {
 		if (restore) this.finalMinuteSubject.next({ credit: restore, flash: false });
 	}
 
-	/**
-	 * Fire the maturity warnings for one credit off a progress heartbeat: a one-shot toast at
-	 * 50% elapsed and a one-shot final-minute alarm (⏰ overlay + panel + label countdown),
-	 * each latched per credit id. The half-mark toast is suppressed when it would land inside
-	 * the final minute (durationCredit ≤ 2 min).
-	 */
 	private checkMaturityPressure(id: string, remainingTime: number, credits: Credit[]): void {
 		const durationMs = (this.rulesSubject.getValue()?.durationCredit ?? 0) * 60 * 1000;
 		if (durationMs <= 0 || remainingTime <= 0) return;
@@ -791,8 +748,6 @@ export class PlayerStateService {
 			return;
 		}
 
-		// Halfway nudge — once per cycle, above the final minute, and only when the half-mark
-		// sits clear of it (credit long enough that the two warnings don't collide).
 		if (
 			halfMs > this.FINAL_MS &&
 			remainingTime <= halfMs &&
@@ -808,7 +763,6 @@ export class PlayerStateService {
 		}
 	}
 
-	/** Format a remaining duration as "2mn05s" (or "45s" under a minute). */
 	private formatRemaining(ms: number): string {
 		const totalSec = Math.round(ms / 1000);
 		const m = Math.floor(totalSec / 60);
@@ -816,9 +770,7 @@ export class PlayerStateService {
 		return m > 0 ? `${m}mn${s.toString().padStart(2, '0')}s` : `${s}s`;
 	}
 
-	// Remove all event listeners to prevent memory leaks
 	offAll(): void {
-		// playerState service events
 		this.wsService.off('connected');
 		this.wsService.off('resync');
 		this.wsService.off(IO.PLAYER.INIT);
@@ -953,7 +905,6 @@ export class PlayerStateService {
 		});
 	}
 
-	// Auto-bank: refresh the persistent rate chip (pull; no quote-lock).
 	refreshRate(): void {
 		const rules = this.rulesSubject.getValue();
 		if (rules.typeMoney !== GAME_TYPE.DEBT || !rules.autoBank) return;
@@ -962,8 +913,6 @@ export class PlayerStateService {
 		});
 	}
 
-	// Auto-bank: self-service credit request. Accepted → IO.CREDIT.NEW updates the UI;
-	// refused → IO.CREDIT.REFUSED shows the "negotiate with the animator" snackbar.
 	requestCredit(amount: number, interest: number): void {
 		if (this.playerStatusSubject.getValue() !== PLAYER_STATUS.ALIVE) {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE'));
@@ -972,8 +921,6 @@ export class PlayerStateService {
 		this.bankService.requestCredit(this.gameStateId, this.playerStateIdx, amount, interest).subscribe(() => this.refreshRate());
 	}
 
-	// Auto-bank: answer the opening First Credit Question, then clear the overlay.
-	// Accepted → IO.CREDIT.NEW adds the credit; the answer is recorded server-side.
 	answerFirstCreditQuestion(answer: string): void {
 		this.bankService.answerFirstCredit(this.gameStateId, this.playerStateIdx, answer).subscribe(() => {
 			this.firstCreditQuestionSubject.next(null);
@@ -1104,11 +1051,9 @@ export class PlayerStateService {
 		this.deckService.produce(gameStateId, this.playerStateIdx.toString(), cardsForProd).subscribe({
 			next: (result: any) => {
 				if (result.status === 'ok') {
-					this.showProduction(result.producedCard, result.newCard);
-					this.cardsSubject.next(result.cardsLK);
-					if (result.result?.actionTokens != null) {
-						this.actionTokensSubject.next(result.result.actionTokens);
-					}
+					const { cardsLK, newCards, producedCard, actionTokens } = result.result;
+					this.pendingProduction = { cardsLK, actionTokens };
+					this.productionRevealSubject.next({ letter, weight, producedCard, newCards });
 				} else {
 					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
 					this.audioService.playSound('error');
@@ -1123,6 +1068,15 @@ export class PlayerStateService {
 		});
 	}
 
+	commitProduction(): void {
+		if (!this.pendingProduction) return;
+		this.cardsSubject.next(this.pendingProduction.cardsLK);
+		if (this.pendingProduction.actionTokens != null) {
+			this.actionTokensSubject.next(this.pendingProduction.actionTokens);
+		}
+		this.pendingProduction = null;
+	}
+
 	refreshActionResult(result: { actionKey: string; result: any }) {
 		if (!result?.result) return;
 		if (result.result.cardsLK != null) {
@@ -1131,23 +1085,5 @@ export class PlayerStateService {
 		if (result.result.actionTokens != null) {
 			this.actionTokensSubject.next(result.result.actionTokens);
 		}
-	}
-
-	showProduction(producedCard: Card, newCards: Card[]) {
-		this.dialog.open(CongratsDialogComponent, {
-			hasBackdrop: true,
-			backdropClass: 'bgBlur',
-			data: {
-				text:
-					producedCard.weight > 2
-						? this.i18nService.instant('EVENTS.TECHNOLOGY')
-						: this.i18nService.instant('EVENTS.GIFT'),
-				producedCard,
-				newCards,
-				theme: this.themeService.getCurrentTheme(),
-			},
-			width: '10px',
-			height: '10px',
-		});
 	}
 }

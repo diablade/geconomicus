@@ -54,7 +54,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { CdkMenuTrigger } from '@angular/cdk/menu';
 import { SeizureDialogComponent } from './dialogs/seizure-dialog/seizure-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { CongratsDialogComponent } from './dialogs/congrats-dialog/congrats-dialog.component';
 import { ActionDialogComponent } from './dialogs/action-dialog/action-dialog.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { LOAD_WASM, NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
@@ -76,6 +75,7 @@ import { TaskListBtnComponent, AnimatorTaskListDialog } from './components/taskl
 import { JoinShortDialogComponent } from './dialogs/join-short-dialog/join-short-dialog.component';
 import { ResumeSessionPromptComponent } from './dialogs/resume-session-prompt/resume-session-prompt.component';
 import { ItemComponent } from './components/item/item.component';
+import { SquareZoneComponent } from './components/square-zone/square-zone.component';
 import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TutorialDialogComponent } from './dialogs/tutorial-dialog/tutorial-dialog.component';
@@ -129,7 +129,6 @@ LOAD_WASM().subscribe();
 		ConfirmDialogComponent,
 		BtnTimerAutoClickComponent,
 		SeizureDialogComponent,
-		CongratsDialogComponent,
 		ActionDialogComponent,
 		ShortcodeDialogComponent,
 		AssistModeDialogComponent,
@@ -148,6 +147,7 @@ LOAD_WASM().subscribe();
 		JoinShortDialogComponent,
 		ResumeSessionPromptComponent,
 		ItemComponent,
+		SquareZoneComponent,
 		LobbyMasterComponent,
 		LobbyPlayerComponent,
 		TutorialDialogComponent,

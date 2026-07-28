@@ -267,49 +267,19 @@
 			</ng-container>
 			<ng-container *ngIf="vm.typeTheme !== 'CARD'">
 				<ng-container *ngIf="cardsView$ | async as cardsView">
-					<!-- Carré complet (chantier) : les cartes réelles se regroupent ici, elles ne sont plus rendues plus bas -->
-					<div class="square-zone" *ngFor="let group of cardsView.groups">
-						<div class="square-zone-wheel-container">
-							<div *ngIf="giftReceived" class="square-zone-wheel"></div>
-						</div>
-						<div class="square-zone-header">
-							<span
-								class="square-zone-icon emoji"
-								[ngClass]="vm.typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
-								{{ getSquareIcon(group.recipe.letter) }}
-							</span>
-							<span class="square-zone-title contour">🏗️ {{ group.recipe.letter | translate }}</span>
-							<span class="square-zone-count">
-								{{ group.cards.length }}/{{ vm.rules.amountCardsForProd }}
-							</span>
-						</div>
-						<div class="square-zone-cards">
-							<app-item
-								class="square-zone-card"
-								*ngFor="let card of group.cards; trackBy: trackByCard"
-								[card]="card"
-								[typeMoney]="vm.rules.typeMoney"
-								[ownerIdx]="playerStateIdx"
-								[gameStateId]="gameStateId"
-								[typeTheme]="vm.typeTheme"
-								[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
-								[currentDU]="vm.gameState.currentDU"
-								[allCards]="vm.cards"
-								[amountCardsForProd]="vm.rules.amountCardsForProd"
-								[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
-								(shortCodeChanged)="onChangedShortCode($event)"
-								[screenWidth]="screenWidth"
-								[screenHeight]="screenHeight"></app-item>
-						</div>
-						<button class="square-zone-btn h-auto" mat-raised-button (click)="buildSquare(group.recipe)">
-							<div class="giftBounce square-zone-tool">🛠️</div>
-							<span>{{ getSquareBuildText(group.recipe.weight) | translate }}</span>
-							<span class="square-zone-gift">🎁</span>
-						</button>
-						<div class="square-zone-hint">
-							+ 1 carte de niveau supérieur · {{ vm.rules.amountCardsForProd }} nouvelles cartes
-						</div>
-					</div>
+					<app-square-zone
+						*ngFor="let group of cardsView.groups; trackBy: trackByGroup"
+						[group]="group"
+						[typeMoney]="vm.rules.typeMoney"
+						[typeTheme]="vm.typeTheme"
+						[ownerIdx]="playerStateIdx"
+						[gameStateId]="gameStateId"
+						[currentDU]="vm.gameState.currentDU"
+						[allCards]="vm.cards"
+						[amountCardsForProd]="vm.rules.amountCardsForProd"
+						[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
+						[screenWidth]="screenWidth"
+						[screenHeight]="screenHeight"></app-square-zone>
 
 					<ng-container *ngFor="let card of cardsView.remaining; trackBy: trackByCard">
 						<app-item

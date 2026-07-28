@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import confetti from 'canvas-confetti';
 import { combineLatest, distinctUntilChanged, map, Subscription, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
@@ -58,7 +59,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	screenWidth = 0;
 	screenHeight = 0;
-	giftReceived = false;
 
 	get isLandscape(): boolean {
 		return this.screenWidth > this.screenHeight;
@@ -68,7 +68,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	gameStateId: string | undefined;
 	avatarIdx: number | undefined;
 	playerStateIdx: number | undefined;
-	// Set when this tab is an animator's assist session (?assist=coexist|takeover|kick).
 	assistMode: AssistMode | null = null;
 
 	typeTheme$ = inject(ThemesService).typeTheme$;
@@ -82,9 +81,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
 	credits_NotOrdered$ = inject(PlayerStateService).credits$;
-	// Auto-bank: current effective rate on offer (for the persistent rate chip).
 	rate$ = inject(PlayerStateService).rate$;
-	// Auto-bank: opening First Credit Question prompt (drives the blocking overlay).
 	firstCreditQuestion$ = inject(PlayerStateService).firstCreditQuestion$;
 
 	order = (status: string): number => {
@@ -112,11 +109,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	);
 	gameState$ = inject(PlayerStateService).gameState$;
 	rules$ = inject(PlayerStateService).rules$;
-
-	// Carrés complets (4 cartes distinctes même lettre / même niveau), thème item/emoji uniquement.
-	// Les cartes d'un groupe complet sont retirées de `remaining` : elles ne sont donc rendues
-	// qu'une seule fois, à l'intérieur de la zone chantier — jamais dans la grille normale.
-	// Le thème CARD garde son propre bouton de construction existant, inchangé.
 	cardsView$ = combineLatest([this.cards$, this.rules$]).pipe(
 		map(([cards, rules]) => {
 			const recipes = getAvailableRecipes(
@@ -160,19 +152,13 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		rate: this.rate$,
 	});
 
-	// Death→rebirth overlay state (skull → sprout, ~2.5s, then auto-navigate to the new life).
 	isReincarnating = false;
 	reincarnatePhase: 'death' | 'rebirth' = 'death';
 	private reincarnationSub: Subscription | undefined;
 	private readonly REINCARNATE_OVERLAY_MS = 4000;
-
-	// Final-minute credit alarm: ⏰ full-screen flash (~2s), then the credit panel force-opens.
 	creditAlarm = false;
 	private finalMinuteSub: Subscription | undefined;
 	private readonly CREDIT_ALARM_MS = 4000;
-
-	// Faulty-credit police overlay: state-derived (survives refresh), un-skippable —
-	// stays up with a looping siren until the animator's seizure clears the FAULT.
 	creditFault = false;
 	private creditFaultSub: Subscription | undefined;
 
@@ -211,7 +197,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				this.prisonProgress = totalSec > 0 ? Math.max(0, Math.min(100, (remainingSec / totalSec) * 100)) : 0;
 			},
 			done: () => {
-				// The server (PRISON_ENDED) is authoritative for the actual release; just settle the UI.
 				this.minutesPrison = 0;
 				this.secondsPrison = 0;
 				this.prisonProgress = 0;
@@ -219,11 +204,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	);
 
-	/**
-	 * (Re)start the local prison countdown from an authoritative server remaining/total time.
-	 * Called on entry (seizure), on each 5s heartbeat, and on refresh — each call re-syncs so the
-	 * per-second display stays smooth without drifting from the server timer.
-	 */
 	private syncPrison(remainingTime: number, totalTime: number): void {
 		this.prisonTotalMs = totalTime || remainingTime;
 		const remainingSec = Math.max(0, Math.round(remainingTime / 1000));
@@ -269,17 +249,14 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.updateScreenSize();
 		this.scanV3 = this.localStorageService.getItem('scanV3');
 
-		// Death → rebirth: play the overlay, then move this device to the new life.
 		this.reincarnationSub = this.playerStateService.reincarnation$.subscribe((data) => {
 			this.playReincarnationOverlay(data.newPlayerStateIdx);
 		});
 
-		// A credit entered its final minute → force-open the panel (+ flash on a live crossing).
 		this.finalMinuteSub = this.playerStateService.finalMinute$.subscribe(({ flash }) => {
 			this.onCreditFinalMinute(flash);
 		});
 
-		// Prison countdown: (re)sync the local timer from the server state; stop it on release.
 		this.prisonSub = this.playerStateService.prison$.subscribe((prison) => {
 			if (prison) {
 				this.syncPrison(prison.remainingTime, prison.totalTime);
@@ -288,8 +265,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		// A credit defaulted → raise the un-skippable police overlay + siren; drop both on seizure.
-		// State-derived so a refresh re-raises it, and only the animator's seizure ends it.
 		this.creditFaultSub = this.warningCredit$
 			.pipe(distinctUntilChanged())
 			.subscribe((fault) => this.onCreditFault(fault));
@@ -306,23 +281,18 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.gameStateId = params['gameStateId'];
 			this.playerStateIdx = params['playerStateIdx'];
 
-			// Initialize socket in service
 			if (this.sessionId && this.gameStateId && this.avatarIdx != undefined && this.playerStateIdx != undefined) {
-				//first get state , prepare sockets
 				this.playerStateService.loadPlayerState(
 					this.sessionId,
 					this.gameStateId,
 					this.avatarIdx,
 					this.playerStateIdx
 				);
-				// then get avatar and connect to sockets — an assist session connects
-				// with a non-colliding identity so it never kicks the player's device.
 				this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true, this.assistMode).subscribe();
 			}
 		});
 	}
 
-	/** Player taps "retake play" on the take-over overlay to reclaim their Seat. */
 	retake(): void {
 		this.playerStateService.retake();
 	}
@@ -359,7 +329,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				} else {
 					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
 				}
-				// Auto-bank: seed the persistent rate chip for the debt game.
 				this.playerStateService.refreshRate();
 			}
 		});
@@ -376,28 +345,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.playerStateService.produce($event.letter, $event.weight);
 	}
 
-	buildSquare(recipe: Recipe) {
-		this.produceLevelUp({ letter: recipe.letter, weight: recipe.weight });
-	}
-
-	getSquareIcon(key: string) {
-		return this.themesService.getIcon(key);
-	}
-
-	getSquareBuildText(weight: number) {
-		switch (weight) {
-			case 0:
-				return 'CARD.BUILD_UP_0';
-			case 1:
-				return 'CARD.BUILD_UP_1';
-			case 2:
-				return 'CARD.BUILD_UP_2';
-		}
-		return 'CARD.BUILD_UP';
-	}
-
-	trackByRecipe(index: number, recipe: Recipe): string {
-		return recipe.letter + recipe.weight;
+	trackByGroup(index: number, group: { recipe: Recipe; cards: Card[] }): string {
+		return group.recipe.letter + group.recipe.weight;
 	}
 
 	scan() {
@@ -424,7 +373,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	buy(dataRaw: any) {
 		if (this.isBuying) {
-			return; // Prevent double-clicks
+			return;
 		}
 		this.isBuying = true;
 
@@ -467,7 +416,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/** Auto-bank self-service: borrow the shown terms (contract; ×2 already doubled by the caller). */
 	requestCredit(amount: number, interest: number) {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
@@ -490,22 +438,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/** Auto-bank opening ceremony: answer the First Credit Question. */
 	answerFirstCredit(answer: string) {
 		this.playerStateService.answerFirstCreditQuestion(answer);
 	}
 
-	/**
-	 * Full-screen skull→sprout transition, then auto-navigate to the reborn life.
-	 * The overlay covers the brief DEAD flash so the player only sees "you died → new life begins".
-	 */
 	private async playReincarnationOverlay(newPlayerStateIdx: number) {
 		if (this.isReincarnating) return;
 		this.audioService.playSound('dead');
 		this.isReincarnating = true;
 		this.reincarnatePhase = 'death';
 
-		// Cross-fade to the rebirth glyph partway through.
 		await setTimeout(() => {
 			this.reincarnatePhase = 'rebirth';
 			this.audioService.playSound('angel');
@@ -513,18 +455,12 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				this.router
 					.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
 					.finally(() => {
-						// New life is loading via route params; drop the overlay on the next beat.
 						setTimeout(() => (this.isReincarnating = false), 300);
 					});
 			}, this.REINCARNATE_OVERLAY_MS);
 		}, this.REINCARNATE_OVERLAY_MS);
 	}
 
-	/**
-	 * A credit entered its final minute: force-open the credit panel so its countdown label
-	 * is visible, and — only on a live crossing (`flash`), not a reconnect restore — play the
-	 * ⏰ alarm overlay. A single flash covers concurrent finals (rare); both never overlap.
-	 */
 	private onCreditFinalMinute(flash: boolean): void {
 		if (!this.panelCreditOpenState) {
 			this.panelCreditOpenState = true;
@@ -536,12 +472,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/**
-	 * A credit is in FAULT: raise the full-screen police overlay and loop the siren; when the
-	 * animator's seizure clears the fault (credits$ re-derives false), drop the overlay and stop
-	 * the siren. Purely state-driven, so there is no player-side dismiss — even on refresh it
-	 * comes straight back until the seizure lands.
-	 */
 	private onCreditFault(fault: boolean): void {
 		this.creditFault = fault;
 		if (fault) {
@@ -551,10 +481,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/**
-	 * Manual fallback if the REINCARNATED socket was missed (reconnect / offline at death):
-	 * resolve this avatar's current ALIVE life and jump to it.
-	 */
 	tryReincarnate() {
 		if (!this.sessionId || !this.gameStateId || this.avatarIdx == undefined) return;
 		this.avatarService.getCurrentPlayerStateIdx(this.sessionId, this.gameStateId, this.avatarIdx).subscribe({

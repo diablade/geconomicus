@@ -1,0 +1,66 @@
+<div class="square-zone" [class.square-zone--revealing]="productionReveal">
+	<div class="square-zone-wheel-container">
+		<div *ngIf="productionReveal" class="square-zone-wheel square-zone-wheel--reveal"></div>
+	</div>
+	<div class="square-zone-header">
+		<span class="square-zone-icon emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+			{{ getIcon(group.recipe.letter) }}
+		</span>
+		<span class="square-zone-title contour">🏗️ {{ group.recipe.letter | translate }}</span>
+		<span class="square-zone-count">{{ group.cards.length }}/{{ amountCardsForProd }}</span>
+	</div>
+
+	<ng-container *ngIf="!productionReveal; else revealBody">
+		<div class="square-zone-cards">
+			<app-item
+				class="square-zone-card"
+				*ngFor="let card of group.cards; trackBy: trackByCard"
+				[card]="card"
+				[typeMoney]="typeMoney"
+				[ownerIdx]="ownerIdx"
+				[gameStateId]="gameStateId"
+				[typeTheme]="typeTheme"
+				[suffixShortCode]="suffixShortCode"
+				[currentDU]="currentDU"
+				[allCards]="allCards"
+				[amountCardsForProd]="amountCardsForProd"
+				[generatedIdenticalLetters]="generatedIdenticalLetters"
+				(shortCodeChanged)="onChangedShortCode($event)"
+				[screenWidth]="screenWidth"
+				[screenHeight]="screenHeight"></app-item>
+		</div>
+		<button class="square-zone-btn h-auto" mat-raised-button (click)="build()">
+			<div class="giftBounce square-zone-tool">🛠️</div>
+			<span>{{ getBuildText(group.recipe.weight) | translate }}</span>
+			<span class="square-zone-gift">🎁</span>
+			<span class="square-zone-token">⚡ +1</span>
+		</button>
+		<div class="square-zone-hint">
+			+ 1 carte de niveau supérieur · {{ amountCardsForProd }} nouvelles cartes · +1 jeton d'action
+		</div>
+	</ng-container>
+
+	<ng-template #revealBody>
+		<div class="production-reveal-card">
+			<app-item
+				[card]="productionReveal!.producedCard"
+				[typeMoney]="typeMoney"
+				[ownerIdx]="ownerIdx"
+				[gameStateId]="gameStateId"
+				[typeTheme]="typeTheme"
+				[flippable]="false"
+				[width]="'clamp(120px, 40vmin, 220px)'"
+				[height]="'clamp(120px, 40vmin, 220px)'"
+				[letterSize]="'2rem'"
+				[textSize]="'1rem'"
+				[screenWidth]="screenWidth"
+				[screenHeight]="screenHeight"></app-item>
+		</div>
+		<div class="production-reveal-title contour">{{ 'PRODUCTION.REVEAL_TITLE' | translate }}</div>
+		<div class="production-reveal-hint">
+			{{
+				'PRODUCTION.REVEAL_HINT' | translate: { count: amountCardsForProd, level: group.recipe.weight + 1 }
+			}}
+		</div>
+	</ng-template>
+</div>
