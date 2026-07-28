@@ -17,9 +17,15 @@
 					<div class="d-flex flex-column align-items-center flex-grow-1">
 						<div class="fs-6 shadowed">{{ avatar.name }}</div>
 						<div class="sold">
-							{{ 'DIALOG.SEIZURE.SOLD' | translate: { amount: playerCoins | number: '1.2-2' } }}
+							<ng-container *ngIf="seizureCoins === 0">
+								{{ 'DIALOG.SEIZURE.SOLD' | translate: { amount: playerCoins | number: '1.2-2' } }}
+							</ng-container>
+							<ng-container *ngIf="seizureCoins > 0">
+								<span class="strike">{{ playerCoins | number: '1.2-2' }}</span>
+								→ {{ playerCoins - seizureCoins | number: '1.2-2' }}
+							</ng-container>
 						</div>
-						<button *ngIf="playerCoins > 0" mat-raised-button color="primary" (click)="seizeCoins()">
+						<button *ngIf="playerCoins > 0 && seizureCoins === 0" mat-raised-button color="primary" (click)="seizeCoins()">
 							{{ 'DIALOG.SEIZURE.SEIZE' | translate }}
 							<fa-icon [icon]="faSackDollar"></fa-icon>
 						</button>

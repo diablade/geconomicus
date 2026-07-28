@@ -229,14 +229,17 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		cards = _.orderBy(cards, ['weight', 'letter'], ['asc', 'asc']);
 		const countByResult = _.countBy(cards, (c: Card) => c.weight + '-' + c.letter);
 		const seen: string[] = [];
-		for (const c of cards) {
+		// Return new objects: `cards` here shares Card references with playersAC$ (e.g. the
+		// seizure dialog's playerCards), so mutating `count`/`displayed` in place used to leak
+		// this row-summary badge count onto cards shown individually elsewhere.
+		return cards.map((c) => {
 			const countKey = c.weight + '-' + c.letter;
-			c.count = countByResult[countKey] || 0;
+			const count = countByResult[countKey] || 0;
 			const alreadySeen = seen.includes(countKey);
-			c.displayed = !alreadySeen;
+			const displayed = !alreadySeen;
 			if (!alreadySeen) seen.push(countKey);
-		}
-		return cards;
+			return { ...c, count, displayed };
+		});
 	}
 
 	// ── credits ──────────────────────────────────────────────────────────────────
@@ -350,7 +353,10 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 						seizureDecote: rules.seizureDecote,
 						timerPrison: rules.timerPrison,
 						playerState: targetPlayer,
-						playerCards: targetPlayer.cards || [],
+						// Copy the array: the dialog's cdkDropList drag/drop (transferArrayItem)
+						// splices items between playerCards/seizureCards in place — passing the
+						// live reference mutated the shared player state on every drag, even on Cancel.
+						playerCards: [...(targetPlayer.cards || [])],
 						playerCoins: targetPlayer.coins || 0,
 						avatar: targetPlayer.avatar,
 					},

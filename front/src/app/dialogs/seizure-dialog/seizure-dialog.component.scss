@@ -12,6 +12,12 @@
   color: black;
   background: wheat;
   border: solid black 1px;
+
+  .strike {
+    text-decoration-line: line-through;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+  }
 }
 
 .barSeizure {

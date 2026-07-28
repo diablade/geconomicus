@@ -613,6 +613,18 @@ export class GameStateService {
 	}
 
 	/**
+	 * Apply a local coins delta to one player row so the table view's balance stays live —
+	 * bank actions (credit, free money, seizure) only broadcast to the player's own device
+	 * (playerState room), not to the animator/table room, so the table must patch itself.
+	 */
+	private applyPlayerCoinsDelta(playerStateIdx: number, delta: number): void {
+		const updated = this.playersStatesSubject
+			.getValue()
+			.map((p) => (p.idx === playerStateIdx ? { ...p, coins: (p.coins ?? 0) + delta } : p));
+		this.playersStatesSubject.next(updated);
+	}
+
+	/**
 	 * Update player connection status.
 	 */
 	updatePlayerConnectionStatus(data: any, isConnected: boolean): void {
@@ -641,8 +653,10 @@ export class GameStateService {
 				credits.push(res.data.credit);
 				this.creditsSubject.next(credits);
 				const gameState = this.gameStateSubject.getValue();
-				gameState.currentMassMonetary = res.data.currentMassMonetary;
+				// The backend nests this under bankIndicators — reading it flat always left it undefined.
+				gameState.currentMassMonetary = res.data.bankIndicators?.currentMassMonetary;
 				this.gameStateSubject.next(gameState);
+				this.applyPlayerCoinsDelta(contrat.playerIdx, res.data.credit.amount);
 			});
 	}
 
@@ -670,8 +684,9 @@ export class GameStateService {
 			);
 			if (data) {
 				const gameState = this.gameStateSubject.getValue();
-				gameState.currentMassMonetary = data.data.currentMassMonetary;
+				gameState.currentMassMonetary = data.data.bankIndicators?.currentMassMonetary;
 				this.gameStateSubject.next(gameState);
+				this.applyPlayerCoinsDelta(give.playerStateIdx, give.amount);
 			}
 		});
 	}
@@ -696,6 +711,16 @@ export class GameStateService {
 					currentGameState.currentMassMonetary -= response.seizure.coins;
 				}
 				this.gameStateSubject.next(currentGameState);
+				if (response.seizure) {
+					this.applyPlayerCoinsDelta(playerStateIdx, -response.seizure.coins);
+				}
+
+				// The table view's credit column reads from creditsSubject, not gameState.credits —
+				// without this the credit kept showing its pre-seizure (warning/fault) status.
+				const updatedCredits = this.creditsSubject.getValue().map((c) =>
+					c.id === credit.id ? { ...c, status: CREDIT_STATUS.DONE, endAt: new Date() } : c
+				);
+				this.creditsSubject.next(updatedCredits);
 			}
 		});
 	}

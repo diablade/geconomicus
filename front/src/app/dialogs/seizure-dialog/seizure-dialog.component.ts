@@ -77,17 +77,19 @@ export class SeizureDialogComponent {
 
 	getSeizureObjective() {
 		if (this.credit) {
-			if (this.seizureType === CREDIT_STATUS.DECOTE) {
-				return this.credit.amount + this.credit.interest - this.seizureCoins;
-			} else {
-				return this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;
-			}
+			const objective =
+				this.seizureType === CREDIT_STATUS.DECOTE
+					? this.credit.amount + this.credit.interest - this.seizureCoins
+					: this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;
+			return Math.max(0, objective);
 		}
 		return 1;
 	}
 
 	getProgressSeizure() {
-		const progress = (this.getSeizure() / this.getSeizureObjective()) * 100;
+		const objective = this.getSeizureObjective();
+		if (objective <= 0) return 100;
+		const progress = (this.getSeizure() / objective) * 100;
 		return progress > 100 ? 100 : progress;
 	}
 

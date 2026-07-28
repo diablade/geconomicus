@@ -105,7 +105,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	};
 	credits$ = this.credits_NotOrdered$.pipe(
 		map((credits) => {
-			return [...credits].sort((a, b) => {
+			return [...credits].filter((c) => c.status !== CREDIT_STATUS.DONE).sort((a, b) => {
 				return this.order(a.status) - this.order(b.status);
 			});
 		})
