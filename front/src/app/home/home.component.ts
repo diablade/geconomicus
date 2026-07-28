@@ -170,6 +170,7 @@ export class CreateSessionDialog {
 		private i18nService: I18nService
 	) {
 		this.themes = this.themesService.getThemesKeys();
+		this.theme = this.themes[0];
 	}
 
 	onNoClick(): void {

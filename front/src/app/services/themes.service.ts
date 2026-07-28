@@ -10,9 +10,9 @@ export class ThemesService {
 	icons: Record<string, string> = {};
 	currentTheme = '';
 	themes: Record<string, string> = {
-		'THEME.CLASSIC': 'classic',
-		'THEME.EMOJIS': 'emojis',
 		'THEME.TWEMOJIS': 'twemojis',
+		'THEME.EMOJIS': 'emojis',
+		'THEME.CLASSIC': 'classic',
 	};
 
 	private _typeTheme$ = new BehaviorSubject<string>('CARD');
