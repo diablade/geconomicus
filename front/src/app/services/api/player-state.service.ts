@@ -648,13 +648,19 @@ export class PlayerStateService {
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			// Death-path seizures emit a bare { playerStateIdx } — nothing to reconcile here.
 			if (!data?.seizure?.cards) return;
+			// Manual seizure sends a single `credit`; Auto Seizure resolves a whole FIFO batch and
+			// sends `credits` (docs/adr/0005-auto-seizure.md) — normalize to one array either way.
+			const resolvedCredits: Credit[] = data.credits ?? (data.credit ? [data.credit] : []);
+			const resolvedIds = new Set(resolvedCredits.map((c) => c.id));
+
 			const updatedCards = this.cardsSubject
 				.getValue()
 				.filter((c) => !data.seizure.cards.some((sc: any) => sc.key === c.key));
 			const currentCredits = this.creditsSubject.getValue();
 			const updatedCredits = currentCredits.map((c) => {
-				if (data.credit && c.id === data.credit.id) {
-					c.status = data.credit.status;
+				if (resolvedIds.has(c.id)) {
+					const resolved = resolvedCredits.find((rc) => rc.id === c.id);
+					c.status = resolved?.status ?? c.status;
 				}
 				return c;
 			});
@@ -663,17 +669,34 @@ export class PlayerStateService {
 			this.creditsSubject.next(updatedCredits);
 			this.coinsSubject.next(data.coinsLK);
 
-			// Seizure with prison time → enter prison mode immediately and seed the countdown, so the
-			// player doesn't have to refresh and the timer starts from the real remaining time.
-			if (data.prisoner) {
-				this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
-				if (data.prisonTotalTime) {
-					this.prisonSubject.next({
-						remainingTime: data.prisonRemainingTime,
-						totalTime: data.prisonTotalTime,
-					});
+			// Seizure Confirmation: a tap-to-dismiss summary of what was seized, shown for both the
+			// manual and Auto Seizure paths alike (today's manual path was silent). Prison lockout
+			// begins only once the player dismisses this dialog, not before.
+			const cardsCount = data.seizure.cards.length;
+			const cardsValue = data.seizure.cards.reduce((acc: number, c: any) => acc + c.price, 0);
+			const prisonMinutes = data.prisoner && data.prisonTotalTime ? Math.round(data.prisonTotalTime / 60000) : 0;
+
+			const dialogRef = this.dialog.open(InformationDialogComponent, {
+				disableClose: true,
+				data: {
+					title: this.i18nService.instant('DIALOG.SEIZURE_RESULT.TITLE'),
+					message: this.i18nService.instant('DIALOG.SEIZURE_RESULT.MESSAGE', { coins: data.seizure.coins, cardsCount, cardsValue }),
+					message2: prisonMinutes > 0 ? this.i18nService.instant('DIALOG.SEIZURE_RESULT.PRISON', { minutes: prisonMinutes }) : '',
+					timerBtn: 0, // no auto-dismiss — the player must acknowledge this one
+				},
+			});
+
+			dialogRef.afterClosed().subscribe(() => {
+				if (data.prisoner) {
+					this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
+					if (data.prisonTotalTime) {
+						this.prisonSubject.next({
+							remainingTime: data.prisonRemainingTime,
+							totalTime: data.prisonTotalTime,
+						});
+					}
 				}
-			}
+			});
 		});
 
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {

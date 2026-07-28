@@ -49,6 +49,8 @@ let RulesSchema = new Schema(
 
 		//auto-bank (see docs/adr/0003-auto-bank-rate-board.md)
 		autoBank: { type: Boolean, required: true, default: false },
+		//auto-seizure (see docs/adr/0005-auto-seizure.md) — independent of autoBank
+		autoSeizure: { type: Boolean, required: true, default: false },
 		bankProfile: {
 			type: String,
 			required: true,

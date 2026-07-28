@@ -180,7 +180,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
-	defaultCredit = false;
 	prisonProgress = 0;
 	minutesPrison = 5;
 	secondsPrison = 0;

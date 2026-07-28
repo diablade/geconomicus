@@ -353,6 +353,13 @@
 						[(ngModel)]="rules.timerPrison" />
 				</mat-form-field>
 			</div>
+			<!-- Auto-seizure: independent of autoBank — automates collections on a FAULT credit -->
+			<div *ngIf="rules.typeMoney === DEBT" class="mt-2 d-flex flex-column">
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.autoSeizure">
+					{{ 'OPTION.AUTO_SEIZURE' | translate }}
+				</mat-checkbox>
+				<div class="m-auto fs-7 infoLabel" [innerHTML]="'OPTION.AUTO_SEIZURE_INFO' | translate"></div>
+			</div>
 			<!--			<div *ngIf="game.typeMoney===DEBT" class="mb-4 d-flex flex-column">-->
 			<!--				<mat-checkbox class="m-auto" [disabled]="true">-->
 			<!--					Convertir un joueur en banquier d'affaire (comming soon)-->

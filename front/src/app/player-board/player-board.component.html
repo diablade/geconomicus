@@ -15,11 +15,16 @@
 	<div class="credit-alarm-text">{{ 'CREDIT.FINAL_MINUTE' | translate }}</div>
 </div>
 
-<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable — only the animator's seizure clears it. -->
+<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable — clears the instant
+    a Seizure (manual or auto) resolves every FAULT credit. Text depends on Auto Seizure. -->
 <div class="police-overlay" *ngIf="creditFault">
 	<div class="police-glyph">🚨</div>
 	<div class="police-title">{{ 'CREDIT.FAULT_OVERLAY_TITLE' | translate }}</div>
-	<div class="police-text">{{ 'CREDIT.FAULT_OVERLAY_TEXT' | translate }}</div>
+	<div class="police-text">
+		{{
+			((rules$ | async)?.autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT') | translate
+		}}
+	</div>
 </div>
 
 <!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it. -->
@@ -35,10 +40,7 @@
 </div>
 
 <ng-container *ngIf="vm$ | async as vm">
-	<div class="blocked" *ngIf="vm.playerStatus === PRISON || defaultCredit">
-		<div class="default-credit" *ngIf="defaultCredit">
-			{{ 'PLAYER.GO_TO_BANK' | translate }}
-		</div>
+	<div class="blocked" *ngIf="vm.playerStatus === PRISON">
 		<div class="prison" *ngIf="vm.playerStatus === PRISON" [@prisonDoor]="'in'">
 			<div class="countDownContainer">
 				<div class="time">
@@ -191,10 +193,7 @@
 				<div
 					*ngIf="panelCreditOpenState && vm.rules.autoBank && vm.playerStatus === ALIVE"
 					class="request-credit frame frame-light d-flex flex-column align-items-center justify-content-center">
-					<button
-						mat-raised-button
-						color="accent"
-						(click)="requestCredit(vm.rate.amount, vm.rate.interest)">
+					<button mat-raised-button color="accent" (click)="requestCredit(vm.rate.amount, vm.rate.interest)">
 						<fa-icon [icon]="faFileSignature"></fa-icon>
 						{{ 'CREDIT.BORROW' | translate }} · {{ vm.rate.amount }}/{{ vm.rate.interest }}
 					</button>

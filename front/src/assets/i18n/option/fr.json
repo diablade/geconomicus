@@ -26,6 +26,8 @@
 		"INTEREST_FREQ": "Délai avant paiement de l'intérêt (en minutes) :",
 		"AUTO_BANK": "Banque automatique",
 		"AUTO_BANK_INFO": "La banque fixe le taux du crédit selon la rareté de la monnaie ; les joueurs empruntent quand ils veulent.",
+		"AUTO_SEIZURE": "Saisie automatique",
+		"AUTO_SEIZURE_INFO": "En cas de défaut de paiement, la banque saisit automatiquement les pièces puis les cartes (les plus chères en premier), sans attendre l'animateur.",
 		"BANK_PROFILE": "Profil de banque",
 		"PROFILE_NORMAL": "Normal",
 		"PROFILE_AGGRESSIVE": "Agressif",

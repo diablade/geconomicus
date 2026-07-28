@@ -414,6 +414,30 @@ export class GameStateService {
 			this.creditsSubject.next(updatedCredits);
 			this.snackbarService.showError(this.i18n.instant('CREDIT.DEFAULT_CREDIT_MESSAGE'));
 		});
+		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any) => {
+			// Manual seizure's animator-side state is already patched directly from the seize
+			// dialog's own RPC response (seizureOnCredit) — this listener exists so Auto Seizure,
+			// which has no initiating client to patch state, still updates the table for everyone
+			// (docs/adr/0005-auto-seizure.md). Backend sends `credits` (a FIFO-resolved batch) or
+			// `credit` (never both) — normalize either shape. Player PRISON status is not handled
+			// here; it already arrives generically via IO.PLAYER.PROGRESS_PRISON.
+			const resolvedCredits: Credit[] = data.credits ?? (data.credit ? [data.credit] : []);
+			const resolvedIds = new Set(resolvedCredits.map((c) => c.id));
+			const updatedCredits = this.creditsSubject.getValue().map((c) =>
+				resolvedIds.has(c.id) ? { ...c, status: CREDIT_STATUS.DONE, remainingTime: 0, progress: 0 } : c
+			);
+			this.creditsSubject.next(updatedCredits);
+
+			if (data.bankIndicators) {
+				const currentStates = this.gameStateSubject.getValue();
+				currentStates.currentMassMonetary = data.bankIndicators.currentMassMonetary;
+				currentStates.bankInterestEarned = data.bankIndicators.bankInterestEarned;
+				currentStates.bankMoneyLost = data.bankIndicators.bankMoneyLost;
+				currentStates.bankMoneyDestroyed = data.bankIndicators.bankMoneyDestroyed;
+				currentStates.bankGoodsEarned = data.bankIndicators.bankGoodsEarned;
+				this.gameStateSubject.next(currentStates);
+			}
+		});
 	}
 
 	offAll(): void {
@@ -437,6 +461,7 @@ export class GameStateService {
 		this.wsService.off(IO.CREDIT.PROGRESS);
 		this.wsService.off(IO.CREDIT.FAULT);
 		this.wsService.off(IO.CREDIT.DONE);
+		this.wsService.off(IO.CREDIT.SEIZURE);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
 	}

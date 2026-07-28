@@ -2,6 +2,7 @@ import _ from 'lodash';
 import GameStateManager from '../managers/GameStateManager.js';
 import creditTimerManager from '../managers/CreditTimerManager.js';
 import prisonTimerManager from '../managers/PrisonTimerManager.js';
+import autoSeizureTimerManager from '../managers/AutoSeizureTimerManager.js';
 import socket from '#config/socket';
 import log from '#config/log';
 import Timer from '../../misc/Timer.js';
@@ -20,10 +21,19 @@ import {
 } from '@geco/shared';
 import EventHelper from '../helpers/event.helper.js';
 import DecksHelper from '../helpers/decks.helper.js';
-import { computeAverageMoney, computeEffectiveRate, computeSolvency } from '../helpers/bank.helper.js';
+import {
+	computeAverageMoney,
+	computeEffectiveRate,
+	computeSolvency,
+	computeAutoSeizureForCredit,
+	computeAutoSeizurePrisonMinutes,
+} from '../helpers/bank.helper.js';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
+// Auto Seizure: purely cosmetic "police is processing" wait before the backend resolves a FAULT
+// credit on its own. See docs/adr/0005-auto-seizure.md.
+const AUTO_SEIZURE_DELAY_MS = 10 * 1000;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -133,6 +143,18 @@ const _whatCanDoCredit = (credit, playerState) => {
 		canExtend: credit.interest <= playerState.coins,
 		canSettle: credit.amount + credit.interest <= playerState.coins,
 	};
+};
+
+// Helper to create the Auto Seizure 10s wait timer — one per player, keyed like the prison timer.
+// No progress interval: the wait is a plain "seizure ongoing" spinner, not a countdown.
+const _createAutoSeizureTimer = (gameStateId, playerStateIdx) => {
+	log.debug('[BankStateService] creating auto-seizure timer', { gameStateId, playerStateIdx });
+	return new Timer(
+		`${gameStateId}-${playerStateIdx}`,
+		{ gameStateId, playerStateIdx },
+		AUTO_SEIZURE_DELAY_MS,
+		_autoSeizureCallback
+	);
 };
 
 // Helper to create a prison timer
@@ -273,14 +295,151 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				);
 				events.push(event);
 				credit.status = CREDIT_STATUS.FAULT;
+				credit.faultAt = new Date();
 				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, event);
 				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.FAULT, { credit });
 				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.FAULT, { credit });
+
+				// Auto Seizure (docs/adr/0005): start the 10s wait if not already running for this
+				// player — the first fault's deadline stands, later faults join the same batch.
+				if (rules.autoSeizure) {
+					const timer = _createAutoSeizureTimer(gameStateId, playerState.idx);
+					await autoSeizureTimerManager.startIfAbsent(timer);
+				}
 			}
 		} else {
 			throw new Error(`Credit not found for player ${playerStateIdx} in timerInstance data`);
 		}
 	});
+};
+
+// Auto Seizure resolution (docs/adr/0005-auto-seizure.md): fires once the 10s wait elapses.
+// Settles every currently-FAULT credit for the player in one batch, FIFO (oldest fault first),
+// against one shared, draining pool of coins/cards — never trusting a client-supplied amount.
+const _autoSeizureCallback = async (timerInstance) => {
+	const { gameStateId, playerStateIdx } = timerInstance.data;
+	try {
+		await GameStateManager.withQueue(gameStateId, async (entry) => {
+			const { gameState, events, rules } = entry;
+			await autoSeizureTimerManager.stopAndRemoveTimer(timerInstance.id);
+			const playerState = _findPlayer(gameState, playerStateIdx);
+
+			const faultedCredits = _findCreditsOfPlayer(gameState, playerStateIdx)
+				.filter((c) => c.status === CREDIT_STATUS.FAULT)
+				.sort((a, b) => new Date(a.faultAt).getTime() - new Date(b.faultAt).getTime());
+
+			if (faultedCredits.length === 0) {
+				log.debug('[BankStateService] auto-seizure fired with nothing in fault', { gameStateId, playerStateIdx });
+				return;
+			}
+
+			let totalCoinsSeized = 0;
+			let totalInterestSeized = 0;
+			let totalCardsFaceValue = 0;
+			let totalObjective = 0;
+			let totalUnpaid = 0;
+			const allSeizedCards = [];
+			const resolvedCredits = [];
+
+			for (const credit of faultedCredits) {
+				const result = computeAutoSeizureForCredit(playerState.coins, playerState.cards, credit, rules);
+				playerState.coins = result.remainingCoins;
+				playerState.cards = result.remainingCards;
+
+				totalCoinsSeized += result.coinsSeized;
+				totalInterestSeized += result.interestSeized;
+				totalCardsFaceValue += result.cardsFaceValue;
+				totalObjective += result.objective;
+				totalUnpaid += result.unpaid;
+				allSeizedCards.push(...result.cardsSeized);
+
+				credit.status = CREDIT_STATUS.DONE;
+				credit.endAt = new Date();
+				resolvedCredits.push(credit);
+
+				const seizureEvent = EventHelper.createEvent(
+					DB_EVENTS.CREDIT_SEIZURE,
+					gameState.sessionId,
+					gameStateId,
+					PLAYER_TYPE.BANK,
+					playerStateIdx,
+					{ credit, coins: result.coinsSeized, cards: result.cardsSeized }
+				);
+				events.push(seizureEvent);
+				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, seizureEvent);
+			}
+
+			gameState.currentMassMonetary -= totalCoinsSeized;
+			gameState.bankInterestEarned += totalInterestSeized;
+			gameState.bankGoodsEarned += totalCardsFaceValue;
+			DecksHelper.pushCardsInDecks(gameState, allSeizedCards);
+
+			log.info('[BankStateService] auto seizure completed', {
+				gameStateId,
+				playerStateIdx,
+				creditsResolved: resolvedCredits.length,
+				coinsSeized: totalCoinsSeized,
+				cardsSeized: allSeizedCards.length,
+			});
+
+			// Prison triggers whenever the hand ends up empty — regardless of whether the debt was
+			// fully covered — because prison release unconditionally deals 4 fresh cards, the only
+			// path back to a non-empty hand (docs/adr/0005-auto-seizure.md).
+			let prisonResult = null;
+			let prisonRemainingMs = 0;
+			let prisonTotalMs = 0;
+			if (playerState.cards.length === 0) {
+				const shortfallRatio = totalObjective > 0 ? totalUnpaid / totalObjective : 0;
+				const prisonMinutes = computeAutoSeizurePrisonMinutes(shortfallRatio, rules.timerPrison);
+				playerState.status = PLAYER_STATUS.PRISON;
+
+				const prisonEvent = EventHelper.createEvent(
+					DB_EVENTS.PRISON,
+					gameState.sessionId,
+					gameStateId,
+					PLAYER_TYPE.BANK,
+					playerStateIdx,
+					{ prisonTime: prisonMinutes }
+				);
+				events.push(prisonEvent);
+				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.EVENT, prisonEvent);
+
+				const timer = _createPrisonTimer(gameStateId, playerStateIdx, prisonMinutes);
+				await prisonTimerManager.startTimer(timer);
+				prisonRemainingMs = timer.getRemainingMs();
+				prisonTotalMs = timer.duration;
+				await _prisonProgressCallback(timer);
+
+				prisonResult = { playerState };
+
+				log.info('[BankStateService] player auto-imprisoned', {
+					gameStateId,
+					playerStateIdx,
+					prisonDuration: prisonMinutes,
+				});
+			}
+
+			const payload = {
+				credits: resolvedCredits,
+				seizure: { coins: totalCoinsSeized, cards: allSeizedCards },
+				coinsLK: playerState.coins,
+				prisoner: prisonResult?.playerState,
+				prisonRemainingTime: prisonRemainingMs,
+				prisonTotalTime: prisonTotalMs,
+			};
+			socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, payload);
+			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, {
+				credits: resolvedCredits,
+				..._getBankIndicators(gameState),
+			});
+		});
+	} catch (err) {
+		log.error('[BankStateService] error in _autoSeizureCallback', {
+			error: err.message,
+			playerStateIdx,
+			gameStateId,
+		});
+	}
 };
 
 const _creditHeartBeatCallback = async (timerInstance) => {

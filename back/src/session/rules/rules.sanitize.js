@@ -47,6 +47,7 @@ export const sanitize = {
 			timerPrison: Joi.number().default(5),
 			manualBank: Joi.boolean().default(false),
 			autoBank: Joi.boolean().default(false),
+			autoSeizure: Joi.boolean().default(false),
 			bankProfile: Joi.string()
 				.valid(...Object.values(BANK_PROFILE))
 				.default(BANK_PROFILE.NORMAL),
@@ -103,6 +104,7 @@ export const sanitize = {
 			timerPrison: Joi.number().optional(),
 			manualBank: Joi.boolean().optional(),
 			autoBank: Joi.boolean().optional(),
+			autoSeizure: Joi.boolean().optional(),
 			bankProfile: Joi.string()
 				.valid(...Object.values(BANK_PROFILE))
 				.optional(),

@@ -26,6 +26,8 @@ let Credit = new Schema(
 		startedAt: { type: Date },
 		endAt: { type: Date },
 		remainingTime: { type: Number, required: true },
+		// When this credit entered FAULT — drives Auto Seizure's FIFO ordering (docs/adr/0005).
+		faultAt: { type: Date },
 	},
 	{ _id: false }
 );

@@ -41,6 +41,7 @@ export class Rules {
 	timerPrison = 0;
 	manualBank = false;
 	autoBank = false;
+	autoSeizure = false;
 	bankProfile: BankProfile = BANK_PROFILE.NORMAL;
 	rateSchedule: RateTier[] = RATE_SCHEDULE_PRESETS.normal.map((t) => ({ ...t }));
 	seizureType = '';
