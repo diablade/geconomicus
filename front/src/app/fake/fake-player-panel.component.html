@@ -1,0 +1,58 @@
+<!-- Always-on-top toggle -->
+<button type="button" class="fake-fab" (click)="toggleOpen()">🧪</button>
+
+<div class="fake-panel" *ngIf="open">
+	<div class="fake-section">
+		<span class="fake-label">Mode</span>
+		<button type="button" class="fake-btn" (click)="toggleMoney()">{{ isJune ? '🌱 June' : '💶 Debt' }}</button>
+		<button type="button" class="fake-btn" (click)="toggleTheme()">{{ isItemTheme ? '🧩 Item' : '🃏 Card' }}</button>
+		<button type="button" class="fake-btn" [class.on]="autoSeizure" (click)="toggleAutoSeizure()">
+			{{ autoSeizure ? '🚓 autoSeizure ON' : '🚓 autoSeizure OFF' }}
+		</button>
+	</div>
+
+	<div class="fake-section">
+		<span class="fake-label">Overlays</span>
+		<button type="button" class="fake-btn" (click)="testReincarnate()">☠️→👶 Reincarnate</button>
+		<button type="button" class="fake-btn" (click)="testAlarm()">⏰ Alarm</button>
+		<button type="button" class="fake-btn" (click)="testFault()">🚨 Fault</button>
+		<button type="button" class="fake-btn" (click)="testTakeover()">🎬 Take-over</button>
+		<button type="button" class="fake-btn" (click)="testPrison()">🔒 Prison</button>
+		<button type="button" class="fake-btn" [class.on]="showProdGroup" (click)="toggleProdGroup()">
+			🏭 {{ showProdGroup ? 'Hide group' : 'Show group' }}
+		</button>
+		<button type="button" class="fake-btn" (click)="triggerProduction()">🎁 Reveal</button>
+	</div>
+
+	<div class="fake-section">
+		<span class="fake-label">Sounds</span>
+		<button type="button" class="fake-btn sound" *ngFor="let key of soundKeys" (click)="playSound(key)">
+			🔊 {{ key }}
+		</button>
+	</div>
+</div>
+
+<!-- Hosted instances of the extracted components -->
+<app-overlay
+	*ngIf="overlayConfig"
+	[config]="overlayConfig"
+	(done)="onOverlayDone()"
+	(action)="onOverlayDone()"></app-overlay>
+
+<app-prison *ngIf="showPrison" [prison]="fakePrison"></app-prison>
+
+<div class="fake-prod-host" *ngIf="showProdGroup">
+	<app-square-zone
+		[group]="showProdGroup"
+		[typeMoney]="'debt'"
+		[typeTheme]="'EMOJI'"
+		[ownerIdx]="0"
+		[gameStateId]="'fake'"
+		[currentDU]="2"
+		[allCards]="showProdGroup.cards"
+		[amountCardsForProd]="4"
+		[generatedIdenticalLetters]="4"
+		[revealMs]="7000"
+		[screenWidth]="screenWidth"
+		[screenHeight]="screenHeight"></app-square-zone>
+</div>

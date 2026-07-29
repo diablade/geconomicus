@@ -26,9 +26,10 @@ export class SquareZoneComponent implements OnInit, OnDestroy {
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
 
+	@Input() revealMs = 2500;
+
 	productionReveal: { producedCard: Card; newCards: Card[] } | null = null;
 	private productionRevealSub: Subscription | undefined;
-	private readonly PRODUCTION_REVEAL_MS = 2500;
 
 	constructor(
 		private playerStateService: PlayerStateService,
@@ -87,6 +88,6 @@ export class SquareZoneComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			this.productionReveal = null;
 			this.playerStateService.commitProduction();
-		}, this.PRODUCTION_REVEAL_MS);
+		}, this.revealMs);
 	}
 }

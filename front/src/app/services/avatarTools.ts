@@ -109,6 +109,25 @@ export function getBackgroundStyle(boardConf = '', boardColor = '#8e6beeab') {
     return {};
 }
 
+export function getRandomInt(min: number, max: number): number {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+export function getRandomAvatar(base?: Avatar): Avatar {
+	const avatar: Avatar = base ? { ...base } : new Avatar();
+	avatar.earrings = getRandomInt(-1, properties.earrings.default.length - 1);
+	avatar.glasses = getRandomInt(-1, properties.glasses.default.length - 1);
+	avatar.features = getRandomInt(-1, properties.features.default.length - 1);
+	avatar.eyes = getRandomInt(0, properties.eyes.default.length - 1);
+	avatar.eyebrows = getRandomInt(0, properties.eyebrows.default.length - 1);
+	avatar.hair = getRandomInt(0, properties.hair.default.length - 1);
+	avatar.mouth = getRandomInt(0, properties.mouth.default.length - 1);
+	avatar.hairColor = hairPalette[getRandomInt(0, 13)].replace('#', '');
+	avatar.skinColor = skinPalette[getRandomInt(0, 3)].replace('#', '');
+	avatar.image = createSvg(avatar);
+	return avatar;
+}
+
 export function getRandomBackgroundBoard() {
     const boards = ['bgWood', 'bgGreen', 'bgGradien1', 'bgGradien2', 'bgGradien3', 'bgGradien4', 'bgGradien5', 'bgGradien6', 'bgGradien7'];
     const randomIndex = _.random(0, boards.length - 1, false);

@@ -1,0 +1,16 @@
+<div
+	class="overlay"
+	*ngIf="phase as p"
+	[ngClass]="'bg-' + (p.bg || 'plain')"
+	(click)="onOverlayClick()">
+	<ng-container *ngFor="let _ of [p]; trackBy: trackByIndex">
+		<div class="content" [ngClass]="'content-' + (p.bg || 'plain')">
+			<div class="glyph" [ngClass]="'glyph-' + (p.bg || 'plain')">{{ p.icon }}</div>
+			<div class="title" *ngIf="p.title">{{ p.title | translate }}</div>
+			<div class="text" *ngIf="p.text">{{ p.text | translate }}</div>
+			<button *ngIf="p.button" type="button" class="overlay-btn" (click)="onButton($event)">
+				{{ p.button.labelKey | translate }}
+			</button>
+		</div>
+	</ng-container>
+</div>

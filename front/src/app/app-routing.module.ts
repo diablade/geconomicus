@@ -25,6 +25,7 @@ const routes: Routes = [
 	{ path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent },
 	{ path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent },
 	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent },
+	{ path: 'fake', component: PlayerBoardComponent, data: { fake: true } },
 	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent },
 	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent },
 	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent },

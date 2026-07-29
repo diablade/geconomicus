@@ -1,0 +1,54 @@
+import { Component, Input, OnDestroy } from '@angular/core';
+import { animations } from '../../services/animations';
+import createCountdown from '../../services/countDown';
+
+@Component({
+	selector: 'app-prison',
+	templateUrl: './prison.component.html',
+	styleUrls: ['./prison.component.scss'],
+	animations,
+})
+export class PrisonComponent implements OnDestroy {
+	minutesPrison = 0;
+	secondsPrison = 0;
+	prisonProgress = 0;
+	private prisonTotalMs = 0;
+
+	@Input() set prison(value: { remainingTime: number; totalTime: number } | null) {
+		if (value) {
+			this.sync(value.remainingTime, value.totalTime);
+		} else {
+			this.prisonTimer.stop();
+		}
+	}
+
+	private prisonTimer = createCountdown(
+		{ h: 0, m: 0, s: 0 },
+		{
+			listen: ({ s, h, m }) => {
+				this.minutesPrison = m;
+				this.secondsPrison = s;
+				const remainingSec = h * 3600 + m * 60 + s;
+				const totalSec = this.prisonTotalMs / 1000;
+				this.prisonProgress = totalSec > 0 ? Math.max(0, Math.min(100, (remainingSec / totalSec) * 100)) : 0;
+			},
+			done: () => {
+				this.minutesPrison = 0;
+				this.secondsPrison = 0;
+				this.prisonProgress = 0;
+			},
+		}
+	);
+
+	private sync(remainingTime: number, totalTime: number): void {
+		this.prisonTotalMs = totalTime || remainingTime;
+		const remainingSec = Math.max(0, Math.round(remainingTime / 1000));
+		this.prisonTimer.reset();
+		this.prisonTimer.set({ h: 0, m: 0, s: remainingSec });
+		this.prisonTimer.start();
+	}
+
+	ngOnDestroy(): void {
+		this.prisonTimer.stop();
+	}
+}

@@ -26,6 +26,7 @@ export interface ActionDialogData {
 	currentDU?: number;
 	typeTheme: string;
 	sessionAvatars: SessionAvatar[];
+	fake?: boolean;
 }
 
 export interface AvailablePlayer {
@@ -117,6 +118,12 @@ export class ActionDialogComponent {
 	}
 
 	private loadAvailablePlayers(onSuccess: () => void) {
+		if (this.data.fake) {
+			this.availablePlayers = this.fakePlayers();
+			this.playersLoading = false;
+			onSuccess();
+			return;
+		}
 		this.playersLoading = true;
 		this.playersError = '';
 		this.actionService.getAvailablePlayers(this.data.gameStateId, this.data.playerStateIdx).subscribe({
@@ -140,6 +147,7 @@ export class ActionDialogComponent {
 
 	confirmWhoHaveCard() {
 		if (!this.selectedCard || this.whoHaveCardLoading) return;
+		if (this.data.fake) return this.fakeClose();
 		this.whoHaveCardLoading = true;
 		this.error = '';
 		this.actionService.whoHaveCard(this.data.gameStateId, this.data.playerStateIdx, this.selectedCard.key).subscribe({
@@ -217,6 +225,12 @@ export class ActionDialogComponent {
 	}
 
 	private fetchTargetCards(target: AvailablePlayer) {
+		if (this.data.fake) {
+			this.targetCards = this.data.myCards.slice(0, 3);
+			this.targetCardsLoading = false;
+			this.step = 'pick-card';
+			return;
+		}
 		this.targetCardsLoading = true;
 		this.targetCardsError = '';
 		this.actionService.getTargetCards(this.data.gameStateId, target.idx).subscribe({
@@ -247,6 +261,7 @@ export class ActionDialogComponent {
 
 	private executeCardAction() {
 		if (!this.selectedAction || !this.selectedTarget1 || !this.selectedCard) return;
+		if (this.data.fake) return this.fakeClose();
 		this.loading = true;
 		this.error = '';
 
@@ -276,6 +291,7 @@ export class ActionDialogComponent {
 
 	private executeWar() {
 		if (!this.selectedTarget1 || !this.selectedTarget2) return;
+		if (this.data.fake) return this.fakeClose();
 		this.loading = true;
 		this.error = '';
 
@@ -295,6 +311,7 @@ export class ActionDialogComponent {
 
 	confirmOng(useAutoTargets: boolean) {
 		if (this.selectedOngCards.length !== 4) return;
+		if (this.data.fake) return this.fakeClose();
 		this.loading = true;
 		this.error = '';
 
@@ -348,6 +365,22 @@ export class ActionDialogComponent {
 	}
 
 	close() {
+		this.dialogRef.close(null);
+	}
+
+	// ── Fake harness: walk the whole flow with local data, never touch the backend ──
+	private fakePlayers(): AvailablePlayer[] {
+		if (this.data.sessionAvatars.length) {
+			return this.data.sessionAvatars.map((a) => ({ idx: a.idx, name: a.name, avatarIdx: a.idx }));
+		}
+		return [
+			{ idx: 1, name: 'Alice', avatarIdx: 1 },
+			{ idx: 2, name: 'Bob', avatarIdx: 2 },
+			{ idx: 3, name: 'Chloé', avatarIdx: 3 },
+		];
+	}
+
+	private fakeClose(): void {
 		this.dialogRef.close(null);
 	}
 }

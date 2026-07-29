@@ -38,6 +38,10 @@ export class AvatarService {
 		private i18n: I18nService
 	) {}
 
+	loadFakeAvatar(avatar: Avatar): void {
+		this.avatarSubject.next(avatar);
+	}
+
 	loadAvatar(
 		sessionId: string,
 		avatarIdx: number,

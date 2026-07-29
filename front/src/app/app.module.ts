@@ -90,6 +90,9 @@ import { TableBoardComponent } from './table-board/table-board.component';
 import { EventsV2Component } from './events-v2/events-v2.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { OverlayComponent } from './components/overlay/overlay.component';
+import { PrisonComponent } from './components/prison/prison.component';
+import { FakePlayerPanelComponent } from './fake/fake-player-panel.component';
 
 // required for AOT compilation
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -159,6 +162,9 @@ LOAD_WASM().subscribe();
 		TableBoardComponent,
         EventsV2Component,
         SessionResultsCompareComponent,
+		OverlayComponent,
+		PrisonComponent,
+		FakePlayerPanelComponent,
 	],
 	imports: [
 		HttpClientModule,

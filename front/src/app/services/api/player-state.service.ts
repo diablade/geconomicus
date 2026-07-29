@@ -1068,6 +1068,35 @@ export class PlayerStateService {
 		});
 	}
 
+	loadFake(bundle: {
+		coins: number;
+		cards: Card[];
+		credits: Credit[];
+		actionTokens: number;
+		gameState: GameState;
+		rules: Rules;
+		rate?: { amount: number; interest: number; pct: number; allowDouble: boolean };
+	}): void {
+		this.coinsSubject.next(bundle.coins);
+		this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
+		this.prisonSubject.next(null);
+		this.typeMoneySubject.next(bundle.rules.typeMoney as GameType);
+		this.cardsSubject.next(bundle.cards);
+		this.actionTokensSubject.next(bundle.actionTokens);
+		this.creditsSubject.next(bundle.credits);
+		this.rateSubject.next(bundle.rate ?? null);
+		this.gameStateSubject.next(bundle.gameState);
+		this.rulesSubject.next(bundle.rules);
+	}
+
+	triggerFakeProduction(letter: string, weight: number, producedCard: Card, newCards: Card[]): void {
+		this.pendingProduction = {
+			cardsLK: this.cardsSubject.getValue(),
+			actionTokens: this.actionTokensSubject.getValue(),
+		};
+		this.productionRevealSubject.next({ letter, weight, producedCard, newCards });
+	}
+
 	commitProduction(): void {
 		if (!this.pendingProduction) return;
 		this.cardsSubject.next(this.pendingProduction.cardsLK);

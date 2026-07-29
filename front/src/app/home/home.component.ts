@@ -57,6 +57,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		this.audioService.playSound('coins');
 	}
 
+	private fakeTapCount = 0;
+	private fakeTapTimer: any = null;
+	fakeTap(): void {
+		clearTimeout(this.fakeTapTimer);
+		this.fakeTapCount++;
+		if (this.fakeTapCount >= 5) {
+			this.fakeTapCount = 0;
+			this.router.navigate(['/fake']);
+			return;
+		}
+		this.fakeTapTimer = setTimeout(() => (this.fakeTapCount = 0), 800);
+	}
+
 	create() {
 		const dialogRef = this.dialog.open(CreateSessionDialog, {});
 

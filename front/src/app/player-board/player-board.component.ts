@@ -24,7 +24,6 @@ import { ShortCode } from '../models/shortCode';
 import { Recipe, getAvailableRecipes } from '../models/recipe';
 import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
 import { GameInfosDialog } from '../components/notice-btn/notice-btn.component';
-import createCountdown from '../services/countDown';
 import { LocalStorageService } from '../services/local-storage/local-storage.service';
 import { AudioService } from '../services/audio.service';
 import { animations } from '../services/animations';
@@ -34,6 +33,8 @@ import { AvatarService } from '../services/api/avatar.service';
 import { PlayerStateService } from '../services/api/player-state.service';
 import { DeckService } from '../services/api/deck.service';
 import { Rules } from '../models/rules';
+import { OverlayConfig } from '../components/overlay/overlay.component';
+import { makeFakeAvatar, makeFakeBundle } from '../fake/fake-data';
 
 @Component({
 	selector: 'app-player-board',
@@ -77,6 +78,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	playerStatus$ = inject(PlayerStateService).playerStatus$;
 	playerConnection$ = inject(PlayerStateService).playerConnection$;
 	takenOver$ = inject(PlayerStateService).takenOver$;
+	prison$ = inject(PlayerStateService).prison$;
 
 	coins$ = inject(PlayerStateService).coins$;
 	cards$ = inject(PlayerStateService).cards$;
@@ -152,25 +154,34 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		rate: this.rate$,
 	});
 
-	isReincarnating = false;
-	reincarnatePhase: 'death' | 'rebirth' = 'death';
+	reincarnateConfig: OverlayConfig | null = null;
+	private pendingReincarnateIdx: number | null = null;
 	private reincarnationSub: Subscription | undefined;
 	private readonly REINCARNATE_OVERLAY_MS = 4000;
-	creditAlarm = false;
+	alarmConfig: OverlayConfig | null = null;
 	private finalMinuteSub: Subscription | undefined;
 	private readonly CREDIT_ALARM_MS = 4000;
-	creditFault = false;
+	faultConfig: OverlayConfig | null = null;
+	private autoSeizure = false;
 	private creditFaultSub: Subscription | undefined;
+	private rulesSub: Subscription | undefined;
+	readonly takeoverConfig: OverlayConfig = {
+		phases: [
+			{
+				icon: '🎬',
+				title: 'PLAYER.TAKEN_OVER_TITLE',
+				text: 'PLAYER.TAKEN_OVER_TEXT',
+				bg: 'takeover',
+				button: { labelKey: 'PLAYER.RETAKE' },
+			},
+		],
+	};
 
+	fakeMode = false;
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
-	prisonProgress = 0;
-	minutesPrison = 5;
-	secondsPrison = 0;
-	private prisonTotalMs = 0;
-	private prisonSub: Subscription | undefined;
 	shortCode: ShortCode | undefined;
 	isBuying = false;
 	isProducing = false;
@@ -185,32 +196,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	recipies = (cards: Card[], rules: Rules) => {
 		return getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters);
 	};
-
-	prisonTimer = createCountdown(
-		{ h: 0, m: 0, s: 0 },
-		{
-			listen: ({ s, h, m }) => {
-				this.minutesPrison = m;
-				this.secondsPrison = s;
-				const remainingSec = h * 3600 + m * 60 + s;
-				const totalSec = this.prisonTotalMs / 1000;
-				this.prisonProgress = totalSec > 0 ? Math.max(0, Math.min(100, (remainingSec / totalSec) * 100)) : 0;
-			},
-			done: () => {
-				this.minutesPrison = 0;
-				this.secondsPrison = 0;
-				this.prisonProgress = 0;
-			},
-		}
-	);
-
-	private syncPrison(remainingTime: number, totalTime: number): void {
-		this.prisonTotalMs = totalTime || remainingTime;
-		const remainingSec = Math.max(0, Math.round(remainingTime / 1000));
-		this.prisonTimer.reset();
-		this.prisonTimer.set({ h: 0, m: 0, s: remainingSec });
-		this.prisonTimer.start();
-	}
 
 	constructor(
 		private route: ActivatedRoute,
@@ -236,12 +221,13 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
 		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
-		if (this.prisonSub) this.prisonSub.unsubscribe();
-		this.prisonTimer.stop();
+		if (this.rulesSub) this.rulesSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
 	ngOnInit(): void {
+		this.fakeMode = this.route.snapshot.data['fake'] === true;
+
 		this.coins$.subscribe(() => {
 			this.flipCoins();
 		});
@@ -257,17 +243,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.onCreditFinalMinute(flash);
 		});
 
-		this.prisonSub = this.playerStateService.prison$.subscribe((prison) => {
-			if (prison) {
-				this.syncPrison(prison.remainingTime, prison.totalTime);
-			} else {
-				this.prisonTimer.stop();
-			}
-		});
-
 		this.creditFaultSub = this.warningCredit$
 			.pipe(distinctUntilChanged())
 			.subscribe((fault) => this.onCreditFault(fault));
+
+		this.rulesSub = this.rules$.subscribe((r) => (this.autoSeizure = !!r?.autoSeizure));
+
+		if (this.fakeMode) {
+			this.bootFake();
+			return;
+		}
 
 		const rawAssist = this.route.snapshot.queryParamMap.get('assist');
 		this.assistMode =
@@ -291,6 +276,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true, this.assistMode).subscribe();
 			}
 		});
+	}
+
+	private bootFake(): void {
+		this.sessionId = 'fake';
+		this.gameStateId = 'fake';
+		this.avatarIdx = 0;
+		this.playerStateIdx = 0;
+		this.themesService.loadTheme('THEME.EMOJIS');
+		this.avatarService.loadFakeAvatar(makeFakeAvatar());
+		this.playerStateService.loadFake(makeFakeBundle(GAME_TYPE.DEBT, false));
 	}
 
 	retake(): void {
@@ -342,6 +337,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	produceLevelUp($event: any) {
+		if (this.fakeMode) return;
 		this.playerStateService.produce($event.letter, $event.weight);
 	}
 
@@ -359,6 +355,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	buyWith() {
+		if (this.fakeMode) {
+			this.openDialogShorCode();
+			return;
+		}
 		if (this.scanV3) {
 			this.scan();
 		} else {
@@ -396,6 +396,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
+		if (this.fakeMode) return;
 		if ($event == 'settle') {
 			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 				data: {
@@ -417,6 +418,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	requestCredit(amount: number, interest: number) {
+		if (this.fakeMode) return;
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: this.i18nService.instant('DIALOG.REQUEST_CREDIT.TITLE'),
@@ -439,26 +441,43 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	answerFirstCredit(answer: string) {
+		if (this.fakeMode) return;
 		this.playerStateService.answerFirstCreditQuestion(answer);
 	}
 
-	private async playReincarnationOverlay(newPlayerStateIdx: number) {
-		if (this.isReincarnating) return;
-		this.audioService.playSound('dead');
-		this.isReincarnating = true;
-		this.reincarnatePhase = 'death';
+	private playReincarnationOverlay(newPlayerStateIdx: number) {
+		if (this.reincarnateConfig) return;
+		this.pendingReincarnateIdx = newPlayerStateIdx;
+		this.reincarnateConfig = {
+			phases: [
+				{
+					icon: '☠️',
+					text: 'PLAYER.THIS_LIFE_IS_GONE',
+					bg: 'reincarnate-death',
+					sound: 'dead',
+					durationMs: this.REINCARNATE_OVERLAY_MS,
+				},
+				{
+					icon: '👶',
+					text: 'PLAYER.GO_TO_SECOND_LIFE',
+					bg: 'reincarnate-rebirth',
+					sound: 'angel',
+					durationMs: this.REINCARNATE_OVERLAY_MS,
+				},
+			],
+		};
+	}
 
-		await setTimeout(() => {
-			this.reincarnatePhase = 'rebirth';
-			this.audioService.playSound('angel');
-			setTimeout(() => {
-				this.router
-					.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, newPlayerStateIdx])
-					.finally(() => {
-						setTimeout(() => (this.isReincarnating = false), 300);
-					});
-			}, this.REINCARNATE_OVERLAY_MS);
-		}, this.REINCARNATE_OVERLAY_MS);
+	onReincarnateDone(): void {
+		const idx = this.pendingReincarnateIdx;
+		this.pendingReincarnateIdx = null;
+		if (idx == null) {
+			this.reincarnateConfig = null;
+			return;
+		}
+		this.router
+			.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, idx])
+			.finally(() => (this.reincarnateConfig = null));
 	}
 
 	private onCreditFinalMinute(flash: boolean): void {
@@ -466,17 +485,29 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.panelCreditOpenState = true;
 			this.localStorageService.setItem('panelCredit', true);
 		}
-		if (flash && !this.creditAlarm) {
-			this.creditAlarm = true;
-			setTimeout(() => (this.creditAlarm = false), this.CREDIT_ALARM_MS);
+		if (flash && !this.alarmConfig) {
+			this.alarmConfig = {
+				phases: [{ icon: '⏰', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.CREDIT_ALARM_MS }],
+			};
 		}
 	}
 
 	private onCreditFault(fault: boolean): void {
-		this.creditFault = fault;
 		if (fault) {
+			this.faultConfig = {
+				loop: true,
+				phases: [
+					{
+						icon: '🚨',
+						title: 'CREDIT.FAULT_OVERLAY_TITLE',
+						text: this.autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT',
+						bg: 'police',
+					},
+				],
+			};
 			this.audioService.playSound('police');
 		} else {
+			this.faultConfig = null;
 			this.audioService.stopSound('police');
 		}
 	}
@@ -510,6 +541,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 					currentDU: vm.gameState.currentDU,
 					typeTheme: vm.typeTheme,
 					sessionAvatars: vm.sessionAvatars || [],
+					fake: this.fakeMode,
 				},
 				panelClass: 'action-dialog-panel',
 			})
@@ -528,7 +560,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	openDialogShorCode() {
 		const shortCodeDialogRef = this.dialog.open(ShortcodeDialogComponent);
 		shortCodeDialogRef.afterClosed().subscribe((code) => {
-			if (code) {
+			if (code && !this.fakeMode) {
 				this.buyWithCode(code);
 			}
 		});
@@ -546,7 +578,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (panel == 'credit') {
 			this.panelCreditOpenState = !this.panelCreditOpenState;
 			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
-			if (this.panelCreditOpenState) this.playerStateService.refreshRate();
+			if (this.panelCreditOpenState && !this.fakeMode) this.playerStateService.refreshRate();
 		} else if (panel == 'recipe') {
 			this.panelRecipeOpenState = !this.panelRecipeOpenState;
 			this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);

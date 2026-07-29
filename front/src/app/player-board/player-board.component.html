@@ -1,65 +1,24 @@
+<!-- Fake-player harness: demo/test controls, only present on the /fake route. -->
+<app-fake-player-panel
+	*ngIf="fakeMode"
+	[screenWidth]="screenWidth"
+	[screenHeight]="screenHeight"></app-fake-player-panel>
+
 <!-- Death → rebirth overlay: skull cross-fades to sprout, then the board navigates to the new life. -->
-<div class="reincarnate-overlay" *ngIf="isReincarnating" [class.phase-rebirth]="reincarnatePhase === 'rebirth'">
-	<div class="reincarnate-glyph">
-		<span class="glyph glyph-death" *ngIf="reincarnatePhase === 'death'">☠️</span>
-		<span class="glyph glyph-rebirth">👶</span>
-	</div>
-	<div class="reincarnate-text">
-		{{ (reincarnatePhase === 'rebirth' ? 'PLAYER.GO_TO_SECOND_LIFE' : 'PLAYER.THIS_LIFE_IS_GONE') | translate }}
-	</div>
-</div>
+<app-overlay *ngIf="reincarnateConfig" [config]="reincarnateConfig" (done)="onReincarnateDone()"></app-overlay>
 
-<!-- Final-minute credit alarm: ⏰ flash (~2s), then the credit panel force-opens with a live countdown. -->
-<div class="credit-alarm-overlay" *ngIf="creditAlarm">
-	<div class="credit-alarm-glyph">⏰</div>
-	<div class="credit-alarm-text">{{ 'CREDIT.FINAL_MINUTE' | translate }}</div>
-</div>
+<!-- Final-minute credit alarm: ⏰ flash, then the credit panel force-opens with a live countdown. -->
+<app-overlay *ngIf="alarmConfig" [config]="alarmConfig" (done)="alarmConfig = null"></app-overlay>
 
-<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable — clears the instant
-    a Seizure (manual or auto) resolves every FAULT credit. Text depends on Auto Seizure. -->
-<div class="police-overlay" *ngIf="creditFault">
-	<div class="police-glyph">🚨</div>
-	<div class="police-title">{{ 'CREDIT.FAULT_OVERLAY_TITLE' | translate }}</div>
-	<div class="police-text">
-		{{
-			((rules$ | async)?.autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT') | translate
-		}}
-	</div>
-</div>
+<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable (loop) — cleared by
+    onCreditFault the instant a Seizure resolves every FAULT credit. Text depends on Auto Seizure. -->
+<app-overlay *ngIf="faultConfig" [config]="faultConfig"></app-overlay>
 
-<!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it. -->
-<div class="takenover-overlay" *ngIf="takenOver$ | async">
-	<div class="takenover-card">
-		<div class="takenover-icon">🎬</div>
-		<div class="takenover-title">{{ 'PLAYER.TAKEN_OVER_TITLE' | translate }}</div>
-		<div class="takenover-text">{{ 'PLAYER.TAKEN_OVER_TEXT' | translate }}</div>
-		<button type="button" class="takenover-btn" (click)="retake()">
-			{{ 'PLAYER.RETAKE' | translate }}
-		</button>
-	</div>
-</div>
+<!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it via the button. -->
+<app-overlay *ngIf="takenOver$ | async" [config]="takeoverConfig" (action)="retake()"></app-overlay>
 
 <ng-container *ngIf="vm$ | async as vm">
-	<div class="blocked" *ngIf="vm.playerStatus === PRISON">
-		<div class="prison" *ngIf="vm.playerStatus === PRISON" [@prisonDoor]="'in'">
-			<audio autoplay>
-				<source src="assets/audios/prison.mp3" type="audio/mpeg" />
-			</audio>
-			<div class="countDownContainer">
-				<div class="time">
-					<div class="minute shadowed">{{ minutesPrison | number: '2.0' }}</div>
-					<div class="deuxpoints shadowed">:</div>
-					<div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
-				</div>
-				<mat-progress-spinner
-					[color]="'warn'"
-					[mode]="'determinate'"
-					[diameter]="300"
-					strokeWidth="20"
-					[value]="prisonProgress"></mat-progress-spinner>
-			</div>
-		</div>
-	</div>
+	<app-prison *ngIf="vm.playerStatus === PRISON" [prison]="prison$ | async"></app-prison>
 	<div class="blocked" *ngIf="vm.playerStatus === DEAD">
 		<div class="default-credit d-flex flex-column">
 			<div class="shadowed fs-3">{{ 'PLAYER.THIS_LIFE_IS_GONE' | translate }}</div>

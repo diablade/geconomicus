@@ -11,6 +11,7 @@ import {
 	properties,
 	getBackgroundStyle,
 	getRandomBackgroundBoard,
+	getRandomAvatar,
 	hairPalette,
 	skinPalette,
 	boardPalette,
@@ -212,23 +213,10 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		this.avatar = { ...this.avatar!, image: createSvg(this.avatar!) };
 	}
 
-	getRandomInt(min: number, max: number) {
-		return Math.floor(Math.random() * (max - min + 1) + min);
-	}
-
 	randomize() {
-		this.avatar!.earrings = this.getRandomInt(-1, properties.earrings.default.length - 1);
-		this.avatar!.glasses = this.getRandomInt(-1, properties.glasses.default.length - 1);
-		this.avatar!.features = this.getRandomInt(-1, properties.features.default.length - 1);
-		this.avatar!.eyes = this.getRandomInt(0, properties.eyes.default.length - 1);
-		this.avatar!.eyebrows = this.getRandomInt(0, properties.eyebrows.default.length - 1);
-		this.avatar!.hair = this.getRandomInt(0, properties.hair.default.length - 1);
-		this.avatar!.mouth = this.getRandomInt(0, properties.mouth.default.length - 1);
-		this.hairColor = hairPalette[this.getRandomInt(0, 13)];
-		this.skin = skinPalette[this.getRandomInt(0, 3)];
-		this.avatar!.skinColor = this.skin.replace('#', '');
-		this.avatar!.hairColor = this.hairColor.replace('#', '');
-		this.avatar = { ...this.avatar!, image: createSvg(this.avatar!) };
+		this.avatar = getRandomAvatar(this.avatar);
+		this.hairColor = '#' + this.avatar.hairColor;
+		this.skin = '#' + this.avatar.skinColor;
 	}
 
 	randomizeBg() {
