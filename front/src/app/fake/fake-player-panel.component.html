@@ -5,7 +5,9 @@
 	<div class="fake-section">
 		<span class="fake-label">Mode</span>
 		<button type="button" class="fake-btn" (click)="toggleMoney()">{{ isJune ? '🌱 June' : '💶 Debt' }}</button>
-		<button type="button" class="fake-btn" (click)="toggleTheme()">{{ isItemTheme ? '🧩 Item' : '🃏 Card' }}</button>
+		<button type="button" class="fake-btn" (click)="toggleTheme()">
+			{{ isItemTheme ? '🧩 Item' : '🃏 Card' }}
+		</button>
 		<button type="button" class="fake-btn" [class.on]="autoSeizure" (click)="toggleAutoSeizure()">
 			{{ autoSeizure ? '🚓 autoSeizure ON' : '🚓 autoSeizure OFF' }}
 		</button>
@@ -22,6 +24,7 @@
 			🏭 {{ showProdGroup ? 'Hide group' : 'Show group' }}
 		</button>
 		<button type="button" class="fake-btn" (click)="triggerProduction()">🎁 Reveal</button>
+		<button type="button" class="fake-btn" [class.on]="showWheel" (click)="toggleWheel()">🎡 Wheel</button>
 	</div>
 
 	<div class="fake-section">
@@ -40,6 +43,10 @@
 	(action)="onOverlayDone()"></app-overlay>
 
 <app-prison *ngIf="showPrison" [prison]="fakePrison"></app-prison>
+
+<div class="wheel-host" *ngIf="showWheel" (click)="toggleWheel()">
+	<div class="wheel"></div>
+</div>
 
 <div class="fake-prod-host" *ngIf="showProdGroup">
 	<app-square-zone

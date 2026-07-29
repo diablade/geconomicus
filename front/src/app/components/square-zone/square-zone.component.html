@@ -1,6 +1,6 @@
 <div class="square-zone" [class.square-zone--revealing]="productionReveal">
-	<div class="square-zone-wheel-container">
-		<div *ngIf="productionReveal" class="square-zone-wheel square-zone-wheel--reveal"></div>
+	<div class="wheel-host">
+		<div *ngIf="productionReveal" class="wheel"></div>
 	</div>
 	<div class="square-zone-header">
 		<span class="square-zone-icon emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
@@ -30,13 +30,14 @@
 				[screenHeight]="screenHeight"></app-item>
 		</div>
 		<button class="square-zone-btn h-auto" mat-raised-button (click)="build()">
-			<div class="giftBounce square-zone-tool">🛠️</div>
-			<span>{{ getBuildText(group.recipe.weight) | translate }}</span>
-			<span class="square-zone-gift">🎁</span>
-			<span class="square-zone-token">⚡ +1</span>
+			<div>
+				<span class="square-zone-gift">🛠️</span>
+				<span>{{ 'PRODUCTION.BUILD' | translate }}</span>
+				<span class="square-zone-gift">(🎁+⚡)</span>
+			</div>
 		</button>
-		<div class="square-zone-hint">
-			+ 1 carte de niveau supérieur · {{ amountCardsForProd }} nouvelles cartes · +1 jeton d'action
+		<div class="square-zone-hint contourText white">
+			{{ 'PRODUCTION.HINT' | translate: { amount: amountCardsForProd } }}
 		</div>
 	</ng-container>
 
@@ -57,10 +58,8 @@
 				[screenHeight]="screenHeight"></app-item>
 		</div>
 		<div class="production-reveal-title contour">{{ 'PRODUCTION.REVEAL_TITLE' | translate }}</div>
-		<div class="production-reveal-hint">
-			{{
-				'PRODUCTION.REVEAL_HINT' | translate: { count: amountCardsForProd, level: group.recipe.weight + 1 }
-			}}
+		<div class="production-reveal-hint contourText white">
+			{{ 'PRODUCTION.REVEAL_HINT' | translate: { count: amountCardsForProd, level: group.recipe.weight + 1 } }}
 		</div>
 	</ng-template>
 </div>

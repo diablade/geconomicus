@@ -38,6 +38,7 @@ export class FakePlayerPanelComponent {
 	showPrison = false;
 	fakePrison = { remainingTime: 4000, totalTime: 4000 };
 	showProdGroup: { recipe: Recipe; cards: Card[] } | null = null;
+	showWheel = false;
 	private prisonTimeout: any = null;
 
 	private readonly TEST_MS = 4000;
@@ -147,6 +148,10 @@ export class FakePlayerPanelComponent {
 
 	toggleProdGroup(): void {
 		this.showProdGroup = this.showProdGroup ? null : makeFakeProductionGroup();
+	}
+
+	toggleWheel(): void {
+		this.showWheel = !this.showWheel;
 	}
 
 	triggerProduction(): void {

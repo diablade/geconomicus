@@ -86,7 +86,9 @@
 		"FAULT_OVERLAY_TEXT_AUTO": "Tu n'as pas remboursé à temps. Saisie en cours..."
 	},
 	"PRODUCTION": {
+        "BUILD": "Construire",
+		"HINT": "+ 1 carte de niveau supérieur · {{ amount }} nouvelles cartes · +1 jeton (⚡)",
 		"REVEAL_TITLE": "Construit !",
-		"REVEAL_HINT": "{{count}} cartes Niv. {{level}} repiochées... +1 jeton d'action"
+		"REVEAL_HINT": "{{count}} cartes Niv. {{level}} repiochées... +1 jeton (⚡)"
 	}
 }
