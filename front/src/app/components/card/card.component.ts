@@ -52,14 +52,12 @@ export class CardComponent implements OnChanges {
 	}
 
 	private recalculateSizes() {
-		const isPortrait = this.screenWidth < this.screenHeight;
-		const unit = isPortrait ? 'vw' : 'vh';
-		// width = 30vw/vh clamped, height = 1.5x for 2:3 ratio
-		this.width = `clamp(80px, 30${unit}, 150px)`;
-		this.height = `clamp(120px, 45${unit}, 225px)`;
-		this.letterSize = `clamp(10px, 6${unit}, 28px)`;
-		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
-		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
+		// vmin = shorter viewport side, so sizing is orientation-independent
+		this.width = 'clamp(80px, 30vmin, 150px)';
+		this.height = 'clamp(120px, 45vmin, 225px)';
+		this.letterSize = 'clamp(10px, 6vmin, 28px)';
+		this.priceSize = 'clamp(7px, 3vmin, 14px)';
+		this.smallPriceSize = 'clamp(5px, 2vmin, 10px)';
 	}
 
 	closeCard() {

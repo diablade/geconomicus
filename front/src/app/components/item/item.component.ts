@@ -107,13 +107,12 @@ export class ItemComponent implements OnChanges, OnDestroy {
 	}
 
 	private recalculateSizes() {
-		const isPortrait = this.screenWidth < this.screenHeight;
-		const unit = isPortrait ? 'vw' : 'vh';
+		// vmin = shorter viewport side, so sizing is orientation-independent
 		if (!this.height) {
-			this.height = `clamp(80px, 30${unit}, 150px)`;
+			this.height = 'clamp(80px, 30vmin, 150px)';
 		}
 		if (!this.width) {
-			this.width = `clamp(80px, 30${unit}, 150px)`;
+			this.width = 'clamp(80px, 30vmin, 150px)';
 		}
 		if (!this.iconSize) {
 			this.iconSize = `calc(${this.width} * 0.60)`;
@@ -124,8 +123,8 @@ export class ItemComponent implements OnChanges, OnDestroy {
 		if (!this.textSize) {
 			this.textSize = `calc(${this.width} * 0.12)`;
 		}
-		this.priceSize = `clamp(7px, 3${unit}, 14px)`;
-		this.smallPriceSize = `clamp(5px, 2${unit}, 10px)`;
+		this.priceSize = 'clamp(7px, 3vmin, 14px)';
+		this.smallPriceSize = 'clamp(5px, 2vmin, 10px)';
 
         this.gapBackItems= this.height;
 	}
