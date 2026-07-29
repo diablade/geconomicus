@@ -6,7 +6,7 @@
 		<span class="square-zone-icon emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 			{{ getIcon(group.recipe.letter) }}
 		</span>
-		<span class="square-zone-title contour">🏗️ {{ group.recipe.letter | translate }}</span>
+		<span class="square-zone-title contour">{{ group.recipe.letter | translate }}</span>
 		<span class="square-zone-count">{{ group.cards.length }}/{{ amountCardsForProd }}</span>
 	</div>
 
@@ -32,12 +32,12 @@
 		<button class="square-zone-btn h-auto" mat-raised-button (click)="build()">
 			<div>
 				<span class="square-zone-gift">🛠️</span>
-				<span>{{ 'PRODUCTION.BUILD' | translate }}</span>
-				<span class="square-zone-gift">(🎁+⚡)</span>
+				<span class="">{{ 'PRODUCTION.BUILD' | translate }}</span>
 			</div>
 		</button>
 		<div class="square-zone-hint contourText white">
-			{{ 'PRODUCTION.HINT' | translate: { amount: amountCardsForProd } }}
+			<span class="square-zone-gift">={{ getBuildHint(group.recipe.weight) }}+🎁+⚡</span>
+			<!-- {{ 'PRODUCTION.HINT' | translate: { amount: amountCardsForProd } }} -->
 		</div>
 	</ng-container>
 

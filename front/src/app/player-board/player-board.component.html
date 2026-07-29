@@ -87,9 +87,9 @@
 				[onlineStatus]="true"
 				[connection]="playerConnection$ | async"></avatar>
 		</div>
-		<div class="btn-buy marginArround">
+		<div class="btn-buy">
 			<button
-				class="styleBtn size-center box-shadowed z2"
+				class="styleBtn marginArround size-center box-shadowed z2"
 				mat-raised-button
 				color="primary"
 				[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
@@ -226,37 +226,41 @@
 			</ng-container>
 			<ng-container *ngIf="vm.typeTheme !== 'CARD'">
 				<ng-container *ngIf="cardsView$ | async as cardsView">
-					<app-square-zone
-						*ngFor="let group of cardsView.groups; trackBy: trackByGroup"
-						[group]="group"
-						[typeMoney]="vm.rules.typeMoney"
-						[typeTheme]="vm.typeTheme"
-						[ownerIdx]="playerStateIdx"
-						[gameStateId]="gameStateId"
-						[currentDU]="vm.gameState.currentDU"
-						[allCards]="vm.cards"
-						[amountCardsForProd]="vm.rules.amountCardsForProd"
-						[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
-						[screenWidth]="screenWidth"
-						[screenHeight]="screenHeight"></app-square-zone>
-
-					<ng-container *ngFor="let card of cardsView.remaining; trackBy: trackByCard">
-						<app-item
-							@item
-							[card]="card"
+					<div class="zones" *ngIf="cardsView.groups.length">
+						<app-square-zone
+							*ngFor="let group of cardsView.groups; trackBy: trackByGroup"
+							[group]="group"
 							[typeMoney]="vm.rules.typeMoney"
+							[typeTheme]="vm.typeTheme"
 							[ownerIdx]="playerStateIdx"
 							[gameStateId]="gameStateId"
-							[typeTheme]="vm.typeTheme"
-							[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
 							[currentDU]="vm.gameState.currentDU"
 							[allCards]="vm.cards"
 							[amountCardsForProd]="vm.rules.amountCardsForProd"
 							[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
-							(shortCodeChanged)="onChangedShortCode($event)"
 							[screenWidth]="screenWidth"
-							[screenHeight]="screenHeight"></app-item>
-					</ng-container>
+							[screenHeight]="screenHeight"></app-square-zone>
+					</div>
+
+					<div class="cards" *ngIf="cardsView.remaining.length">
+						<ng-container *ngFor="let card of cardsView.remaining; trackBy: trackByCard">
+							<app-item
+								@item
+								[card]="card"
+								[typeMoney]="vm.rules.typeMoney"
+								[ownerIdx]="playerStateIdx"
+								[gameStateId]="gameStateId"
+								[typeTheme]="vm.typeTheme"
+								[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
+								[currentDU]="vm.gameState.currentDU"
+								[allCards]="vm.cards"
+								[amountCardsForProd]="vm.rules.amountCardsForProd"
+								[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
+								(shortCodeChanged)="onChangedShortCode($event)"
+								[screenWidth]="screenWidth"
+								[screenHeight]="screenHeight"></app-item>
+						</ng-container>
+					</div>
 				</ng-container>
 			</ng-container>
 		</div>

@@ -29,6 +29,21 @@
 		gap: 2.5vw;
 		align-content: flex-start;
 		justify-content: center;
+
+		.zones {
+			display: flex;
+			flex-flow: row wrap;
+			gap: 2.5vw;
+			align-content: flex-start;
+		}
+		.cards {
+			flex: 1 1 300px;
+			display: flex;
+			flex-flow: row wrap;
+			gap: 2.5vw;
+			align-content: flex-start;
+			justify-content: center;
+		}
 	}
 
 	.btn-credit {
@@ -102,6 +117,21 @@
 		gap: 2.5vh;
 		align-content: flex-start;
 		justify-content: center;
+
+		.zones {
+			display: flex;
+			flex-flow: row wrap;
+			gap: 2.5vh;
+			align-content: flex-start;
+		}
+		.cards {
+			flex: 1 1 300px;
+			display: flex;
+			flex-flow: row wrap;
+			gap: 2.5vh;
+			align-content: flex-start;
+			justify-content: center;
+		}
 	}
 
 	.btn-credit {
@@ -119,7 +149,6 @@
 		display: flex;
 		align-items: center;
 		height: 100%;
-		z-index: 9 !important;
 	}
 	.btn-action {
 		position: fixed;
@@ -164,7 +193,7 @@
 // ________other stuff _____________________
 
 .marginArround {
-	margin: 3vw;
+	margin: 15px;
 	z-index: 20;
 }
 
@@ -200,9 +229,9 @@
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 
-// .btn-action {
-//     min-width: 20px;
-// }
+.btn-buy {
+    z-index: 3;
+}
 
 .styleBtn {
 	font-size: 1.5em;

@@ -405,12 +405,11 @@ html {
 .wheel-host {
 	position: fixed;
 	inset: 0;
-	// z-index: ;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(0, 0, 0, 0.55);
 	cursor: pointer;
+    filter: blur(3px);
 }
 
 .wheel {
@@ -418,7 +417,6 @@ html {
 	aspect-ratio: 1;
 	border-radius: 50%;
 	opacity: 0.85;
-    filter: blur(3px);
 	animation: rotate 2.5s linear infinite;
 	background: repeating-conic-gradient(
 		#ff990000 0% 8.33%,

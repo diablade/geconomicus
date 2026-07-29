@@ -57,16 +57,18 @@ export class SquareZoneComponent implements OnInit, OnDestroy {
 		return this.themesService.getIcon(key);
 	}
 
-	getBuildText(weight: number) {
+	getBuildHint(weight: number): string {
 		switch (weight) {
 			case 0:
-				return 'CARD.BUILD_UP_0';
+				return '🟥🟥🟥🟥';
 			case 1:
-				return 'CARD.BUILD_UP_1';
+				return '🟨🟨🟨🟨';
 			case 2:
-				return 'CARD.BUILD_UP_2';
+				return '🟩🟩🟩🟩';
+			case 3:
+				return '🟦🟦🟦🟦';
 		}
-		return 'CARD.BUILD_UP';
+		return '🟥🟥🟥🟥';
 	}
 
 	build() {
