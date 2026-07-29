@@ -1,6 +1,7 @@
 .tutorial-dialog {
 	width: 100%;
-	max-width: 680px;
+    max-height: 90vh;
+    overflow: auto;
 }
 
 .slide-title {

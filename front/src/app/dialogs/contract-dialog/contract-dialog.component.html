@@ -10,10 +10,7 @@
 		</div>
 		<mat-form-field *ngIf="!locked" class="mt-2" appearance="fill">
 			<mat-label>{{ 'CONTRACT.WITH_PLAYER' | translate }}</mat-label>
-			<mat-select
-				[value]="selectedPlayer"
-				(valueChange)="onPlayerChange($event)"
-				[compareWith]="compareById">
+			<mat-select [value]="selectedPlayer" (valueChange)="onPlayerChange($event)" [compareWith]="compareById">
 				<mat-select-trigger>
 					<avatar
 						[avatar]="selectedPlayer?.avatar"
@@ -54,7 +51,7 @@
 			</mat-radio-button>
 			<mat-radio-button value="manual">{{ 'CONTRACT.MANUAL_CREDIT' | translate }}</mat-radio-button>
 		</mat-radio-group>
-		<div *ngIf="selectedCreditOption === 'manual'">
+		<ng-container *ngIf="selectedCreditOption === 'manual'">
 			<mat-form-field class="input">
 				<mat-label>{{ 'CONTRACT.CREDIT' | translate }}</mat-label>
 				<input
@@ -73,7 +70,7 @@
 					[placeholder]="'CONTRACT.DEFAULT_INTEREST_AMOUNT' | translate"
 					[(ngModel)]="interest" />
 			</mat-form-field>
-		</div>
+		</ng-container>
 		<div>
 			- {{ 'CONTRACT.RATE_INTEREST' | translate }} :
 			<b>{{ (interest / amount) * 100 | number: '1.2-2' }} %</b>
@@ -82,7 +79,8 @@
 			<b>{{ interest + amount }}</b>
 			<br />
 			-
-			<span [innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.durationCredit }"></span>
+			<span
+				[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.durationCredit }"></span>
 		</div>
 		<!-- Auto-bank: informational solvency of the target (coins + card value vs debts). Never blocks signing. -->
 		<div *ngIf="rules.typeMoney === DEBT && solvency" class="solvency mt-2 p-2 w-100">

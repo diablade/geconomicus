@@ -87,7 +87,6 @@
 	},
 	"PRODUCTION": {
         "BUILD": "Construire",
-		"HINT": "+ 1 carte de niveau supérieur · {{ amount }} nouvelles cartes · +1 jeton (⚡)",
 		"REVEAL_TITLE": "Construit !",
 		"REVEAL_HINT": "{{count}} cartes Niv. {{level}} repiochées... +1 jeton (⚡)"
 	}
