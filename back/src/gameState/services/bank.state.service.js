@@ -146,8 +146,6 @@ const _whatCanDoCredit = (credit, playerState) => {
 	};
 };
 
-// Helper to create the Auto Seizure 10s wait timer — one per player, keyed like the prison timer.
-// No progress interval: the wait is a plain "seizure ongoing" spinner, not a countdown.
 const _createAutoSeizureTimer = (gameStateId, playerStateIdx) => {
 	log.debug('[BankStateService] creating auto-seizure timer', { gameStateId, playerStateIdx });
 	return new Timer(
@@ -199,8 +197,6 @@ const _releasePlayer = async (entry, playerStateIdx) => {
 	log.info('[BankStateService] player released from prison', { playerStateIdx, cardsCount: newCards.length });
 
 	socket.emitTo(ROOMS.gameStateTable(gameState._id), IO.EVENT, event);
-	// Player gets its full refreshed hand (cardsLK convention); the table gets the idx so it can
-	// flip the row back to ALIVE and clear the prison bar.
 	socket.emitAckTo(ROOMS.playerState(gameState._id, playerStateIdx), IO.PLAYER.PRISON_ENDED, {
 		cardsLK: playerState.cards,
 	});
@@ -230,7 +226,6 @@ const _prisonProgressCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
 	const remainingMs = timerInstance.getRemainingMs();
 	const totalMs = timerInstance.duration;
-	// Percent of prison time still remaining (drives the table's countdown bar and the player's spinner).
 	const progress = totalMs > 0 ? Math.max(0, Math.min(100, Math.round((remainingMs / totalMs) * 100))) : 0;
 	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs, progress });
 
@@ -262,7 +257,6 @@ const _creditTimeoutCallback = async (timerInstance) => {
 
 			const { canSettle, canExtend } = await _whatCanDoCredit(credit, playerState);
 			if (canSettle) {
-				// requesting settle credit or pay interest
 				const event = EventHelper.createEvent(
 					DB_EVENTS.CREDIT_REQUEST,
 					gameState.sessionId,
@@ -286,7 +280,10 @@ const _creditTimeoutCallback = async (timerInstance) => {
 					credit,
 					coinsLK: playerState.coins,
 				});
-				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.EXTENDED, { credit });
+				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.EXTENDED, {
+					credit,
+					..._getBankIndicators(gameState),
+				});
 				SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 			} else {
 				// bankrup payment
@@ -305,8 +302,6 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.FAULT, { credit });
 				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.FAULT, { credit });
 
-				// Auto Seizure (docs/adr/0005): start the 10s wait if not already running for this
-				// player — the first fault's deadline stands, later faults join the same batch.
 				if (rules.autoSeizure) {
 					const timer = _createAutoSeizureTimer(gameStateId, playerState.idx);
 					await autoSeizureTimerManager.startIfAbsent(timer);
@@ -318,9 +313,6 @@ const _creditTimeoutCallback = async (timerInstance) => {
 	});
 };
 
-// Auto Seizure resolution (docs/adr/0005-auto-seizure.md): fires once the 10s wait elapses.
-// Settles every currently-FAULT credit for the player in one batch, FIFO (oldest fault first),
-// against one shared, draining pool of coins/cards — never trusting a client-supplied amount.
 const _autoSeizureCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
 	try {
@@ -387,9 +379,6 @@ const _autoSeizureCallback = async (timerInstance) => {
 				cardsSeized: allSeizedCards.length,
 			});
 
-			// Prison triggers whenever the hand ends up empty — regardless of whether the debt was
-			// fully covered — because prison release unconditionally deals 4 fresh cards, the only
-			// path back to a non-empty hand (docs/adr/0005-auto-seizure.md).
 			let prisonResult = null;
 			let prisonRemainingMs = 0;
 			let prisonTotalMs = 0;
@@ -472,8 +461,6 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 
 const BankStateService = {};
 
-// The credit terms on offer right now: base rate unless the game is PLAYING with
-// autoBank on, in which case the deepest crossed avg-tier wins.
 const _currentRate = (gameState, rules) => {
 	if (rules.typeMoney !== GAME_TYPE.DEBT || !rules.autoBank || gameState.status !== GAME_STATUS.PLAYING) {
 		// base rate (tierIndex -1): pass an avg above every threshold
@@ -482,9 +469,6 @@ const _currentRate = (gameState, rules) => {
 	return computeEffectiveRate(computeAverageMoney(gameState), rules.rateSchedule, rules);
 };
 
-// Core credit creation — runs inside an already-held queue entry (no re-enqueue),
-// so callers that already hold the queue (createCreditForAll, requestCredit) reuse
-// it without deadlocking.
 const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, interest, origin) => {
 	const { gameState, rules, events } = entry;
 	const playerState = _findPlayer(gameState, playerStateIdx);
@@ -530,7 +514,7 @@ const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, 
 			entry.gameStateId,
 			PLAYER_TYPE.BANK,
 			playerStateIdx,
-			{ ...credit, origin } // origin lives in the event stream, not on the persisted credit
+			{ ...credit, origin }
 		)
 	);
 
@@ -562,11 +546,7 @@ BankStateService.createCredit = async (
 	);
 };
 
-// Auto-bank rate broadcast: after a money/alive change, re-price credit from the
-// new average money and, if the deepest-crossed tier moved, push IO.CREDIT.RATE to
-// every alive player. The chip updates both ways; `improved` (a move to a DEEPER
-// tier — cheaper relief as money gets scarcer) flags a live-down so the client
-// notifies, while a climb back up is silent. No-op unless debt + autoBank + PLAYING.
+// Auto-bank rate broadcast: after a money/alive change, re-price credit from theG.
 // Registered as a GameStateManager afterMutation hook, so it runs after every
 // mutation inside the already-held queue entry — it never re-enqueues.
 BankStateService.refreshRateBroadcast = (entry) => {
@@ -588,7 +568,6 @@ BankStateService.refreshRateBroadcast = (entry) => {
 };
 GameStateManager.onAfterMutation(BankStateService.refreshRateBroadcast);
 
-// Read-only current rate + solvency for a life — feeds the persistent rate chip.
 BankStateService.getRate = async (gameStateId, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules } = entry;
@@ -599,8 +578,6 @@ BankStateService.getRate = async (gameStateId, playerStateIdx) => {
 	});
 };
 
-// First Credit Question: broadcast the opening prompt (base rate) to every alive
-// player. Their answer is captured by answerFirstCreditQuestion.
 BankStateService.askFirstCreditQuestion = async (gameStateId) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules } = entry;
@@ -617,8 +594,6 @@ BankStateService.askFirstCreditQuestion = async (gameStateId) => {
 	});
 };
 
-// First Credit Question: record a player's answer (research data) and, on accept,
-// create the opening credit at the base rate — no solvency gate at the ceremony.
 BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx, answer) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
@@ -655,10 +630,6 @@ BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx,
 	});
 };
 
-// Self-service Credit Request (pull). The client sends the amount+interest it was
-// shown (the contract — "what you saw when you opened the panel is what you get",
-// ×2 already baked in); the bank only checks coins+cards solvency, then creates or
-// refuses. No re-quote against the live rate: the displayed terms are honoured.
 BankStateService.requestCredit = async (gameStateId, playerStateIdx, amount, interest) => {
 	log.info(`[BankStateService] credit request p:${playerStateIdx} g:${gameStateId} a:${amount} i:${interest}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
@@ -835,17 +806,12 @@ BankStateService.pauseAllTimersCreditGame = async (gameStateId, credits) => {
 	for (const credit of credits) {
 		if (credit.status !== CREDIT_STATUS.RUNNING) continue;
 		const remaining = creditTimerManager.stopAndGetRemaining(credit.id);
-		// remaining === null means the timer was missing from the manager (e.g. the
-		// credit was RUNNING but its in-memory timer was lost after a server restart).
-		// Only overwrite remainingTime when we actually read a positive value; keep the
-		// last known value otherwise so resume doesn't restart from 0.
-		if (remaining !== null && remaining > 0) {
+
+        if (remaining !== null && remaining > 0) {
 			credit.remainingTime = remaining;
 		}
-		// Always park a RUNNING credit as PAUSED — even when its timer was missing —
-		// so resume can restart it. Leaving it RUNNING would strand it forever
-		// (resume never touched RUNNING credits).
-		credit.status = CREDIT_STATUS.PAUSED;
+
+        credit.status = CREDIT_STATUS.PAUSED;
 		log.debug(
 			`[BankStateService] Paused credit ${credit.id} for player ${credit.playerStateIdx}, remainingTime: ${credit.remainingTime}`
 		);
@@ -856,10 +822,6 @@ BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules)
 	log.debug(`[BankStateService] Resuming all credit timers for game ${gameStateId}`);
 	const fullDurationMs = (rules?.durationCredit ?? 0) * minute;
 	for (const credit of credits) {
-		// Restart every credit that should be actively counting down. PAUSED/IDLE are
-		// the normal cases; RUNNING here is a recovery case — a credit that never got
-		// parked (timer lost to a restart, or a pause that couldn't read its timer).
-		// Restart it too so it isn't frozen forever.
 		if (
 			credit.status !== CREDIT_STATUS.PAUSED &&
 			credit.status !== CREDIT_STATUS.IDLE &&
@@ -867,15 +829,12 @@ BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules)
 		) {
 			continue;
 		}
-		// Guard against a lost or zeroed remaining time so we never spawn a timer that
-		// fires instantly (reset-to-0) or with a bogus duration.
 		if (!(credit.remainingTime > 0) && fullDurationMs > 0) {
 			log.warn(
 				`[BankStateService] credit ${credit.id} had invalid remainingTime (${credit.remainingTime}), resetting to full duration ${fullDurationMs}ms`
 			);
 			credit.remainingTime = fullDurationMs;
 		}
-		// On recrée depuis le credit (remainingTime est la source de vérité)
 		const timer = _createCreditTimer(gameStateId, credit);
 		await creditTimerManager.startTimer(timer);
 		credit.status = CREDIT_STATUS.RUNNING;
@@ -895,7 +854,7 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 	let totalPayedInterest = 0;
 	let totalPayedAmount = 0;
 	let totalValuesToSeize = 0;
-	let totalNotPayed = 0; //rest that is not payed by coins or cards
+	let totalNotPayed = 0;
 
 	for (let credit of credits) {
 		let payedInterest = 0;
@@ -1075,9 +1034,6 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			if (clampedPrisonTime > 0) {
 				const timer = _createPrisonTimer(gameStateId, playerStateIdx, clampedPrisonTime);
 				await prisonTimerManager.startTimer(timer);
-				// Push an initial progress tick right away so the player enters prison mode and the
-				// table shows the prisoner with a live countdown — the recurring interval only fires
-				// after the first 5s, which would otherwise leave both stuck on the default display.
 				prisonRemainingMs = timer.getRemainingMs();
 				prisonTotalMs = timer.duration;
 				await _prisonProgressCallback(timer);
@@ -1118,10 +1074,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 BankStateService.prisonBreak = async (gameStateId, playerStateIdx) => {
 	log.debug(`[BankStateService] Prison break for player:${playerStateIdx} in game:${gameStateId}`);
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		// Stop the prison timer if it exists
 		await prisonTimerManager.releasePlayer(gameStateId, playerStateIdx);
-
-		// Release the player (draw new cards, set ALIVE status)
 		const result = await _releasePlayer(entry, playerStateIdx);
 		if (!result) {
 			throw new Error('ERROR.PLAYER_NOT_IN_PRISON');

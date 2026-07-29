@@ -26,7 +26,8 @@ You are responsible for:
 - **v1 is Reference, Not Destiny**: Legacy v1 code is a source of truth for business logic and behavior to migrate, never to be deleted or modified. Read it to understand intent, then rewrite for v2.
 - **Separation of Concerns**: Backend services handle business logic; controllers handle HTTP concerns; Angular services handle frontend logic; components handle presentation
 - **Shared Contracts**: The /shared/ directory contains schemas, interfaces, and types that both backend and frontend depend on—changes here require coordination
-- **Type Safety (JavaScript Backend)**: Mongoose schemas + runtime validation (Joi/Zod) at Express routes. Share interfaces in /shared/ with Angular. Use JSDoc for IDE hints.
+- **Type Safety (JavaScript Backend)**: Mongoose schemas + runtime validation (Joi/Zod) at Express routes. Share interfaces in /shared/ with Angular.
+- **No code comments**: Never add comments to code — no `//`, no `/* */`, no `/** */`/JSDoc, not even one-liners. Convey intent through naming and structure. "Document" below always means ADRs/markdown or descriptive naming, never inline code comments. Don't purge the repo's own pre-existing banner comments either.
 - **Error Handling**: Consistent error responses from Express, proper Observable error handling in Angular
 - **Testing Priority**: Jest tests are mandatory for business logic, services, and complex components
 
@@ -44,7 +45,7 @@ When encountering v1 code:
 2. Identify what logic must be preserved vs. what can be improved
 3. Translate into v2 patterns (e.g., callback-based code becomes Promise/async-await, class components become functional, gameState, queue, etc.)
 4. Never modify or delete v1 code—it remains as reference
-5. Document migration decisions when the v2 translation diverges from v1 implementation
+5. Record migration decisions in an ADR/markdown doc (never as code comments) when the v2 translation diverges from v1 implementation
 
 ## Best Practices for v2
 
@@ -59,7 +60,7 @@ When encountering v1 code:
 - Use Mongoose model methods and queries efficiently
 - Use schema validation and indexes appropriately
 - Version schema changes when breaking changes occur
-- Document schema relationships and constraints
+- Express schema relationships and constraints through schema definitions and naming (not code comments)
 
 **Angular/Frontend:**
 - Use functional components with composition over class inheritance
@@ -72,7 +73,7 @@ When encountering v1 code:
 **Shared/constants:**
 - Define constants and shared utilities in TypeScript
 - Use TypeScript interfaces and types for type safety
-- Document constants and their usage
+- Use descriptive constant names that convey their usage (not code comments)
 
 **Testing:**
 - Write Jest tests for services, controllers, and business logic

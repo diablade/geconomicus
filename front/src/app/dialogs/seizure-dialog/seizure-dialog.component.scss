@@ -1,97 +1,97 @@
 .seizure {
-  overflow: auto;
-  max-height: 100vh;
+	overflow: auto;
+	max-height: 100vh;
 }
 
 .player-board {
-  width: 200px;
-  height: 300px;
+	width: 200px;
+	height: 300px;
 }
 
 .sold {
-  color: black;
-  background: wheat;
-  border: solid black 1px;
+	color: black;
+	background: wheat;
+	border: solid black 1px;
 
-  .strike {
-    text-decoration-line: line-through;
-    text-decoration-color: red;
-    text-decoration-thickness: 2px;
-  }
+	.strike {
+		text-decoration-line: line-through;
+		text-decoration-color: red;
+		text-decoration-thickness: 2px;
+	}
 }
 
 .barSeizure {
-  height: 22px;
-  font-weight: bold;
-  color: black;
-  // text-shadow:
-  // -1px -1px 0 white,
-  // 1px -1px 0 white,
-  // -1px 1px 0 white,
-  // 1px 1px 0 white;
+	height: 22px;
+	font-weight: bold;
+	color: black;
+	// text-shadow:
+	// -1px -1px 0 white,
+	// 1px -1px 0 white,
+	// -1px 1px 0 white,
+	// 1px 1px 0 white;
 }
 
 .decotePrice {
-  position: relative;
-  text-align: center;
-  bottom: 20px;
-  z-index: 2;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
+	position: relative;
+	text-align: center;
+	bottom: 20px;
+	z-index: 2;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: bold;
 
-  .strike {
-    text-decoration-line: line-through;
-    text-decoration-color: red;
-    text-decoration-thickness: 2px;
-  }
+	.strike {
+		text-decoration-line: line-through;
+		text-decoration-color: red;
+		text-decoration-thickness: 2px;
+	}
 }
 
 .bank-board {
-  width: 200px;
-  height: 300px;
+	width: 200px;
+	height: 300px;
 }
 
 .header-board {
-  height: 100px;
+	height: 100px;
 }
 
 .proBar {
-  text-align: center;
-  color: black;
+	text-align: center;
+	color: black;
 }
 
 .dropZone {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  border: red dashed 2px;
-  overflow: auto;
-  height: 200px;
-  width: 200px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	border: red dashed 2px;
+	overflow: auto;
+	height: 200px;
+	width: 200px;
 }
 
 .cdk-drag-placeholder {
-  opacity: 0;
+	opacity: 0;
 }
 
 .svg {
-  width: 75px;
-  height: 75px;
-  border: solid #5398ca 2px;
-  border-radius: 40px;
-  background: rgba(255, 255, 255, 0.65);
+	width: 75px;
+	height: 75px;
+	border: solid #5398ca 2px;
+	border-radius: 40px;
+	background: rgba(255, 255, 255, 0.65);
 }
 
 .dropText {
-  position: absolute;
-  color: gray;
-  white-space: normal;
-  width: 100px;
-  word-wrap: break-word; /* For legacy browsers */
-  word-break: break-word; /* Ensures long words break properly */
+	position: absolute;
+	color: gray;
+	white-space: normal;
+	width: 100px;
+	word-wrap: break-word; /* For legacy browsers */
+	word-break: break-word; /* Ensures long words break properly */
 }
 
 .smallInput {
-  width: 40px;
+	width: 40px;
 }

@@ -135,8 +135,6 @@ export class GameStateService {
 			this.roomTable = ROOMS.gameStateTable(gameStateId);
 		}
 
-		// Singleton service: clear any timer left over from a previously-viewed game
-		// so its stale countdown/interval never bleeds into this board.
 		this.stopTimer();
 
 		this.sessionService.initializeSocket(sessionId);
@@ -152,7 +150,6 @@ export class GameStateService {
 				this.creditsSubject.next(payload.gameState.credits);
 			}
 
-			// Auto-resume, display paused timer, or fall back to the full round from rules.
 			const remainingTime = payload.gameState.gameTimers?.remainingTime ?? 0;
 			if (payload.gameState.status === GAME_STATUS.PLAYING && remainingTime > 0) {
 				this.startTimer(remainingTime);
@@ -171,8 +168,6 @@ export class GameStateService {
 	}
 
 	leaveRooms(): void {
-		// The service is a singleton but its countdown belongs to the board being torn
-		// down: stop it so no stale interval survives into the next game view.
 		this.stopTimer();
 		if (this.gameStateId) {
 			this.wsService.leaveRoom(this.roomGameState);
@@ -204,23 +199,17 @@ export class GameStateService {
 			this.joinRooms();
 		});
 
-		// Handle reconnection - if we receive 'connected' event, check if we're still in rooms
 		this.wsService.on('disconnect', () => {
 			console.log('Master board disconnected, will reconnect...');
-			// Schedule reconnection after a short delay
 			setTimeout(() => {
 				if (this.wsService.isConnected()) {
 					console.log('Master board reconnecting to rooms...');
 					this.joinRooms();
-					// Observer-room syncs are unacked, so a blip can drop them: re-pull the
-					// authoritative baseline once on reconnect. See docs/adr/0008.
 					this.refreshMasterState();
 				}
-			}, 2000); // Reconnect after 2 seconds
+			}, 2000);
 		});
 
-		// Game deleted: both the master and table boards join the session room, so this reaches
-		// both — bounce back to the session lobby. Moved out of the table-only listener (ADR-0008).
 		this.wsService.on(IO.GAME.DELETED, async (data: { gameStateId: string }) => {
 			console.log('game deleted ws:', data);
 			if (data.gameStateId === this.gameStateId) {
@@ -263,7 +252,6 @@ export class GameStateService {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.currentDU = data.du;
-				// DU changes the money mass; it now rides this event (ADR-0008) so avg-money stays live.
 				if (data.currentMassMonetary !== undefined) {
 					currentGameState.currentMassMonetary = data.currentMassMonetary;
 				}
@@ -280,8 +268,6 @@ export class GameStateService {
 			const currentStates = this.playersStatesSubject.getValue();
 			const updated = currentStates.map((p) => {
 				if (p.idx == deadIdx) {
-					// Freeze the dead life's snapshot (coins/cards) from the enriched payload so the
-					// table's ghost-money stays correct on a terminal death (no re-pull follows). ADR-0008.
 					const snapshot: Partial<PlayerState> = { status: PLAYER_STATUS.DEAD };
 					if (event.coinsLK !== undefined) snapshot.coins = event.coinsLK;
 					if (event.cardsLK !== undefined) snapshot.cards = event.cardsLK;
@@ -307,15 +293,11 @@ export class GameStateService {
 		});
 
 		this.wsService.on(IO.PLAYER.REINCARNATED, (event: any) => {
-			// A life died and a new one was appended server-side: re-pull to add the new life
-			// and reflect the shrunk death queue, then notify the cockpit for a snackbar.
 			this.refreshMasterState();
 			this.reincarnationSubject.next(event);
 		});
 
 		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
-			// Patch the avatar in place — the payload carries the full updatedAvatar (with its idx),
-			// so playersAC$ recomputes the affected row without a full page reload. ADR-0008.
 			const s = this.sessionSubject.getValue();
 			if (s && data?.updatedAvatar) {
 				s.avatars = s.avatars.map((a: Avatar) => (a.idx === data.updatedAvatar.idx ? data.updatedAvatar : a));
@@ -323,9 +305,6 @@ export class GameStateService {
 			}
 		});
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
-			// Server sends { playerStateIdx, progress } every 5s (and once immediately on imprisonment).
-			// Rebuild the array immutably + re-emit so playersAC$ (distinctUntilChanged) recomputes the
-			// rows; also force the row into PRISON so the table reflects it live and after a refresh.
 			const updated = this.playersStatesSubject.getValue().map((p) =>
 				p.idx == data.playerStateIdx
 					? { ...p, status: PLAYER_STATUS.PRISON, progressPrison: data.progress }
@@ -367,7 +346,6 @@ export class GameStateService {
 	private setupTableSocketListener(): void {
 		console.log('setup Table SocketListener');
 
-		// Absolute LK rows of the affected players — replace coins/cards/tokens wholesale (ADR-0008).
 		this.wsService.on(IO.PLAYER.STATE_SYNC, (data: { players: Partial<PlayerState>[] }) => {
 			const byIdx = new Map((data.players ?? []).map((p) => [p.idx, p]));
 			const updated = this.playersStatesSubject.getValue().map((p) => {
@@ -377,7 +355,6 @@ export class GameStateService {
 			this.playersStatesSubject.next(updated);
 		});
 
-		// Absolute LK card arrays of the changed deck levels — replace those levels wholesale (ADR-0008).
 		this.wsService.on(IO.DECKS_STATE_SYNC, (data: { decks: { level: number; cards: Card[] }[] }) => {
 			const gs = this.gameStateSubject.getValue();
 			if (!gs.decks) return;
@@ -389,11 +366,10 @@ export class GameStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.STARTED, async (data: { id: string }) => {
-			_.forEach(this.creditsSubject.getValue(), (c) => {
-				if (c.id === data.id) {
-					c.status = CREDIT_STATUS.RUNNING;
-				}
-			});
+			const updated = this.creditsSubject.getValue().map((c) =>
+				c.id === data.id ? { ...c, status: CREDIT_STATUS.RUNNING } : c
+			);
+			this.creditsSubject.next(updated);
 		});
 		this.wsService.on(IO.CREDIT.PROGRESS, async (data: { id: string; remainingTime: number }) => {
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
@@ -405,51 +381,38 @@ export class GameStateService {
 			this.creditsSubject.next(updatedCredits);
 		});
 		this.wsService.on(IO.CREDIT.DONE, async (data: any) => {
-			const currentStates = this.gameStateSubject.getValue();
-			currentStates.currentMassMonetary = data.currentMassMonetary;
-			currentStates.bankInterestEarned = data.bankInterestEarned;
-			currentStates.bankMoneyLost = data.bankMoneyLost;
-			currentStates.bankMoneyDestroyed = data.bankMoneyDestroyed;
-			currentStates.bankGoodsEarned = data.bankGoodsEarned;
-			this.gameStateSubject.next(currentStates);
-
-			const credits = this.creditsSubject.getValue();
-			_.forEach(credits, (c) => {
-				if (c.id == data.id) {
-					c.status = data.status;
-				}
-			});
+			this.applyBankIndicators(data.bankIndicators);
+			const updated = this.creditsSubject.getValue().map((c) =>
+				c.id === data.credit.id
+					? { ...c, status: data.credit.status, endAt: data.credit.endAt, remainingTime: 0 }
+					: c
+			);
+			this.creditsSubject.next(updated);
 		});
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any) => {
-			const currentStates = this.gameStateSubject.getValue();
-			const credits = this.creditsSubject.getValue();
-			_.forEach(credits, (c) => {
-				if (c.id == data.id) {
-					c.status = data.status;
-					c.extended = data.extended;
-					c.progress = 0;
-					currentStates.currentMassMonetary = currentStates.currentMassMonetary
-						? currentStates.currentMassMonetary - c.interest
-						: currentStates.currentMassMonetary;
-				}
-			});
-			this.creditsSubject.next(credits);
-			this.gameStateSubject.next(currentStates);
+			this.applyBankIndicators(data.bankIndicators);
+			const updated = this.creditsSubject.getValue().map((c) =>
+				c.id === data.credit.id
+					? {
+							...c,
+							status: data.credit.status,
+							extended: data.credit.extended,
+							remainingTime: data.credit.remainingTime,
+							progress: 0,
+					  }
+					: c
+			);
+			this.creditsSubject.next(updated);
 		});
 		this.wsService.on(IO.CREDIT.REQUEST, async (data: any) => {
-			const credits = this.creditsSubject.getValue();
-			_.forEach(credits, (c) => {
-				if (c.id == data.credit.id) {
-					c.status = data.credit.status;
-					c.remainingTime = data.credit.remainingTime;
-				}
-			});
-			this.creditsSubject.next(credits);
+			const updated = this.creditsSubject.getValue().map((c) =>
+				c.id === data.credit.id
+					? { ...c, status: data.credit.status, remainingTime: data.credit.remainingTime }
+					: c
+			);
+			this.creditsSubject.next(updated);
 		});
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any) => {
-			// Backend emits { credit } per faulted credit (same shape as the player room).
-			// Rebuild immutably + zero the timer so the chip's progress bar clears and the
-			// blinking FAULT state shows; emitting is what makes the table's rows$ recompute.
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
 				if (c.id === data.credit.id) {
 					return { ...c, status: data.credit.status, remainingTime: 0, progress: 0 };
@@ -460,29 +423,25 @@ export class GameStateService {
 			this.snackbarService.showError(this.i18n.instant('CREDIT.DEFAULT_CREDIT_MESSAGE'));
 		});
 		this.wsService.on(IO.CREDIT.SEIZURE, async (data: any) => {
-			// Manual seizure's animator-side state is already patched directly from the seize
-			// dialog's own RPC response (seizureOnCredit) — this listener exists so Auto Seizure,
-			// which has no initiating client to patch state, still updates the table for everyone
-			// (docs/adr/0005-auto-seizure.md). Backend sends `credits` (a FIFO-resolved batch) or
-			// `credit` (never both) — normalize either shape. Player PRISON status is not handled
-			// here; it already arrives generically via IO.PLAYER.PROGRESS_PRISON.
 			const resolvedCredits: Credit[] = data.credits ?? (data.credit ? [data.credit] : []);
 			const resolvedIds = new Set(resolvedCredits.map((c) => c.id));
 			const updatedCredits = this.creditsSubject.getValue().map((c) =>
 				resolvedIds.has(c.id) ? { ...c, status: CREDIT_STATUS.DONE, remainingTime: 0, progress: 0 } : c
 			);
 			this.creditsSubject.next(updatedCredits);
-
-			if (data.bankIndicators) {
-				const currentStates = this.gameStateSubject.getValue();
-				currentStates.currentMassMonetary = data.bankIndicators.currentMassMonetary;
-				currentStates.bankInterestEarned = data.bankIndicators.bankInterestEarned;
-				currentStates.bankMoneyLost = data.bankIndicators.bankMoneyLost;
-				currentStates.bankMoneyDestroyed = data.bankIndicators.bankMoneyDestroyed;
-				currentStates.bankGoodsEarned = data.bankIndicators.bankGoodsEarned;
-				this.gameStateSubject.next(currentStates);
-			}
+			this.applyBankIndicators(data.bankIndicators);
 		});
+	}
+
+	private applyBankIndicators(bi: any): void {
+		if (!bi) return;
+		const gs = this.gameStateSubject.getValue();
+		gs.currentMassMonetary = bi.currentMassMonetary;
+		gs.bankInterestEarned = bi.bankInterestEarned;
+		gs.bankMoneyLost = bi.bankMoneyLost;
+		gs.bankMoneyDestroyed = bi.bankMoneyDestroyed;
+		gs.bankGoodsEarned = bi.bankGoodsEarned;
+		this.gameStateSubject.next(gs);
 	}
 
 	offAll(): void {
