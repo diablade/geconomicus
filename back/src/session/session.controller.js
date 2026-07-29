@@ -130,8 +130,8 @@ SessionController.killGame = async (req, res, next) => {
 			ruleStatus: GAME_STATUS.NONE,
 			ruleIdx: ruleIdx,
 		};
+		// The session room (both boards' publicChannel) already delivers this to master + table. ADR-0008.
 		socket.emitAckTo(ROOMS.session(sessionId), IO.GAME.DELETED, response);
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.GAME.DELETED, { gameStateId });
 		return res.status(200).json(response);
 	} catch (err) {
 		log.error(`[SessionController] Session kill game error:`, err);

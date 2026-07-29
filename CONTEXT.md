@@ -210,6 +210,26 @@ The last-60-seconds treatment of a running credit: a brief full-screen flash (re
 The player-view treatment once a credit reaches FAULT (the borrower failed to settle at maturity): a full-screen blue↔red police-strobe overlay (🚨, looping `police.mp3` siren) that blocks the whole board. Text depends on Auto Seizure: "go see the animator" when off, "seizure ongoing" while the backend's Auto Seizure timer is running when on. Unlike the Final-Minute Alarm it is **un-skippable and state-derived** — it is rendered from the presence of any FAULT credit, so it re-raises on refresh and clears the instant a Seizure (manual or auto) moves every FAULT credit out of that status. Highest-priority overlay (z-index above reincarnate/alarm/take-over).
 *Avoid*: default screen, blocked overlay, GO_TO_BANK.
 
+## Table (Console)
+
+The animator's omniscient observer view (`table-board`) — the spreadsheet of the whole game: every player's coins, cards, action tokens, credits, and the decks, live. It absorbs what used to be the "bank view" (the credit console) into one screen. Joins three socket rooms — `gameState` (lifecycle/timer), `master` (connection + death/rebirth), and `table` (everything economic) — so it hears every mutation. Fed by absolute [[last-known]] snapshots; it *replaces* state, never computes deltas. Distinct from the **Master (Console)** and from the **Bank** economic actor. *Avoid*: bank view, admin view.
+
+## Master (Console)
+
+The lightweight animator overhead view (`master-board`) — avatars grid, connection dots, the round timer, birth/death. Deliberately minimal: it is fed only connection on/off, death/reincarnation, game lifecycle + timer, and game-deleted (to bounce back to the session lobby). It is **not** fed the economic detail (coins/cards/credits/decks) — that is the Table's job. *Avoid*: master board (when the concept, not the component, is meant).
+
+## Bank — room vs actor
+
+Two unrelated meanings of "bank" that only share a word. The Bank **actor** (`PLAYER_TYPE.BANK`) is the in-game money issuer — it emits DU and credit and performs seizures, and tags those events as its own. The Bank **room** was the animator's credit feed; it is gone, renamed to the `table` room and folded into the Table Console. Removing the room does **not** touch the actor. *Avoid*: using "bank" unqualified when the room (now Table) is meant.
+
+## Last-Known (LK)
+
+The absolute-snapshot convention behind the Table's live state. A state-changing broadcast carries the affected entity's authoritative **post-value** — `coinsLK`, `cardsLK`, action tokens, a deck level's full card array — and the receiver *replaces* that field. Never a delta. Chosen because observer-room broadcasts are unacked: an absolute snapshot is idempotent and self-healing (a dropped or duplicated message can't corrupt a balance), whereas a delta corrupts permanently. See [[player-state-sync]] and ADR-0008.
+
+## Player State Sync / Decks State Sync
+
+The two sibling [[last-known]] channels to the `table` room, each single-responsibility. `PLAYER_STATE_SYNC` carries `{ players: [{ idx, coinsLK, cardsLK, actionTokens }] }` for only the *concerned* players (both sides of a transaction, the giver + targets of an action, the whole alive set on DU). `DECKS_STATE_SYNC` carries `{ decks: [{ level, cards }] }` for only the deck *levels that changed*. Aggregates (`currentMassMonetary`, bank indicators) are **not** here — they ride their causing domain events (credit, DU, death). Emitted *in addition* to the unchanged player-facing events. *Avoid*: state broadcast, table update.
+
 ## Production Reveal
 
 The player-facing celebration when a completed square (`amountCardsForProd` matching cards) is built. The existing square-zone box holds its position and swaps its ingredients-and-button content for the new leveled-up card, a rotating sunburst scaled to the box (not the screen), confetti, and "built"/"cards redrawn" text, for a fixed ~2.5s auto-dismiss (no tap needed) before the hand resolves to its new state. Scoped to the card-area only: unlike Reincarnate/Fault Lockout, the title bar and action buttons stay visible and interactive throughout, and other complete-but-unbuilt squares stay fully clickable underneath a visual dim — nothing is input-blocked. The new hand state (produced card + redrawn replacement cards) is deliberately **held** and only applied once the reveal completes, so the box isn't pulled out from under itself mid-animation. Every production gets the identical reveal regardless of `producedCard.weight` — there is no end-of-game/top-tier special case; the eventual "technology shift" endgame is unbuilt, unscoped future work, and production is deliberately treated as endless/circular until that's designed.

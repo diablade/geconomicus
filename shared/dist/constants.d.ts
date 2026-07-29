@@ -6,6 +6,7 @@ export type GameType = (typeof GAME_TYPE)[keyof typeof GAME_TYPE];
 export declare const PLAYER_TYPE: {
     readonly MASTER: "master";
     readonly BANK: "bank";
+    readonly TABLE: "table";
     readonly RESULTS: "results";
     readonly AVATAR: "avatar";
 };
@@ -133,6 +134,7 @@ export declare const IO: {
         readonly ACTION_DONE: "pad";
         readonly ACTION_ROBBED: "par";
         readonly ACTION_TOKENS_UPDATED: "patu";
+        readonly STATE_SYNC: "pss";
         readonly TAKEN_OVER: "pto";
         readonly RETAKE: "prt";
     };
@@ -158,6 +160,7 @@ export declare const IO: {
     };
     readonly TIMER_LEFT: "tl";
     readonly TRANSACTION_DONE: "td";
+    readonly DECKS_STATE_SYNC: "dss";
     readonly REFRESH_FORCE: "rf";
     readonly INFO: "i";
     readonly EVENT: "ev";
@@ -211,7 +214,7 @@ export declare const ROOMS: {
     lobbyAvatar: (sessionId: string, avatarIdx: number) => string;
     gameState: (gameStateId: string) => string;
     gameStateMaster: (gameStateId: string) => string;
-    gameStateBank: (gameStateId: string) => string;
+    gameStateTable: (gameStateId: string) => string;
     gameStateEvents: (gameStateId: string) => string;
     playerState: (gameStateId: string, playerIdx: number) => string;
 };

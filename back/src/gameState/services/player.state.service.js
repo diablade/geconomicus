@@ -5,6 +5,7 @@ import SessionService from '../../session/session.service.js';
 import EventHelper from '../helpers/event.helper.js';
 import BankStateService from './bank.state.service.js';
 import DecksHelper from '../helpers/decks.helper.js';
+import SyncHelper from '../helpers/sync.helper.js';
 import creditTimerManager from '../managers/CreditTimerManager.js';
 import prisonTimerManager from '../managers/PrisonTimerManager.js';
 import gameTimerManager from '../managers/GameTimerManager.js';
@@ -61,7 +62,7 @@ const _endLife = async (entry, player) => {
 			await creditTimerManager.stopAndRemoveTimer(c.id);
 		}
 		await BankStateService.seizureOnDead(gameState, events, player);
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, { playerStateIdx });
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.SEIZURE, { playerStateIdx });
 		socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, { playerStateIdx });
 	}
 
@@ -69,6 +70,8 @@ const _endLife = async (entry, player) => {
 	// while the DEAD snapshot keeps its own copy as history.
 	const returnedCards = player.cards.map((c) => ({ ...c }));
 	DecksHelper.pushCardsInDecks(gameState, returnedCards);
+	// Cards flowed back into the decks (seizure + returned hand) — refresh every level for the Table.
+	SyncHelper.emitDecksSync(gameStateId, gameState, gameState.decks.map((_, lvl) => lvl));
 
 	// coinsLK = the leftover coins on the dead life = this life's ghost money.
 	const eventDied = EventHelper.createEvent(
@@ -81,8 +84,17 @@ const _endLife = async (entry, player) => {
 	);
 	events.push(eventDied);
 
+	// Enrich DIED with the dead life's frozen snapshot (coins/cards) + post-seizure mass so the Table
+	// stays correct on a terminal death (no reincarnation re-pull follows). A first death is harmlessly
+	// overwritten by the REINCARNATED re-pull moments later. See docs/adr/0008.
+	const diedPayload = {
+		playerStateIdx,
+		coinsLK: player.coins,
+		cardsLK: player.cards,
+		currentMassMonetary: gameState.currentMassMonetary,
+	};
 	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.DIED, { playerStateIdx });
-	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.DIED, { playerStateIdx });
+	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.DIED, diedPayload);
 	return player;
 };
 
@@ -321,6 +333,9 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 			cardKey: card.key,
 			coinsLK: seller.coins,
 		});
+
+		// Table: both sides' coins + hands moved (peer transfer, mass unchanged).
+		SyncHelper.emitPlayerSync(gameStateId, [buyer, seller]);
 
 		return {
 			buyedCard: card,

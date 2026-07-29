@@ -7,6 +7,7 @@ export const GAME_TYPE = {
 export const PLAYER_TYPE = {
     MASTER: 'master',
     BANK: 'bank',
+    TABLE: 'table',
     RESULTS: 'results',
     AVATAR: 'avatar',
 };
@@ -148,6 +149,7 @@ export const IO = {
         ACTION_DONE: 'pad',
         ACTION_ROBBED: 'par',
         ACTION_TOKENS_UPDATED: 'patu',
+        STATE_SYNC: 'pss', // absolute LK rows of the affected players → table room (ADR-0008)
         TAKEN_OVER: 'pto', // server → player device: an animator is driving; show overlay
         RETAKE: 'prt', // player device → server: reclaim my Seat from the animator
     },
@@ -173,6 +175,7 @@ export const IO = {
     },
     TIMER_LEFT: 'tl',
     TRANSACTION_DONE: 'td',
+    DECKS_STATE_SYNC: 'dss', // absolute LK card arrays of the changed deck levels → table room (ADR-0008)
     REFRESH_FORCE: 'rf',
     INFO: 'i',
     EVENT: 'ev',
@@ -221,7 +224,7 @@ export const ROOMS = {
     lobbyAvatar: (sessionId, avatarIdx) => `s:${sessionId}:a:${avatarIdx}`,
     gameState: (gameStateId) => `gs:${gameStateId}`,
     gameStateMaster: (gameStateId) => `gs:${gameStateId}:master`,
-    gameStateBank: (gameStateId) => `gs:${gameStateId}:bank`,
+    gameStateTable: (gameStateId) => `gs:${gameStateId}:table`,
     gameStateEvents: (gameStateId) => `gs:${gameStateId}:events`,
     playerState: (gameStateId, playerIdx) => `gs:${gameStateId}:ps:${playerIdx}`,
 };

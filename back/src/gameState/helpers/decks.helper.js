@@ -216,6 +216,7 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 		cardsLK: playerState.cards,
 		newCards: newCards,
 		producedCard: newCardSup,
+		weight, // the two deck levels touched are `weight` and `weight + 1`
 	};
 };
 

@@ -206,7 +206,7 @@ export class SocketManager {
 					if (
 						roomType === 'gs' &&
 						avatarIdx !== 'master' &&
-						avatarIdx !== 'bank' &&
+						avatarIdx !== 'table' &&
 						avatarIdx !== 'results'
 					) {
 						const playerIdx = parseInt(playerStateIdx);
@@ -251,7 +251,7 @@ export class SocketManager {
 					roomType === 'gs' &&
 					gameStateId &&
 					avatarIdx !== 'master' &&
-					avatarIdx !== 'bank' &&
+					avatarIdx !== 'table' &&
 					avatarIdx !== 'results'
 				) {
 					const playerIdx = parseInt(playerStateIdx);
@@ -290,7 +290,7 @@ export class SocketManager {
 			if (room.includes(':')) {
 				// Extract playerIdx from privateChannel format: gs:gameStateId:avatarIdx:playerStateIdx
 				const [roomType, gameStateId, avatarIdx, playerStateIdx] = room.split(':');
-				if (roomType === 'gs' && avatarIdx !== 'master' && avatarIdx !== 'bank' && avatarIdx !== 'results') {
+				if (roomType === 'gs' && avatarIdx !== 'master' && avatarIdx !== 'table' && avatarIdx !== 'results') {
 					const playerIdx = parseInt(playerStateIdx);
 					if (playerIdx >= 0 && !socket.data?.isAssist) {
 						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });

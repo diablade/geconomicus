@@ -161,7 +161,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			this.gameStateId = params['gameStateId'];
-			// isBank=true so credit socket events keep the credits column live
+			// isTable=true: join the omniscient table room so every player/credit/deck sync lands here (ADR-0008)
 			this.gameStateService.loadForMaster(this.sessionId, this.gameStateId, true);
 		});
 

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import EventHelper from './event.helper.js';
+import SyncHelper from './sync.helper.js';
 import { PLAYER_TYPE, PLAYER_STATUS, DB_EVENTS, IO, ROOMS } from '@geco/shared';
 import log from '#config/log';
 import socket from '#config/socket';
@@ -24,15 +25,14 @@ MoneyHelper.distributeNewDU = async (entry) => {
 	const DU = await generateDU(gameState, rules);
 
 	gameState.currentDU = DU;
-	socket.emitTo(ROOMS.gameState(gameState._id), IO.GAME.CURRENT_DU, {
-		du: DU,
-	});
+	const alive = [];
 	gameState.playersStates.forEach((playerState) => {
 		log.debug(`[MoneyHelper] Distributing DU to player ${playerState.idx}: ${DU} coins`);
 		if (playerState.status == PLAYER_STATUS.ALIVE) {
 			log.debug(`[MoneyHelper] Player ${playerState.idx} is alive, adding ${DU} coins to ${playerState.coins}`);
 			playerState.coins += DU;
 			gameState.currentMassMonetary += DU;
+			alive.push(playerState);
 
 			socket.emitAckTo(
 				ROOMS.playerState(gameState._id, playerState.idx),
@@ -54,6 +54,14 @@ MoneyHelper.distributeNewDU = async (entry) => {
 			events.push(event);
 		}
 	});
+
+	// Emit after the loop so the mass is final. gameState room carries the DU + new mass to all
+	// observers; the Table also gets the batched LK rows of every alive player. See docs/adr/0008.
+	socket.emitTo(ROOMS.gameState(gameState._id), IO.GAME.CURRENT_DU, {
+		du: DU,
+		currentMassMonetary: gameState.currentMassMonetary,
+	});
+	SyncHelper.emitPlayerSync(gameState._id.toString(), alive);
 
 	return entry;
 };

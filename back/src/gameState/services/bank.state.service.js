@@ -21,6 +21,7 @@ import {
 } from '@geco/shared';
 import EventHelper from '../helpers/event.helper.js';
 import DecksHelper from '../helpers/decks.helper.js';
+import SyncHelper from '../helpers/sync.helper.js';
 import {
 	computeAverageMoney,
 	computeEffectiveRate,
@@ -197,13 +198,16 @@ const _releasePlayer = async (entry, playerStateIdx) => {
 
 	log.info('[BankStateService] player released from prison', { playerStateIdx, cardsCount: newCards.length });
 
-	socket.emitTo(ROOMS.gameStateBank(gameState._id), IO.EVENT, event);
+	socket.emitTo(ROOMS.gameStateTable(gameState._id), IO.EVENT, event);
 	// Player gets its full refreshed hand (cardsLK convention); the table gets the idx so it can
 	// flip the row back to ALIVE and clear the prison bar.
 	socket.emitAckTo(ROOMS.playerState(gameState._id, playerStateIdx), IO.PLAYER.PRISON_ENDED, {
 		cardsLK: playerState.cards,
 	});
-	socket.emitTo(ROOMS.gameStateBank(gameState._id), IO.PLAYER.PRISON_ENDED, { playerStateIdx });
+	socket.emitTo(ROOMS.gameStateTable(gameState._id), IO.PLAYER.PRISON_ENDED, { playerStateIdx });
+	// Table: the released hand gained 4 fresh cards drawn from deck 0.
+	SyncHelper.emitPlayerSync(gameState._id, [playerState]);
+	SyncHelper.emitDecksSync(gameState._id, gameState, [0]);
 
 	return { playerState, event, newCards };
 };
@@ -230,7 +234,7 @@ const _prisonProgressCallback = async (timerInstance) => {
 	const progress = totalMs > 0 ? Math.max(0, Math.min(100, Math.round((remainingMs / totalMs) * 100))) : 0;
 	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs, progress });
 
-	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.PLAYER.PROGRESS_PRISON, {
+	socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.PLAYER.PROGRESS_PRISON, {
 		playerStateIdx,
 		remainingTime: remainingMs,
 		totalTime: totalMs,
@@ -269,7 +273,7 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				);
 				events.push(event);
 				credit.status = CREDIT_STATUS.REQUESTING;
-				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.REQUEST, { credit });
+				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.REQUEST, { credit });
 				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.REQUEST, {
 					credit,
 					coinsLK: playerState.coins,
@@ -282,7 +286,8 @@ const _creditTimeoutCallback = async (timerInstance) => {
 					credit,
 					coinsLK: playerState.coins,
 				});
-				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.EXTENDED, { credit });
+				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.EXTENDED, { credit });
+				SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 			} else {
 				// bankrup payment
 				const event = EventHelper.createEvent(
@@ -298,7 +303,7 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				credit.faultAt = new Date();
 				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, event);
 				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.FAULT, { credit });
-				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.FAULT, { credit });
+				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.FAULT, { credit });
 
 				// Auto Seizure (docs/adr/0005): start the 10s wait if not already running for this
 				// player — the first fault's deadline stands, later faults join the same batch.
@@ -402,7 +407,7 @@ const _autoSeizureCallback = async (timerInstance) => {
 					{ prisonTime: prisonMinutes }
 				);
 				events.push(prisonEvent);
-				socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.EVENT, prisonEvent);
+				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.EVENT, prisonEvent);
 
 				const timer = _createPrisonTimer(gameStateId, playerStateIdx, prisonMinutes);
 				await prisonTimerManager.startTimer(timer);
@@ -428,10 +433,13 @@ const _autoSeizureCallback = async (timerInstance) => {
 				prisonTotalTime: prisonTotalMs,
 			};
 			socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, payload);
-			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, {
+			socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.SEIZURE, {
 				credits: resolvedCredits,
 				..._getBankIndicators(gameState),
 			});
+			// Table: coins/cards drained on the seized player, and seized cards returned to the decks.
+			SyncHelper.emitPlayerSync(gameStateId, [playerState]);
+			SyncHelper.emitDecksSync(gameStateId, gameState, allSeizedCards.map((c) => c.weight));
 		});
 	} catch (err) {
 		log.error('[BankStateService] error in _autoSeizureCallback', {
@@ -446,7 +454,7 @@ const _creditHeartBeatCallback = async (timerInstance) => {
 	log.debug('[BankStateService] heartbeat credit callback ');
 	const remainingMs = timerInstance.getRemainingMs();
 	log.debug('[BankStateService] remainingTime: ' + remainingMs);
-	socket.emitTo(ROOMS.gameStateBank(timerInstance.data.gameStateId), IO.CREDIT.PROGRESS, {
+	socket.emitTo(ROOMS.gameStateTable(timerInstance.data.gameStateId), IO.CREDIT.PROGRESS, {
 		id: timerInstance.id,
 		remainingTime: remainingMs,
 	});
@@ -526,11 +534,12 @@ const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, 
 		)
 	);
 
-	socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
+	socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
 		credit,
 		coinsLK: playerState.coins,
 	});
+	SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 	return {
 		credit,
@@ -750,6 +759,7 @@ BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
 			coinsLK: playerState.coins,
 			amount,
 		});
+		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 		return { amount, playerStateIdx, ..._getBankIndicators(gameState) };
 	});
@@ -794,10 +804,11 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 			credit,
 			coinsLK: playerState.coins,
 		});
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.CANCELED, {
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.CANCELED, {
 			credit,
 			..._getBankIndicators(gameState),
 		});
+		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 		return {
 			credit,
@@ -814,7 +825,7 @@ BankStateService.startAllTimersCreditGame = async (gameStateId, credits) => {
 		await creditTimerManager.startTimer(timer);
 		credit.status = CREDIT_STATUS.RUNNING;
 		credit.remainingTime = timer.getRemainingMs();
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.STARTED, { id: credit.id });
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.STARTED, { id: credit.id });
 		socket.emitTo(ROOMS.playerState(gameStateId, credit.playerStateIdx), IO.CREDIT.STARTED, { id: credit.id });
 	}
 };
@@ -1072,7 +1083,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 				await _prisonProgressCallback(timer);
 			}
 
-			socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.EVENT, prisonEvent);
+			socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.EVENT, prisonEvent);
 			prisonResult = { playerState, event: prisonEvent };
 
 			log.info('[BankStateService] player imprisoned', {
@@ -1092,10 +1103,13 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			prisonTotalTime: prisonTotalMs,
 		};
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, payload);
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.SEIZURE, {
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.SEIZURE, {
 			credit,
 			..._getBankIndicators(gameState),
 		});
+		// Table: coins/cards drained on the seized player, and seized cards returned to the decks.
+		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
+		SyncHelper.emitDecksSync(gameStateId, gameState, seizedCardsFromHand.map((c) => c.weight));
 
 		return payload;
 	});
@@ -1156,10 +1170,11 @@ BankStateService.settleCredit = async (gameStateId, creditId, playerStateIdx) =>
 			credit,
 			coinsLK: playerState.coins,
 		});
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.DONE, {
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.DONE, {
 			credit,
 			..._getBankIndicators(gameState),
 		});
+		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 		return {
 			credit,
@@ -1199,10 +1214,11 @@ BankStateService.extendCredit = async (gameStateId, creditId, playerStateIdx) =>
 			)
 		);
 
-		socket.emitTo(ROOMS.gameStateBank(gameStateId), IO.CREDIT.EXTENDED, {
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.EXTENDED, {
 			credit,
 			..._getBankIndicators(gameState),
 		});
+		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 		return {
 			credit,

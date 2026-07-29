@@ -1,6 +1,7 @@
 import DecksHelper from '../helpers/decks.helper.js';
 import GameStateManager from '../managers/GameStateManager.js';
 import EventHelper from '../helpers/event.helper.js';
+import SyncHelper from '../helpers/sync.helper.js';
 import { DB_EVENTS } from '@geco/shared';
 
 const DecksStateService = {};
@@ -27,6 +28,11 @@ DecksStateService.produce = async (gameStateId, playerStateIdx, cards) => {
 				}
 			)
 		);
+
+		// Table sync: the producer's hand + tokens changed, and two deck levels moved (produce
+		// emits nothing to any room otherwise). See docs/adr/0008.
+		SyncHelper.emitPlayerSync(gameStateId, [player]);
+		SyncHelper.emitDecksSync(gameStateId, entry.gameState, [result.weight, result.weight + 1]);
 
 		return result;
 	});

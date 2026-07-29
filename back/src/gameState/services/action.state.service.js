@@ -2,6 +2,7 @@ import GameStateManager from '../managers/GameStateManager.js';
 import EventHelper from '../helpers/event.helper.js';
 import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, IO, ROOMS } from '@geco/shared';
 import socket from '#config/socket';
+import SyncHelper from '../helpers/sync.helper.js';
 import log from '#config/log';
 
 const ActionStateService = {};
@@ -73,6 +74,8 @@ ActionStateService.give = async (gameStateId, giverIdx, receiverIdx, cardKey) =>
 			fromAvatarIdx: giver.avatarIdx,
 		});
 
+		SyncHelper.emitPlayerSync(gameStateId, [giver, receiver]);
+
 		return { cardsLK: giver.cards, actionTokens: giver.actionTokens };
 	});
 };
@@ -103,6 +106,8 @@ ActionStateService.steal = async (gameStateId, stealerIdx, victimIdx, cardKey) =
 			actionKey: 'steal',
 			card,
 		});
+
+		SyncHelper.emitPlayerSync(gameStateId, [stealer, victim]);
 
 		return { cardsLK: stealer.cards, actionTokens: stealer.actionTokens };
 	});
@@ -136,6 +141,8 @@ ActionStateService.silentSteal = async (gameStateId, stealerIdx, victimIdx, card
 			card,
 			silent: true,
 		});
+
+		SyncHelper.emitPlayerSync(gameStateId, [stealer, victim]);
 
 		return { cardsLK: stealer.cards, actionTokens: stealer.actionTokens };
 	});
@@ -181,6 +188,8 @@ ActionStateService.war = async (gameStateId, attackerIdx, victim1Idx, victim2Idx
 			actionKey: 'war',
 			cards: stolen2,
 		});
+
+		SyncHelper.emitPlayerSync(gameStateId, [attacker, victim1, victim2]);
 
 		return { cardsLK: attacker.cards, actionTokens: attacker.actionTokens };
 	});
@@ -242,6 +251,8 @@ ActionStateService.ong = async (gameStateId, giverIdx, cardKeys, manualTargetIdx
 			cards: batch2,
 			fromAvatarIdx: giver.avatarIdx,
 		});
+
+		SyncHelper.emitPlayerSync(gameStateId, [giver, targets[0], targets[1]]);
 
 		return { cardsLK: giver.cards, actionTokens: giver.actionTokens };
 	});

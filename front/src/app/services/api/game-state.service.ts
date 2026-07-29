@@ -12,7 +12,7 @@ import {
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService } from '../error.service';
-import { GameState, PlayerState, Credit, ConnectionStatus } from '../../models/gameState';
+import { GameState, PlayerState, Credit, ConnectionStatus, Card } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { Avatar } from '../../models/avatar';
 import { Session } from '../../models/session';
@@ -99,7 +99,7 @@ export class GameStateService {
 	private gameStateId = '';
 	private roomGameState = '';
 	private roomMaster = '';
-	private roomBank = '';
+	private roomTable = '';
 
 	private timer: any;
 
@@ -122,7 +122,7 @@ export class GameStateService {
 		this.initializeTimer();
 	}
 
-	loadForMaster(sessionId: string, gameStateId: string, isBank = false): void {
+	loadForMaster(sessionId: string, gameStateId: string, isTable = false): void {
 		this.sessionId = sessionId;
 		this.gameStateId = gameStateId;
 		this.roomGameState = ROOMS.gameState(gameStateId);
@@ -130,9 +130,9 @@ export class GameStateService {
 
 		this.setupMasterSocketListeners();
 		this.setupPlayersSocketListeners();
-		if (isBank) {
-			this.setupBankSocketListener();
-			this.roomBank = ROOMS.gameStateBank(gameStateId);
+		if (isTable) {
+			this.setupTableSocketListener();
+			this.roomTable = ROOMS.gameStateTable(gameStateId);
 		}
 
 		// Singleton service: clear any timer left over from a previously-viewed game
@@ -177,22 +177,22 @@ export class GameStateService {
 		if (this.gameStateId) {
 			this.wsService.leaveRoom(this.roomGameState);
 			this.wsService.leaveRoom(this.roomMaster);
-			if (this.roomBank) {
-				this.wsService.leaveRoom(this.roomBank);
+			if (this.roomTable) {
+				this.wsService.leaveRoom(this.roomTable);
 			}
 		}
 	}
 
-	leaveBankRoom(): void {
-		this.wsService.leaveRoom(this.roomBank);
+	leaveTableRoom(): void {
+		this.wsService.leaveRoom(this.roomTable);
 	}
 
 	private joinRooms(): void {
 		console.log('joining rooms...');
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomMaster);
-		if (this.roomBank) {
-			this.wsService.joinRoom(this.roomBank);
+		if (this.roomTable) {
+			this.wsService.joinRoom(this.roomTable);
 		}
 	}
 
@@ -212,8 +212,20 @@ export class GameStateService {
 				if (this.wsService.isConnected()) {
 					console.log('Master board reconnecting to rooms...');
 					this.joinRooms();
+					// Observer-room syncs are unacked, so a blip can drop them: re-pull the
+					// authoritative baseline once on reconnect. See docs/adr/0008.
+					this.refreshMasterState();
 				}
 			}, 2000); // Reconnect after 2 seconds
+		});
+
+		// Game deleted: both the master and table boards join the session room, so this reaches
+		// both — bounce back to the session lobby. Moved out of the table-only listener (ADR-0008).
+		this.wsService.on(IO.GAME.DELETED, async (data: { gameStateId: string }) => {
+			console.log('game deleted ws:', data);
+			if (data.gameStateId === this.gameStateId) {
+				this.router.navigate(['/session', this.sessionId]);
+			}
 		});
 
 		this.wsService.on(IO.TIMER_LEFT, (millisecondsRemaining: number) => {
@@ -251,6 +263,10 @@ export class GameStateService {
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
 				currentGameState.currentDU = data.du;
+				// DU changes the money mass; it now rides this event (ADR-0008) so avg-money stays live.
+				if (data.currentMassMonetary !== undefined) {
+					currentGameState.currentMassMonetary = data.currentMassMonetary;
+				}
 				this.gameStateSubject.next(currentGameState);
 			}
 		});
@@ -264,11 +280,22 @@ export class GameStateService {
 			const currentStates = this.playersStatesSubject.getValue();
 			const updated = currentStates.map((p) => {
 				if (p.idx == deadIdx) {
-					return { ...p, status: PLAYER_STATUS.DEAD };
+					// Freeze the dead life's snapshot (coins/cards) from the enriched payload so the
+					// table's ghost-money stays correct on a terminal death (no re-pull follows). ADR-0008.
+					const snapshot: Partial<PlayerState> = { status: PLAYER_STATUS.DEAD };
+					if (event.coinsLK !== undefined) snapshot.coins = event.coinsLK;
+					if (event.cardsLK !== undefined) snapshot.cards = event.cardsLK;
+					return { ...p, ...snapshot };
 				}
 				return p;
 			});
 			this.playersStatesSubject.next(updated);
+
+			if (event.currentMassMonetary !== undefined) {
+				const gs = this.gameStateSubject.getValue();
+				gs.currentMassMonetary = event.currentMassMonetary;
+				this.gameStateSubject.next(gs);
+			}
 
 			const credits = this.creditsSubject.getValue();
 			credits.map((c) => {
@@ -286,9 +313,14 @@ export class GameStateService {
 			this.reincarnationSubject.next(event);
 		});
 
-		this.wsService.on(IO.AVATAR.UPDATED, () => {
-			// Avatar updated event — could refresh player list
-			window.location.reload();
+		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
+			// Patch the avatar in place — the payload carries the full updatedAvatar (with its idx),
+			// so playersAC$ recomputes the affected row without a full page reload. ADR-0008.
+			const s = this.sessionSubject.getValue();
+			if (s && data?.updatedAvatar) {
+				s.avatars = s.avatars.map((a: Avatar) => (a.idx === data.updatedAvatar.idx ? data.updatedAvatar : a));
+				this.sessionSubject.next({ ...s });
+			}
 		});
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			// Server sends { playerStateIdx, progress } every 5s (and once immediately on imprisonment).
@@ -332,15 +364,28 @@ export class GameStateService {
 		});
 	}
 
-	private setupBankSocketListener(): void {
-		console.log('setup Bank SocketListener');
+	private setupTableSocketListener(): void {
+		console.log('setup Table SocketListener');
 
-		this.wsService.on(IO.GAME.DELETED, async (data: { gameStateId: string }) => {
-			console.log('game deleted ws:', data);
-			if (data.gameStateId === this.gameStateId) {
-				//redirect to lobby session
-				this.router.navigate(['/session', this.sessionId]);
-			}
+		// Absolute LK rows of the affected players — replace coins/cards/tokens wholesale (ADR-0008).
+		this.wsService.on(IO.PLAYER.STATE_SYNC, (data: { players: Partial<PlayerState>[] }) => {
+			const byIdx = new Map((data.players ?? []).map((p) => [p.idx, p]));
+			const updated = this.playersStatesSubject.getValue().map((p) => {
+				const row = byIdx.get(p.idx);
+				return row ? { ...p, ...row } : p;
+			});
+			this.playersStatesSubject.next(updated);
+		});
+
+		// Absolute LK card arrays of the changed deck levels — replace those levels wholesale (ADR-0008).
+		this.wsService.on(IO.DECKS_STATE_SYNC, (data: { decks: { level: number; cards: Card[] }[] }) => {
+			const gs = this.gameStateSubject.getValue();
+			if (!gs.decks) return;
+			const decks = [...gs.decks];
+			(data.decks ?? []).forEach(({ level, cards }) => {
+				decks[level] = cards;
+			});
+			this.gameStateSubject.next({ ...gs, decks });
 		});
 
 		this.wsService.on(IO.CREDIT.STARTED, async (data: { id: string }) => {
@@ -464,6 +509,8 @@ export class GameStateService {
 		this.wsService.off(IO.CREDIT.SEIZURE);
 		this.wsService.off(IO.PLAYER.PROGRESS_PRISON);
 		this.wsService.off(IO.PLAYER.PRISON_ENDED);
+		this.wsService.off(IO.PLAYER.STATE_SYNC);
+		this.wsService.off(IO.DECKS_STATE_SYNC);
 	}
 
 	create(sessionId: string, ruleIdx: number): Observable<any> {
@@ -638,18 +685,6 @@ export class GameStateService {
 	}
 
 	/**
-	 * Apply a local coins delta to one player row so the table view's balance stays live —
-	 * bank actions (credit, free money, seizure) only broadcast to the player's own device
-	 * (playerState room), not to the animator/table room, so the table must patch itself.
-	 */
-	private applyPlayerCoinsDelta(playerStateIdx: number, delta: number): void {
-		const updated = this.playersStatesSubject
-			.getValue()
-			.map((p) => (p.idx === playerStateIdx ? { ...p, coins: (p.coins ?? 0) + delta } : p));
-		this.playersStatesSubject.next(updated);
-	}
-
-	/**
 	 * Update player connection status.
 	 */
 	updatePlayerConnectionStatus(data: any, isConnected: boolean): void {
@@ -681,7 +716,7 @@ export class GameStateService {
 				// The backend nests this under bankIndicators — reading it flat always left it undefined.
 				gameState.currentMassMonetary = res.data.bankIndicators?.currentMassMonetary;
 				this.gameStateSubject.next(gameState);
-				this.applyPlayerCoinsDelta(contrat.playerIdx, res.data.credit.amount);
+				// Borrower's coins arrive via PLAYER_STATE_SYNC on the table room (ADR-0008).
 			});
 	}
 
@@ -711,7 +746,7 @@ export class GameStateService {
 				const gameState = this.gameStateSubject.getValue();
 				gameState.currentMassMonetary = data.data.bankIndicators?.currentMassMonetary;
 				this.gameStateSubject.next(gameState);
-				this.applyPlayerCoinsDelta(give.playerStateIdx, give.amount);
+				// Recipient's coins arrive via PLAYER_STATE_SYNC on the table room (ADR-0008).
 			}
 		});
 	}
@@ -736,9 +771,7 @@ export class GameStateService {
 					currentGameState.currentMassMonetary -= response.seizure.coins;
 				}
 				this.gameStateSubject.next(currentGameState);
-				if (response.seizure) {
-					this.applyPlayerCoinsDelta(playerStateIdx, -response.seizure.coins);
-				}
+				// The seized player's coins + cards arrive via PLAYER_STATE_SYNC on the table room (ADR-0008).
 
 				// The table view's credit column reads from creditsSubject, not gameState.credits —
 				// without this the credit kept showing its pre-seizure (warning/fault) status.
