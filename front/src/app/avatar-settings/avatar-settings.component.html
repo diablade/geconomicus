@@ -20,6 +20,8 @@
 						<ngx-colors
 							class=""
 							[palette]="skinPalette"
+							[acceptLabel]="'SAVE' | translate"
+							[cancelLabel]="'CANCEL' | translate"
 							ngx-colors-trigger
 							(change)="changeSkin()"
 							[(ngModel)]="skin"></ngx-colors>
@@ -33,6 +35,8 @@
 						<div class="optionsLabel-withColor img-thumbnail">{{ 'AVATAR.HAIR' | translate }}</div>
 						<ngx-colors
 							[palette]="hairPalette"
+							[acceptLabel]="'SAVE' | translate"
+							[cancelLabel]="'CANCEL' | translate"
 							class=""
 							ngx-colors-trigger
 							(change)="changeHairColor()"
@@ -228,6 +232,8 @@
 							<mat-radio-button value="bgCustom">
 								<ngx-colors
 									class="box-shadowed"
+									[acceptLabel]="'SAVE' | translate"
+									[cancelLabel]="'CANCEL' | translate"
 									[palette]="boardPalette"
 									ngx-colors-trigger
 									[format]="'string'"
