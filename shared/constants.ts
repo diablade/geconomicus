@@ -117,7 +117,7 @@ export type CreditQuestionAnswer = (typeof CREDIT_QUESTION_ANSWER)[keyof typeof 
 
 // ─── ASSIST SESSIONS ──────────────────────────────────────────────────────────
 // How an animator's secondary connection ("play the user" / 2nd cockpit) relates
-// to the device already holding a Seat. See docs/adr/0002-animator-assist-sessions.md
+// to the device already holding a Seat. See docs/adr/0010-animator-assist-sessions.md
 export const ASSIST_MODE = {
 	COEXIST: 'coexist', // both devices act at once
 	TAKEOVER: 'takeover', // player screen overlaid + Retake; animator drives

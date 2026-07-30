@@ -138,7 +138,7 @@ export class SocketManager {
 		// Handle previous connection if exists.
 		// Assist sessions use a unique identity (they never collide), and master
 		// cockpits are allowed to co-exist — in both cases we do NOT displace the
-		// incumbent. See docs/adr/0002-animator-assist-sessions.md
+		// incumbent. See docs/adr/0010-animator-assist-sessions.md
 		const previousConnection = this.connections.get(privateChannel);
 		const isMaster = typeof privateChannel === 'string' && privateChannel.endsWith(':master');
 		if (previousConnection && previousConnection.socket.connected) {
@@ -305,7 +305,7 @@ export class SocketManager {
 			}
 		});
 		// Player reclaims their Seat from an animator take-over: drop every assist
-		// session pointed at this Seat (a hard reclaim — see ADR-0002).
+		// session pointed at this Seat (a hard reclaim — see ADR-0010).
 		socket.on(IO.PLAYER.RETAKE, (data) => {
 			const { sessionId, avatarIdx } = data || {};
 			if (!sessionId || avatarIdx === undefined || avatarIdx === null) return;

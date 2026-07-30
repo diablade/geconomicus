@@ -12,7 +12,8 @@ jest.unstable_mockModule('#config/socket', () => ({
     default: {
         initIo: jest.fn(),
         getIo: mockGetIo,
-        emitTo: mockEmitTo  // Use the same mock reference
+        emitTo: mockEmitTo,  // Use the same mock reference
+        emitAckTo: jest.fn()
     }
 }));
 
@@ -145,6 +146,44 @@ describe('AVATAR controller', () => {
             expect(mockEmitTo).toHaveBeenCalledWith(ROOMS.session(session._id), expect.stringContaining(IO.AVATAR.DELETED), expect.objectContaining({
                 avatarIdx: avatarIdx,
             }));
+        });
+    });
+    describe("AVATAR JOIN once the session has started", () => {
+        let startedSessionId;
+
+        beforeAll(async () => {
+            const created = await agent.post('/session/create').send({
+                name: 'test-started-session',
+                animator: 'test-animator',
+                location: 'test-location'
+            });
+            startedSessionId = created.body._id;
+            const started = await agent.post('/session/start').send({sessionId: startedSessionId});
+            expect(started.status).toBe(200);
+        });
+
+        test('refuses to create an avatar, so retyping a session code cannot duplicate one', async () => {
+            const res = await agent.post('/avatar/join').send({
+                sessionId: startedSessionId,
+                name: 'late-comer'
+            });
+            expect(res.status).toBe(409);
+            expect(res.body.message).toBe('ERROR.SESSION_ALREADY_STARTED');
+        });
+
+        test('leaves the avatar list untouched after a refusal', async () => {
+            const res = await agent.get('/session/' + startedSessionId).send();
+            expect(res.status).toBe(200);
+            expect(res.body.avatars).toHaveLength(0);
+        });
+
+        test('reports 404 for a session that does not exist', async () => {
+            const res = await agent.post('/avatar/join').send({
+                sessionId: '6a6b389402c96d6b8e66c018',
+                name: 'nobody'
+            });
+            expect(res.status).toBe(404);
+            expect(res.body.message).toBe('ERROR.SESSION_NOT_FOUND');
         });
     });
 });

@@ -152,6 +152,7 @@
 		"BUTTON": "Modules pédagogiques"
 	},
 	"ERROR": {
+		"SESSION_ALREADY_STARTED": "La session a déjà démarré, tu ne peux plus créer d'avatar.",
 		"GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
 		"GAME_NOT_FOUND": "Partie introuvable",
 		"SESSION_NOT_FOUND": "Session non trouvée",
@@ -197,6 +198,13 @@
 		"GAME_STATE_OVER": "Partie terminée"
 	},
 	"SOCKET": {
+		"KICKED": {
+			"TITLE": "Connexion interrompue ⚠️",
+			"ANOTHER_CONNECTION": "Ta place a été reprise depuis un autre appareil.",
+			"KICKED_BY_ANIMATOR": "L'animateur t'a déconnecté. Rejoins la partie pour revenir.",
+			"RETAKEN": "Le joueur a repris sa place.",
+			"GENERIC": "Ta connexion a été remplacée."
+		},
 		"OFFLINE": {
 			"TITLE": "Hors ligne ⚠️",
 			"TEXT": "☎️ En attente de reconnexion..."

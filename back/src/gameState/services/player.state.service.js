@@ -169,7 +169,7 @@ PlayerStateService.reincarnateWithinLock = async (entry, avatarIdx) => _reincarn
 PlayerStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, avatarIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const player = entry.gameState.playersStates.find(
-			(p) => p.avatarIdx == avatarIdx && p.status === PLAYER_STATUS.ALIVE
+			(p) => p.avatarIdx == avatarIdx && p.status !== PLAYER_STATUS.DEAD
 		);
 		if (player) {
 			return player.idx;

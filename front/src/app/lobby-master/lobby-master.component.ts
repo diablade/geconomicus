@@ -343,6 +343,6 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 		if (!this.session || !this.session.gamesRules) {
 			return false;
 		}
-		return this.session.gamesRules.every((rule) => rule.gameStatus === 'STOPPED');
+		return this.session.gamesRules.every((rule) => rule.gameStatus === GAME_STATUS.STOPPED);
 	}
 }

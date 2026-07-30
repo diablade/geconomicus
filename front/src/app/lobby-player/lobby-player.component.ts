@@ -8,6 +8,7 @@ import { I18nService } from '../services/i18n.service';
 import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { getBackgroundStyle } from '../services/avatarTools';
 import { AudioService } from '../services/audio.service';
+import { SnackbarService } from '../services/snackbar.service';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { TutorialDialogComponent } from '../dialogs/tutorial-dialog/tutorial-dialog.component';
 
@@ -48,6 +49,7 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private router: Router,
 		private dialog: MatDialog,
+		private snackbarService: SnackbarService,
 		private i18n: I18nService
 	) {
 		this.i18n.loadNamespace('avatar');
@@ -71,6 +73,10 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		this.avatarService
 			.getCurrentPlayerStateIdx(this.sessionId, gameStateId, this.avatarIdx)
 			.subscribe((data: any) => {
+				if (data?.idx == undefined || data.idx === -1) {
+					this.snackbarService.showError(this.i18n.instant('ERROR.JOIN_REINCARNATE'));
+					return;
+				}
 				this.router.navigate(['player', this.sessionId, this.avatarIdx, gameStateId, data.idx]);
 			});
 	}

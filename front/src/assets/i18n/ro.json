@@ -405,6 +405,7 @@
         "VERYNOT": "(Negativ 😒)"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "Sesiunea a început deja; nu mai poți crea un avatar.",
         "GENERIC": "Ceva a mers prost; te rugăm să încerci din nou mai târziu.",
         "JOIN_REINCARNATE": "imposibil de alăturat",
         "REINCARNATE": "imposibil de reîncarnat",
@@ -437,6 +438,13 @@
         "IO_SOCKET_ERROR": "A apărut o eroare, vă rugăm să încercați din nou mai târziu."
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "Conexiune întreruptă ⚠️",
+            "ANOTHER_CONNECTION": "Locul tău a fost preluat de pe alt dispozitiv.",
+            "KICKED_BY_ANIMATOR": "Animatorul te-a deconectat. Alătură-te din nou jocului.",
+            "RETAKEN": "Jucătorul și-a recuperat locul.",
+            "GENERIC": "Conexiunea ta a fost înlocuită."
+        },
         "OFFLINE": {
             "TITLE": "Offline ⚠️",
             "TEXT": "☎️ Aștept reconectarea..."

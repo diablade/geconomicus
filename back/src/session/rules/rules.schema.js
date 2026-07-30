@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { GAME_TYPE, GAME_STATUS, CREDIT_STATUS, BANK_PROFILE, RATE_SCHEDULE_PRESETS } from '@geco/shared';
+import { GAME_TYPE, CREDIT_STATUS, BANK_PROFILE, RATE_SCHEDULE_PRESETS } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
@@ -11,7 +11,6 @@ let RulesSchema = new Schema(
 			ref: 'GameState', // le nom de votre modèle
 			required: false,
 		},
-		gameStatus: { type: String, required: true, default: GAME_STATUS.NONE },
 
 		//common
 		amountCardsForProd: { type: Number, required: true, default: 4 },

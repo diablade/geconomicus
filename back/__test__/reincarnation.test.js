@@ -230,3 +230,39 @@ describe('Force Death (manual kill)', () => {
 		expect(lives.every((p) => p.status === PLAYER_STATUS.DEAD)).toBe(true);
 	});
 });
+
+describe('getCurrentPlayerStateIdx', () => {
+	test('resolves an ALIVE life', async () => {
+		const { id, gameState } = makeGame();
+
+		await expect(PlayerStateService.getCurrentPlayerStateIdx(gameState.sessionId, id, 1)).resolves.toBe(1);
+	});
+
+	test('resolves a PRISON life instead of refusing — prison is a state of the current life', async () => {
+		const { id, gameState } = makeGame();
+		gameState.playersStates[1].status = PLAYER_STATUS.PRISON;
+
+		await expect(PlayerStateService.getCurrentPlayerStateIdx(gameState.sessionId, id, 1)).resolves.toBe(1);
+	});
+
+	test('resolves the surviving life, never the frozen DEAD snapshot', async () => {
+		const { id, gameState } = makeGame();
+		await PlayerStateService.reincarnatePlayer(id, 0);
+
+		await expect(PlayerStateService.getCurrentPlayerStateIdx(gameState.sessionId, id, 0)).resolves.toBe(3);
+	});
+
+	test('returns -1 only on terminal death, when the avatar has no life left', async () => {
+		const { id, gameState } = makeGame();
+		await PlayerStateService.reincarnatePlayer(id, 0);
+		await PlayerStateService.forceDeath(id, 3);
+
+		await expect(PlayerStateService.getCurrentPlayerStateIdx(gameState.sessionId, id, 0)).resolves.toBe(-1);
+	});
+
+	test('returns -1 for an avatar that has no life in this game at all', async () => {
+		const { id, gameState } = makeGame();
+
+		await expect(PlayerStateService.getCurrentPlayerStateIdx(gameState.sessionId, id, 99)).resolves.toBe(-1);
+	});
+});

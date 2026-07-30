@@ -404,6 +404,7 @@
         "VERYNOT": "(Negatif 😒)"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "セッションは既に開始されています。新しいアバターは作成できません。",
         "GENERIC": "何かがうまくいきませんでした。後で再試行してください。",
         "JOIN_REINCARNATE": "参加できません",
         "REINCARNATE": "再生できません",
@@ -436,6 +437,13 @@
         "IO_SOCKET_ERROR": "エラーが発生しました。後でもう一度お試しください。"
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "接続が切断されました ⚠️",
+            "ANOTHER_CONNECTION": "別の端末からあなたの席が引き継がれました。",
+            "KICKED_BY_ANIMATOR": "ファシリテーターによって切断されました。もう一度参加してください。",
+            "RETAKEN": "プレイヤーが席を取り戻しました。",
+            "GENERIC": "接続が置き換えられました。"
+        },
         "OFFLINE": {
             "TITLE": "オフライン ⚠️",
             "TEXT": "☎️ 再接続を待っています..."

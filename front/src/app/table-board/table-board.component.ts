@@ -418,7 +418,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	playUser(row: TableRow): void {
 		// If the player is live on their own device, ask how to attach: co-exist,
-		// take-over, or kick (ADR-0002). Otherwise just open their board.
+		// take-over, or kick (ADR-0010). Otherwise just open their board.
 		if (row.connection?.isConnected) {
 			this.dialog
 				.open(AssistModeDialogComponent, { data: { playerName: row.avatar?.name } })

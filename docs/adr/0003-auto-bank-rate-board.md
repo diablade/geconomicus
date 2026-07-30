@@ -1,5 +1,7 @@
 # Auto-Bank: a pull rate-board, not a credit pusher
 
+> **Amended in part by [ADR-0009](./0009-first-credit-question-as-pre-round-state.md).** The first-credit question below is described as an `autoBank` feature delivered as a broadcast. It is now asked in **both** bank modes and lives as per-life state, and the base/double figures in the animator's dialog come from the server's rate rather than the rules defaults. Everything else here stands.
+
 In the debt game, when the `autoBank` toggle is on the bank sets the *price* of credit from the money supply and lets players borrow on demand — rather than the animator hand-issuing every loan, or the bank force-creating credit onto players. The Effective Rate is the deepest Average-Money tier the current avg has crossed, per the selected Bank Profile (`normal` / `aggressive` / `custom`); it moves **bidirectionally** and is **live-down / silent-up** — improvements notify players (amount, interest, %), tightenings are silent. Players **pull** credit via a self-service Credit Request auto-approved on Solvency (coins + card value ≥ total outstanding obligation) or refused with a prompt to negotiate with the animator. The game opens with a **blocking first-credit question** (Take / Take-double / Decline at the base rate, no solvency gate) whose answer is stored purely as data; the animator then persuades the room toward ~2€ average before starting the round.
 
 ## Considered options

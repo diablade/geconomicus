@@ -498,6 +498,7 @@
         "VERYNOT": "(Negative 😒)  Very"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "The session has already started; you can no longer create an avatar.",
         "GENERIC": "Something bad happened; please try again later.",
         "JOIN_REINCARNATE": "impossible to join",
         "REINCARNATE": "impossible to reincarnate",
@@ -530,6 +531,13 @@
         "NOT_ENOUGH_MONEY": "Insufficient funds."
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "Connection interrupted ⚠️",
+            "ANOTHER_CONNECTION": "Your seat was taken over from another device.",
+            "KICKED_BY_ANIMATOR": "The animator disconnected you. Join the game again to come back.",
+            "RETAKEN": "The player reclaimed their seat.",
+            "GENERIC": "Your connection was replaced."
+        },
         "OFFLINE": {
             "TITLE": "Offline ⚠️",
             "TEXT": "☎️ Waiting for reconnection..."

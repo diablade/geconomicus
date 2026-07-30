@@ -405,6 +405,7 @@
         "VERYNOT": "(Negativno 😒)"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "Sesija je već počela; više ne možeš da napraviš avatar.",
         "GENERIC": "Nešto je pošlo po zlu; pokušajte ponovo kasnije.",
         "JOIN_REINCARNATE": "nemoguće se pridružiti",
         "REINCARNATE": "nemoguće se reinkarnirati",
@@ -437,6 +438,13 @@
         "IO_SOCKET_ERROR": "Došlo je do greške, pokušajte ponovo kasnije."
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "Konekcija prekinuta ⚠️",
+            "ANOTHER_CONNECTION": "Tvoje mesto je preuzeto sa drugog uređaja.",
+            "KICKED_BY_ANIMATOR": "Animator te je isključio. Pridruži se igri ponovo.",
+            "RETAKEN": "Igrač je povratio svoje mesto.",
+            "GENERIC": "Tvoja konekcija je zamenjena."
+        },
         "OFFLINE": {
             "TITLE": "Offline ⚠️",
             "TEXT": "☎️ Čekam ponovnu konekciju..."

@@ -1,7 +1,8 @@
 import log from '#config/log';
 import socket from '#config/socket';
-import { IO, ROOMS } from '@geco/shared';
+import { IO, ROOMS, SESSION_STATUS } from '@geco/shared';
 import AvatarService from "./avatar.service.js";
+import SessionService from "../session.service.js";
 // import { generateToken, hashToken } from '../../misc/token.service.js';
 
 const AvatarController = {};
@@ -15,9 +16,16 @@ AvatarController.join = async (req, res, next) => {
         // TODO AUTH (with token hash in ram and in db)
         // const token = generateToken();
         // const tokenHash = await hashToken(token);
+        const session = await SessionService.getById(sessionId, false);
+        if (!session) {
+            return res.status(404).json({message: "ERROR.SESSION_NOT_FOUND"});
+        }
+        if (session.status !== SESSION_STATUS.OPEN) {
+            return res.status(409).json({message: "ERROR.SESSION_ALREADY_STARTED"});
+        }
         let avatar = await AvatarService.create(sessionId, name);
         if (!avatar) {
-            return res.status(404).json({message: "Session not found"});
+            return res.status(409).json({message: "ERROR.SESSION_ALREADY_STARTED"});
         }
         socket.emitTo(ROOMS.session(sessionId), IO.AVATAR.NEW, {
             name:   name,

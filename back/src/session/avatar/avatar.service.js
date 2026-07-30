@@ -1,5 +1,6 @@
 import SessionService from '../session.service.js';
 import SessionModel from './../session.model.js';
+import { SESSION_STATUS } from '@geco/shared';
 
 const AvatarService = {};
 
@@ -23,7 +24,10 @@ AvatarService.create = async (sessionId, name) => {
         boardColor:          "",
     };
 
-    const session = await SessionModel.findOneAndUpdate({_id: sessionId}, [
+    const session = await SessionModel.findOneAndUpdate({
+        _id:    sessionId,
+        status: SESSION_STATUS.OPEN
+    }, [
         {$set: {avatarIndexSeq: {$add: ['$avatarIndexSeq', 1]}}}, {
             $set: {
                 avatars: {
@@ -34,6 +38,9 @@ AvatarService.create = async (sessionId, name) => {
             }
         }
     ], {returnDocument: 'after'})
+    if (!session) {
+        return null;
+    }
     const idx = session.avatarIndexSeq
     return {
         idx, ...newAvatar

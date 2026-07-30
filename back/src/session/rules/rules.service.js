@@ -4,7 +4,6 @@ import log from '#config/log';
 
 export const defaultDebtRules = {
 	typeMoney: GAME_TYPE.DEBT,
-	gameStatus: GAME_STATUS.NONE,
 	priceWeight1: 1,
 	priceWeight2: 2,
 	priceWeight3: 4,
@@ -12,7 +11,6 @@ export const defaultDebtRules = {
 };
 export const defaultJuneRules = {
 	typeMoney: GAME_TYPE.JUNE,
-	gameStatus: GAME_STATUS.NONE,
 	priceWeight1: 3,
 	priceWeight2: 6,
 	priceWeight3: 9,

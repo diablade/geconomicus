@@ -8,7 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { I18nService } from './i18n.service';
 import { LocalStorageService } from './local-storage/local-storage.service';
-import { IO } from '@geco/shared';
+import { IO, KICK_REASON } from '@geco/shared';
 import { ConnectionStatus } from '../models/gameState';
 
 @Injectable({
@@ -100,6 +100,19 @@ export class WebSocketService {
 		});
 	}
 
+	private kickedMessageKey(reason: string | undefined): string {
+		switch (reason) {
+			case KICK_REASON.ANOTHER_CONNECTION:
+				return 'SOCKET.KICKED.ANOTHER_CONNECTION';
+			case KICK_REASON.KICKED_BY_ANIMATOR:
+				return 'SOCKET.KICKED.KICKED_BY_ANIMATOR';
+			case KICK_REASON.RETAKEN:
+				return 'SOCKET.KICKED.RETAKEN';
+			default:
+				return 'SOCKET.KICKED.GENERIC';
+		}
+	}
+
 	private setupConnectionListeners(): void {
 		if (!this.socket) return;
 		const maxOfflineDuration = 10000; // 10 secondes
@@ -116,10 +129,11 @@ export class WebSocketService {
 		this.socket.on('kicked', (data) => {
 			console.warn('kicked : ' + data.reason);
 			this.dialog.open(InformationDialogComponent, {
+				disableClose: true,
 				data: {
 					disableClose: true,
-					title: this.i18nService.instant('SOCKET.KICKED.TITLE'),
-					message: this.i18nService.instant('SOCKET.KICKED.TEXT') + ' ' + data.reason,
+					title: 'SOCKET.KICKED.TITLE',
+					message: this.kickedMessageKey(data?.reason),
 				},
 			});
 		});

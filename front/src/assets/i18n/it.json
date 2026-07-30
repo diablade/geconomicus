@@ -410,6 +410,7 @@
         "VERYNOT": "(Negativo 😒)"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "La sessione è già iniziata; non puoi più creare un avatar.",
         "GENERIC": "Si è verificato un errore; riprova più tardi.",
         "JOIN_REINCARNATE": "Impossibile unirsi",
         "REINCARNATE": "Impossibile reincarnarsi",
@@ -448,6 +449,13 @@
         "NOT_ENOUGH_CARDS_IN_DECK": "Non ci sono abbastanza carte nel mazzo"
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "Connessione interrotta ⚠️",
+            "ANOTHER_CONNECTION": "Il tuo posto è stato preso da un altro dispositivo.",
+            "KICKED_BY_ANIMATOR": "L'animatore ti ha disconnesso. Unisciti di nuovo alla partita.",
+            "RETAKEN": "Il giocatore ha ripreso il suo posto.",
+            "GENERIC": "La tua connessione è stata sostituita."
+        },
         "OFFLINE": {
             "TITLE": "Offline ⚠️",
             "TEXT": "☎️ In attesa di riconnessione..."

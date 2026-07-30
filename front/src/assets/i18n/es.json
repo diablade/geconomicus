@@ -382,6 +382,7 @@
         "RESUME": "Continuar"
     },
     "ERROR": {
+        "SESSION_ALREADY_STARTED": "La sesión ya ha comenzado; ya no puedes crear un avatar.",
         "EXCHANGE": "Intercambio imposible",
         "GENERIC": "Se produjo un error, inténtalo de nuevo más tarde, por favor.",
         "REPAY_CREDIT": "Fallo del reembolso del crédito",
@@ -513,6 +514,13 @@
         "CARDS": "Cartas"
     },
     "SOCKET": {
+        "KICKED": {
+            "TITLE": "Conexión interrumpida ⚠️",
+            "ANOTHER_CONNECTION": "Tu puesto ha sido tomado desde otro dispositivo.",
+            "KICKED_BY_ANIMATOR": "El animador te ha desconectado. Vuelve a unirte a la partida.",
+            "RETAKEN": "El jugador ha recuperado su puesto.",
+            "GENERIC": "Tu conexión ha sido reemplazada."
+        },
         "OFFLINE": {
             "TEXT": "☎️ Esperando reconexión...",
             "TITLE": "Desconectado⚠️"

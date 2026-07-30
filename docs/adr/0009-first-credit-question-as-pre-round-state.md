@@ -1,0 +1,24 @@
+# First Credit Question: pre-round state, both bank modes, one credit dialog
+
+The opening credit question was an `autoBank`-only broadcast: the animator pressed a button, the server fire-and-forget emitted `IO.CREDIT.QUESTION` to every connected player, and the client held the prompt in memory. Anyone disconnected, handed a phone late, or merely refreshing never saw it, and a manual-bank game never got the ceremony at all — even though the ceremony is pedagogy, not lending automation. It becomes **per-life state** (`PlayerState.firstCreditAnswer`: `null | pending | accept-single | accept-double | decline | no-answer`), asked in **both bank modes**, and it is presented through the **same dialog that issues every other credit**.
+
+`autoBank` is now scoped to mean only *how credit is priced and issued during the round*. The opening question sits outside it; the mid-round self-service Credit Request stays inside it.
+
+## Considered options
+
+- **Re-push the question on socket join** — rejected: still needs the answered flag persisted, so it is the same schema change plus join-handler logic, and the question would still exist only as a message in flight, which is the failure being fixed.
+- **Derive answered-ness from `dbEvents`** — rejected: `dbEvents` is the telemetry store, not game state; it means an event query on every board load, and "has been asked" has nowhere to live.
+- **Auto-ask when cards are distributed** — rejected: it pops a hard-blocking dialog on every phone while the animator is still explaining the terms. The animator keeps an explicit button, now sequenced **Distribute Cards → Ask for Credits → Start Game**, each button replacing the previous, so a debt round cannot start without the question having been asked.
+- **Block Start Game until every life has answered** — rejected: one dead phone or abandoned avatar would hold the room hostage. Still-pending lives are swept to `no-answer` at launch, and Start Game raises a confirm when Average Money is under 2 **or** anyone is still pending.
+- **Un-ask / undo the question** — rejected: it would have to cancel the credits an accept already booked and would leave answered-events behind, so the undo is partial and the telemetry muddy. A confirm before asking (naming how many players are connected) prevents the misclick instead.
+- **A dedicated first-credit dialog, or a third button on `ConfirmDialogComponent`** — rejected in favour of one `mode` input on `ContractDialogComponent`, so the animator's contract, the player's mid-round request and the opening question share one body and cannot drift apart.
+
+## Consequences
+
+- **A player who never answers is distinguishable from one who declined.** `no-answer` is recorded separately, so silence is never read as a refusal in the results panel. A game-level ask event anchors the ceremony in the event stream; per-answer `CREDIT_QUESTION_ANSWERED` events are unchanged.
+- **The sweep is what closes the dialog.** Because the prompt is derived from `pending`, a life left pending would re-raise the dialog mid-round on any refresh. Setting `no-answer` at launch is therefore load-bearing, not bookkeeping.
+- **The question is hard-blocking with no dismissal**, so a player cannot inspect their hand before deciding. Acceptable at t=0, where every hand is a comparable freshly-dealt set and the choice is "do I want money to trade with".
+- **A reincarnated life is born `null` and is never asked** — consistent with ADR-0003. Only lives that exist when the animator asks are stamped.
+- **Accepts self-issue the credit in both modes** (origin `first-question`, idle until the round starts). `autoBank: false` no longer means "the animator issues every credit by hand" without qualification — it means that only during the round.
+- **The shared dialog takes its figures from the server's rate**, fetched on open: the Base Rate before the round, the deepest crossed tier during it. This removes a hardcoded `3/1` / `6/2` in `onCreditOptionChange` that contradicted the dialog's own labels, and it makes the animator's quick credit follow the rate board — free-form entry remains the animator's override. Solvency stays animator-only; players see a refusal from the server rather than a disabled button, which is why their confirm reads *Demander* and the animator's reads *Signer*.
+- **master-board gains one aggregate it did not carry**: `currentMassMonetary` rides the answer broadcast to the `master` room, keeping the existing low-average-money warning live through the ceremony without subscribing the Master Console to the economic feed (see ADR-0008).

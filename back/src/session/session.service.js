@@ -1,6 +1,6 @@
 import SessionModel from './session.model.js';
 import { numbersId4 } from '../misc/misc.tool.js';
-import { SESSION_STATUS } from '@geco/shared';
+import { SESSION_STATUS, GAME_STATUS } from '@geco/shared';
 import log from '#config/log';
 import { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
 
@@ -15,7 +15,7 @@ const populateStatusForGameRules = async (session) => {
 	sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
 		...rule,
 		gameStateId: rule?.gameStateId?._id ?? rule?.gameStateId,
-		gameStatus: rule?.gameStateId?.status ?? rule?.gameStatus,
+		gameStatus: rule?.gameStateId?.status ?? GAME_STATUS.NONE,
 	}));
 	log.debug(
 		`[SessionService] getById populated: ${sessionObj.gamesRules[0]?.gameStatus}, ${sessionObj.gamesRules[1]?.gameStatus}`
@@ -123,7 +123,7 @@ SessionService.start = async (sessionId) => {
 			runValidators: true,
 		}
 	);
-	return session;
+	return populateStatusForGameRules(session);
 };
 
 /* Update */
