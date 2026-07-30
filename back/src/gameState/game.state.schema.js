@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { GAME_STATUS, GAME_TYPE, CREDIT_STATUS, PLAYER_STATUS } from '@geco/shared';
+import { GAME_STATUS, GAME_TYPE, CREDIT_STATUS, PLAYER_STATUS, CREDIT_QUESTION_ANSWER } from '@geco/shared';
 
 const Schema = mongoose.Schema;
 
@@ -40,6 +40,11 @@ let PlayerState = new Schema(
 		coins: { type: Number, required: true },
 		cards: { type: [CardSchema], required: true },
 		actionTokens: { type: Number, required: true, default: 1 },
+		firstCreditAnswer: {
+			type: String,
+			enum: [...Object.values(CREDIT_QUESTION_ANSWER), null],
+			default: null,
+		},
 	},
 	{ _id: false }
 );

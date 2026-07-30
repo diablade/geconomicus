@@ -109,7 +109,9 @@
 						<!-- Auto-bank: send the opening First Credit Question (after cards distributed) -->
 						<button
 							*ngIf="
-								vm.gameState.status === INITIALIZED && vm.rules.typeMoney === DEBT && vm.rules.autoBank
+								vm.gameState.status === INITIALIZED &&
+								vm.rules.typeMoney === DEBT &&
+								!vm.firstCredit.asked
 							"
 							class="ms-2 box-shadowed"
 							mat-raised-button
@@ -119,7 +121,11 @@
 							{{ 'MASTER.ASK_FIRST_CREDIT' | translate }}
 						</button>
 						<button
-							*ngIf="vm.gameState.status === INITIALIZED || vm.gameState.status === PAUSED"
+							*ngIf="
+								(vm.gameState.status === INITIALIZED &&
+									(vm.rules.typeMoney !== DEBT || vm.firstCredit.asked)) ||
+								vm.gameState.status === PAUSED
+							"
 							class="ms-2 box-shadowed"
 							mat-raised-button
 							color="warn"
@@ -131,20 +137,17 @@
 									: ('MASTER.RESUME_GAME' | translate)
 							}}
 						</button>
-						<!-- Auto-bank: warn the animator that average money is still below target -->
+						<!-- Auto-bank: average money per player, with the target status -->
 						<span
-							*ngIf="
-								vm.gameState.status === INITIALIZED &&
-								vm.rules.typeMoney === DEBT &&
-								vm.rules.autoBank &&
-								vm.avgMoney < AVG_MONEY_TARGET
-							"
+							*ngIf="vm.gameState.status === INITIALIZED && vm.rules.typeMoney === DEBT"
 							class="avg-warning ms-2 d-inline-flex align-items-center"
 							[matTooltip]="
-								'MASTER.LOW_AVG_WARNING'
+								(vm.avgMoney < AVG_MONEY_TARGET ? 'MASTER.LOW_AVG_WARNING' : 'MASTER.AVG_OK')
 									| translate: { avg: (vm.avgMoney | number: '1.2-2'), target: AVG_MONEY_TARGET }
 							">
-							<mat-icon color="warn">warning</mat-icon>
+							<mat-icon [color]="vm.avgMoney < AVG_MONEY_TARGET ? 'warn' : 'accent'">
+								{{ vm.avgMoney < AVG_MONEY_TARGET ? 'warning' : 'check_circle' }}
+							</mat-icon>
 							<b class="ms-1">{{ vm.avgMoney | number: '1.2-2' }} €</b>
 						</span>
 						<button
@@ -191,6 +194,12 @@
 							<div class="d-flex flex-row justify-content-center flex-wrap">
 								<div *ngFor="let player of playersAC$ | async" class="player d-flex flex-column">
 									<div class="avatar-container">
+										<mat-icon
+											*ngIf="player.firstCreditAnswer && player.firstCreditAnswer !== PENDING"
+											class="first-credit-check"
+											color="accent"
+											>check_circle</mat-icon
+										>
 										<avatar
 											[avatar]="player.avatar"
 											[width]="'80px'"

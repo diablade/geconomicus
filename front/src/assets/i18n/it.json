@@ -169,6 +169,7 @@
         "DETAILS": "Fra {{timer}} minuti, il giocatore dovrà detenere questo importo per rimborsare questo credito, inclusi gli interessi",
         "WITH_PLAYER": "Con il giocatore",
         "SIGN": "Firmare",
+        "ASK": "Richiedere",
         "DEFAULT_CREDIT_AMOUNT": "3 per impostazione predefinita",
         "DEFAULT_INTEREST_AMOUNT": "1 per impostazione predefinita",
         "CREDIT_SUCCESS": "Credito concesso a {{player}}",

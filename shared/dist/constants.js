@@ -81,6 +81,7 @@ export const CREDIT_ORIGIN = {
 };
 // A player's answer to the opening First Credit Question (stored as data).
 export const CREDIT_QUESTION_ANSWER = {
+    PENDING: 'pending',
     ACCEPT_SINGLE: 'accept-single',
     ACCEPT_DOUBLE: 'accept-double',
     DECLINE: 'decline',
@@ -88,7 +89,7 @@ export const CREDIT_QUESTION_ANSWER = {
 };
 // ─── ASSIST SESSIONS ──────────────────────────────────────────────────────────
 // How an animator's secondary connection ("play the user" / 2nd cockpit) relates
-// to the device already holding a Seat. See docs/adr/0002-animator-assist-sessions.md
+// to the device already holding a Seat. See docs/adr/0010-animator-assist-sessions.md
 export const ASSIST_MODE = {
     COEXIST: 'coexist', // both devices act at once
     TAKEOVER: 'takeover', // player screen overlaid + Retake; animator drives
@@ -167,6 +168,7 @@ export const IO = {
         RATE: 'crate', // auto-bank effective rate changed (broadcast to players)
         REFUSED: 'cref', // a player's Credit Request was refused (insolvent)
         QUESTION: 'cq', // opening First Credit Question prompt / answer round-trip
+        QUESTION_ANSWERED: 'cqa',
     },
     SHORT_CODE: {
         EMIT: 'sce',
@@ -208,6 +210,7 @@ export const DB_EVENTS = {
     CREDIT_CANCELED: 'credit-canceled',
     CREDIT_SEIZURE: 'credit-seizure',
     CREDIT_SEIZED_DEAD: 'credit-seized-dead',
+    CREDIT_QUESTION_ASKED: 'credit-question-asked',
     CREDIT_QUESTION_ANSWERED: 'credit-question-answered',
     CREDIT_REFUSED: 'credit-refused',
     PRISON: 'prison',

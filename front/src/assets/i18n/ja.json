@@ -165,6 +165,7 @@
         "DETAILS": "{{timer}}分以内に支払う",
         "WITH_PLAYER": "プレイヤーと",
         "SIGN": "署名",
+        "ASK": "申し込む",
         "DEFAULT_CREDIT_AMOUNT": "デフォルトで3",
         "DEFAULT_INTEREST_AMOUNT": "デフォルトで1",
         "CREDIT_SUCCESS": "{{player}}にクレジットが付与されました",

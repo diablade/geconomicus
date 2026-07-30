@@ -74,7 +74,7 @@
 		"DONE_AT": "Clos le",
 		"EXTENDED": "Prolongé",
 		"CREDIT_SETTLED": "Crédit remboursé",
-		"BORROW": "Emprunter",
+		"BORROW": "Prendre un crédit",
 		"REFUSED_NEGOTIATE": "Crédit refusé — négociez avec l'animateur",
 		"RATE_CHANGED": "Nouveau taux : {{amount}}/{{interest}} ({{pct}}%)",
 		"FIRST_Q_TITLE": "Voulez-vous prendre un premier crédit ?",

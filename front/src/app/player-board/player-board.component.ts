@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import confetti from 'canvas-confetti';
-import { combineLatest, distinctUntilChanged, map, Subscription, withLatestFrom } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, of, Subscription, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
 import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
 import { faClipboardCheck, faFileContract, faCreditCardAlt, faFileSignature } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +15,6 @@ import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.compon
 import {
 	AssistMode,
 	ASSIST_MODE,
-	CREDIT_QUESTION_ANSWER,
 	CREDIT_STATUS,
 	GAME_STATUS,
 	GAME_TYPE,
@@ -47,7 +47,6 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
-	protected readonly ANSWER = CREDIT_QUESTION_ANSWER;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
@@ -84,7 +83,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	cards$ = inject(PlayerStateService).cards$;
 	credits_NotOrdered$ = inject(PlayerStateService).credits$;
 	rate$ = inject(PlayerStateService).rate$;
-	firstCreditQuestion$ = inject(PlayerStateService).firstCreditQuestion$;
+	firstCreditPending$ = inject(PlayerStateService).firstCreditPending$;
 
 	order = (status: string): number => {
 		switch (status) {
@@ -165,6 +164,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private autoSeizure = false;
 	private creditFaultSub: Subscription | undefined;
 	private rulesSub: Subscription | undefined;
+	private firstCreditSub: Subscription | undefined;
+	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
 	readonly takeoverConfig: OverlayConfig = {
 		phases: [
 			{
@@ -212,6 +213,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	) {
 		this.i18nService.loadNamespace('player');
 		this.i18nService.loadNamespace('action');
+		this.i18nService.loadNamespace('bank');
 	}
 
 	ngOnDestroy(): void {
@@ -222,6 +224,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
 		if (this.rulesSub) this.rulesSub.unsubscribe();
+		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -248,6 +251,14 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			.subscribe((fault) => this.onCreditFault(fault));
 
 		this.rulesSub = this.rules$.subscribe((r) => (this.autoSeizure = !!r?.autoSeizure));
+
+		this.firstCreditSub = this.firstCreditPending$.pipe(distinctUntilChanged()).subscribe((pending) => {
+			if (pending) {
+				this.openFirstCreditQuestion();
+			} else {
+				this.firstCreditDialogRef?.close();
+			}
+		});
 
 		if (this.fakeMode) {
 			this.bootFake();
@@ -417,32 +428,42 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	requestCredit(amount: number, interest: number) {
+	requestCredit() {
 		if (this.fakeMode) return;
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+		const dialogRef = this.dialog.open(ContractDialogComponent, {
 			data: {
-				title: this.i18nService.instant('DIALOG.REQUEST_CREDIT.TITLE'),
-				message: this.i18nService.instant('DIALOG.REQUEST_CREDIT.MESSAGE', {
-					amount, interest
-				}),
-				message2: this.i18nService.instant('DIALOG.REQUEST_CREDIT.MESSAGE2', {
-					total: amount + interest,
-					rate: Math.floor(interest / amount * 100)
-				}),
-				labelBtnConfirm: this.i18nService.instant('DIALOG.REQUEST_CREDIT.BTN_CONFIRM'),
-				styleBtnConfirm: 'warn',
+				rules: this.rules$,
+				players: of([]),
+				gameStateId: this.gameStateId,
+				playerStateIdx: this.playerStateIdx,
+				mode: 'request',
 			},
 		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btnConfirm') {
-				this.playerStateService.requestCredit(amount, interest);
+		dialogRef.afterClosed().subscribe((contract) => {
+			if (contract) {
+				this.playerStateService.requestCredit(contract.amount, contract.interest);
 			}
 		});
 	}
 
-	answerFirstCredit(answer: string) {
-		if (this.fakeMode) return;
-		this.playerStateService.answerFirstCreditQuestion(answer);
+	private openFirstCreditQuestion() {
+		if (this.fakeMode || this.firstCreditDialogRef) return;
+		this.firstCreditDialogRef = this.dialog.open(ContractDialogComponent, {
+			disableClose: true,
+			data: {
+				rules: this.rules$,
+				players: of([]),
+				gameStateId: this.gameStateId,
+				playerStateIdx: this.playerStateIdx,
+				mode: 'first-question',
+			},
+		});
+		this.firstCreditDialogRef.afterClosed().subscribe((result: any) => {
+			this.firstCreditDialogRef = null;
+			if (result?.answer) {
+				this.playerStateService.answerFirstCreditQuestion(result.answer);
+			}
+		});
 	}
 
 	private playReincarnationOverlay(newPlayerStateIdx: number) {

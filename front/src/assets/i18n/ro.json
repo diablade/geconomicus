@@ -166,6 +166,7 @@
         "DETAILS": "{{timer}} minute pentru a plăti",
         "WITH_PLAYER": "Cu jucătorul",
         "SIGN": "Semnează",
+        "ASK": "Solicită",
         "DEFAULT_CREDIT_AMOUNT": "3 implicit",
         "DEFAULT_INTEREST_AMOUNT": "1 implicit",
         "CREDIT_SUCCESS": "Credit acordat lui {{player}}",

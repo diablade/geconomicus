@@ -5,7 +5,7 @@ import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
-import { GAME_STATUS, GAME_TYPE, PLAYER_STATUS, IO } from '@geco/shared';
+import { GAME_STATUS, GAME_TYPE, PLAYER_STATUS, IO, CREDIT_QUESTION_ANSWER } from '@geco/shared';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { I18nService } from '../services/i18n.service';
@@ -31,6 +31,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEBT = GAME_TYPE.DEBT;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
+	protected readonly PENDING = CREDIT_QUESTION_ANSWER.PENDING;
 	protected readonly environment = environment;
 	// Auto-bank: target average money per player the animator aims for before starting.
 	protected readonly AVG_MONEY_TARGET = 2;
@@ -63,6 +64,21 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		})
 	);
 
+	firstCredit$ = this.playersAC$.pipe(
+		map((players: any[]) => {
+			const lives = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
+			const pending = lives.filter((p: any) => p.firstCreditAnswer === CREDIT_QUESTION_ANSWER.PENDING);
+			return {
+				asked: lives.some((p: any) => !!p.firstCreditAnswer),
+				pending: pending.length,
+				answered: lives.filter(
+					(p: any) => !!p.firstCreditAnswer && p.firstCreditAnswer !== CREDIT_QUESTION_ANSWER.PENDING
+				).length,
+				total: lives.length,
+			};
+		})
+	);
+
 	vm$ = combineLatest({
 		gameState: this.gameState$,
 		rules: this.rules$,
@@ -71,6 +87,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		minutes: this.minutes$,
 		seconds: this.seconds$,
 		avgMoney: this.avgMoney$,
+		firstCredit: this.firstCredit$,
 	});
 
 	constructor(
@@ -231,13 +248,67 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 
 	// Auto-bank: broadcast the opening First Credit Question to all players.
 	askFirstCredit() {
-		this.gameStateService.askFirstCreditQuestion(this.gameStateId).subscribe({
-			next: () => this.snackbarService.showSuccess(this.i18nService.instant('MASTER.FIRST_CREDIT_SENT')),
-			error: (err: any) => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
+		this.playersAC$.pipe(take(1)).subscribe((players: any[]) => {
+			const lives = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
+			const connected = lives.filter((p: any) => p.connection?.isConnected).length;
+			const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+				data: {
+					title: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
+					message: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM', {
+						connected,
+						total: lives.length,
+					}),
+					message2: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM2'),
+					labelBtnConfirm: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
+				},
+			});
+			confirmRef.afterClosed().subscribe((result) => {
+				if (result !== 'btnConfirm') return;
+				this.gameStateService.askFirstCreditQuestion(this.gameStateId).subscribe({
+					next: () =>
+						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.FIRST_CREDIT_SENT')),
+					error: () => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
+				});
+			});
 		});
 	}
 
 	launchGame(status: string) {
+		if (status !== this.INITIALIZED) {
+			this.doLaunchGame(status);
+			return;
+		}
+		combineLatest([this.rules$, this.avgMoney$, this.firstCredit$])
+			.pipe(take(1))
+			.subscribe(([rules, avgMoney, firstCredit]) => {
+				const lowMoney = rules.typeMoney === this.DEBT && avgMoney < this.AVG_MONEY_TARGET;
+				const missing = rules.typeMoney === this.DEBT ? firstCredit.pending : 0;
+				if (!lowMoney && !missing) {
+					this.doLaunchGame(status);
+					return;
+				}
+				const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+					data: {
+						title: this.i18nService.instant('MASTER.START_GAME'),
+						message: lowMoney
+							? this.i18nService.instant('MASTER.LOW_AVG_WARNING', {
+									avg: avgMoney.toFixed(2),
+									target: this.AVG_MONEY_TARGET,
+							  })
+							: '',
+						message2: missing
+							? this.i18nService.instant('MASTER.START_PENDING_ANSWERS', { missing })
+							: '',
+						labelBtnConfirm: this.i18nService.instant('MASTER.START_GAME'),
+					},
+				});
+				confirmRef.afterClosed().subscribe((result) => {
+					if (result === 'btnConfirm') this.doLaunchGame(status);
+				});
+			});
+	}
+
+	private doLaunchGame(status: string) {
 		if (status === this.INITIALIZED) {
 			this.gameStateService.startGame(this.gameStateId).subscribe({
 				next: (result) => {

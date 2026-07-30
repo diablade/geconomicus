@@ -68,6 +68,7 @@ export declare const CREDIT_ORIGIN: {
 };
 export type CreditOrigin = (typeof CREDIT_ORIGIN)[keyof typeof CREDIT_ORIGIN];
 export declare const CREDIT_QUESTION_ANSWER: {
+    readonly PENDING: "pending";
     readonly ACCEPT_SINGLE: "accept-single";
     readonly ACCEPT_DOUBLE: "accept-double";
     readonly DECLINE: "decline";
@@ -152,6 +153,7 @@ export declare const IO: {
         readonly RATE: "crate";
         readonly REFUSED: "cref";
         readonly QUESTION: "cq";
+        readonly QUESTION_ANSWERED: "cqa";
     };
     readonly SHORT_CODE: {
         readonly EMIT: "sce";
@@ -197,6 +199,7 @@ export declare const DB_EVENTS: {
     readonly CREDIT_CANCELED: "credit-canceled";
     readonly CREDIT_SEIZURE: "credit-seizure";
     readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
+    readonly CREDIT_QUESTION_ASKED: "credit-question-asked";
     readonly CREDIT_QUESTION_ANSWERED: "credit-question-answered";
     readonly CREDIT_REFUSED: "credit-refused";
     readonly PRISON: "prison";

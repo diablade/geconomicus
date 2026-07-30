@@ -209,6 +209,7 @@
         "DETAILS": "{{timer}} minutes to pay",
         "WITH_PLAYER": "With player",
         "SIGN": "Sign",
+        "ASK": "Ask",
         "DEFAULT_CREDIT_AMOUNT": "3 by default",
         "DEFAULT_INTEREST_AMOUNT": "1 by default",
         "CREDIT_SUCCESS": "Credit granted to {{player}}",

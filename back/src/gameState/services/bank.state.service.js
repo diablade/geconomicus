@@ -519,6 +519,7 @@ const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, 
 	);
 
 	socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
+	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
 	socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.NEW, {
 		credit,
 		coinsLK: playerState.coins,
@@ -580,25 +581,58 @@ BankStateService.getRate = async (gameStateId, playerStateIdx) => {
 
 BankStateService.askFirstCreditQuestion = async (gameStateId) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules } = entry;
+		const { gameState, rules, events } = entry;
+		if (rules.typeMoney !== GAME_TYPE.DEBT) {
+			throw new Error('ERROR.NOT_A_DEBT_GAME');
+		}
+		if (gameState.status !== GAME_STATUS.INITIALIZED) {
+			throw new Error('ERROR.GAME_NOT_INITIALIZED');
+		}
+
 		const rate = _currentRate(gameState, rules); // not PLAYING yet → base rate
 		const payload = { rate: { amount: rate.amount, interest: rate.interest, allowDouble: rate.allowDouble } };
-		let asked = 0;
+		const asked = [];
 		for (const p of gameState.playersStates) {
-			if (p.status !== PLAYER_STATUS.ALIVE) continue;
+			if (p.status === PLAYER_STATUS.DEAD) continue;
+			if (p.firstCreditAnswer) continue;
+			p.firstCreditAnswer = CREDIT_QUESTION_ANSWER.PENDING;
+			asked.push(p.idx);
 			socket.emitTo(ROOMS.playerState(gameStateId, p.idx), IO.CREDIT.QUESTION, payload);
-			asked++;
 		}
-		log.info(`[BankStateService] first credit question asked to ${asked} players in g:${gameStateId}`);
-		return { asked, ...payload };
+
+		events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.CREDIT_QUESTION_ASKED,
+				gameState.sessionId,
+				gameState._id,
+				PLAYER_TYPE.BANK,
+				'-',
+				{ asked: asked.length, amount: rate.amount, interest: rate.interest }
+			)
+		);
+
+		log.info(`[BankStateService] first credit question asked to ${asked.length} players in g:${gameStateId}`);
+		return { asked: asked.length, playerStateIdxs: asked, ...payload };
 	});
 };
 
 BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx, answer) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const { gameState, rules, events } = entry;
-		_findPlayer(gameState, playerStateIdx); // validate the life exists (throws otherwise)
+		const playerState = _findPlayer(gameState, playerStateIdx);
+		const answerable = [
+			CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE,
+			CREDIT_QUESTION_ANSWER.ACCEPT_DOUBLE,
+			CREDIT_QUESTION_ANSWER.DECLINE,
+		];
+		if (!answerable.includes(answer)) {
+			throw new Error('ERROR.INVALID_ANSWER');
+		}
+		if (playerState.firstCreditAnswer !== CREDIT_QUESTION_ANSWER.PENDING) {
+			throw new Error('ERROR.FIRST_CREDIT_NOT_PENDING');
+		}
 		const base = _currentRate(gameState, rules);
+		playerState.firstCreditAnswer = answer;
 
 		events.push(
 			EventHelper.createEvent(
@@ -626,8 +660,39 @@ BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx,
 			);
 			result = { ...result, ...created };
 		}
+
+		socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.CREDIT.QUESTION_ANSWERED, {
+			playerStateIdx,
+			firstCreditAnswer: answer,
+			currentMassMonetary: gameState.currentMassMonetary,
+		});
 		return result;
 	});
+};
+
+BankStateService.sweepUnansweredFirstCredit = (entry) => {
+	const { gameState, events } = entry;
+	const swept = [];
+	for (const p of gameState.playersStates) {
+		if (p.firstCreditAnswer !== CREDIT_QUESTION_ANSWER.PENDING) continue;
+		p.firstCreditAnswer = CREDIT_QUESTION_ANSWER.NO_ANSWER;
+		swept.push(p.idx);
+		events.push(
+			EventHelper.createEvent(
+				DB_EVENTS.CREDIT_QUESTION_ANSWERED,
+				gameState.sessionId,
+				gameState._id,
+				PLAYER_TYPE.BANK,
+				p.idx,
+				{ answer: CREDIT_QUESTION_ANSWER.NO_ANSWER }
+			)
+		);
+		socket.emitTo(ROOMS.playerState(gameState._id, p.idx), IO.CREDIT.QUESTION, { rate: null });
+	}
+	if (swept.length) {
+		log.info(`[BankStateService] first credit question unanswered by ${swept.length} players in g:${gameState._id}`);
+	}
+	return swept;
 };
 
 BankStateService.requestCredit = async (gameStateId, playerStateIdx, amount, interest) => {
@@ -730,6 +795,16 @@ BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
 			coinsLK: playerState.coins,
 			amount,
 		});
+		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.FREE_MONEY, {
+			playerStateIdx,
+			amount,
+			..._getBankIndicators(gameState),
+		});
+		socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.CREDIT.FREE_MONEY, {
+			playerStateIdx,
+			amount,
+			..._getBankIndicators(gameState),
+		});
 		SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 
 		return { amount, playerStateIdx, ..._getBankIndicators(gameState) };
@@ -776,6 +851,10 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 			coinsLK: playerState.coins,
 		});
 		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.CANCELED, {
+			credit,
+			..._getBankIndicators(gameState),
+		});
+		socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.CREDIT.CANCELED, {
 			credit,
 			..._getBankIndicators(gameState),
 		});

@@ -6,7 +6,17 @@ import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
 import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
 import { WebSocketService } from '../web-socket.service';
-import { IO, GAME_STATUS, PLAYER_STATUS, CREDIT_STATUS, GAME_TYPE, ROOMS, GameType, PlayerStatus } from '@geco/shared';
+import {
+	IO,
+	GAME_STATUS,
+	PLAYER_STATUS,
+	CREDIT_STATUS,
+	CREDIT_QUESTION_ANSWER,
+	GAME_TYPE,
+	ROOMS,
+	GameType,
+	PlayerStatus,
+} from '@geco/shared';
 import { BankService } from './bank.service';
 import { DeckService } from './deck.service';
 import { ThemesService } from '../themes.service';
@@ -42,8 +52,8 @@ export class PlayerStateService {
 	credits$ = this.creditsSubject.asObservable();
 	private rateSubject = new BehaviorSubject<any>(null);
 	rate$ = this.rateSubject.asObservable();
-	private firstCreditQuestionSubject = new BehaviorSubject<any>(null);
-	firstCreditQuestion$ = this.firstCreditQuestionSubject.asObservable();
+	private firstCreditPendingSubject = new BehaviorSubject<boolean>(false);
+	firstCreditPending$ = this.firstCreditPendingSubject.asObservable();
 	private halfwayFired = new Set<string>();
 	private finalFired = new Set<string>();
 	private finalMinuteSubject = new Subject<{ credit: Credit; flash: boolean }>();
@@ -187,6 +197,9 @@ export class PlayerStateService {
 				this.typeMoneySubject.next(data.playerState.typeMoney);
 				this.cardsSubject.next(data.playerState.cards);
 				this.actionTokensSubject.next(data.playerState.actionTokens ?? 1);
+				this.firstCreditPendingSubject.next(
+					data.playerState.firstCreditAnswer === CREDIT_QUESTION_ANSWER.PENDING
+				);
 				this.creditsSubject.next(data.credits);
 				if (data.avatars) this.avatarsSubject.next(data.avatars);
 
@@ -262,7 +275,7 @@ export class PlayerStateService {
 	private setupGameSocketListeners(): void {
 		this.wsService.on(IO.GAME.STARTED, async () => {
 			console.log('game started');
-			this.firstCreditQuestionSubject.next(null);
+			this.firstCreditPendingSubject.next(false);
 			this.refreshRate();
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {
@@ -710,7 +723,7 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.QUESTION, async (data: any) => {
-			this.firstCreditQuestionSubject.next(data?.rate ?? null);
+			this.firstCreditPendingSubject.next(!!data?.rate);
 		});
 	}
 
@@ -923,7 +936,7 @@ export class PlayerStateService {
 
 	answerFirstCreditQuestion(answer: string): void {
 		this.bankService.answerFirstCredit(this.gameStateId, this.playerStateIdx, answer).subscribe(() => {
-			this.firstCreditQuestionSubject.next(null);
+			this.firstCreditPendingSubject.next(false);
 		});
 	}
 

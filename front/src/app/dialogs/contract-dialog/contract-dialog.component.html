@@ -1,6 +1,8 @@
 <div class="contract">
 	<div class="d-flex align-items-center flex-column">
-		<h2 class="fs-4 shadowed geconomicusFont">{{ 'CONTRACT.TITLE' | translate }}</h2>
+		<h2 class="fs-4 shadowed geconomicusFont">
+			{{ (mode === 'first-question' ? 'CREDIT.FIRST_Q_TITLE' : 'CONTRACT.TITLE') | translate }}
+		</h2>
 		<div *ngIf="locked" class="mt-2 d-flex flex-column align-items-center">
 			<avatar
 				[avatar]="selectedPlayer?.avatar"
@@ -8,7 +10,7 @@
 				[height]="'48px'"
 				[namePosition]="'bottom'"></avatar>
 		</div>
-		<mat-form-field *ngIf="!locked" class="mt-2" appearance="fill">
+		<mat-form-field *ngIf="isAnimator && !locked" class="mt-2" appearance="fill">
 			<mat-label>{{ 'CONTRACT.WITH_PLAYER' | translate }}</mat-label>
 			<mat-select [value]="selectedPlayer" (valueChange)="onPlayerChange($event)" [compareWith]="compareById">
 				<mat-select-trigger>
@@ -34,24 +36,26 @@
 					'CONTRACT.QUICK_CREDIT'
 						| translate
 							: {
-									amount: rules.defaultCreditAmount,
-									interest: rules.defaultInterestAmount,
+									amount: singleAmount,
+									interest: singleInterest
 							  }
 				}}
 			</mat-radio-button>
-			<mat-radio-button value="double">
+			<mat-radio-button *ngIf="allowDouble" value="double">
 				{{
 					'CONTRACT.QUICK_CREDIT'
 						| translate
 							: {
-									amount: rules.defaultCreditAmount * 2,
-									interest: rules.defaultInterestAmount * 2,
+									amount: singleAmount * 2,
+									interest: singleInterest * 2
 							  }
 				}}
 			</mat-radio-button>
-			<mat-radio-button value="manual">{{ 'CONTRACT.MANUAL_CREDIT' | translate }}</mat-radio-button>
+			<mat-radio-button *ngIf="isAnimator" value="manual">{{
+				'CONTRACT.MANUAL_CREDIT' | translate
+			}}</mat-radio-button>
 		</mat-radio-group>
-		<ng-container *ngIf="selectedCreditOption === 'manual'">
+		<ng-container *ngIf="isAnimator && selectedCreditOption === 'manual'">
 			<mat-form-field class="input">
 				<mat-label>{{ 'CONTRACT.CREDIT' | translate }}</mat-label>
 				<input
@@ -83,7 +87,7 @@
 				[innerHTML]="'CONTRACT.DETAILS' | translate: { amount: interest, timer: rules.durationCredit }"></span>
 		</div>
 		<!-- Auto-bank: informational solvency of the target (coins + card value vs debts). Never blocks signing. -->
-		<div *ngIf="rules.typeMoney === DEBT && solvency" class="solvency mt-2 p-2 w-100">
+		<div *ngIf="isAnimator && rules.typeMoney === DEBT && solvency" class="solvency mt-2 p-2 w-100">
 			<div class="fw-bold mb-1">{{ 'CONTRACT.SOLVENCY' | translate }}</div>
 			<div class="d-flex justify-content-between">
 				<span>{{ 'CONTRACT.WEALTH' | translate }}</span>
@@ -104,14 +108,19 @@
 			</div>
 		</div>
 		<div>
-			<button class="m-2" mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
+			<button *ngIf="mode !== 'first-question'" class="m-2" mat-raised-button (click)="cancel()">
+				{{ 'CANCEL' | translate }}
+			</button>
+			<button *ngIf="mode === 'first-question'" class="m-2" mat-raised-button (click)="decline()">
+				{{ 'CREDIT.DECLINE' | translate }}
+			</button>
 			<button
 				class="m-2"
-				[disabled]="!selectedCreditOption || !selectedPlayer"
+				[disabled]="!selectedCreditOption || (isAnimator && !selectedPlayer)"
 				mat-raised-button
 				color="accent"
 				(click)="saveUserCredit()">
-				{{ 'CONTRACT.SIGN' | translate }}
+				{{ (isAnimator ? 'CONTRACT.SIGN' : 'CONTRACT.ASK') | translate }}
 				<fa-icon [icon]="faFileSignature"></fa-icon>
 			</button>
 		</div>

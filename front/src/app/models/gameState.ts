@@ -1,4 +1,4 @@
-import { PlayerStatus } from '@geco/shared';
+import { CreditQuestionAnswer, PlayerStatus } from '@geco/shared';
 
 export class Card {
 	key = '';
@@ -34,6 +34,7 @@ export class PlayerState {
 	cards = [];
 	progressPrison = 0;
 	actionTokens = 1;
+	firstCreditAnswer: CreditQuestionAnswer | null = null;
 }
 
 export class ConnectionStatus {

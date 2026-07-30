@@ -168,6 +168,7 @@
         "DETAILS": "Der Spieler muss innerhalb von {{timer}} Minuten diesen Betrag haben, um den Kredit inklusive Zinsen zu begleichen",
         "WITH_PLAYER": "Mit dem Spieler",
         "SIGN": "Unterschreiben",
+        "ASK": "Anfragen",
         "DEFAULT_CREDIT_AMOUNT": "3 standardmäßig",
         "DEFAULT_INTEREST_AMOUNT": "1 standardmäßig",
         "CREDIT_SUCCESS": "Kredit an {{player}} genehmigt",

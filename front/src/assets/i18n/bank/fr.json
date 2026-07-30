@@ -31,6 +31,7 @@
 		"DETAILS": "Dans {{timer}} minutes, le joueur devra détenir ce montant pour rembourser ce crédit y compris l'intérêt",
 		"WITH_PLAYER": "Avec le joueur",
 		"SIGN": "Signer",
+		"ASK": "Demander",
 		"DEFAULT_CREDIT_AMOUNT": "3 par défaut",
 		"DEFAULT_INTEREST_AMOUNT": "1 par défaut",
 		"CREDIT_SUCCESS": "Crédit accordé à {{player}}",

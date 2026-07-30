@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { CREDIT_STATUS, GAME_STATUS, PLAYER_STATUS } from '@geco/shared';
+import { CREDIT_QUESTION_ANSWER, CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
 
 // ─── Mocks (must come BEFORE imports of the module under test) ───────────────
 
@@ -935,5 +935,134 @@ describe('BankStateService — pause / resume credit timers', () => {
         expect(credit.status).toBe(CREDIT_STATUS.RUNNING);
         expect(credit.remainingTime).toBe(120000);
         expect(creditTimerManager.startTimer).toHaveBeenCalledTimes(1);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('BankStateService — First Credit Question (docs/adr/0009)', () => {
+    const debtRules = (overrides = {}) => makeRules({ typeMoney: GAME_TYPE.DEBT, ...overrides });
+
+    const preRoundGameState = (overrides = {}) =>
+        makeGameState({ status: GAME_STATUS.INITIALIZED, currentMassMonetary: 0, ...overrides });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('stamps every current life PENDING and prompts each one', async () => {
+        const gameState = preRoundGameState();
+        setupWithQueue(gameState, debtRules());
+
+        const result = await BankStateService.askFirstCreditQuestion('game-001');
+
+        expect(result.asked).toBe(2);
+        expect(gameState.playersStates.map((p) => p.firstCreditAnswer)).toEqual([
+            CREDIT_QUESTION_ANSWER.PENDING,
+            CREDIT_QUESTION_ANSWER.PENDING,
+        ]);
+        expect(socket.emitTo).toHaveBeenCalledTimes(2);
+    });
+
+    it('refuses to ask once the round is running', async () => {
+        const gameState = makeGameState({ status: GAME_STATUS.PLAYING });
+        setupWithQueue(gameState, debtRules());
+
+        await expect(BankStateService.askFirstCreditQuestion('game-001')).rejects.toThrow(
+            'ERROR.GAME_NOT_INITIALIZED'
+        );
+        expect(gameState.playersStates[0].firstCreditAnswer).toBeUndefined();
+    });
+
+    it('never re-asks a life that already answered, and skips DEAD lives', async () => {
+        const gameState = preRoundGameState({
+            playersStates: [
+                { idx: 1, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [], firstCreditAnswer: CREDIT_QUESTION_ANSWER.DECLINE },
+                { idx: 2, status: PLAYER_STATUS.DEAD, coins: 0, cards: [] },
+                { idx: 3, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [] },
+            ],
+        });
+        setupWithQueue(gameState, debtRules());
+
+        const result = await BankStateService.askFirstCreditQuestion('game-001');
+
+        expect(result.playerStateIdxs).toEqual([3]);
+        expect(gameState.playersStates[0].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.DECLINE);
+        expect(gameState.playersStates[1].firstCreditAnswer).toBeUndefined();
+    });
+
+    it('books the credit at the base rate on accept-single', async () => {
+        const gameState = preRoundGameState();
+        gameState.playersStates[0].firstCreditAnswer = CREDIT_QUESTION_ANSWER.PENDING;
+        setupWithQueue(gameState, debtRules());
+
+        await BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE);
+
+        expect(gameState.credits).toHaveLength(1);
+        expect(gameState.credits[0]).toMatchObject({ amount: 3, interest: 1, status: CREDIT_STATUS.IDLE });
+        expect(gameState.playersStates[0].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE);
+    });
+
+    it('doubles both amount and interest on accept-double', async () => {
+        const gameState = preRoundGameState();
+        gameState.playersStates[0].firstCreditAnswer = CREDIT_QUESTION_ANSWER.PENDING;
+        setupWithQueue(gameState, debtRules());
+
+        await BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.ACCEPT_DOUBLE);
+
+        expect(gameState.credits[0]).toMatchObject({ amount: 6, interest: 2 });
+    });
+
+    it('creates no credit on decline', async () => {
+        const gameState = preRoundGameState();
+        gameState.playersStates[0].firstCreditAnswer = CREDIT_QUESTION_ANSWER.PENDING;
+        setupWithQueue(gameState, debtRules());
+
+        await BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.DECLINE);
+
+        expect(gameState.credits).toHaveLength(0);
+        expect(gameState.playersStates[0].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.DECLINE);
+    });
+
+    it('rejects a second answer, so a double tap cannot book two credits', async () => {
+        const gameState = preRoundGameState();
+        gameState.playersStates[0].firstCreditAnswer = CREDIT_QUESTION_ANSWER.PENDING;
+        setupWithQueue(gameState, debtRules());
+
+        await BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE);
+        await expect(
+            BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE)
+        ).rejects.toThrow('ERROR.FIRST_CREDIT_NOT_PENDING');
+
+        expect(gameState.credits).toHaveLength(1);
+    });
+
+    it('rejects an answer from a life that was never asked', async () => {
+        const gameState = preRoundGameState();
+        setupWithQueue(gameState, debtRules());
+
+        await expect(
+            BankStateService.answerFirstCreditQuestion('game-001', 1, CREDIT_QUESTION_ANSWER.ACCEPT_SINGLE)
+        ).rejects.toThrow('ERROR.FIRST_CREDIT_NOT_PENDING');
+    });
+
+    it('sweeps only pending lives to no-answer at launch, one event each', () => {
+        const gameState = preRoundGameState({
+            playersStates: [
+                { idx: 1, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [], firstCreditAnswer: CREDIT_QUESTION_ANSWER.PENDING },
+                { idx: 2, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [], firstCreditAnswer: CREDIT_QUESTION_ANSWER.DECLINE },
+                { idx: 3, status: PLAYER_STATUS.ALIVE, coins: 0, cards: [] },
+            ],
+        });
+        const entry = { gameState, rules: debtRules(), events: [] };
+
+        const swept = BankStateService.sweepUnansweredFirstCredit(entry);
+
+        expect(swept).toEqual([1]);
+        expect(gameState.playersStates[0].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.NO_ANSWER);
+        expect(gameState.playersStates[1].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.DECLINE);
+        expect(gameState.playersStates[2].firstCreditAnswer).toBeUndefined();
+        expect(entry.events).toHaveLength(1);
+        expect(entry.events[0].data).toEqual({ answer: CREDIT_QUESTION_ANSWER.NO_ANSWER });
     });
 });

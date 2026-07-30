@@ -186,7 +186,7 @@
 	}
 
 	.creditsLandscape {
-		justify-content: flex-end;
+		flex-direction: row-reverse !important;
 	}
 }
 
@@ -295,16 +295,6 @@
 	align-items: center;
 }
 
-.question-first-credit {
-	background: white;
-	width: 300px;
-	display: flex;
-	align-items: center;
-	border-radius: 20px;
-	padding: 10px;
-	justify-content: space-around;
-}
-
 .default-credit {
 	background: white;
 	width: 300px;
@@ -338,7 +328,9 @@
 
 // Auto-bank: self-service request buttons inside the open credit panel.
 .request-credit {
-	gap: 0.25rem;
-	padding: 0 0.5rem;
-	flex: 0 0 auto;
+    margin:5px 0;
+    button{
+        width:100px;
+        height:auto;
+    }
 }

@@ -297,6 +297,35 @@ export class GameStateService {
 			this.reincarnationSubject.next(event);
 		});
 
+		this.wsService.on(IO.CREDIT.NEW, (data: any) => {
+			this.applyBankIndicators(data.bankIndicators);
+			this.upsertCredit(data.credit);
+		});
+
+		this.wsService.on(IO.CREDIT.CANCELED, (data: any) => {
+			this.applyBankIndicators(data.bankIndicators);
+			this.upsertCredit(data.credit);
+		});
+
+		this.wsService.on(IO.CREDIT.FREE_MONEY, (data: any) => {
+			this.applyBankIndicators(data.bankIndicators);
+		});
+
+		this.wsService.on(IO.CREDIT.QUESTION_ANSWERED, (data: any) => {
+			const updated = this.playersStatesSubject
+				.getValue()
+				.map((p) =>
+					p.idx == data.playerStateIdx ? { ...p, firstCreditAnswer: data.firstCreditAnswer } : p
+				);
+			this.playersStatesSubject.next(updated);
+
+			if (data.currentMassMonetary !== undefined) {
+				const gs = this.gameStateSubject.getValue();
+				gs.currentMassMonetary = data.currentMassMonetary;
+				this.gameStateSubject.next(gs);
+			}
+		});
+
 		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
 			const s = this.sessionSubject.getValue();
 			if (s && data?.updatedAvatar) {
@@ -433,6 +462,15 @@ export class GameStateService {
 		});
 	}
 
+	private upsertCredit(credit: Credit | undefined): void {
+		if (!credit) return;
+		const credits = this.creditsSubject.getValue();
+		const known = credits.some((c) => c.id === credit.id);
+		this.creditsSubject.next(
+			known ? credits.map((c) => (c.id === credit.id ? credit : c)) : [...credits, credit]
+		);
+	}
+
 	private applyBankIndicators(bi: any): void {
 		if (!bi) return;
 		const gs = this.gameStateSubject.getValue();
@@ -460,6 +498,10 @@ export class GameStateService {
 		this.wsService.off(IO.GAME.DEATH_IS_COMING);
 		this.wsService.off(IO.PLAYER.DIED);
 		this.wsService.off(IO.PLAYER.REINCARNATED);
+		this.wsService.off(IO.CREDIT.QUESTION_ANSWERED);
+		this.wsService.off(IO.CREDIT.NEW);
+		this.wsService.off(IO.CREDIT.CANCELED);
+		this.wsService.off(IO.CREDIT.FREE_MONEY);
 		this.wsService.off(IO.CREDIT.EXTENDED);
 		this.wsService.off(IO.CREDIT.STARTED);
 		this.wsService.off(IO.CREDIT.PROGRESS);
@@ -668,9 +710,7 @@ export class GameStateService {
 						player: contrat.playerName,
 					})
 				);
-				const credits = this.creditsSubject.getValue();
-				credits.push(res.data.credit);
-				this.creditsSubject.next(credits);
+				this.upsertCredit(res.data.credit);
 				const gameState = this.gameStateSubject.getValue();
 				// The backend nests this under bankIndicators — reading it flat always left it undefined.
 				gameState.currentMassMonetary = res.data.bankIndicators?.currentMassMonetary;
@@ -682,9 +722,8 @@ export class GameStateService {
 	cancelCredit(credit: Credit) {
 		this.bankService.cancelCredit(this.gameStateId, credit.id).subscribe((res: any) => {
 			this.snackbarService.showSuccess(this.i18n.instant('CREDIT.CANCELED'));
-			const credits = this.creditsSubject.getValue();
-			const updatedCredits = credits.map((c) => (c.id === credit.id ? res.data.credit : c));
-			this.creditsSubject.next(updatedCredits);
+			this.applyBankIndicators(res.data?.bankIndicators);
+			this.upsertCredit(res.data?.credit);
 		});
 	}
 

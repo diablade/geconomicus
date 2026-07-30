@@ -213,6 +213,7 @@
         "RATE_INTEREST": "Tasa de interés",
         "WITH_PLAYER": "Con el jugador",
         "SIGN": "Firmar",
+        "ASK": "Solicitar",
         "DEFAULT_CREDIT_AMOUNT": "3 por defecto",
         "DEFAULT_INTEREST_AMOUNT": "1 por defecto",
         "CAN_CANCEL_CREDIT": "Cantidad a reembolsar",

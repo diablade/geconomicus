@@ -166,6 +166,7 @@
         "DETAILS": "{{timer}} minuta za plaćanje",
         "WITH_PLAYER": "Sa igračem",
         "SIGN": "Potpisati",
+        "ASK": "Zatraži",
         "DEFAULT_CREDIT_AMOUNT": "3 po defaultu",
         "DEFAULT_INTEREST_AMOUNT": "1 po defaultu",
         "CREDIT_SUCCESS": "Kredit dodeljen {{player}}",

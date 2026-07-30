@@ -60,6 +60,18 @@
 	justify-content: space-between;
 }
 
+.avatar-container {
+	position: relative;
+}
+
+.first-credit-check {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	z-index: 2;
+	filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
+}
+
 .players {
 	padding: 15px;
 	max-width: 1320px;

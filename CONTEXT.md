@@ -258,7 +258,9 @@ The animator's omniscient observer view (`table-board`) — the spreadsheet of t
 
 ## Master (Console)
 
-The lightweight animator overhead view (`master-board`) — avatars grid, connection dots, the round timer, birth/death. Deliberately minimal: it is fed only connection on/off, death/reincarnation, game lifecycle + timer, and game-deleted (to bounce back to the session lobby). It is **not** fed the economic detail (coins/cards/credits/decks) — that is the Table's job. *Avoid*: master board (when the concept, not the component, is meant).
+The lightweight animator overhead view (`master-board`) — avatars grid, connection dots, the round timer, birth/death. Deliberately minimal: it is fed only connection on/off, death/reincarnation, game lifecycle + timer, and game-deleted (to bounce back to the session lobby). It is **not** fed the per-player economic detail (coins/cards/credits/decks) — that is the Table's job.
+
+The one economic thing it does carry is the **money-mass aggregate**, because the pre-round [[first-credit-question]] step needs a live [[average-money]] reading to decide when to start. It rides its causing event exactly as it does everywhere else: every mutation that moves the mass (credit created, cancelled, free money, a first-credit answer, a death) carries the bank indicators to the `master` room, and the console replaces its copy. No per-player amounts, no credit list. *Avoid*: master board (when the concept, not the component, is meant).
 
 ## Bank — room vs actor
 

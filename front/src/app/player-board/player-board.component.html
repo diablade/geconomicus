@@ -27,26 +27,6 @@
 			</button>
 		</div>
 	</div>
-	<!-- Auto-bank: opening First Credit Question (blocking until answered) -->
-	<div class="blocked" *ngIf="firstCreditQuestion$ | async as fq">
-		<div class="question-first-credit d-flex flex-column align-items-center gap-2">
-			<div class="shadowed fs-3">{{ 'CREDIT.FIRST_Q_TITLE' | translate }}</div>
-			<button mat-raised-button color="accent" (click)="answerFirstCredit(ANSWER.ACCEPT_SINGLE)">
-				{{ 'CREDIT.BORROW' | translate }} · {{ fq.amount }}/{{ fq.interest }}
-			</button>
-			<button
-				*ngIf="fq.allowDouble"
-				mat-stroked-button
-				color="accent"
-				(click)="answerFirstCredit(ANSWER.ACCEPT_DOUBLE)">
-				{{ 'CREDIT.DOUBLE' | translate }} · {{ fq.amount * 2 }}/{{ fq.interest * 2 }}
-			</button>
-			<button mat-button (click)="answerFirstCredit(ANSWER.DECLINE)">
-				{{ 'CREDIT.DECLINE' | translate }}
-			</button>
-		</div>
-	</div>
-
 	<div
 		class="game"
 		[class.landscape]="isLandscape"
@@ -155,18 +135,9 @@
 				<div
 					*ngIf="panelCreditOpenState && vm.rules.autoBank && vm.playerStatus === ALIVE"
 					class="request-credit frame frame-light d-flex flex-column align-items-center justify-content-center">
-					<button mat-raised-button color="accent" (click)="requestCredit(vm.rate.amount, vm.rate.interest)">
+					<button mat-raised-button color="accent" (click)="requestCredit()">
 						<fa-icon [icon]="faFileSignature"></fa-icon>
-						{{ 'CREDIT.BORROW' | translate }} · {{ vm.rate.amount }}/{{ vm.rate.interest }}
-					</button>
-					<button
-						*ngIf="vm.rate.allowDouble"
-						mat-stroked-button
-						color="primary"
-						class="mt-1"
-						(click)="requestCredit(vm.rate.amount * 2, vm.rate.interest * 2)">
-						<fa-icon [icon]="faFileSignature"></fa-icon>
-						{{ 'CREDIT.DOUBLE' | translate }} · {{ vm.rate.amount * 2 }}/{{ vm.rate.interest * 2 }}
+						{{ 'CREDIT.BORROW' | translate }}
 					</button>
 				</div>
 				<app-credit

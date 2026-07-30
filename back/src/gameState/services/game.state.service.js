@@ -330,6 +330,10 @@ GameStateService.start = async (gameStateId) => {
 				? existingQueue
 				: _.shuffle(entry.gameState.playersStates.map((p) => p.avatarIdx));
 
+		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
+			BankStateService.sweepUnansweredFirstCredit(entry);
+		}
+
 		// Update game status to PLAYING
 		entry.gameState.status = GAME_STATUS.PLAYING;
 		// Initialize gameTimers
