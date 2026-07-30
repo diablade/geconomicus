@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of } from 'rxjs';
 import { Session } from '../../models/session';
 import { environment } from '../../../environments/environment';
 import { ERROR, ErrorService, REDIRECT_HOME } from '../error.service';
@@ -102,6 +102,12 @@ export class SessionService {
 		return this.http
 			.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.SESSION_NOT_FOUND')));
+	}
+
+	lookupByShortId(shortId: string): Observable<any | null> {
+		return this.http
+			.get<any>(environment.API_HOST + environment.SESSION.GET_BY_SHORT_ID + shortId)
+			.pipe(catchError(() => of(null)));
 	}
 
 	create(name: string, location: string, animator: string, theme: string): Observable<any> {

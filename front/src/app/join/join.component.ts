@@ -12,6 +12,7 @@ import { I18nService } from '../services/i18n.service';
 export class JoinComponent implements OnInit, OnDestroy {
 	sessionId = "";
 	name = "";
+	fromUnknownAvatar = false;
 	private subscription: Subscription | undefined;
 
 	constructor(private route: ActivatedRoute, private router: Router, private sessionService: SessionService, private i18n: I18nService) {
@@ -22,6 +23,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 		this.subscription = this.route.params.subscribe(params => {
 			this.sessionId = params['sessionId'];
 		});
+		this.fromUnknownAvatar = this.route.snapshot.queryParamMap.get('newAvatar') === '1';
 	}
 
 	//To prevent memory leak

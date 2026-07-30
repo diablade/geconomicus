@@ -98,11 +98,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 	joinShortId() {
 		const dialogRef = this.dialog.open(JoinShortDialogComponent, {});
-		dialogRef.afterClosed().subscribe((shortCode) => {
-			if (shortCode) {
-				this.sessionService.getByShortId(shortCode).subscribe((payload) => {
-					this.router.navigate(['/join', payload._id]);
-				});
+		dialogRef.afterClosed().subscribe((destination) => {
+			if (destination?.commands) {
+				this.router.navigate(destination.commands, { queryParams: destination.queryParams });
 			}
 		});
 	}

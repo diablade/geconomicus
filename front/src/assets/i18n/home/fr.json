@@ -39,8 +39,12 @@
 	},
 	"DIALOG_JOIN_SHORT_CODE": {
 		"PLACEHOLDER": "Entrez le code...",
-		"SHORT_ID_TITLE": "Pour rejoindre la session, entre le code à 4 chiffres",
-		"SHORT_ID_DESC": "Le code pin se trouve au centre du QR code de la session en cours",
-		"SEARCH": "Rechercher"
+		"SHORT_ID_TITLE": "Entre le code de la session, ou ton code complet",
+		"SHORT_ID_DESC": "4 chiffres pour rejoindre en nouveau joueur (ex : 0042). Ajoute ton numéro pour retrouver ton avatar (ex : 0042-7) — l'animateur peut te le donner.",
+		"SEARCH": "Rechercher",
+		"INVALID_FORMAT": "Format attendu : 4 chiffres, éventuellement suivis de - et de ton numéro. Ex : 0042 ou 0042-7",
+		"UNKNOWN_SESSION": "Aucune session ne correspond à ce code.",
+		"UNKNOWN_AVATAR": "Cette session ne contient aucun avatar portant ce numéro.",
+		"NEEDS_AVATAR_CODE": "Cette session a déjà démarré : il te faut ton code complet, avec ton numéro (ex : 0042-7)."
 	}
 }

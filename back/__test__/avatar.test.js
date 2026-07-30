@@ -177,6 +177,17 @@ describe('AVATAR controller', () => {
             expect(res.body.avatars).toHaveLength(0);
         });
 
+        test('still resolves by short id once started, so an Avatar Code keeps working', async () => {
+            const session = await agent.get('/session/' + startedSessionId).send();
+            expect(session.body.shortId).toBeTruthy();
+
+            const res = await agent.get('/session/short/' + session.body.shortId).send();
+            expect(res.status).toBe(200);
+            expect(res.body).toBeTruthy();
+            expect(res.body._id).toBe(startedSessionId);
+            expect(res.body.status).not.toBe('open');
+        });
+
         test('reports 404 for a session that does not exist', async () => {
             const res = await agent.post('/avatar/join').send({
                 sessionId: '6a6b389402c96d6b8e66c018',

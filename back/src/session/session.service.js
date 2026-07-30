@@ -56,7 +56,7 @@ SessionService.getById = async (id, tryPopulate = false) => {
 	return session;
 };
 SessionService.getByShortId = async (shortId) => {
-	return SessionModel.findOne({ shortId, status: SESSION_STATUS.OPEN }).exec();
+	return SessionModel.findOne({ shortId, status: { $ne: SESSION_STATUS.ENDED } }).exec();
 };
 
 SessionService.getAvatarsBySessionId = async (sessionId) => {

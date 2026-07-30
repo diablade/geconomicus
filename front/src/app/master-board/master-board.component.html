@@ -222,6 +222,13 @@
 											<mat-icon>qr_code_2</mat-icon>
 											<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
 										</button>
+										<button mat-menu-item (click)="copyAvatarCode(player)">
+											<mat-icon>pin</mat-icon>
+											<span
+												>{{ 'TABLE.AVATAR_CODE' | translate }} :
+												<b>{{ shortId }}-{{ player.avatarIdx }}</b></span
+											>
+										</button>
 									</mat-menu>
 								</div>
 							</div>

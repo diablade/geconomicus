@@ -7,6 +7,9 @@
 	<div class="mt-1 col-md-12 text-center">
 		<img class="guny halo" src="./assets/images/guny.png" alt="" />
 	</div>
+	<div class="newAvatarNotice mt-2" *ngIf="fromUnknownAvatar">
+		{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
+	</div>
 	<div>
 		<mat-form-field appearance="fill">
 			<mat-label>{{ 'JOIN.NAME_PROMPT' | translate }}</mat-label>

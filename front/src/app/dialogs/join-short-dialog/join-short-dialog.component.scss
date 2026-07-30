@@ -1,7 +1,17 @@
 .join-short {
 	max-height: 90vh;
+	max-width: 400px;
 	overflow: auto;
 }
 .inputShort {
 	width: 200px;
+}
+.codeError {
+	color: #c62828;
+	text-align: center;
+	max-width: 260px;
+	margin-bottom: 0.5rem;
+}
+.keyboard{
+    max-width: 400px;
 }

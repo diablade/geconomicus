@@ -19,6 +19,7 @@ import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog
 import { SeizureDialogComponent } from '../dialogs/seizure-dialog/seizure-dialog.component';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { AssistModeDialogComponent } from '../dialogs/assist-mode-dialog/assist-mode-dialog.component';
+import { formatAvatarCode } from '../services/avatarCode';
 
 type SortKey = 'coins' | 'cards' | 'name';
 type ViewMode = 'table' | 'boards';
@@ -435,6 +436,14 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	copyPlayerLink(row: TableRow): void {
 		navigator.clipboard.writeText(this.getPlayerStateUrl(row));
+		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
+	}
+
+	copyAvatarCode(shortId: string | undefined, row: TableRow): void {
+		if (!shortId) {
+			return;
+		}
+		navigator.clipboard.writeText(formatAvatarCode(shortId, row.avatarIdx));
 		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
 	}
 

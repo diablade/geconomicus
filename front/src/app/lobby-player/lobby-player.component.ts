@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
 import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { getBackgroundStyle } from '../services/avatarTools';
+import { formatAvatarCode } from '../services/avatarCode';
 import { AudioService } from '../services/audio.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
@@ -41,7 +42,14 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	});
 	skin = '#f2d3b1';
 	hairColor = '#ac6511';
+	avatarCode = '';
+	rejoinCountdown: number | null = null;
 	private subscription: Subscription | undefined;
+	private sessionSubscription: Subscription | undefined;
+	private resumeRequested = false;
+	private rejoinArmed = false;
+	private rejoinTarget: { gameStateId: string; playerStateIdx: number } | null = null;
+	private rejoinTicker: any = null;
 
 	constructor(
 		private avatarService: AvatarService,
@@ -67,9 +75,17 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 				this.allowEditFeedback = true;
 			}
 		});
+		this.resumeRequested = this.route.snapshot.queryParamMap.get('resume') === '1';
+		this.sessionSubscription = this.session$.subscribe((session: any) => {
+			if (session?.shortId) {
+				this.avatarCode = formatAvatarCode(session.shortId, this.avatarIdx);
+			}
+			this.tryArmRejoin(session);
+		});
 	}
 
 	joinGame(gameStateId: string) {
+		this.cancelRejoin();
 		this.avatarService
 			.getCurrentPlayerStateIdx(this.sessionId, gameStateId, this.avatarIdx)
 			.subscribe((data: any) => {
@@ -81,9 +97,66 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	isRejoinTarget(gameStateId: string): boolean {
+		return this.rejoinCountdown !== null && this.rejoinTarget?.gameStateId === gameStateId;
+	}
+
+	cancelRejoin(): void {
+		if (this.rejoinTicker) {
+			clearInterval(this.rejoinTicker);
+			this.rejoinTicker = null;
+		}
+		this.rejoinCountdown = null;
+	}
+
+	private tryArmRejoin(session: any): void {
+		if (!this.resumeRequested || this.rejoinArmed || !session?.gamesRules) {
+			return;
+		}
+		const joinable = session.gamesRules.filter(
+			(game: any) =>
+				game.gameStateId &&
+				game.gameStatus &&
+				game.gameStatus !== GAME_STATUS.NONE &&
+				game.gameStatus !== GAME_STATUS.STOPPED
+		);
+		if (joinable.length !== 1) {
+			return;
+		}
+		this.rejoinArmed = true;
+		const gameStateId = joinable[0].gameStateId;
+		this.avatarService.getCurrentPlayerStateIdx(this.sessionId, gameStateId, this.avatarIdx).subscribe({
+			next: (data: any) => {
+				if (data?.idx == undefined || data.idx === -1) {
+					return;
+				}
+				this.rejoinTarget = { gameStateId, playerStateIdx: data.idx };
+				this.rejoinCountdown = 5;
+				this.rejoinTicker = setInterval(() => this.tickRejoin(), 1000);
+			},
+		});
+	}
+
+	private tickRejoin(): void {
+		if (this.rejoinCountdown === null) {
+			return;
+		}
+		this.rejoinCountdown -= 1;
+		if (this.rejoinCountdown > 0) {
+			return;
+		}
+		const target = this.rejoinTarget;
+		this.cancelRejoin();
+		if (target) {
+			this.router.navigate(['player', this.sessionId, this.avatarIdx, target.gameStateId, target.playerStateIdx]);
+		}
+	}
+
 	//To prevent memory leak
 	ngOnDestroy(): void {
 		if (this.subscription) this.subscription.unsubscribe();
+		if (this.sessionSubscription) this.sessionSubscription.unsubscribe();
+		this.cancelRejoin();
 	}
 
 	refresh() {

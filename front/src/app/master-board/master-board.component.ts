@@ -10,6 +10,7 @@ import { InformationDialogComponent } from '../dialogs/information-dialog/inform
 import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
 import { I18nService } from '../services/i18n.service';
 import { WebSocketService } from '../services/web-socket.service';
+import { formatAvatarCode } from '../services/avatarCode';
 import { AudioService } from '../services/audio.service';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 
 	sessionId = '';
 	gameStateId = '';
+	shortId = '';
 
 	// Reactive state from service
 	masterConnection$ = this.gameStateService.masterConnection$;
@@ -105,6 +107,12 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 				})
 			);
 
+			this.subscription?.add(
+				this.session$.subscribe((session: any) => {
+					this.shortId = session?.shortId || '';
+				})
+			);
+
 			this.wsService.on(IO.GAME.STOPPED, () => {
 				this.snackbarService.showNotif(this.i18nService.instant('EVENTS.ROUND_END'));
 				this.dialog.open(InformationDialogComponent, {
@@ -165,6 +173,11 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	copyPlayerLink(playerState: any): void {
 		const url = this.getPlayerStateUrl(playerState);
 		navigator.clipboard.writeText(url);
+		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
+	}
+
+	copyAvatarCode(playerState: any): void {
+		navigator.clipboard.writeText(formatAvatarCode(this.shortId, playerState.avatarIdx));
 		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.COPY_SUCCESS'));
 	}
 

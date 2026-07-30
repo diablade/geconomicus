@@ -1,6 +1,7 @@
 {
     "AVATAR": {
         "NAME": "First Name or Nickname",
+        "YOUR_CODE": "Your code to come back:",
         "YOUR_AVATAR": "Your Avatar",
         "SYS_SCAN": "Buy with camera & QRCode",
         "EYES": "Eyes",

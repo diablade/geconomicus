@@ -4,6 +4,7 @@
 		"GUNY_INTRO": "Hey Bienvenue ! J'm'appelle Ğuny",
 		"GUNY_INTRO2": "et toi tu t'appelles comment ?",
 		"NAME_PROMPT": "Votre petit nom ?",
-		"GO_BUTTON": "Ğo !"
+		"GO_BUTTON": "Ğo !",
+		"UNKNOWN_AVATAR_NOTICE": "Aucun avatar ne portait le numéro que tu as tapé : tu vas en créer un nouveau, avec un numéro différent."
 	}
 }

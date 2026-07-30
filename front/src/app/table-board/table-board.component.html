@@ -624,6 +624,13 @@
 				<mat-icon>qr_code_2</mat-icon>
 				<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
 			</button>
+			<button mat-menu-item (click)="copyAvatarCode(vm.session.shortId, row)">
+				<mat-icon>pin</mat-icon>
+				<span>
+					{{ 'TABLE.AVATAR_CODE' | translate }} :
+					<b>{{ vm.session.shortId }}-{{ row.avatarIdx }}</b>
+				</span>
+			</button>
 			<button mat-menu-item (click)="refreshPlayer(row)">
 				<mat-icon>refresh</mat-icon>
 				<span>{{ 'TABLE.REFRESH_PLAYER' | translate }}</span>
