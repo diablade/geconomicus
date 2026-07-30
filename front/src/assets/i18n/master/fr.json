@@ -15,6 +15,7 @@
 		"PAUSE_GAME": "Mettre en pause",
 		"RESUME_GAME": "Reprendre",
 		"END_GAME": "Arrêter",
+        "AVATAR_CODE": "Code du joueur",
 		"JOIN": "Rejoins la session {{name}}",
 		"GUNY_WELCOME": "Hey ! Scanne mon QR code pour rejoindre la session.",
 		"SCAN_QR": "Ou sur {{webHost}}, puis clique sur 'Rejoindre' !",

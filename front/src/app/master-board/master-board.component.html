@@ -197,9 +197,9 @@
 										<mat-icon
 											*ngIf="player.firstCreditAnswer && player.firstCreditAnswer !== PENDING"
 											class="first-credit-check"
-											color="accent"
-											>check_circle</mat-icon
-										>
+											color="accent">
+											check_circle
+										</mat-icon>
 										<avatar
 											[avatar]="player.avatar"
 											[width]="'80px'"
@@ -233,10 +233,10 @@
 										</button>
 										<button mat-menu-item (click)="copyAvatarCode(player)">
 											<mat-icon>pin</mat-icon>
-											<span
-												>{{ 'TABLE.AVATAR_CODE' | translate }} :
-												<b>{{ shortId }}-{{ player.avatarIdx }}</b></span
-											>
+											<span>
+												{{ 'MASTER.AVATAR_CODE' | translate }} :
+												<b>{{ shortId }}-{{ player.avatarIdx }}</b>
+											</span>
 										</button>
 									</mat-menu>
 								</div>
