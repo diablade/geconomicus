@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "¿Cómo jugar?",
+		"PREV": "Anterior",
+		"NEXT": "Siguiente",
+		"FINISH": "Terminado",
+		"GO_TO": "Ir a la diapositiva {{n}}",
+		"CARDS": {
+			"TITLE": "Las cartas de recursos",
+			"DESC": "Cada carta representa un recurso: Alimentación (roja, 1), Conocimiento (amarilla, 2), Energía (verde, 4), Tecnología (azul, 8). Cada familia de cartas lleva una letra (A, B, C…). Tu riqueza = tus monedas + el valor de tus cartas."
+		},
+		"WEALTH": {
+			"TITLE": "El objetivo: enriquecerse",
+			"DESC": "Acumula el máximo de riqueza (monedas + valor de las cartas) antes del final de la partida. La clasificación premia al jugador más rico, al que tiene más monedas, más recursos y al más activo."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Las transacciones",
+			"DESC": "Cualquier jugador puede vender una carta dándole la vuelta (código QR o código corto). El comprador escanea o introduce el código para comprar al precio del recurso. Así circula la riqueza entre jugadores."
+		},
+		"PRODUCTION": {
+			"TITLE": "La producción",
+			"DESC": "Reúne 4 cartas de la misma letra Y del mismo nivel → pulsa Producir → recibes 1 carta del nivel superior + 4 cartas nuevas. Alimentación×4 → 1 Conocimiento. Cada producción también te da +1 ficha de acción."
+		},
+		"ACTIONS": {
+			"TITLE": "Las acciones",
+			"DESC": "Gasta tus fichas de acción para interactuar con los demás jugadores: buscar quién tiene una carta, dar una, robar una, desencadenar un conflicto… Empiezas con 1 ficha y ganas más con cada producción."
+		},
+		"JUNE": {
+			"TITLE": "Modo Moneda Libre (JUNE)",
+			"DESC": "Cada minuto se distribuye equitativamente una cantidad de moneda (el Dividendo Universal) entre todos los jugadores vivos. Los precios de las cartas se ajustan con el DU. Sin banco, sin deuda: la moneda se crea y se comparte automáticamente."
+		},
+		"DEBT": {
+			"TITLE": "Modo Moneda Deuda",
+			"DESC": "Empiezas con 0 monedas. Debes pedir prestado al banco para jugar. En cada crédito: recibes monedas y debes devolver el capital + los intereses dentro del plazo."
+		},
+		"REPAYMENT": {
+			"TITLE": "Devolver o prolongar",
+			"DESC": "Al vencimiento: devuelve todo (crédito saldado) o paga solo los intereses para prolongar el plazo (sigues debiendo el capital). Si no puedes pagar → embargo."
+		},
+		"SEIZURE": {
+			"TITLE": "Embargo y prisión",
+			"DESC": "En caso de impago, el banco embarga tus cartas (con un descuento del 33 %) y tus monedas para recuperar la deuda. Si no basta, vas a prisión unos minutos: excluido del juego hasta el final de la condena."
+		}
+	}
+}

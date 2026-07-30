@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Modulo distribuzione",
+			"SUB_TITLE": "Comprendere la disuguaglianza valutaria con l'indice di Gini",
+			"SUMMARY": "Questo modulo consente di visualizzare la distribuzione di una valuta tra i suoi membri, utilizzando l'indice di Gini.",
+			"SUMMARY2": "L'indice di Gini misura le disuguaglianze di distribuzione (spesso di redditi o ricchezze) all'interno di una popolazione.",
+			"SUMMARY3": "L'importo totale viene ripartito in modo diverso in base al parametro P. 💸",
+			"SUMMARY4": "Un P basso significa una distribuzione più equa. 🤝",
+			"SUMMARY5": "Un P elevato crea più differenze tra le persone. 📊",
+			"DESCRIPTION": "Questo grafico permette di visualizzare la distribuzione della ricchezza in base a diversi tipi di monete: euro, dollaro, bitcoin o moneta libera. Ogni sistema monetario comporta dinamiche diverse: alcuni favoriscono la concentrazione della ricchezza, altri una distribuzione più equa. Giocando con i cursori, è possibile modificare la distribuzione monetaria. È quindi possibile osservare come queste scelte influenzino l'indice di Gini, un semplice indicatore che misura la disuguaglianza.",
+			"SUMMARY7": "L'indice di Gini misura le disuguaglianze di distribuzione (spesso di redditi o ricchezze) all'interno di una popolazione.",
+			"SUMMARY8": "- 0 = uguaglianza perfetta (tutti hanno la stessa cosa)",
+			"SUMMARY9": "- 1 = disuguaglianza totale (una sola persona ha tutto)",
+			"SUMMARY10": "☝️ Nella moneta libera, l'indice di Gini tende permanentemente verso 0.",
+			"TOTAL": "Importo totale",
+			"NUM_PLAYERS": "Numero di persone",
+			"RESULTS": "Risultati della distribuzione",
+			"PARAM_P": "Parametro P (disuguaglianza)",
+			"PERSON": "Persona",
+			"AMOUNT": "Importo",
+			"GINI": "Indice di Gini",
+			"RATIO": "Rapporto alto/basso",
+			"SIMULATION": "Simulazione",
+			"PERCENTAGE": "% del totale",
+			"GRAPHIC": "Grafico",
+			"CURVE": "Curva",
+			"CAMBER": "Grafico a torta"
+		}
+	}
+}

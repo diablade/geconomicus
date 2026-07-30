@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Pagina de start",
+		"CONTRIBUTION": "Donacii",
+		"WELCOME": "Descoperă moneda liberă prin joc!",
+		"INSTALL": "Instalează aplicația",
+		"CREATE_SESSION": "Creează o sesiune",
+		"JOIN_SESSION": "Alătură-te unei sesiuni",
+		"JOIN_VIA_SHORT_ID": "Prin codul scurt",
+		"JOIN_VIA_QR_CODE": "Prin codul QR",
+		"HOW_TO_PLAY": "Cum funcționează?",
+		"FUND_RAISE": "O donație pentru a mă susține, ",
+		"IN": "în",
+		"OR_IN": " sau în",
+		"SAY_HI": "Ai nevoie de ajutor, ai o idee, ai găsit o eroare sau vrei doar să spui bună?",
+		"LINK_SAY_HI": "aici",
+		"LOOKING_FOR_PAPER_GAME": "Cauți jocul original pe hârtie?",
+		"CLOSE": "Închide",
+		"YES": "Da",
+		"NO": "Nu",
+		"CANCEL": "Anulează",
+		"CONTINUE_SESSION": "Reia sesiunea ta",
+		"ACTIVE_SESSION": "Ai o sesiune activă:",
+		"DISMISS": "Închide",
+		"RESUME": "Continuă"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Creează o sesiune",
+		"NAME": "Denumește sesiunea",
+		"ANIMATOR": "Numele animatorului",
+		"LOCATION": "Loc",
+		"THEME": "Temă",
+		"BTN1": "Creează",
+		"BTN2": "Anulează"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "În Safari, deschide meniul de partajare cu butonul",
+		"MESSAGE2": "apoi alege \"Adaugă la ecranul principal\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Introdu codul...",
+		"SHORT_ID_TITLE": "Introdu codul sesiunii sau codul tău complet",
+		"SHORT_ID_DESC": "4 cifre ca să te alături ca jucător nou (ex.: 0042). Adaugă numărul tău ca să îți regăsești avatarul (ex.: 0042-7) — animatorul ți-l poate da.",
+		"SEARCH": "Caută",
+		"INVALID_FORMAT": "Format așteptat: 4 cifre, eventual urmate de - și numărul tău. Ex.: 0042 sau 0042-7",
+		"UNKNOWN_SESSION": "Nicio sesiune nu corespunde acestui cod.",
+		"UNKNOWN_AVATAR": "Această sesiune nu conține niciun avatar cu acest număr.",
+		"NEEDS_AVATAR_CODE": "Această sesiune a început deja: ai nevoie de codul tău complet, cu numărul tău (ex.: 0042-7)."
+	}
+}

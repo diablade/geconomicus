@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Modul de distribuție",
+			"SUB_TITLE": "Înțelegerea inegalității valutare cu ajutorul coeficientului Gini",
+			"SUMMARY": "Acest modul vă permite să vizualizați distribuția unei monede între membrii săi folosind coeficientul Gini.",
+			"SUMMARY2": "Indicele de Gini măsoară inegalitățile de distribuție (de obicei de venituri sau bogății) într-o populație.",
+			"SUMMARY3": "Cuantumul total este distribuit diferit în funcție de parametrul P. 💸",
+			"SUMMARY4": "Un P redus înseamnă o distribuție mai egală. 🤝",
+			"SUMMARY5": "Un P ridicat creează mai multe diferențe între persoane. 📊",
+			"DESCRIPTION": "Acest grafic vă permite să vizualizați distribuția bogăției în funcție de diferite tipuri de monede: euro, dolar, bitcoin sau monedă liberă. Fiecare sistem monetar duce la dinamici diferite: unele favorizează concentrarea bogăției, altele o distribuție mai echitabilă. Jucându-vă cu cursoarele, modificați distribuția monetară. Astfel, puteți observa cum aceste alegeri influențează coeficientul Gini, un indicator simplu care măsoară inegalitatea.",
+			"SUMMARY7": "Indicele de Gini măsoară inegalitățile de distribuție (de obicei de venituri sau bogății) într-o populație.",
+			"SUMMARY8": "- 0 = egalitate perfectă (toată lumea are același lucru)",
+			"SUMMARY9": "- 1 = inegalitate totală (o singură persoană are totul)",
+			"SUMMARY10": "☝️ În moneda liberă, indicele Gini tende permanent către 0.",
+			"TOTAL": "Cuantum total",
+			"NUM_PLAYERS": "Numărul de persoane",
+			"RESULTS": "Rezultatele distribuției",
+			"PARAM_P": "Parametrul P (inegalitate)",
+			"PERSON": "Persoană",
+			"AMOUNT": "Cuantum",
+			"GINI": "Indicele de Gini",
+			"RATIO": "Raportul superior/inferior",
+			"SIMULATION": "Simulare",
+			"PERCENTAGE": "% din total",
+			"GRAPHIC": "Grafic",
+			"CURVE": "Curba",
+			"CAMBER": "Camembert"
+		}
+	}
+}

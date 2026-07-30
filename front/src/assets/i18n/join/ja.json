@@ -1,0 +1,10 @@
+{
+	"JOIN": {
+		"TITLE": "ゲームに参加！",
+		"GUNY_INTRO": "こんにちは！私はĞunyです。",
+		"GUNY_INTRO2": "あなたのお名前は？",
+		"NAME_PROMPT": "あなたのニックネームは？",
+		"GO_BUTTON": "Ğo！",
+		"UNKNOWN_AVATAR_NOTICE": "入力された番号のアバターはありません。別の番号で新しいアバターを作成します。"
+	}
+}

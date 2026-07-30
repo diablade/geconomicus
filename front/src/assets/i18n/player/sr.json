@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "Dobio si {{cardsLength}} karata 🎴 i {{coins}}{{currency}} 👛. Srećno!",
+		"INIT_DEBT": "Dobio si {{cardsLength}} karata 🎴 i {{coins}}{{currency}} 👛. Idi kod bankara da dobiješ novac. Srećno!",
+		"GO_TO_BANK": "🚨 IDITE U BANKU!!! 🚨",
+		"THIS_LIFE_IS_GONE": "Ovaj život je prošao 🪦",
+		"GO_TO_SECOND_LIFE": "Idite u svoj drugi život!",
+		"WAITING": "Čekanje...",
+		"GAME_OVER": "Igra završena...",
+		"GAME_PAUSED": "Igra pauzirana",
+		"ANSWER_SURVEY": "Odgovori na anketu",
+		"DEBT": "Dugovi",
+		"BUY": "KUPI",
+		"CREDITS": "KREDITI",
+		"OBJECTIVES": "Ciljevi",
+		"TAKEN_OVER_TITLE": "Animator upravlja tvojom tablom",
+		"TAKEN_OVER_TEXT": "Trenutno neko igra umesto tebe. Preuzmi kontrolu kad god poželiš.",
+		"RETAKE": "Preuzmi kontrolu",
+		"NOT_ALIVE": "Više nisi živ",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "Igra nije u toku, ili više nisi živ",
+		"GAME_NOT_PLAYING": "Igra nije u toku",
+		"INSUFFICIENT_FUNDS": "Nedovoljno sredstava",
+		"INSUFFICIENT_CARDS": "Nema dovoljno identičnih karata za proizvodnju",
+		"SETTLE_FAILED": "Otplata kredita nije uspela",
+		"EXTEND_FAILED": "Produženje kredita nije uspelo",
+		"INVALID_STATE": "Tabla nije učitana, osveži stranicu",
+		"INVALID_IDS": "Igra nije pronađena, osveži stranicu"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "Kredit je dospeo!",
+			"MESSAGE": "Naplatili smo kamatu od {{interest}} i produžili tvoj kredit za još 5 minuta"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Otplatiti ili produžiti kredit?",
+			"MESSAGE": "Možeš otplatiti ceo kredit plaćanjem {{amount}} odmah",
+			"MESSAGE2": "ili ga produžiti za još 5 min plaćanjem kamate od {{interest}}",
+			"BTN_SETTLE": "Otplati",
+			"BTN_EXTEND": "Produži"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Otplatiti kredit?",
+			"MESSAGE": "Potvrđuješ otplatu svog kredita, plaćanjem {{amount}} €?",
+			"BTN_CONFIRM": "Otplati u celosti"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Otplatiti kredit?",
+			"MESSAGE": "!!! KREDIT JE U DOCNJI !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Potvrdi zahtev za kredit",
+			"MESSAGE": "Za isplatu od {{amount}} € i {{interest}} € kamate",
+			"MESSAGE2": "Za ukupno {{total}} € za otplatu? (odnosno {{rate}}% kamatne stope)",
+			"BTN_CONFIRM": "Zatraži"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Zaplena izvršena",
+			"MESSAGE": "-{{coins}} 💰 i {{cardsCount}} karata zaplenjeno (-{{cardsValue}} 💰)",
+			"PRISON": "Nije ti ostalo ništa za zaplenu: pravac zatvor na {{minutes}} minut(a)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "jednostruko",
+		"DOUBLE": "dvostruko",
+		"IDLE": "Na čekanju...",
+		"PAUSED": "Igra pauzirana...",
+		"RUNNING": "U toku...",
+		"REQUEST": "Zahtev...",
+		"DEFAULT": "Docnja u plaćanju",
+		"DONE": "Završeno",
+		"NEW": "Kredit dobijen (+{{amount}}💰)",
+		"FREE_MONEY": "Primljen besplatan novac (+{{amount}}💰)",
+		"ANSWER": "Odgovori",
+		"SETTLE": "Otplati",
+		"DEBT": "Dug",
+		"INTEREST": "Kamatna stopa",
+		"CANCEL_SUCCESS": "Kredit otkazan, {{amount}} € vraćeno",
+		"CANCELED": "Kredit otkazan",
+		"NOTICE_INTEREST": "Kamatna stopa, plaćanje za produženje od {{ interestMinutes }} minuta",
+		"DONE_AT": "Zatvoreno",
+		"EXTENDED": "Produženo",
+		"CREDIT_SETTLED": "Kredit rambursen",
+		"BORROW": "Uzmi kredit",
+		"REFUSED_NEGOTIATE": "Kredit odbijen — pregovaraj sa animatorom",
+		"RATE_CHANGED": "Nova stopa: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Želiš li da uzmeš prvi kredit?",
+		"DECLINE": "Ne, hvala",
+		"HALFWAY_NUDGE": "Kredit na pola puta - preostalo {{remaining}}",
+		"FINAL_MINUTE": "Manje od minuta! Otplati svoj kredit, brzo!",
+		"FAULT_OVERLAY_TITLE": "Kredit u docnji",
+		"FAULT_OVERLAY_TEXT": "Nisi otplatio na vreme. Idi kod animatora zbog zaplene.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Nisi otplatio na vreme. Zaplena u toku..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Izgradi",
+		"REVEAL_TITLE": "Izgrađeno!",
+		"REVEAL_HINT": "{{count}} karata Niv. {{level}} ponovo izvučeno... +1 žeton (⚡)"
+	}
+}

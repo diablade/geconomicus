@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "How to play?",
+		"PREV": "Previous",
+		"NEXT": "Next",
+		"FINISH": "Done",
+		"GO_TO": "Go to slide {{n}}",
+		"CARDS": {
+			"TITLE": "Resource cards",
+			"DESC": "Each card represents a resource: Food (red, 1), Knowledge (yellow, 2), Energy (green, 4), Technology (blue, 8). Each card family has a letter (A, B, C…). Your wealth = your coins + the value of your cards."
+		},
+		"WEALTH": {
+			"TITLE": "The goal: get richer",
+			"DESC": "Accumulate as much wealth (coins + card values) as possible before the game ends. Rankings reward the richest player, the one with the most coins, the most resources, and the most active trader."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Transactions",
+			"DESC": "Any player can sell a card by flipping it (shows a QR code or short code). The buyer scans or types the code to purchase at the resource price. This is how wealth circulates between players."
+		},
+		"PRODUCTION": {
+			"TITLE": "Production",
+			"DESC": "Collect 4 cards with the same letter AND same level → press Produce → you get 1 card of the next level + 4 fresh cards. Food×4 → 1 Knowledge. Each production also gives you +1 action token."
+		},
+		"ACTIONS": {
+			"TITLE": "Actions",
+			"DESC": "Spend your action tokens to interact with other players: find who has a card, give one away, steal one, trigger a conflict… You start with 1 token and earn more with each production."
+		},
+		"JUNE": {
+			"TITLE": "Free Money mode (JUNE)",
+			"DESC": "Every minute, an amount of money (the Universal Dividend) is distributed equally to all living players. Card prices adjust with the DU. No bank, no debt — money is created and shared automatically."
+		},
+		"DEBT": {
+			"TITLE": "Debt Money mode",
+			"DESC": "You start with 0 coins. You must borrow from the bank to play. Each credit: you receive coins, you must repay the principal + interest within the allotted time."
+		},
+		"REPAYMENT": {
+			"TITLE": "Repay or extend",
+			"DESC": "At maturity: repay everything (credit settled), or pay only the interest to extend the duration (you still owe the principal). If you cannot pay → seizure."
+		},
+		"SEIZURE": {
+			"TITLE": "Seizure and prison",
+			"DESC": "If you default, the bank seizes your cards (at a 33% discount) and your coins to recover the debt. If that's not enough, you go to prison for a few minutes — excluded from the game until your sentence ends."
+		}
+	}
+}

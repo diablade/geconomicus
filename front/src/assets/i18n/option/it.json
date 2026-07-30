@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "Opzioni generali",
+		"TITLE_ADV": "Opzioni avanzate",
+		"TITLE_DU": "Opzioni moneta libera",
+		"TITLE_DEBT": "Opzioni moneta debito",
+		"TITLE_CARDS": "Opzioni carte",
+		"SURVEY_Q": "Sondaggio di feedback a fine gioco",
+		"WARNING": "⚠️ Attenzione ⚠️, modifica solo se sei sicuro di quello che stai facendo!!!!\nSennò clicca su <span class=\"red\"> \"valore predefinito\"</span> in caso di errore!",
+		"DURATION": "Durata del turno in minuti",
+		"DEATH": "Morte automatica",
+		"PRICE_NET": "Prezzo netto:",
+		"PRICE_DU": "Prezzo in DU:",
+		"SAVE_INTERVAL": "Salvataggio ogni (secondi)",
+		"DU_INTERVAL": "Dividendo universale ogni (secondi)",
+		"DEATH_MINUTES": "La morte avviene ogni {{deathMinute}} minuti",
+		"DEATH_MINUTES_FORMULA": "(durata del turno/numero di giocatori)",
+		"DU_RATES": "Tasso di crescita del Dividendo Universale",
+		"START_MONEY_AMOUNT": "Capitale iniziale (classe media)",
+		"START_MONEY_INEQUALITY": "Inizio disuguale in moneta libera",
+		"RICH": "% di ricchi (iniziano con un doppio capitale)",
+		"MIDDLE": "% classe media (moneta di partenza)",
+		"POOR": "% di poveri (iniziano con il capitale a metà)",
+		"DEFAULT_CREDIT": "Credito predefinito:",
+		"DEFAULT_INTEREST": "Interesse predefinito:",
+		"INTEREST_FREQ": "Scadenza del pagamento degli interessi (in minuti):",
+		"AUTO_BANK": "Banca automatica",
+		"AUTO_BANK_INFO": "La banca fissa il tasso del credito in base alla scarsità della moneta; i giocatori prendono in prestito quando vogliono.",
+		"AUTO_SEIZURE": "Pignoramento automatico",
+		"AUTO_SEIZURE_INFO": "In caso di insolvenza, la banca pignora automaticamente le monete e poi le carte (le più care per prime), senza aspettare l'animatore.",
+		"BANK_PROFILE": "Profilo di banca",
+		"PROFILE_NORMAL": "Normale",
+		"PROFILE_AGGRESSIVE": "Aggressivo",
+		"PROFILE_CUSTOM": "Personalizzato",
+		"TIER_THRESHOLD": "Sotto (€/giocatore)",
+		"TIER_AMOUNT": "Importo",
+		"TIER_INTEREST": "Interesse",
+		"TIER_ADD": "aggiungere una fascia",
+		"TIER_HELP": "Sotto la media indicata, il credito passa alla fascia; vince la fascia più bassa superata. Tasso di base = credito/interesse predefinito qui sopra.",
+		"BANKROUTE_WTD": "In caso di inadempimento del pagamento, sequestrare:",
+		"SEIZURE_FIX1": "in valore carta, 1 per 1",
+		"SEIZURE_FIX2": "+ spese fisse (equivalente carte basse):",
+		"SEIZURE_DECOTE": "in valore carta con sconto di:",
+		"IF_PRISON": "Se il prestito non viene recuperato, massima prigione",
+		"PRISON_TIMER": "Durata massima dell'imprigionamento(in minuti):",
+		"GEN_LETTERS": "Numero di lettere utilizzate nel gioco",
+		"GEN_LETTERS_AUTO": "auto (numero giocatori + 1)",
+		"GEN_LETTERS_MANU": "manuale",
+		"GEN_LETTERS_IDENTICAL": "Numero di carte identiche generate",
+		"PLAYERS_3TO5": "(da 3 a 5 giocatori)",
+		"PLAYERS_6TO15": "(da 6 a 15 giocatori)",
+		"PLAYERS_16+": "(16 giocatori e più di 16)",
+		"PLAYERS_6+": "(6 giocatori et più di 6)",
+		"START_DISTRIB_CARDS": "Numero di carte distribuite ai giocatori all'inizio del gioco",
+		"BUILD_AMOUNT": "Numero di carte identiche necessarie per costruire una carta superiore:",
+		"ACTIONS_TITLE": "Azioni",
+		"STARTING_TOKENS": "Gettoni iniziali",
+		"COST": "Costo"
+	},
+	"CARD": {
+		"LV1": "Alimentazione",
+		"LV2": "Conoscenza",
+		"LV3": "Energia",
+		"LV4": "Tecnologia"
+	},
+	"ACTION": {
+		"TITLE": "Azioni",
+		"CONFIRM": "Convalida",
+		"PICK_TARGET": "Scegliere un giocatore",
+		"PICK_TARGET2": "Scegliere un secondo giocatore",
+		"PICK_CARD": "Scegliere una carta",
+		"PICK_ONG_CARDS": "Scegliere 4 carte da dare",
+		"CONFIRMING": "In corso...",
+		"NO_CARDS": "Nessuna carta disponibile",
+		"ONG_SELECT_HINT": "{{selected}}/4 carte selezionate",
+		"ONG_AUTO_TARGET": "Dare ai 2 giocatori più poveri",
+		"RECEIVED_GIVE": "{{fromName}} ti ha dato una carta!",
+		"RECEIVED_ONG": "{{fromName}} ti ha donato {{count}} carta/e (azione ONG)!",
+		"ROBBED_STEAL": "Qualcuno ti ha rubato una carta!",
+		"ROBBED_WAR": "Sei stato attaccato! Ti sono state prese 2 carte.",
+		"SHOP_HINT": "Produci un quadrato per guadagnare punti!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Chi ha questa famiglia?",
+			"DESC": "Scopri chi possiede una carta della famiglia che ti manca. Costa 1 gettone.",
+			"PICK": "Scegliere una famiglia da localizzare",
+			"HINT": "Seleziona una carta — saprai chi possiede una carta della stessa famiglia.",
+			"SEARCH": "Cercare",
+			"RESULT_PLAYER": "{{name}} possiede una carta di questa famiglia.",
+			"RESULT_DECK": "Una carta di questa famiglia è nel mazzo.",
+			"RESULT_UNKNOWN": "Per ora nessuno possiede una carta di questa famiglia."
+		},
+		"GIVE": {
+			"LABEL": "Dare una carta",
+			"DESC": "Regala una delle tue carte a un giocatore a tua scelta."
+		},
+		"STEAL": {
+			"LABEL": "Rubare una carta",
+			"DESC": "Prendi una carta a un altro giocatore. Verrà avvisato."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Furto silenzioso",
+			"DESC": "Prendi una carta senza che l'altro giocatore venga avvisato."
+		},
+		"WAR": {
+			"LABEL": "Guerra",
+			"DESC": "Ruba 2 carte a caso a ciascuno di 2 giocatori."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Dai 4 delle tue carte ai 2 giocatori più poveri (2 ciascuno)."
+		}
+	}
+}

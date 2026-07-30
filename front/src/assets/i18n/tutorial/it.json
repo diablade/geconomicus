@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Come si gioca?",
+		"PREV": "Indietro",
+		"NEXT": "Avanti",
+		"FINISH": "Fatto",
+		"GO_TO": "Vai alla diapositiva {{n}}",
+		"CARDS": {
+			"TITLE": "Le carte risorsa",
+			"DESC": "Ogni carta rappresenta una risorsa: Alimentazione (rossa, 1), Sapere (gialla, 2), Energia (verde, 4), Tecnologia (blu, 8). Ogni famiglia di carte porta una lettera (A, B, C…). La tua ricchezza = le tue monete + il valore delle tue carte."
+		},
+		"WEALTH": {
+			"TITLE": "L'obiettivo: arricchirsi",
+			"DESC": "Accumula più ricchezza possibile (monete + valore delle carte) prima della fine della partita. La classifica premia il giocatore più ricco, quello con più monete, con più risorse e il più attivo."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Le transazioni",
+			"DESC": "Ogni giocatore può vendere una carta girandola (codice QR o codice breve). L'acquirente scansiona o digita il codice per comprare al prezzo della risorsa. È così che la ricchezza circola tra i giocatori."
+		},
+		"PRODUCTION": {
+			"TITLE": "La produzione",
+			"DESC": "Riunisci 4 carte con la stessa lettera E lo stesso livello → premi Produrre → ricevi 1 carta di livello superiore + 4 nuove carte. Alimentazione×4 → 1 Sapere. Ogni produzione ti dà anche +1 gettone azione."
+		},
+		"ACTIONS": {
+			"TITLE": "Le azioni",
+			"DESC": "Spendi i tuoi gettoni azione per interagire con gli altri giocatori: cercare chi ha una carta, darne una, rubarne una, scatenare un conflitto… Inizi con 1 gettone e ne guadagni a ogni produzione."
+		},
+		"JUNE": {
+			"TITLE": "Modalità Moneta Libera (JUNE)",
+			"DESC": "Ogni minuto una quantità di moneta (il Dividendo Universale) viene distribuita equamente a tutti i giocatori vivi. I prezzi delle carte si adeguano al DU. Nessuna banca, nessun debito: la moneta viene creata e condivisa automaticamente."
+		},
+		"DEBT": {
+			"TITLE": "Modalità Moneta Debito",
+			"DESC": "Inizi con 0 monete. Devi prendere in prestito dalla banca per giocare. Per ogni credito: ricevi monete e devi rimborsare capitale + interessi entro il termine previsto."
+		},
+		"REPAYMENT": {
+			"TITLE": "Rimborsare o prolungare",
+			"DESC": "Alla scadenza: rimborsa tutto (credito estinto) oppure paga solo gli interessi per prolungare la durata (devi ancora il capitale). Se non puoi pagare → pignoramento."
+		},
+		"SEIZURE": {
+			"TITLE": "Pignoramento e prigione",
+			"DESC": "In caso di insolvenza, la banca pignora le tue carte (con uno sconto del 33%) e le tue monete per recuperare il debito. Se non basta, vai in prigione per qualche minuto — escluso dal gioco fino alla fine della pena."
+		}
+	}
+}

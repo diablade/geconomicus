@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Modul raspodele",
+			"SUB_TITLE": "Razumevanje nejednakosti valuta pomoću Džinijevog koeficijenta",
+			"SUMMARY": "Ovaj modul vam omogućava da vizualizujete raspodelu valute među njenim članicama koristeći Džinijev koeficijent.",
+			"SUMMARY2": "Indeks Gini meri nejednakosti distribucije (često prihoda ili bogatstva) u populaciji.",
+			"SUMMARY3": "Ukupan iznos se raspoređuje različito u zavisnosti od parametra P. 💸",
+			"SUMMARY4": "Nizak P znači raspodelu koja je više jednaka. 🤝",
+			"SUMMARY5": "Visok P stvara više razlika između ljudi. 📊",
+			"DESCRIPTION": "Ovaj grafikon vam omogućava da vizualizujete raspodelu bogatstva prema različitim vrstama valuta: evro, dolar, bitkoin ili slobodna valuta. Svaki monetarni sistem vodi ka drugačijoj dinamici: neki favorizuju koncentraciju bogatstva, drugi pravedniju raspodelu. Igranjem sa klizačima menjate monetarnu raspodelu. Tako možete posmatrati kako ovi izbori utiču na Džinijev koeficijent, jednostavan indikator koji meri nejednakost.",
+			"SUMMARY7": "Indeks Gini meri nejednakosti distribucije (često prihoda ili bogatstva) u populaciji.",
+			"SUMMARY8": "- 0 = savršena jednakost (svi imaju isto)",
+			"SUMMARY9": "- 1 = potpuna nejednakost (samo jedna osoba ima sve)",
+			"SUMMARY10": "☝️ U slobodnoj valuti, indeks Gini tende prema 0.",
+			"TOTAL": "Ukupan iznos",
+			"NUM_PLAYERS": "Broj osoba",
+			"RESULTS": "Rezultati raspodele",
+			"PARAM_P": "Parametar P (nejednakost)",
+			"PERSON": "Osoba",
+			"AMOUNT": "Iznos",
+			"GINI": "Indeks Gini",
+			"RATIO": "Odnos Gornji/Doljni",
+			"SIMULATION": "Simulacija",
+			"PERCENTAGE": "% od ukupnog",
+			"GRAPHIC": "Grafik",
+			"CURVE": "Kriva",
+			"CAMBER": "Kamber"
+		}
+	}
+}

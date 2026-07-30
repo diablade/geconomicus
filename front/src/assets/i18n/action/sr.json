@@ -1,0 +1,49 @@
+{
+	"ACTION": {
+		"TITLE": "Akcije",
+		"PICK_TARGET": "Izaberi igrača",
+		"PICK_TARGET2": "Izaberi drugog igrača",
+		"PICK_CARD": "Izaberi kartu",
+		"PICK_ONG_CARDS": "Izaberi 4 karte za poklon",
+		"CONFIRMING": "U toku...",
+		"CONFIRM": "Potvrdi",
+		"NO_CARDS": "Nema dostupnih karata",
+		"ONG_SELECT_HINT": "{{selected}}/4 izabranih karata",
+		"ONG_AUTO_TARGET": "Daj dvojici najsiromašnijih igrača",
+		"RECEIVED_GIVE": "{{fromName}} ti je dao kartu!",
+		"RECEIVED_ONG": "{{fromName}} ti je poklonio {{count}} kartu/karata (NVO akcija)!",
+		"ROBBED_STEAL": "Neko ti je ukrao kartu!",
+		"ROBBED_WAR": "Napadnut si! Oduzete su ti 2 karte.",
+		"SHOP_HINT": "Proizvedi kvadrat da osvojiš poene!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Ko ima ovu kartu?",
+			"DESC": "Otkrij ko ima kartu iz porodice koja ti nedostaje. Košta 1 žeton.",
+			"PICK": "Izaberi porodicu za pretragu",
+			"HINT": "Izaberi porodicu karte koju tražiš i saznaćeš ko je ima",
+			"SEARCH": "Pretraži",
+			"RESULT_PLAYER": "{{name}} ima kartu iz ove porodice.",
+			"RESULT_DECK": "Karta iz ove porodice je u špilu.",
+			"RESULT_UNKNOWN": "Za sada niko nema kartu iz ove porodice."
+		},
+		"GIVE": {
+			"LABEL": "Daj kartu",
+			"DESC": "Pokloni jednu od svojih karata igraču po izboru."
+		},
+		"STEAL": {
+			"LABEL": "Ukradi kartu",
+			"DESC": "Uzmi kartu drugom igraču. Biće obavešten."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Tiha krađa",
+			"DESC": "Uzmi kartu bez da drugi igrač bude obavešten."
+		},
+		"WAR": {
+			"LABEL": "Rat",
+			"DESC": "Ukradi po 2 nasumične karte od svakog od 2 igrača."
+		},
+		"ONG": {
+			"LABEL": "NVO",
+			"DESC": "Daj 4 svoje karte dvojici najsiromašnijih igrača (po 2 svakom)."
+		}
+	}
+}

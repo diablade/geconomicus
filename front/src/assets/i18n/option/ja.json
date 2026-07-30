@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "一般オプション",
+		"TITLE_ADV": "詳細オプション",
+		"TITLE_DU": "自由通貨のオプション",
+		"TITLE_DEBT": "負債通貨のオプション",
+		"TITLE_CARDS": "カードのオプション",
+		"SURVEY_Q": "ゲーム終了時の感情に関するアンケート",
+		"WARNING": "⚠️ 警告 ⚠️、自分が何をしているか確信がある場合のみ変更してください!!!!\nそれ以外の場合は、エラーが発生した場合に備えて<span class=\"red\"> \"デフォルト値\"</span>をクリックしてください！",
+		"DURATION": "ラウンドの時間（分）",
+		"DEATH": "自動死",
+		"PRICE_NET": "ネット価格：",
+		"PRICE_DU": "DU価格：",
+		"SAVE_INTERVAL": "保存の間隔（秒）",
+		"DU_INTERVAL": "ユニバーサル・ディビデンドの間隔（秒）",
+		"DEATH_MINUTES": "{{deathMinute}}分ごとに死が発生します",
+		"DEATH_MINUTES_FORMULA": "",
+		"DU_RATES": "ユニバーサル配当の成長率",
+		"START_MONEY_AMOUNT": "開始資金（中流階級）",
+		"START_MONEY_INEQUALITY": "自由通貨での不平等なスタート",
+		"RICH": "富裕層の割合（開始資金 * 2）",
+		"MIDDLE": "中流階級の割合（開始資金）",
+		"POOR": "貧困層の割合（開始資金 / 2）",
+		"DEFAULT_CREDIT": "デフォルトのクレジット：",
+		"DEFAULT_INTEREST": "デフォルトの利息：",
+		"INTEREST_FREQ": "利息の支払い（分単位）：",
+		"AUTO_BANK": "自動銀行",
+		"AUTO_BANK_INFO": "銀行は通貨の希少性に応じてクレジットの金利を決めます。プレイヤーはいつでも借りられます。",
+		"AUTO_SEIZURE": "自動差し押さえ",
+		"AUTO_SEIZURE_INFO": "支払いが滞った場合、銀行は進行役を待たずに、まずコイン、次にカード（高価なものから）を自動的に差し押さえます。",
+		"BANK_PROFILE": "銀行プロファイル",
+		"PROFILE_NORMAL": "標準",
+		"PROFILE_AGGRESSIVE": "アグレッシブ",
+		"PROFILE_CUSTOM": "カスタム",
+		"TIER_THRESHOLD": "下限（€/プレイヤー）",
+		"TIER_AMOUNT": "金額",
+		"TIER_INTEREST": "利息",
+		"TIER_ADD": "段階を追加",
+		"TIER_HELP": "表示された平均を下回ると、クレジットはその段階に移ります。到達した最も低い段階が適用されます。基準レート＝上記のデフォルトのクレジット／利息。",
+		"BANKROUTE_WTD": "支払い不履行の場合、差し押さえ：",
+		"SEIZURE_FIX1": "カードの価値で、1対1",
+		"SEIZURE_FIX2": "+固定手数料（低いカードの相当物）：",
+		"SEIZURE_DECOTE": "割引付きのカードの価値で：",
+		"IF_PRISON": "ローンが回収されない場合、最大の刑務所",
+		"PRISON_TIMER": "最大の刑務所の時間（分）：",
+		"GEN_LETTERS": "ゲーム内で生成された手紙の数",
+		"GEN_LETTERS_AUTO": "自動（プレイヤー数 + 1）",
+		"GEN_LETTERS_MANU": "手動",
+		"GEN_LETTERS_IDENTICAL": "ゲーム内で生成されたカードの数と開始カードの数が同じ",
+		"PLAYERS_3TO5": "(3人から5人のプレイヤー)",
+		"PLAYERS_6TO15": "(6人から15人のプレイヤー)",
+		"PLAYERS_16+": "(16人以上のプレイヤー)",
+		"PLAYERS_6+": "(6人以上のプレイヤー)",
+		"START_DISTRIB_CARDS": "ゲーム開始時にプレイヤーに配布されるカードの数",
+		"BUILD_AMOUNT": "上位カードを構築するための同じ数のカード：",
+		"ACTIONS_TITLE": "アクション",
+		"STARTING_TOKENS": "開始時のトークン",
+		"COST": "コスト"
+	},
+	"CARD": {
+		"LV1": "食料",
+		"LV2": "文化と知識",
+		"LV3": "エネルギー",
+		"LV4": "技術"
+	},
+	"ACTION": {
+		"TITLE": "アクション",
+		"CONFIRM": "決定",
+		"PICK_TARGET": "プレイヤーを選ぶ",
+		"PICK_TARGET2": "2人目のプレイヤーを選ぶ",
+		"PICK_CARD": "カードを選ぶ",
+		"PICK_ONG_CARDS": "渡すカードを4枚選ぶ",
+		"CONFIRMING": "処理中...",
+		"NO_CARDS": "利用できるカードがありません",
+		"ONG_SELECT_HINT": "{{selected}}/4 枚選択済み",
+		"ONG_AUTO_TARGET": "最も貧しい2人に渡す",
+		"RECEIVED_GIVE": "{{fromName}} さんがカードをくれました！",
+		"RECEIVED_ONG": "{{fromName}} さんがカードを{{count}}枚くれました（NGOアクション）！",
+		"ROBBED_STEAL": "誰かにカードを盗まれました！",
+		"ROBBED_WAR": "攻撃されました！カードを2枚奪われました。",
+		"SHOP_HINT": "スクエアを生産して得点しましょう！",
+		"WHO_HAVE_CARD": {
+			"LABEL": "このファミリーは誰が持っている？",
+			"DESC": "足りないファミリーのカードを誰が持っているかを調べます。トークン1個が必要です。",
+			"PICK": "探すファミリーを選ぶ",
+			"HINT": "カードを1枚選ぶと、同じファミリーのカードを誰が持っているかがわかります。",
+			"SEARCH": "検索",
+			"RESULT_PLAYER": "{{name}} さんがこのファミリーのカードを持っています。",
+			"RESULT_DECK": "このファミリーのカードはデッキにあります。",
+			"RESULT_UNKNOWN": "現在、このファミリーのカードを持っている人はいません。"
+		},
+		"GIVE": {
+			"LABEL": "カードを渡す",
+			"DESC": "選んだプレイヤーにカードを1枚贈ります。"
+		},
+		"STEAL": {
+			"LABEL": "カードを盗む",
+			"DESC": "他のプレイヤーからカードを1枚奪います。相手に通知されます。"
+		},
+		"SILENT_STEAL": {
+			"LABEL": "こっそり盗む",
+			"DESC": "相手に通知せずにカードを1枚奪います。"
+		},
+		"WAR": {
+			"LABEL": "戦争",
+			"DESC": "2人のプレイヤーそれぞれからランダムにカードを2枚奪います。"
+		},
+		"ONG": {
+			"LABEL": "NGO",
+			"DESC": "最も貧しい2人のプレイヤーにカードを4枚（各2枚）渡します。"
+		}
+	}
+}

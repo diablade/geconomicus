@@ -1,0 +1,10 @@
+{
+	"JOIN": {
+		"TITLE": "Pridružite se igri!",
+		"GUNY_INTRO": "Hej! Ja sam Ğuny.",
+		"GUNY_INTRO2": "a kako se ti zoveš?",
+		"NAME_PROMPT": "Vaš nadimak?",
+		"GO_BUTTON": "Ğo!",
+		"UNKNOWN_AVATAR_NOTICE": "Nijedan avatar nije imao broj koji si ukucao: napravićeš novi, sa drugim brojem."
+	}
+}

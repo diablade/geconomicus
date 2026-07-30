@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "You received {{cardsLength}} cards 🎴 and {{coins}}{{currency}} 👛. Good luck!",
+		"INIT_DEBT": "You received {{cardsLength}} cards 🎴 and {{coins}}{{currency}} 👛. Go see the banker to get money. Good luck!",
+		"GO_TO_BANK": "🚨 GO TO THE BANK!!! 🚨",
+		"THIS_LIFE_IS_GONE": "This life is gone 🪦",
+		"GO_TO_SECOND_LIFE": "Go to your second life!",
+		"WAITING": "Waiting...",
+		"GAME_OVER": "Game Over...",
+		"GAME_PAUSED": "Game paused",
+		"ANSWER_SURVEY": "Answer the Survey",
+		"DEBT": "Debts",
+		"BUY": "BUY",
+		"CREDITS": "CREDITS",
+		"OBJECTIVES": "Objectives",
+		"TAKEN_OVER_TITLE": "The facilitator is driving your board",
+		"TAKEN_OVER_TEXT": "Someone is playing for you at the moment. Take back control whenever you want.",
+		"RETAKE": "Take back control",
+		"NOT_ALIVE": "You are no longer alive",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "The game is not running, or you are no longer alive",
+		"GAME_NOT_PLAYING": "The game is not running",
+		"INSUFFICIENT_FUNDS": "Insufficient funds",
+		"INSUFFICIENT_CARDS": "Not enough identical cards to produce",
+		"SETTLE_FAILED": "Loan repayment failed",
+		"EXTEND_FAILED": "Loan extension failed",
+		"INVALID_STATE": "Board not loaded, refresh the page",
+		"INVALID_IDS": "Game not found, refresh the page"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "The loan has reached maturity!",
+			"MESSAGE": "We charged the interest of {{interest}} and extended your loan by 5 more minutes"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Repay or extend the loan?",
+			"MESSAGE": "You can repay the whole loan by paying {{amount}} now",
+			"MESSAGE2": "or extend it by 5 more minutes by paying the interest of {{interest}}",
+			"BTN_SETTLE": "Repay",
+			"BTN_EXTEND": "Extend"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Repay the loan?",
+			"MESSAGE": "Do you confirm the repayment of your loan, by paying {{amount}} €?",
+			"BTN_CONFIRM": "Repay in full"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Repay the loan?",
+			"MESSAGE": "!!! A LOAN IS IN DEFAULT !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Confirm the loan request",
+			"MESSAGE": "For a payment of {{amount}} € and {{interest}} € of interest",
+			"MESSAGE2": "For a total of {{total}} € to repay? (i.e. {{rate}}% interest rate)",
+			"BTN_CONFIRM": "Request"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Seizure completed",
+			"MESSAGE": "-{{coins}} 💰 and {{cardsCount}} card(s) seized (-{{cardsValue}} 💰)",
+			"PRISON": "You have nothing left to seize: off to prison for {{minutes}} minute(s)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "single",
+		"DOUBLE": "double",
+		"IDLE": "Waiting...",
+		"PAUSED": "Game paused...",
+		"RUNNING": "Running...",
+		"REQUEST": "Requesting...",
+		"DEFAULT": "Payment default",
+		"DONE": "Finished",
+		"NEW": "Loan obtained (+{{amount}}💰)",
+		"FREE_MONEY": "Free money received (+{{amount}}💰)",
+		"ANSWER": "Answer",
+		"SETTLE": "Repay",
+		"DEBT": "Debt",
+		"INTEREST": "Interest",
+		"CANCEL_SUCCESS": "Loan cancelled, {{amount}} € refunded",
+		"CANCELED": "Loan cancelled",
+		"NOTICE_INTEREST": "Interest, payable to extend by {{ interestMinutes }} minutes",
+		"DONE_AT": "Closed on",
+		"EXTENDED": "Extended",
+		"CREDIT_SETTLED": "Credit settled",
+		"BORROW": "Take a loan",
+		"REFUSED_NEGOTIATE": "Loan refused — negotiate with the facilitator",
+		"RATE_CHANGED": "New rate: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Do you want to take a first loan?",
+		"DECLINE": "No thanks",
+		"HALFWAY_NUDGE": "Loan halfway - {{remaining}} left",
+		"FINAL_MINUTE": "Less than a minute! Repay your loan, quick!",
+		"FAULT_OVERLAY_TITLE": "Loan in default",
+		"FAULT_OVERLAY_TEXT": "You did not repay in time. Go see the facilitator for the seizure.",
+		"FAULT_OVERLAY_TEXT_AUTO": "You did not repay in time. Seizure in progress..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Build",
+		"REVEAL_TITLE": "Built!",
+		"REVEAL_HINT": "{{count}} Lv. {{level}} cards redrawn... +1 token (⚡)"
+	}
+}

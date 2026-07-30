@@ -1,0 +1,49 @@
+{
+	"ACTION": {
+		"TITLE": "Aktionen",
+		"PICK_TARGET": "Einen Spieler wählen",
+		"PICK_TARGET2": "Einen zweiten Spieler wählen",
+		"PICK_CARD": "Eine Karte wählen",
+		"PICK_ONG_CARDS": "4 Karten zum Verschenken wählen",
+		"CONFIRMING": "Läuft...",
+		"CONFIRM": "Bestätigen",
+		"NO_CARDS": "Keine Karte verfügbar",
+		"ONG_SELECT_HINT": "{{selected}}/4 Karten ausgewählt",
+		"ONG_AUTO_TARGET": "An die 2 ärmsten Spieler geben",
+		"RECEIVED_GIVE": "{{fromName}} hat dir eine Karte gegeben!",
+		"RECEIVED_ONG": "{{fromName}} hat dir {{count}} Karte(n) geschenkt (NGO-Aktion)!",
+		"ROBBED_STEAL": "Jemand hat dir eine Karte gestohlen!",
+		"ROBBED_WAR": "Du wurdest angegriffen! Dir wurden 2 Karten genommen.",
+		"SHOP_HINT": "Stelle ein Quadrat her, um Punkte zu sammeln!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Wer hat diese Karte?",
+			"DESC": "Finde heraus, wer eine Karte der Familie besitzt, die dir fehlt. Kostet 1 Jeton.",
+			"PICK": "Zu suchende Familie wählen",
+			"HINT": "Wähle die Familie der gesuchten Karte, und du erfährst, wer eine besitzt",
+			"SEARCH": "Suchen",
+			"RESULT_PLAYER": "{{name}} besitzt eine Karte dieser Familie.",
+			"RESULT_DECK": "Eine Karte dieser Familie liegt im Deck.",
+			"RESULT_UNKNOWN": "Zurzeit besitzt niemand eine Karte dieser Familie."
+		},
+		"GIVE": {
+			"LABEL": "Karte geben",
+			"DESC": "Schenke einem Spieler deiner Wahl eine deiner Karten."
+		},
+		"STEAL": {
+			"LABEL": "Karte stehlen",
+			"DESC": "Nimm einem anderen Spieler eine Karte weg. Er wird benachrichtigt."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Stiller Diebstahl",
+			"DESC": "Nimm eine Karte, ohne dass der andere Spieler benachrichtigt wird."
+		},
+		"WAR": {
+			"LABEL": "Krieg",
+			"DESC": "Stiehl 2 zufällige Karten von jedem der 2 Spieler."
+		},
+		"ONG": {
+			"LABEL": "NGO",
+			"DESC": "Gib 4 deiner Karten an die 2 ärmsten Spieler (je 2)."
+		}
+	}
+}

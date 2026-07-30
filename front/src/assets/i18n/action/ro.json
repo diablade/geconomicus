@@ -1,0 +1,49 @@
+{
+	"ACTION": {
+		"TITLE": "Acțiuni",
+		"PICK_TARGET": "Alege un jucător",
+		"PICK_TARGET2": "Alege un al doilea jucător",
+		"PICK_CARD": "Alege o carte",
+		"PICK_ONG_CARDS": "Alege 4 cărți de dat",
+		"CONFIRMING": "În curs...",
+		"CONFIRM": "Confirmă",
+		"NO_CARDS": "Nicio carte disponibilă",
+		"ONG_SELECT_HINT": "{{selected}}/4 cărți selectate",
+		"ONG_AUTO_TARGET": "Dă celor mai săraci 2 jucători",
+		"RECEIVED_GIVE": "{{fromName}} ți-a dat o carte!",
+		"RECEIVED_ONG": "{{fromName}} ți-a donat {{count}} carte/cărți (acțiune ONG)!",
+		"ROBBED_STEAL": "Cineva ți-a furat o carte!",
+		"ROBBED_WAR": "Ai fost atacat! Ți-au fost luate 2 cărți.",
+		"SHOP_HINT": "Produ un pătrat ca să câștigi puncte!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Cine are această carte?",
+			"DESC": "Află cine are o carte din familia care îți lipsește. Costă 1 jeton.",
+			"PICK": "Alege familia de localizat",
+			"HINT": "Selectează familia cărții pe care o cauți și vei afla cine are una",
+			"SEARCH": "Caută",
+			"RESULT_PLAYER": "{{name}} are o carte din această familie.",
+			"RESULT_DECK": "O carte din această familie este în pachet.",
+			"RESULT_UNKNOWN": "Deocamdată nimeni nu are o carte din această familie."
+		},
+		"GIVE": {
+			"LABEL": "Dă o carte",
+			"DESC": "Oferă una dintre cărțile tale unui jucător la alegere."
+		},
+		"STEAL": {
+			"LABEL": "Fură o carte",
+			"DESC": "Ia o carte de la alt jucător. Va fi anunțat."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Furt silențios",
+			"DESC": "Ia o carte fără ca celălalt jucător să fie anunțat."
+		},
+		"WAR": {
+			"LABEL": "Război",
+			"DESC": "Fură 2 cărți la întâmplare de la fiecare dintre 2 jucători."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Dă 4 dintre cărțile tale celor mai săraci 2 jucători (câte 2 fiecare)."
+		}
+	}
+}

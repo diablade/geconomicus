@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "Opšte opcije",
+		"TITLE_ADV": "Napredne opcije",
+		"TITLE_DU": "Opcije slobodnog novca",
+		"TITLE_DEBT": "Opcije dužničkog novca",
+		"TITLE_CARDS": "Opcije karata",
+		"SURVEY_Q": "Anketa o osećaju na kraju igre",
+		"WARNING": "⚠️ Upozorenje ⚠️, menjajte samo ako ste sigurni u ono što radite!!!!\ninače kliknite na <span class=\"red\"> \"podrazumevana vrednost\"</span> u slučaju greške!",
+		"DURATION": "Trajanje runde u minutima",
+		"DEATH": "Automatske smrti",
+		"PRICE_NET": "neto cena:",
+		"PRICE_DU": "cena DU:",
+		"SAVE_INTERVAL": "Čuvanje na svakih (sekundi)",
+		"DU_INTERVAL": "Univerzalni dividend na svakih (sekundi)",
+		"DEATH_MINUTES": "Smrt se dešava svake {{deathMinute}} minuta",
+		"DEATH_MINUTES_FORMULA": "",
+		"DU_RATES": "Stopa rasta Univerzalnog Dividenda",
+		"START_MONEY_AMOUNT": "Početni novac (srednja klasa)",
+		"START_MONEY_INEQUALITY": "Nepravedan početak u slobodnoj valuti",
+		"RICH": "% bogatih (početni novac * 2)",
+		"MIDDLE": "% srednja klasa (početni novac)",
+		"POOR": "% siromašnih (početni novac / 2)",
+		"DEFAULT_CREDIT": "Podrazumevani kredit:",
+		"DEFAULT_INTEREST": "Podrazumevana kamata:",
+		"INTEREST_FREQ": "Plaćanje kamata svake (u minutima):",
+		"AUTO_BANK": "Automatska banka",
+		"AUTO_BANK_INFO": "Banka određuje kamatnu stopu kredita prema oskudici novca; igrači pozajmljuju kad god žele.",
+		"AUTO_SEIZURE": "Automatska zaplena",
+		"AUTO_SEIZURE_INFO": "U slučaju neplaćanja, banka automatski zaplenjuje novčiće pa karte (najskuplje prve), bez čekanja na animatora.",
+		"BANK_PROFILE": "Profil banke",
+		"PROFILE_NORMAL": "Normalan",
+		"PROFILE_AGGRESSIVE": "Agresivan",
+		"PROFILE_CUSTOM": "Prilagođen",
+		"TIER_THRESHOLD": "Ispod (€/igraču)",
+		"TIER_AMOUNT": "Iznos",
+		"TIER_INTEREST": "Kamata",
+		"TIER_ADD": "dodaj nivo",
+		"TIER_HELP": "Ispod prikazanog proseka, kredit prelazi na nivo; pobeđuje najniži pređeni nivo. Osnovna stopa = podrazumevani kredit/kamata iznad.",
+		"BANKROUTE_WTD": "U slučaju neplaćanja, zapleni:",
+		"SEIZURE_FIX1": "u vrednosti karte, 1 za 1",
+		"SEIZURE_FIX2": "+ fiksne naknade (ekvivalent niskih karata):",
+		"SEIZURE_DECOTE": "u vrednosti karte sa popustom od:",
+		"IF_PRISON": "Ako kredit nije naplaćen, maksimalna zatvor",
+		"PRISON_TIMER": "Maksimalno vreme zatvora (u minutima):",
+		"GEN_LETTERS": "Broj generisanih pisama u igri",
+		"GEN_LETTERS_AUTO": "auto (nb igrača + 1)",
+		"GEN_LETTERS_MANU": "ručno",
+		"GEN_LETTERS_IDENTICAL": "Identičan broj karata generisanih u igri i početnim kartama",
+		"PLAYERS_3TO5": "(od 3 do 5 igrača)",
+		"PLAYERS_6TO15": "(od 6 do 15 igrača)",
+		"PLAYERS_16+": "(16+ igrača)",
+		"PLAYERS_6+": "(6+ igrača)",
+		"START_DISTRIB_CARDS": "Broj karata podeljenih igračima na početku igre",
+		"BUILD_AMOUNT": "Identičan broj karata za izgradnju superiorne karte:",
+		"ACTIONS_TITLE": "Akcije",
+		"STARTING_TOKENS": "Početni žetoni",
+		"COST": "Cena"
+	},
+	"CARD": {
+		"LV1": "Ishrana",
+		"LV2": "Kultura i znanje",
+		"LV3": "Energija",
+		"LV4": "Tehnologija"
+	},
+	"ACTION": {
+		"TITLE": "Akcije",
+		"CONFIRM": "Potvrdi",
+		"PICK_TARGET": "Izaberi igrača",
+		"PICK_TARGET2": "Izaberi drugog igrača",
+		"PICK_CARD": "Izaberi kartu",
+		"PICK_ONG_CARDS": "Izaberi 4 karte za poklon",
+		"CONFIRMING": "U toku...",
+		"NO_CARDS": "Nema dostupnih karata",
+		"ONG_SELECT_HINT": "{{selected}}/4 izabranih karata",
+		"ONG_AUTO_TARGET": "Daj dvojici najsiromašnijih igrača",
+		"RECEIVED_GIVE": "{{fromName}} ti je dao kartu!",
+		"RECEIVED_ONG": "{{fromName}} ti je poklonio {{count}} kartu/karata (NVO akcija)!",
+		"ROBBED_STEAL": "Neko ti je ukrao kartu!",
+		"ROBBED_WAR": "Napadnut si! Oduzete su ti 2 karte.",
+		"SHOP_HINT": "Proizvedi kvadrat da osvojiš poene!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Ko ima ovu porodicu?",
+			"DESC": "Otkrij ko ima kartu iz porodice koja ti nedostaje. Košta 1 žeton.",
+			"PICK": "Izaberi porodicu za pretragu",
+			"HINT": "Izaberi kartu — saznaćeš ko ima kartu iz iste porodice.",
+			"SEARCH": "Pretraži",
+			"RESULT_PLAYER": "{{name}} ima kartu iz ove porodice.",
+			"RESULT_DECK": "Karta iz ove porodice je u špilu.",
+			"RESULT_UNKNOWN": "Za sada niko nema kartu iz ove porodice."
+		},
+		"GIVE": {
+			"LABEL": "Daj kartu",
+			"DESC": "Pokloni jednu od svojih karata igraču po izboru."
+		},
+		"STEAL": {
+			"LABEL": "Ukradi kartu",
+			"DESC": "Uzmi kartu drugom igraču. Biće obavešten."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Tiha krađa",
+			"DESC": "Uzmi kartu bez da drugi igrač bude obavešten."
+		},
+		"WAR": {
+			"LABEL": "Rat",
+			"DESC": "Ukradi po 2 nasumične karte od svakog od 2 igrača."
+		},
+		"ONG": {
+			"LABEL": "NVO",
+			"DESC": "Daj 4 svoje karte dvojici najsiromašnijih igrača (po 2 svakom)."
+		}
+	}
+}

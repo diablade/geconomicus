@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "カード{{cardsLength}}枚 🎴 と {{coins}}{{currency}} 👛 を受け取りました。頑張ってください！",
+		"INIT_DEBT": "カード{{cardsLength}}枚 🎴 と {{coins}}{{currency}} 👛 を受け取りました。お金を得るには銀行家のところへ行ってください。頑張ってください！",
+		"GO_TO_BANK": "🚨 銀行に行け!!! 🚨",
+		"THIS_LIFE_IS_GONE": "この人生は終わった 🪦",
+		"GO_TO_SECOND_LIFE": "あなたの第二の人生に行け！",
+		"WAITING": "待機中...",
+		"GAME_OVER": "ゲーム終了...",
+		"GAME_PAUSED": "ゲーム一時停止中",
+		"ANSWER_SURVEY": "アンケートに回答",
+		"DEBT": "負債",
+		"BUY": "購入",
+		"CREDITS": "クレジット",
+		"OBJECTIVES": "目標",
+		"TAKEN_OVER_TITLE": "進行役があなたのボードを操作しています",
+		"TAKEN_OVER_TEXT": "現在、誰かがあなたの代わりにプレイしています。いつでも操作を取り戻せます。",
+		"RETAKE": "操作を取り戻す",
+		"NOT_ALIVE": "あなたはもう生きていません",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "ゲームが進行中でないか、あなたはもう生きていません",
+		"GAME_NOT_PLAYING": "ゲームは進行中ではありません",
+		"INSUFFICIENT_FUNDS": "資金が不足しています",
+		"INSUFFICIENT_CARDS": "生産するには同じカードが足りません",
+		"SETTLE_FAILED": "クレジットの返済に失敗しました",
+		"EXTEND_FAILED": "クレジットの延長に失敗しました",
+		"INVALID_STATE": "ボードが読み込まれていません。ページを更新してください",
+		"INVALID_IDS": "ゲームが見つかりません。ページを更新してください"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "クレジットが期限を迎えました！",
+			"MESSAGE": "利息{{interest}}を差し引き、クレジットをさらに5分延長しました"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "クレジットを返済しますか、延長しますか？",
+			"MESSAGE": "今すぐ{{amount}}を支払えば、クレジット全額を返済できます",
+			"MESSAGE2": "または利息{{interest}}を支払ってさらに5分延長できます",
+			"BTN_SETTLE": "返済する",
+			"BTN_EXTEND": "延長する"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "クレジットを返済しますか？",
+			"MESSAGE": "{{amount}} € を支払ってクレジットを返済することを確認しますか？",
+			"BTN_CONFIRM": "全額返済する"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "クレジットを返済しますか？",
+			"MESSAGE": "!!! クレジットが債務不履行です !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "クレジット申請の確認",
+			"MESSAGE": "支払額 {{amount}} €、利息 {{interest}} €",
+			"MESSAGE2": "返済総額は {{total}} € です。（金利 {{rate}}%）",
+			"BTN_CONFIRM": "申請する"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "差し押さえ完了",
+			"MESSAGE": "-{{coins}} 💰 とカード{{cardsCount}}枚を差し押さえ（-{{cardsValue}} 💰）",
+			"PRISON": "差し押さえるものが残っていません：{{minutes}}分間の刑務所行きです。"
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "シングル",
+		"DOUBLE": "ダブル",
+		"IDLE": "待機中...",
+		"PAUSED": "ゲーム一時停止中...",
+		"RUNNING": "進行中...",
+		"REQUEST": "申請中...",
+		"DEFAULT": "債務不履行",
+		"DONE": "完了",
+		"NEW": "クレジットを取得（+{{amount}}💰）",
+		"FREE_MONEY": "無償のお金を受け取りました（+{{amount}}💰）",
+		"ANSWER": "回答",
+		"SETTLE": "返済",
+		"DEBT": "負債",
+		"INTEREST": "利息",
+		"CANCEL_SUCCESS": "クレジットを取り消しました。{{amount}} € 返金されました",
+		"CANCELED": "クレジット取り消し",
+		"NOTICE_INTEREST": "利息、{{ interestMinutes }}分延長の支払い",
+		"DONE_AT": "閉じました",
+		"EXTENDED": "延長された",
+		"CREDIT_SETTLED": "クレジット返済完了",
+		"BORROW": "クレジットを受ける",
+		"REFUSED_NEGOTIATE": "クレジットが拒否されました — 進行役と交渉してください",
+		"RATE_CHANGED": "新しいレート：{{amount}}/{{interest}}（{{pct}}%）",
+		"FIRST_Q_TITLE": "最初のクレジットを受けますか？",
+		"DECLINE": "いいえ、結構です",
+		"HALFWAY_NUDGE": "クレジットが折り返し地点 - 残り{{remaining}}",
+		"FINAL_MINUTE": "残り1分未満！早くクレジットを返済して！",
+		"FAULT_OVERLAY_TITLE": "クレジット債務不履行",
+		"FAULT_OVERLAY_TEXT": "期限までに返済できませんでした。差し押さえについて進行役のところへ行ってください。",
+		"FAULT_OVERLAY_TEXT_AUTO": "期限までに返済できませんでした。差し押さえ中..."
+	},
+	"PRODUCTION": {
+		"BUILD": "生産する",
+		"REVEAL_TITLE": "完成！",
+		"REVEAL_HINT": "レベル{{level}}のカードを{{count}}枚引き直し... +1トークン（⚡）"
+	}
+}

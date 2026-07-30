@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "Hai ricevuto {{cardsLength}} carte 🎴 e {{coins}}{{currency}} 👛. Buona fortuna!",
+		"INIT_DEBT": "Hai ricevuto {{cardsLength}} carte 🎴 e {{coins}}{{currency}} 👛. Vai dal banchiere per avere del denaro. Buona fortuna!",
+		"GO_TO_BANK": "🚨 ANDARE IN BANCA!!! 🚨",
+		"THIS_LIFE_IS_GONE": "Questa vita è terminata🪦",
+		"GO_TO_SECOND_LIFE": "Inizia la tua seconda vita!",
+		"WAITING": "In attesa...",
+		"GAME_OVER": "Gioco finito...",
+		"GAME_PAUSED": "Partita in pausa",
+		"ANSWER_SURVEY": "Rispondi al sondaggio",
+		"DEBT": "Debiti",
+		"BUY": "ACQUISTA",
+		"CREDITS": "CREDITI",
+		"OBJECTIVES": "Obiettivi",
+		"TAKEN_OVER_TITLE": "L'animatore sta guidando il tuo tavolo",
+		"TAKEN_OVER_TEXT": "Al momento qualcuno sta giocando al posto tuo. Riprendi il controllo quando vuoi.",
+		"RETAKE": "Riprendere il controllo",
+		"NOT_ALIVE": "Non sei più in vita",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "La partita non è in corso, oppure non sei più in vita",
+		"GAME_NOT_PLAYING": "La partita non è in corso",
+		"INSUFFICIENT_FUNDS": "Fondi insufficienti",
+		"INSUFFICIENT_CARDS": "Non ci sono abbastanza carte identiche per produrre",
+		"SETTLE_FAILED": "Rimborso del credito fallito",
+		"EXTEND_FAILED": "Proroga del credito fallita",
+		"INVALID_STATE": "Tavolo non caricato, ricarica la pagina",
+		"INVALID_IDS": "Partita non trovata, ricarica la pagina"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "Il credito è giunto a scadenza!",
+			"MESSAGE": "Abbiamo prelevato l'interesse di {{interest}} e prorogato il tuo credito di 5 minuti supplementari"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Rimborsare o prorogare il credito?",
+			"MESSAGE": "Puoi rimborsare l'intero credito pagando {{amount}} adesso",
+			"MESSAGE2": "oppure prorogarlo di 5 min supplementari pagando l'interesse di {{interest}}",
+			"BTN_SETTLE": "Rimborsare",
+			"BTN_EXTEND": "Prorogare"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Rimborsare il credito?",
+			"MESSAGE": "Confermi il rimborso del tuo credito, con il pagamento di {{amount}} €?",
+			"BTN_CONFIRM": "Rimborsare integralmente"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Rimborsare il credito?",
+			"MESSAGE": "!!! UN CREDITO È IN INSOLVENZA !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Conferma la richiesta di credito",
+			"MESSAGE": "Per un versamento di {{amount}} € e {{interest}} € di interesse",
+			"MESSAGE2": "Per un totale di {{total}} € da rimborsare? (ossia {{rate}}% di tasso d'interesse)",
+			"BTN_CONFIRM": "Richiedere"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Pignoramento effettuato",
+			"MESSAGE": "-{{coins}} 💰 e {{cardsCount}} carta/e pignorata/e (-{{cardsValue}} 💰)",
+			"PRISON": "Non ti resta più nulla da pignorare: direzione prigione per {{minutes}} minuto/i."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "semplice",
+		"DOUBLE": "doppio",
+		"IDLE": "In attesa...",
+		"PAUSED": "Gioco in pausa...",
+		"RUNNING": "In corso...",
+		"REQUEST": "Richiesta...",
+		"DEFAULT": "Insolvenza",
+		"DONE": "Terminato",
+		"NEW": "Credito ottenuto (+{{amount}}💰)",
+		"FREE_MONEY": "Denaro gratuito ricevuto (+{{amount}}💰)",
+		"ANSWER": "Rispondere",
+		"SETTLE": "Rimborsare",
+		"DEBT": "Debito",
+		"INTEREST": "Interesse",
+		"CANCEL_SUCCESS": "Credito annullato, {{amount}} € rimborsati",
+		"CANCELED": "Credito annullato",
+		"NOTICE_INTEREST": "Interesse, pagabile per estendere di {{ interestMinutes }} minuti",
+		"DONE_AT": "Chiuso il",
+		"EXTENDED": "Prolungato",
+		"CREDIT_SETTLED": "Credito rimborsato",
+		"BORROW": "Prendere un credito",
+		"REFUSED_NEGOTIATE": "Credito rifiutato — negozia con l'animatore",
+		"RATE_CHANGED": "Nuovo tasso: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Vuoi prendere un primo credito?",
+		"DECLINE": "No grazie",
+		"HALFWAY_NUDGE": "Credito a metà percorso - {{remaining}} rimanente",
+		"FINAL_MINUTE": "Meno di un minuto! Rimborsa il tuo credito, presto!",
+		"FAULT_OVERLAY_TITLE": "Credito in insolvenza",
+		"FAULT_OVERLAY_TEXT": "Non hai rimborsato in tempo. Vai dall'animatore per il pignoramento.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Non hai rimborsato in tempo. Pignoramento in corso..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Costruire",
+		"REVEAL_TITLE": "Costruito!",
+		"REVEAL_HINT": "{{count}} carte Liv. {{level}} ripescate... +1 gettone (⚡)"
+	}
+}

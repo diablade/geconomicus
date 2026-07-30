@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "Cronologia delle partite create",
+		"DELETE_CONFIRM": "Eliminare un gioco?",
+		"AUTO_DELETE": "A breve, le partite più vecchie di 2 mesi verranno eliminate automaticamente.",
+		"IMPORT_EXPORT": "(L'importazione e l'esportazione delle partite saranno presto possibili).",
+		"JOIN_AS_NEW_PLAYER": "Unisciti (nuovo giocatore)",
+		"JOIN_AS_MASTER": "Unisciti come animatore",
+		"CREATED_ON": "Creato il",
+		"PLAYERS": "giocatori",
+		"GAMES": "giochi",
+		"SESSION": "Sessione",
+		"TYPE": "tipo:",
+		"LOCATION": "Luogo:",
+		"ANIMATOR": "Animatore:",
+		"VIEW_RESULTS": "Visualizza risultati",
+		"VIEW": "Visualizza",
+		"NAME_PARTY": "Nome della partita",
+		"TYPE_MONEY": "Tipo di moneta",
+		"STATUS_TEXT": "Stato",
+		"SORT": "Ordina per",
+		"BY_DATE": "Data",
+		"BY_PLAYERS": "Numero di giocatori",
+		"BY_TYPE": "Tipo",
+		"BY_LOCATION": "Luogo",
+		"BY_ANIMATOR": "Animatore",
+		"BY_STATUS": "Stato",
+		"STATUS": {
+			"ENDED": "Terminato",
+			"OPEN": "Aperto",
+			"IN_PROGRESS": "In corso"
+		},
+		"DELETE_SESSION": "La sessione è stata eliminata",
+		"DELETE_GAME": "la sessione è stata eliminata",
+		"DELETE_DIALOG": {
+			"TITLE": "Confermi?",
+			"MESSAGE": "Questa azione è irreversibile."
+		}
+	}
+}

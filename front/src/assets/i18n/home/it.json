@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Pagina di inizio",
+		"CONTRIBUTION": "Contributi",
+		"WELCOME": "Scopri la Moneta Libera attraverso il gioco!",
+		"INSTALL": "Installare l'app (facoltativo)",
+		"CREATE_SESSION": "Creare una sessione",
+		"JOIN_SESSION": "Unirsi a una sessione",
+		"JOIN_VIA_SHORT_ID": "Tramite il codice breve",
+		"JOIN_VIA_QR_CODE": "Tramite il codice QR",
+		"HOW_TO_PLAY": "Come funziona?",
+		"FUND_RAISE": "Una donazione per sostenermi, ",
+		"IN": "in",
+		"OR_IN": " o in",
+		"SAY_HI": "Hai bisogno di aiuto, hai un'idea, hai trovato un bug, o vuoi semplicemente dirmi ciao?",
+		"LINK_SAY_HI": "Clicca qui",
+		"LOOKING_FOR_PAPER_GAME": "Cerchi il gioco originale in versione cartacea?",
+		"CLOSE": "Chiudi",
+		"YES": "Sì",
+		"NO": "No",
+		"CANCEL": "Annulla",
+		"CONTINUE_SESSION": "Riprendi la tua sessione",
+		"ACTIVE_SESSION": "Hai una sessione attiva:",
+		"DISMISS": "Chiudi",
+		"RESUME": "Continua"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Creare una sessione",
+		"NAME": "Dai un nome alla sessione",
+		"ANIMATOR": "Nome dell'animatore",
+		"LOCATION": "Luogo",
+		"THEME": "Tema",
+		"BTN1": "Crea",
+		"BTN2": "Annulla"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "In Safari, apri il menu di condivisione con il pulsante",
+		"MESSAGE2": "poi scegli \"Aggiungi a Home\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Inserisci il codice...",
+		"SHORT_ID_TITLE": "Inserisci il codice della sessione, o il tuo codice completo",
+		"SHORT_ID_DESC": "4 cifre per unirti come nuovo giocatore (es.: 0042). Aggiungi il tuo numero per ritrovare il tuo avatar (es.: 0042-7) — l'animatore può dartelo.",
+		"SEARCH": "Cerca",
+		"INVALID_FORMAT": "Formato atteso: 4 cifre, eventualmente seguite da - e dal tuo numero. Es.: 0042 o 0042-7",
+		"UNKNOWN_SESSION": "Nessuna sessione corrisponde a questo codice.",
+		"UNKNOWN_AVATAR": "Questa sessione non contiene alcun avatar con questo numero.",
+		"NEEDS_AVATAR_CODE": "Questa sessione è già iniziata: ti serve il tuo codice completo, con il tuo numero (es.: 0042-7)."
+	}
+}

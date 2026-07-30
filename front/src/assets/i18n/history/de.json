@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "Verlauf der erstellten Spiele",
+		"DELETE_CONFIRM": "Ein Spiel löschen?",
+		"AUTO_DELETE": "Spiele, die älter als 2 Monate sind, werden bald automatisch gelöscht.",
+		"IMPORT_EXPORT": "(Das Importieren und Exportieren von Spielen wird bald möglich sein).",
+		"JOIN_AS_NEW_PLAYER": "Beitreten (neuer Spieler)",
+		"JOIN_AS_MASTER": "Als Spielleiter beitreten",
+		"CREATED_ON": "Erstellt am",
+		"PLAYERS": "Spieler",
+		"GAMES": "Spiele",
+		"SESSION": "Sitzung",
+		"TYPE": "Typ:",
+		"LOCATION": "Ort:",
+		"ANIMATOR": "Spielleiter:",
+		"VIEW_RESULTS": "Ergebnisse anzeigen",
+		"VIEW": "Anzeigen",
+		"NAME_PARTY": "Name des Spieles",
+		"TYPE_MONEY": "Geldtyp",
+		"STATUS_TEXT": "Status",
+		"SORT": "Sortieren nach",
+		"BY_DATE": "Datum",
+		"BY_PLAYERS": "Anzahl Spieler",
+		"BY_TYPE": "Typ",
+		"BY_LOCATION": "Ort",
+		"BY_ANIMATOR": "Spielleiter",
+		"BY_STATUS": "Status",
+		"STATUS": {
+			"ENDED": "Beendet",
+			"OPEN": "Offen",
+			"IN_PROGRESS": "In Bearbeitung"
+		},
+		"DELETE_SESSION": "Die Sitzung wurde gelöscht",
+		"DELETE_GAME": "die Sitzung wurde gelöscht",
+		"DELETE_DIALOG": {
+			"TITLE": "Bist du sicher?",
+			"MESSAGE": "Diese Aktion kann nicht rückgängig gemacht werden."
+		}
+	}
+}

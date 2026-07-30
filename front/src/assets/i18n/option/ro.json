@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "Opțiuni generale",
+		"TITLE_ADV": "Opțiuni avansate",
+		"TITLE_DU": "Opțiuni monedă liberă",
+		"TITLE_DEBT": "Opțiuni monedă datorie",
+		"TITLE_CARDS": "Opțiuni cărți",
+		"SURVEY_Q": "Sondaj despre sentimentele de la sfârșitul jocului",
+		"WARNING": "⚠️ Atenție ⚠️, modifică doar dacă ești sigur de ceea ce faci!!!!\naltfel, fă clic pe <span class=\"red\"> \"valoare implicită\"</span> în caz de eroare!",
+		"DURATION": "Durata rundei în minute",
+		"DEATH": "Morți automate",
+		"PRICE_NET": "preț net:",
+		"PRICE_DU": "preț DU:",
+		"SAVE_INTERVAL": "Salvare la fiecare (secunde)",
+		"DU_INTERVAL": "Dividend universal la fiecare (secunde)",
+		"DEATH_MINUTES": "Moartea se întâmplă la fiecare {{deathMinute}} minute",
+		"DEATH_MINUTES_FORMULA": "",
+		"DU_RATES": "Rata de creștere a Dividendului Universal",
+		"START_MONEY_AMOUNT": "Bani de început (clasa de mijloc)",
+		"START_MONEY_INEQUALITY": "Început inegal în moneda liberă",
+		"RICH": "% bogați (bani de început * 2)",
+		"MIDDLE": "% clasă de mijloc (bani de început)",
+		"POOR": "% săraci (bani de început / 2)",
+		"DEFAULT_CREDIT": "Credit implicit:",
+		"DEFAULT_INTEREST": "Dobândă implicită:",
+		"INTEREST_FREQ": "Plata dobânzilor la fiecare (în minute):",
+		"AUTO_BANK": "Bancă automată",
+		"AUTO_BANK_INFO": "Banca stabilește rata creditului în funcție de raritatea monedei; jucătorii împrumută când vor.",
+		"AUTO_SEIZURE": "Sechestru automat",
+		"AUTO_SEIZURE_INFO": "În caz de neplată, banca sechestrează automat monedele, apoi cărțile (cele mai scumpe primele), fără să aștepte animatorul.",
+		"BANK_PROFILE": "Profil de bancă",
+		"PROFILE_NORMAL": "Normal",
+		"PROFILE_AGGRESSIVE": "Agresiv",
+		"PROFILE_CUSTOM": "Personalizat",
+		"TIER_THRESHOLD": "Sub (€/jucător)",
+		"TIER_AMOUNT": "Sumă",
+		"TIER_INTEREST": "Dobândă",
+		"TIER_ADD": "adaugă un prag",
+		"TIER_HELP": "Sub media indicată, creditul trece la prag; câștigă cel mai jos prag depășit. Rata de bază = creditul/dobânda implicită de mai sus.",
+		"BANKROUTE_WTD": "În caz de neplată, sechestrare:",
+		"SEIZURE_FIX1": "în valoare de carte, 1 la 1",
+		"SEIZURE_FIX2": "+ taxe fixe (echivalent cu cărți mici):",
+		"SEIZURE_DECOTE": "în valoare de carte cu discount de:",
+		"IF_PRISON": "Dacă creditul nu este recuperat, închisoare maximă",
+		"PRISON_TIMER": "Timp maxim de închisoare (în minute):",
+		"GEN_LETTERS": "Numărul de scrisori generate în joc",
+		"GEN_LETTERS_AUTO": "auto (nb jucători + 1)",
+		"GEN_LETTERS_MANU": "manual",
+		"GEN_LETTERS_IDENTICAL": "Numărul identic de cărți generate în joc și cărțile de început",
+		"PLAYERS_3TO5": "(de la 3 la 5 jucători)",
+		"PLAYERS_6TO15": "(de la 6 la 15 jucători)",
+		"PLAYERS_16+": "(16+ jucători)",
+		"PLAYERS_6+": "(6+ jucători)",
+		"START_DISTRIB_CARDS": "Numărul de cărți distribuite jucătorilor la începutul jocului",
+		"BUILD_AMOUNT": "Numărul identic de cărți pentru a construi o carte superioară:",
+		"ACTIONS_TITLE": "Acțiuni",
+		"STARTING_TOKENS": "Jetoane inițiale",
+		"COST": "Cost"
+	},
+	"CARD": {
+		"LV1": "Alimentație",
+		"LV2": "Cultură și cunoștințe",
+		"LV3": "Energie",
+		"LV4": "Tehnologie"
+	},
+	"ACTION": {
+		"TITLE": "Acțiuni",
+		"CONFIRM": "Validează",
+		"PICK_TARGET": "Alege un jucător",
+		"PICK_TARGET2": "Alege un al doilea jucător",
+		"PICK_CARD": "Alege o carte",
+		"PICK_ONG_CARDS": "Alege 4 cărți de dat",
+		"CONFIRMING": "În curs...",
+		"NO_CARDS": "Nicio carte disponibilă",
+		"ONG_SELECT_HINT": "{{selected}}/4 cărți selectate",
+		"ONG_AUTO_TARGET": "Dă celor mai săraci 2 jucători",
+		"RECEIVED_GIVE": "{{fromName}} ți-a dat o carte!",
+		"RECEIVED_ONG": "{{fromName}} ți-a donat {{count}} carte/cărți (acțiune ONG)!",
+		"ROBBED_STEAL": "Cineva ți-a furat o carte!",
+		"ROBBED_WAR": "Ai fost atacat! Ți-au fost luate 2 cărți.",
+		"SHOP_HINT": "Produ un pătrat ca să câștigi puncte!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Cine are această familie?",
+			"DESC": "Află cine are o carte din familia care îți lipsește. Costă 1 jeton.",
+			"PICK": "Alege o familie de localizat",
+			"HINT": "Selectează o carte — vei afla cine are o carte din aceeași familie.",
+			"SEARCH": "Caută",
+			"RESULT_PLAYER": "{{name}} are o carte din această familie.",
+			"RESULT_DECK": "O carte din această familie este în pachet.",
+			"RESULT_UNKNOWN": "Deocamdată nimeni nu are o carte din această familie."
+		},
+		"GIVE": {
+			"LABEL": "Dă o carte",
+			"DESC": "Oferă una dintre cărțile tale unui jucător la alegere."
+		},
+		"STEAL": {
+			"LABEL": "Fură o carte",
+			"DESC": "Ia o carte de la alt jucător. Va fi anunțat."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Furt silențios",
+			"DESC": "Ia o carte fără ca celălalt jucător să fie anunțat."
+		},
+		"WAR": {
+			"LABEL": "Război",
+			"DESC": "Fură 2 cărți la întâmplare de la fiecare dintre 2 jucători."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Dă 4 dintre cărțile tale celor mai săraci 2 jucători (câte 2 fiecare)."
+		}
+	}
+}

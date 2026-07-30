@@ -6,6 +6,7 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import Chart from 'chart.js/auto';
 // @ts-ignore
 import * as C from "../../../../back/config/constantes_deprecated.cjs";
+import { I18nService } from "../services/i18n.service";
 
 Chart.register(zoomPlugin);
 
@@ -21,6 +22,9 @@ export class EventsComponent {
 	@Input() players: Player[] = [];
 	@Input() typeMoney = C.JUNE;
 
+	constructor(private i18n: I18nService) {
+		this.i18n.loadNamespace('events');
+	}
 
 	getResourcesEmoji(color: string) {
 		switch (color) {

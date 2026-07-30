@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "Du hast {{cardsLength}} Karten 🎴 und {{coins}}{{currency}} 👛 erhalten. Viel Glück!",
+		"INIT_DEBT": "Du hast {{cardsLength}} Karten 🎴 und {{coins}}{{currency}} 👛 erhalten. Geh zum Bankier, um Geld zu bekommen. Viel Glück!",
+		"GO_TO_BANK": "🚨 GEHE ZUR BANK!!! 🚨",
+		"THIS_LIFE_IS_GONE": "Dieses Leben ist vorbei 🪦",
+		"GO_TO_SECOND_LIFE": "Beginne dein zweites Leben!",
+		"WAITING": "Warte...",
+		"GAME_OVER": "Spiel beendet...",
+		"GAME_PAUSED": "Spiel pausiert",
+		"ANSWER_SURVEY": "Umfrage beantworten",
+		"DEBT": "Schulden",
+		"BUY": "KAUFEN",
+		"CREDITS": "KREDITE",
+		"OBJECTIVES": "Ziele",
+		"TAKEN_OVER_TITLE": "Der Spielleiter steuert dein Brett",
+		"TAKEN_OVER_TEXT": "Im Moment spielt jemand für dich. Übernimm wieder, wann immer du willst.",
+		"RETAKE": "Wieder übernehmen",
+		"NOT_ALIVE": "Du lebst nicht mehr",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "Das Spiel läuft nicht, oder du lebst nicht mehr",
+		"GAME_NOT_PLAYING": "Das Spiel läuft nicht",
+		"INSUFFICIENT_FUNDS": "Nicht genug Geld",
+		"INSUFFICIENT_CARDS": "Nicht genug gleiche Karten zum Produzieren",
+		"SETTLE_FAILED": "Rückzahlung des Kredits fehlgeschlagen",
+		"EXTEND_FAILED": "Verlängerung des Kredits fehlgeschlagen",
+		"INVALID_STATE": "Brett nicht geladen, lade die Seite neu",
+		"INVALID_IDS": "Spiel nicht gefunden, lade die Seite neu"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "Der Kredit ist fällig geworden!",
+			"MESSAGE": "Wir haben die Zinsen von {{interest}} eingezogen und deinen Kredit um 5 weitere Minuten verlängert"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Kredit zurückzahlen oder verlängern?",
+			"MESSAGE": "Du kannst den gesamten Kredit jetzt durch Zahlung von {{amount}} zurückzahlen",
+			"MESSAGE2": "oder ihn um 5 weitere Minuten verlängern, indem du die Zinsen von {{interest}} zahlst",
+			"BTN_SETTLE": "Zurückzahlen",
+			"BTN_EXTEND": "Verlängern"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Kredit zurückzahlen?",
+			"MESSAGE": "Bestätigst du die Rückzahlung deines Kredits durch Zahlung von {{amount}} €?",
+			"BTN_CONFIRM": "Vollständig zurückzahlen"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Kredit zurückzahlen?",
+			"MESSAGE": "!!! EIN KREDIT IST IN VERZUG !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Kreditanfrage bestätigen",
+			"MESSAGE": "Für eine Auszahlung von {{amount}} € und {{interest}} € Zinsen",
+			"MESSAGE2": "Für insgesamt {{total}} € zurückzuzahlen? (also {{rate}}% Zinssatz)",
+			"BTN_CONFIRM": "Anfragen"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Pfändung durchgeführt",
+			"MESSAGE": "-{{coins}} 💰 und {{cardsCount}} Karte(n) gepfändet (-{{cardsValue}} 💰)",
+			"PRISON": "Dir bleibt nichts mehr zum Pfänden: ab ins Gefängnis für {{minutes}} Minute(n)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "einfach",
+		"DOUBLE": "doppelt",
+		"IDLE": "Warten...",
+		"PAUSED": "Spiel pausiert...",
+		"RUNNING": "Läuft...",
+		"REQUEST": "Anfrage...",
+		"DEFAULT": "Zahlungsverzug",
+		"DONE": "Beendet",
+		"NEW": "Kredit erhalten (+{{amount}}💰)",
+		"FREE_MONEY": "Gratisgeld erhalten (+{{amount}}💰)",
+		"ANSWER": "Antworten",
+		"SETTLE": "Rückerstattung",
+		"DEBT": "Schulden",
+		"INTEREST": "Zinsen",
+		"CANCEL_SUCCESS": "Kredit storniert, {{amount}} € erstattet",
+		"CANCELED": "Kredit storniert",
+		"NOTICE_INTEREST": "Zinsen, um den Kredit um {{ interestMinutes }} Minuten zu verlängern",
+		"DONE_AT": "Abgeschlossen am",
+		"EXTENDED": "Verlängert",
+		"CREDIT_SETTLED": "Kredit beglichen",
+		"BORROW": "Kredit aufnehmen",
+		"REFUSED_NEGOTIATE": "Kredit abgelehnt — verhandle mit dem Spielleiter",
+		"RATE_CHANGED": "Neuer Satz: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Möchtest du einen ersten Kredit aufnehmen?",
+		"DECLINE": "Nein danke",
+		"HALFWAY_NUDGE": "Kredit zur Hälfte - {{remaining}} übrig",
+		"FINAL_MINUTE": "Weniger als eine Minute! Zahl deinen Kredit zurück, schnell!",
+		"FAULT_OVERLAY_TITLE": "Kredit in Verzug",
+		"FAULT_OVERLAY_TEXT": "Du hast nicht rechtzeitig zurückgezahlt. Geh zum Spielleiter für die Pfändung.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Du hast nicht rechtzeitig zurückgezahlt. Pfändung läuft..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Bauen",
+		"REVEAL_TITLE": "Gebaut!",
+		"REVEAL_HINT": "{{count}} Karten Stufe {{level}} nachgezogen... +1 Jeton (⚡)"
+	}
+}

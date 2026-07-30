@@ -1,0 +1,49 @@
+{
+	"ACTION": {
+		"TITLE": "Azioni",
+		"PICK_TARGET": "Scegliere un giocatore",
+		"PICK_TARGET2": "Scegliere un secondo giocatore",
+		"PICK_CARD": "Scegliere una carta",
+		"PICK_ONG_CARDS": "Scegliere 4 carte da dare",
+		"CONFIRMING": "In corso...",
+		"CONFIRM": "Conferma",
+		"NO_CARDS": "Nessuna carta disponibile",
+		"ONG_SELECT_HINT": "{{selected}}/4 carte selezionate",
+		"ONG_AUTO_TARGET": "Dare ai 2 giocatori più poveri",
+		"RECEIVED_GIVE": "{{fromName}} ti ha dato una carta!",
+		"RECEIVED_ONG": "{{fromName}} ti ha donato {{count}} carta/e (azione ONG)!",
+		"ROBBED_STEAL": "Qualcuno ti ha rubato una carta!",
+		"ROBBED_WAR": "Sei stato attaccato! Ti sono state prese 2 carte.",
+		"SHOP_HINT": "Produci un quadrato per guadagnare punti!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Chi ha questa carta?",
+			"DESC": "Scopri chi possiede una carta della famiglia che ti manca. Costa 1 gettone.",
+			"PICK": "Scegliere la famiglia da localizzare",
+			"HINT": "Seleziona la famiglia della carta che cerchi e saprai chi ne possiede una",
+			"SEARCH": "Cercare",
+			"RESULT_PLAYER": "{{name}} possiede una carta di questa famiglia.",
+			"RESULT_DECK": "Una carta di questa famiglia è nel mazzo.",
+			"RESULT_UNKNOWN": "Per ora nessuno possiede una carta di questa famiglia."
+		},
+		"GIVE": {
+			"LABEL": "Dare una carta",
+			"DESC": "Regala una delle tue carte a un giocatore a tua scelta."
+		},
+		"STEAL": {
+			"LABEL": "Rubare una carta",
+			"DESC": "Prendi una carta a un altro giocatore. Verrà avvisato."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Furto silenzioso",
+			"DESC": "Prendi una carta senza che l'altro giocatore venga avvisato."
+		},
+		"WAR": {
+			"LABEL": "Guerra",
+			"DESC": "Ruba 2 carte a caso a ciascuno di 2 giocatori."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Dai 4 delle tue carte ai 2 giocatori più poveri (2 ciascuno)."
+		}
+	}
+}

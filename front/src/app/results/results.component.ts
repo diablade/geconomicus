@@ -468,7 +468,10 @@ export class ResultsComponent implements OnInit, AfterViewInit, OnDestroy {
 		private wsService: WebSocketService,
 		private sessionStorageService: SessionStorageService,
 		private translate: TranslateService
-	) {}
+	) {
+		this.i18nService.loadNamespace('results');
+		this.i18nService.loadNamespace('module-galileo');
+	}
 
 	ngOnInit(): void {
 		this.getMaster();

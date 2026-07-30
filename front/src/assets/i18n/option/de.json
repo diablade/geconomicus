@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "Allgemeine Einstellungen",
+		"TITLE_ADV": "Erweiterte Optionen",
+		"TITLE_DU": "Optionen freies Geld",
+		"TITLE_DEBT": "Optionen Schuldgeld",
+		"TITLE_CARDS": "Kartenoptionen",
+		"SURVEY_Q": "Fragebogen zu den Eindrücken am Ende der Runde",
+		"WARNING": "⚠️ Achtung ⚠️, ändere dies nur, wenn du weisst was du tust !!!!\nAnsonsten klicke im Fehlerfall auf <span class=\"red\"> \"Standardeinstellung\"</span> !",
+		"DURATION": "Spieldauer in Minuten",
+		"DEATH": "Automatischer Tod",
+		"PRICE_NET": "Nettopreis :",
+		"PRICE_DU": "Preis in DU :",
+		"SAVE_INTERVAL": "Speichern alle (Sekunden)",
+		"DU_INTERVAL": "Universelles Dividende alle (Sekunden)",
+		"DEATH_MINUTES": "Tod tritt alle {{deathMinute}} Minuten auf",
+		"DEATH_MINUTES_FORMULA": "(Spieldauer/ Anzahl der Spieler)",
+		"DU_RATES": "Wachstumsrate der universellen Dividende",
+		"START_MONEY_AMOUNT": "Startguthaben (Mittelklasse)",
+		"START_MONEY_INEQUALITY": "Ungleiche Verteilung in Freigeld",
+		"RICH": "% der Reichen (doppeltes Startguthaben)",
+		"MIDDLE": "% der Mittelschicht (Startguthaben)",
+		"POOR": "% der Armen (halbes Startguthaben)",
+		"DEFAULT_CREDIT": "Kreditstandard:",
+		"DEFAULT_INTEREST": "Zinssatzstandard:",
+		"INTEREST_FREQ": "Zeitraum vor Zinszahlung (in Minuten) :",
+		"AUTO_BANK": "Automatische Bank",
+		"AUTO_BANK_INFO": "Die Bank legt den Kreditzins nach der Knappheit des Geldes fest; die Spieler leihen sich, wann sie wollen.",
+		"AUTO_SEIZURE": "Automatische Pfändung",
+		"AUTO_SEIZURE_INFO": "Bei Zahlungsverzug pfändet die Bank automatisch zuerst die Münzen, dann die Karten (die teuersten zuerst), ohne auf den Spielleiter zu warten.",
+		"BANK_PROFILE": "Bankprofil",
+		"PROFILE_NORMAL": "Normal",
+		"PROFILE_AGGRESSIVE": "Aggressiv",
+		"PROFILE_CUSTOM": "Benutzerdefiniert",
+		"TIER_THRESHOLD": "Unter (€/Spieler)",
+		"TIER_AMOUNT": "Betrag",
+		"TIER_INTEREST": "Zins",
+		"TIER_ADD": "Stufe hinzufügen",
+		"TIER_HELP": "Unter dem angegebenen Durchschnitt wechselt der Kredit auf die Stufe; die tiefste überschrittene Stufe gewinnt. Basiszins = Standardkredit/-zins oben.",
+		"BANKROUTE_WTD": "Im Falle von Zahlungsunfähigkeit zu konfiszieren:",
+		"SEIZURE_FIX1": "in Kartenwert, 1 für 1",
+		"SEIZURE_FIX2": "+ feste Gebühren (gleichwertige schwache Karten) :",
+		"SEIZURE_DECOTE": "in Kartenwert mit einem Abschlag von :",
+		"IF_PRISON": "Wenn der Kredit nicht beglichen wird, maximale Gefängnisstrafe",
+		"PRISON_TIMER": "Maximale Dauer des Gefängnisstrafe (in Minuten) :",
+		"GEN_LETTERS": "Anzahl der im Spiel verwendeten Buchstaben",
+		"GEN_LETTERS_AUTO": "automatisch (Anzahl der Spieler + 1)",
+		"GEN_LETTERS_MANU": "manuell",
+		"GEN_LETTERS_IDENTICAL": "Anzahl der identischen Karten, die generiert werden",
+		"PLAYERS_3TO5": "(3 bis 5 Spieler)",
+		"PLAYERS_6TO15": "(6 bis 15 Spieler)",
+		"PLAYERS_16+": "(16 Spieler und mehr)",
+		"PLAYERS_6+": "(6 Spieler und mehr)",
+		"START_DISTRIB_CARDS": "Anzahl der Karten, die den Spielern am Anfang der Runde verteilt werden",
+		"BUILD_AMOUNT": "Anzahl identischer Karten, die benötigt werden, um eine Karte von höherem Wert zu erhalten :",
+		"ACTIONS_TITLE": "Aktionen",
+		"STARTING_TOKENS": "Start-Jetons",
+		"COST": "Kosten"
+	},
+	"CARD": {
+		"LV1": "Ernährung",
+		"LV2": "Wissen",
+		"LV3": "Energie",
+		"LV4": "Technologie"
+	},
+	"ACTION": {
+		"TITLE": "Aktionen",
+		"CONFIRM": "Bestätigen",
+		"PICK_TARGET": "Einen Spieler wählen",
+		"PICK_TARGET2": "Einen zweiten Spieler wählen",
+		"PICK_CARD": "Eine Karte wählen",
+		"PICK_ONG_CARDS": "4 Karten zum Verschenken wählen",
+		"CONFIRMING": "Läuft...",
+		"NO_CARDS": "Keine Karte verfügbar",
+		"ONG_SELECT_HINT": "{{selected}}/4 Karten ausgewählt",
+		"ONG_AUTO_TARGET": "An die 2 ärmsten Spieler geben",
+		"RECEIVED_GIVE": "{{fromName}} hat dir eine Karte gegeben!",
+		"RECEIVED_ONG": "{{fromName}} hat dir {{count}} Karte(n) geschenkt (NGO-Aktion)!",
+		"ROBBED_STEAL": "Jemand hat dir eine Karte gestohlen!",
+		"ROBBED_WAR": "Du wurdest angegriffen! Dir wurden 2 Karten genommen.",
+		"SHOP_HINT": "Stelle ein Quadrat her, um Punkte zu sammeln!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Wer hat diese Familie?",
+			"DESC": "Finde heraus, wer eine Karte der Familie besitzt, die dir fehlt. Kostet 1 Jeton.",
+			"PICK": "Eine zu suchende Familie wählen",
+			"HINT": "Wähle eine Karte — du erfährst, wer eine Karte derselben Familie besitzt.",
+			"SEARCH": "Suchen",
+			"RESULT_PLAYER": "{{name}} besitzt eine Karte dieser Familie.",
+			"RESULT_DECK": "Eine Karte dieser Familie liegt im Deck.",
+			"RESULT_UNKNOWN": "Zurzeit besitzt niemand eine Karte dieser Familie."
+		},
+		"GIVE": {
+			"LABEL": "Karte geben",
+			"DESC": "Schenke einem Spieler deiner Wahl eine deiner Karten."
+		},
+		"STEAL": {
+			"LABEL": "Karte stehlen",
+			"DESC": "Nimm einem anderen Spieler eine Karte weg. Er wird benachrichtigt."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Stiller Diebstahl",
+			"DESC": "Nimm eine Karte, ohne dass der andere Spieler benachrichtigt wird."
+		},
+		"WAR": {
+			"LABEL": "Krieg",
+			"DESC": "Stiehl 2 zufällige Karten von jedem der 2 Spieler."
+		},
+		"ONG": {
+			"LABEL": "NGO",
+			"DESC": "Gib 4 deiner Karten an die 2 ärmsten Spieler (je 2)."
+		}
+	}
+}

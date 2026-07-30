@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Distribution module",
+			"SUB_TITLE": "Understanding Currency Inequality with the Gini Coefficient",
+			"SUMMARY": "This module allows you to visualize the distribution of currency between members, thanks to the Gini index.",
+			"SUMMARY2": "The Gini index measures the inequalities of distribution (often income or wealth) within a population.",
+			"SUMMARY3": "The total amount is distributed differently depending on the parameter P. 💸",
+			"SUMMARY4": "A low P means a more equal distribution. 🤝",
+			"SUMMARY5": "A high P creates more differences between people. 📊",
+			"DESCRIPTION": "This graph visualizes the distribution of wealth across different currency types: euro, dollar, bitcoin, or free money. Each monetary system creates different dynamics: some favor the concentration of wealth, others a more equitable distribution. By adjusting the sliders, you can change the monetary distribution. You can observe how these choices influence the Gini coefficient, a simple indicator that measures inequality.",
+			"SUMMARY7": "The Gini index measures the inequalities of distribution (often income or wealth) within a population.",
+			"SUMMARY8": "- 0 = perfect equality (everyone has the same)",
+			"SUMMARY9": "- 1 = complete inequality (only one person has everything)",
+			"SUMMARY10": "☝️ In free currency, the Gini index tends permanently towards 0.",
+			"TOTAL": "Total Amount",
+			"NUM_PLAYERS": "Number of people",
+			"RESULTS": "Distribution results",
+			"PARAM_P": "Parameter P (inequality)",
+			"PERSON": "Person",
+			"AMOUNT": "Amount",
+			"GINI": "Gini index",
+			"RATIO": "Ratio High/Low",
+			"SIMULATION": "Simulation",
+			"PERCENTAGE": "% of Total",
+			"GRAPHIC": "Graphic",
+			"CURVE": "Curve",
+			"CAMBER": "Camembert"
+		}
+	}
+}

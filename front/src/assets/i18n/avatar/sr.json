@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "Čekaonica",
+		"ANIMATOR": "Animator: {{name}}",
+		"NAME": "Ime ili nadimak",
+		"YOUR_AVATAR": "Tvoj avatar",
+		"SYS_SCAN": "Kupi pomoću",
+		"EYES": "Oči",
+		"EYEBROWS": "Obrve",
+		"MOUTH": "Usta",
+		"GLASSES": "Naočare",
+		"EARRINGS": "Minđuše",
+		"FEATURES": "Razno",
+		"GAME_TABLE": "Sto za igru",
+		"SKIN": "Koža",
+		"HAIR": "Kosa",
+		"PLAY": "Uđi u igru",
+		"YOUR_CODE": "Tvoj kod za povratak:",
+		"UPDATED": "Avatar je ažuriran",
+		"MODIFY_FEEDBACK": "Ispravi moje odgovore",
+		"MODIFY_FEEDBACK_MESSAGE": "Zamoli animatora da ti dozvoli da ispraviš odgovore, pa pokušaj ponovo.",
+		"SURVEY_AUTORIZED": "Možeš ponovo da odgovoriš na upitnik"
+	}
+}

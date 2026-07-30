@@ -1,0 +1,113 @@
+{
+	"OPTION": {
+		"TITLE": "General options",
+		"TITLE_ADV": "Advanced options",
+		"TITLE_DU": "Free money options",
+		"TITLE_DEBT": "Debt money options",
+		"TITLE_CARDS": "Card options",
+		"SURVEY_Q": "End game feeling survey",
+		"WARNING": "⚠️ Warning ⚠️, only modify if you're sure of what you're doing!!!!\notherwise click on <span class=\"red\"> \"default value\"</span> in case of error!",
+		"DURATION": "Round duration in minutes",
+		"DEATH": "Automatic deaths",
+		"PRICE_NET": "net price:",
+		"PRICE_DU": "UD price:",
+		"SAVE_INTERVAL": "Save every (seconds)",
+		"DU_INTERVAL": "Universal dividend every (seconds)",
+		"DEATH_MINUTES": "Death occurs every {{deathMinute}} minutes",
+		"DEATH_MINUTES_FORMULA": "(game duration / nb players)",
+		"DU_RATES": "Universal Dividend growth rate",
+		"START_MONEY_AMOUNT": "Starting money (middle class)",
+		"START_MONEY_INEQUALITY": "Unequal start in free money",
+		"RICH": "% of rich (starting money * 2)",
+		"MIDDLE": "% middle class (starting money)",
+		"POOR": "% of poor (starting money / 2)",
+		"DEFAULT_CREDIT": "Default credit:",
+		"DEFAULT_INTEREST": "Default interest:",
+		"INTEREST_FREQ": "Interest payment every (in minutes):",
+		"AUTO_BANK": "Automatic bank",
+		"AUTO_BANK_INFO": "The bank sets the loan rate according to how scarce money is; players borrow whenever they want.",
+		"AUTO_SEIZURE": "Automatic seizure",
+		"AUTO_SEIZURE_INFO": "In case of payment default, the bank automatically seizes coins then cards (the most expensive first), without waiting for the facilitator.",
+		"BANK_PROFILE": "Bank profile",
+		"PROFILE_NORMAL": "Normal",
+		"PROFILE_AGGRESSIVE": "Aggressive",
+		"PROFILE_CUSTOM": "Custom",
+		"TIER_THRESHOLD": "Below (€/player)",
+		"TIER_AMOUNT": "Amount",
+		"TIER_INTEREST": "Interest",
+		"TIER_ADD": "add a tier",
+		"TIER_HELP": "Below the average shown, the loan moves to the tier; the lowest tier crossed wins. Base rate = default loan/interest above.",
+		"BANKROUTE_WTD": "In case of payment default, seize:",
+		"SEIZURE_FIX1": "in card value, 1 for 1",
+		"SEIZURE_FIX2": "+ fixed fees (equivalent low cards):",
+		"SEIZURE_DECOTE": "in card value with discount of:",
+		"IF_PRISON": "If loan not recovered, maximum prison",
+		"PRISON_TIMER": "Maximum prison duration (in minutes):",
+		"GEN_LETTERS": "Number of letters generated in game",
+		"GEN_LETTERS_AUTO": "auto (nb players + 1)",
+		"GEN_LETTERS_MANU": "manual",
+		"GEN_LETTERS_IDENTICAL": "Identical number of cards generated in game and starting cards",
+		"PLAYERS_3TO5": "(3 to 5 players)",
+		"PLAYERS_6TO15": "(6 to 15 players)",
+		"PLAYERS_16+": "(16+ players)",
+		"PLAYERS_6+": "(6+ players)",
+		"START_DISTRIB_CARDS": "Number of cards distributed to players at game start",
+		"BUILD_AMOUNT": "Identical number of cards to build a superior card:",
+		"ACTIONS_TITLE": "Actions",
+		"STARTING_TOKENS": "Starting tokens",
+		"COST": "Cost"
+	},
+	"CARD": {
+		"LV1": "Food",
+		"LV2": "Culture and knowledge",
+		"LV3": "Energy",
+		"LV4": "Technology"
+	},
+	"ACTION": {
+		"TITLE": "Actions",
+		"CONFIRM": "Confirm",
+		"PICK_TARGET": "Choose a player",
+		"PICK_TARGET2": "Choose a second player",
+		"PICK_CARD": "Choose a card",
+		"PICK_ONG_CARDS": "Choose 4 cards to donate",
+		"CONFIRMING": "Processing...",
+		"NO_CARDS": "No cards available",
+		"ONG_SELECT_HINT": "{{selected}}/4 cards selected",
+		"ONG_AUTO_TARGET": "Give to the 2 poorest players",
+		"RECEIVED_GIVE": "{{fromName}} gave you a card!",
+		"RECEIVED_ONG": "{{fromName}} donated {{count}} card(s) to you (ONG action)!",
+		"ROBBED_STEAL": "Someone stole a card from you!",
+		"ROBBED_WAR": "You were attacked! 2 cards were taken from you.",
+		"SHOP_HINT": "Produce a complete set to score points!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Who has this family?",
+			"DESC": "Find out who holds a card from a family you're missing. Costs 1 token.",
+			"PICK": "Choose a family to locate",
+			"HINT": "Select a card — you'll find out who holds a card of the same family.",
+			"SEARCH": "Search",
+			"RESULT_PLAYER": "{{name}} has a card of this family.",
+			"RESULT_DECK": "A card of this family is in the deck.",
+			"RESULT_UNKNOWN": "No one holds a card of this family right now."
+		},
+		"GIVE": {
+			"LABEL": "Give a card",
+			"DESC": "Give one of your cards to a player of your choice."
+		},
+		"STEAL": {
+			"LABEL": "Steal a card",
+			"DESC": "Take a card from another player. They will be notified."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Silent steal",
+			"DESC": "Take a card without the other player being notified."
+		},
+		"WAR": {
+			"LABEL": "War",
+			"DESC": "Steal 2 random cards from each of 2 players."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Give 4 of your cards to the 2 poorest players (2 each)."
+		}
+	}
+}

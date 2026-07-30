@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "Ai primit {{cardsLength}} cărți 🎴 și {{coins}}{{currency}} 👛. Baftă!",
+		"INIT_DEBT": "Ai primit {{cardsLength}} cărți 🎴 și {{coins}}{{currency}} 👛. Du-te la bancher ca să obții bani. Baftă!",
+		"GO_TO_BANK": "🚨 MERGE LA BANCĂ!!! 🚨",
+		"THIS_LIFE_IS_GONE": "Această viață s-a încheiat 🪦",
+		"GO_TO_SECOND_LIFE": "Mergi la a doua ta viață!",
+		"WAITING": "Așteptând...",
+		"GAME_OVER": "Jocul s-a încheiat...",
+		"GAME_PAUSED": "Joc în pauză",
+		"ANSWER_SURVEY": "Răspunde la sondaj",
+		"DEBT": "Datorii",
+		"BUY": "CUMPĂRĂ",
+		"CREDITS": "CREDITE",
+		"OBJECTIVES": "Obiective",
+		"TAKEN_OVER_TITLE": "Animatorul îți conduce tabla",
+		"TAKEN_OVER_TEXT": "Momentan altcineva joacă în locul tău. Preia controlul când vrei.",
+		"RETAKE": "Preia controlul",
+		"NOT_ALIVE": "Nu mai ești în viață",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "Jocul nu este în desfășurare sau nu mai ești în viață",
+		"GAME_NOT_PLAYING": "Jocul nu este în desfășurare",
+		"INSUFFICIENT_FUNDS": "Fonduri insuficiente",
+		"INSUFFICIENT_CARDS": "Nu ai suficiente cărți identice pentru a produce",
+		"SETTLE_FAILED": "Rambursarea creditului a eșuat",
+		"EXTEND_FAILED": "Prelungirea creditului a eșuat",
+		"INVALID_STATE": "Tabla nu este încărcată, reîmprospătează pagina",
+		"INVALID_IDS": "Joc negăsit, reîmprospătează pagina"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "Creditul a ajuns la scadență!",
+			"MESSAGE": "Am reținut dobânda de {{interest}} și ți-am prelungit creditul cu încă 5 minute"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Rambursezi sau prelungești creditul?",
+			"MESSAGE": "Poți rambursa integral creditul plătind {{amount}} acum",
+			"MESSAGE2": "sau îl poți prelungi cu încă 5 min plătind dobânda de {{interest}}",
+			"BTN_SETTLE": "Rambursează",
+			"BTN_EXTEND": "Prelungește"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Rambursezi creditul?",
+			"MESSAGE": "Confirmi rambursarea creditului tău, prin plata a {{amount}} €?",
+			"BTN_CONFIRM": "Rambursează integral"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Rambursezi creditul?",
+			"MESSAGE": "!!! UN CREDIT ESTE ÎN INCAPACITATE DE PLATĂ !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Confirmă cererea de credit",
+			"MESSAGE": "Pentru o vărsare de {{amount}} € și {{interest}} € dobândă",
+			"MESSAGE2": "Pentru un total de {{total}} € de rambursat? (adică {{rate}}% rată a dobânzii)",
+			"BTN_CONFIRM": "Cere"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Sechestru efectuat",
+			"MESSAGE": "-{{coins}} 💰 și {{cardsCount}} carte/cărți sechestrate (-{{cardsValue}} 💰)",
+			"PRISON": "Nu ți-a mai rămas nimic de sechestrat: direcția închisoare pentru {{minutes}} minut(e)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "simplu",
+		"DOUBLE": "dublu",
+		"IDLE": "În așteptare...",
+		"PAUSED": "Joc în pauză...",
+		"RUNNING": "În curs...",
+		"REQUEST": "Cerere...",
+		"DEFAULT": "Incapacitate de plată",
+		"DONE": "Terminat",
+		"NEW": "Credit obținut (+{{amount}}💰)",
+		"FREE_MONEY": "Bani gratuiți primiți (+{{amount}}💰)",
+		"ANSWER": "Răspunde",
+		"SETTLE": "Rambursează",
+		"DEBT": "Datorie",
+		"INTEREST": "Dobândă",
+		"CANCEL_SUCCESS": "Credit anulat, {{amount}} € rambursați",
+		"CANCELED": "Credit anulat",
+		"NOTICE_INTEREST": "Dobândă, plată pentru extindere de {{ interestMinutes }} minute",
+		"DONE_AT": "Închis",
+		"EXTENDED": "Prelungit",
+		"CREDIT_SETTLED": "Credit rambursat",
+		"BORROW": "Ia un credit",
+		"REFUSED_NEGOTIATE": "Credit refuzat — negociază cu animatorul",
+		"RATE_CHANGED": "Rată nouă: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "Vrei să iei un prim credit?",
+		"DECLINE": "Nu, mulțumesc",
+		"HALFWAY_NUDGE": "Credit la jumătate - {{remaining}} rămas",
+		"FINAL_MINUTE": "Mai puțin de un minut! Rambursează-ți creditul, repede!",
+		"FAULT_OVERLAY_TITLE": "Credit în incapacitate de plată",
+		"FAULT_OVERLAY_TEXT": "Nu ai rambursat la timp. Du-te la animator pentru sechestru.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Nu ai rambursat la timp. Sechestru în curs..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Construiește",
+		"REVEAL_TITLE": "Construit!",
+		"REVEAL_HINT": "{{count}} cărți Niv. {{level}} extrase din nou... +1 jeton (⚡)"
+	}
+}

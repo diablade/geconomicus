@@ -1,17 +1,24 @@
 {
-    "AVATAR": {
-        "NAME": "First Name or Nickname",
-        "YOUR_CODE": "Your code to come back:",
-        "YOUR_AVATAR": "Your Avatar",
-        "SYS_SCAN": "Buy with camera & QRCode",
-        "EYES": "Eyes",
-        "EYEBROWS": "Eyebrows",
-        "MOUTH": "Mouth",
-        "GLASSES": "Glasses",
-        "EARRINGS": "Earrings",
-        "FEATURES": "Features",
-        "GAME_TABLE": "Game Table",
-        "SKIN": "Skin",
-        "HAIR": "Hair"
-    }
+	"AVATAR": {
+		"LOBBY": "Waiting room",
+		"ANIMATOR": "Facilitator: {{name}}",
+		"NAME": "First Name or Nickname",
+		"YOUR_AVATAR": "Your Avatar",
+		"SYS_SCAN": "Buy with camera & QRCode",
+		"EYES": "Eyes",
+		"EYEBROWS": "Eyebrows",
+		"MOUTH": "Mouth",
+		"GLASSES": "Glasses",
+		"EARRINGS": "Earrings",
+		"FEATURES": "Features",
+		"GAME_TABLE": "Game Table",
+		"SKIN": "Skin",
+		"HAIR": "Hair",
+		"PLAY": "Enter the game",
+		"YOUR_CODE": "Your code to come back:",
+		"UPDATED": "Avatar updated",
+		"MODIFY_FEEDBACK": "Correct my answers",
+		"MODIFY_FEEDBACK_MESSAGE": "Ask the facilitator to let you correct your answers, then try again.",
+		"SURVEY_AUTORIZED": "You can answer the survey again"
+	}
 }

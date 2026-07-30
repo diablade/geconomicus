@@ -1,0 +1,99 @@
+{
+	"PLAYER": {
+		"INIT": "Has recibido {{cardsLength}} cartas 🎴 y {{coins}}{{currency}} 👛. ¡Buena suerte!",
+		"INIT_DEBT": "Has recibido {{cardsLength}} cartas 🎴 y {{coins}}{{currency}} 👛. Ve a ver al banquero para conseguir dinero. ¡Buena suerte!",
+		"GO_TO_BANK": "🚨 ¡¡¡VAYA A LA BANCA!!! 🚨",
+		"THIS_LIFE_IS_GONE": "Esta vida se acabó 🪦",
+		"GO_TO_SECOND_LIFE": "¡Comienza tu segunda vida!",
+		"WAITING": "En espera...",
+		"GAME_OVER": "Partida terminada...",
+		"GAME_PAUSED": "Partida en pausa",
+		"ANSWER_SURVEY": "Responder al cuestionario",
+		"DEBT": "Deudas",
+		"BUY": "COMPRAR",
+		"CREDITS": "CRÉDITOS",
+		"OBJECTIVES": "Objetivos",
+		"TAKEN_OVER_TITLE": "El animador está manejando tu tablero",
+		"TAKEN_OVER_TEXT": "Alguien está jugando por ti en este momento. Recupera el control cuando quieras.",
+		"RETAKE": "Recuperar el control",
+		"NOT_ALIVE": "Ya no estás vivo",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "La partida no está en curso, o ya no estás vivo",
+		"GAME_NOT_PLAYING": "La partida no está en curso",
+		"INSUFFICIENT_FUNDS": "Fondos insuficientes",
+		"INSUFFICIENT_CARDS": "No hay suficientes cartas idénticas para producir",
+		"SETTLE_FAILED": "Error al devolver el crédito",
+		"EXTEND_FAILED": "Error al prolongar el crédito",
+		"INVALID_STATE": "Tablero no cargado, actualiza la página",
+		"INVALID_IDS": "Partida no encontrada, actualiza la página"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "¡El crédito ha vencido!",
+			"MESSAGE": "Hemos cobrado el interés de {{interest}} y prolongado tu crédito 5 minutos más"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "¿Devolver o prolongar el crédito?",
+			"MESSAGE": "Puedes devolver todo el crédito pagando {{amount}} ahora",
+			"MESSAGE2": "o prolongarlo 5 min más pagando el interés de {{interest}}",
+			"BTN_SETTLE": "Devolver",
+			"BTN_EXTEND": "Prolongar"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "¿Devolver el crédito?",
+			"MESSAGE": "¿Confirmas la devolución de tu crédito, pagando {{amount}} €?",
+			"BTN_CONFIRM": "Devolver íntegramente"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "¿Devolver el crédito?",
+			"MESSAGE": "!!! ¡UN CRÉDITO ESTÁ EN IMPAGO! !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Confirma la solicitud de crédito",
+			"MESSAGE": "Por un desembolso de {{amount}} € y {{interest}} € de interés",
+			"MESSAGE2": "¿Por un total de {{total}} € a devolver? (o sea {{rate}}% de tipo de interés)",
+			"BTN_CONFIRM": "Solicitar"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Embargo realizado",
+			"MESSAGE": "-{{coins}} 💰 y {{cardsCount}} carta(s) embargada(s) (-{{cardsValue}} 💰)",
+			"PRISON": "No te queda nada que embargar: a prisión por {{minutes}} minuto(s)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "simple",
+		"DOUBLE": "doble",
+		"IDLE": "Esperando...",
+		"PAUSED": "Juego en pausa...",
+		"RUNNING": "En curso...",
+		"REQUEST": "Solicitando...",
+		"DEFAULT": "Impago",
+		"DONE": "Terminado",
+		"NEW": "Crédito obtenido (+{{amount}}💰)",
+		"FREE_MONEY": "Dinero gratis recibido (+{{amount}}💰)",
+		"ANSWER": "Responder",
+		"SETTLE": "Reembolsar",
+		"DEBT": "Deuda",
+		"INTEREST": "Interés",
+		"CANCEL_SUCCESS": "Crédito anulado, {{amount}} € devueltos",
+		"CANCELED": "Crédito anulado",
+		"NOTICE_INTEREST": "Interés, pagadero para prorrogar {{ interestMinutes }} minutos",
+		"DONE_AT": "Cancelado el",
+		"EXTENDED": "Prorrogado",
+		"CREDIT_SETTLED": "Crédito reembolsado",
+		"BORROW": "Pedir un crédito",
+		"REFUSED_NEGOTIATE": "Crédito rechazado — negocia con el animador",
+		"RATE_CHANGED": "Nuevo tipo: {{amount}}/{{interest}} ({{pct}}%)",
+		"FIRST_Q_TITLE": "¿Quieres pedir un primer crédito?",
+		"DECLINE": "No, gracias",
+		"HALFWAY_NUDGE": "Crédito a mitad de camino - {{remaining}} restante",
+		"FINAL_MINUTE": "¡Menos de un minuto! ¡Devuelve tu crédito, rápido!",
+		"FAULT_OVERLAY_TITLE": "Crédito en impago",
+		"FAULT_OVERLAY_TEXT": "No has devuelto a tiempo. Ve a ver al animador para el embargo.",
+		"FAULT_OVERLAY_TEXT_AUTO": "No has devuelto a tiempo. Embargo en curso..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Construir",
+		"REVEAL_TITLE": "¡Construido!",
+		"REVEAL_HINT": "{{count}} cartas Niv. {{level}} robadas... +1 ficha (⚡)"
+	}
+}

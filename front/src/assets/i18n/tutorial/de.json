@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Wie spielt man?",
+		"PREV": "Zurück",
+		"NEXT": "Weiter",
+		"FINISH": "Fertig",
+		"GO_TO": "Zu Folie {{n}} gehen",
+		"CARDS": {
+			"TITLE": "Die Ressourcenkarten",
+			"DESC": "Jede Karte steht für eine Ressource: Nahrung (rot, 1), Wissen (gelb, 2), Energie (grün, 4), Technologie (blau, 8). Jede Kartenfamilie trägt einen Buchstaben (A, B, C…). Dein Vermögen = deine Münzen + der Wert deiner Karten."
+		},
+		"WEALTH": {
+			"TITLE": "Das Ziel: reich werden",
+			"DESC": "Sammle bis zum Spielende so viel Vermögen wie möglich an (Münzen + Kartenwert). Die Rangliste belohnt den reichsten Spieler, den mit den meisten Münzen, den mit den meisten Ressourcen und den aktivsten."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Die Transaktionen",
+			"DESC": "Jeder Spieler kann eine Karte verkaufen, indem er sie umdreht (QR-Code oder Kurzcode). Der Käufer scannt oder tippt den Code ein, um zum Preis der Ressource zu kaufen. So zirkuliert das Vermögen zwischen den Spielern."
+		},
+		"PRODUCTION": {
+			"TITLE": "Die Produktion",
+			"DESC": "Sammle 4 Karten mit demselben Buchstaben UND derselben Stufe → drücke auf Produzieren → du erhältst 1 Karte der nächsthöheren Stufe + 4 neue Karten. Nahrung×4 → 1 Wissen. Jede Produktion bringt dir außerdem +1 Aktionsjeton."
+		},
+		"ACTIONS": {
+			"TITLE": "Die Aktionen",
+			"DESC": "Gib deine Aktionsjetons aus, um mit den anderen Spielern zu interagieren: suchen, wer eine Karte hat, eine verschenken, eine stehlen, einen Konflikt auslösen… Du beginnst mit 1 Jeton und gewinnst bei jeder Produktion weitere."
+		},
+		"JUNE": {
+			"TITLE": "Modus Freies Geld (JUNE)",
+			"DESC": "Jede Minute wird eine Geldmenge (das Universelle Dividende) gleichmäßig an alle lebenden Spieler verteilt. Die Kartenpreise passen sich dem UD an. Keine Bank, keine Schulden — das Geld wird automatisch geschaffen und geteilt."
+		},
+		"DEBT": {
+			"TITLE": "Modus Schuldgeld",
+			"DESC": "Du beginnst mit 0 Münzen. Du musst dir bei der Bank Geld leihen, um zu spielen. Bei jedem Kredit: du erhältst Münzen und musst innerhalb der Frist Kapital + Zinsen zurückzahlen."
+		},
+		"REPAYMENT": {
+			"TITLE": "Zurückzahlen oder verlängern",
+			"DESC": "Bei Fälligkeit: alles zurückzahlen (Kredit getilgt) oder nur die Zinsen zahlen, um die Laufzeit zu verlängern (du schuldest weiterhin das Kapital). Wenn du nicht zahlen kannst → Pfändung."
+		},
+		"SEIZURE": {
+			"TITLE": "Pfändung und Gefängnis",
+			"DESC": "Bei Zahlungsausfall pfändet die Bank deine Karten (mit einem Abschlag von 33 %) und deine Münzen, um die Schuld einzutreiben. Reicht das nicht, kommst du für einige Minuten ins Gefängnis — vom Spiel ausgeschlossen bis zum Ende der Strafe."
+		}
+	}
+}

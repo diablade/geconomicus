@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Cum se joacă?",
+		"PREV": "Anterior",
+		"NEXT": "Următor",
+		"FINISH": "Gata",
+		"GO_TO": "Mergi la diapozitivul {{n}}",
+		"CARDS": {
+			"TITLE": "Cărțile de resurse",
+			"DESC": "Fiecare carte reprezintă o resursă: Alimentație (roșu, 1), Cunoaștere (galben, 2), Energie (verde, 4), Tehnologie (albastru, 8). Fiecare familie de cărți poartă o literă (A, B, C…). Averea ta = monedele tale + valoarea cărților tale."
+		},
+		"WEALTH": {
+			"TITLE": "Obiectivul: să te îmbogățești",
+			"DESC": "Adună cât mai multă avere (monede + valoarea cărților) până la sfârșitul jocului. Clasamentul îl recompensează pe cel mai bogat jucător, pe cel cu cele mai multe monede, cu cele mai multe resurse și pe cel mai activ."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Tranzacțiile",
+			"DESC": "Orice jucător poate vinde o carte întorcând-o (cod QR sau cod scurt). Cumpărătorul scanează sau introduce codul pentru a cumpăra la prețul resursei. Astfel circulă averea între jucători."
+		},
+		"PRODUCTION": {
+			"TITLE": "Producția",
+			"DESC": "Adună 4 cărți cu aceeași literă ȘI același nivel → apasă pe Produce → primești 1 carte de nivel superior + 4 cărți noi. Alimentație×4 → 1 Cunoaștere. Fiecare producție îți dă și +1 jeton de acțiune."
+		},
+		"ACTIONS": {
+			"TITLE": "Acțiunile",
+			"DESC": "Cheltuiește-ți jetoanele de acțiune ca să interacționezi cu ceilalți jucători: să cauți cine are o carte, să dai una, să furi una, să declanșezi un conflict… Începi cu 1 jeton și câștigi altele la fiecare producție."
+		},
+		"JUNE": {
+			"TITLE": "Mod Monedă Liberă (JUNE)",
+			"DESC": "În fiecare minut, o cantitate de monedă (Dividendul Universal) este distribuită echitabil tuturor jucătorilor în viață. Prețurile cărților se ajustează odată cu DU. Fără bancă, fără datorie — moneda este creată și împărțită automat."
+		},
+		"DEBT": {
+			"TITLE": "Mod Monedă Datorie",
+			"DESC": "Începi cu 0 monede. Trebuie să împrumuți de la bancă pentru a juca. La fiecare credit: primești monede și trebuie să rambursezi principalul + dobânzile în termenul stabilit."
+		},
+		"REPAYMENT": {
+			"TITLE": "Rambursează sau prelungește",
+			"DESC": "La scadență: rambursează tot (credit închis) sau plătește doar dobânzile pentru a prelungi durata (rămâi dator cu principalul). Dacă nu poți plăti → sechestru."
+		},
+		"SEIZURE": {
+			"TITLE": "Sechestru și închisoare",
+			"DESC": "În caz de neplată, banca îți sechestrează cărțile (cu o reducere de 33%) și monedele pentru a recupera datoria. Dacă nu este de ajuns, ajungi la închisoare pentru câteva minute — exclus din joc până la sfârșitul pedepsei."
+		}
+	}
+}

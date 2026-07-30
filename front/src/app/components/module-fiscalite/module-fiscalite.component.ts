@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {Subscription, interval} from 'rxjs';
 import {faPlay, faPause, faRotateLeft, faCircleInfo, faArrowRightArrowLeft} from '@fortawesome/free-solid-svg-icons';
 import {SimParams, SimResult, TaxSimulationService} from './tax-simulation.service';
+import {I18nService} from '../../services/i18n.service';
 
 /** Un preset = un repère historique réel. Les libellés/contextes sont dans les fichiers i18n (clé par id). */
 interface FiscalPreset {
@@ -110,7 +111,8 @@ export class ModuleFiscaliteComponent implements OnInit, OnDestroy {
 	readonly faCircleInfo = faCircleInfo;
 	readonly faArrowRightArrowLeft = faArrowRightArrowLeft;
 
-	constructor(private router: Router, private sim: TaxSimulationService) {
+	constructor(private router: Router, private sim: TaxSimulationService, private i18n: I18nService) {
+		this.i18n.loadNamespace('module-fiscalite');
 	}
 
 	ngOnInit(): void {

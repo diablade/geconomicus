@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Module répartition",
+			"SUB_TITLE": "Comprendre les inégalités de la monnaie avec l'indice de Gini",
+			"SUMMARY": "Ce module permet de visualiser la répartition d’une monnaie entre ses membres, grâce à l'indice de Gini.",
+			"SUMMARY2": "L’indice de Gini mesure les inégalités de distribution (souvent de revenus ou richesses) dans une population.",
+			"SUMMARY3": "Le montant total est réparti différemment selon le paramètre P. 💸",
+			"SUMMARY4": "Un P bas signifie une répartition plus égale. 🤝",
+			"SUMMARY5": "Un P élevé crée plus de différences entre les personnes. 📊",
+			"DESCRIPTION": "Ce graphique permet de visualiser la répartition des richesses selon différents types de monnaies : euro, dollar, bitcoin ou monnaie libre. Chaque système monétaire entraîne des dynamiques différentes : certaines favorisent la concentration de richesses, d'autres une distribution plus équitable. En jouant avec les curseurs, tu modifies la répartition monétaire. Tu peux ainsi observer comment ces choix influencent l'indice de Gini, un indicateur simple qui mesure les inégalités.",
+			"SUMMARY7": "L’indice de Gini mesure les inégalités de distribution (souvent de revenus ou richesses) dans une population.",
+			"SUMMARY8": "- 0 = égalité parfaite (tout le monde a la même chose)",
+			"SUMMARY9": "- 1 = inégalité totale (une seule personne a tout)",
+			"SUMMARY10": "☝️ En monnaie libre, l’indice de Gini tend en permanence vers 0.",
+			"TOTAL": "Montant total",
+			"NUM_PLAYERS": "Nombre de personnes",
+			"RESULTS": "Résultats de la distribution",
+			"PARAM_P": "Paramètre P (inégalité)",
+			"PERSON": "Personne",
+			"AMOUNT": "Montant",
+			"GINI": "Indice de Gini",
+			"RATIO": "Ratio haut/bas",
+			"SIMULATION": "Simulation",
+			"PERCENTAGE": "% du total",
+			"GRAPHIC": "Graphique",
+			"CURVE": "Courbe",
+			"CAMBER": "Camembert"
+		}
+	}
+}
