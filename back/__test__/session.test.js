@@ -18,6 +18,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@
 import request from 'supertest';
 import app from '../src/app';
 import db from '#configTest/database';
+import SessionModel from '../src/session/session.model.js';
+import { GAME_STATUS } from '@geco/shared';
 
 /* ================= SETUP ================= */
 const agent = request.agent(app);
@@ -93,6 +95,40 @@ describe("SESSION controller tests", () => {
             expect(res.body.name).toBe("test-name-session-updated");
             expect(res.body.animator).toBe("test-session-animator-updated");
             expect(res.body.location).toBe("test-session-location-updated");
+        });
+    });
+    describe("SESSION START", () => {
+        test("should persist complete rules with schema defaults", async () => {
+            const created = await agent.post("/session/create").send({
+                name: "started-session",
+                animator: "a",
+                location: "l",
+            });
+            const startedId = created.body._id;
+            await agent.post("/session/start").send({ sessionId: startedId });
+
+            const raw = await SessionModel.collection.findOne({
+                _id: new SessionModel.base.Types.ObjectId(startedId),
+            });
+            expect(raw.gamesRules.length).toBe(2);
+            raw.gamesRules.forEach((rule) => {
+                expect(Array.isArray(rule.actions)).toBe(true);
+                expect(rule.actions.length).toBeGreaterThan(0);
+                expect(Array.isArray(rule.rateSchedule)).toBe(true);
+                expect(rule.roundMinutes).toBe(20);
+                expect(rule.generateLettersAuto).toBe(true);
+            });
+        });
+        test("should expose gameStatus none on rules that have no game state yet", async () => {
+            const started = await agent.post("/session/start").send({ sessionId: sessionId });
+            expect(started.status).toBe(200);
+            expect(started.body.gamesRules.length).toBe(2);
+            started.body.gamesRules.forEach((rule) => expect(rule.gameStatus).toBe(GAME_STATUS.NONE));
+
+            const reloaded = await agent.get("/session/" + sessionId).send();
+            expect(reloaded.status).toBe(200);
+            expect(reloaded.body.gamesRules.length).toBe(2);
+            reloaded.body.gamesRules.forEach((rule) => expect(rule.gameStatus).toBe(GAME_STATUS.NONE));
         });
     });
     describe("SESSION DELETE", () => {

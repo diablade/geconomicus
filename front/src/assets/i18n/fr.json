@@ -13,6 +13,7 @@
 	"VALUES_BY_DEFAULT": "Valeurs par défaut",
 	"BACK_TO_LOBBY": "Retour en salle d'attente",
 	"CANCEL": "Annuler",
+	"CLOSE": "Fermer",
 	"OK": "OK",
 	"ALL": "Tous",
 	"SAVE": "Sauvegarder",
@@ -98,8 +99,8 @@
 		"YES": "Oui",
 		"NO": "Non",
 		"CANCEL": "Annuler",
-		"CONTINUE_GAME": "Continuer votre partie",
-		"ACTIVE_GAME": "Vous avez une partie active :",
+		"CONTINUE_SESSION": "Reprendre votre session",
+		"ACTIVE_SESSION": "Vous avez une session en cours :",
 		"DISMISS": "Fermer",
 		"RESUME": "Continuer",
 		"INFORMATION": {
@@ -154,6 +155,8 @@
 	"ERROR": {
 		"SESSION_ALREADY_STARTED": "La session a déjà démarré, tu ne peux plus créer d'avatar.",
 		"GENERIC": "Une erreur s'est produite, veuillez réessayer plus tard.",
+		"UNKNOWN": "Une erreur inattendue s'est produite",
+		"DISTRIBUTE_CARDS": "Échec de la distribution des cartes",
 		"GAME_NOT_FOUND": "Partie introuvable",
 		"SESSION_NOT_FOUND": "Session non trouvée",
 		"GAME_ALREADY_LAUNCHED": "La partie est déjà ouverte, les joueurs peuvent la rejoindre.",
@@ -195,7 +198,20 @@
 		"CONNECTION_EXPIRED": "La connexion a expiré. Rechargement automatique de la page...",
 		"IO_SOCKET_ERROR": "Une erreur s'est produite, veuillez réessayer plus tard.",
 		"FINDING_CARD": "Carte non trouvé",
-		"GAME_STATE_OVER": "Partie terminée"
+		"GAME_STATE_OVER": "Partie terminée",
+		"NOT_FOUND": "Introuvable",
+		"GET_ALL": "Échec du chargement des sessions",
+		"GET_BY_ID": "Échec du chargement de la session",
+		"GET_BY_SHORT_ID": "Aucune session pour ce code",
+		"START": "Échec du démarrage de la session",
+		"SESSION_REMOVE_BY_ID": "Échec de la suppression de la session",
+		"KILL_GAME": "Échec de la suppression de la partie",
+		"DEFAULT": "Échec du retour aux valeurs par défaut",
+		"GET_BY_IDX": "Échec du chargement des règles",
+		"REMOVE_BY_IDX": "Échec de la suppression des règles",
+		"ALLOW_AVATAR_EDIT_SURVEY": "Échec de l'ouverture du questionnaire pour cet avatar",
+		"FINDING_INGREDIENT": "Ingrédient non trouvé",
+		"REFRESH": "Échec du rafraîchissement de la partie"
 	},
 	"SOCKET": {
 		"KICKED": {
@@ -220,6 +236,7 @@
 			"TEXT": "☎️ Reconnexion en cours..."
 		},
 		"CONNECTED": "✅ Vous êtes connecté(e).",
+		"RECONNECTED": "✅ Vous êtes reconnecté(e).",
 		"TIMEOUT": "Délai de connexion dépassé."
 	},
 	"RESULTS": {

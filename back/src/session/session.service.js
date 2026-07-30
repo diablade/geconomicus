@@ -4,6 +4,15 @@ import { SESSION_STATUS, GAME_STATUS } from '@geco/shared';
 import log from '#config/log';
 import { defaultDebtRules, defaultJuneRules } from './rules/rules.service.js';
 
+const withGameStatus = (sessionObj) => {
+	sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
+		...rule,
+		gameStateId: rule?.gameStateId?._id ?? rule?.gameStateId,
+		gameStatus: rule?.gameStateId?.status ?? GAME_STATUS.NONE,
+	}));
+	return sessionObj;
+};
+
 const populateStatusForGameRules = async (session) => {
 	const populatedSession = await session.populate({
 		path: 'gamesRules.gameStateId',
@@ -11,12 +20,7 @@ const populateStatusForGameRules = async (session) => {
 	});
 
 	// Convertir en objet plain et remapper
-	const sessionObj = populatedSession.toObject();
-	sessionObj.gamesRules = sessionObj.gamesRules.map((rule) => ({
-		...rule,
-		gameStateId: rule?.gameStateId?._id ?? rule?.gameStateId,
-		gameStatus: rule?.gameStateId?.status ?? GAME_STATUS.NONE,
-	}));
+	const sessionObj = withGameStatus(populatedSession.toObject());
 	log.debug(
 		`[SessionService] getById populated: ${sessionObj.gamesRules[0]?.gameStatus}, ${sessionObj.gamesRules[1]?.gameStatus}`
 	);
@@ -42,18 +46,15 @@ SessionService.create = async (sessionObject) => {
 SessionService.getById = async (id, tryPopulate = false) => {
 	log.debug(`[SessionService] getById tryPopulate: ${tryPopulate}`);
 	const session = await SessionModel.findById(id).exec();
-	if (!session || session.gamesRules.length === 0) {
-		log.debug(`[SessionService] getById no game states found for session: ${id}`);
+	if (!session || session.gamesRules.length === 0 || !tryPopulate) {
+		log.debug(`[SessionService] getById returned without game status for session: ${id}`);
 		return session;
 	}
 	if (session.gamesRules.every((gameRule) => !gameRule.gameStateId)) {
 		log.debug(`[SessionService] getById game states yet not created for session: ${id}`);
-		return session;
+		return withGameStatus(session.toObject());
 	}
-	if (tryPopulate) {
-		return populateStatusForGameRules(session);
-	}
-	return session;
+	return populateStatusForGameRules(session);
 };
 SessionService.getByShortId = async (shortId) => {
 	return SessionModel.findOne({ shortId, status: { $ne: SESSION_STATUS.ENDED } }).exec();
@@ -91,38 +92,15 @@ SessionService.getAll = async () => {
 SessionService.start = async (sessionId) => {
 	log.info(`[SessionService] start: ${sessionId}`);
 
-	const session = await SessionModel.findOneAndUpdate(
-		{ _id: sessionId },
-		[
-			{ $set: { status: SESSION_STATUS.IN_PROGRESS } },
-			{ $set: { rulesIndexSeq: { $ifNull: ['$rulesIndexSeq', 0] } } },
-
-			// Debt
-			{ $set: { rulesIndexSeq: { $add: ['$rulesIndexSeq', 1] } } },
-			{
-				$set: {
-					gamesRules: {
-						$concatArrays: [
-							{ $ifNull: ['$gamesRules', []] },
-							[{ idx: '$rulesIndexSeq', ...defaultDebtRules }],
-						],
-					},
-				},
-			},
-
-			// June
-			{ $set: { rulesIndexSeq: { $add: ['$rulesIndexSeq', 1] } } },
-			{
-				$set: {
-					gamesRules: { $concatArrays: ['$gamesRules', [{ idx: '$rulesIndexSeq', ...defaultJuneRules }]] },
-				},
-			},
-		],
-		{
-			new: true,
-			runValidators: true,
-		}
-	);
+	const session = await SessionModel.findById(sessionId).exec();
+	if (!session) {
+		return null;
+	}
+	session.status = SESSION_STATUS.IN_PROGRESS;
+	session.gamesRules.push({ ...defaultDebtRules, idx: session.rulesIndexSeq + 1 });
+	session.gamesRules.push({ ...defaultJuneRules, idx: session.rulesIndexSeq + 2 });
+	session.rulesIndexSeq += 2;
+	await session.save({ validateModifiedOnly: true });
 	return populateStatusForGameRules(session);
 };
 

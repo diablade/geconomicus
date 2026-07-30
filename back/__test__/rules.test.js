@@ -20,6 +20,7 @@ jest.unstable_mockModule('#config/socket', () => ({
 const { default: app } = await import('../src/app.js');
 import request from 'supertest';
 import db from '#configTest/database';
+import SessionModel from '../src/session/session.model.js';
 
 /* ================= SETUP ================= */
 const agent = request.agent(app);
@@ -98,6 +99,27 @@ describe('RULES controller', () => {
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.typeMoney).toBe(GAME_TYPE.JUNE);
+        });
+    });
+    describe("RULES RESET DEFAULT", () => {
+        test("should reset to defaults while keeping every schema field persisted", async () => {
+            const res = await agent.put("/rules/default").send({
+                sessionId: session._id,
+                ruleIdx: ruleIdx,
+            });
+            expect(res.status).toBe(200);
+            expect(res.body.idx).toBe(ruleIdx);
+            expect(res.body.typeMoney).toBe(GAME_TYPE.JUNE);
+            expect(res.body.priceWeight1).toBe(3);
+            expect(res.body.roundMinutes).toBe(20);
+
+            const raw = await SessionModel.findById(session._id).lean();
+            const persisted = raw.gamesRules.find((rule) => rule.idx === ruleIdx);
+            expect(persisted.roundMinutes).toBe(20);
+            expect(persisted.autoBank).toBe(false);
+            expect(persisted.seizureType).toBeTruthy();
+            expect(persisted.actions.length).toBeGreaterThan(0);
+            expect(persisted.rateSchedule.length).toBeGreaterThan(0);
         });
     });
     describe("RULES REMOVE", () => {

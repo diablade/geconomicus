@@ -22,8 +22,8 @@ export const sanitize = {
 			//common
 			amountCardsForProd: Joi.number().default(4),
 			generatedIdenticalLetters: Joi.number().default(5),
-			generatedLettersAuto: Joi.boolean().default(true),
-			generatedLettersInDeck: Joi.number(),
+			generateLettersAuto: Joi.boolean().default(true),
+			generateLettersInDeck: Joi.number(),
 			distribInitCards: Joi.number().default(4),
 			surveyEnabled: Joi.boolean().default(true),
 			roundMax: Joi.number().default(1),
@@ -81,8 +81,8 @@ export const sanitize = {
 
 			amountCardsForProd: Joi.number().optional(),
 			generatedIdenticalLetters: Joi.number().optional(),
-			generatedLettersAuto: Joi.boolean().optional(),
-			generatedLettersInDeck: Joi.number().optional(),
+			generateLettersAuto: Joi.boolean().optional(),
+			generateLettersInDeck: Joi.number().optional(),
 			distribInitCards: Joi.number().optional(),
 			surveyEnabled: Joi.boolean().optional(),
 			roundMax: Joi.number().optional(),

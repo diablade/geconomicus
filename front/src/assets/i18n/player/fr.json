@@ -15,7 +15,16 @@
 		"OBJECTIVES": "Objectifs",
 		"TAKEN_OVER_TITLE": "L'animateur pilote votre plateau",
 		"TAKEN_OVER_TEXT": "Quelqu'un joue à votre place pour le moment. Reprenez la main quand vous voulez.",
-		"RETAKE": "Reprendre la main"
+		"RETAKE": "Reprendre la main",
+		"NOT_ALIVE": "Vous n'êtes plus en vie",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "La partie n'est pas en cours, ou vous n'êtes plus en vie",
+		"GAME_NOT_PLAYING": "La partie n'est pas en cours",
+		"INSUFFICIENT_FUNDS": "Fonds insuffisants",
+		"INSUFFICIENT_CARDS": "Pas assez de cartes identiques pour produire",
+		"SETTLE_FAILED": "Échec du remboursement du crédit",
+		"EXTEND_FAILED": "Échec de la prolongation du crédit",
+		"INVALID_STATE": "Plateau non chargé, rafraîchissez la page",
+		"INVALID_IDS": "Partie introuvable, rafraîchissez la page"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

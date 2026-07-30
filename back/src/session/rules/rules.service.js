@@ -21,31 +21,15 @@ const RulesService = {};
 
 RulesService.create = async (sessionId, rules) => {
 	log.debug(`[RulesService] create: Creating rules for session ${sessionId}`);
-	const session = await SessionModel.findOneAndUpdate(
-		{ _id: sessionId },
-		[
-			{ $set: { rulesIndexSeq: { $ifNull: ['$rulesIndexSeq', 0] } } },
-			{ $set: { rulesIndexSeq: { $add: ['$rulesIndexSeq', 1] } } },
-			{
-				$set: {
-					gamesRules: {
-						$concatArrays: [{ $ifNull: ['$gamesRules', []] }, [{ idx: '$rulesIndexSeq', ...rules }]],
-					},
-				},
-			},
-		],
-		{
-			new: true,
-			runValidators: true,
-		}
-	);
-
-	const idx = session.rulesIndexSeq;
-
-	return {
-		idx,
-		...rules,
-	};
+	const session = await SessionModel.findById(sessionId).exec();
+	if (!session) {
+		return null;
+	}
+	const idx = session.rulesIndexSeq + 1;
+	session.rulesIndexSeq = idx;
+	session.gamesRules.push({ ...rules, idx });
+	await session.save({ validateModifiedOnly: true });
+	return session.gamesRules[session.gamesRules.length - 1].toObject();
 };
 RulesService.update = async (sessionId, ruleIdx, updates) => {
 	log.debug(`[RulesService] update: Updating rules for session ${sessionId}, ruleIdx: ${ruleIdx}`);
@@ -63,42 +47,26 @@ RulesService.update = async (sessionId, ruleIdx, updates) => {
 	).exec();
 };
 RulesService.resetDefault = async (sessionId, ruleIdx) => {
-	const result = await SessionModel.findOneAndUpdate(
-		{
-			_id: sessionId,
-			'gamesRules.idx': ruleIdx,
-		},
-		[
-			{
-				$set: {
-					gamesRules: {
-						$map: {
-							input: '$gamesRules',
-							as: 'rule',
-							in: {
-								$cond: {
-									if: { $eq: ['$$rule.idx', ruleIdx] },
-									then: {
-										$cond: {
-											if: { $eq: ['$$rule.typeMoney', GAME_TYPE.JUNE] },
-											then: { ...defaultJuneRules, idx: ruleIdx },
-											else: { ...defaultDebtRules, idx: ruleIdx },
-										},
-									},
-									else: '$$rule',
-								},
-							},
-						},
-					},
-				},
-			},
-		],
-		{
-			new: true,
-			runValidators: true,
-		}
-	).exec();
-	return result.gamesRules.find((rule) => rule.idx === ruleIdx);
+	const session = await SessionModel.findOne({
+		_id: sessionId,
+		'gamesRules.idx': ruleIdx,
+	}).exec();
+	if (!session) {
+		return null;
+	}
+	const index = session.gamesRules.findIndex((rule) => rule.idx === ruleIdx);
+	if (index === -1) {
+		return null;
+	}
+	const current = session.gamesRules[index];
+	const typeDefaults = current.typeMoney === GAME_TYPE.JUNE ? defaultJuneRules : defaultDebtRules;
+	session.gamesRules.set(index, {
+		...typeDefaults,
+		idx: current.idx,
+		gameStateId: current.gameStateId,
+	});
+	await session.save({ validateModifiedOnly: true });
+	return session.gamesRules[index].toObject();
 };
 RulesService.getByIdx = async (sessionId, ruleIdx) => {
 	const session = await SessionModel.findOne(

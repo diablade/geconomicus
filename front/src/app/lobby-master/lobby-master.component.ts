@@ -252,7 +252,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
 					this.session.gamesRules = this.session.gamesRules.map((rules) => {
 						if (rules.idx == data.idx) {
-							rules = { ...data };
+							rules = { ...rules, ...data };
 						}
 						return rules;
 					});
