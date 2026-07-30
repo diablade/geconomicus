@@ -42,7 +42,7 @@
 			"AMOUNT": "Amount",
 			"FROM": "From",
 			"TO": "To",
-			"YEAR": "An",
+			"YEAR": "Year",
 			"EVENT_ADD": "Add Member {{from}}",
 			"EVENT_SUP": "Remove Member {{ to }}",
 			"EVENT_TRA": "Transaction {{ amount }} from {{ from }} to {{ to }}",
