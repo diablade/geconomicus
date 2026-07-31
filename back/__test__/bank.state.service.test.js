@@ -559,6 +559,46 @@ describe('BankStateService — seizure (manual master seizure)', () => {
         expect(result.coinsLK).toBe(20);
     });
 
+    it('adds the unrecovered gap to bankMoneyLost (Fees mode)', async () => {
+        setupWithQueue(gameState, makeRules({ timerPrison: 5, seizureType: CREDIT_STATUS.FEES, seizureCosts: 1 }));
+        const seizure = {
+            coins: 3,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 1,
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.bankMoneyLost).toBe(3);
+        expect(gameState.playersStates[0].status).toBe(PLAYER_STATUS.PRISON);
+    });
+
+    it('counts seized cards at their discounted value when computing the gap (Decote mode)', async () => {
+        setupWithQueue(gameState, makeRules({ timerPrison: 5, seizureType: CREDIT_STATUS.DECOTE, seizureDecote: 50 }));
+        const seizure = {
+            coins: 0,
+            cards: [{ key: 'card-1', price: 2, letter: 'A', color: 'red', weight: 0 }],
+            prisonTime: 0,
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.bankMoneyLost).toBe(6);
+        expect(gameState.bankGoodsEarned).toBe(2);
+    });
+
+    it('leaves bankMoneyLost untouched when the seizure covers the whole credit', async () => {
+        const seizure = {
+            coins: 7,
+            cards: [],
+            prisonTime: 0,
+        };
+
+        await BankStateService.seizure('game-001', 'credit-1', 1, seizure);
+
+        expect(gameState.bankMoneyLost).toBe(0);
+    });
+
     it('marks credit as DONE and stops timer', async () => {
         const seizure = {
             coins: 5,

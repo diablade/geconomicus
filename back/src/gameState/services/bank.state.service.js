@@ -28,6 +28,7 @@ import {
 	computeSolvency,
 	computeAutoSeizureForCredit,
 	computeAutoSeizurePrisonMinutes,
+	computeManualSeizureUnpaid,
 } from '../helpers/bank.helper.js';
 
 const minute = 60 * 1000;
@@ -360,7 +361,7 @@ const _autoSeizureCallback = async (timerInstance) => {
 					gameStateId,
 					PLAYER_TYPE.BANK,
 					playerStateIdx,
-					{ credit, coins: result.coinsSeized, cards: result.cardsSeized }
+					{ credit, coins: result.coinsSeized, cards: result.cardsSeized, bankMoneyLost: result.unpaid }
 				);
 				events.push(seizureEvent);
 				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, seizureEvent);
@@ -369,6 +370,7 @@ const _autoSeizureCallback = async (timerInstance) => {
 			gameState.currentMassMonetary -= totalCoinsSeized;
 			gameState.bankInterestEarned += totalInterestSeized;
 			gameState.bankGoodsEarned += totalCardsFaceValue;
+			gameState.bankMoneyLost += totalUnpaid;
 			DecksHelper.pushCardsInDecks(gameState, allSeizedCards);
 
 			log.info('[BankStateService] auto seizure completed', {
@@ -1054,6 +1056,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 		// Calculate value from actual card data (don't trust client prices)
 		const cardsValue = seizedCardsFromHand.reduce((acc, c) => acc + c.price, 0);
 		const interestSeized = seizure.coins >= credit.interest ? credit.interest : 0;
+		const unpaid = computeManualSeizureUnpaid(credit, rules, seizure.coins, seizedCardsFromHand);
 
 		// Remove seized cards from player hand
 		playerState.cards = playerState.cards.filter((c) => !seizedCardKeys.has(c.key));
@@ -1063,6 +1066,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 		gameState.currentMassMonetary -= seizure.coins;
 		gameState.bankInterestEarned += interestSeized;
 		gameState.bankGoodsEarned += cardsValue;
+		gameState.bankMoneyLost += unpaid;
 
 		// Return seized cards to deck
 		DecksHelper.pushCardsInDecks(gameState, seizedCardsFromHand);
@@ -1079,7 +1083,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			gameState._id,
 			PLAYER_TYPE.BANK,
 			playerStateIdx,
-			{ credit, coins: seizure.coins, cards: seizedCardsFromHand }
+			{ credit, coins: seizure.coins, cards: seizedCardsFromHand, bankMoneyLost: unpaid }
 		);
 		events.push(seizureEvent);
 
@@ -1089,6 +1093,7 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			playerStateIdx,
 			coinSeized: seizure.coins,
 			cardsSeized: seizedCardsFromHand.length,
+			bankMoneyLost: unpaid,
 		});
 
 		socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, seizureEvent);

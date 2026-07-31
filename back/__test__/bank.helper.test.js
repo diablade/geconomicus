@@ -8,6 +8,7 @@ import {
 	isSolvent,
 	seizeCardsForAutoSeizure,
 	computeAutoSeizureForCredit,
+	computeManualSeizureUnpaid,
 	computeAutoSeizurePrisonMinutes,
 } from '../src/gameState/helpers/bank.helper.js';
 
@@ -160,6 +161,35 @@ describe('computeAutoSeizureForCredit (docs/adr/0005-auto-seizure.md)', () => {
 		expect(result.coinsSeized).toBe(0);
 		expect(result.interestSeized).toBe(0);
 		expect(result.unpaid).toBe(5);
+	});
+});
+
+describe('computeManualSeizureUnpaid', () => {
+	const card = (key, price) => ({ key, price, letter: 'A', color: 'red', weight: 0 });
+	const credit = { amount: 5, interest: 2 };
+
+	it('Fees mode: the flat cost is part of what the master has to recover', () => {
+		const rules = { seizureType: CREDIT_STATUS.FEES, seizureDecote: 50, seizureCosts: 1 };
+		expect(computeManualSeizureUnpaid(credit, rules, 3, [card('a', 2)])).toBe(3);
+	});
+
+	it('Decote mode: seized cards only count at their discounted value', () => {
+		const rules = { seizureType: CREDIT_STATUS.DECOTE, seizureDecote: 50, seizureCosts: 1 };
+		expect(computeManualSeizureUnpaid(credit, rules, 0, [card('a', 2)])).toBe(6);
+	});
+
+	it('is 0 when coins alone settle the credit', () => {
+		const rules = { seizureType: CREDIT_STATUS.FEES, seizureDecote: 50, seizureCosts: 1 };
+		expect(computeManualSeizureUnpaid(credit, rules, 8, [])).toBe(0);
+	});
+
+	it('never goes negative when the last card overshoots', () => {
+		const rules = { seizureType: CREDIT_STATUS.DECOTE, seizureDecote: 0, seizureCosts: 0 };
+		expect(computeManualSeizureUnpaid(credit, rules, 0, [card('a', 20)])).toBe(0);
+	});
+
+	it('treats missing seizure rules as no cost and no decote', () => {
+		expect(computeManualSeizureUnpaid(credit, {}, 2, [card('a', 2)])).toBe(3);
 	});
 });
 

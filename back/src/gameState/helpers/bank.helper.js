@@ -119,14 +119,32 @@ export function seizeCardsForAutoSeizure(cards, objectiveRemaining, decotePercen
 	return { seized, remainingCards: pool, remainingUnpaid: Math.max(0, remaining) };
 }
 
+export function seizureObjective(credit, rules) {
+	const isDecote = rules.seizureType === CREDIT_STATUS.DECOTE;
+	return credit.amount + credit.interest + (isDecote ? 0 : rules.seizureCosts || 0);
+}
+
+export function seizureDecotePercent(rules) {
+	return rules.seizureType === CREDIT_STATUS.DECOTE ? rules.seizureDecote || 0 : 0;
+}
+
+export function countedSeizureValue(cards, rules) {
+	const decotePercent = seizureDecotePercent(rules);
+	return (cards || []).reduce((acc, c) => acc + (c.price - (c.price * decotePercent) / 100), 0);
+}
+
+export function computeManualSeizureUnpaid(credit, rules, coinsSeized, cardsSeized) {
+	const recovered = coinsSeized + countedSeizureValue(cardsSeized, rules);
+	return Math.max(0, seizureObjective(credit, rules) - recovered);
+}
+
 // Seize one FAULT credit's amount + interest from a player's coins, then cards — the same
 // math the manual seizure dialog uses (rules.seizureType: Decote or Fees). Pure: takes the
 // player's current coins/cards and returns the outcome plus the post-seizure remainder; the
 // caller applies the mutation. Auto Seizure settles several credits in one FIFO pass, so each
 // credit's remainder feeds the next.
 export function computeAutoSeizureForCredit(coins, cards, credit, rules) {
-	const isDecote = rules.seizureType === CREDIT_STATUS.DECOTE;
-	const objective = credit.amount + credit.interest + (isDecote ? 0 : rules.seizureCosts);
+	const objective = seizureObjective(credit, rules);
 
 	const coinsSeized = Math.min(coins, objective);
 	const interestSeized = coinsSeized >= credit.interest ? credit.interest : 0;
@@ -135,8 +153,7 @@ export function computeAutoSeizureForCredit(coins, cards, credit, rules) {
 	let cardsSeized = [];
 	let remainingCards = cards;
 	if (unpaid > 0 && cards.length > 0) {
-		const decotePercent = isDecote ? rules.seizureDecote : 0;
-		const result = seizeCardsForAutoSeizure(cards, unpaid, decotePercent);
+		const result = seizeCardsForAutoSeizure(cards, unpaid, seizureDecotePercent(rules));
 		cardsSeized = result.seized;
 		remainingCards = result.remainingCards;
 		unpaid = result.remainingUnpaid;
@@ -177,6 +194,10 @@ export default {
 	computeSolvency,
 	isSolvent,
 	seizeCardsForAutoSeizure,
+	seizureObjective,
+	seizureDecotePercent,
+	countedSeizureValue,
+	computeManualSeizureUnpaid,
 	computeAutoSeizureForCredit,
 	computeAutoSeizurePrisonMinutes,
 };

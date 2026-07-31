@@ -61,7 +61,7 @@ BankController.payInterest = async (req, res, next) => {
 BankController.seizure = async (req, res, next) => {
 	const { creditId, gameStateId, playerStateIdx, seizure } = req.body;
 	try {
-		const result = await BankStateService.seizure(creditId, gameStateId, playerStateIdx, seizure);
+		const result = await BankStateService.seizure(gameStateId, creditId, playerStateIdx, seizure);
 		return res.status(200).json(result);
 	} catch (err) {
 		log.error('[BankController] seizure error: ', err);
