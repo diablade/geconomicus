@@ -1,9 +1,10 @@
 <ng-container *ngIf="avatar">
 	<app-version></app-version>
 	<div
-		class="settings w-100 h-100 p-2"
+		class="bgFixedLayer"
 		[ngClass]="avatar!.boardConf"
-		[ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)">
+		[ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)"></div>
+	<div class="settings w-100 h-100 p-2 aboveBg">
 		<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
 		<avatar [avatar]="avatar!" [width]="'180px'" [height]="'180px'" class="mx-auto"></avatar>
 		<div class="text-center mt-2">

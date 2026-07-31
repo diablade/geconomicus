@@ -15,6 +15,7 @@ body {
 body,
 html {
 	height: 100%;
+	overscroll-behavior: none;
 	background: rgb(32, 7, 46) !important;
 	// font-family: 'GecoFont5', 'Roboto', 'Helvetica', sans-serif !important;
 }
@@ -518,8 +519,6 @@ mat-chip {
 
 .dots {
 	position: relative; /* needed for pseudo-element */
-	width: 100vw;
-	height: 100vh;
 	z-index: 1;
 }
 
@@ -532,6 +531,7 @@ mat-chip {
 	background-repeat: repeat;
 	background-position: center;
 	opacity: 0.4;
+	pointer-events: none;
 	z-index: -1;
 }
 
@@ -611,6 +611,19 @@ mat-chip {
 		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
 		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
 		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
+}
+
+.bgFixedLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background-size: cover;
+}
+
+.aboveBg {
+	position: relative;
+	z-index: 1;
 }
 
 // credit-chip detail popover: let the app-credit card breathe inside the mat-menu panel

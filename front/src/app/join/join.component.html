@@ -1,22 +1,25 @@
-<div class="join bgGradien7 h-100 overflow-auto">
-	<h1 class="shadowed geconomicusFont">{{ 'JOIN.TITLE' | translate }}</h1>
-	<!--  GUNY  -->
-	<div class="mt-4">
-		<bulle [pointer]="true" [contents]="['JOIN.GUNY_INTRO', 'JOIN.GUNY_INTRO2']"></bulle>
+<div class="bgGradien7 bgFixedLayer"></div>
+<div class="h-100 aboveBg">
+	<div class="join h-100 overflow-auto">
+		<h1 class="shadowed geconomicusFont">{{ 'JOIN.TITLE' | translate }}</h1>
+		<!--  GUNY  -->
+		<div class="mt-4">
+			<bulle [pointer]="true" [contents]="['JOIN.GUNY_INTRO', 'JOIN.GUNY_INTRO2']"></bulle>
+		</div>
+		<div class="mt-1 col-md-12 text-center">
+			<img class="guny halo" src="./assets/images/guny.png" alt="" />
+		</div>
+		<div class="newAvatarNotice mt-2" *ngIf="fromUnknownAvatar">
+			{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
+		</div>
+		<div>
+			<mat-form-field appearance="fill">
+				<mat-label>{{ 'JOIN.NAME_PROMPT' | translate }}</mat-label>
+				<input matInput required [(ngModel)]="name" (keydown.enter)="join()" />
+			</mat-form-field>
+		</div>
+		<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">
+			{{ 'JOIN.GO_BUTTON' | translate }}
+		</button>
 	</div>
-	<div class="mt-1 col-md-12 text-center">
-		<img class="guny halo" src="./assets/images/guny.png" alt="" />
-	</div>
-	<div class="newAvatarNotice mt-2" *ngIf="fromUnknownAvatar">
-		{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
-	</div>
-	<div>
-		<mat-form-field appearance="fill">
-			<mat-label>{{ 'JOIN.NAME_PROMPT' | translate }}</mat-label>
-			<input matInput required [(ngModel)]="name" (keydown.enter)="join()" />
-		</mat-form-field>
-	</div>
-	<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">
-		{{ 'JOIN.GO_BUTTON' | translate }}
-	</button>
 </div>
