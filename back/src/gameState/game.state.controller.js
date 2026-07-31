@@ -274,6 +274,13 @@ GameStateController.actionSilentSteal = asyncHandler(async (req, res) => {
 	return res.status(200).json(result);
 });
 
+GameStateController.actionAssociation = asyncHandler(async (req, res) => {
+	const { gameStateId, giverIdx, cardKeys, targetIdxs } = req.body;
+	log.info('[GameStateController] association action', { gameStateId, giverIdx });
+	const result = await ActionStateService.association(gameStateId, giverIdx, cardKeys, targetIdxs);
+	return res.status(200).json(result);
+});
+
 GameStateController.actionWar = asyncHandler(async (req, res) => {
 	const { gameStateId, attackerIdx, victim1Idx, victim2Idx } = req.body;
 	log.info('[GameStateController] war action', { gameStateId, attackerIdx });

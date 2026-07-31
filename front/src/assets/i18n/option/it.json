@@ -70,12 +70,16 @@
 		"PICK_TARGET2": "Scegliere un secondo giocatore",
 		"PICK_CARD": "Scegliere una carta",
 		"PICK_ONG_CARDS": "Scegliere 4 carte da dare",
+		"PICK_ASSOCIATION_CARDS": "Scegliere 2 carte da dare",
 		"CONFIRMING": "In corso...",
 		"NO_CARDS": "Nessuna carta disponibile",
 		"ONG_SELECT_HINT": "{{selected}}/4 carte selezionate",
 		"ONG_AUTO_TARGET": "Dare ai 2 giocatori più poveri",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 carte selezionate",
+		"ASSOCIATION_TARGET_HINT": "Questa carta andrà al giocatore scelto qui sotto",
 		"RECEIVED_GIVE": "{{fromName}} ti ha dato una carta!",
 		"RECEIVED_ONG": "{{fromName}} ti ha donato {{count}} carta/e (azione ONG)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} ti ha dato una carta (azione Associazione)!",
 		"ROBBED_STEAL": "Qualcuno ti ha rubato una carta!",
 		"ROBBED_WAR": "Sei stato attaccato! Ti sono state prese 2 carte.",
 		"SHOP_HINT": "Produci un quadrato per guadagnare punti!",
@@ -100,6 +104,10 @@
 		"SILENT_STEAL": {
 			"LABEL": "Furto silenzioso",
 			"DESC": "Prendi una carta senza che l'altro giocatore venga avvisato."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Associazione",
+			"DESC": "Dai 2 delle tue carte a 2 giocatori a tua scelta (1 ciascuno)."
 		},
 		"WAR": {
 			"LABEL": "Guerra",

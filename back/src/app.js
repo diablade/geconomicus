@@ -9,7 +9,7 @@ import legacyGameRoutes from './legacy/game/game.routes.js';
 import legacyBankRoutes from './legacy/bank/bank.routes.js';
 import legacyPlayerRoutes from './legacy/player/player.routes.js';
 import sessionRoutes from './session/session.routes.js';
-import eventRoutes from './event/event.routes.js';
+import eventsRoutes from './event/event.routes.js';
 import surveyRoutes from './survey/survey.routes.js';
 import avatarRoutes from './session/avatar/avatar.routes.js';
 import rulesRoutes from './session/rules/rules.routes.js';
@@ -73,7 +73,7 @@ app.use('/player', legacyPlayerRoutes);
 app.use('/session', sessionRoutes);
 app.use('/rules', rulesRoutes);
 app.use('/survey', surveyRoutes);
-app.use('/event', eventRoutes);
+app.use('/events', eventsRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/game-state', gameStateRoutes);
 

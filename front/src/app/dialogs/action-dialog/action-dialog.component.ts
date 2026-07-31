@@ -35,7 +35,7 @@ export interface AvailablePlayer {
 	avatarIdx: number;
 }
 
-type Step = 'shop' | 'pick-who-card' | 'pick-target' | 'pick-target2' | 'pick-card' | 'pick-ong-cards' | 'confirming';
+type Step = 'shop' | 'pick-who-card' | 'pick-target' | 'pick-target2' | 'pick-card' | 'pick-ong-cards' | 'pick-association-cards' | 'confirming';
 
 @Component({
 	selector: 'app-action-dialog',
@@ -58,8 +58,13 @@ export class ActionDialogComponent {
 	targetCardsError = '';
 
 	selectedOngCards: Card[] = [];
+	selectedAssociationCards: Card[] = [];
 
     get famillyCards(): Card[] { return _.uniqBy(this.data.myCards, 'letter'); }
+
+	get associationCardForStep(): Card | null {
+		return this.selectedAssociationCards[this.step === 'pick-target2' ? 1 : 0] ?? null;
+	}
 
 	whoHaveCardLoading = false;
 
@@ -108,6 +113,9 @@ export class ActionDialogComponent {
 
 		if (action.key === 'ong') {
 			this.step = 'pick-ong-cards';
+		} else if (action.key === 'association') {
+			this.selectedAssociationCards = [];
+			this.step = 'pick-association-cards';
 		} else if (action.key === 'whoHaveCard') {
 			this.step = 'pick-who-card';
 		} else {
@@ -196,10 +204,14 @@ export class ActionDialogComponent {
 		if (this.step === 'pick-target2') {
 			if (!this.selectedTarget2) return;
 			this.step = 'confirming';
-			this.executeWar();
+			if (this.selectedAction?.key === 'association') {
+				this.executeAssociation();
+			} else {
+				this.executeWar();
+			}
 		} else {
 			if (!this.selectedTarget1) return;
-			if (this.selectedAction?.key === 'war') {
+			if (this.selectedAction?.key === 'war' || this.selectedAction?.key === 'association') {
 				this.selectedTarget2 = null;
 				this.step = 'pick-target2';
 			} else if (this.selectedAction?.key === 'give') {
@@ -259,6 +271,26 @@ export class ActionDialogComponent {
 		return this.selectedOngCards.some((c) => c.key === card.key);
 	}
 
+	toggleAssociationCard(card: Card) {
+		const idx = this.selectedAssociationCards.findIndex((c) => c.key === card.key);
+		if (idx >= 0) {
+			this.selectedAssociationCards = this.selectedAssociationCards.filter((c) => c.key !== card.key);
+		} else if (this.selectedAssociationCards.length < 2) {
+			this.selectedAssociationCards = [...this.selectedAssociationCards, card];
+		}
+	}
+
+	isAssociationCardSelected(card: Card): boolean {
+		return this.selectedAssociationCards.some((c) => c.key === card.key);
+	}
+
+	confirmAssociationCards() {
+		if (this.selectedAssociationCards.length !== 2) return;
+		this.loadAvailablePlayers(() => {
+			this.step = 'pick-target';
+		});
+	}
+
 	private executeCardAction() {
 		if (!this.selectedAction || !this.selectedTarget1 || !this.selectedCard) return;
 		if (this.data.fake) return this.fakeClose();
@@ -309,6 +341,31 @@ export class ActionDialogComponent {
 			});
 	}
 
+	private executeAssociation() {
+		if (this.selectedAssociationCards.length !== 2 || !this.selectedTarget1 || !this.selectedTarget2) return;
+		if (this.data.fake) return this.fakeClose();
+		this.loading = true;
+		this.error = '';
+
+		this.actionService
+			.association(
+				this.data.gameStateId,
+				this.data.playerStateIdx,
+				this.selectedAssociationCards.map((c) => c.key),
+				[this.selectedTarget1.idx, this.selectedTarget2.idx]
+			)
+			.subscribe({
+				next: (result: any) => {
+					this.dialogRef.close({ success: true, result, actionKey: 'association' });
+				},
+				error: (err: any) => {
+					this.error = err?.error?.message || 'ERROR.GENERIC';
+					this.loading = false;
+					this.step = 'pick-target2';
+				},
+			});
+	}
+
 	confirmOng(useAutoTargets: boolean) {
 		if (this.selectedOngCards.length !== 4) return;
 		if (this.data.fake) return this.fakeClose();
@@ -347,10 +404,14 @@ export class ActionDialogComponent {
 			this.step = 'shop';
 			this.selectedAction = null;
 		} else if (this.step === 'pick-target') {
-			this.step = 'shop';
-			this.selectedAction = null;
-			this.availablePlayers = [];
 			this.selectedTarget1 = null;
+			if (this.selectedAction?.key === 'association') {
+				this.step = 'pick-association-cards';
+			} else {
+				this.step = 'shop';
+				this.selectedAction = null;
+				this.availablePlayers = [];
+			}
 		} else if (this.step === 'pick-target2') {
 			this.step = 'pick-target';
 			this.selectedTarget2 = null;
@@ -361,6 +422,11 @@ export class ActionDialogComponent {
 			this.step = 'shop';
 			this.selectedAction = null;
 			this.selectedOngCards = [];
+		} else if (this.step === 'pick-association-cards') {
+			this.step = 'shop';
+			this.selectedAction = null;
+			this.availablePlayers = [];
+			this.selectedAssociationCards = [];
 		}
 	}
 

@@ -70,12 +70,16 @@
 		"PICK_TARGET2": "Choose a second player",
 		"PICK_CARD": "Choose a card",
 		"PICK_ONG_CARDS": "Choose 4 cards to donate",
+		"PICK_ASSOCIATION_CARDS": "Choose 2 cards to donate",
 		"CONFIRMING": "Processing...",
 		"NO_CARDS": "No cards available",
 		"ONG_SELECT_HINT": "{{selected}}/4 cards selected",
 		"ONG_AUTO_TARGET": "Give to the 2 poorest players",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 cards selected",
+		"ASSOCIATION_TARGET_HINT": "This card will go to the player chosen below",
 		"RECEIVED_GIVE": "{{fromName}} gave you a card!",
 		"RECEIVED_ONG": "{{fromName}} donated {{count}} card(s) to you (ONG action)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} gave you a card (Association action)!",
 		"ROBBED_STEAL": "Someone stole a card from you!",
 		"ROBBED_WAR": "You were attacked! 2 cards were taken from you.",
 		"SHOP_HINT": "Produce a complete set to score points!",
@@ -100,6 +104,10 @@
 		"SILENT_STEAL": {
 			"LABEL": "Silent steal",
 			"DESC": "Take a card without the other player being notified."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Association",
+			"DESC": "Give 2 of your cards to 2 players of your choice (1 each)."
 		},
 		"WAR": {
 			"LABEL": "War",

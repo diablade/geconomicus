@@ -55,6 +55,7 @@ export class Rules {
 		{ key: 'give', labelKey: 'ACTION.GIVE.LABEL', descriptionKey: 'ACTION.GIVE.DESC', cost: 2, enabled: true },
 		{ key: 'steal', labelKey: 'ACTION.STEAL.LABEL', descriptionKey: 'ACTION.STEAL.DESC', cost: 2, enabled: true },
 		{ key: 'silentSteal', labelKey: 'ACTION.SILENT_STEAL.LABEL', descriptionKey: 'ACTION.SILENT_STEAL.DESC', cost: 3, enabled: true },
+		{ key: 'association', labelKey: 'ACTION.ASSOCIATION.LABEL', descriptionKey: 'ACTION.ASSOCIATION.DESC', cost: 3, enabled: true },
 		{ key: 'war', labelKey: 'ACTION.WAR.LABEL', descriptionKey: 'ACTION.WAR.DESC', cost: 6, enabled: true },
 		{ key: 'ong', labelKey: 'ACTION.ONG.LABEL', descriptionKey: 'ACTION.ONG.DESC', cost: 6, enabled: true },
 	];
@@ -74,6 +75,8 @@ export function getActionIcon(actionKey: string): string {
 			return '💥';
 		case 'silentSteal':
 			return '🤫';
+		case 'association':
+			return '🧑‍🤝‍🧑';
 		case 'war':
 			return '⚔️';
 		case 'ong':

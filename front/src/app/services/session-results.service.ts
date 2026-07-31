@@ -295,7 +295,7 @@ export class SessionResultsService {
 
 		const mostActiveIdx = [...txByPlayer.entries()].filter(([idx]) => byIdx.has(idx)).sort((a, b) => b[1] - a[1])[0];
 
-		const GOOD = new Set(['action-give', 'action-ong']);
+		const GOOD = new Set(['action-give', 'action-association', 'action-ong']);
 		const actions: ActionUsage[] = [...actionCounts.entries()].map(([typeEvent, count]) => ({
 			typeEvent,
 			count,

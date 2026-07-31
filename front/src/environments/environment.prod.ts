@@ -55,6 +55,7 @@ export const environment = {
 		GIVE: 'game-state/action/give',
 		STEAL: 'game-state/action/steal',
 		SILENT_STEAL: 'game-state/action/silent-steal',
+		ASSOCIATION: 'game-state/action/association',
 		WAR: 'game-state/action/war',
 		ONG: 'game-state/action/ong',
 	},

@@ -57,6 +57,15 @@ export class ActionService {
 		});
 	}
 
+	association(gameStateId: string, giverIdx: number, cardKeys: string[], targetIdxs: number[]): Observable<any> {
+		return this.http.post<any>(environment.API_HOST + environment.ACTION.ASSOCIATION, {
+			gameStateId,
+			giverIdx,
+			cardKeys,
+			targetIdxs,
+		});
+	}
+
 	war(gameStateId: string, attackerIdx: number, victim1Idx: number, victim2Idx: number): Observable<any> {
 		return this.http.post<any>(environment.API_HOST + environment.ACTION.WAR, {
 			gameStateId,

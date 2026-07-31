@@ -77,6 +77,7 @@ export class SessionResultsCompareComponent implements OnInit {
 	private readonly ACTION_META: { [type: string]: { label: string; icon: string } } = {
 		[DB_EVENTS.ACTION_GIVE]: { label: 'Don', icon: '🫴' },
 		[DB_EVENTS.ACTION_ONG]: { label: 'ONG', icon: '🤝' },
+		[DB_EVENTS.ACTION_ASSOCIATION]: { label: 'Association', icon: '🧑‍🤝‍🧑' },
 		[DB_EVENTS.ACTION_STEAL]: { label: 'Vol', icon: '💥' },
 		[DB_EVENTS.ACTION_SILENT_STEAL]: { label: 'Vol silencieux', icon: '🤫' },
 		[DB_EVENTS.ACTION_WAR]: { label: 'Guerre', icon: '⚔️' },
@@ -198,7 +199,7 @@ export class SessionResultsCompareComponent implements OnInit {
 	}
 
 	private buildActions(): void {
-		const goodTypes = [DB_EVENTS.ACTION_GIVE, DB_EVENTS.ACTION_ONG];
+		const goodTypes = [DB_EVENTS.ACTION_GIVE, DB_EVENTS.ACTION_ASSOCIATION, DB_EVENTS.ACTION_ONG];
 		const badTypes = [DB_EVENTS.ACTION_STEAL, DB_EVENTS.ACTION_SILENT_STEAL, DB_EVENTS.ACTION_WAR];
 		this.goodActions = goodTypes.map((t) => this.actionRow(t));
 		this.badActions = badTypes.map((t) => this.actionRow(t));

@@ -207,6 +207,7 @@ export declare const DB_EVENTS: {
     readonly ACTION_GIVE: "action-give";
     readonly ACTION_STEAL: "action-steal";
     readonly ACTION_SILENT_STEAL: "action-silent-steal";
+    readonly ACTION_ASSOCIATION: "action-association";
     readonly ACTION_WAR: "action-war";
     readonly ACTION_ONG: "action-ong";
 };

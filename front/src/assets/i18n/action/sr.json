@@ -5,13 +5,17 @@
 		"PICK_TARGET2": "Izaberi drugog igrača",
 		"PICK_CARD": "Izaberi kartu",
 		"PICK_ONG_CARDS": "Izaberi 4 karte za poklon",
+		"PICK_ASSOCIATION_CARDS": "Izaberi 2 karte za poklon",
 		"CONFIRMING": "U toku...",
 		"CONFIRM": "Potvrdi",
 		"NO_CARDS": "Nema dostupnih karata",
 		"ONG_SELECT_HINT": "{{selected}}/4 izabranih karata",
 		"ONG_AUTO_TARGET": "Daj dvojici najsiromašnijih igrača",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 izabranih karata",
+		"ASSOCIATION_TARGET_HINT": "Ova karta ide igraču izabranom ispod",
 		"RECEIVED_GIVE": "{{fromName}} ti je dao kartu!",
 		"RECEIVED_ONG": "{{fromName}} ti je poklonio {{count}} kartu/karata (NVO akcija)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} ti je dao kartu (akcija Udruženje)!",
 		"ROBBED_STEAL": "Neko ti je ukrao kartu!",
 		"ROBBED_WAR": "Napadnut si! Oduzete su ti 2 karte.",
 		"SHOP_HINT": "Proizvedi kvadrat da osvojiš poene!",
@@ -36,6 +40,10 @@
 		"SILENT_STEAL": {
 			"LABEL": "Tiha krađa",
 			"DESC": "Uzmi kartu bez da drugi igrač bude obavešten."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Udruženje",
+			"DESC": "Daj 2 svoje karte dvojici igrača po izboru (po 1 svakom)."
 		},
 		"WAR": {
 			"LABEL": "Rat",

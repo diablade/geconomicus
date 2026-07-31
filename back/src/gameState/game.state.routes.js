@@ -35,6 +35,7 @@ router.post('/action/available-players', validate(actionSanitize.getAvailablePla
 router.post('/action/give', validate(actionSanitize.give), gameStateController.actionGive);
 router.post('/action/steal', validate(actionSanitize.steal), gameStateController.actionSteal);
 router.post('/action/silent-steal', validate(actionSanitize.silentSteal), gameStateController.actionSilentSteal);
+router.post('/action/association', validate(actionSanitize.association), gameStateController.actionAssociation);
 router.post('/action/war', validate(actionSanitize.war), gameStateController.actionWar);
 router.post('/action/ong', validate(actionSanitize.ong), gameStateController.actionOng);
 router.post('/action/who-have-card', validate(actionSanitize.whoHaveCard), gameStateController.actionWhoHaveCard);

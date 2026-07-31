@@ -11,6 +11,7 @@
 			<span *ngIf="step === 'pick-target2'">{{ 'ACTION.PICK_TARGET2' | translate }}</span>
 			<span *ngIf="step === 'pick-card'">{{ 'ACTION.PICK_CARD' | translate }}</span>
 			<span *ngIf="step === 'pick-ong-cards'">{{ 'ACTION.PICK_ONG_CARDS' | translate }}</span>
+			<span *ngIf="step === 'pick-association-cards'">{{ 'ACTION.PICK_ASSOCIATION_CARDS' | translate }}</span>
 			<span *ngIf="step === 'confirming'">{{ 'ACTION.CONFIRMING' | translate }}</span>
 		</h2>
 		<div class="token-badge">
@@ -69,6 +70,10 @@
 
 	<!-- PICK TARGET STEP -->
 	<div *ngIf="step === 'pick-target' || step === 'pick-target2'" class="step-section">
+		<p class="hint" *ngIf="selectedAction?.key === 'association' && associationCardForStep">
+			<span class="family-icon">{{ getFamilyIcon(associationCardForStep!) }}</span>
+			{{ 'ACTION.ASSOCIATION_TARGET_HINT' | translate }}
+		</p>
 		<div *ngIf="playersLoading" class="text-center p-3">
 			<mat-spinner diameter="40"></mat-spinner>
 		</div>
@@ -199,6 +204,45 @@
 				{{ 'ACTION.ONG_AUTO_TARGET' | translate }}
 			</button>
 		</div>
+	</div>
+
+	<!-- ASSOCIATION CARDS STEP -->
+	<div *ngIf="step === 'pick-association-cards'" class="step-section">
+		<p class="hint">{{ 'ACTION.ASSOCIATION_SELECT_HINT' | translate: { selected: selectedAssociationCards.length } }}</p>
+		<div class="card-grid">
+			<div
+				*ngFor="let card of data.myCards"
+				class="card-grid-item"
+				[class.selected]="isAssociationCardSelected(card)"
+				[class.ong-disabled]="!isAssociationCardSelected(card) && selectedAssociationCards.length >= 2"
+				(click)="toggleAssociationCard(card)">
+				<div class="card-check" *ngIf="isAssociationCardSelected(card)">
+					<mat-icon>check_circle</mat-icon>
+				</div>
+				<app-item
+					[card]="card"
+					[shadow]="false"
+					[typeMoney]="data.typeMoney"
+					[currentDU]="data.currentDU"
+					[typeTheme]="data.typeTheme"
+					[gameStateId]="data.gameStateId"
+					[iconSize]="dialogIconSize"
+					[letterSize]="dialogLetterSize"
+					[textSize]="dialogTextSize"
+					[flippable]="false"
+					[width]="dialogCardSize"
+					[height]="dialogCardSize"></app-item>
+			</div>
+		</div>
+		<div class="step-actions" *ngIf="!playersLoading">
+			<button mat-raised-button color="accent" [disabled]="selectedAssociationCards.length !== 2" (click)="confirmAssociationCards()">
+				{{ 'ACTION.CONFIRM' | translate }}
+			</button>
+		</div>
+		<div *ngIf="playersLoading" class="text-center p-3 w-100">
+			<mat-spinner diameter="40"></mat-spinner>
+		</div>
+		<div *ngIf="playersError" class="error-msg w-100">{{ playersError | translate }}</div>
 	</div>
 
 	<!-- CONFIRMING (war in progress) -->

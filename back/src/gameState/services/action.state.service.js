@@ -148,6 +148,57 @@ ActionStateService.silentSteal = async (gameStateId, stealerIdx, victimIdx, card
 	});
 };
 
+// ─── ASSOCIATION ─────────────────────────────────────────────────────────────
+
+ActionStateService.association = async (gameStateId, giverIdx, cardKeys, targetIdxs) => {
+	return await GameStateManager.withQueue(gameStateId, async (entry) => {
+		const { gameState, rules, events } = entry;
+
+		const action = _getActionConfig(rules, 'association');
+		const giver = gameState.playersStates.find((p) => p.idx === giverIdx);
+
+		if (!giver || giver.status !== PLAYER_STATUS.ALIVE) throw new Error('ERROR.PLAYER_NOT_FOUND');
+		if (cardKeys.length !== 2) throw new Error('ERROR.ASSOCIATION_REQUIRES_2_CARDS');
+		if (targetIdxs[0] === targetIdxs[1]) throw new Error('ERROR.TARGETS_MUST_BE_DIFFERENT');
+
+		const cardsToGive = cardKeys.map((key) => {
+			const card = giver.cards.find((c) => c.key === key);
+			if (!card) throw new Error('ERROR.CARD_NOT_FOUND');
+			return card;
+		});
+
+		const targets = targetIdxs.map((idx) => {
+			const target = gameState.playersStates.find((p) => p.idx === idx);
+			if (!target || target.status !== PLAYER_STATUS.ALIVE) throw new Error('ERROR.TARGET_NOT_FOUND');
+			return target;
+		});
+
+		_deductTokens(giver, action.cost);
+
+		const givenKeys = cardsToGive.map((c) => c.key);
+		giver.cards = giver.cards.filter((c) => !givenKeys.includes(c.key));
+
+		targets.forEach((target, i) => target.cards.push(cardsToGive[i]));
+
+		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_ASSOCIATION, gameState.sessionId, gameStateId, giverIdx, giverIdx, {
+			cards: cardsToGive,
+			recipients: targets.map((t) => t.idx),
+		}));
+
+		targets.forEach((target, i) => {
+			socket.emitAckTo(ROOMS.playerState(gameStateId, target.idx), IO.PLAYER.ACTION_DONE, {
+				actionKey: 'association',
+				card: cardsToGive[i],
+				fromAvatarIdx: giver.avatarIdx,
+			});
+		});
+
+		SyncHelper.emitPlayerSync(gameStateId, [giver, ...targets]);
+
+		return { cardsLK: giver.cards, actionTokens: giver.actionTokens };
+	});
+};
+
 // ─── WAR ─────────────────────────────────────────────────────────────────────
 
 ActionStateService.war = async (gameStateId, attackerIdx, victim1Idx, victim2Idx) => {

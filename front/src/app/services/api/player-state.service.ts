@@ -494,9 +494,10 @@ export class PlayerStateService {
 			if (data.card) {
 				const cards = this.cardsSubject.getValue();
 				this.cardsSubject.next([...cards, data.card]);
+				const msgKey = data.actionKey === 'association' ? 'ACTION.RECEIVED_ASSOCIATION' : 'ACTION.RECEIVED_GIVE';
 				this.dialog.open(InformationDialogComponent, {
 					data: {
-						message: this.i18nService.instant('ACTION.RECEIVED_GIVE', { fromName: avatar?.name }),
+						message: this.i18nService.instant(msgKey, { fromName: avatar?.name }),
 					},
 				});
 			}

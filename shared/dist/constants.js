@@ -218,6 +218,7 @@ export const DB_EVENTS = {
     ACTION_GIVE: 'action-give',
     ACTION_STEAL: 'action-steal',
     ACTION_SILENT_STEAL: 'action-silent-steal',
+    ACTION_ASSOCIATION: 'action-association',
     ACTION_WAR: 'action-war',
     ACTION_ONG: 'action-ong',
 };

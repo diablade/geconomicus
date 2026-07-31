@@ -70,12 +70,16 @@
 		"PICK_TARGET2": "Alege un al doilea jucător",
 		"PICK_CARD": "Alege o carte",
 		"PICK_ONG_CARDS": "Alege 4 cărți de dat",
+		"PICK_ASSOCIATION_CARDS": "Alege 2 cărți de dat",
 		"CONFIRMING": "În curs...",
 		"NO_CARDS": "Nicio carte disponibilă",
 		"ONG_SELECT_HINT": "{{selected}}/4 cărți selectate",
 		"ONG_AUTO_TARGET": "Dă celor mai săraci 2 jucători",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 cărți selectate",
+		"ASSOCIATION_TARGET_HINT": "Această carte va merge la jucătorul ales mai jos",
 		"RECEIVED_GIVE": "{{fromName}} ți-a dat o carte!",
 		"RECEIVED_ONG": "{{fromName}} ți-a donat {{count}} carte/cărți (acțiune ONG)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} ți-a dat o carte (acțiune Asociație)!",
 		"ROBBED_STEAL": "Cineva ți-a furat o carte!",
 		"ROBBED_WAR": "Ai fost atacat! Ți-au fost luate 2 cărți.",
 		"SHOP_HINT": "Produ un pătrat ca să câștigi puncte!",
@@ -100,6 +104,10 @@
 		"SILENT_STEAL": {
 			"LABEL": "Furt silențios",
 			"DESC": "Ia o carte fără ca celălalt jucător să fie anunțat."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Asociație",
+			"DESC": "Dă 2 dintre cărțile tale la 2 jucători la alegere (câte 1 fiecare)."
 		},
 		"WAR": {
 			"LABEL": "Război",

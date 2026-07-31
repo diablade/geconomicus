@@ -419,7 +419,7 @@
 										[class.active]="(sortBy$ | async) === 'name'"
 										(click)="setSort('name')">
 										{{ 'TABLE.PLAYER' | translate }} ({{ vm.alive.length }}
-										{{ 'TABLE.ALIVE' | translate }} &middot; {{ vm.dead.length }} 🦂) ↕
+										{{ 'TABLE.ALIVE' | translate }} &middot; {{ vm.dead.length }} 💀) ↕
 									</button>
 									<div class="text-center">⚡</div>
 									<button
@@ -443,7 +443,7 @@
 									<!-- Locked overlay (prison / dead): covers row content, avatar stays above -->
 									<div class="rowLock" *ngIf="row.status === DEAD || row.status === PRISON">
 										<ng-container *ngIf="row.status === DEAD">
-											🦂 {{ 'TABLE.DECEASED' | translate }}
+											💀 {{ 'TABLE.DECEASED' | translate }}
 										</ng-container>
 										<ng-container *ngIf="row.status === PRISON">
 											🚨 {{ 'TABLE.PRISON' | translate }}
@@ -594,7 +594,7 @@
 										</div>
 									</div>
 									<div class="pbLock" *ngIf="row.status === DEAD">
-										<div class="pbLockIcon">🦂</div>
+										<div class="pbLockIcon">💀</div>
 										<div>{{ 'TABLE.DECEASED' | translate }}</div>
 									</div>
 									<div class="pbLock prison" *ngIf="row.status === PRISON">

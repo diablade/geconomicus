@@ -5,13 +5,17 @@
 		"PICK_TARGET2": "Einen zweiten Spieler wählen",
 		"PICK_CARD": "Eine Karte wählen",
 		"PICK_ONG_CARDS": "4 Karten zum Verschenken wählen",
+		"PICK_ASSOCIATION_CARDS": "2 Karten zum Verschenken wählen",
 		"CONFIRMING": "Läuft...",
 		"CONFIRM": "Bestätigen",
 		"NO_CARDS": "Keine Karte verfügbar",
 		"ONG_SELECT_HINT": "{{selected}}/4 Karten ausgewählt",
 		"ONG_AUTO_TARGET": "An die 2 ärmsten Spieler geben",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 Karten ausgewählt",
+		"ASSOCIATION_TARGET_HINT": "Diese Karte geht an den unten gewählten Spieler",
 		"RECEIVED_GIVE": "{{fromName}} hat dir eine Karte gegeben!",
 		"RECEIVED_ONG": "{{fromName}} hat dir {{count}} Karte(n) geschenkt (NGO-Aktion)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} hat dir eine Karte gegeben (Verein-Aktion)!",
 		"ROBBED_STEAL": "Jemand hat dir eine Karte gestohlen!",
 		"ROBBED_WAR": "Du wurdest angegriffen! Dir wurden 2 Karten genommen.",
 		"SHOP_HINT": "Stelle ein Quadrat her, um Punkte zu sammeln!",
@@ -36,6 +40,10 @@
 		"SILENT_STEAL": {
 			"LABEL": "Stiller Diebstahl",
 			"DESC": "Nimm eine Karte, ohne dass der andere Spieler benachrichtigt wird."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Verein",
+			"DESC": "Gib 2 deiner Karten an 2 Spieler deiner Wahl (je 1)."
 		},
 		"WAR": {
 			"LABEL": "Krieg",

@@ -28,6 +28,12 @@ export const actionSanitize = {
 		victimIdx: Joi.number().integer().min(0).required(),
 		cardKey: Joi.string().required(),
 	}).required(),
+	association: Joi.object({
+		gameStateId: Joi.string().custom(isValidObjectId).required(),
+		giverIdx: Joi.number().integer().min(0).required(),
+		cardKeys: Joi.array().items(Joi.string()).length(2).unique().required(),
+		targetIdxs: Joi.array().items(Joi.number().integer().min(0)).length(2).unique().required(),
+	}).required(),
 	war: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required(),
 		attackerIdx: Joi.number().integer().min(0).required(),
@@ -37,8 +43,8 @@ export const actionSanitize = {
 	ong: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required(),
 		giverIdx: Joi.number().integer().min(0).required(),
-		cardKeys: Joi.array().items(Joi.string()).length(4).required(),
-		manualTargetIdxs: Joi.array().items(Joi.number().integer().min(0)).length(2).optional(),
+		cardKeys: Joi.array().items(Joi.string()).length(4).unique().required(),
+		manualTargetIdxs: Joi.array().items(Joi.number().integer().min(0)).length(2).unique().optional(),
 	}).required(),
 	whoHaveCard: Joi.object({
 		gameStateId: Joi.string().custom(isValidObjectId).required(),
