@@ -9,6 +9,7 @@
 			<div class="cp-title geconomicusFont contourText ombreText">{{ sessionName || 'Résultats' }}</div>
 			<div class="cp-sub white" *ngIf="location">📍 {{ location }}</div>
 		</div>
+		<app-language-btn [white]="true"></app-language-btn>
 		<img src="assets/images/guny.png" class="cp-guny" alt="Guny" />
 	</div>
 
@@ -85,11 +86,15 @@
 						<span class="act-label">{{ a.icon }} {{ a.label }}</span>
 						<div class="act-bars">
 							<div class="act-bar dette">
-								<span class="fill" [style.width.%]="(a.dette / maxActionCount(goodActions)) * 100"></span>
+								<span
+									class="fill"
+									[style.width.%]="(a.dette / maxActionCount(goodActions)) * 100"></span>
 								<b>{{ a.dette }}</b>
 							</div>
 							<div class="act-bar libre">
-								<span class="fill" [style.width.%]="(a.libre / maxActionCount(goodActions)) * 100"></span>
+								<span
+									class="fill"
+									[style.width.%]="(a.libre / maxActionCount(goodActions)) * 100"></span>
 								<b>{{ a.libre }}</b>
 							</div>
 						</div>
@@ -101,11 +106,15 @@
 						<span class="act-label">{{ a.icon }} {{ a.label }}</span>
 						<div class="act-bars">
 							<div class="act-bar dette">
-								<span class="fill" [style.width.%]="(a.dette / maxActionCount(badActions)) * 100"></span>
+								<span
+									class="fill"
+									[style.width.%]="(a.dette / maxActionCount(badActions)) * 100"></span>
 								<b>{{ a.dette }}</b>
 							</div>
 							<div class="act-bar libre">
-								<span class="fill" [style.width.%]="(a.libre / maxActionCount(badActions)) * 100"></span>
+								<span
+									class="fill"
+									[style.width.%]="(a.libre / maxActionCount(badActions)) * 100"></span>
 								<b>{{ a.libre }}</b>
 							</div>
 						</div>

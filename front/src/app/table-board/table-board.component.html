@@ -25,6 +25,7 @@
 					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
 						🔄️ {{ 'TABLE.REFRESH_VIEW' | translate }}
 					</button>
+					<app-language-btn [short]="true"></app-language-btn>
 				</div>
 			</div>
 
@@ -196,9 +197,16 @@
 							<div class="ruleRow">
 								<span>{{ 'TABLE.SEIZURE' | translate }}</span>
 								<b>
-									{{ vm.rules.seizureType }} {{ vm.rules.seizureDecote }}% &middot;
-									{{ 'TABLE.FEES' | translate }}
-									{{ vm.rules.seizureCosts }}
+									{{
+										vm.rules.seizureType === DECOTE
+											? ('TABLE.DECOTE' | translate)
+											: ('TABLE.FEES' | translate)
+									}}
+									{{
+										vm.rules.seizureType === DECOTE
+											? vm.rules.seizureDecote + '%'
+											: vm.rules.seizureCosts
+									}}
 								</b>
 							</div>
 							<div class="ruleRow">
@@ -598,8 +606,9 @@
 										<div>{{ 'TABLE.DECEASED' | translate }}</div>
 									</div>
 									<div class="pbLock prison" *ngIf="row.status === PRISON">
-										<div class="pbLockIcon">🚨</div>
-										<div>{{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%</div>
+										<div class="pbPrisonLabel">
+											{{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
+										</div>
 									</div>
 								</div>
 							</div>

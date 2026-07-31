@@ -162,7 +162,7 @@ const _createPrisonTimer = (gameStateId, playerStateIdx, prisonTimeMinutes) => {
 	log.debug('[BankStateService] creating prison timer', { gameStateId, playerStateIdx, prisonTimeMinutes });
 	return new Timer(
 		`${gameStateId}-${playerStateIdx}`,
-		{ gameStateId, playerStateIdx },
+		{ gameStateId, playerStateIdx, totalMs: prisonTimeMinutes * minute },
 		prisonTimeMinutes * minute,
 		_prisonEndCallback,
 		fiveSeconds,
@@ -226,21 +226,24 @@ const _prisonEndCallback = async (timerInstance) => {
 const _prisonProgressCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
 	const remainingMs = timerInstance.getRemainingMs();
-	const totalMs = timerInstance.duration;
+	const totalMs = timerInstance.data.totalMs ?? timerInstance.duration;
 	const progress = totalMs > 0 ? Math.max(0, Math.min(100, Math.round((remainingMs / totalMs) * 100))) : 0;
-	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs, progress });
+	const paused = timerInstance.status === 'paused';
+	log.debug('[BankStateService] prison progress', { playerStateIdx, remainingMs, progress, paused });
 
 	socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.PLAYER.PROGRESS_PRISON, {
 		playerStateIdx,
 		remainingTime: remainingMs,
 		totalTime: totalMs,
 		progress,
+		paused,
 	});
 	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.PROGRESS_PRISON, {
 		playerStateIdx,
 		remainingTime: remainingMs,
 		totalTime: totalMs,
 		progress,
+		paused,
 	});
 };
 
@@ -880,6 +883,22 @@ BankStateService.startAllTimersCreditGame = async (gameStateId, credits) => {
 		credit.remainingTime = timer.getRemainingMs();
 		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.STARTED, { id: credit.id });
 		socket.emitTo(ROOMS.playerState(gameStateId, credit.playerStateIdx), IO.CREDIT.STARTED, { id: credit.id });
+	}
+};
+
+BankStateService.pauseAllPrisonTimers = async (gameStateId) => {
+	log.debug(`[BankStateService] Pausing all prison timers for game state ${gameStateId}`);
+	const timers = await prisonTimerManager.pauseAllTimersOfGameState(gameStateId);
+	for (const timer of timers) {
+		await _prisonProgressCallback(timer);
+	}
+};
+
+BankStateService.resumeAllPrisonTimers = async (gameStateId) => {
+	log.debug(`[BankStateService] Resuming all prison timers for game state ${gameStateId}`);
+	const timers = prisonTimerManager.resumeAllTimersOfGameState(gameStateId);
+	for (const timer of timers) {
+		await _prisonProgressCallback(timer);
 	}
 };
 

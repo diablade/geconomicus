@@ -48,6 +48,11 @@ export const CREDIT_STATUS = {
     CANCELED: 'canceled',
     DONE: 'credit-done',
 };
+// ─── SEIZURE TYPE ───────────────────────────────────────────────────────────
+export const SEIZURE_TYPE = {
+    DECOTE: 'decote',
+    FEES: 'fees',
+};
 // ─── AUTO-BANK ────────────────────────────────────────────────────────────────
 // Preset that selects the Rate Schedule when the `autoBank` toggle is on.
 // See docs/adr/0003-auto-bank-rate-board.md

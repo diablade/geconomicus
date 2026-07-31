@@ -14,9 +14,9 @@ export class PrisonComponent implements OnDestroy {
 	prisonProgress = 0;
 	private prisonTotalMs = 0;
 
-	@Input() set prison(value: { remainingTime: number; totalTime: number } | null) {
+	@Input() set prison(value: { remainingTime: number; totalTime: number; paused?: boolean } | null) {
 		if (value) {
-			this.sync(value.remainingTime, value.totalTime);
+			this.sync(value.remainingTime, value.totalTime, !!value.paused);
 		} else {
 			this.prisonTimer.stop();
 		}
@@ -40,12 +40,14 @@ export class PrisonComponent implements OnDestroy {
 		}
 	);
 
-	private sync(remainingTime: number, totalTime: number): void {
+	private sync(remainingTime: number, totalTime: number, paused: boolean): void {
 		this.prisonTotalMs = totalTime || remainingTime;
 		const remainingSec = Math.max(0, Math.round(remainingTime / 1000));
-		this.prisonTimer.reset();
 		this.prisonTimer.set({ h: 0, m: 0, s: remainingSec });
-		this.prisonTimer.start();
+		this.prisonTimer.reset();
+		if (!paused) {
+			this.prisonTimer.start();
+		}
 	}
 
 	ngOnDestroy(): void {

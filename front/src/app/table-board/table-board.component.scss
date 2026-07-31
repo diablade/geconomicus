@@ -616,7 +616,18 @@
 	text-align: center;
 
 	&.prison {
-		background: rgba(30, 40, 120, 0.55);
+		background:
+			linear-gradient(rgba(8, 12, 40, 0.35), rgba(8, 12, 40, 0.35)),
+			url('/assets/images/prison.png') center / cover no-repeat;
+		justify-content: flex-end;
+		padding-bottom: 8px;
+	}
+
+	.pbPrisonLabel {
+		font-weight: bold;
+		text-shadow:
+			1px 1px 0 black,
+			0 0 4px black;
 	}
 
 	.pbLockIcon {

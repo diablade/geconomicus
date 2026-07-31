@@ -48,6 +48,11 @@ export declare const CREDIT_STATUS: {
     readonly DONE: "credit-done";
 };
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
+export declare const SEIZURE_TYPE: {
+    readonly DECOTE: "decote";
+    readonly FEES: "fees";
+};
+export type SeizureType = (typeof SEIZURE_TYPE)[keyof typeof SEIZURE_TYPE];
 export declare const BANK_PROFILE: {
     readonly NORMAL: "normal";
     readonly AGGRESSIVE: "aggressive";

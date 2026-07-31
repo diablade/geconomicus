@@ -38,7 +38,11 @@ export class PlayerStateService {
 	typeMoney$ = this.typeMoneySubject.asObservable();
 	private playerStatusSubject = new BehaviorSubject<PlayerStatus>(PLAYER_STATUS.ALIVE);
 	playerStatus$ = this.playerStatusSubject.asObservable();
-	private prisonSubject = new BehaviorSubject<{ remainingTime: number; totalTime: number } | null>(null);
+	private prisonSubject = new BehaviorSubject<{
+		remainingTime: number;
+		totalTime: number;
+		paused?: boolean;
+	} | null>(null);
 	prison$ = this.prisonSubject.asObservable();
 	playerConnection$ = inject(WebSocketService).connectionStatus$;
 
@@ -423,7 +427,11 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.PLAYER.PROGRESS_PRISON, async (data: any) => {
 			this.playerStatusSubject.next(PLAYER_STATUS.PRISON);
-			this.prisonSubject.next({ remainingTime: data.remainingTime, totalTime: data.totalTime });
+			this.prisonSubject.next({
+				remainingTime: data.remainingTime,
+				totalTime: data.totalTime,
+				paused: !!data.paused,
+			});
 		});
 
 		this.wsService.on(IO.PLAYER.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {

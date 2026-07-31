@@ -35,7 +35,7 @@ export type SessionStatus = (typeof SESSION_STATUS)[keyof typeof SESSION_STATUS]
 
 // ─── GAME STATUS ──────────────────────────────────────────────────────────────
 export const GAME_STATUS = {
-	NONE: 'none',
+    NONE: 'none',
 	CREATED: 'created',
 	INITIALIZED: 'initialized',
 	PLAYING: 'playing',
@@ -46,7 +46,7 @@ export type GameStatus = (typeof GAME_STATUS)[keyof typeof GAME_STATUS];
 
 // ─── CREDIT STATUS ────────────────────────────────────────────────────────────
 export const CREDIT_STATUS = {
-	PAY_INTEREST: 'credit-pay-interest',
+    PAY_INTEREST: 'credit-pay-interest',
 	SEIZURE: 'seizure',
 	DECOTE: 'decote',
 	FEES: 'fees',
@@ -59,6 +59,13 @@ export const CREDIT_STATUS = {
 	DONE: 'credit-done',
 } as const;
 export type CreditStatus = (typeof CREDIT_STATUS)[keyof typeof CREDIT_STATUS];
+
+// ─── SEIZURE TYPE ───────────────────────────────────────────────────────────
+export const SEIZURE_TYPE = {
+    DECOTE: 'decote',
+    FEES: 'fees',
+} as const;
+export type SeizureType = (typeof SEIZURE_TYPE)[keyof typeof SEIZURE_TYPE];
 
 // ─── AUTO-BANK ────────────────────────────────────────────────────────────────
 // Preset that selects the Rate Schedule when the `autoBank` toggle is on.

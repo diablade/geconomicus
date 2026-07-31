@@ -77,6 +77,30 @@ class PrisonTimerManager {
 		}
 	}
 
+	async pauseAllTimersOfGameState(gameStateId) {
+		const paused = [];
+		for (const timer of this.timers.values()) {
+			if (timer?.data?.gameStateId === gameStateId && timer.status === 'running') {
+				await timer.pause();
+				paused.push(timer);
+			}
+		}
+		log.debug(`[PrisonTimerManager] Paused ${paused.length} prison timer(s) of game state ${gameStateId}`);
+		return paused;
+	}
+
+	resumeAllTimersOfGameState(gameStateId) {
+		const resumed = [];
+		for (const timer of this.timers.values()) {
+			if (timer?.data?.gameStateId === gameStateId && timer.status === 'paused') {
+				timer.resume();
+				resumed.push(timer);
+			}
+		}
+		log.debug(`[PrisonTimerManager] Resumed ${resumed.length} prison timer(s) of game state ${gameStateId}`);
+		return resumed;
+	}
+
 	async stopPlayerTimers(gameStateId, playerIdx) {
 		const timersToRemove = [];
 

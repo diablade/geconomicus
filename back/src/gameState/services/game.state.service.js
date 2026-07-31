@@ -414,6 +414,7 @@ GameStateService.pause = async (gameStateId) => {
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
 			//save all credits remaining time
 			await BankStateService.pauseAllTimersCreditGame(gameStateId, entry.gameState.credits);
+			await BankStateService.pauseAllPrisonTimers(gameStateId);
 		}
 
 		log.debug(`[GameStateService] Saving game state to DB: ${gameStateId}`);
@@ -450,6 +451,7 @@ GameStateService.resume = async (gameStateId) => {
 
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
 			await BankStateService.resumeAllTimersCreditGame(gameStateId, entry.gameState.credits, entry.rules);
+			await BankStateService.resumeAllPrisonTimers(gameStateId);
 		}
 
 		EventService.postNow(

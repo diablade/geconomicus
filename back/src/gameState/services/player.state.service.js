@@ -197,7 +197,11 @@ PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, pl
 			if (playerState.status === PLAYER_STATUS.PRISON) {
 				const prisonTimer = prisonTimerManager.getTimer(`${gameStateId}-${playerStateIdx}`);
 				if (prisonTimer) {
-					prison = { remainingTime: prisonTimer.getRemainingMs(), totalTime: prisonTimer.duration };
+					prison = {
+						remainingTime: prisonTimer.getRemainingMs(),
+						totalTime: prisonTimer.data.totalMs ?? prisonTimer.duration,
+						paused: prisonTimer.status === 'paused',
+					};
 				}
 			}
 

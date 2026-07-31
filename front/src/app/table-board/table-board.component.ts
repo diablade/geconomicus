@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 import { Card, ConnectionStatus, Credit, PlayerState } from '../models/gameState';
 import { Avatar } from '../models/avatar';
 import { getActionIcon } from '../models/rules';
-import { AssistMode, CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS } from '@geco/shared';
+import { AssistMode, CREDIT_STATUS, GAME_TYPE, PLAYER_STATUS, SEIZURE_TYPE } from '@geco/shared';
 import * as _ from 'lodash-es';
 import { getBackgroundStyle } from '../services/avatarTools';
 import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
@@ -46,6 +46,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly PRISON = PLAYER_STATUS.PRISON;
+	protected readonly DECOTE = SEIZURE_TYPE.DECOTE;
 	protected readonly getActionIcon = getActionIcon;
 	faCircleInfo = faCircleInfo;
 
