@@ -224,6 +224,7 @@
 		"PREPARE": "Choose game options",
 		"PRESENT_YOURSELF": "Present yourself",
 		"PRESENT_ML": "Present the game objective (2 currencies, 2 different game results)",
+		"SOUND": "Ask players to turn on the sound on their phone for better immersion",
 		"DELAY": "Explain the delays for each of the two rounds",
 		"SQUARES": "create value by gathering identical cards through transactions",
 		"TRANSACTIONS": "Explain how to make purchases (camera or digicode) and play a fake game for a maximum of 5 minutes (use experimental mode to have the reset button)",

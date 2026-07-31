@@ -7,6 +7,7 @@
 		<div class="d-flex flex-row justify-content-between align-items-center m-2">
 			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
 		</div>
+		<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
 		<div class="shadowed text-center fs-1 m-1" (click)="refresh()">
 			{{ 'AVATAR.LOBBY' | translate }}
 		</div>
@@ -33,7 +34,8 @@
 		<!-- /* : 'blackBtn'" */ -->
 
 		<div class="text-center mt-3 shadowed" *ngIf="avatarCode">
-			{{ 'AVATAR.YOUR_CODE' | translate }} <b class="avatarCode">{{ avatarCode }}</b>
+			{{ 'AVATAR.YOUR_CODE' | translate }}
+			<b class="avatarCode">{{ avatarCode }}</b>
 		</div>
 
 		<div class="mt-3 d-flex flex-row flex-wrap gap-2 justify-content-center">
@@ -60,8 +62,8 @@
 						mat-raised-button
 						color="primary"
 						(click)="joinGame(game.gameStateId)">
-						{{ 'AVATAR.PLAY' | translate
-						}}<span *ngIf="isRejoinTarget(game.gameStateId)">&nbsp;({{ rejoinCountdown }})</span>
+						{{ 'AVATAR.PLAY' | translate }}
+						<span *ngIf="isRejoinTarget(game.gameStateId)">&nbsp;({{ rejoinCountdown }})</span>
 						<fa-icon [icon]="faRightToBracket"></fa-icon>
 					</button>
 					<button

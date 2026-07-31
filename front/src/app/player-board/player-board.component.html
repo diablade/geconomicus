@@ -59,7 +59,7 @@
 		</div>
 		<div class="marginArround avatar-wrap">
 			<avatar
-				[routerLink]="['/avatar', sessionId, avatarIdx]"
+				[routerLink]="fakeMode ? [] : ['/avatar', sessionId, avatarIdx]"
 				[avatar]="vm.avatar"
 				[width]="'4em'"
 				[height]="'4em'"

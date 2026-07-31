@@ -224,6 +224,7 @@
 		"PREPARE": "Spieloptionen wählen",
 		"PRESENT_YOURSELF": "Sich vorstellen",
 		"PRESENT_ML": "Ziel des Spiels erklären (2 Geldarten, 2 verschiedene Spielergebnisse)",
+		"SOUND": "Die Spieler bitten, den Ton ihres Telefons für ein besseres Eintauchen einzuschalten",
 		"DELAY": "Zeitrahmen für jede der beiden Runden erläutern",
 		"SQUARES": "Wertschöpfung durch Sammeln identischer Karten durch Transaktionen",
 		"TRANSACTIONS": "Erklären Sie, wie Sie Einkäufe tätigen (Kamera oder digitaler Code) und spielen Sie maximal 5 Minuten lang ein Spiel (verwenden Sie den Experimentalmodus, um die Reset-Taste zu haben).",

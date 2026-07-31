@@ -224,6 +224,7 @@
 		"PREPARE": "Seleccionar opciones del juego",
 		"PRESENT_YOURSELF": "Presentarse",
 		"PRESENT_ML": "Presentar el propósito del juego (2 monedas, 2 resultados de juego diferentes)",
+		"SOUND": "Pedir a los jugadores que activen el sonido de su teléfono para una mejor inmersión",
 		"DELAY": "Explicar los tiempos para cada una de las dos mangas",
 		"SQUARES": "Crear valor reuniendo cartas idénticas mediante transacciones",
 		"TRANSACTIONS": "Explicar cómo realizar compras (cámara o código digital), y haced una partida de prueba durante un máximo de 5 min. (utilizar el modo experimental para obtener el botón de reinicio)",

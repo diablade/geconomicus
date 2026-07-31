@@ -204,7 +204,7 @@
 		"CONNECTED": "✅ Vous êtes connecté(e).",
 		"RECONNECTED": "✅ Vous êtes reconnecté(e).",
 		"TIMEOUT": "Délai de connexion dépassé."
-	},
+	},
 	"CURRENCY": {
 		"EURO": "€",
 		"JUNE": "Ğ1",
@@ -224,6 +224,7 @@
 		"PREPARE": "Choisir les options du jeu",
 		"PRESENT_YOURSELF": "Se présenter",
 		"PRESENT_ML": "Présenter le but du jeu (2 monnaies, 2 résultats de jeu différents)",
+		"SOUND": "Demander aux joueurs d'activer le son de leur téléphone pour une meilleure immersion",
 		"DELAY": "Expliquer les délais pour chacune des deux manches",
 		"SQUARES": "Créer de la valeur en réunissant des cartes identiques au moyen de transactions",
 		"TRANSACTIONS": "Expliquer comment faire des achats (camera ou digicode) et faites une partie pour de faux pendant au maximum 5 min (utiliser le mode expérimental pour avoir le bouton réinitialisation)",
@@ -235,7 +236,7 @@
 		"SURVEY_2": "Fin de la manche, collecte des ressentis par un sondage sur téléphone",
 		"RESULTS": "Fin de la partie, révélation des résultats et comparaison des deux manches"
 	},
-	"MODULE": {
-		"BACK_HOME": "Revenir à l'accueil"
+	"MODULE": {
+		"BACK_HOME": "Revenir à l'accueil"
 	}
 }
