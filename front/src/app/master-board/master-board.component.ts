@@ -227,6 +227,10 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		this.coinRotate = !this.coinRotate;
 	}
 
+	refresh() {
+		window.location.reload();
+	}
+
 	initGame() {
 		this.gameStateService.init(this.gameStateId).subscribe({
 			next: (result: any) => {

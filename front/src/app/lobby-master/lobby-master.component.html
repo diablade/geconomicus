@@ -3,7 +3,12 @@
 	<div class="d-flex flex-column h-100 overflow-auto">
 		<!-- HEADER  -->
 		<div class="d-flex flex-row justify-content-between flex-wrap">
-			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
+			<img
+				class="geco glow mousePointer"
+				src="./assets/images/geconomicus.png"
+				alt=""
+				[matTooltip]="'REFRESH' | translate"
+				(click)="refresh()" />
 			<div class="d-flex flex-row align-items-center flex-wrap gap-2">
 				<button
 					class="box-shadowed blur whiteBtn"

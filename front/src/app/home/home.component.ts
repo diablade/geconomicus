@@ -13,6 +13,7 @@ import { ResumeSessionPromptComponent } from '../dialogs/resume-session-prompt/r
 import { AudioService } from '../services/audio.service';
 import { ThemesService } from '../services/themes.service';
 import { SessionService } from '../services/api/session.service';
+import { FullscreenService } from '../services/fullscreen.service';
 
 @Component({
 	selector: 'app-home',
@@ -33,6 +34,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		private sessionService: SessionService,
 		private localStorageService: LocalStorageService,
 		private audioService: AudioService,
+		private fullscreenService: FullscreenService,
 		public dialog: MatDialog
 	) {
 		this.i18nService.loadNamespace('home');
@@ -142,26 +144,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-    toggleFullscreen() {
-    const doc = window.document;
-    const docEl = doc.documentElement;
-
-    const requestFullScreen = docEl.requestFullscreen ||
-                              (docEl as any).webkitRequestFullscreen ||
-                              (docEl as any).mozRequestFullScreen ||
-                              (docEl as any).msRequestFullscreen;
-
-    const cancelFullScreen = doc.exitFullscreen ||
-                            (doc as any).webkitExitFullscreen ||
-                            (doc as any).mozCancelFullScreen ||
-                            (doc as any).msExitFullscreen;
-
-    if (!doc.fullscreenElement) {
-      requestFullScreen.call(docEl);
-    } else {
-      cancelFullScreen.call(doc);
-    }
-  }
+	toggleFullscreen() {
+		this.fullscreenService.toggle();
+	}
 }
 
 @Component({

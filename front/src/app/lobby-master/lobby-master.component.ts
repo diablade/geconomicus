@@ -141,6 +141,10 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	refresh() {
+		window.location.reload();
+	}
+
 	flipCoin(rule: any) {
 		rule.rotate = true;
 		setTimeout(() => {

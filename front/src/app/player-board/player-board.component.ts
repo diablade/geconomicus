@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import confetti from 'canvas-confetti';
 import { combineLatest, distinctUntilChanged, map, of, Subscription, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
@@ -55,6 +54,56 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	protected readonly faCreditCardAlt = faCreditCardAlt;
 	protected readonly faFileSignature = faFileSignature;
 	protected readonly getBackgroundStyle = getBackgroundStyle;
+
+	private readonly REINCARNATE_OVERLAY_MS = 4000;
+	private readonly CREDIT_ALARM_MS = 4000;
+	readonly takeoverConfig: OverlayConfig = {
+		phases: [
+			{
+				icon: '🎬',
+				title: 'PLAYER.TAKEN_OVER_TITLE',
+				text: 'PLAYER.TAKEN_OVER_TEXT',
+				bg: 'takeover',
+				button: { labelKey: 'PLAYER.RETAKE' },
+			},
+		],
+	};
+
+	private readonly reincarnateOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '☠️',
+				text: 'PLAYER.THIS_LIFE_IS_GONE',
+				bg: 'reincarnate-death',
+				sound: 'dead',
+				durationMs: this.REINCARNATE_OVERLAY_MS,
+			},
+			{
+				icon: '👶',
+				text: 'PLAYER.GO_TO_SECOND_LIFE',
+				bg: 'reincarnate-rebirth',
+				sound: 'angel',
+				durationMs: this.REINCARNATE_OVERLAY_MS,
+			},
+		],
+	};
+
+	private readonly creditAlarmOverlay: OverlayConfig = {
+		phases: [{ icon: '⏰', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.CREDIT_ALARM_MS }],
+	};
+
+	private readonly creditFaultOverlay = (autoSeizure: boolean): OverlayConfig => ({
+		loop: true,
+		phases: [
+			{
+				icon: '🚨',
+				title: 'CREDIT.FAULT_OVERLAY_TITLE',
+				text: autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT',
+				bg: 'police',
+			},
+		],
+	});
+
 	private subscription: Subscription | undefined;
 
 	screenWidth = 0;
@@ -153,30 +202,17 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		rate: this.rate$,
 	});
 
-	reincarnateConfig: OverlayConfig | null = null;
 	private pendingReincarnateIdx: number | null = null;
 	private reincarnationSub: Subscription | undefined;
-	private readonly REINCARNATE_OVERLAY_MS = 4000;
-	alarmConfig: OverlayConfig | null = null;
 	private finalMinuteSub: Subscription | undefined;
-	private readonly CREDIT_ALARM_MS = 4000;
-	faultConfig: OverlayConfig | null = null;
 	private autoSeizure = false;
 	private creditFaultSub: Subscription | undefined;
 	private rulesSub: Subscription | undefined;
 	private firstCreditSub: Subscription | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
-	readonly takeoverConfig: OverlayConfig = {
-		phases: [
-			{
-				icon: '🎬',
-				title: 'PLAYER.TAKEN_OVER_TITLE',
-				text: 'PLAYER.TAKEN_OVER_TEXT',
-				bg: 'takeover',
-				button: { labelKey: 'PLAYER.RETAKE' },
-			},
-		],
-	};
+	alarmConfig: OverlayConfig | null = null;
+	faultConfig: OverlayConfig | null = null;
+	reincarnateConfig: OverlayConfig | null = null;
 
 	fakeMode = false;
 	scanV3 = true;
@@ -226,6 +262,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.rulesSub) this.rulesSub.unsubscribe();
 		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
+		window.removeEventListener('orientationchange', this._orientationHandler);
+		window.visualViewport?.removeEventListener('resize', this._orientationHandler);
 	}
 
 	ngOnInit(): void {
@@ -308,9 +346,15 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.screenHeight = window.innerHeight;
 	};
 
+	private _orientationHandler = () => {
+		requestAnimationFrame(this._resizeHandler);
+	};
+
 	updateScreenSize() {
 		this._resizeHandler();
 		window.addEventListener('resize', this._resizeHandler);
+		window.addEventListener('orientationchange', this._orientationHandler);
+		window.visualViewport?.addEventListener('resize', this._orientationHandler);
 	}
 
 	initPanels() {
@@ -469,24 +513,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private playReincarnationOverlay(newPlayerStateIdx: number) {
 		if (this.reincarnateConfig) return;
 		this.pendingReincarnateIdx = newPlayerStateIdx;
-		this.reincarnateConfig = {
-			phases: [
-				{
-					icon: '☠️',
-					text: 'PLAYER.THIS_LIFE_IS_GONE',
-					bg: 'reincarnate-death',
-					sound: 'dead',
-					durationMs: this.REINCARNATE_OVERLAY_MS,
-				},
-				{
-					icon: '👶',
-					text: 'PLAYER.GO_TO_SECOND_LIFE',
-					bg: 'reincarnate-rebirth',
-					sound: 'angel',
-					durationMs: this.REINCARNATE_OVERLAY_MS,
-				},
-			],
-		};
+		this.reincarnateConfig = this.reincarnateOverlay;
 	}
 
 	onReincarnateDone(): void {
@@ -507,25 +534,13 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			this.localStorageService.setItem('panelCredit', true);
 		}
 		if (flash && !this.alarmConfig) {
-			this.alarmConfig = {
-				phases: [{ icon: '⏰', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.CREDIT_ALARM_MS }],
-			};
+			this.alarmConfig = this.creditAlarmOverlay;
 		}
 	}
 
 	private onCreditFault(fault: boolean): void {
 		if (fault) {
-			this.faultConfig = {
-				loop: true,
-				phases: [
-					{
-						icon: '🚨',
-						title: 'CREDIT.FAULT_OVERLAY_TITLE',
-						text: this.autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT',
-						bg: 'police',
-					},
-				],
-			};
+			this.faultConfig = this.creditFaultOverlay(this.autoSeizure);
 			this.audioService.playSound('police');
 		} else {
 			this.faultConfig = null;

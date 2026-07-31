@@ -20,15 +20,27 @@
 				{{ 'AVATAR.ANIMATOR' | translate: { name: vm.session?.animator } }}
 			</div>
 		</div>
-		<app-notice-btn
-			class="text-center d-block m-3"
-			[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
-			[stroked]="true"
-			[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
-		<div class="text-center">
-			<button class="blur box-shadowed" [ngClass]="'blackBtn'" mat-stroked-button (click)="openTutorial()">
+		<div class="m-3 d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
+			<app-notice-btn
+				[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
+				[stroked]="true"
+				[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
+			<button class="blur box-shadowed blackBtn" mat-stroked-button (click)="openTutorial()">
 				<mat-icon class="outlined">joystick</mat-icon>
 				{{ 'TUTORIAL' | translate }}
+			</button>
+
+			<button
+				*ngIf="fullscreenService.supported"
+				class="blur box-shadowed blackBtn"
+				mat-stroked-button
+				(click)="toggleFullscreen()">
+				<mat-icon class="outlined">{{ fullscreenService.active ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+				{{ (fullscreenService.active ? 'FULLSCREEN_EXIT' : 'FULLSCREEN') | translate }}
+			</button>
+			<button class="blur box-shadowed blackBtn" mat-stroked-button (click)="refresh()">
+				<mat-icon class="outlined">refresh</mat-icon>
+				{{ 'REFRESH' | translate }}
 			</button>
 		</div>
 		<!-- /* : 'blackBtn'" */ -->

@@ -98,7 +98,7 @@ export class FakePlayerPanelComponent {
 	testAlarm(): void {
 		this.overlayConfig = {
 			phases: [
-				{ icon: '⏰', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.TEST_MS, dismissable: true },
+				{ icon: '⚠️', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.TEST_MS, dismissable: true },
 			],
 		};
 	}

@@ -12,6 +12,7 @@ import { AudioService } from '../services/audio.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { TutorialDialogComponent } from '../dialogs/tutorial-dialog/tutorial-dialog.component';
+import { FullscreenService } from '../services/fullscreen.service';
 
 @Component({
 	selector: 'app-lobby-player',
@@ -58,6 +59,7 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private dialog: MatDialog,
 		private snackbarService: SnackbarService,
+		public fullscreenService: FullscreenService,
 		private i18n: I18nService
 	) {
 		this.i18n.loadNamespace('avatar');
@@ -161,6 +163,10 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 
 	refresh() {
 		window.location.reload();
+	}
+
+	toggleFullscreen() {
+		this.fullscreenService.toggle();
 	}
 
 	goToAvatarSettings() {

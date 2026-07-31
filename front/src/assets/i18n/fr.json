@@ -14,6 +14,9 @@
 	"BACK_TO_LOBBY": "Retour en salle d'attente",
 	"CANCEL": "Annuler",
 	"CLOSE": "Fermer",
+	"REFRESH": "Rafraîchir",
+	"FULLSCREEN": "Plein écran",
+	"FULLSCREEN_EXIT": "Quitter le plein écran",
 	"OK": "OK",
 	"ALL": "Tous",
 	"SAVE": "Sauvegarder",
@@ -237,6 +240,6 @@
 		"RESULTS": "Fin de la partie, révélation des résultats et comparaison des deux manches"
 	},
 	"MODULE": {
-		"BACK_HOME": "Revenir à l'accueil"
+		"BACK_HOME": "Revenir à l'accueil"
 	}
 }

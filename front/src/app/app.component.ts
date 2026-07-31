@@ -20,6 +20,7 @@ export class AppComponent implements OnInit{
 	}
 
 	public ngOnInit(): void {
+		this.lockPinchZoom();
 		if (this.swUpdate.isEnabled) {
 			this.swUpdate.versionUpdates.pipe(
 				filter((evt: any): evt is VersionReadyEvent => evt.type === 'VERSION_READY'),
@@ -30,5 +31,21 @@ export class AppComponent implements OnInit{
 				}),
 			);
 		}
+	}
+
+	private lockPinchZoom(): void {
+		const block = (event: Event) => event.preventDefault();
+		document.addEventListener('gesturestart', block, {passive: false});
+		document.addEventListener('gesturechange', block, {passive: false});
+		document.addEventListener('gestureend', block, {passive: false});
+		document.addEventListener(
+			'touchmove',
+			(event: TouchEvent) => {
+				if (event.touches.length > 1) {
+					event.preventDefault();
+				}
+			},
+			{passive: false},
+		);
 	}
 }
