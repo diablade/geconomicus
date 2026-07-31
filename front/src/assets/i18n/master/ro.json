@@ -29,7 +29,7 @@
 		"DISTRIBUTE_CARDS": "Distribuie cărțile",
 		"CARDS_DISTRIBUTED": "Cărți distribuite",
 		"ASK_FIRST_CREDIT": "Propune primul credit",
-		"ASK_FIRST_CREDIT_CONFIRM": "{{connected}} jucător(i) conectat(ți) din {{total}}. Verifică dacă toată lumea e gata să răspundă.",
+		"ASK_FIRST_CREDIT_CONFIRM": "Verifică dacă toată lumea e gata să răspundă.",
 		"ASK_FIRST_CREDIT_CONFIRM2": "Jucătorii offline vor primi întrebarea imediat ce se conectează.",
 		"START_PENDING_ANSWERS": "{{missing}} jucător(i) nu au răspuns la întrebarea despre primul credit.",
 		"FIRST_CREDIT_SENT": "Întrebarea despre primul credit a fost trimisă jucătorilor",

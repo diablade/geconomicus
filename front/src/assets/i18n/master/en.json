@@ -29,7 +29,7 @@
 		"DISTRIBUTE_CARDS": "Distribute the cards",
 		"CARDS_DISTRIBUTED": "Cards distributed",
 		"ASK_FIRST_CREDIT": "Offer the first loan",
-		"ASK_FIRST_CREDIT_CONFIRM": "{{connected}} player(s) connected out of {{total}}. Check that everyone is ready to answer.",
+		"ASK_FIRST_CREDIT_CONFIRM": "Check that everyone is ready to answer.",
 		"ASK_FIRST_CREDIT_CONFIRM2": "Offline players will get the question as soon as they connect.",
 		"START_PENDING_ANSWERS": "{{missing}} player(s) have not answered the first loan question.",
 		"FIRST_CREDIT_SENT": "First loan question sent to the players",

@@ -29,7 +29,7 @@
 		"DISTRIBUTE_CARDS": "カードを配る",
 		"CARDS_DISTRIBUTED": "カードを配りました",
 		"ASK_FIRST_CREDIT": "最初のクレジットを提案する",
-		"ASK_FIRST_CREDIT_CONFIRM": "{{total}}人中{{connected}}人が接続中です。全員が回答できる状態か確認してください。",
+		"ASK_FIRST_CREDIT_CONFIRM": "全員が回答できる状態か確認してください。",
 		"ASK_FIRST_CREDIT_CONFIRM2": "オフラインのプレイヤーは、接続し次第この質問を受け取ります。",
 		"START_PENDING_ANSWERS": "{{missing}}人のプレイヤーが最初のクレジットの質問に回答していません。",
 		"FIRST_CREDIT_SENT": "最初のクレジットの質問をプレイヤーに送信しました",

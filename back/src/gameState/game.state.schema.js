@@ -113,6 +113,7 @@ let GameStateSchema = new Schema(
 			default: 0,
 		},
 		//state debt
+		firstCreditAsked: { type: Boolean, default: false },
 		creditIndexSeq: { type: Number, required: true, default: 0 },
 		credits: {
 			type: [Credit],

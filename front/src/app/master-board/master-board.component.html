@@ -107,12 +107,12 @@
 							<mat-icon class="outlined">playing_cards</mat-icon>
 							{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
 						</button>
-						<!-- Auto-bank: send the opening First Credit Question (after cards distributed) -->
+						<!-- Send the opening First Credit Question (after cards distributed) -->
 						<button
 							*ngIf="
 								vm.gameState.status === INITIALIZED &&
 								vm.rules.typeMoney === DEBT &&
-								!vm.firstCredit.asked
+								!vm.gameState.firstCreditAsked
 							"
 							class="ms-2 box-shadowed"
 							mat-raised-button
@@ -124,7 +124,7 @@
 						<button
 							*ngIf="
 								(vm.gameState.status === INITIALIZED &&
-									(vm.rules.typeMoney !== DEBT || vm.firstCredit.asked)) ||
+									(vm.rules.typeMoney !== DEBT || vm.gameState.firstCreditAsked)) ||
 								vm.gameState.status === PAUSED
 							"
 							class="ms-2 box-shadowed"
@@ -138,7 +138,7 @@
 									: ('MASTER.RESUME_GAME' | translate)
 							}}
 						</button>
-						<!-- Auto-bank: average money per player, with the target status -->
+						<!-- Average money per player, with the target status -->
 						<span
 							*ngIf="vm.gameState.status === INITIALIZED && vm.rules.typeMoney === DEBT"
 							class="avg-warning ms-2 d-inline-flex align-items-center"

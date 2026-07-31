@@ -29,7 +29,7 @@
 		"DISTRIBUTE_CARDS": "Karten verteilen",
 		"CARDS_DISTRIBUTED": "Karten verteilt",
 		"ASK_FIRST_CREDIT": "Ersten Kredit anbieten",
-		"ASK_FIRST_CREDIT_CONFIRM": "{{connected}} von {{total}} Spieler(n) verbunden. Prüfe, ob alle bereit sind zu antworten.",
+		"ASK_FIRST_CREDIT_CONFIRM": "Prüfe, ob alle bereit sind zu antworten.",
 		"ASK_FIRST_CREDIT_CONFIRM2": "Offline-Spieler erhalten die Frage, sobald sie sich verbinden.",
 		"START_PENDING_ANSWERS": "{{missing}} Spieler haben die Frage zum ersten Kredit nicht beantwortet.",
 		"FIRST_CREDIT_SENT": "Frage zum ersten Kredit an die Spieler gesendet",

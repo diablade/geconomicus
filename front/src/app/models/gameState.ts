@@ -63,6 +63,7 @@ export class GameState {
 	//state june
 	currentDU = 0;
 	//state debt
+	firstCreditAsked = false;
 	creditIndexSeq = 0;
 	credits : Credit[] = [];
 	bankInterestEarned = 0;

@@ -599,6 +599,7 @@ BankStateService.askFirstCreditQuestion = async (gameStateId) => {
 			asked.push(p.idx);
 			socket.emitTo(ROOMS.playerState(gameStateId, p.idx), IO.CREDIT.QUESTION, payload);
 		}
+		gameState.firstCreditAsked = true;
 
 		events.push(
 			EventHelper.createEvent(

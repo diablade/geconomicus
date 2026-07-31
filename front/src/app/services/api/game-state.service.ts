@@ -732,6 +732,10 @@ export class GameStateService {
 		return this.bankService.askFirstCreditQuestion(gameStateId);
 	}
 
+	markFirstCreditAsked(): void {
+		this.gameStateSubject.next({ ...this.gameStateSubject.getValue(), firstCreditAsked: true });
+	}
+
 	giveFreeMoney(give: any) {
 		this.bankService.giveFreeMoney(this.gameStateId, give.playerStateIdx, give.amount).subscribe((data: any) => {
 			this.snackbarService.showSuccess(

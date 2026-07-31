@@ -64,19 +64,14 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		})
 	);
 
-	firstCredit$ = this.playersAC$.pipe(
-		map((players: any[]) => {
-			const lives = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
-			const pending = lives.filter((p: any) => p.firstCreditAnswer === CREDIT_QUESTION_ANSWER.PENDING);
-			return {
-				asked: lives.some((p: any) => !!p.firstCreditAnswer),
-				pending: pending.length,
-				answered: lives.filter(
-					(p: any) => !!p.firstCreditAnswer && p.firstCreditAnswer !== CREDIT_QUESTION_ANSWER.PENDING
-				).length,
-				total: lives.length,
-			};
-		})
+	pendingFirstCredit$ = this.playersAC$.pipe(
+		map(
+			(players: any[]) =>
+				(players || []).filter(
+					(p: any) =>
+						p.status !== PLAYER_STATUS.DEAD && p.firstCreditAnswer === CREDIT_QUESTION_ANSWER.PENDING
+				).length
+		)
 	);
 
 	vm$ = combineLatest({
@@ -87,7 +82,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		minutes: this.minutes$,
 		seconds: this.seconds$,
 		avgMoney: this.avgMoney$,
-		firstCredit: this.firstCredit$,
 	});
 
 	constructor(
@@ -248,27 +242,22 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 
 	// Auto-bank: broadcast the opening First Credit Question to all players.
 	askFirstCredit() {
-		this.playersAC$.pipe(take(1)).subscribe((players: any[]) => {
-			const lives = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
-			const connected = lives.filter((p: any) => p.connection?.isConnected).length;
-			const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-				data: {
-					title: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
-					message: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM', {
-						connected,
-						total: lives.length,
-					}),
-					message2: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM2'),
-					labelBtnConfirm: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
+		const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
+				message: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM'),
+				message2: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT_CONFIRM2'),
+				labelBtnConfirm: this.i18nService.instant('MASTER.ASK_FIRST_CREDIT'),
+			},
+		});
+		confirmRef.afterClosed().subscribe((result) => {
+			if (result !== 'btnConfirm') return;
+			this.gameStateService.askFirstCreditQuestion(this.gameStateId).subscribe({
+				next: () => {
+					this.gameStateService.markFirstCreditAsked();
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.FIRST_CREDIT_SENT'));
 				},
-			});
-			confirmRef.afterClosed().subscribe((result) => {
-				if (result !== 'btnConfirm') return;
-				this.gameStateService.askFirstCreditQuestion(this.gameStateId).subscribe({
-					next: () =>
-						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.FIRST_CREDIT_SENT')),
-					error: () => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
-				});
+				error: () => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
 			});
 		});
 	}
@@ -278,11 +267,11 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 			this.doLaunchGame(status);
 			return;
 		}
-		combineLatest([this.rules$, this.avgMoney$, this.firstCredit$])
+		combineLatest([this.rules$, this.avgMoney$, this.pendingFirstCredit$])
 			.pipe(take(1))
-			.subscribe(([rules, avgMoney, firstCredit]) => {
+			.subscribe(([rules, avgMoney, pending]) => {
 				const lowMoney = rules.typeMoney === this.DEBT && avgMoney < this.AVG_MONEY_TARGET;
-				const missing = rules.typeMoney === this.DEBT ? firstCredit.pending : 0;
+				const missing = rules.typeMoney === this.DEBT ? pending : 0;
 				if (!lowMoney && !missing) {
 					this.doLaunchGame(status);
 					return;
