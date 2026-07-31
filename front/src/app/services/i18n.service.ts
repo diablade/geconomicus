@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable, tap} from 'rxjs';
+import {Observable, ReplaySubject, take, tap} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 
@@ -17,17 +17,42 @@ export class I18nService {
 	private readonly SUPPORTED_LANGS = ['fr', 'en', 'it', 'de', 'es', 'ja', 'ro', 'sr'];
 	private translationCache = new Map<string, string>();
 	private missingTranslations = new Set<string>();
+	private loadedNamespaces = new Set<string>();
+	private fetchedNamespaces = new Set<string>();
+	private langReady$ = new ReplaySubject<string>(1);
 
 	constructor(private translate: TranslateService, private http: HttpClient) {
+		this.translate.onLangChange.subscribe(({lang}) => {
+			this.translationCache.clear();
+			this.langReady$.next(lang);
+			this.loadedNamespaces.forEach(namespace => this.fetchNamespace(namespace, lang));
+		});
 		this.initializeLanguage();
 	}
 
 	loadNamespace(namespace: string): void {
-		const lang = this.getCurrentLang();
+		this.loadedNamespaces.add(namespace);
+		this.langReady$.pipe(take(1)).subscribe(lang => this.fetchNamespace(namespace, lang));
+	}
+
+	private fetchNamespace(namespace: string, lang: string): void {
+		const fetchKey = `${namespace}|${lang}`;
+		if (this.fetchedNamespaces.has(fetchKey)) {
+			return;
+		}
+		this.fetchedNamespaces.add(fetchKey);
+
 		const path = `assets/i18n/${namespace}/${lang}.json`;
 
-		this.http.get(path).subscribe((extra: any) => {
-			this.translate.setTranslation(lang, extra, true); // true = merge
+		this.http.get(path).subscribe({
+			next: (extra: any) => {
+				this.translate.setTranslation(lang, extra, true);
+				this.translationCache.clear();
+			},
+			error: () => {
+				this.fetchedNamespaces.delete(fetchKey);
+				console.error(`Failed to load i18n namespace: ${path}`);
+			}
 		});
 	}
 
@@ -58,14 +83,16 @@ export class I18nService {
 
 		const translation = this.translate.instant(key, params);
 
+		if (translation === key) {
+			if (!environment.production) {
+				this.missingTranslations.add(key);
+				console.warn(`Missing translation for key: ${key}`);
+			}
+			return translation;
+		}
+
 		// Cache the result
 		this.translationCache.set(cacheKey, translation);
-
-		// Log missing translations in development
-		if (translation === key && !environment.production) {
-			this.missingTranslations.add(key);
-			console.warn(`Missing translation for key: ${key}`);
-		}
 
 		return translation;
 	}
@@ -106,9 +133,15 @@ export class I18nService {
 			lang = 'fr';
 		}
 
-		this.translate.use(lang);
 		localStorage.setItem(this.STORAGE_KEY, lang);
+
+		if (lang === this.translate.currentLang) {
+			return;
+		}
+
+		this.langReady$ = new ReplaySubject<string>(1);
 		this.translationCache.clear(); // Clear cache when language changes
+		this.translate.use(lang);
 	}
 
 	/**
