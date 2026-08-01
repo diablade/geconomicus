@@ -241,5 +241,9 @@
 	},
 	"MODULE": {
 		"BACK_HOME": "Nazad na početnu"
+	},
+	"PWA": {
+		"NEW_VERSION": "Nova verzija je dostupna, ponovno pokretanje...",
+		"UNRECOVERABLE": "Došlo je do greške, aplikacija mora biti ponovo učitana"
 	}
 }

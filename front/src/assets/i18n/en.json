@@ -241,5 +241,9 @@
 	},
 	"MODULE": {
 		"BACK_HOME": "Back to home"
+	},
+	"PWA": {
+		"NEW_VERSION": "New version available, restarting...",
+		"UNRECOVERABLE": "An error occurred, the application must be reloaded"
 	}
 }

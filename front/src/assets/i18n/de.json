@@ -241,5 +241,9 @@
 	},
 	"MODULE": {
 		"BACK_HOME": "Zurück zur Startseite"
+	},
+	"PWA": {
+		"NEW_VERSION": "Neue Version verfügbar, wird neu gestartet...",
+		"UNRECOVERABLE": "Ein Fehler ist aufgetreten, die Anwendung muss neu geladen werden"
 	}
 }

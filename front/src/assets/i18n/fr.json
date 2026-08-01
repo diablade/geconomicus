@@ -241,5 +241,9 @@
 	},
 	"MODULE": {
 		"BACK_HOME": "Revenir à l'accueil"
+	},
+	"PWA": {
+		"NEW_VERSION": "Nouvelle version disponible, redémarrage en cours...",
+		"UNRECOVERABLE": "Une erreur est survenue, l'application doit être rechargée"
 	}
 }

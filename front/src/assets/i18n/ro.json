@@ -241,5 +241,9 @@
 	},
 	"MODULE": {
 		"BACK_HOME": "Înapoi acasă"
+	},
+	"PWA": {
+		"NEW_VERSION": "Versiune nouă disponibilă, se repornește...",
+		"UNRECOVERABLE": "A apărut o eroare, aplicația trebuie reîncărcată"
 	}
 }
