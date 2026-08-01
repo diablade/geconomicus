@@ -17,8 +17,6 @@ app-root {
 	bottom: 0;
 	box-sizing: border-box;
 	padding-top: env(safe-area-inset-top);
-	padding-right: max(0px, calc(env(safe-area-inset-right) - 20px));
-	padding-left: max(0px, calc(env(safe-area-inset-left) - 20px));
 	overflow: hidden;
 }
 

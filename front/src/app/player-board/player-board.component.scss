@@ -193,7 +193,7 @@
 // ________other stuff _____________________
 
 .marginArround {
-	margin: 20px;
+	margin: 20px max(20px, env(safe-area-inset-right)) 20px max(20px, env(safe-area-inset-left));
 	z-index: 20;
 }
 
