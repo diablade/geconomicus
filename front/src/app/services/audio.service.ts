@@ -21,6 +21,27 @@ export class AudioService {
     this.playSound(key);
   }
 
+  playSequence(keys: string[]) {
+    const [key, ...rest] = keys;
+    if (!key) {
+      return;
+    }
+    if (!this.sounds[key]) {
+      this.preloadSound(key, "./assets/audios/" + key + ".mp3");
+    }
+    const sound = this.sounds[key];
+    sound.onended = () => {
+      sound.onended = null;
+      this.playSequence(rest);
+    };
+    sound.currentTime = 0;
+    sound.play().catch(e => {
+      sound.onended = null;
+      console.error(`Playback failed for ${key}:`, e);
+      this.playSequence(rest);
+    });
+  }
+
   /** Play a sound on loop (e.g. the faulty-credit siren). Stop it with stopSound(key). */
   loopSound(key: string) {
     if (this.sounds[key]) {

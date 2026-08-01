@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 銀行に行け!!! 🚨",
 		"THIS_LIFE_IS_GONE": "この人生は終わった 🪦",
 		"GO_TO_SECOND_LIFE": "あなたの第二の人生に行け！",
+		"OUT_PRISON_TITLE": "自由だ！",
+		"OUT_PRISON_TEXT": "刑期を終えました — ゲームに戻りましょう",
 		"WAITING": "待機中...",
 		"GAME_OVER": "ゲーム終了...",
 		"GAME_PAUSED": "ゲーム一時停止中",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "返済総額は {{total}} € です。（金利 {{rate}}%）",
 			"BTN_CONFIRM": "申請する"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "新しいクレジットレート！"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "差し押さえ完了",
 			"MESSAGE": "-{{coins}} 💰 とカード{{cardsCount}}枚を差し押さえ（-{{cardsValue}} 💰）",
@@ -83,9 +88,10 @@
 		"BORROW": "クレジットを受ける",
 		"REFUSED_NEGOTIATE": "クレジットが拒否されました — 進行役と交渉してください",
 		"RATE_CHANGED": "新しいレート：{{amount}}/{{interest}}（{{pct}}%）",
+		"RATE_HURRY": "お早めに！レートが上がる前に借りましょう",
 		"FIRST_Q_TITLE": "最初のクレジットを受けますか？",
 		"DECLINE": "いいえ、結構です",
-		"HALFWAY_NUDGE": "クレジットが折り返し地点 - 残り{{remaining}}",
+		"HALFWAY_NUDGE": "折り返し地点 — クレジットを返済する時間です",
 		"FINAL_MINUTE": "残り1分未満！早くクレジットを返済して！",
 		"FAULT_OVERLAY_TITLE": "クレジット債務不履行",
 		"FAULT_OVERLAY_TEXT": "期限までに返済できませんでした。差し押さえについて進行役のところへ行ってください。",

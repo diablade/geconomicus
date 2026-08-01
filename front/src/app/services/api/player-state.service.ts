@@ -62,6 +62,12 @@ export class PlayerStateService {
 	private finalFired = new Set<string>();
 	private finalMinuteSubject = new Subject<{ credit: Credit; flash: boolean }>();
 	finalMinute$ = this.finalMinuteSubject.asObservable();
+	private halfwaySubject = new Subject<void>();
+	halfway$ = this.halfwaySubject.asObservable();
+	private zeroRateSubject = new Subject<void>();
+	zeroRate$ = this.zeroRateSubject.asObservable();
+	private prisonEndedSubject = new Subject<void>();
+	prisonEnded$ = this.prisonEndedSubject.asObservable();
 	private readonly WARN_FRACTION = 0.5;
 	private readonly FINAL_MS = 60_000;
 
@@ -440,6 +446,7 @@ export class PlayerStateService {
 			if (data.cardsLK) this.cardsSubject.next(data.cardsLK);
 			this.prisonSubject.next(null);
 			this.playerStatusSubject.next(PLAYER_STATUS.ALIVE);
+			this.prisonEndedSubject.next();
 		});
 
 		this.wsService.on(IO.PLAYER.DIED, async () => {
@@ -715,19 +722,29 @@ export class PlayerStateService {
 				this.rateSubject.next(data.rate);
 				if (data.improved) {
 					const pct = Math.round((data.rate.pct ?? 0) * 100);
-					this.snackbarService.showNotif(
-						this.i18nService.instant('CREDIT.RATE_CHANGED', {
-							amount: data.rate.amount,
-							interest: data.rate.interest,
-							pct,
-						})
-					);
+					if (pct === 0) {
+						this.zeroRateSubject.next();
+					} else {
+						this.dialog.open(InformationDialogComponent, {
+							data: {
+								title: this.i18nService.instant('DIALOG.RATE_CHANGED.TITLE'),
+								message: this.i18nService.instant('CREDIT.RATE_CHANGED', {
+									amount: data.rate.amount,
+									interest: data.rate.interest,
+									pct,
+								}),
+								message2: this.i18nService.instant('CREDIT.RATE_HURRY'),
+								sound: 'notif2',
+							},
+						});
+					}
 				}
 			}
 		});
 
 		this.wsService.on(IO.CREDIT.REFUSED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
+			this.audioService.playSound('glitch');
 			this.snackbarService.showError(this.i18nService.instant('CREDIT.REFUSED_NEGOTIATE'));
 		});
 
@@ -777,19 +794,8 @@ export class PlayerStateService {
 			!this.halfwayFired.has(id)
 		) {
 			this.halfwayFired.add(id);
-			this.snackbarService.showNotif(
-				this.i18nService.instant('CREDIT.HALFWAY_NUDGE', {
-					remaining: this.formatRemaining(remainingTime),
-				})
-			);
+			this.halfwaySubject.next();
 		}
-	}
-
-	private formatRemaining(ms: number): string {
-		const totalSec = Math.round(ms / 1000);
-		const m = Math.floor(totalSec / 60);
-		const s = totalSec % 60;
-		return m > 0 ? `${m}mn${s.toString().padStart(2, '0')}s` : `${s}s`;
 	}
 
 	offAll(): void {
@@ -979,7 +985,7 @@ export class PlayerStateService {
 					this.creditsSubject.next(updatedCredits);
 					this.coinsSubject.next(data.coinsLK);
 					this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.CREDIT_SETTLED'));
-					this.audioService.playSound('interest');
+					this.audioService.playSound('done');
 				} else {
 					this.snackbarService.showError(this.i18nService.instant('PLAYER.SETTLE_FAILED'));
 				}

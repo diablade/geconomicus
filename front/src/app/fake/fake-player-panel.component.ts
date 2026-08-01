@@ -1,14 +1,20 @@
 import { Component, Input, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import confetti from 'canvas-confetti';
 import { GAME_TYPE } from '@geco/shared';
 import { AudioService } from '../services/audio.service';
+import { I18nService } from '../services/i18n.service';
+import { SnackbarService } from '../services/snackbar.service';
 import { ThemesService } from '../services/themes.service';
 import { PlayerStateService } from '../services/api/player-state.service';
 import { OverlayConfig } from '../components/overlay/overlay.component';
+import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { Recipe } from '../models/recipe';
 import { Card } from '../models/gameState';
 import {
 	SOUND_KEYS,
 	makeFakeBundle,
+	makeFakeRate,
 	makeFakeProductionGroup,
 	makeFakeProducedCard,
 	makeFakeLetter,
@@ -27,6 +33,9 @@ export class FakePlayerPanelComponent {
 	private audioService = inject(AudioService);
 	private themesService = inject(ThemesService);
 	private playerStateService = inject(PlayerStateService);
+	private i18nService = inject(I18nService);
+	private snackbarService = inject(SnackbarService);
+	private dialog = inject(MatDialog);
 
 	readonly soundKeys = SOUND_KEYS;
 	open = false;
@@ -95,12 +104,66 @@ export class FakePlayerPanelComponent {
 		};
 	}
 
+	testHalfway(): void {
+		this.overlayConfig = {
+			phases: [
+				{
+					icon: '⏰',
+					text: 'CREDIT.HALFWAY_NUDGE',
+					bg: 'halfway',
+					sound: 'nudge',
+					durationMs: this.TEST_MS,
+					dismissable: true,
+				},
+			],
+		};
+	}
+
 	testAlarm(): void {
 		this.overlayConfig = {
 			phases: [
-				{ icon: '⚠️', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.TEST_MS, dismissable: true },
+				{
+					icon: '⚠️',
+					text: 'CREDIT.FINAL_MINUTE',
+					bg: 'alarm',
+					sound: 'high_alarm',
+					durationMs: this.TEST_MS,
+					dismissable: true,
+				},
 			],
 		};
+	}
+
+	testRateZero(): void {
+		this.overlayConfig = {
+			phases: [
+				{
+					icon: '0%',
+					text: 'CREDIT.RATE_HURRY',
+					bg: 'rate-zero',
+					wheel: true,
+					sound: 'notif2',
+					durationMs: this.TEST_MS,
+					dismissable: true,
+				},
+			],
+		};
+	}
+
+	testRateDialog(): void {
+		const rate = makeFakeRate();
+		this.dialog.open(InformationDialogComponent, {
+			data: {
+				title: this.i18nService.instant('DIALOG.RATE_CHANGED.TITLE'),
+				message: this.i18nService.instant('CREDIT.RATE_CHANGED', {
+					amount: rate.amount,
+					interest: rate.interest,
+					pct: Math.round(rate.pct * 100),
+				}),
+				message2: this.i18nService.instant('CREDIT.RATE_HURRY'),
+				sound: 'notif2',
+			},
+		});
 	}
 
 	testFault(): void {
@@ -111,12 +174,29 @@ export class FakePlayerPanelComponent {
 					title: 'CREDIT.FAULT_OVERLAY_TITLE',
 					text: this.autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT',
 					bg: 'police',
-					sound: 'police',
+					sound: this.autoSeizure ? 'police2' : 'police',
 					durationMs: this.TEST_MS,
 					dismissable: true,
 				},
 			],
 		};
+	}
+
+	testPrisonFree(): void {
+		this.overlayConfig = {
+			phases: [
+				{
+					icon: '🕊️',
+					title: 'PLAYER.OUT_PRISON_TITLE',
+					text: 'PLAYER.OUT_PRISON_TEXT',
+					bg: 'free',
+					sound: 'outPrison',
+					durationMs: this.TEST_MS,
+					dismissable: true,
+				},
+			],
+		};
+		confetti({ particleCount: 160, spread: 110, origin: { y: 0.6 } });
 	}
 
 	testTakeover(): void {
@@ -133,6 +213,16 @@ export class FakePlayerPanelComponent {
 				},
 			],
 		};
+	}
+
+	testRefused(): void {
+		this.audioService.playSound('glitch');
+		this.snackbarService.showError(this.i18nService.instant('CREDIT.REFUSED_NEGOTIATE'));
+	}
+
+	testSettled(): void {
+		this.audioService.playSound('done');
+		this.snackbarService.showSuccess(this.i18nService.instant('CREDIT.CREDIT_SETTLED'));
 	}
 
 	onOverlayDone(): void {

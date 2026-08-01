@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 GO TO THE BANK!!! 🚨",
 		"THIS_LIFE_IS_GONE": "This life is gone 🪦",
 		"GO_TO_SECOND_LIFE": "Go to your second life!",
+		"OUT_PRISON_TITLE": "You are free!",
+		"OUT_PRISON_TEXT": "Your sentence is served — get back in the game",
 		"WAITING": "Waiting...",
 		"GAME_OVER": "Game Over...",
 		"GAME_PAUSED": "Game paused",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "For a total of {{total}} € to repay? (i.e. {{rate}}% interest rate)",
 			"BTN_CONFIRM": "Request"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "New loan rate!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Seizure completed",
 			"MESSAGE": "-{{coins}} 💰 and {{cardsCount}} card(s) seized (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Take a loan",
 		"REFUSED_NEGOTIATE": "Loan refused — negotiate with the facilitator",
 		"RATE_CHANGED": "New rate: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Be quick! Borrow before the rate goes back up",
 		"FIRST_Q_TITLE": "Do you want to take a first loan?",
 		"DECLINE": "No thanks",
-		"HALFWAY_NUDGE": "Loan halfway - {{remaining}} left",
+		"HALFWAY_NUDGE": "Halfway through — time to repay your loan",
 		"FINAL_MINUTE": "Less than a minute! Repay your loan, quick!",
 		"FAULT_OVERLAY_TITLE": "Loan in default",
 		"FAULT_OVERLAY_TEXT": "You did not repay in time. Go see the facilitator for the seizure.",

@@ -7,8 +7,20 @@
 <!-- Death → rebirth overlay: skull cross-fades to sprout, then the board navigates to the new life. -->
 <app-overlay *ngIf="reincarnateConfig" [config]="reincarnateConfig" (done)="onReincarnateDone()"></app-overlay>
 
-<!-- Final-minute credit alarm: ⏰ flash, then the credit panel force-opens with a live countdown. -->
+<!-- Halfway nudge: ⏰ reminder that the credit is half-way to maturity. -->
+<app-overlay *ngIf="halfwayConfig" [config]="halfwayConfig" (done)="halfwayConfig = null"></app-overlay>
+
+<!-- Final-minute credit alarm: ⚠️ flash, then the credit panel force-opens with a live countdown. -->
 <app-overlay *ngIf="alarmConfig" [config]="alarmConfig" (done)="alarmConfig = null"></app-overlay>
+
+<!-- Zero-rate window: spinning wheel behind a huge 0% — borrow before the rate climbs back. -->
+<app-overlay *ngIf="rateZeroConfig" [config]="rateZeroConfig" (done)="rateZeroConfig = null"></app-overlay>
+
+<!-- Prison release: 🕊️ + confetti the moment the sentence ends. -->
+<app-overlay
+	*ngIf="prisonFreeConfig"
+	[config]="prisonFreeConfig"
+	(done)="prisonFreeConfig = null"></app-overlay>
 
 <!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable (loop) — cleared by
     onCreditFault the instant a Seizure resolves every FAULT credit. Text depends on Auto Seizure. -->

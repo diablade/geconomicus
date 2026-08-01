@@ -10,13 +10,21 @@
 	user-select: none;
 	animation: reincarnate-fade-in 0.35s ease-out;
 }
-
+.overlayWheel{
+    transform: scale(2);
+}
 .content {
+	position: relative;
+	z-index: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 4vmin;
+}
+
+.overlay .wheel-host {
+	pointer-events: none;
 }
 
 .glyph {
@@ -52,6 +60,15 @@
 	animation: reincarnate-bloom 1.2s ease-in;
 }
 
+// ── Halfway nudge ─────────────────────────────────────────────────────────────
+.bg-halfway {
+	background: radial-gradient(circle at center, rgba(70, 52, 8, 0.92), rgba(22, 14, 0, 0.96));
+}
+.glyph-halfway {
+	filter: drop-shadow(0 0 3vmin rgba(255, 205, 90, 0.45));
+	animation: credit-alarm-shake 0.9s ease-in-out infinite;
+}
+
 // ── Final-minute alarm ────────────────────────────────────────────────────────
 .bg-alarm {
 	animation: credit-alarm-flash 0.5s steps(1, end) infinite;
@@ -59,6 +76,26 @@
 .glyph-alarm {
 	filter: drop-shadow(0 0 3vmin rgba(255, 90, 90, 0.5));
 	animation: credit-alarm-shake 0.4s ease-in-out infinite;
+}
+
+// ── Zero-rate window (spinning wheel behind a huge 0%) ────────────────────────
+.bg-rate-zero {
+	background: radial-gradient(circle at center, rgba(8, 46, 26, 0.9), rgba(0, 10, 5, 0.96));
+}
+.glyph-rate-zero {
+	font-weight: 900;
+	letter-spacing: -0.04em;
+	filter: drop-shadow(0 0 4vmin rgba(120, 255, 175, 0.55));
+	animation: reincarnate-pulse 1.6s ease-in-out infinite;
+}
+
+// ── Prison release ────────────────────────────────────────────────────────────
+.bg-free {
+	background: radial-gradient(circle at center, rgba(20, 70, 45, 0.88), rgba(0, 14, 8, 0.95));
+}
+.glyph-free {
+	filter: drop-shadow(0 0 3vmin rgba(190, 255, 215, 0.5));
+	animation: reincarnate-bloom 1.2s ease-in;
 }
 
 // ── Fault lockout (police) — tops every other overlay ─────────────────────────

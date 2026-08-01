@@ -3,6 +3,7 @@ import { combineLatest, distinctUntilChanged, map, of, Subscription, withLatestF
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import confetti from 'canvas-confetti';
 import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
 import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
@@ -57,6 +58,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 
 	private readonly REINCARNATE_OVERLAY_MS = 4000;
 	private readonly CREDIT_ALARM_MS = 4000;
+	private readonly CREDIT_HALFWAY_MS = 4000;
+	private readonly RATE_ZERO_MS = 6000;
+	private readonly PRISON_FREE_MS = 5000;
 	readonly takeoverConfig: OverlayConfig = {
 		phases: [
 			{
@@ -88,8 +92,57 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		],
 	};
 
+	private readonly creditHalfwayOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '⏰',
+				text: 'CREDIT.HALFWAY_NUDGE',
+				bg: 'halfway',
+				sound: 'nudge',
+				durationMs: this.CREDIT_HALFWAY_MS,
+				dismissable: true,
+			},
+		],
+	};
+
 	private readonly creditAlarmOverlay: OverlayConfig = {
-		phases: [{ icon: '⏰', text: 'CREDIT.FINAL_MINUTE', bg: 'alarm', durationMs: this.CREDIT_ALARM_MS }],
+		phases: [
+			{
+				icon: '⚠️',
+				text: 'CREDIT.FINAL_MINUTE',
+				bg: 'alarm',
+				sound: 'high_alarm',
+				durationMs: this.CREDIT_ALARM_MS,
+			},
+		],
+	};
+
+	private readonly rateZeroOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '0%',
+				text: 'CREDIT.RATE_HURRY',
+				bg: 'rate-zero',
+				wheel: true,
+				sound: 'notif2',
+				durationMs: this.RATE_ZERO_MS,
+				dismissable: true,
+			},
+		],
+	};
+
+	private readonly prisonFreeOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '🕊️',
+				title: 'PLAYER.OUT_PRISON_TITLE',
+				text: 'PLAYER.OUT_PRISON_TEXT',
+				bg: 'free',
+				sound: 'outPrison',
+				durationMs: this.PRISON_FREE_MS,
+				dismissable: true,
+			},
+		],
 	};
 
 	private readonly creditFaultOverlay = (autoSeizure: boolean): OverlayConfig => ({
@@ -205,12 +258,19 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private pendingReincarnateIdx: number | null = null;
 	private reincarnationSub: Subscription | undefined;
 	private finalMinuteSub: Subscription | undefined;
+	private halfwaySub: Subscription | undefined;
+	private zeroRateSub: Subscription | undefined;
+	private prisonEndedSub: Subscription | undefined;
+	private faultSound: string | null = null;
 	private autoSeizure = false;
 	private creditFaultSub: Subscription | undefined;
 	private rulesSub: Subscription | undefined;
 	private firstCreditSub: Subscription | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
 	alarmConfig: OverlayConfig | null = null;
+	halfwayConfig: OverlayConfig | null = null;
+	rateZeroConfig: OverlayConfig | null = null;
+	prisonFreeConfig: OverlayConfig | null = null;
 	faultConfig: OverlayConfig | null = null;
 	reincarnateConfig: OverlayConfig | null = null;
 
@@ -258,6 +318,9 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.subscription) this.subscription.unsubscribe();
 		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
 		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
+		if (this.halfwaySub) this.halfwaySub.unsubscribe();
+		if (this.zeroRateSub) this.zeroRateSub.unsubscribe();
+		if (this.prisonEndedSub) this.prisonEndedSub.unsubscribe();
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
 		if (this.rulesSub) this.rulesSub.unsubscribe();
 		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
@@ -281,6 +344,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.finalMinuteSub = this.playerStateService.finalMinute$.subscribe(({ flash }) => {
 			this.onCreditFinalMinute(flash);
 		});
+
+		this.halfwaySub = this.playerStateService.halfway$.subscribe(() => {
+			if (!this.halfwayConfig) this.halfwayConfig = this.creditHalfwayOverlay;
+		});
+
+		this.zeroRateSub = this.playerStateService.zeroRate$.subscribe(() => {
+			if (!this.rateZeroConfig) this.rateZeroConfig = this.rateZeroOverlay;
+		});
+
+		this.prisonEndedSub = this.playerStateService.prisonEnded$.subscribe(() => this.playPrisonFreeOverlay());
 
 		this.creditFaultSub = this.warningCredit$
 			.pipe(distinctUntilChanged())
@@ -530,13 +603,21 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	private playPrisonFreeOverlay(): void {
+		if (this.prisonFreeConfig) return;
+		this.prisonFreeConfig = this.prisonFreeOverlay;
+		confetti({ particleCount: 160, spread: 110, origin: { y: 0.6 } });
+	}
+
 	private onCreditFault(fault: boolean): void {
 		if (fault) {
 			this.faultConfig = this.creditFaultOverlay(this.autoSeizure);
-			this.audioService.playSound('police');
+			this.faultSound = this.autoSeizure ? 'police2' : 'police';
+			this.audioService.playSound(this.faultSound);
 		} else {
 			this.faultConfig = null;
-			this.audioService.stopSound('police');
+			if (this.faultSound) this.audioService.stopSound(this.faultSound);
+			this.faultSound = null;
 		}
 	}
 

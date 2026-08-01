@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 ANDARE IN BANCA!!! 🚨",
 		"THIS_LIFE_IS_GONE": "Questa vita è terminata🪦",
 		"GO_TO_SECOND_LIFE": "Inizia la tua seconda vita!",
+		"OUT_PRISON_TITLE": "Sei libero!",
+		"OUT_PRISON_TEXT": "Hai scontato la pena, torna in gioco",
 		"WAITING": "In attesa...",
 		"GAME_OVER": "Gioco finito...",
 		"GAME_PAUSED": "Partita in pausa",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "Per un totale di {{total}} € da rimborsare? (ossia {{rate}}% di tasso d'interesse)",
 			"BTN_CONFIRM": "Richiedere"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "Nuovo tasso di credito!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Pignoramento effettuato",
 			"MESSAGE": "-{{coins}} 💰 e {{cardsCount}} carta/e pignorata/e (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Prendere un credito",
 		"REFUSED_NEGOTIATE": "Credito rifiutato — negozia con l'animatore",
 		"RATE_CHANGED": "Nuovo tasso: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Presto! Chiedi un credito prima che il tasso risalga",
 		"FIRST_Q_TITLE": "Vuoi prendere un primo credito?",
 		"DECLINE": "No grazie",
-		"HALFWAY_NUDGE": "Credito a metà percorso - {{remaining}} rimanente",
+		"HALFWAY_NUDGE": "A metà percorso — è ora di rimborsare il tuo credito",
 		"FINAL_MINUTE": "Meno di un minuto! Rimborsa il tuo credito, presto!",
 		"FAULT_OVERLAY_TITLE": "Credito in insolvenza",
 		"FAULT_OVERLAY_TEXT": "Non hai rimborsato in tempo. Vai dall'animatore per il pignoramento.",

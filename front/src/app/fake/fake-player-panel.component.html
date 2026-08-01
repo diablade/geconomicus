@@ -16,15 +16,25 @@
 	<div class="fake-section">
 		<span class="fake-label">Overlays</span>
 		<button type="button" class="fake-btn" (click)="testReincarnate()">☠️→👶 Reincarnate</button>
-		<button type="button" class="fake-btn" (click)="testAlarm()">⏰ Alarm</button>
+		<button type="button" class="fake-btn" (click)="testHalfway()">⏰ Halfway 50%</button>
+		<button type="button" class="fake-btn" (click)="testAlarm()">⚠️ Alarm 1mn</button>
+		<button type="button" class="fake-btn" (click)="testRateZero()">0️⃣ Rate 0%</button>
 		<button type="button" class="fake-btn" (click)="testFault()">🚨 Fault</button>
 		<button type="button" class="fake-btn" (click)="testTakeover()">🎬 Take-over</button>
 		<button type="button" class="fake-btn" (click)="testPrison()">🔒 Prison</button>
+		<button type="button" class="fake-btn" (click)="testPrisonFree()">🕊️ Prison over</button>
 		<button type="button" class="fake-btn" [class.on]="showProdGroup" (click)="toggleProdGroup()">
 			🏭 {{ showProdGroup ? 'Hide group' : 'Show group' }}
 		</button>
 		<button type="button" class="fake-btn" (click)="triggerProduction()">🎁 Reveal</button>
 		<button type="button" class="fake-btn" [class.on]="showWheel" (click)="toggleWheel()">🎡 Wheel</button>
+	</div>
+
+	<div class="fake-section">
+		<span class="fake-label">Credit</span>
+		<button type="button" class="fake-btn" (click)="testRateDialog()">💱 New rate dialog</button>
+		<button type="button" class="fake-btn" (click)="testRefused()">🚫 Refused</button>
+		<button type="button" class="fake-btn" (click)="testSettled()">✅ Settled</button>
 	</div>
 
 	<div class="fake-section">

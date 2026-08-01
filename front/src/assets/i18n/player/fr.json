@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 ALLEZ VOIR LA BANQUE !!! 🚨",
 		"THIS_LIFE_IS_GONE": "Cette vie est terminée 🪦",
 		"GO_TO_SECOND_LIFE": "Commencez votre seconde vie !",
+		"OUT_PRISON_TITLE": "Tu es libre !",
+		"OUT_PRISON_TEXT": "Ta peine est purgée, retourne jouer",
 		"WAITING": "En attente de l'animateur...",
 		"GAME_OVER": "Partie terminée...",
         "GAME_PAUSED": "Partie en pause",
@@ -53,6 +55,9 @@
             "MESSAGE2": "Pour un total de {{total}} € à rembourser ?  (soit {{rate}}% taux d'intérêt)",
             "BTN_CONFIRM": "Demander"
         },
+        "RATE_CHANGED":{
+            "TITLE": "Nouveau taux de crédit !"
+        },
         "SEIZURE_RESULT":{
             "TITLE": "Saisie effectuée",
             "MESSAGE": "-{{coins}} 💰 et {{cardsCount}} carte(s) saisie(s) (-{{cardsValue}} 💰)",
@@ -86,9 +91,10 @@
 		"BORROW": "Prendre un crédit",
 		"REFUSED_NEGOTIATE": "Crédit refusé — négociez avec l'animateur",
 		"RATE_CHANGED": "Nouveau taux : {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Vite ! Emprunte avant que le taux remonte",
 		"FIRST_Q_TITLE": "Voulez-vous prendre un premier crédit ?",
 		"DECLINE": "Non merci",
-		"HALFWAY_NUDGE": "Crédit à mi-parcours - {{remaining}} restant",
+		"HALFWAY_NUDGE": "Mi-temps pour rembourser ton crédit",
 		"FINAL_MINUTE": "Moins d'une minute ! Rembourse ton crédit, vite !",
 		"FAULT_OVERLAY_TITLE": "Crédit en défaut",
 		"FAULT_OVERLAY_TEXT": "Tu n'as pas remboursé à temps. Va voir l'animateur pour la saisie.",

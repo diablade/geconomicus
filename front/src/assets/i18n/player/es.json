@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 ¡¡¡VAYA A LA BANCA!!! 🚨",
 		"THIS_LIFE_IS_GONE": "Esta vida se acabó 🪦",
 		"GO_TO_SECOND_LIFE": "¡Comienza tu segunda vida!",
+		"OUT_PRISON_TITLE": "¡Eres libre!",
+		"OUT_PRISON_TEXT": "Has cumplido tu condena, vuelve al juego",
 		"WAITING": "En espera...",
 		"GAME_OVER": "Partida terminada...",
 		"GAME_PAUSED": "Partida en pausa",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "¿Por un total de {{total}} € a devolver? (o sea {{rate}}% de tipo de interés)",
 			"BTN_CONFIRM": "Solicitar"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "¡Nuevo tipo de crédito!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Embargo realizado",
 			"MESSAGE": "-{{coins}} 💰 y {{cardsCount}} carta(s) embargada(s) (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Pedir un crédito",
 		"REFUSED_NEGOTIATE": "Crédito rechazado — negocia con el animador",
 		"RATE_CHANGED": "Nuevo tipo: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "¡Rápido! Pide un crédito antes de que suba el tipo",
 		"FIRST_Q_TITLE": "¿Quieres pedir un primer crédito?",
 		"DECLINE": "No, gracias",
-		"HALFWAY_NUDGE": "Crédito a mitad de camino - {{remaining}} restante",
+		"HALFWAY_NUDGE": "A mitad de camino — hora de devolver tu crédito",
 		"FINAL_MINUTE": "¡Menos de un minuto! ¡Devuelve tu crédito, rápido!",
 		"FAULT_OVERLAY_TITLE": "Crédito en impago",
 		"FAULT_OVERLAY_TEXT": "No has devuelto a tiempo. Ve a ver al animador para el embargo.",

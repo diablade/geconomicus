@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 GEHE ZUR BANK!!! 🚨",
 		"THIS_LIFE_IS_GONE": "Dieses Leben ist vorbei 🪦",
 		"GO_TO_SECOND_LIFE": "Beginne dein zweites Leben!",
+		"OUT_PRISON_TITLE": "Du bist frei!",
+		"OUT_PRISON_TEXT": "Deine Strafe ist abgesessen — zurück ins Spiel",
 		"WAITING": "Warte...",
 		"GAME_OVER": "Spiel beendet...",
 		"GAME_PAUSED": "Spiel pausiert",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "Für insgesamt {{total}} € zurückzuzahlen? (also {{rate}}% Zinssatz)",
 			"BTN_CONFIRM": "Anfragen"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "Neuer Kreditsatz!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Pfändung durchgeführt",
 			"MESSAGE": "-{{coins}} 💰 und {{cardsCount}} Karte(n) gepfändet (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Kredit aufnehmen",
 		"REFUSED_NEGOTIATE": "Kredit abgelehnt — verhandle mit dem Spielleiter",
 		"RATE_CHANGED": "Neuer Satz: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Schnell! Nimm einen Kredit, bevor der Satz wieder steigt",
 		"FIRST_Q_TITLE": "Möchtest du einen ersten Kredit aufnehmen?",
 		"DECLINE": "Nein danke",
-		"HALFWAY_NUDGE": "Kredit zur Hälfte - {{remaining}} übrig",
+		"HALFWAY_NUDGE": "Halbzeit — Zeit, deinen Kredit zurückzuzahlen",
 		"FINAL_MINUTE": "Weniger als eine Minute! Zahl deinen Kredit zurück, schnell!",
 		"FAULT_OVERLAY_TITLE": "Kredit in Verzug",
 		"FAULT_OVERLAY_TEXT": "Du hast nicht rechtzeitig zurückgezahlt. Geh zum Spielleiter für die Pfändung.",

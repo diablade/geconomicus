@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 IDITE U BANKU!!! 🚨",
 		"THIS_LIFE_IS_GONE": "Ovaj život je prošao 🪦",
 		"GO_TO_SECOND_LIFE": "Idite u svoj drugi život!",
+		"OUT_PRISON_TITLE": "Slobodan si!",
+		"OUT_PRISON_TEXT": "Odslužio si kaznu — vrati se u igru",
 		"WAITING": "Čekanje...",
 		"GAME_OVER": "Igra završena...",
 		"GAME_PAUSED": "Igra pauzirana",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "Za ukupno {{total}} € za otplatu? (odnosno {{rate}}% kamatne stope)",
 			"BTN_CONFIRM": "Zatraži"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "Nova kreditna stopa!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Zaplena izvršena",
 			"MESSAGE": "-{{coins}} 💰 i {{cardsCount}} karata zaplenjeno (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Uzmi kredit",
 		"REFUSED_NEGOTIATE": "Kredit odbijen — pregovaraj sa animatorom",
 		"RATE_CHANGED": "Nova stopa: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Brzo! Uzmi kredit pre nego što stopa poraste",
 		"FIRST_Q_TITLE": "Želiš li da uzmeš prvi kredit?",
 		"DECLINE": "Ne, hvala",
-		"HALFWAY_NUDGE": "Kredit na pola puta - preostalo {{remaining}}",
+		"HALFWAY_NUDGE": "Na pola puta — vreme je da otplatiš kredit",
 		"FINAL_MINUTE": "Manje od minuta! Otplati svoj kredit, brzo!",
 		"FAULT_OVERLAY_TITLE": "Kredit u docnji",
 		"FAULT_OVERLAY_TEXT": "Nisi otplatio na vreme. Idi kod animatora zbog zaplene.",

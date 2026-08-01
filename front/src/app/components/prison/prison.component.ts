@@ -1,5 +1,6 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { animations } from '../../services/animations';
+import { AudioService } from '../../services/audio.service';
 import createCountdown from '../../services/countDown';
 
 @Component({
@@ -8,11 +9,16 @@ import createCountdown from '../../services/countDown';
 	styleUrls: ['./prison.component.scss'],
 	animations,
 })
-export class PrisonComponent implements OnDestroy {
+export class PrisonComponent implements OnInit, OnDestroy {
 	minutesPrison = 0;
 	secondsPrison = 0;
 	prisonProgress = 0;
 	private prisonTotalMs = 0;
+	private audioService = inject(AudioService);
+
+	ngOnInit(): void {
+		this.audioService.playSequence(['buzzer', 'prison']);
+	}
 
 	@Input() set prison(value: { remainingTime: number; totalTime: number; paused?: boolean } | null) {
 		if (value) {

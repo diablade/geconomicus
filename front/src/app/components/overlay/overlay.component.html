@@ -1,8 +1,7 @@
-<div
-	class="overlay"
-	*ngIf="phase as p"
-	[ngClass]="'bg-' + (p.bg || 'plain')"
-	(click)="onOverlayClick()">
+<div class="overlay" *ngIf="phase as p" [ngClass]="'bg-' + (p.bg || 'plain')" (click)="onOverlayClick()">
+	<div class="wheel-host overlayWheel" *ngIf="p.wheel">
+		<div class="wheel"></div>
+	</div>
 	<ng-container *ngFor="let _ of [p]; trackBy: trackByIndex">
 		<div class="content" [ngClass]="'content-' + (p.bg || 'plain')">
 			<div class="glyph" [ngClass]="'glyph-' + (p.bg || 'plain')">{{ p.icon }}</div>

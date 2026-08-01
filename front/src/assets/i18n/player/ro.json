@@ -5,6 +5,8 @@
 		"GO_TO_BANK": "🚨 MERGE LA BANCĂ!!! 🚨",
 		"THIS_LIFE_IS_GONE": "Această viață s-a încheiat 🪦",
 		"GO_TO_SECOND_LIFE": "Mergi la a doua ta viață!",
+		"OUT_PRISON_TITLE": "Ești liber!",
+		"OUT_PRISON_TEXT": "Ți-ai ispășit pedeapsa, întoarce-te în joc",
 		"WAITING": "Așteptând...",
 		"GAME_OVER": "Jocul s-a încheiat...",
 		"GAME_PAUSED": "Joc în pauză",
@@ -53,6 +55,9 @@
 			"MESSAGE2": "Pentru un total de {{total}} € de rambursat? (adică {{rate}}% rată a dobânzii)",
 			"BTN_CONFIRM": "Cere"
 		},
+		"RATE_CHANGED": {
+			"TITLE": "Rată de credit nouă!"
+		},
 		"SEIZURE_RESULT": {
 			"TITLE": "Sechestru efectuat",
 			"MESSAGE": "-{{coins}} 💰 și {{cardsCount}} carte/cărți sechestrate (-{{cardsValue}} 💰)",
@@ -83,9 +88,10 @@
 		"BORROW": "Ia un credit",
 		"REFUSED_NEGOTIATE": "Credit refuzat — negociază cu animatorul",
 		"RATE_CHANGED": "Rată nouă: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Repede! Ia un credit înainte să crească rata",
 		"FIRST_Q_TITLE": "Vrei să iei un prim credit?",
 		"DECLINE": "Nu, mulțumesc",
-		"HALFWAY_NUDGE": "Credit la jumătate - {{remaining}} rămas",
+		"HALFWAY_NUDGE": "La jumătate — e timpul să rambursezi creditul",
 		"FINAL_MINUTE": "Mai puțin de un minut! Rambursează-ți creditul, repede!",
 		"FAULT_OVERLAY_TITLE": "Credit în incapacitate de plată",
 		"FAULT_OVERLAY_TEXT": "Nu ai rambursat la timp. Du-te la animator pentru sechestru.",

@@ -8,6 +8,7 @@ export interface OverlayPhase {
 	durationMs?: number;
 	bg?: string;
 	sound?: string;
+	wheel?: boolean;
 	dismissable?: boolean;
 	button?: { labelKey: string };
 }

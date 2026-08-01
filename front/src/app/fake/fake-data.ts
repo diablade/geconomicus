@@ -7,8 +7,9 @@ import { GAME_STATUS, GAME_TYPE, CREDIT_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
 
 export const SOUND_KEYS: string[] = [
-	'angel', 'cardFlipBack', 'cardFlipGet', 'coin', 'coins', 'dead', 'du', 'end', 'error',
-	'gotitem', 'iamdeath', 'interest', 'outPrison', 'police', 'prison', 'request', 'start',
+	'angel', 'buzzer', 'cardFlipBack', 'cardFlipGet', 'coin', 'coins', 'dead', 'done', 'du', 'end',
+	'error', 'glitch', 'gotitem', 'high_alarm', 'iamdeath', 'interest', 'notif1', 'notif2', 'nudge',
+	'outPrison', 'police', 'police2', 'prison', 'request', 'start',
 ];
 
 const PRICES: Record<number, number> = { 0: 1, 1: 2, 2: 4, 3: 8 };
