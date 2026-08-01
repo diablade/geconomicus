@@ -1,6 +1,7 @@
 import EventModel from './event.model.js';
 import mongoose from 'mongoose';
 import log from '#config/log';
+import LkGuard from '../gameState/helpers/lk.guard.js';
 
 const EventService = {};
 
@@ -42,6 +43,7 @@ EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
  */
 EventService.postNow = async (typeEvent, sessionId, gameStateId, emitter, receiver, payload) => {
 	log.debug(`[EventService] postNow: ${typeEvent} for game: ${gameStateId}`);
+	LkGuard.assertEventContract(typeEvent, sessionId, gameStateId, payload);
 	const newEvent = new EventModel({
 		typeEvent,
 		sessionId,

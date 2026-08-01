@@ -1,6 +1,6 @@
 # Reincarnation in the v2 results graph — spec for a later session
 
-> **Status: deferred.** The reincarnation *mechanic* (kill → new life → snapshot → redirect → death queue → ghost money) is built in the current pass. This document captures how the v2 results graph should later *read* that data. Nothing here is built yet — it exists so the next session can pick it up without re-deriving the design. **Verify the data-source assumptions below against the code before implementing.**
+> **Status: superseded by [ADR-0012](./adr/0012-results-data-contract.md) and [ADR-0014](./adr/0014-avatar-score-counts-every-life.md).** Kept for the reasoning behind one-series-per-life and per-avatar colouring, which both survive unchanged. The data-source assumptions below have now been verified against the code and several were wrong: the LK fields were a wish list, not a fact, and reconstruction from the event stream has been dropped in favour of reading gameState for end-state numbers. Read the ADRs first.
 
 ## Non-negotiables
 

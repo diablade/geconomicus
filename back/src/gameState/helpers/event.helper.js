@@ -1,3 +1,5 @@
+import LkGuard from './lk.guard.js';
+
 const EventHelper = {};
 
 /**
@@ -12,6 +14,7 @@ const EventHelper = {};
  * @returns {object} The created event object
  */
 EventHelper.createEvent = (typeEvent, sessionId, gameStateId, emitter, receiver, payload, at = Date.now()) => {
+	LkGuard.assertEventContract(typeEvent, sessionId, gameStateId, payload);
 	return {
 		typeEvent,
 		sessionId,

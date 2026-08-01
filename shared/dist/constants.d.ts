@@ -228,3 +228,16 @@ export declare const ROOMS: {
     playerState: (gameStateId: string, playerIdx: number) => string;
 };
 export type Rooms = (typeof ROOMS)[keyof typeof ROOMS];
+export declare const LK_KEYS: {
+    readonly PLAYERS: "playersLK";
+    readonly MASS_MONETARY: "massMonetaryLK";
+    readonly DU: "duLK";
+    readonly ALIVE_COUNT: "aliveCountLK";
+    readonly BANK_INTEREST_EARNED: "bankInterestEarnedLK";
+    readonly BANK_MONEY_LOST: "bankMoneyLostLK";
+    readonly BANK_MONEY_DESTROYED: "bankMoneyDestroyedLK";
+    readonly BANK_GOODS_EARNED: "bankGoodsEarnedLK";
+};
+export type LkKey = (typeof LK_KEYS)[keyof typeof LK_KEYS];
+export declare const EVENT_LK_CONTRACT: Record<string, readonly LkKey[]>;
+export declare const EVENT_LK_EXEMPT: readonly string[];
