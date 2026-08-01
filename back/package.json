@@ -1,5 +1,5 @@
 {
-    "name": "geconomicus api",
+    "name": "geconomicus_api",
     "version": "2.0.0.beta.1",
     "dependencies": {
         "@geco/shared": "file:../shared",
