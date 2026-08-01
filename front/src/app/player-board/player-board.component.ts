@@ -105,6 +105,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	});
 
 	private subscription: Subscription | undefined;
+	private backdropSub: Subscription | undefined;
+	private backdropClass: string | null = null;
 
 	screenWidth = 0;
 	screenHeight = 0;
@@ -264,6 +266,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		window.removeEventListener('resize', this._resizeHandler);
 		window.removeEventListener('orientationchange', this._orientationHandler);
 		window.visualViewport?.removeEventListener('resize', this._orientationHandler);
+		this.unlockBoardViewport();
 	}
 
 	ngOnInit(): void {
@@ -274,6 +277,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 
 		this.updateScreenSize();
+		this.lockBoardViewport();
 		this.scanV3 = this.localStorageService.getItem('scanV3');
 
 		this.reincarnationSub = this.playerStateService.reincarnation$.subscribe((data) => {
@@ -355,6 +359,29 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		window.addEventListener('resize', this._resizeHandler);
 		window.addEventListener('orientationchange', this._orientationHandler);
 		window.visualViewport?.addEventListener('resize', this._orientationHandler);
+	}
+
+	private lockBoardViewport(): void {
+		document.documentElement.classList.add('board-locked');
+		this.backdropSub = this.avatar$.subscribe((avatar) => {
+			const body = document.body;
+			if (this.backdropClass) body.classList.remove(this.backdropClass);
+			this.backdropClass = avatar?.boardConf ?? null;
+			if (this.backdropClass) body.classList.add(this.backdropClass);
+			if (avatar?.boardConf === 'bgCustom' && avatar?.boardColor) {
+				body.style.setProperty('background-color', avatar.boardColor, 'important');
+			} else {
+				body.style.removeProperty('background-color');
+			}
+		});
+	}
+
+	private unlockBoardViewport(): void {
+		document.documentElement.classList.remove('board-locked');
+		if (this.backdropClass) document.body.classList.remove(this.backdropClass);
+		this.backdropClass = null;
+		document.body.style.removeProperty('background-color');
+		this.backdropSub?.unsubscribe();
 	}
 
 	initPanels() {
