@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {filter, map} from "rxjs";
 import { I18nService } from './services/i18n.service';
-import { ViewportService } from './services/viewport.service';
 
 @Component({
 	selector: 'app-root',
@@ -12,11 +11,7 @@ import { ViewportService } from './services/viewport.service';
 export class AppComponent implements OnInit{
 	title = 'Ğeconomicus';
 
-	constructor(
-		private swUpdate: SwUpdate,
-		private i18nService: I18nService,
-		private viewportService: ViewportService
-	) {
+	constructor(private swUpdate: SwUpdate, private i18nService: I18nService) {
 		this.i18nService.setDefaultLang('fr'); // Default language
 		const savedLanguage = localStorage.getItem('language');
 		if (savedLanguage) {
