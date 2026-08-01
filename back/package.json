@@ -1,6 +1,6 @@
 {
-    "name": "back",
-    "version": "2.0.0.beta",
+    "name": "geconomicus api",
+    "version": "2.0.0.beta.1",
     "dependencies": {
         "@geco/shared": "file:../shared",
         "bcrypt": "^6.0.0",

@@ -1,7 +1,6 @@
 .lobby {
 	width: 100%;
-	height: 100vh;
-	height: 100dvh;
+	height: var(--app-height);
 }
 
 .avatar-item {

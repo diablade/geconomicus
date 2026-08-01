@@ -2,7 +2,7 @@
 // Reuses v2 styles.scss: .bgGradien7, .frame-light, .box-shadowed, Geconomicus font.
 
 .compare-page {
-	min-height: 100vh;
+	min-height: var(--app-height);
 	padding-bottom: 36px;
 }
 

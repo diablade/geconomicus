@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {SwUpdate, VersionReadyEvent} from "@angular/service-worker";
 import {filter, map} from "rxjs";
 import { I18nService } from './services/i18n.service';
+import { ViewportService } from './services/viewport.service';
 
 @Component({
 	selector: 'app-root',
@@ -11,7 +12,11 @@ import { I18nService } from './services/i18n.service';
 export class AppComponent implements OnInit{
 	title = 'Ğeconomicus';
 
-	constructor(private swUpdate: SwUpdate, private i18nService: I18nService) {
+	constructor(
+		private swUpdate: SwUpdate,
+		private i18nService: I18nService,
+		private viewportService: ViewportService
+	) {
 		this.i18nService.setDefaultLang('fr'); // Default language
 		const savedLanguage = localStorage.getItem('language');
 		if (savedLanguage) {
@@ -20,7 +25,6 @@ export class AppComponent implements OnInit{
 	}
 
 	public ngOnInit(): void {
-		this.lockPinchZoom();
 		if (this.swUpdate.isEnabled) {
 			this.swUpdate.versionUpdates.pipe(
 				filter((evt: any): evt is VersionReadyEvent => evt.type === 'VERSION_READY'),
@@ -31,21 +35,5 @@ export class AppComponent implements OnInit{
 				}),
 			);
 		}
-	}
-
-	private lockPinchZoom(): void {
-		const block = (event: Event) => event.preventDefault();
-		document.addEventListener('gesturestart', block, {passive: false});
-		document.addEventListener('gesturechange', block, {passive: false});
-		document.addEventListener('gestureend', block, {passive: false});
-		document.addEventListener(
-			'touchmove',
-			(event: TouchEvent) => {
-				if (event.touches.length > 1) {
-					event.preventDefault();
-				}
-			},
-			{passive: false},
-		);
 	}
 }
