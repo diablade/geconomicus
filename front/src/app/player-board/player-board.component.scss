@@ -23,10 +23,10 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 		padding: 2.5vw;
-		padding-top: calc(clamp(50px, 8vmin, 80px) + 2.5vw + env(safe-area-inset-top));
-		padding-bottom: calc(clamp(44px, 10vmin, 60px) + 5vw + env(safe-area-inset-bottom));
-		padding-left: calc(2.5vw + env(safe-area-inset-left));
-		padding-right: calc(2.5vw + env(safe-area-inset-right));
+		padding-top: max(calc(clamp(50px, 8vmin, 80px) + 2.5vw), env(safe-area-inset-top, 0px));
+		padding-bottom: max(calc(clamp(44px, 10vmin, 60px) + 5vw), env(safe-area-inset-bottom, 0px));
+		padding-left: max(2.5vw, env(safe-area-inset-left, 0px));
+		padding-right: max(2.5vw, env(safe-area-inset-right, 0px));
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
@@ -113,10 +113,10 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 		padding: 2.5vh;
-		padding-left: calc(clamp(50px, 8vmin, 80px) + 2.5vh + env(safe-area-inset-left));
-		padding-right: calc(clamp(44px, 10vmin, 60px) + 5vh + env(safe-area-inset-right));
-		padding-top: calc(2.5vh + env(safe-area-inset-top));
-		padding-bottom: calc(2.5vh + env(safe-area-inset-bottom));
+		padding-left: max(calc(clamp(50px, 8vmin, 80px) + 2.5vh), env(safe-area-inset-left, 0px));
+		padding-right: max(calc(clamp(44px, 10vmin, 60px) + 5vh), env(safe-area-inset-right, 0px));
+		padding-top: max(2.5vh, env(safe-area-inset-top, 0px));
+		padding-bottom: max(2.5vh, env(safe-area-inset-bottom, 0px));
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
@@ -187,8 +187,8 @@
 	}
 
 	.credits {
-		right: calc(100px + env(safe-area-inset-right));
-		bottom: env(safe-area-inset-bottom);
+		right: max(100px, env(safe-area-inset-right, 0px));
+		bottom: 0px;
 	}
 
 	.creditsLandscape {
@@ -199,14 +199,14 @@
 // ________other stuff _____________________
 
 .marginArround {
-	margin: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right))
-		calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+	margin: max(20px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px))
+		max(20px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
 	z-index: 20;
 }
 
 .credits {
 	position: fixed;
-	bottom: calc(60px + env(safe-area-inset-bottom));
+	bottom: max(60px, env(safe-area-inset-bottom, 0px));
 	z-index: 5;
 	visibility: visible;
 	overflow: auto;
