@@ -68,6 +68,8 @@ export class PlayerStateService {
 	zeroRate$ = this.zeroRateSubject.asObservable();
 	private prisonEndedSubject = new Subject<void>();
 	prisonEnded$ = this.prisonEndedSubject.asObservable();
+	private creditTimeoutSubject = new Subject<void>();
+	creditTimeout$ = this.creditTimeoutSubject.asObservable();
 	private readonly WARN_FRACTION = 0.5;
 	private readonly FINAL_MS = 60_000;
 
@@ -622,6 +624,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
             cb?.({ status: 'ok', _ackId: data._ackId });
+			this.onCreditTimeout();
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
                 if (c.id === data.credit.id) {
                     c.status = data.credit.status;
@@ -697,6 +700,7 @@ export class PlayerStateService {
 
 		this.wsService.on(IO.CREDIT.EXTENDED, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
+			this.onCreditTimeout();
 			this.coinsSubject.next(data.coinsLK);
 			this.halfwayFired.delete(data.credit.id);
 			this.finalFired.delete(data.credit.id);
@@ -707,12 +711,14 @@ export class PlayerStateService {
 						amount: data.credit.amount + data.credit.interest,
 						interest: data.credit.interest,
 					}),
+					sound: 'interest',
 				},
 			});
 		});
 
 		this.wsService.on(IO.CREDIT.REQUEST, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
+			this.onCreditTimeout();
 			this.coinsSubject.next(data.coinsLK);
 			this.confirmSettleOrExtend(data.credit);
 		});
@@ -796,6 +802,11 @@ export class PlayerStateService {
 			this.halfwayFired.add(id);
 			this.halfwaySubject.next();
 		}
+	}
+
+	private onCreditTimeout(): void {
+		this.dialog.closeAll();
+		this.creditTimeoutSubject.next();
 	}
 
 	offAll(): void {
@@ -1115,6 +1126,14 @@ export class PlayerStateService {
 		this.rateSubject.next(bundle.rate ?? null);
 		this.gameStateSubject.next(bundle.gameState);
 		this.rulesSubject.next(bundle.rules);
+	}
+
+	setFakeCreditRemaining(remainingTime: number): void {
+		const updatedCredits = this.creditsSubject.getValue().map((c) => {
+			if (c.status !== CREDIT_STATUS.RUNNING) return c;
+			return { ...c, remainingTime, endAt: new Date(Date.now() + remainingTime) };
+		});
+		this.creditsSubject.next(updatedCredits);
 	}
 
 	triggerFakeProduction(letter: string, weight: number, producedCard: Card, newCards: Card[]): void {

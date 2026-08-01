@@ -93,30 +93,37 @@
 			</button>
 		</div>
 		<div class="btn-credit marginArround gap-2">
-			<button
-				[matBadge]="vm.credits.length"
-				[matBadgeColor]="'warn'"
-				[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
-				*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
-				class="styleBtn size box-shadowed z2"
-				mat-icon-button
-				[style.color]="'#117fd0'"
-				color="primary"
-				(click)="togglePanel('credit')">
-				<fa-icon [icon]="faFileContract"></fa-icon>
-			</button>
-			<button
-				[matBadge]="vm.credits.length"
-				[matBadgeColor]="'warn'"
-				[style.background-color]="'#117fd0'"
-				[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
-				*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
-				class="styleBtn size box-shadowed z2"
-				mat-fab
-				color="primary"
-				(click)="togglePanel('credit')">
-				<fa-icon [icon]="faFileContract"></fa-icon>
-			</button>
+			<div class="credit-btn-host">
+				<span
+					*ngIf="creditCountdown"
+					class="credit-ring"
+					[style.background]="creditRing(creditCountdown)"></span>
+				<button
+					[matBadge]="vm.credits.length"
+					[matBadgeColor]="'warn'"
+					[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
+					*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
+					class="styleBtn size box-shadowed z2"
+					mat-icon-button
+					[style.color]="'#117fd0'"
+					[style.background-color]="creditCountdown?.color"
+					color="primary"
+					(click)="togglePanel('credit')">
+					<ng-container *ngTemplateOutlet="creditBtnFace"></ng-container>
+				</button>
+				<button
+					[matBadge]="vm.credits.length"
+					[matBadgeColor]="'warn'"
+					[style.background-color]="creditCountdown ? creditCountdown.color : '#117fd0'"
+					[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
+					*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
+					class="styleBtn size box-shadowed z2"
+					mat-fab
+					color="primary"
+					(click)="togglePanel('credit')">
+					<ng-container *ngTemplateOutlet="creditBtnFace"></ng-container>
+				</button>
+			</div>
 			<!-- Auto-bank: persistent current-rate chip beside the credit button -->
 			<div
 				*ngIf="vm.gameState.typeMoney === DEBT && vm.rules.autoBank && vm.rate"
@@ -126,6 +133,17 @@
 				<span class="rate-pct">{{ vm.rate.pct * 100 | number: '1.0-0' }}%</span>
 			</div>
 		</div>
+		<ng-template #creditBtnFace>
+			<span
+				*ngIf="creditCountdown as countdown; else creditBtnIcon"
+				class="credit-countdown"
+				[class.final]="countdown.finalMinute">
+				{{ countdown.label }}
+			</span>
+			<ng-template #creditBtnIcon>
+				<fa-icon [icon]="faFileContract"></fa-icon>
+			</ng-template>
+		</ng-template>
 		<div class="btn-action marginArround">
 			<button
 				class="styleBtn size box-shadowed z2"

@@ -215,6 +215,10 @@ export class FakePlayerPanelComponent {
 		};
 	}
 
+	setCreditRemaining(seconds: number): void {
+		this.playerStateService.setFakeCreditRemaining(seconds * 1000);
+	}
+
 	testRefused(): void {
 		this.audioService.playSound('glitch');
 		this.snackbarService.showError(this.i18nService.instant('CREDIT.REFUSED_NEGOTIATE'));

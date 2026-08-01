@@ -3,6 +3,7 @@ import { faCircleInfo, faCommentsDollar, faSackDollar } from '@fortawesome/free-
 import { Credit } from '../../models/gameState';
 import { CREDIT_STATUS } from '@geco/shared';
 import { Avatar } from 'src/app/models/avatar';
+import { creditProgressColor } from '../../services/creditTools';
 
 /** Below this remaining time a RUNNING credit's label becomes a per-second countdown. */
 const FINAL_MS = 60_000;
@@ -116,12 +117,6 @@ export class CreditComponent implements OnChanges, OnDestroy {
 	}
 
 	getStatusColor(progress: number) {
-		if (progress < 50) {
-			return '#28a745';
-		} else if (progress < 75) {
-			return '#ffc107';
-		} else {
-			return '#dc3545';
-		}
+		return creditProgressColor(progress);
 	}
 }

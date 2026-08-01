@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { combineLatest, distinctUntilChanged, map, of, Subscription, withLatestFrom } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, of, Subscription, switchMap, timer, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Card, Credit, ConnectionStatus } from '../models/gameState';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -34,6 +34,7 @@ import { PlayerStateService } from '../services/api/player-state.service';
 import { DeckService } from '../services/api/deck.service';
 import { Rules } from '../models/rules';
 import { OverlayConfig } from '../components/overlay/overlay.component';
+import { CreditCountdown, creditCountdownAt } from '../services/creditTools';
 import { makeFakeAvatar, makeFakeBundle } from '../fake/fake-data';
 
 @Component({
@@ -237,6 +238,21 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		return this.credits$.pipe(map((credits) => credits.some((credit) => credit.status === CREDIT_STATUS.FAULT)));
 	}
 
+	creditCountdown$ = combineLatest([this.credits$, this.rules$]).pipe(
+		map(([credits, rules]) => {
+			const durationMs = (rules?.durationCredit ?? 0) * 60 * 1000;
+			const running = credits.filter((c) => c.status === CREDIT_STATUS.RUNNING && c.remainingTime > 0);
+			if (durationMs <= 0 || running.length === 0) return null;
+			const soonest = running.reduce((a, b) => (a.remainingTime <= b.remainingTime ? a : b));
+			return { endsAt: Date.now() + soonest.remainingTime, durationMs };
+		}),
+		switchMap((maturity) =>
+			maturity
+				? timer(0, 1000).pipe(map(() => creditCountdownAt(maturity.endsAt, maturity.durationMs, Date.now())))
+				: of(null)
+		)
+	);
+
 	actionTokens$ = inject(PlayerStateService).actionTokens$;
 	sessionAvatars$ = inject(PlayerStateService).avatars$;
 
@@ -266,7 +282,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private creditFaultSub: Subscription | undefined;
 	private rulesSub: Subscription | undefined;
 	private firstCreditSub: Subscription | undefined;
+	private creditCountdownSub: Subscription | undefined;
+	private creditTimeoutSub: Subscription | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
+	creditCountdown: CreditCountdown | null = null;
 	alarmConfig: OverlayConfig | null = null;
 	halfwayConfig: OverlayConfig | null = null;
 	rateZeroConfig: OverlayConfig | null = null;
@@ -288,6 +307,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		return credits
 			.filter((c) => c.status !== CREDIT_STATUS.DONE && c.status !== CREDIT_STATUS.CANCELED)
 			.reduce((total, c) => total + c.amount + c.interest, 0);
+	};
+
+	creditRing = (countdown: CreditCountdown): string => {
+		return `conic-gradient(from -90deg, ${countdown.color} 0 ${countdown.progress}%, rgba(255, 255, 255, 0.5) ${countdown.progress}% 100%)`;
 	};
 
 	recipies = (cards: Card[], rules: Rules) => {
@@ -324,6 +347,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
 		if (this.rulesSub) this.rulesSub.unsubscribe();
 		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
+		if (this.creditCountdownSub) this.creditCountdownSub.unsubscribe();
+		if (this.creditTimeoutSub) this.creditTimeoutSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -360,6 +385,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 			.subscribe((fault) => this.onCreditFault(fault));
 
 		this.rulesSub = this.rules$.subscribe((r) => (this.autoSeizure = !!r?.autoSeizure));
+
+		this.creditCountdownSub = this.creditCountdown$.subscribe((countdown) => (this.creditCountdown = countdown));
+
+		this.creditTimeoutSub = this.playerStateService.creditTimeout$.subscribe(() => this.clearMaturityOverlays());
 
 		this.firstCreditSub = this.firstCreditPending$.pipe(distinctUntilChanged()).subscribe((pending) => {
 			if (pending) {
@@ -591,6 +620,12 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.router
 			.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, idx])
 			.finally(() => (this.reincarnateConfig = null));
+	}
+
+	private clearMaturityOverlays(): void {
+		this.alarmConfig = null;
+		this.halfwayConfig = null;
+		this.rateZeroConfig = null;
 	}
 
 	private onCreditFinalMinute(flash: boolean): void {

@@ -32,6 +32,9 @@
 
 	<div class="fake-section">
 		<span class="fake-label">Credit</span>
+		<button type="button" class="fake-btn" (click)="setCreditRemaining(240)">🟢 4:00 left</button>
+		<button type="button" class="fake-btn" (click)="setCreditRemaining(120)">🟠 2:00 left</button>
+		<button type="button" class="fake-btn" (click)="setCreditRemaining(45)">🔴 0:45 left</button>
 		<button type="button" class="fake-btn" (click)="testRateDialog()">💱 New rate dialog</button>
 		<button type="button" class="fake-btn" (click)="testRefused()">🚫 Refused</button>
 		<button type="button" class="fake-btn" (click)="testSettled()">✅ Settled</button>

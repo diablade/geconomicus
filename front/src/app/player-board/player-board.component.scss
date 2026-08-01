@@ -230,7 +230,7 @@
 // ── Buttons ───────────────────────────────────────────────────────────────────
 
 .btn-buy {
-    z-index: 3;
+	z-index: 3;
 }
 
 .styleBtn {
@@ -271,6 +271,41 @@
 
 	&-center {
 		height: clamp(44px, 10vmin, 60px) !important;
+	}
+}
+
+.credit-btn-host {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.credit-ring {
+	position: absolute;
+	inset: -7px;
+	border-radius: 50%;
+	pointer-events: none;
+	filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
+	-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+	mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+}
+
+.credit-countdown {
+	font-size: clamp(11px, 2.6vmin, 15px);
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	color: #fff;
+	text-shadow:
+		0 0 4px rgba(0, 0, 0, 0.9),
+		0 1px 2px rgba(0, 0, 0, 0.9);
+
+	&.final {
+		display: inline-block;
+		transform-origin: center center;
+		font-size: clamp(15px, 3.6vmin, 21px);
+		animation: countdown-pulse 1s infinite ease-out;
 	}
 }
 
@@ -328,9 +363,9 @@
 
 // Auto-bank: self-service request buttons inside the open credit panel.
 .request-credit {
-    margin:5px 0;
-    button{
-        width:100px;
-        height:auto;
-    }
+	margin: 5px 0;
+	button {
+		width: 100px;
+		height: auto;
+	}
 }
