@@ -46,6 +46,13 @@
 			🔊 {{ key }}
 		</button>
 	</div>
+
+	<div class="fake-section">
+		<span class="fake-label">Haptics</span>
+		<button type="button" class="fake-btn" *ngFor="let tier of hapticTiers" (click)="vibrateTier(tier)">
+			📳 {{ tier }}
+		</button>
+	</div>
 </div>
 
 <!-- Hosted instances of the extracted components -->

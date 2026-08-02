@@ -498,6 +498,8 @@ export class PlayerStateService {
 			console.log('transaction done', data);
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			if (Number(this.playerStateIdx) === Number(data.sellerIdx)) {
+                this.audioService.playSound("coin");
+                this.audioService.playSound("cardFlipGet");
 				this.coinsSubject.next(data.coinsLK);
 				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
 				this.cardsSubject.next(updatedCards);

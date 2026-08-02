@@ -16,8 +16,11 @@ export class PrisonComponent implements OnInit, OnDestroy {
 	private prisonTotalMs = 0;
 	private audioService = inject(AudioService);
 
+
+
 	ngOnInit(): void {
-		this.audioService.playSequence(['buzzer', 'prison']);
+		this.audioService.playSound('buzzer');
+		this.audioService.playSound('prison');
 	}
 
 	@Input() set prison(value: { remainingTime: number; totalTime: number; paused?: boolean } | null) {

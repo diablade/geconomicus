@@ -151,7 +151,7 @@ export class ItemComponent implements OnChanges, OnDestroy {
 			this.amountCardsForProd,
 			this.generatedIdenticalLetters
 		);
-		this.audioService.playSound('cardFlipGet');
+		this.audioService.playSound('cardFlipGet',false);
 		this.openOverlay();
 
 		this.openTimer = setTimeout(() => {
@@ -165,7 +165,7 @@ export class ItemComponent implements OnChanges, OnDestroy {
 		}
 		this.clearTimers();
 
-		this.audioService.playSound('cardFlipBack');
+		this.audioService.playSound('cardFlipBack',false);
 		this.flipState = 'front';
 		this.recipe = null;
 		this.deleteShortCode();

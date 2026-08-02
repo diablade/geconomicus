@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import confetti from 'canvas-confetti';
 import { GAME_TYPE } from '@geco/shared';
 import { AudioService } from '../services/audio.service';
+import { HapticService, HapticTier, HAPTIC_TIERS } from '../services/haptic.service';
 import { I18nService } from '../services/i18n.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { ThemesService } from '../services/themes.service';
@@ -31,6 +32,7 @@ export class FakePlayerPanelComponent {
 	@Input() screenHeight = 1;
 
 	private audioService = inject(AudioService);
+	private hapticService = inject(HapticService);
 	private themesService = inject(ThemesService);
 	private playerStateService = inject(PlayerStateService);
 	private i18nService = inject(I18nService);
@@ -38,6 +40,7 @@ export class FakePlayerPanelComponent {
 	private dialog = inject(MatDialog);
 
 	readonly soundKeys = SOUND_KEYS;
+	readonly hapticTiers = HAPTIC_TIERS;
 	open = false;
 	isJune = false;
 	isItemTheme = true;
@@ -260,5 +263,9 @@ export class FakePlayerPanelComponent {
 
 	playSound(key: string): void {
 		this.audioService.playSound(key);
+	}
+
+	vibrateTier(tier: HapticTier): void {
+		this.hapticService.vibrate(tier);
 	}
 }

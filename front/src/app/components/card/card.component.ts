@@ -61,7 +61,7 @@ export class CardComponent implements OnChanges {
 	}
 
 	closeCard() {
-		this.audioService.playSound('cardFlipBack');
+		this.audioService.playSound('cardFlipBack',false);
 		this.state = 'default';
 	}
 
@@ -71,9 +71,9 @@ export class CardComponent implements OnChanges {
 			if (this.state === 'default') {
 				this.state = 'flipped';
 				this.createShortCode();
-				this.audioService.playSound('cardFlipGet');
+				this.audioService.playSound('cardFlipGet',false);
 			} else {
-				this.audioService.playSound('cardFlipBack');
+				this.audioService.playSound('cardFlipBack',false);
 				this.state = 'default';
 				this.deleteShortCode();
 			}
