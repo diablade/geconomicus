@@ -17,16 +17,11 @@ DecksStateService.produce = async (gameStateId, playerStateIdx, cards) => {
 		}
 
 		entry.events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.PRODUCTION,
-				entry.gameState.sessionId,
-				gameStateId,
-				playerStateIdx,
-				playerStateIdx,
-				{
-					newCards: result.newCards,
-				}
-			)
+			EventHelper.createEvent(DB_EVENTS.PRODUCTION, entry.gameState, {
+				emitter: playerStateIdx,
+				receiver: playerStateIdx,
+				payload: { newCards: result.newCards },
+			})
 		);
 
 		// Table sync: the producer's hand + tokens changed, and two deck levels moved (produce

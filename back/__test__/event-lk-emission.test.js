@@ -32,17 +32,20 @@ await jest.unstable_mockModule('../src/gameState/managers/PrisonTimerManager.js'
 }));
 
 const savedEvents = [];
-await jest.unstable_mockModule('../src/event/event.model.js', () => ({
-	default: class {
-		constructor(doc) {
-			Object.assign(this, doc);
-		}
-		async save() {
-			savedEvents.push({ ...this });
-			return this;
-		}
-	},
-}));
+class EventModelStub {
+	constructor(doc) {
+		Object.assign(this, doc);
+	}
+	async save() {
+		savedEvents.push({ ...this });
+		return this;
+	}
+	static async insertMany(docs) {
+		savedEvents.push(...docs);
+		return docs;
+	}
+}
+await jest.unstable_mockModule('../src/event/event.model.js', () => ({ default: EventModelStub }));
 
 const initedGames = new Map();
 await jest.unstable_mockModule('../src/gameState/game.state.model.js', () => ({
@@ -74,12 +77,15 @@ const card = (weight) => {
 };
 const deckOf = (weight, count) => Array.from({ length: count }, () => card(weight));
 
+const objectId = () =>
+	Array.from({ length: 24 }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('');
+
 const makeGame = ({ typeMoney = GAME_TYPE.JUNE, credits = [], overrides = {} } = {}) => {
-	const id = `gs_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+	const id = objectId();
 	const gameState = {
 		_id: id,
 		typeMoney,
-		sessionId: `sess_${Math.random().toString(36).slice(2, 8)}`,
+		sessionId: objectId(),
 		ruleIdx: 0,
 		status: GAME_STATUS.PLAYING,
 		decks: [deckOf(0, 12), deckOf(1, 8), deckOf(2, 4), deckOf(3, 2)],
@@ -91,6 +97,10 @@ const makeGame = ({ typeMoney = GAME_TYPE.JUNE, credits = [], overrides = {} } =
 		],
 		currentMassMonetary: 300,
 		currentDU: 10,
+		bankInterestEarned: 0,
+		bankGoodsEarned: 0,
+		bankMoneyLost: 0,
+		bankMoneyDestroyed: 0,
 		creditIndexSeq: credits.length,
 		credits,
 		gameTimers: {
@@ -107,6 +117,7 @@ const makeGame = ({ typeMoney = GAME_TYPE.JUNE, credits = [], overrides = {} } =
 		distribInitCards: 4,
 		durationCredit: 5,
 		timerPrison: 5,
+		tauxCroissance: 10,
 		tauxCredit: 3,
 		defaultCreditAmount: 3,
 		defaultInterestAmount: 1,

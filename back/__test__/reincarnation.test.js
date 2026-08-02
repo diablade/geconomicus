@@ -51,6 +51,10 @@ function makeGame(overrides = {}) {
 		],
 		currentMassMonetary: 300,
 		currentDU: 10,
+		bankInterestEarned: 0,
+		bankGoodsEarned: 0,
+		bankMoneyLost: 0,
+		bankMoneyDestroyed: 0,
 		creditIndexSeq: 0,
 		credits: [],
 		gameTimers: {

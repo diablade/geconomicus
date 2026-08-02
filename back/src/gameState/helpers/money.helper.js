@@ -43,14 +43,11 @@ MoneyHelper.distributeNewDU = async (entry) => {
 				}
 			);
 
-			const event = EventHelper.createEvent(
-				DB_EVENTS.DISTRIB_DU,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				playerState.idx,
-				DU
-			);
+			const event = EventHelper.createEvent(DB_EVENTS.DISTRIB_DU, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: playerState.idx,
+				payload: { du: DU },
+			});
 			events.push(event);
 		}
 	});

@@ -69,13 +69,14 @@ await jest.unstable_mockModule('../src/gameState/helpers/decks.helper.js', () =>
 
 await jest.unstable_mockModule('../src/gameState/helpers/event.helper.js', () => ({
     default: {
-        createEvent: jest.fn((typeEvent, sessionId, gameStateId, playerType, playerIdx, data) => ({
+        createEvent: jest.fn((typeEvent, gameState, { emitter, receiver, touched, payload } = {}) => ({
             typeEvent,
-            sessionId,
-            gameStateId,
-            playerType,
-            playerIdx,
-            data,
+            sessionId: gameState?.sessionId,
+            gameStateId: gameState?._id,
+            emitter,
+            receiver,
+            touched,
+            payload,
             createdAt: new Date()
         }))
     }
@@ -1103,6 +1104,6 @@ describe('BankStateService — First Credit Question (docs/adr/0009)', () => {
         expect(gameState.playersStates[1].firstCreditAnswer).toBe(CREDIT_QUESTION_ANSWER.DECLINE);
         expect(gameState.playersStates[2].firstCreditAnswer).toBeUndefined();
         expect(entry.events).toHaveLength(1);
-        expect(entry.events[0].data).toEqual({ answer: CREDIT_QUESTION_ANSWER.NO_ANSWER });
+        expect(entry.events[0].payload).toEqual({ answer: CREDIT_QUESTION_ANSWER.NO_ANSWER });
     });
 });

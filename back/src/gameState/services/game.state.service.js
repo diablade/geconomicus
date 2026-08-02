@@ -16,6 +16,12 @@ import PlayerStateService from './player.state.service.js';
 import EventHelper from '../helpers/event.helper.js';
 import _ from 'lodash';
 
+const _initEventSource = (initializedGame, gameState, gameStateId) => ({
+	...initializedGame,
+	sessionId: gameState.sessionId,
+	_id: gameStateId,
+});
+
 const minute = 60 * 1000;
 const TIMER_HEARTBEAT_INTERVAL = 10000; // 10 seconds
 
@@ -200,9 +206,16 @@ GameStateService.initGame = async (gameStateId) => {
 	if (gameState.typeMoney === GAME_TYPE.JUNE) {
 		initializedGame = await setupGameJune(gameState, rules);
 		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {});
-		await EventService.postNow(DB_EVENTS.FIRST_DU, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {
-			firstDU: initializedGame.currentDU,
-		});
+		await EventService.postMany(
+			[
+				EventHelper.createEvent(DB_EVENTS.FIRST_DU, _initEventSource(initializedGame, gameState, gameStateId), {
+					emitter: PLAYER_TYPE.MASTER,
+					receiver: '-',
+					payload: { firstDU: initializedGame.currentDU },
+				}),
+			],
+			gameStateId
+		);
 	} else if (gameState.typeMoney === GAME_TYPE.DEBT) {
 		initializedGame = await setupGameDebt(gameState, rules);
 		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {});
@@ -245,13 +258,15 @@ GameStateService.initGame = async (gameStateId) => {
 	initializedGame.playersStates.forEach(async (playerState) => {
 		const roomId = ROOMS.playerState(gameStateId, playerState.idx);
 		log.debug(`[GameStateService] emit PLAYER_INIT to room: ${roomId}`);
-		await EventService.postNow(
-			DB_EVENTS.PLAYER_INIT,
-			gameState.sessionId,
-			gameStateId,
-			PLAYER_TYPE.MASTER,
-			playerState.idx,
-			{ playerState }
+		await EventService.postMany(
+			[
+				EventHelper.createEvent(
+					DB_EVENTS.PLAYER_INIT,
+					_initEventSource(initializedGame, gameState, gameStateId),
+					{ emitter: PLAYER_TYPE.MASTER, receiver: playerState.idx, payload: { playerState } }
+				),
+			],
+			gameStateId
 		);
 		socket.emitAckTo(roomId, IO.PLAYER.INIT, {
 			playerState,

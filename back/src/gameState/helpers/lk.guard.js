@@ -16,7 +16,7 @@ const isPlayersLk = (value) => {
 
 const LkGuard = {};
 
-LkGuard.missingLkKeys = (typeEvent, payload) => {
+LkGuard.unusableLkPieces = (typeEvent, payload) => {
 	const required = EVENT_LK_CONTRACT[typeEvent];
 	if (!required) return [];
 	const body = payload ?? {};
@@ -34,10 +34,10 @@ LkGuard.missingIdentity = (typeEvent, sessionId, gameStateId) => {
 	return missing;
 };
 
-LkGuard.assertLkContract = (typeEvent, payload) => {
-	const missing = LkGuard.missingLkKeys(typeEvent, payload);
-	if (missing.length > 0) {
-		throw new Error(`[LK] ${typeEvent} missing required Last-Known data: ${missing.join(', ')}`);
+LkGuard.assertLkPieces = (typeEvent, payload) => {
+	const unusable = LkGuard.unusableLkPieces(typeEvent, payload);
+	if (unusable.length > 0) {
+		throw new Error(`[LK] ${typeEvent} has no usable value for: ${unusable.join(', ')}`);
 	}
 };
 
@@ -46,7 +46,7 @@ LkGuard.assertEventContract = (typeEvent, sessionId, gameStateId, payload) => {
 	if (missingIds.length > 0) {
 		throw new Error(`[LK] ${typeEvent} missing event identity: ${missingIds.join(', ')}`);
 	}
-	LkGuard.assertLkContract(typeEvent, payload);
+	LkGuard.assertLkPieces(typeEvent, payload);
 };
 
 export default LkGuard;

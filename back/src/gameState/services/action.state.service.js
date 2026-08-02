@@ -66,7 +66,13 @@ ActionStateService.give = async (gameStateId, giverIdx, receiverIdx, cardKey) =>
 		giver.cards = giver.cards.filter((c) => c.key !== cardKey);
 		receiver.cards.push(card);
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_GIVE, gameState.sessionId, gameStateId, giverIdx, receiverIdx, { card }));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_GIVE, gameState, {
+				emitter: giverIdx,
+				receiver: receiverIdx,
+				payload: { card },
+			})
+		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, receiverIdx), IO.PLAYER.ACTION_DONE, {
 			actionKey: 'give',
@@ -100,7 +106,13 @@ ActionStateService.steal = async (gameStateId, stealerIdx, victimIdx, cardKey) =
 		victim.cards = victim.cards.filter((c) => c.key !== cardKey);
 		stealer.cards.push(card);
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_STEAL, gameState.sessionId, gameStateId, stealerIdx, victimIdx, { card }));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_STEAL, gameState, {
+				emitter: stealerIdx,
+				receiver: victimIdx,
+				payload: { card },
+			})
+		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, victimIdx), IO.PLAYER.ACTION_ROBBED, {
 			actionKey: 'steal',
@@ -133,7 +145,13 @@ ActionStateService.silentSteal = async (gameStateId, stealerIdx, victimIdx, card
 		victim.cards = victim.cards.filter((c) => c.key !== cardKey);
 		stealer.cards.push(card);
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_SILENT_STEAL, gameState.sessionId, gameStateId, stealerIdx, victimIdx, { card }));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_SILENT_STEAL, gameState, {
+				emitter: stealerIdx,
+				receiver: victimIdx,
+				payload: { card },
+			})
+		);
 
 		// Victim's card is removed silently — no popup, just state update
 		socket.emitAckTo(ROOMS.playerState(gameStateId, victimIdx), IO.PLAYER.ACTION_ROBBED, {
@@ -180,10 +198,14 @@ ActionStateService.association = async (gameStateId, giverIdx, cardKeys, targetI
 
 		targets.forEach((target, i) => target.cards.push(cardsToGive[i]));
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_ASSOCIATION, gameState.sessionId, gameStateId, giverIdx, giverIdx, {
-			cards: cardsToGive,
-			recipients: targets.map((t) => t.idx),
-		}));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_ASSOCIATION, gameState, {
+				emitter: giverIdx,
+				receiver: giverIdx,
+				touched: [giverIdx, ...targets.map((t) => t.idx)],
+				payload: { cards: cardsToGive, recipients: targets.map((t) => t.idx) },
+			})
+		);
 
 		targets.forEach((target, i) => {
 			socket.emitAckTo(ROOMS.playerState(gameStateId, target.idx), IO.PLAYER.ACTION_DONE, {
@@ -226,10 +248,14 @@ ActionStateService.war = async (gameStateId, attackerIdx, victim1Idx, victim2Idx
 		victim2.cards = victim2.cards.filter((c) => !stolenKeys2.includes(c.key));
 		attacker.cards.push(...stolen1, ...stolen2);
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_WAR, gameState.sessionId, gameStateId, attackerIdx, attackerIdx, {
-			stolen: [...stolen1, ...stolen2],
-			victims: [victim1Idx, victim2Idx],
-		}));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_WAR, gameState, {
+				emitter: attackerIdx,
+				receiver: attackerIdx,
+				touched: [attackerIdx, victim1Idx, victim2Idx],
+				payload: { stolen: [...stolen1, ...stolen2], victims: [victim1Idx, victim2Idx] },
+			})
+		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, victim1Idx), IO.PLAYER.ACTION_ROBBED, {
 			actionKey: 'war',
@@ -287,10 +313,14 @@ ActionStateService.ong = async (gameStateId, giverIdx, cardKeys, manualTargetIdx
 		targets[0].cards.push(...batch1);
 		targets[1].cards.push(...batch2);
 
-		events.push(EventHelper.createEvent(DB_EVENTS.ACTION_ONG, gameState.sessionId, gameStateId, giverIdx, giverIdx, {
-			cards: cardsToGive,
-			recipients: [targets[0].idx, targets[1].idx],
-		}));
+		events.push(
+			EventHelper.createEvent(DB_EVENTS.ACTION_ONG, gameState, {
+				emitter: giverIdx,
+				receiver: giverIdx,
+				touched: [giverIdx, targets[0].idx, targets[1].idx],
+				payload: { cards: cardsToGive, recipients: [targets[0].idx, targets[1].idx] },
+			})
+		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, targets[0].idx), IO.PLAYER.ACTION_DONE, {
 			actionKey: 'ong',

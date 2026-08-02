@@ -74,14 +74,11 @@ const _endLife = async (entry, player) => {
 	SyncHelper.emitDecksSync(gameStateId, gameState, gameState.decks.map((_, lvl) => lvl));
 
 	// coinsLK = the leftover coins on the dead life = this life's ghost money.
-	const eventDied = EventHelper.createEvent(
-		DB_EVENTS.PLAYER_DIED,
-		gameState.sessionId,
-		gameStateId,
-		playerStateIdx,
-		PLAYER_TYPE.MASTER,
-		{ coinsLK: player.coins, cards: player.cards }
-	);
+	const eventDied = EventHelper.createEvent(DB_EVENTS.PLAYER_DIED, gameState, {
+		emitter: playerStateIdx,
+		receiver: PLAYER_TYPE.MASTER,
+		payload: { cards: player.cards },
+	});
 	events.push(eventDied);
 
 	// Enrich DIED with the dead life's frozen snapshot (coins/cards) + post-seizure mass so the Table
@@ -137,14 +134,11 @@ const _reincarnate = async (entry, avatarIdx) => {
 	gameState.playersStates.push(newLife);
 
 	events.push(
-		EventHelper.createEvent(
-			DB_EVENTS.PLAYER_BIRTH,
-			gameState.sessionId,
-			gameStateId,
-			PLAYER_TYPE.MASTER,
-			newPlayerStateIdx,
-			{ coinsLK: 0, cards: newCards, avatarIdx }
-		)
+		EventHelper.createEvent(DB_EVENTS.PLAYER_BIRTH, gameState, {
+			emitter: PLAYER_TYPE.MASTER,
+			receiver: newPlayerStateIdx,
+			payload: { cards: newCards, avatarIdx },
+		})
 	);
 
 	// Move the dying player's device to the new life.
@@ -304,17 +298,11 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 
 		// add transaction event
 		entry.events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.TRANSACTION,
-				entry.gameState.sessionId,
-				gameStateId,
-				buyerIdx,
-				sellerIdx,
-				{
-					cost,
-					card,
-				}
-			)
+			EventHelper.createEvent(DB_EVENTS.TRANSACTION, entry.gameState, {
+				emitter: buyerIdx,
+				receiver: sellerIdx,
+				payload: { cost, card },
+			})
 		);
 
 		// Emit transaction event to results room

@@ -65,36 +65,36 @@ describe('event LK contract — coverage', () => {
 });
 
 describe('event LK contract — guard', () => {
-	test('accepts a payload carrying every required key', () => {
+	test('accepts a payload whose declared pieces all carry usable values', () => {
 		expect(() =>
-			LkGuard.assertLkContract(DB_EVENTS.CREDIT_NEW, {
+			LkGuard.assertLkPieces(DB_EVENTS.CREDIT_NEW, {
 				[LK_KEYS.PLAYERS]: playersLk(3),
 				[LK_KEYS.MASS_MONETARY]: 120,
 			})
 		).not.toThrow();
 	});
 
-	test('rejects a payload missing a required key, naming it', () => {
-		expect(() => LkGuard.assertLkContract(DB_EVENTS.CREDIT_NEW, { [LK_KEYS.PLAYERS]: playersLk(3) })).toThrow(
+	test('rejects a declared piece with no usable value, naming it', () => {
+		expect(() => LkGuard.assertLkPieces(DB_EVENTS.CREDIT_NEW, { [LK_KEYS.PLAYERS]: playersLk(3) })).toThrow(
 			/massMonetaryLK/
 		);
 	});
 
 	test('rejects an empty playersLK map', () => {
 		expect(() =>
-			LkGuard.assertLkContract(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: {} })
+			LkGuard.assertLkPieces(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: {} })
 		).toThrow(/playersLK/);
 	});
 
 	test('rejects a playersLK entry missing cardsValue', () => {
 		expect(() =>
-			LkGuard.assertLkContract(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: { 0: { coins: 5 } } })
+			LkGuard.assertLkPieces(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: { 0: { coins: 5 } } })
 		).toThrow(/playersLK/);
 	});
 
 	test('rejects a playersLK keyed by anything other than playerStateIdx', () => {
 		expect(() =>
-			LkGuard.assertLkContract(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: { bank: { coins: 5, cardsValue: 0 } } })
+			LkGuard.assertLkPieces(DB_EVENTS.TRANSACTION, { [LK_KEYS.PLAYERS]: { bank: { coins: 5, cardsValue: 0 } } })
 		).toThrow(/playersLK/);
 	});
 
@@ -113,13 +113,13 @@ describe('event LK contract — guard', () => {
 
 	test('ignores exempt events entirely', () => {
 		for (const type of EVENT_LK_EXEMPT) {
-			expect(() => LkGuard.assertLkContract(type, {})).not.toThrow();
+			expect(() => LkGuard.assertLkPieces(type, {})).not.toThrow();
 		}
 	});
 });
 
-describe('event LK contract — migration status', () => {
-	test('reports which contract events still have call sites to migrate', () => {
+describe('event LK contract — inventory', () => {
+	test('reports every contract event and the call sites that emit it', () => {
 		const sites = emissionSites();
 		const report = Object.keys(EVENT_LK_CONTRACT)
 			.map((type) => `  ${type} -> ${(sites.get(type) ?? []).join(', ')}`)

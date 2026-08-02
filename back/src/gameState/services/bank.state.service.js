@@ -117,14 +117,11 @@ const _payInterest = async (playerState, credit, entry) => {
 	credit.remainingTime = rules.durationCredit * minute;
 	credit.status = CREDIT_STATUS.RUNNING;
 
-	const event = EventHelper.createEvent(
-		DB_EVENTS.CREDIT_EXTENDED,
-		gameState.sessionId,
-		gameState.id,
-		PLAYER_TYPE.BANK,
-		playerState.idx,
-		credit
-	);
+	const event = EventHelper.createEvent(DB_EVENTS.CREDIT_EXTENDED, gameState, {
+		emitter: PLAYER_TYPE.BANK,
+		receiver: playerState.idx,
+		payload: { credit },
+	});
 	events.push(event);
 };
 
@@ -185,14 +182,11 @@ const _releasePlayer = async (entry, playerStateIdx) => {
 	playerState.cards.push(...newCards);
 	playerState.status = PLAYER_STATUS.ALIVE;
 
-	const event = EventHelper.createEvent(
-		DB_EVENTS.PRISON_ENDED,
-		gameState.sessionId,
-		gameState._id,
-		PLAYER_TYPE.BANK,
-		playerStateIdx,
-		{ cards: newCards }
-	);
+	const event = EventHelper.createEvent(DB_EVENTS.PRISON_ENDED, gameState, {
+		emitter: PLAYER_TYPE.BANK,
+		receiver: playerStateIdx,
+		payload: { cards: newCards },
+	});
 	events.push(event);
 
 	log.info('[BankStateService] player released from prison', { playerStateIdx, cardsCount: newCards.length });
@@ -261,14 +255,11 @@ const _creditTimeoutCallback = async (timerInstance) => {
 
 			const { canSettle, canExtend } = await _whatCanDoCredit(credit, playerState);
 			if (canSettle) {
-				const event = EventHelper.createEvent(
-					DB_EVENTS.CREDIT_REQUEST,
-					gameState.sessionId,
-					gameStateId,
-					PLAYER_TYPE.BANK,
-					playerState.idx,
-					credit
-				);
+				const event = EventHelper.createEvent(DB_EVENTS.CREDIT_REQUEST, gameState, {
+					emitter: PLAYER_TYPE.BANK,
+					receiver: playerState.idx,
+					payload: { credit },
+				});
 				events.push(event);
 				credit.status = CREDIT_STATUS.REQUESTING;
 				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.REQUEST, { credit });
@@ -291,14 +282,11 @@ const _creditTimeoutCallback = async (timerInstance) => {
 				SyncHelper.emitPlayerSync(gameStateId, [playerState]);
 			} else {
 				// bankrup payment
-				const event = EventHelper.createEvent(
-					DB_EVENTS.CREDIT_FAULT,
-					gameState.sessionId,
-					gameStateId,
-					PLAYER_TYPE.BANK,
-					playerState.idx,
-					credit
-				);
+				const event = EventHelper.createEvent(DB_EVENTS.CREDIT_FAULT, gameState, {
+					emitter: PLAYER_TYPE.BANK,
+					receiver: playerState.idx,
+					payload: { credit },
+				});
 				events.push(event);
 				credit.status = CREDIT_STATUS.FAULT;
 				credit.faultAt = new Date();
@@ -358,14 +346,11 @@ const _autoSeizureCallback = async (timerInstance) => {
 				credit.endAt = new Date();
 				resolvedCredits.push(credit);
 
-				const seizureEvent = EventHelper.createEvent(
-					DB_EVENTS.CREDIT_SEIZURE,
-					gameState.sessionId,
-					gameStateId,
-					PLAYER_TYPE.BANK,
-					playerStateIdx,
-					{ credit, coins: result.coinsSeized, cards: result.cardsSeized, bankMoneyLost: result.unpaid }
-				);
+				const seizureEvent = EventHelper.createEvent(DB_EVENTS.CREDIT_SEIZURE, gameState, {
+					emitter: PLAYER_TYPE.BANK,
+					receiver: playerStateIdx,
+					payload: { credit, coins: result.coinsSeized, cards: result.cardsSeized },
+				});
 				events.push(seizureEvent);
 				socket.emitTo(ROOMS.gameStateEvents(gameStateId), IO.EVENT, seizureEvent);
 			}
@@ -392,14 +377,11 @@ const _autoSeizureCallback = async (timerInstance) => {
 				const prisonMinutes = computeAutoSeizurePrisonMinutes(shortfallRatio, rules.timerPrison);
 				playerState.status = PLAYER_STATUS.PRISON;
 
-				const prisonEvent = EventHelper.createEvent(
-					DB_EVENTS.PRISON,
-					gameState.sessionId,
-					gameStateId,
-					PLAYER_TYPE.BANK,
-					playerStateIdx,
-					{ prisonTime: prisonMinutes }
-				);
+				const prisonEvent = EventHelper.createEvent(DB_EVENTS.PRISON, gameState, {
+					emitter: PLAYER_TYPE.BANK,
+					receiver: playerStateIdx,
+					payload: { prisonTime: prisonMinutes },
+				});
 				events.push(prisonEvent);
 				socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.EVENT, prisonEvent);
 
@@ -513,14 +495,11 @@ const _createCreditInEntry = async (entry, gameStateId, playerStateIdx, amount, 
 	}
 
 	events.push(
-		EventHelper.createEvent(
-			DB_EVENTS.CREDIT_NEW,
-			entry.sessionId,
-			entry.gameStateId,
-			PLAYER_TYPE.BANK,
-			playerStateIdx,
-			{ ...credit, origin }
-		)
+		EventHelper.createEvent(DB_EVENTS.CREDIT_NEW, gameState, {
+			emitter: PLAYER_TYPE.BANK,
+			receiver: playerStateIdx,
+			payload: { ...credit, origin },
+		})
 	);
 
 	socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.NEW, { credit, ..._getBankIndicators(gameState) });
@@ -607,14 +586,11 @@ BankStateService.askFirstCreditQuestion = async (gameStateId) => {
 		gameState.firstCreditAsked = true;
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_QUESTION_ASKED,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				'-',
-				{ asked: asked.length, amount: rate.amount, interest: rate.interest }
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_QUESTION_ASKED, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: '-',
+				payload: { asked: asked.length, amount: rate.amount, interest: rate.interest },
+			})
 		);
 
 		log.info(`[BankStateService] first credit question asked to ${asked.length} players in g:${gameStateId}`);
@@ -641,14 +617,11 @@ BankStateService.answerFirstCreditQuestion = async (gameStateId, playerStateIdx,
 		playerState.firstCreditAnswer = answer;
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_QUESTION_ANSWERED,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				playerStateIdx,
-				{ answer, amount: base.amount, interest: base.interest }
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_QUESTION_ANSWERED, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: playerStateIdx,
+				payload: { answer, amount: base.amount, interest: base.interest },
+			})
 		);
 
 		let result = { answer };
@@ -684,14 +657,11 @@ BankStateService.sweepUnansweredFirstCredit = (entry) => {
 		p.firstCreditAnswer = CREDIT_QUESTION_ANSWER.NO_ANSWER;
 		swept.push(p.idx);
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_QUESTION_ANSWERED,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				p.idx,
-				{ answer: CREDIT_QUESTION_ANSWER.NO_ANSWER }
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_QUESTION_ANSWERED, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: p.idx,
+				payload: { answer: CREDIT_QUESTION_ANSWER.NO_ANSWER },
+			})
 		);
 		socket.emitTo(ROOMS.playerState(gameState._id, p.idx), IO.CREDIT.QUESTION, { rate: null });
 	}
@@ -721,14 +691,11 @@ BankStateService.requestCredit = async (gameStateId, playerStateIdx, amount, int
 			interest
 		);
 		if (!solvency.solvent) {
-			const event = EventHelper.createEvent(
-				DB_EVENTS.CREDIT_REFUSED,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				playerStateIdx,
-				{ amount, interest, ...solvency }
-			);
+			const event = EventHelper.createEvent(DB_EVENTS.CREDIT_REFUSED, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: playerStateIdx,
+				payload: { amount, interest, ...solvency },
+			});
 			events.push(event);
 			socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.REFUSED, {
 				amount,
@@ -788,14 +755,11 @@ BankStateService.freeMoney = async (gameStateId, playerStateIdx, amount) => {
 		gameState.currentMassMonetary += amount;
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.FREE_MONEY,
-				entry.sessionId,
-				entry.gameStateId,
-				PLAYER_TYPE.BANK,
-				playerStateIdx,
-				{ coinsLK: playerState.coins, currentMassMonetary: gameState.currentMassMonetary, amount }
-			)
+			EventHelper.createEvent(DB_EVENTS.FREE_MONEY, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: playerStateIdx,
+				payload: { amount },
+			})
 		);
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.FREE_MONEY, {
 			coinsLK: playerState.coins,
@@ -842,14 +806,11 @@ BankStateService.cancelCredit = async (gameStateId, creditId) => {
 		creditTimerManager.stopAndRemoveTimer(credit.id);
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_CANCELED,
-				entry.sessionId,
-				entry.gameStateId,
-				PLAYER_TYPE.BANK,
-				credit.playerStateIdx,
-				credit
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_CANCELED, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: credit.playerStateIdx,
+				payload: { credit },
+			})
 		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.CANCELED, {
@@ -1027,22 +988,17 @@ BankStateService.seizureOnDead = async (gameState, events, player) => {
 	const seizedKeys = new Set(totalSeizedCards.map((c) => c.key));
 	player.cards = player.cards.filter((card) => !seizedKeys.has(card.key));
 
-	const event = EventHelper.createEvent(
-		DB_EVENTS.CREDIT_SEIZED_DEAD,
-		gameState.sessionId,
-		gameState._id,
-		PLAYER_TYPE.MASTER,
-		PLAYER_TYPE.BANK,
-		{
+	const event = EventHelper.createEvent(DB_EVENTS.CREDIT_SEIZED_DEAD, gameState, {
+		emitter: PLAYER_TYPE.MASTER,
+		receiver: PLAYER_TYPE.BANK,
+		touched: [player.idx],
+		payload: {
 			totalCoinSeized,
 			interest: totalPayedInterest,
 			amount: totalPayedAmount,
 			cards: totalSeizedCards,
-			bankMoneyLost: totalNotPayed,
-			bankMoneyDestroyed: totalPayedAmount,
-			bankGoodsEarned: totalSeizedCardsValue,
-		}
-	);
+		},
+	});
 	events.push(event);
 };
 
@@ -1096,14 +1052,11 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 		creditTimerManager.stopAndRemoveTimer(credit.id);
 
 		// Create seizure event
-		const seizureEvent = EventHelper.createEvent(
-			DB_EVENTS.CREDIT_SEIZURE,
-			gameState.sessionId,
-			gameState._id,
-			PLAYER_TYPE.BANK,
-			playerStateIdx,
-			{ credit, coins: seizure.coins, cards: seizedCardsFromHand, bankMoneyLost: unpaid }
-		);
+		const seizureEvent = EventHelper.createEvent(DB_EVENTS.CREDIT_SEIZURE, gameState, {
+			emitter: PLAYER_TYPE.BANK,
+			receiver: playerStateIdx,
+			payload: { credit, coins: seizure.coins, cards: seizedCardsFromHand },
+		});
 		events.push(seizureEvent);
 
 		log.info('[BankStateService] seizure completed', {
@@ -1125,14 +1078,11 @@ BankStateService.seizure = async (gameStateId, creditId, playerStateIdx, seizure
 			const clampedPrisonTime = Math.min(seizure.prisonTime, rules.timerPrison);
 			playerState.status = PLAYER_STATUS.PRISON;
 
-			const prisonEvent = EventHelper.createEvent(
-				DB_EVENTS.PRISON,
-				gameState.sessionId,
-				gameState._id,
-				PLAYER_TYPE.BANK,
-				playerStateIdx,
-				{ prisonTime: clampedPrisonTime }
-			);
+			const prisonEvent = EventHelper.createEvent(DB_EVENTS.PRISON, gameState, {
+				emitter: PLAYER_TYPE.BANK,
+				receiver: playerStateIdx,
+				payload: { prisonTime: clampedPrisonTime },
+			});
 			events.push(prisonEvent);
 
 			if (clampedPrisonTime > 0) {
@@ -1213,14 +1163,11 @@ BankStateService.settleCredit = async (gameStateId, creditId, playerStateIdx) =>
 		creditTimerManager.stopAndRemoveTimer(credit.id);
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_SETTLED,
-				entry.sessionId,
-				entry.gameStateId,
-				credit.playerStateIdx,
-				PLAYER_TYPE.BANK,
-				credit
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_SETTLED, gameState, {
+				emitter: credit.playerStateIdx,
+				receiver: PLAYER_TYPE.BANK,
+				payload: { credit },
+			})
 		);
 
 		socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.CREDIT.DONE, {
@@ -1261,14 +1208,11 @@ BankStateService.extendCredit = async (gameStateId, creditId, playerStateIdx) =>
 		}
 
 		events.push(
-			EventHelper.createEvent(
-				DB_EVENTS.CREDIT_EXTENDED,
-				entry.sessionId,
-				entry.gameStateId,
-				playerStateIdx,
-				PLAYER_TYPE.BANK,
-				credit
-			)
+			EventHelper.createEvent(DB_EVENTS.CREDIT_EXTENDED, gameState, {
+				emitter: playerStateIdx,
+				receiver: PLAYER_TYPE.BANK,
+				payload: { credit },
+			})
 		);
 
 		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.EXTENDED, {
