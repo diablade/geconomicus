@@ -250,6 +250,13 @@
 											<mat-icon>qr_code_2</mat-icon>
 											<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
 										</button>
+										<button mat-menu-item>
+											<mat-icon>pin</mat-icon>
+											<span>
+												{{ 'MASTER.AVATAR_CODE' | translate }}:
+												<b>{{ session.shortId }}-{{ avatar.idx }}</b>
+											</span>
+										</button>
 										<button mat-menu-item (click)="allowRedirectSurvey(avatar.idx)">
 											<mat-icon>how_to_vote</mat-icon>
 											<span>{{ 'MASTER.ALLOW_SURVEY_REDO' | translate }}</span>
