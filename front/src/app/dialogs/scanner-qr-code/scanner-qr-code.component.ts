@@ -17,7 +17,6 @@ export class ScannerQrCode implements AfterViewInit, OnDestroy {
 		vibrate: 300, /** support mobile */
 	};
 	cameras: any[] = [];
-	stream: any;
 	cameraSelected: any | undefined;
 	itemCamera = "preferedCameraId";
 
@@ -36,29 +35,7 @@ export class ScannerQrCode implements AfterViewInit, OnDestroy {
 		this.dialogRef.close($event[0].value);
 	}
 
-	public async checkCameraPermission() {
-		try {
-			// Check if camera access is already granted
-			this.stream = await navigator.mediaDevices.getUserMedia({video: true});
-			console.log("Camera access granted");
-
-			// Stop the stream to release the camera
-			this.stream.getTracks().forEach((track: { stop: () => any; }) => track.stop());
-		} catch (error: any) {
-			if (error.name === "NotAllowedError") {
-				console.warn("Camera access denied by the user");
-			} else if (error.name === "NotFoundError") {
-				console.error("No camera devices found");
-			} else {
-				console.error("Error accessing camera:", error);
-			}
-		}
-	}
-
-
 	public handle(scanner: any, fn: string): void {
-		this.checkCameraPermission();
-
 		const playDeviceFacingBack = (devices: any[]) => {
 			if (this.cameraSelected) {
 				scanner.playDevice(this.cameraSelected);
@@ -84,9 +61,12 @@ export class ScannerQrCode implements AfterViewInit, OnDestroy {
 	}
 
 	async ngOnDestroy() {
-		this.stream.getTracks().forEach((track: { stop: () => any; }) => track.stop());
-		this.scanner.stop();
-		this.scanner.ngOnDestroy();
+		try {
+			this.scanner?.stop();
+		} catch (error) {
+			console.warn('scanner stop failed', error);
+		}
+		this.scanner?.ngOnDestroy();
 	}
 
 	cameraChanged(cameraId: any) {
