@@ -43,6 +43,12 @@
 				{{ 'REFRESH' | translate }}
 			</button>
 		</div>
+		<div class="d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
+			<div class="shadowed scanLabel">{{ 'AVATAR.SYS_SCAN' | translate }}</div>
+			<mat-icon class="itemBg blur box-shadowed blackBtn">dialpad</mat-icon>
+			<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3"></mat-slide-toggle>
+			<mat-icon class="itemBg blur box-shadowed blackBtn">qr_code_scanner</mat-icon>
+		</div>
 		<!-- /* : 'blackBtn'" */ -->
 
 		<div class="text-center mt-3 shadowed" *ngIf="avatarCode">

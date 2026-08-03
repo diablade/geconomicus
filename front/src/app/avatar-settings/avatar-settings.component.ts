@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faCamera, faChevronLeft, faChevronRight, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
-import { LocalStorageService } from '../services/local-storage/local-storage.service';
 import { AvatarService } from '../services/api/avatar.service';
 import { Avatar } from '../models/avatar';
 import { I18nService } from '../services/i18n.service';
@@ -38,7 +37,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	faChevronRight = faChevronRight;
 	faWandMagicSparkles = faWandMagicSparkles;
 	faCamera = faCamera;
-	scanV3 = true;
 
 	skin = '#f2d3b1';
 	hairColor = '#ac6511';
@@ -47,7 +45,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private router: Router,
 		private avatarService: AvatarService,
-		private localStorageService: LocalStorageService,
 		private i18nService: I18nService,
 		private toastr: SnackbarService
 	) {
@@ -59,7 +56,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 		}
 	}
 	ngOnInit(): void {
-		this.scanV3 = this.localStorageService.getItem('scanV3');
 		this.subscription = this.route.params.subscribe((params) => {
 			this.sessionId = params['sessionId'];
 			this.avatarIdx = params['avatarIdx'];
@@ -101,10 +97,6 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	}
 	close() {
 		this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
-	}
-
-	onChangeSysScan() {
-		this.localStorageService.setItem('scanV3', this.scanV3);
 	}
 
 	changeEyes(increment: boolean) {

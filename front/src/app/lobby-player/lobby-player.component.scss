@@ -12,7 +12,22 @@
 	height: 40px;
 	margin: 10px;
 }
+.scanLabel {
+	text-align: center;
+}
+
 .avatarCode {
 	font-size: 1.4em;
 	letter-spacing: 0.1em;
+}
+
+.itemBg {
+	height: 40px;
+	width: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	border-radius: 15%;
+	border: solid black 1px;
 }
