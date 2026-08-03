@@ -222,7 +222,6 @@ export class WebSocketService {
 			console.log('Query parameters changed, reconnecting socket');
 			this.socket?.disconnect();
 			this.socket?.removeAllListeners();
-			this.eventHandlers.clear();
 			this.joinedRooms.clear();
 			this.updateDisconnectedStatus();
 		}
@@ -240,7 +239,11 @@ export class WebSocketService {
 		if (!this.eventHandlers.has(event)) {
 			this.eventHandlers.set(event, []);
 		}
-		this.eventHandlers.get(event)!.push(handler);
+		const handlers = this.eventHandlers.get(event)!;
+		if (handlers.includes(handler)) {
+			return;
+		}
+		handlers.push(handler);
 		this.socket?.on(event, handler as any);
 	}
 

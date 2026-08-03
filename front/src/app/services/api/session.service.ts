@@ -53,35 +53,43 @@ export class SessionService {
 		});
 	}
 
+	private readonly onAvatarNew = (data: any) => {
+		const currentSession = this.sessionSubject.getValue();
+		const avatar = data?.avatar;
+		if (!currentSession || !avatar) {
+			return;
+		}
+		const known = currentSession.avatars.some((p) => p.idx === avatar.idx);
+		currentSession.avatars = known
+			? currentSession.avatars.map((p) => (p.idx === avatar.idx ? avatar : p))
+			: [...currentSession.avatars, avatar];
+		this.sessionSubject.next({ ...currentSession });
+	};
+
+	private readonly onAvatarUpdated = (data: any) => {
+		const currentSession = this.sessionSubject.getValue();
+		const updatedAvatar = data?.updatedAvatar;
+		if (!currentSession || !updatedAvatar) {
+			return;
+		}
+		currentSession.avatars = currentSession.avatars.map((p) => (p.idx === updatedAvatar.idx ? updatedAvatar : p));
+		this.sessionSubject.next({ ...currentSession });
+	};
+
+	private readonly onAvatarDeleted = (data: any) => {
+		const currentSession = this.sessionSubject.getValue();
+		if (!currentSession) {
+			return;
+		}
+		const deletedIdx = Number(data?.avatarIdx);
+		currentSession.avatars = currentSession.avatars.filter((p) => Number(p.idx) !== deletedIdx);
+		this.sessionSubject.next({ ...currentSession });
+	};
+
 	setupSocketListeners(): void {
-		this.wsService.on(IO.AVATAR.NEW, (data: any) => {
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				currentSession.avatars.push(data.avatar);
-				this.sessionSubject.next({ ...currentSession });
-			}
-		});
-
-		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				currentSession.avatars = currentSession.avatars.map((p) => {
-					if (p.idx == data.updatedAvatar.idx) {
-						p = data.updatedAvatar;
-					}
-					return p;
-				});
-				this.sessionSubject.next({ ...currentSession });
-			}
-		});
-
-		this.wsService.on(IO.AVATAR.DELETED, (data: any) => {
-			const currentSession = this.sessionSubject.getValue();
-			if (currentSession) {
-				currentSession.avatars = currentSession.avatars.filter((p) => p.idx !== data.avatarIdx);
-				this.sessionSubject.next({ ...currentSession });
-			}
-		});
+		this.wsService.on(IO.AVATAR.NEW, this.onAvatarNew);
+		this.wsService.on(IO.AVATAR.UPDATED, this.onAvatarUpdated);
+		this.wsService.on(IO.AVATAR.DELETED, this.onAvatarDeleted);
 	}
 
 

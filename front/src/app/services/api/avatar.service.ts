@@ -42,6 +42,13 @@ export class AvatarService {
 		this.avatarSubject.next(avatar);
 	}
 
+	private readonly onAvatarUpdated = (data: any) => {
+		const updatedAvatar = data?.updatedAvatar ?? data;
+		if (updatedAvatar && Number(updatedAvatar.idx) === Number(this.avatarIdx)) {
+			this.avatarSubject.next(updatedAvatar);
+		}
+	};
+
 	loadAvatar(
 		sessionId: string,
 		avatarIdx: number,
@@ -69,6 +76,8 @@ export class AvatarService {
 				});
 			if (sessionId !== this.sessionId || avatarIdx !== this.avatarIdx) {
 				this.initializeSocket(sessionId, avatarIdx, assistMode);
+			} else {
+				this.setupSocketListeners();
 			}
 		});
 	}
@@ -96,11 +105,7 @@ export class AvatarService {
 
 	private setupSocketListeners(): void {
 		// Avatar events
-		this.wsService.on(IO.AVATAR.UPDATED, (data: any) => {
-			if (data.idx == this.avatarIdx) {
-				this.avatarSubject.next(data);
-			}
-		});
+		this.wsService.on(IO.AVATAR.UPDATED, this.onAvatarUpdated);
 
 		this.wsService.on(IO.AVATAR.SURVEY_REDO, (data: { avatarIdx: number; sessionId: string }) => {
 			if (data.avatarIdx === this.avatarIdx && this.sessionId === data.sessionId) {
