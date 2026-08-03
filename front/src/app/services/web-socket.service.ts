@@ -18,6 +18,7 @@ export class WebSocketService {
 	private socket: Socket | undefined;
 	private ioUrl: string = environment.API_HOST;
 	private disconnected = false;
+	private kicked = false;
 	private connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(new ConnectionStatus());
 	connectionStatus$ = this.connectionStatusSubject.asObservable();
 	private currentQuery: any = null;
@@ -35,6 +36,7 @@ export class WebSocketService {
 
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
+			if (this.kicked) return;
 			this.dialog.closeAll();
 			this.disconnected = true;
 			this.socket?.disconnect();
@@ -54,6 +56,7 @@ export class WebSocketService {
 
 		window.addEventListener('online', () => {
 			console.log('Browser is back online');
+			if (this.kicked) return;
 			this.dialog.closeAll();
 
 			this.socket?.connect();
@@ -69,6 +72,7 @@ export class WebSocketService {
 
 	private connect(query: any): void {
 		this.currentQuery = query;
+		this.kicked = false;
 		this.socket?.disconnect();
 		this.socket?.removeAllListeners();
 
@@ -128,6 +132,9 @@ export class WebSocketService {
 
 		this.socket.on('kicked', (data) => {
 			console.warn('kicked : ' + data.reason);
+			this.kicked = true;
+			this.socket?.io.reconnection(false);
+			this.dialog.closeAll();
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
@@ -164,6 +171,7 @@ export class WebSocketService {
 		});
 		this.socket.io.on('reconnect_failed', () => {
 			console.log('Reconnection failed — all attempts exhausted');
+			if (this.kicked) return;
 			this.dialog.closeAll();
 			this.showDisconnectedDialog();
 		});
@@ -183,8 +191,9 @@ export class WebSocketService {
 		this.socket.on('disconnect', (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
-			this.showReconnectingDialog();
 			this.updateDisconnectedStatus();
+			if (this.kicked) return;
+			this.showReconnectingDialog();
 		});
 		this.socket.on('error', (error: any) => {
 			this.snackbarService.showError(this.i18nService.instant('ERROR.IO_SOCKET_ERROR'));
