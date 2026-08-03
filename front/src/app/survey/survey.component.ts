@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { SurveyService } from '../services/api/survey.service';
-import { SnackbarService } from '../services/snackbar.service';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18nService } from '../services/i18n.service';
 import { Feedback } from '../models/feedback';
+import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 
 @Component({
 	selector: 'app-survey',
@@ -23,7 +24,7 @@ export class SurveyComponent implements OnInit {
 		private i18nService: I18nService,
 		private router: Router,
 		private surveyService: SurveyService,
-		private snackbarService: SnackbarService
+		private dialog: MatDialog
 	) {
 		this.i18nService.loadNamespace('survey');
 	}
@@ -52,10 +53,20 @@ export class SurveyComponent implements OnInit {
 		if (this.sessionId || this.avatarIdx || this.gameStateId) {
 			this.surveyService
 				.sendFeedback(this.sessionId, this.gameStateId, this.avatarIdx, this.feedback)
-				.subscribe(async () => {
-					this.snackbarService.showSuccess(this.i18nService.instant('SURVEY.THANK_YOU'));
-					await new Promise((resolve) => setTimeout(resolve, 3000));
-					this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
+				.subscribe(() => {
+					this.dialog
+						.open(InformationDialogComponent, {
+							disableClose: true,
+							data: {
+								title: this.i18nService.instant('SURVEY.THANK_YOU'),
+								message: this.i18nService.instant('BACK_TO_LOBBY'),
+								timerBtn: 3,
+							},
+						})
+						.afterClosed()
+						.subscribe(() => {
+							this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
+						});
 				});
 		}
 	}
