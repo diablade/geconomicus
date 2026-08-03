@@ -360,12 +360,19 @@ export class GameStateService {
 
 		this.wsService.on(IO.PLAYER.CONNECTIONS_SNAPSHOT, (snapshot: { idx: number; isConnected: boolean; lastSeen: Date }[]) => {
 			console.log('connections snapshot ws:', snapshot);
-			const current = this.connectedPlayersSubject.getValue();
-			const updated = current.map((conn) => {
-				const found = snapshot.find((s) => s.idx === conn.idx);
-				return found ? { ...conn, isConnected: found.isConnected, lastSeen: found.lastSeen } : conn;
+			const byIdx = new Map<number, ConnectionStatus>(
+				this.connectedPlayersSubject.getValue().map((conn) => [conn.idx, conn])
+			);
+			(snapshot ?? []).forEach((s) => {
+				const existing = byIdx.get(s.idx);
+				byIdx.set(s.idx, {
+					...(existing ?? new ConnectionStatus()),
+					idx: s.idx,
+					isConnected: s.isConnected,
+					lastSeen: s.lastSeen ? new Date(s.lastSeen) : null,
+				});
 			});
-			this.connectedPlayersSubject.next(updated);
+			this.connectedPlayersSubject.next(Array.from(byIdx.values()));
 		});
 		this.wsService.on(IO.PLAYER.DISTRIB_DU, async (data: any) => {
 			console.log('room distrib du ws:', data);
@@ -690,9 +697,13 @@ export class GameStateService {
 	 */
 	updatePlayerConnectionStatus(data: any, isConnected: boolean): void {
 		const currentConnections = this.connectedPlayersSubject.getValue();
-		const updatedConnections = currentConnections.map((connection) => {
-			return connection.idx === data.idx ? { ...connection, isConnected } : connection;
-		});
+		const known = currentConnections.some((connection) => connection.idx === data.idx);
+		const lastSeen = data.lastSeen ? new Date(data.lastSeen) : new Date();
+		const updatedConnections = known
+			? currentConnections.map((connection) =>
+					connection.idx === data.idx ? { ...connection, isConnected, lastSeen } : connection
+			  )
+			: [...currentConnections, { idx: data.idx, isConnected, lastSeen }];
 		this.connectedPlayersSubject.next(updatedConnections);
 	}
 
