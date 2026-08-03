@@ -58,8 +58,9 @@
 				[screenHeight]="screenHeight"></app-item>
 		</div>
 		<div class="production-reveal-title contour">{{ 'PRODUCTION.REVEAL_TITLE' | translate }}</div>
-		<!-- <div class="production-reveal-hint contourText white"> -->
+		<div class="square-zone-hint contourText white">
+			<span class="square-zone-gift">+{{ getBuildHint(group.recipe.weight) }}+⚡</span>
+		</div>
 		<!-- {{ 'PRODUCTION.REVEAL_HINT' | translate: { count: amountCardsForProd, level: group.recipe.weight + 1 } }} -->
-		<!-- </div> -->
 	</ng-template>
 </div>
