@@ -61,7 +61,7 @@ export class ThemesService {
 		const link = document.createElement('link');
 		link.id = 'twemoji-css';
 		link.rel = 'stylesheet';
-		link.href = 'https://cdn.jsdelivr.net/npm/twemoji-colr-font@latest/twemoji.css';
+		link.href = 'https://cdn.jsdelivr.net/npm/twemoji-colr-font@15.0.3/twemoji.css';
 		document.head.appendChild(link);
 	}
 
