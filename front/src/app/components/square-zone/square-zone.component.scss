@@ -24,6 +24,18 @@
 
 	&-icon {
 		font-size: 1.4rem;
+
+		&-png {
+			position: relative;
+			display: inline-block;
+			width: 1.8rem;
+			height: 1.8rem;
+			flex: none;
+
+			.item-png {
+				object-fit: contain;
+			}
+		}
 	}
 
 	&-title {

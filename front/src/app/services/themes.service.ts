@@ -85,6 +85,10 @@ export class ThemesService {
 		return `assets/i18n/themes/${this.currentTheme}/images/${this.icons[key]}`;
 	}
 
+	hasPNG(key: string): boolean {
+		return this.getTypeTheme() === 'PNG' && !!this.icons[key]?.endsWith('.png');
+	}
+
 	getTypeTheme(): string {
 		return this._typeTheme$.value!;
 	}

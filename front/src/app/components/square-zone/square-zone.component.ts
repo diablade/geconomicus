@@ -57,6 +57,14 @@ export class SquareZoneComponent implements OnInit, OnDestroy {
 		return this.themesService.getIcon(key);
 	}
 
+	getPNG(key: string) {
+		return this.themesService.getPNG(key);
+	}
+
+	isPNG(key: string) {
+		return this.themesService.hasPNG(key);
+	}
+
 	getBuildHint(weight: number): string {
 		switch (weight) {
 			case 0:

@@ -47,6 +47,7 @@ export class FakePlayerPanelComponent {
 
 	readonly themeKeys = this.themesService.getThemesKeys();
 	themeIndex = Math.max(0, this.themeKeys.indexOf('THEME.EMOJIS'));
+	theme = '';
 
 	overlayConfig: OverlayConfig | null = null;
 	showPrison = false;
@@ -86,6 +87,7 @@ export class FakePlayerPanelComponent {
 	}
 
 	private applyTheme(): void {
+		this.theme = this.themeKeys[this.themeIndex];
 		this.themesService.loadTheme(this.themeKeys[this.themeIndex]);
 	}
 

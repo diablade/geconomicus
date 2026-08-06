@@ -3,8 +3,14 @@
 		<div *ngIf="productionReveal" class="wheel"></div>
 	</div>
 	<div class="square-zone-header">
-		<span class="square-zone-icon emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+		<span
+			*ngIf="!isPNG(group.recipe.letter)"
+			class="square-zone-icon emoji"
+			[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 			{{ getIcon(group.recipe.letter) }}
+		</span>
+		<span *ngIf="isPNG(group.recipe.letter)" class="square-zone-icon-png">
+			<img alt="" class="item-png" [ngSrc]="getPNG(group.recipe.letter)" fill />
 		</span>
 		<span class="square-zone-title contour">{{ group.recipe.letter | translate }}</span>
 		<span class="square-zone-count">{{ group.cards.length }}/{{ amountCardsForProd }}</span>
