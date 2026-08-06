@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "QR-Code scannen",
 			"CAMERA": "Kamera",
-			"SELECT_DEVICE": "Kamera auswählen"
+			"SELECT_DEVICE": "Kamera auswählen",
+			"DENIED": "Kamerazugriff verweigert",
+			"NOT_FOUND": "Keine Kamera erkannt",
+			"BUSY": "Die Kamera wird bereits von einer anderen App oder einem anderen Tab verwendet",
+			"UNAVAILABLE": "Kamera nicht verfügbar",
+			"ALLOW_PATH_IOS": "Safari: Tippen Sie auf « aA » links in der Adressleiste → Website-Einstellungen → Kamera → Erlauben.\nAndernfalls: Einstellungen → Safari → Kamera → Fragen, dann Seite neu laden.",
+			"ALLOW_PATH_ANDROID": "Chrome: Tippen Sie auf das Schloss (oder (i)) links neben der Adresse → Berechtigungen → Kamera → Zulassen, dann erneut versuchen.",
+			"ALLOW_PATH_DESKTOP": "Klicken Sie auf das Schloss links in der Adressleiste → Kamera → Zulassen, dann Seite neu laden.",
+			"RETRY": "Erneut versuchen",
+			"RELOAD": "Seite neu laden",
+			"USE_SHORT_CODE": "Kurzcode verwenden",
+			"UNREADABLE": "QR-Code nicht lesbar"
 		},
 		"SEIZURE": {
 			"TITLE": "Zahlungsausfall - Vermögenswerte pfänden",

@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Scanner le QR code",
 			"CAMERA": "Caméra",
-			"SELECT_DEVICE": "Sélectionner la caméra"
+			"SELECT_DEVICE": "Sélectionner la caméra",
+			"DENIED": "Accès à la caméra refusé",
+			"NOT_FOUND": "Aucune caméra détectée",
+			"BUSY": "La caméra est déjà utilisée par une autre application ou un autre onglet",
+			"UNAVAILABLE": "Caméra indisponible",
+			"ALLOW_PATH_IOS": "Safari : touchez « aA » à gauche de la barre d'adresse → Réglages du site web → Caméra → Autoriser.\nSinon : Réglages → Safari → Caméra → Demander, puis rechargez la page.",
+			"ALLOW_PATH_ANDROID": "Chrome : touchez le cadenas (ou (i)) à gauche de l'adresse → Autorisations → Caméra → Autoriser, puis réessayez.",
+			"ALLOW_PATH_DESKTOP": "Cliquez sur le cadenas à gauche de la barre d'adresse → Caméra → Autoriser, puis rechargez la page.",
+			"RETRY": "Réessayer",
+			"RELOAD": "Recharger la page",
+			"USE_SHORT_CODE": "Utiliser un code court",
+			"UNREADABLE": "QR code illisible"
 		},
 		"SEIZURE": {
 			"TITLE": "Défaut de paiement - saisir des biens",

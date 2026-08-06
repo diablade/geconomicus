@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Scansionare il codice QR",
 			"CAMERA": "Fotocamera",
-			"SELECT_DEVICE": "Selezionare fotocamera"
+			"SELECT_DEVICE": "Selezionare fotocamera",
+			"DENIED": "Accesso alla fotocamera negato",
+			"NOT_FOUND": "Nessuna fotocamera rilevata",
+			"BUSY": "La fotocamera è già in uso da un'altra applicazione o scheda",
+			"UNAVAILABLE": "Fotocamera non disponibile",
+			"ALLOW_PATH_IOS": "Safari: tocca « aA » a sinistra della barra degli indirizzi → Impostazioni sito web → Fotocamera → Consenti.\nAltrimenti: Impostazioni → Safari → Fotocamera → Chiedi, poi ricarica la pagina.",
+			"ALLOW_PATH_ANDROID": "Chrome: tocca il lucchetto (o (i)) a sinistra dell'indirizzo → Autorizzazioni → Fotocamera → Consenti, poi riprova.",
+			"ALLOW_PATH_DESKTOP": "Fai clic sul lucchetto a sinistra della barra degli indirizzi → Fotocamera → Consenti, poi ricarica la pagina.",
+			"RETRY": "Riprova",
+			"RELOAD": "Ricarica la pagina",
+			"USE_SHORT_CODE": "Usa un codice breve",
+			"UNREADABLE": "Codice QR illeggibile"
 		},
 		"SEIZURE": {
 			"TITLE": "Inadempimento - sequestrare beni",

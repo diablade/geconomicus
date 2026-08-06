@@ -14,6 +14,7 @@ import { AudioService } from '../services/audio.service';
 import { ThemesService } from '../services/themes.service';
 import { SessionService } from '../services/api/session.service';
 import { FullscreenService } from '../services/fullscreen.service';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
 	selector: 'app-home',
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 		private localStorageService: LocalStorageService,
 		private audioService: AudioService,
 		private fullscreenService: FullscreenService,
+		private snackbarService: SnackbarService,
 		public dialog: MatDialog
 	) {
 		this.i18nService.loadNamespace('home');
@@ -91,10 +93,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 	joinWithCamera() {
 		const dialogRef = this.dialog.open(ScannerQrCode, {});
-		dialogRef.afterClosed().subscribe((url) => {
-			const u = new URL(url);
-			const paths = u.pathname.split('/').filter(Boolean);
-			this.router.navigate(paths);
+		dialogRef.afterClosed().subscribe((outcome) => {
+			if (!outcome?.value) {
+				return;
+			}
+			try {
+				const u = new URL(outcome.value);
+				const paths = u.pathname.split('/').filter(Boolean);
+				this.router.navigate(paths);
+			} catch (error) {
+				this.snackbarService.showError(this.i18nService.instant('DIALOG.QR_SCAN.UNREADABLE'));
+			}
 		});
 	}
 

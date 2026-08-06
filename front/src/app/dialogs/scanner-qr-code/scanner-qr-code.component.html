@@ -1,10 +1,16 @@
 <h2 mat-dialog-title>{{ "DIALOG.QR_SCAN.TITLE"|translate }}</h2>
 <mat-dialog-content>
-	<ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event, action)">
-	</ngx-scanner-qrcode>
+	<div class="scanner-frame" [class.scanner-frame--hidden]="failure">
+		<ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event)">
+		</ngx-scanner-qrcode>
+	</div>
+	<div class="scanner-failure" *ngIf="failure">
+		<p class="scanner-failure__message">{{ failureMessageKey|translate }}</p>
+		<p class="scanner-failure__path" *ngIf="failure === 'denied'">{{ allowPathKey|translate }}</p>
+	</div>
 </mat-dialog-content>
 <mat-dialog-actions [align]="'center'">
-	<mat-form-field appearance="fill">
+	<mat-form-field appearance="fill" *ngIf="!failure">
 		<mat-label>{{ "DIALOG.QR_SCAN.CAMERA"|translate }}</mat-label>
 		<select #select1 (change)="cameraChanged(select1.value)" matNativeControl required>
 			<option [value]="null" selected>{{ "DIALOG.QR_SCAN.SELECT_DEVICE"|translate }}</option>
@@ -12,5 +18,9 @@
 				[selected]="i == action.deviceIndexActive">{{ c.label }}</option>
 		</select>
 	</mat-form-field>
+	<button mat-button *ngIf="failure" (click)="retry()">{{ retryLabelKey|translate }}</button>
+	<button mat-button *ngIf="failure && shortCodeOffered" (click)="switchToShortCode()">
+		{{ "DIALOG.QR_SCAN.USE_SHORT_CODE"|translate }}
+	</button>
 	<button mat-button (click)="closeDialog()">{{ "CANCEL"|translate }}</button>
 </mat-dialog-actions>

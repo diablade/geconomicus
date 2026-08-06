@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Scan QR Code",
 			"CAMERA": "Camera",
-			"SELECT_DEVICE": "Select camera"
+			"SELECT_DEVICE": "Select camera",
+			"DENIED": "Camera access denied",
+			"NOT_FOUND": "No camera detected",
+			"BUSY": "The camera is already in use by another app or tab",
+			"UNAVAILABLE": "Camera unavailable",
+			"ALLOW_PATH_IOS": "Safari: tap « aA » on the left of the address bar → Website Settings → Camera → Allow.\nOtherwise: Settings → Safari → Camera → Ask, then reload the page.",
+			"ALLOW_PATH_ANDROID": "Chrome: tap the padlock (or (i)) on the left of the address → Permissions → Camera → Allow, then retry.",
+			"ALLOW_PATH_DESKTOP": "Click the padlock on the left of the address bar → Camera → Allow, then reload the page.",
+			"RETRY": "Retry",
+			"RELOAD": "Reload the page",
+			"USE_SHORT_CODE": "Use a short code",
+			"UNREADABLE": "Unreadable QR code"
 		},
 		"SEIZURE": {
 			"TITLE": "Payment default - seize assets",

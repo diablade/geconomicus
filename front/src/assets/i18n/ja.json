@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "QRコードをスキャン",
 			"CAMERA": "カメラ",
-			"SELECT_DEVICE": "カメラを選択"
+			"SELECT_DEVICE": "カメラを選択",
+			"DENIED": "カメラへのアクセスが拒否されました",
+			"NOT_FOUND": "カメラが検出されません",
+			"BUSY": "カメラは他のアプリまたはタブで使用中です",
+			"UNAVAILABLE": "カメラを利用できません",
+			"ALLOW_PATH_IOS": "Safari：アドレスバー左の「あぁ」→ Webサイトの設定 → カメラ → 許可。\nまたは：設定 → Safari → カメラ → 確認、その後ページを再読み込みしてください。",
+			"ALLOW_PATH_ANDROID": "Chrome：アドレス左の鍵アイコン（または (i)）→ 権限 → カメラ → 許可、その後もう一度お試しください。",
+			"ALLOW_PATH_DESKTOP": "アドレスバー左の鍵アイコン → カメラ → 許可、その後ページを再読み込みしてください。",
+			"RETRY": "再試行",
+			"RELOAD": "ページを再読み込み",
+			"USE_SHORT_CODE": "短いコードを使う",
+			"UNREADABLE": "QRコードを読み取れません"
 		},
 		"SEIZURE": {
 			"TITLE": "支払い不履行 - 資産を差し押さえ",

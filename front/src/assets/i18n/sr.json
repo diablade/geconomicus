@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Skeniraj QR kod",
 			"CAMERA": "Kamera",
-			"SELECT_DEVICE": "Izaberi kameru"
+			"SELECT_DEVICE": "Izaberi kameru",
+			"DENIED": "Pristup kameri je odbijen",
+			"NOT_FOUND": "Nijedna kamera nije otkrivena",
+			"BUSY": "Kameru već koristi druga aplikacija ili kartica",
+			"UNAVAILABLE": "Kamera nije dostupna",
+			"ALLOW_PATH_IOS": "Safari: dodirni « aA » levo od adresne trake → Podešavanja sajta → Kamera → Dozvoli.\nU suprotnom: Podešavanja → Safari → Kamera → Pitaj, zatim ponovo učitaj stranicu.",
+			"ALLOW_PATH_ANDROID": "Chrome: dodirni katanac (ili (i)) levo od adrese → Dozvole → Kamera → Dozvoli, zatim pokušaj ponovo.",
+			"ALLOW_PATH_DESKTOP": "Klikni na katanac levo od adresne trake → Kamera → Dozvoli, zatim ponovo učitaj stranicu.",
+			"RETRY": "Pokušaj ponovo",
+			"RELOAD": "Ponovo učitaj stranicu",
+			"USE_SHORT_CODE": "Koristi kratki kod",
+			"UNREADABLE": "QR kod nije čitljiv"
 		},
 		"SEIZURE": {
 			"TITLE": "Neplaćanje - zapleni imovinu",

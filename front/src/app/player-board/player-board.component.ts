@@ -495,10 +495,12 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	}
 
 	scan() {
-		const dialogRef = this.dialog.open(ScannerQrCode, {});
-		dialogRef.afterClosed().subscribe((dataRaw) => {
-			if (dataRaw) {
-				this.buy(dataRaw);
+		const dialogRef = this.dialog.open(ScannerQrCode, { data: { allowShortCode: true } });
+		dialogRef.afterClosed().subscribe((outcome) => {
+			if (outcome?.useShortCode) {
+				this.openDialogShorCode();
+			} else if (outcome?.value) {
+				this.buy(outcome.value);
 			}
 		});
 	}

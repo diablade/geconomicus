@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Scanează codul QR",
 			"CAMERA": "Cameră",
-			"SELECT_DEVICE": "Selectează cameră"
+			"SELECT_DEVICE": "Selectează cameră",
+			"DENIED": "Acces la cameră refuzat",
+			"NOT_FOUND": "Nicio cameră detectată",
+			"BUSY": "Camera este deja folosită de altă aplicație sau filă",
+			"UNAVAILABLE": "Cameră indisponibilă",
+			"ALLOW_PATH_IOS": "Safari: atinge « aA » în stânga barei de adrese → Setări site web → Cameră → Permite.\nAltfel: Setări → Safari → Cameră → Întreabă, apoi reîncarcă pagina.",
+			"ALLOW_PATH_ANDROID": "Chrome: atinge lacătul (sau (i)) din stânga adresei → Permisiuni → Cameră → Permite, apoi încearcă din nou.",
+			"ALLOW_PATH_DESKTOP": "Dă clic pe lacătul din stânga barei de adrese → Cameră → Permite, apoi reîncarcă pagina.",
+			"RETRY": "Încearcă din nou",
+			"RELOAD": "Reîncarcă pagina",
+			"USE_SHORT_CODE": "Folosește un cod scurt",
+			"UNREADABLE": "Cod QR ilizibil"
 		},
 		"SEIZURE": {
 			"TITLE": "Neplată - sechestrare bunuri",

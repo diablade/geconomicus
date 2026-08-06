@@ -97,7 +97,18 @@
 		"QR_SCAN": {
 			"TITLE": "Escanear el código QR",
 			"CAMERA": "Cámara",
-			"SELECT_DEVICE": "Seleccionar la cámara"
+			"SELECT_DEVICE": "Seleccionar la cámara",
+			"DENIED": "Acceso a la cámara denegado",
+			"NOT_FOUND": "No se ha detectado ninguna cámara",
+			"BUSY": "La cámara ya está siendo utilizada por otra aplicación o pestaña",
+			"UNAVAILABLE": "Cámara no disponible",
+			"ALLOW_PATH_IOS": "Safari: toca « aA » a la izquierda de la barra de direcciones → Ajustes del sitio web → Cámara → Permitir.\nSi no: Ajustes → Safari → Cámara → Preguntar, y recarga la página.",
+			"ALLOW_PATH_ANDROID": "Chrome: toca el candado (o (i)) a la izquierda de la dirección → Permisos → Cámara → Permitir, y vuelve a intentarlo.",
+			"ALLOW_PATH_DESKTOP": "Haz clic en el candado a la izquierda de la barra de direcciones → Cámara → Permitir, y recarga la página.",
+			"RETRY": "Reintentar",
+			"RELOAD": "Recargar la página",
+			"USE_SHORT_CODE": "Usar un código corto",
+			"UNREADABLE": "Código QR ilegible"
 		},
 		"SEIZURE": {
 			"TITLE": "Impago - embargo de bienes",
