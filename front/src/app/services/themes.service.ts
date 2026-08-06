@@ -13,6 +13,7 @@ export class ThemesService {
 		'THEME.TWEMOJIS': 'twemojis',
 		'THEME.EMOJIS': 'emojis',
 		'THEME.CLASSIC': 'classic',
+        'THEME.POKE':'poke'
 	};
 
 	private _typeTheme$ = new BehaviorSubject<string>('CARD');
@@ -78,6 +79,10 @@ export class ThemesService {
 
 	getIcon(key: string): string {
 		return this.icons[key];
+	}
+
+	getPNG(key: string): string {
+		return `assets/i18n/themes/${this.currentTheme}/images/${this.icons[key]}`;
 	}
 
 	getTypeTheme(): string {

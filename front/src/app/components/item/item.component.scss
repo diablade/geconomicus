@@ -54,6 +54,26 @@
 		}
 	}
 }
+.item-png {
+	object-fit: contain;
+	padding: 4%;
+}
+
+.card-icon-back-png {
+	position: relative;
+	width: 3rem;
+	height: 3rem;
+	flex: none;
+}
+
+.ingredient-png {
+	position: relative;
+	display: inline-block;
+	width: 1.4rem;
+	height: 1.4rem;
+	flex: none;
+}
+
 .price {
 	font-family: Times, Arial, serif;
     font-size: 1.7rem;

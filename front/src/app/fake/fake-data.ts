@@ -35,7 +35,7 @@ export function makeFakeCards(): Card[] {
 		makeCard('C', 0, 'C01'),
 		makeCard('D', 1, 'D11'),
 		makeCard('E', 1, 'E11'),
-		makeCard('F', 2, 'F11'),
+		makeCard('F', 2, 'F21'),
 	];
 }
 
@@ -73,7 +73,7 @@ export function makeFakeRules(typeMoney: string, autoSeizure: boolean): Rules {
 	const rules = new Rules();
 	rules.typeMoney = typeMoney;
 	rules.amountCardsForProd = 4;
-	rules.generatedIdenticalLetters = 4;
+	rules.generatedIdenticalLetters = 5;
 	rules.durationCredit = 5;
 	rules.timerPrison = 5;
 	rules.autoBank = true;

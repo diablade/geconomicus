@@ -7,8 +7,15 @@
 	[style.width]="width"
 	[style.height]="height">
 	<div class="face" (click)="cardClicked()">
-		<div [style.font-size]="iconSize" class="card-icon emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+		<div
+			*ngIf="typeTheme !== 'PNG'"
+			[style.font-size]="iconSize"
+			class="card-icon emoji"
+			[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 			{{ getIcon(card.key) }}
+		</div>
+		<div *ngIf="typeTheme === 'PNG'" class="card-icon">
+			<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
 		</div>
 		<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
 		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">
@@ -28,8 +35,14 @@
 			class="frame frame-light d-flex flex-row justify-content-between align-items-center p-2"
 			*ngIf="flipState === 'back'"
 			[style.top]="gapBackItems + 'px'">
-			<div class="card-icon-back emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+			<div
+				*ngIf="typeTheme !== 'PNG'"
+				class="card-icon-back emoji"
+				[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 				{{ getIcon(card.key) }}
+			</div>
+			<div *ngIf="typeTheme === 'PNG'" class="card-icon-back-png">
+				<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
 			</div>
 			<div class="d-flex flex-column">
 				<div class="card-text-back">{{ card.key | translate }}</div>
@@ -60,10 +73,14 @@
 					[class.is-back]="flipState === 'back'">
 					<div class="flip-face flip-face-front" [ngClass]="[card.color]">
 						<div
+							*ngIf="typeTheme !== 'PNG'"
 							[style.font-size]="iconSize"
 							class="card-icon emoji"
 							[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 							{{ getIcon(card.key) }}
+						</div>
+						<div *ngIf="typeTheme === 'PNG'" class="card-icon">
+							<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
 						</div>
 						<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
 						<div
@@ -98,8 +115,11 @@
 					class="recipe-ingredient"
 					[class.have]="ingredient.have > 0"
 					[class.missing]="ingredient.have === 0">
-					<span class="emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+					<span *ngIf="typeTheme !== 'PNG'" class="emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 						{{ getIcon(ingredient.key) }}
+					</span>
+					<span *ngIf="typeTheme === 'PNG'" class="ingredient-png">
+						<img alt="" class="item-png" [ngSrc]="getPNG(ingredient.key)" fill />
 					</span>
 					<span class="ingredient-name">{{ ingredient.key | translate }}</span>
 					<span class="check" *ngIf="ingredient.have > 0">✅</span>

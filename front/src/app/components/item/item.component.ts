@@ -214,6 +214,10 @@ export class ItemComponent implements OnChanges, OnDestroy {
 		return this.themesService.getIcon(icon);
 	}
 
+	getPNG(key: string) {
+		return this.themesService.getPNG(key);
+	}
+
 	createShortCode() {
 		const shortCode = new ShortCode(this.getData(), this.suffixShortCode);
 		this.code = shortCode.code;
