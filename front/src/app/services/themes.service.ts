@@ -45,7 +45,7 @@ export class ThemesService {
 			this.i18nService.loadNamespace('themes/' + pathIcon);
 			const path = `assets/i18n/themes/${pathIcon}/icons.json`;
 			this.http.get<Record<string, string>>(path).subscribe((icons: Record<string, string>) => {
-				this.icons = icons;
+				this.icons = namespace === 'twemojis' ? this.stripVariationSelectors(icons) : icons;
 				this.currentTheme = namespace;
 				if (namespace === 'twemojis') {
 					this.setTypeTheme('TWEMOJI');
@@ -68,6 +68,12 @@ export class ThemesService {
 	unloadTwemojiCss() {
 		const link = document.getElementById('twemoji-css');
 		if (link) link.remove();
+	}
+
+	private stripVariationSelectors(icons: Record<string, string>): Record<string, string> {
+		return Object.fromEntries(
+			Object.entries(icons).map(([key, value]) => [key, value.replace(/\uFE0F/g, '')])
+		);
 	}
 
 	getIcon(key: string): string {

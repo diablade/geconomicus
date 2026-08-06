@@ -43,8 +43,10 @@ export class FakePlayerPanelComponent {
 	readonly hapticTiers = HAPTIC_TIERS;
 	open = false;
 	isJune = false;
-	isItemTheme = true;
 	autoSeizure = false;
+
+	readonly themeKeys = this.themesService.getThemesKeys();
+	themeIndex = Math.max(0, this.themeKeys.indexOf('THEME.EMOJIS'));
 
 	overlayConfig: OverlayConfig | null = null;
 	showPrison = false;
@@ -64,9 +66,13 @@ export class FakePlayerPanelComponent {
 		this.reload();
 	}
 
-	toggleTheme(): void {
-		this.isItemTheme = !this.isItemTheme;
+	cycleTheme(): void {
+		this.themeIndex = (this.themeIndex + 1) % this.themeKeys.length;
 		this.applyTheme();
+	}
+
+	get themeLabel(): string {
+		return this.themesService.getThemeName(this.themeKeys[this.themeIndex]);
 	}
 
 	toggleAutoSeizure(): void {
@@ -80,7 +86,7 @@ export class FakePlayerPanelComponent {
 	}
 
 	private applyTheme(): void {
-		this.themesService.loadTheme(this.isItemTheme ? 'THEME.EMOJIS' : 'THEME.CLASSIC');
+		this.themesService.loadTheme(this.themeKeys[this.themeIndex]);
 	}
 
 	// ── Overlay tests (all 4s, dismissable) ───────────────────────────────────

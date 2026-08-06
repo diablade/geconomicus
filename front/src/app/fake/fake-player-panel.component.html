@@ -5,9 +5,7 @@
 	<div class="fake-section">
 		<span class="fake-label">Mode</span>
 		<button type="button" class="fake-btn" (click)="toggleMoney()">{{ isJune ? '🌱 June' : '💶 Debt' }}</button>
-		<button type="button" class="fake-btn" (click)="toggleTheme()">
-			{{ isItemTheme ? '🧩 Item' : '🃏 Card' }}
-		</button>
+		<button type="button" class="fake-btn" (click)="cycleTheme()">🎨 {{ themeLabel }}</button>
 		<button type="button" class="fake-btn" [class.on]="autoSeizure" (click)="toggleAutoSeizure()">
 			{{ autoSeizure ? '🚓 autoSeizure ON' : '🚓 autoSeizure OFF' }}
 		</button>

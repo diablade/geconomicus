@@ -9,7 +9,7 @@ let SessionSchema = new Schema({
 	location: { type: String, required: true, default: "-" },
 	shortId: { type: String, required: true },
 	devMode: { type: Boolean, required: true, default: false },
-	theme: { type: String, required: true, default: "CLASSIC" },
+	theme: { type: String, required: true, default: "TWEMOJI" },
 	status: { type: String, required: true, default: "open" },
 	//open, in_progress, ended
 	gamesRules: { type: [RulesSchema], required: true, default: [] },

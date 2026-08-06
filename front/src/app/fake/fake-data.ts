@@ -100,6 +100,7 @@ export function makeFakeBundle(typeMoney: string, autoSeizure: boolean) {
 		cards: makeFakeCards(),
 		credits: isJune ? [] : [makeFakeCredit()],
 		actionTokens: 4,
+        theme:'TWEMOJI',
 		gameState: makeFakeGameState(typeMoney),
 		rules: makeFakeRules(typeMoney, autoSeizure),
 		rate: makeFakeRate(),
