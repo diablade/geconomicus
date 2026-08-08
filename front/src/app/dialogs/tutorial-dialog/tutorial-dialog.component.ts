@@ -71,10 +71,11 @@ export class TutorialDialogComponent implements AfterViewInit {
 		public dialogRef: MatDialogRef<TutorialDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: unknown,
 		private i18n: I18nService
-	) {}
+	) {
+		this.i18n.loadNamespace('tutorial');
+	}
 
 	ngAfterViewInit(): void {
-		this.i18n.loadNamespace('tutorial');
 		this.playCurrentVideo();
 	}
 

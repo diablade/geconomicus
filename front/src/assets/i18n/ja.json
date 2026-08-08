@@ -8,7 +8,6 @@
 	"GAME_NOTICE": "ゲームのお知らせ",
 	"BY_DEFAULT": "デフォルトで",
 	"PUBLIC_KEY": "公開鍵",
-	"TUTORIAL": "遊び方",
 	"LAST_SEEN": "最終接続：{{lastSeen}}",
 	"VALUES_BY_DEFAULT": "デフォルト値",
 	"BACK_TO_LOBBY": "待機ルームに戻る",

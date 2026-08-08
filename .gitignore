@@ -12,3 +12,5 @@ node_modules/*
 graphify-out/*
 
 logs/
+
+front/src/assets/i18n/themes/poke/

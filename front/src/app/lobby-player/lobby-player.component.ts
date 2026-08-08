@@ -66,6 +66,7 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		private i18n: I18nService
 	) {
 		this.i18n.loadNamespace('avatar');
+		this.i18n.loadNamespace('tutorial');
 	}
 
 	ngOnInit() {
