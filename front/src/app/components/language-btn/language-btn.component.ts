@@ -18,6 +18,7 @@ export class LanguageBtnComponent implements OnInit {
 		{flag: "🇪🇸", language: "Español", lang: "es"},
 		{flag: "🇮🇹", language: "Italiano", lang: "it"},
 		{flag: "💚", language: "Esperanto", lang: "eo"},
+		{flag: "🇵🇹", language: "Português", lang: "pt_BR"},
 		{flag: "🇬🇧", language: "English", lang: "en"},
 		{flag: "🇷🇸", language: "Srpski", lang: "sr"},
 		{flag: "🇯🇵", language: "日本語", lang: "ja"},
