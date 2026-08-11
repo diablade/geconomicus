@@ -101,7 +101,7 @@
         "BUY_6": "Por código de 3 dígitos",
         "BUY_7": "Desative a câmera através do interruptor ao lado do botão Comprar.",
         "BUY_8": "Clique em Comprar para fazer aparecer um teclado, em seguida digita os 3 dígitos que se encontram no meio do QR code da carta comprada.",
-        "TITLE_PRODUCTION": "Criar uma carta de valor superior",
+        "TITLE_PRODUCTION": "Produzir uma carta de valor superior",
         "PROD_1": "No canto da carta aparece o número de cartas idênticas e empilhadas que você possui.",
         "PROD_2": "Estas cartas podem ser vendidas, como todas as outras, porém, uma de cada vez.",
         "PROD_3": "Assim que você juntar {{count}} cartas idênticas, um botão permitirá obter uma carta de valor superior como se segue:",
@@ -144,7 +144,7 @@
         "BUILD_UP_1": "Criar uma carta de Energia",
         "BUILD_UP_2": "Criar uma carta de Tecnologia",
         "BUILD_UP": "Criar uma carta de valor superior",
-        "IN_DECK": "a carta <b>{{cardName}}</b>está no <b>baralho</b>",
+        "IN_DECK": "a carta <b>{{cardName}}</b> está no <b>baralho</b>",
         "IN_PLAYER": "a carta <b>{{cardName}}</b> está com o jogador <b>{{player}}</b>"
     },
     "BANK": {
@@ -678,7 +678,7 @@
             "PERCENTAGE": "% do total",
             "GRAPHIC": "Gráfico",
             "CURVE": "Curva",
-            "CAMBER": "Camembert"
+            "CAMBER": "Pizza"
         }
     }
 }
