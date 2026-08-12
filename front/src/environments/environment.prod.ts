@@ -48,6 +48,9 @@ export const environment = {
 		END: 'game/end',
 		DELETE_GAME: 'game/delete',
 	},
+	TOOLS: {
+		SIMULATE: 'tools/simulate',
+	},
 	ACTION: {
 		GET_TARGET_CARDS: 'game-state/action/get-target-cards',
 		AVAILABLE_PLAYERS: 'game-state/action/available-players',

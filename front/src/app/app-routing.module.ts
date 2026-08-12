@@ -16,6 +16,7 @@ import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
 import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TableBoardComponent } from './table-board/table-board.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
+import { ToolsComponent } from './tools/tools.component';
 
 const routes: Routes = [
 	{ path: '', component: HomeComponent },
@@ -30,7 +31,7 @@ const routes: Routes = [
 	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent },
 	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent },
 	{ path: 'results/:sessionId', component: SessionResultsCompareComponent },
-
+	{ path: 'tools', component: ToolsComponent },
 	{ path: 'module/galileo', component: ModuleGalileoComponent },
 	{ path: 'module/gini', component: ModuleWealthDistribComponent },
 	{ path: 'module/fiscalite', component: ModuleFiscaliteComponent },

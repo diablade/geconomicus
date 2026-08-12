@@ -1,0 +1,802 @@
+<div class="tools">
+	<header>
+		<h1>{{ 'TOOLS.TITLE' | translate }}</h1>
+		<p class="sub">
+			{{
+				'TOOLS.SUMMARY'
+					| translate
+						: {
+								shape: 'TOOLS.SHAPE.' + shapeKey | translate,
+								need: request.rules.amountCardsForProd,
+								copies: request.rules.generatedIdenticalLetters,
+								letters: lettersMinted,
+								cards: cardsPerLevel,
+								rounds: roundsResolved,
+						  }
+			}}
+		</p>
+	</header>
+
+	<div class="runbar">
+		<mat-form-field appearance="outline" class="runfield wide">
+			<mat-label>{{ 'TOOLS.FIELD.GAME' | translate }}</mat-label>
+			<mat-select [(ngModel)]="request.typeMoney">
+				<mat-option value="june">{{ 'TOOLS.GAME.JUNE' | translate }}</mat-option>
+				<mat-option value="debt">{{ 'TOOLS.GAME.DEBT' | translate }}</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield">
+			<mat-label>{{ 'TOOLS.FIELD.PLAYERS' | translate }}</mat-label>
+			<input matInput type="number" min="2" max="120" [(ngModel)]="request.players" />
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield">
+			<mat-label>{{ 'TOOLS.FIELD.ROUNDS' | translate }}</mat-label>
+			<input matInput type="number" min="1" max="1000" [(ngModel)]="request.rounds" />
+		</mat-form-field>
+		<span class="approx">{{ 'TOOLS.FIELD.ROUNDS_APPROX' | translate: { minutes: approxMinutes } }}</span>
+
+		<span class="divider"></span>
+
+		<mat-form-field appearance="outline" class="runfield wide">
+			<mat-label>{{ 'TOOLS.FIELD.CARDS_NEEDED' | translate }}</mat-label>
+			<mat-select [(ngModel)]="request.rules.amountCardsForProd">
+				<mat-option [value]="3">{{ 'TOOLS.SHAPE.OPTION_TRIANGLE' | translate }}</mat-option>
+				<mat-option [value]="4">{{ 'TOOLS.SHAPE.OPTION_SQUARE' | translate }}</mat-option>
+				<mat-option [value]="5">{{ 'TOOLS.SHAPE.OPTION_QUINTE' | translate }}</mat-option>
+				<mat-option [value]="6">{{ 'TOOLS.SHAPE.OPTION_CUSTOM' | translate }}</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield">
+			<mat-label>{{ 'TOOLS.FIELD.COPIES_MINTED' | translate }}</mat-label>
+			<input matInput type="number" min="2" max="12" [(ngModel)]="request.rules.generatedIdenticalLetters" />
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield">
+			<mat-label>{{ 'TOOLS.FIELD.OPENING_HAND' | translate }}</mat-label>
+			<input matInput type="number" min="1" max="12" [(ngModel)]="request.rules.distribInitCards" />
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield" *ngIf="!request.rules.generateLettersAuto">
+			<mat-label>{{ 'TOOLS.FIELD.LETTERS_IN_DECK' | translate }}</mat-label>
+			<input matInput type="number" min="1" max="200" [(ngModel)]="request.rules.generateLettersInDeck" />
+		</mat-form-field>
+		<mat-form-field appearance="outline" class="runfield">
+			<mat-label>{{ 'TOOLS.FIELD.SEED' | translate }}</mat-label>
+			<input matInput type="number" [(ngModel)]="request.seed" />
+		</mat-form-field>
+		<button mat-icon-button class="dice" [disabled]="running" (click)="randomSeed()"
+			[attr.aria-label]="'TOOLS.ACTION.RANDOM_SEED' | translate"
+			[title]="'TOOLS.ACTION.RANDOM_SEED' | translate">🎲</button>
+		<mat-slide-toggle class="runtoggle" [(ngModel)]="request.rules.generateLettersAuto">
+			{{ 'TOOLS.FIELD.AUTO_LETTERS' | translate }}
+		</mat-slide-toggle>
+
+		<span class="spacer"></span>
+
+		<button mat-button (click)="optionsOpen = !optionsOpen">
+			{{ optionsOpen ? '▾' : '▸' }} {{ 'TOOLS.OPTIONS' | translate }}
+		</button>
+		<button mat-button (click)="methodOpen = !methodOpen">
+			{{ methodOpen ? '▾' : '▸' }} {{ 'TOOLS.NOTE.TITLE' | translate }}
+		</button>
+		<span class="elapsed" *ngIf="elapsedMs">{{ 'TOOLS.ELAPSED' | translate: { ms: elapsedMs } }}</span>
+		<button mat-raised-button color="primary" [disabled]="running" (click)="sessionRun()">
+			{{ running ? ('TOOLS.ACTION.RUNNING' | translate) : ('TOOLS.ACTION.RUN' | translate) }}
+		</button>
+	</div>
+
+	<p class="warn" *ngIf="alphabetOverflow > 0">
+		{{ 'TOOLS.ALPHABET_WARNING' | translate: { count: alphabetOverflow } }}
+	</p>
+	<p class="error" *ngIf="error">{{ error }}</p>
+
+	<section class="panel note" *ngIf="methodOpen">
+		<h2>{{ 'TOOLS.NOTE.TITLE' | translate }}</h2>
+		<div class="note-cols">
+			<div>
+				<h3>{{ 'TOOLS.NOTE.COSTS_ROUND' | translate }}</h3>
+				<ul class="cost yes">
+					<li>{{ 'TOOLS.NOTE.COST_BUY' | translate }}</li>
+					<li>{{ 'TOOLS.NOTE.COST_SEARCH' | translate }}</li>
+					<li *ngIf="isDebt">{{ 'TOOLS.NOTE.COST_CREDIT' | translate }}</li>
+				</ul>
+				<h3>{{ 'TOOLS.NOTE.FREE' | translate }}</h3>
+				<ul class="cost no">
+					<li>{{ 'TOOLS.NOTE.FREE_PRODUCE' | translate }}</li>
+					<li>{{ 'TOOLS.NOTE.FREE_SELL' | translate }}</li>
+					<li *ngIf="isDebt">{{ 'TOOLS.NOTE.FREE_SETTLE' | translate }}</li>
+					<li>{{ 'TOOLS.NOTE.FREE_DEATH' | translate }}</li>
+				</ul>
+			</div>
+			<div>
+				<h3>{{ 'TOOLS.NOTE.FORMULAS' | translate }}</h3>
+				<dl class="formulas">
+					<dt>{{ 'TOOLS.NOTE.F_ROUNDS' | translate }}</dt>
+					<dd>
+						<strong>{{ roundsResolved }}</strong> ≈ {{ approxMinutes }} min —
+						{{ 'TOOLS.HINT.ROUNDS' | translate }}
+					</dd>
+					<dt>{{ 'TOOLS.NOTE.F_CARDS' | translate }}</dt>
+					<dd>
+						({{ lettersMinted - 1 }} + 1) × {{ request.rules.generatedIdenticalLetters }} =
+						<strong>{{ cardsPerLevel }}</strong>
+					</dd>
+					<dt>{{ 'TOOLS.NOTE.F_LATENT_FLOOR' | translate }}</dt>
+					<dd>
+						⌈{{ request.players }} / 2⌉ =
+						<strong>{{ latentFloorResolved }}</strong>
+					</dd>
+					<dt>{{ 'TOOLS.NOTE.F_TEMPERATURE' | translate }}</dt>
+					<dd>{{ 'TOOLS.NOTE.F_TEMPERATURE_BODY' | translate }}</dd>
+				</dl>
+			</div>
+			<div>
+				<h3>{{ 'TOOLS.NOTE.WHAT_TEMPERATURE_DOES' | translate }}</h3>
+				<p class="tempnote hot">{{ 'TOOLS.NOTE.TEMP_HOT' | translate }}</p>
+				<p class="tempnote cold">{{ 'TOOLS.NOTE.TEMP_COLD' | translate }}</p>
+
+				<h3>{{ 'TOOLS.NOTE.CONSTRAINTS' | translate }}</h3>
+				<ul>
+					<li>{{ 'TOOLS.NOTE.C_THROW' | translate }}</li>
+					<li *ngIf="!request.rules.techShiftEnabled">{{ 'TOOLS.NOTE.C_TECH' | translate }}</li>
+					<li *ngIf="request.rules.techShiftEnabled">
+						{{
+							'TOOLS.CHECK.TECH_SHIFT_TIMING'
+								| translate: { floor: request.thresholds.techShiftFloorRound ?? 25 }
+						}}
+					</li>
+					<li>{{ 'TOOLS.NOTE.C_DEADLOCK' | translate }}</li>
+					<li>{{ 'TOOLS.NOTE.C_EVERYONE' | translate }}</li>
+					<li>{{ 'TOOLS.NOTE.C_LATENT' | translate: { floor: latentFloorResolved } }}</li>
+					<li>{{ 'TOOLS.NOTE.C_STRANDED' | translate }}</li>
+					<li>
+						{{
+							'TOOLS.NOTE.C_TEMPERATURE'
+								| translate: { tolerance: request.thresholds.temperatureTolerance }
+						}}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<div class="options-wrap" *ngIf="optionsOpen">
+		<section class="panel">
+			<h2>{{ 'TOOLS.SECTION.PRICES' | translate }}</h2>
+			<div class="grid">
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.PRICE_1' | translate }}</mat-label>
+					<input matInput type="number" min="1" max="100" [(ngModel)]="request.rules.priceWeight1" />
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.PRICE_2' | translate }}</mat-label>
+					<input matInput type="number" min="1" max="100" [(ngModel)]="request.rules.priceWeight2" />
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.PRICE_3' | translate }}</mat-label>
+					<input matInput type="number" min="1" max="100" [(ngModel)]="request.rules.priceWeight3" />
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.PRICE_4' | translate }}</mat-label>
+					<input matInput type="number" min="1" max="100" [(ngModel)]="request.rules.priceWeight4" />
+				</mat-form-field>
+			</div>
+			<div class="presets">
+				<button
+					mat-stroked-button
+					[class.active]="activePricePreset === 'debt'"
+					(click)="applyPricePreset('debt')">
+					{{ 'TOOLS.PRICE_PRESET.DEBT' | translate }}
+				</button>
+				<button
+					mat-stroked-button
+					[class.active]="activePricePreset === 'freeMoney'"
+					(click)="applyPricePreset('freeMoney')">
+					{{ 'TOOLS.PRICE_PRESET.FREE_MONEY' | translate }}
+				</button>
+			</div>
+			<p class="hint">{{ 'TOOLS.HINT.PRICES' | translate }}</p>
+			<p class="hint" *ngIf="!isDebt && result?.finalDU as finalDU">
+				{{
+					'TOOLS.HINT.PRICE_IN_DU'
+						| translate: { du: finalDU | number: '1.0-2', prices: priceInDu.join(' / ') }
+				}}
+			</p>
+		</section>
+
+		<section class="panel">
+			<h2>{{ 'TOOLS.SECTION.MONEY' | translate }}</h2>
+			<div class="grid">
+				<mat-form-field appearance="outline" *ngIf="!isDebt">
+					<mat-label>{{ 'TOOLS.FIELD.START_COINS' | translate }}</mat-label>
+					<input matInput type="number" [(ngModel)]="request.rules.startAmountCoins" />
+				</mat-form-field>
+				<mat-form-field appearance="outline" *ngIf="!isDebt">
+					<mat-label>{{ 'TOOLS.FIELD.GROWTH' | translate }}</mat-label>
+					<input matInput type="number" [(ngModel)]="request.rules.tauxCroissance" />
+				</mat-form-field>
+				<ng-container *ngIf="isDebt">
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.CREDIT_AMOUNT' | translate }}</mat-label>
+						<input matInput type="number" [(ngModel)]="request.rules.defaultCreditAmount" />
+					</mat-form-field>
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.INTEREST' | translate }}</mat-label>
+						<input matInput type="number" [(ngModel)]="request.rules.defaultInterestAmount" />
+					</mat-form-field>
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.CREDIT_MINUTES' | translate }}</mat-label>
+						<input matInput type="number" [(ngModel)]="request.rules.durationCredit" />
+					</mat-form-field>
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.PRISON_MINUTES' | translate }}</mat-label>
+						<input matInput type="number" [(ngModel)]="request.rules.timerPrison" />
+					</mat-form-field>
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.FIRST_CREDIT' | translate }}</mat-label>
+						<input
+							matInput
+							type="number"
+							min="0"
+							max="100"
+							[(ngModel)]="request.rules.firstCreditAcceptance" />
+					</mat-form-field>
+					<mat-form-field appearance="outline">
+						<mat-label>{{ 'TOOLS.FIELD.SEIZURE_TYPE' | translate }}</mat-label>
+						<mat-select [(ngModel)]="request.rules.seizureType">
+							<mat-option value="decote">{{ 'TOOLS.SEIZURE.DECOTE' | translate }}</mat-option>
+							<mat-option value="fees">{{ 'TOOLS.SEIZURE.FEES' | translate }}</mat-option>
+						</mat-select>
+					</mat-form-field>
+					<mat-slide-toggle [(ngModel)]="request.rules.autoBank">
+						{{ 'TOOLS.FIELD.AUTO_BANK' | translate }}
+					</mat-slide-toggle>
+					<mat-slide-toggle [(ngModel)]="request.rules.autoSeizure">
+						{{ 'TOOLS.FIELD.AUTO_SEIZURE' | translate }}
+					</mat-slide-toggle>
+				</ng-container>
+			</div>
+		</section>
+
+		<section class="panel">
+			<h2>{{ 'TOOLS.SECTION.MODEL' | translate }}</h2>
+			<p class="hint">{{ 'TOOLS.HINT.MODEL' | translate }}</p>
+			<div class="grid">
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.ENCOUNTERS' | translate }}</mat-label>
+					<input matInput type="number" step="0.25" [(ngModel)]="request.encountersPerRound" />
+				</mat-form-field>
+				<mat-form-field appearance="outline" *ngIf="isDebt && !request.rules.autoBank">
+					<mat-label>{{ 'TOOLS.FIELD.ANIMATOR_CREDITS' | translate }}</mat-label>
+					<input matInput type="number" [(ngModel)]="request.animatorCreditsPerRound" />
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.LATENT_FLOOR' | translate }}</mat-label>
+					<input
+						matInput
+						type="number"
+						[placeholder]="'TOOLS.FIELD.AUTO' | translate"
+						[(ngModel)]="request.thresholds.latentFloor" />
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>{{ 'TOOLS.FIELD.STRANDED_CEILING' | translate }}</mat-label>
+					<input
+						matInput
+						type="number"
+						step="0.05"
+						placeholder="0.5"
+						[(ngModel)]="request.thresholds.strandedCeiling" />
+				</mat-form-field>
+				<mat-form-field appearance="outline" *ngIf="request.rules.techShiftEnabled">
+					<mat-label>{{ 'TOOLS.FIELD.TECH_SHIFT_FLOOR' | translate }}</mat-label>
+					<input
+						matInput
+						type="number"
+						placeholder="25"
+						[(ngModel)]="request.thresholds.techShiftFloorRound" />
+				</mat-form-field>
+				<mat-form-field appearance="outline" *ngIf="request.rules.techShiftEnabled">
+					<mat-label>{{ 'TOOLS.FIELD.TECH_SHIFT_RATIO' | translate }}</mat-label>
+					<mat-select [(ngModel)]="request.rules.techShiftExchangeRatio">
+						<mat-option [value]="1">{{ 'TOOLS.FIELD.TECH_SHIFT_RATIO_1' | translate }}</mat-option>
+						<mat-option [value]="2">{{ 'TOOLS.FIELD.TECH_SHIFT_RATIO_2' | translate }}</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<mat-slide-toggle [(ngModel)]="request.rules.autoDeath">
+					{{ 'TOOLS.FIELD.AUTO_DEATH' | translate }}
+				</mat-slide-toggle>
+				<mat-slide-toggle [(ngModel)]="request.rules.techShiftEnabled">
+					{{ 'TOOLS.FIELD.TECH_SHIFT' | translate }}
+				</mat-slide-toggle>
+				<mat-slide-toggle [(ngModel)]="request.logActions">
+					{{ 'TOOLS.FIELD.LOG_ACTIONS' | translate }}
+				</mat-slide-toggle>
+			</div>
+			<p class="hint" *ngIf="request.rules.techShiftEnabled">{{ 'TOOLS.HINT.TECH_SHIFT' | translate }}</p>
+			<p class="hint" *ngIf="request.rules.techShiftEnabled">
+				{{ 'TOOLS.HINT.TECH_SHIFT_RATIO' | translate }}
+			</p>
+			<div class="tolerance">
+				<label>
+					{{ 'TOOLS.FIELD.TEMPERATURE_TOLERANCE' | translate }}
+					<strong>×{{ request.thresholds.temperatureTolerance }}</strong>
+				</label>
+				<p class="hint">{{ 'TOOLS.HINT.TOLERANCE' | translate }}</p>
+				<mat-slider min="1.25" max="6" step="0.25" discrete>
+					<input matSliderThumb [(ngModel)]="request.thresholds.temperatureTolerance" />
+				</mat-slider>
+			</div>
+		</section>
+	</div>
+
+	<ng-container *ngIf="result && verdict">
+		<div class="d-flex flex-row gap-4 flex-wrap">
+			<section class="panel flex-grow-1">
+				<h2>{{ 'TOOLS.SECTION.CHECKS' | translate }}</h2>
+				<div class="hero-verdict" [class.ok]="verdict.passed" [class.no]="!verdict.passed">
+					<span class="hero-label">
+						{{
+							verdict.passed
+								? ('TOOLS.VERDICT.ICON_OK' | translate)
+								: ('TOOLS.VERDICT.ICON_NO' | translate)
+						}}
+					</span>
+					<span class="hero-value">
+						{{ verdict.checks.length - verdict.failedCount }}/{{ verdict.checks.length }}
+					</span>
+					<span class="hero-band">
+						{{
+							verdict.passed
+								? ('TOOLS.VERDICT.ALL_PASSED' | translate)
+								: ('TOOLS.VERDICT.FAILED' | translate: { count: verdict.failedCount })
+						}}
+					</span>
+				</div>
+				<ul class="checks">
+					<li *ngFor="let check of verdict.checks" [class.pass]="check.passed" [class.fail]="!check.passed">
+						<span class="badge">
+							{{ (check.passed ? 'TOOLS.VERDICT.PASS' : 'TOOLS.VERDICT.FAIL') | translate }}
+						</span>
+						<span class="check-label">{{ check.labelKey | translate: check.labelParams }}</span>
+						<span class="check-detail">{{ check.detailKey | translate: check.detailParams }}</span>
+					</li>
+				</ul>
+			</section>
+			<section class="panel flex-grow-1">
+				<h2>{{ 'TOOLS.SECTION.HEADLINE' | translate }}</h2>
+				<div class="hero-temp">
+					<span class="hero-label">{{ 'TOOLS.TEMPERATURE.TITLE' | translate }}</span>
+					<span class="hero-value">×{{ result.temperature.ratio | number: '1.2-2' }}</span>
+					<span class="hero-band">{{ 'TOOLS.TEMPERATURE.' + temperatureBandKey | translate }}</span>
+					<div class="gauge">
+						<div class="track">
+							<div
+								class="tolerance-band"
+								[style.left]="toleranceBandStyle.left"
+								[style.width]="toleranceBandStyle.width"></div>
+							<div class="needle" [style.left.%]="temperatureNeedlePercent"></div>
+						</div>
+						<div class="scale">
+							<span>{{ 'TOOLS.TEMPERATURE.SCARCE' | translate }}</span>
+							<span>{{ 'TOOLS.TEMPERATURE.REFERENCE' | translate }}</span>
+							<span>{{ 'TOOLS.TEMPERATURE.ABUNDANT' | translate }}</span>
+						</div>
+					</div>
+				</div>
+				<div class="metrics">
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.TRANSACTIONS' | translate }}</span>
+						<span class="value">{{ result.transactions }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.PRODUCTIONS' | translate }}</span>
+						<span class="value">{{ result.productions }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.TX_PER_PRODUCTION' | translate }}</span>
+						<span class="value">{{ result.transactionsPerProduction | number: '1.2-2' }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.UTILISATION' | translate }}</span>
+						<span class="value">{{ result.utilisation * 100 | number: '1.1-1' }}%</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.WORST_AVATAR' | translate }}</span>
+						<span class="value">{{ result.minProductions }}</span>
+						<span class="note">{{ 'TOOLS.METRIC.WORST_AVATAR_NOTE' | translate }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.GINI' | translate }}</span>
+						<span class="value">{{ result.giniProductions | number: '1.2-2' }}</span>
+						<span class="note">{{ 'TOOLS.METRIC.GINI_NOTE' | translate }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.DEATHS' | translate }}</span>
+						<span class="value">{{ result.deaths }} / {{ result.rebirths }}</span>
+					</div>
+					<div class="metric">
+						<span class="label">{{ 'TOOLS.METRIC.GHOST_MONEY' | translate }}</span>
+						<span class="value">{{ result.ghostMoney | number: '1.0-1' }}</span>
+					</div>
+					<div class="metric" *ngIf="!isDebt">
+						<span class="label">{{ 'TOOLS.METRIC.FINAL_DU' | translate }}</span>
+						<span class="value">{{ result.finalDU }}</span>
+					</div>
+					<div class="metric" *ngIf="isDebt">
+						<span class="label">{{ 'TOOLS.METRIC.CREDITS' | translate }}</span>
+						<span class="value">{{ result.creditsCreated }}</span>
+						<span class="note">
+							{{
+								'TOOLS.METRIC.CREDITS_NOTE'
+									| translate: { faults: result.faults, prison: result.prisonSentences }
+							}}
+						</span>
+					</div>
+					<div class="metric" *ngIf="result.techShiftReached">
+						<span class="label">
+							{{
+								(result.config.rules.techShiftEnabled ? 'TOOLS.METRIC.CEILING' : 'TOOLS.METRIC.TECH_WALL')
+									| translate
+							}}
+						</span>
+						<span class="value">
+							{{ 'TOOLS.METRIC.TECH_SHIFT_VALUE' | translate: { round: result.techShiftRound } }}
+						</span>
+						<span class="note">
+							{{
+								(result.config.rules.techShiftEnabled
+									? 'TOOLS.METRIC.CEILING_NOTE'
+									: 'TOOLS.METRIC.TECH_WALL_NOTE'
+								) | translate: { count: result.techShiftReached, level: result.topWeight }
+							}}
+						</span>
+					</div>
+					<div class="metric" *ngIf="result.techShifts?.length">
+						<span class="label">{{ 'TOOLS.METRIC.TECH_SHIFTS' | translate }}</span>
+						<span class="value">
+							{{
+								'TOOLS.METRIC.TECH_SHIFTS_VALUE'
+									| translate: { count: result.techShifts.length, round: result.techShifts[0].round }
+							}}
+						</span>
+						<span class="note">
+							{{ 'TOOLS.METRIC.TECH_SHIFTS_NOTE' | translate: { ladder: result.priceLadder.join(' / ') } }}
+						</span>
+					</div>
+					<div class="metric" *ngIf="retiredTotals as retired">
+						<span class="label">{{ 'TOOLS.METRIC.RETIRED' | translate }}</span>
+						<span class="value">{{ 'TOOLS.METRIC.RETIRED_VALUE' | translate: retired }}</span>
+						<span class="note">{{ 'TOOLS.METRIC.RETIRED_NOTE' | translate }}</span>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<div class="charts">
+			<div class="charts">
+				<section class="panel chart-card">
+					<div class="chart-head">
+						<h2>{{ 'TOOLS.CHART.SQUARES' | translate }}</h2>
+						<button mat-button class="tablebtn" (click)="toggleTable('squares')">
+							{{ (tableOpen['squares'] ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+						</button>
+					</div>
+					<p class="hint">{{ 'TOOLS.HINT.SQUARES' | translate }}</p>
+					<div class="chart" *ngIf="!tableOpen['squares']">
+						<canvas baseChart type="line" [data]="squaresChart!" [options]="lineOpts"></canvas>
+					</div>
+					<div class="table-scroll" *ngIf="tableOpen['squares']">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.CHART.ROUND' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.THEORETICAL' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.LATENT' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.READY' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let s of result.samples">
+									<td>{{ s.round }}</td>
+									<td>{{ s.theoreticalSquares }}</td>
+									<td>{{ s.latentSquares }}</td>
+									<td>{{ s.readySquares }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="panel chart-card">
+					<div class="chart-head">
+						<h2>{{ 'TOOLS.CHART.STRANDED' | translate }}</h2>
+						<button mat-button class="tablebtn" (click)="toggleTable('stranded')">
+							{{ (tableOpen['stranded'] ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+						</button>
+					</div>
+					<p class="hint">{{ 'TOOLS.HINT.STRANDED' | translate }}</p>
+					<div class="chart" *ngIf="!tableOpen['stranded']">
+						<canvas baseChart type="line" [data]="strandedChart!" [options]="soloLineOpts"></canvas>
+					</div>
+					<div class="table-scroll" *ngIf="tableOpen['stranded']">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.CHART.ROUND' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.STRANDED_SERIES' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let s of result.samples">
+									<td>{{ s.round }}</td>
+									<td>{{ s.strandedShare * 100 | number: '1.1-1' }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="panel chart-card">
+					<div class="chart-head">
+						<h2>{{ 'TOOLS.CHART.DECKS' | translate }}</h2>
+						<button mat-button class="tablebtn" (click)="toggleTable('decks')">
+							{{ (tableOpen['decks'] ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+						</button>
+					</div>
+					<p class="hint">{{ 'TOOLS.HINT.DECKS' | translate }}</p>
+					<div class="chart" *ngIf="!tableOpen['decks']">
+						<canvas baseChart type="line" [data]="decksChart!" [options]="lineOpts"></canvas>
+					</div>
+					<div class="table-scroll" *ngIf="tableOpen['decks']">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.CHART.ROUND' | translate }}</th>
+									<th *ngFor="let level of deckLevels">{{ level }}</th>
+									<th>{{ 'TOOLS.CHART.DECK_TOTAL' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let s of result.samples">
+									<td>{{ s.round }}</td>
+									<td *ngFor="let level of deckLevels">{{ s.deckSizes[level] }}</td>
+									<td>{{ deckTotalOf(s) }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="panel chart-card">
+					<div class="chart-head">
+						<h2>{{ 'TOOLS.CHART.MONEY' | translate }}</h2>
+						<button mat-button class="tablebtn" (click)="toggleTable('money')">
+							{{ (tableOpen['money'] ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+						</button>
+					</div>
+					<div class="chart" *ngIf="!tableOpen['money']">
+						<canvas baseChart type="line" [data]="moneyChart!" [options]="soloLineOpts"></canvas>
+					</div>
+					<div class="table-scroll" *ngIf="tableOpen['money']">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.CHART.ROUND' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.MASS' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.ALIVE' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let s of result.samples">
+									<td>{{ s.round }}</td>
+									<td>{{ s.massMonetary | number: '1.0-2' }}</td>
+									<td>{{ s.aliveCount }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="panel chart-card wide">
+					<div class="chart-head">
+						<h2>{{ 'TOOLS.CHART.AVATARS' | translate }}</h2>
+						<button mat-button class="tablebtn" (click)="toggleTable('avatars')">
+							{{ (tableOpen['avatars'] ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+						</button>
+					</div>
+					<p class="hint">{{ 'TOOLS.HINT.AVATARS' | translate: { worst: worstAvatarIdx } }}</p>
+					<div class="chart" *ngIf="!tableOpen['avatars']">
+						<canvas baseChart type="bar" [data]="avatarChart!" [options]="barOpts"></canvas>
+					</div>
+					<div class="table-scroll" *ngIf="tableOpen['avatars']">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.CHART.AVATAR' | translate }}</th>
+									<th>{{ 'TOOLS.CHART.PRODUCTIONS' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let n of result.productionsPerAvatar; let i = index">
+									<td>{{ i }}</td>
+									<td>{{ n }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+			<section class="panel log-panel" *ngIf="result.log.length">
+				<h2>
+					{{ 'TOOLS.LOG.TITLE' | translate: { count: result.log.length } }}
+				</h2>
+
+				<ng-container>
+					<p class="warn" *ngIf="result.logTruncated">{{ 'TOOLS.LOG.TRUNCATED' | translate }}</p>
+
+					<p
+						class="integrity"
+						[class.bad]="doubleActionRounds.length"
+						[class.good]="!doubleActionRounds.length">
+						{{
+							doubleActionRounds.length
+								? ('TOOLS.LOG.INTEGRITY_BAD' | translate: { rounds: doubleActionRounds.join(', ') })
+								: ('TOOLS.LOG.INTEGRITY_OK' | translate)
+						}}
+					</p>
+
+					<div class="type-counts">
+						<button
+							type="button"
+							class="chip"
+							[class.active]="logFilter.type === row.type"
+							*ngFor="let row of logTypeCounts"
+							(click)="logFilter.type = logFilter.type === row.type ? '' : row.type">
+							{{ 'TOOLS.LOG.TYPE.' + row.type.toUpperCase() | translate }}
+							<strong>{{ row.count }}</strong>
+						</button>
+					</div>
+
+					<div class="legend" *ngIf="searchReasonRows.length">
+						<p>{{ 'TOOLS.LOG.SEARCH_HINT' | translate }}</p>
+						<ul>
+							<li *ngFor="let row of searchReasonRows">
+								<strong>{{ row.count }}</strong>
+								{{ 'TOOLS.LOG.REASON.' + row.reason.toUpperCase() | translate: row.sample }}
+							</li>
+						</ul>
+						<p>{{ 'TOOLS.LOG.HAND_HINT' | translate }}</p>
+					</div>
+
+					<div class="log-filters">
+						<mat-form-field appearance="outline">
+							<mat-label>{{ 'TOOLS.LOG.FILTER_ROUND' | translate }}</mat-label>
+							<input matInput type="number" [(ngModel)]="logFilter.round" />
+						</mat-form-field>
+						<mat-form-field appearance="outline">
+							<mat-label>{{ 'TOOLS.LOG.FILTER_PLAYER' | translate }}</mat-label>
+							<input matInput type="number" [(ngModel)]="logFilter.player" />
+						</mat-form-field>
+						<button mat-stroked-button (click)="clearLogFilter()">
+							{{ 'TOOLS.LOG.CLEAR' | translate }}
+						</button>
+						<span class="count">
+							{{
+								'TOOLS.LOG.SHOWING' | translate: { shown: visibleLog.length, total: filteredLog.length }
+							}}
+						</span>
+					</div>
+
+					<div class="table-scroll">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.LOG.ROUND' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.PLAYER' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.TYPE_COL' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.COST' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.DETAIL' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.COINS' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.HAND' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let entry of visibleLog" [class.free]="entry.free">
+									<td>{{ entry.round }}</td>
+									<td>{{ entry.playerIdx < 0 ? '—' : '#' + entry.playerIdx }}</td>
+									<td>{{ 'TOOLS.LOG.TYPE.' + entry.type.toUpperCase() | translate }}</td>
+									<td>{{ entry.free ? '·' : '1' }}</td>
+									<td class="detail">
+										<ng-container *ngIf="entry.reason; else rawDetail">
+											{{
+												'TOOLS.LOG.REASON.' + entry.reason.toUpperCase()
+													| translate: { price: entry.reasonPrice, coins: entry.coins }
+											}}
+										</ng-container>
+										<ng-template #rawDetail>{{ entry.detail }}</ng-template>
+									</td>
+									<td>{{ entry.coins === undefined ? '' : (entry.coins | number: '1.0-2') }}</td>
+									<td>{{ entry.handSize === undefined ? '' : entry.handSize }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<h3>{{ 'TOOLS.LOG.PER_ROUND' | translate }}</h3>
+					<div class="table-scroll short">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.LOG.ROUND' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.ACTING' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.COSTING' | translate }}</th>
+									<th>{{ 'TOOLS.LOG.FREE_COL' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let row of roundActionCounts">
+									<td>{{ row.round }}</td>
+									<td>{{ row.players }}</td>
+									<td>{{ row.costing }}</td>
+									<td>{{ row.free }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</ng-container>
+			</section>
+
+			<section class="panel log-panel" *ngIf="result.events?.length">
+				<h2>
+					{{ 'TOOLS.EVENTS.TITLE' | translate: { count: result.events.length } }}
+					<button mat-button class="tablebtn" (click)="eventsOpen = !eventsOpen">
+						{{ (eventsOpen ? 'TOOLS.TABLE.HIDE' : 'TOOLS.TABLE.SHOW') | translate }}
+					</button>
+				</h2>
+				<p class="hint">{{ 'TOOLS.EVENTS.HINT' | translate }}</p>
+
+				<ng-container *ngIf="eventsOpen">
+					<div class="type-counts">
+						<button
+							type="button"
+							class="chip"
+							[class.active]="eventFilter === row.type"
+							*ngFor="let row of eventTypeCounts"
+							(click)="eventFilter = eventFilter === row.type ? '' : row.type">
+							{{ row.type }}
+							<strong>{{ row.count }}</strong>
+						</button>
+					</div>
+
+					<div class="log-filters">
+						<span class="count">
+							{{
+								'TOOLS.EVENTS.SHOWING'
+									| translate: { shown: visibleEvents.length, total: filteredEvents.length }
+							}}
+						</span>
+					</div>
+
+					<div class="table-scroll">
+						<table class="data">
+							<thead>
+								<tr>
+									<th>{{ 'TOOLS.EVENTS.TYPE' | translate }}</th>
+									<th>{{ 'TOOLS.EVENTS.EMITTER' | translate }}</th>
+									<th>{{ 'TOOLS.EVENTS.RECEIVER' | translate }}</th>
+									<th>{{ 'TOOLS.EVENTS.PAYLOAD' | translate }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let event of visibleEvents">
+									<td>{{ event.typeEvent }}</td>
+									<td>{{ eventPartyOf(event.emitter) }}</td>
+									<td>{{ eventPartyOf(event.receiver) }}</td>
+									<td class="detail">{{ eventPayloadOf(event) }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</ng-container>
+			</section>
+		</div>
+	</ng-container>
+</div>

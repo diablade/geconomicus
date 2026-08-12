@@ -18,6 +18,9 @@ export const environment = {
 		UPDATE: 'rules/update',
 		DEFAULT: 'rules/default',
 	},
+	TOOLS: {
+		SIMULATE: 'tools/simulate',
+	},
 	AVATAR: {
 		JOIN: 'avatar/join',
 		GET: 'avatar/',
