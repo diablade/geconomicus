@@ -1,10 +1,7 @@
 import log from '#config/log';
-import _ from 'lodash';
 import GameStateManager from '../managers/GameStateManager.js';
 import SessionService from '../../session/session.service.js';
-import EventHelper from '../helpers/event.helper.js';
-import BankStateService from './bank.state.service.js';
-import DecksHelper from '../helpers/decks.helper.js';
+import PlayerEngine from '../engine/player.engine.js';
 import SyncHelper from '../helpers/sync.helper.js';
 import creditTimerManager from '../managers/CreditTimerManager.js';
 import prisonTimerManager from '../managers/PrisonTimerManager.js';
@@ -15,21 +12,6 @@ import socket from '#config/socket';
 const PlayerStateService = {};
 
 // ── Reincarnation internals (all assume the game lock is already held) ──────────
-
-/** Number of level-0-equivalent cards a fresh life is dealt, per game type. */
-const _openingCardUnits = (gameState, rules) =>
-	gameState.typeMoney === GAME_TYPE.JUNE
-		? (rules.amountCardsForProd === 3 ? 3 : 4)
-		: (rules.distribInitCards === 3 ? 3 : 4);
-
-/** Remove an avatar from the death queue (used by Force Death). */
-const _removeFromDeathQueue = (gameState, avatarIdx) => {
-	const queue = gameState.gameTimers?.deathState?.deathQueue;
-	if (Array.isArray(queue)) {
-		const i = queue.indexOf(avatarIdx);
-		if (i !== -1) queue.splice(i, 1);
-	}
-};
 
 /** Re-space the remaining scheduled deaths over the remaining round time (used by Force Death). */
 const _resetDeathInterval = (gameState, gameStateId) => {
@@ -45,132 +27,75 @@ const _resetDeathInterval = (gameState, gameStateId) => {
 };
 
 /**
- * End a Life terminally: seize (debt), return its cards to the deck, mark DEAD, snapshot, emit DIED.
- * The dead Life's coins + cards are left in place as the frozen snapshot.
+ * Tear down the dead Life's timers and tell everyone, once the engine has ended it.
+ *
+ * The engine reports which credits it resolved and whether the Life was imprisoned, so the
+ * service never has to re-derive either. Stopping a prison timer here rather than before the
+ * mutation is safe: the manager only cancels the timer, it does not run the release.
  */
-const _endLife = async (entry, player) => {
-	const { gameState, events } = entry;
+const _afterDeath = async (entry, playerStateIdx, death) => {
+	const { gameState } = entry;
 	const gameStateId = gameState._id.toString();
-	const playerStateIdx = player.idx;
-	player.status = PLAYER_STATUS.DEAD;
 
-	// Seize the dead life's assets (debt game only). Any coins beyond the debts stay as ghost money.
+	for (const credit of death.resolvedCredits) {
+		await creditTimerManager.stopAndRemoveTimer(credit.id);
+	}
+	if (death.wasInPrison) {
+		await prisonTimerManager.releasePlayer(gameStateId, playerStateIdx).catch(() => {});
+	}
+
 	if (gameState.typeMoney === GAME_TYPE.DEBT) {
-		// Stop this life's running credit timers (keyed by credit.id in the manager).
-		const playerCredits = (gameState.credits || []).filter((c) => c.playerStateIdx === playerStateIdx);
-		for (const c of playerCredits) {
-			await creditTimerManager.stopAndRemoveTimer(c.id);
-		}
-		await BankStateService.seizureOnDead(gameState, events, player);
 		socket.emitTo(ROOMS.gameStateTable(gameStateId), IO.CREDIT.SEIZURE, { playerStateIdx });
 		socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.CREDIT.SEIZURE, { playerStateIdx });
 	}
 
-	// Replenish the card supply: clone the (post-seizure) remaining cards back into their weight decks,
-	// while the DEAD snapshot keeps its own copy as history.
-	const returnedCards = player.cards.map((c) => ({ ...c }));
-	DecksHelper.pushCardsInDecks(gameState, returnedCards);
-	// Cards flowed back into the decks (seizure + returned hand) — refresh every level for the Table.
 	SyncHelper.emitDecksSync(gameStateId, gameState, gameState.decks.map((_, lvl) => lvl));
 
-	// coinsLK = the leftover coins on the dead life = this life's ghost money.
-	const eventDied = EventHelper.createEvent(DB_EVENTS.PLAYER_DIED, gameState, {
-		emitter: playerStateIdx,
-		receiver: PLAYER_TYPE.MASTER,
-		payload: { cards: player.cards },
-	});
-	events.push(eventDied);
-
-	// Enrich DIED with the dead life's frozen snapshot (coins/cards) + post-seizure mass so the Table
-	// stays correct on a terminal death (no reincarnation re-pull follows). A first death is harmlessly
-	// overwritten by the REINCARNATED re-pull moments later. See docs/adr/0008.
-	const diedPayload = {
-		playerStateIdx,
-		coinsLK: player.coins,
-		cardsLK: player.cards,
-		currentMassMonetary: gameState.currentMassMonetary,
-	};
 	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.DIED, { playerStateIdx });
-	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.DIED, diedPayload);
-	return player;
+	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.DIED, {
+		playerStateIdx,
+		coinsLK: death.player.coins,
+		cardsLK: death.player.cards,
+		currentMassMonetary: gameState.currentMassMonetary,
+	});
 };
 
-/**
- * End an avatar's current (non-dead) Life and open a new one for the same avatar.
- * Returns { oldPlayerStateIdx, newPlayerStateIdx } or null if the avatar has no living life.
- */
-const _reincarnate = async (entry, avatarIdx) => {
-	const { gameState, rules, events } = entry;
-	const gameStateId = gameState._id.toString();
+/** Move the player's device onto the new Life and refresh the animator's cockpit. */
+const _afterReincarnation = (gameStateId, avatarIdx, oldPlayerStateIdx, newPlayerStateIdx) => {
+	const payload = { avatarIdx, oldPlayerStateIdx, newPlayerStateIdx };
+	socket.emitTo(ROOMS.playerState(gameStateId, oldPlayerStateIdx), IO.PLAYER.REINCARNATED, payload);
+	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.REINCARNATED, payload);
+};
 
-	const current = gameState.playersStates.find(
-		(p) => p.avatarIdx === avatarIdx && p.status !== PLAYER_STATUS.DEAD
-	);
-	if (!current) {
+/** End an avatar's current Life, open a new one, and run every side effect of both. */
+const _reincarnate = async (entry, avatarIdx) => {
+	const gameStateId = entry.gameState._id.toString();
+	const result = PlayerEngine.reincarnate(entry, avatarIdx);
+	if (!result) {
 		log.warn(`[PlayerStateService] reincarnate: no living life for avatar ${avatarIdx} in game ${gameStateId}`);
 		return null;
 	}
 
-	// Death overrides imprisonment: cancel the running prison timer without running its release logic.
-	if (current.status === PLAYER_STATUS.PRISON) {
-		await prisonTimerManager.releasePlayer(gameStateId, current.idx).catch(() => {});
-	}
+	await _afterDeath(entry, result.oldPlayerStateIdx, result.death);
+	_afterReincarnation(gameStateId, avatarIdx, result.oldPlayerStateIdx, result.newPlayerStateIdx);
 
-	const oldPlayerStateIdx = current.idx;
-	await _endLife(entry, current);
-
-	// Open the new life.
-	const newPlayerStateIdx = gameState.playerStateIndexSeq;
-	gameState.playerStateIndexSeq += 1;
-	const newCards = DecksHelper.drawReincarnationCards(gameState, _openingCardUnits(gameState, rules));
-	const newLife = {
-		idx: newPlayerStateIdx,
-		avatarIdx,
-		status: PLAYER_STATUS.ALIVE,
-		coins: 0,
-		cards: newCards,
-		actionTokens: rules.startingTokens ?? 1,
-	};
-	gameState.playersStates.push(newLife);
-
-	events.push(
-		EventHelper.createEvent(DB_EVENTS.PLAYER_BIRTH, gameState, {
-			emitter: PLAYER_TYPE.MASTER,
-			receiver: newPlayerStateIdx,
-			payload: { cards: newCards, avatarIdx },
-		})
-	);
-
-	// Move the dying player's device to the new life.
-	socket.emitTo(ROOMS.playerState(gameStateId, oldPlayerStateIdx), IO.PLAYER.REINCARNATED, {
-		avatarIdx,
-		oldPlayerStateIdx,
-		newPlayerStateIdx,
-	});
-	// Let the animator cockpit refresh the queue / rows.
-	socket.emitTo(ROOMS.gameStateMaster(gameStateId), IO.PLAYER.REINCARNATED, {
-		avatarIdx,
-		oldPlayerStateIdx,
-		newPlayerStateIdx,
-	});
-
-	return { oldPlayerStateIdx, newPlayerStateIdx };
+	return { oldPlayerStateIdx: result.oldPlayerStateIdx, newPlayerStateIdx: result.newPlayerStateIdx };
 };
 
 /** Lock-free reincarnation entry point for the death-timer callback (which already holds the lock). */
 PlayerStateService.reincarnateWithinLock = async (entry, avatarIdx) => _reincarnate(entry, avatarIdx);
 
+/** The playerStateIdx of an avatar's current Life, or -1 when it has none. */
 PlayerStateService.getCurrentPlayerStateIdx = async (sessionId, gameStateId, avatarIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
 		const player = entry.gameState.playersStates.find(
 			(p) => p.avatarIdx == avatarIdx && p.status !== PLAYER_STATUS.DEAD
 		);
-		if (player) {
-			return player.idx;
-		}
-		return -1;
+		return player ? player.idx : -1;
 	});
 };
+
+/** Everything one player's board needs to render itself, including a live prison countdown. */
 PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, playerStateIdx) => {
 	const [queueResult, session] = await Promise.all([
 		GameStateManager.withQueue(gameStateId, async (entry) => {
@@ -181,12 +106,10 @@ PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, pl
 			const credits = (gameState.credits || []).filter((c) => c.playerStateIdx == playerStateIdx);
 			const defaultCredit = credits.some((c) => c.status === 'default-credit');
 
-            if(gameState.status === GAME_STATUS.CREATED) {
-                playerState.actionTokens = rules.startingTokens;
-            }
+			if (gameState.status === GAME_STATUS.CREATED) {
+				playerState.actionTokens = rules.startingTokens;
+			}
 
-			// On refresh, restore the live prison countdown from the running timer (if any) so the
-			// board doesn't fall back to the default display until the next 5s progress tick.
 			let prison = null;
 			if (playerState.status === PLAYER_STATUS.PRISON) {
 				const prisonTimer = prisonTimerManager.getTimer(`${gameStateId}-${playerStateIdx}`);
@@ -226,10 +149,8 @@ PlayerStateService.getPlayerState = async (sessionId, gameStateId, avatarIdx, pl
 /** Terminal death (no new life). Used for an already-reincarnated avatar. */
 PlayerStateService.killPlayer = async (gameStateId, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const player = entry.gameState.playersStates.find((p) => p.idx === playerStateIdx);
-		if (!player) throw new Error('ERROR.PLAYER_NOT_FOUND');
-		if (player.status === PLAYER_STATUS.DEAD) throw new Error('ERROR.PLAYER_ALREADY_DEAD');
-		await _endLife(entry, player);
+		const death = PlayerEngine.killLife(entry, playerStateIdx);
+		await _afterDeath(entry, playerStateIdx, death);
 		return true;
 	});
 };
@@ -242,97 +163,53 @@ PlayerStateService.reincarnatePlayer = async (gameStateId, avatarIdx) => {
 /**
  * Force Death — the animator's manual "kill". Reincarnates an avatar that has not reincarnated yet
  * (dropping it from the death queue and re-spacing the remaining deaths); terminal otherwise.
+ *
  * @param {string} gameStateId
  * @param {number} playerStateIdx - the life the animator clicked on
+ * @returns {Promise<{reincarnated: boolean, oldPlayerStateIdx?: number, newPlayerStateIdx?: number}>}
  */
 PlayerStateService.forceDeath = async (gameStateId, playerStateIdx) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState } = entry;
-		const target = gameState.playersStates.find((p) => p.idx === playerStateIdx);
-		if (!target) throw new Error('ERROR.PLAYER_NOT_FOUND');
-		if (target.status === PLAYER_STATUS.DEAD) throw new Error('ERROR.PLAYER_ALREADY_DEAD');
+		const result = PlayerEngine.forceDeath(entry, playerStateIdx);
+		await _afterDeath(entry, playerStateIdx, result.death);
 
-		const avatarIdx = target.avatarIdx;
-		const alreadyReincarnated = gameState.playersStates.filter((p) => p.avatarIdx === avatarIdx).length > 1;
-
-		if (alreadyReincarnated) {
-			// Second death: terminal, no new life.
-			await _endLife(entry, target);
-			_removeFromDeathQueue(gameState, avatarIdx);
+		if (!result.reincarnated) {
 			return { reincarnated: false };
 		}
 
-		// First death forced early: reincarnate, drop from the queue, re-space the remaining deaths.
-		const result = await _reincarnate(entry, avatarIdx);
-		_removeFromDeathQueue(gameState, avatarIdx);
-		_resetDeathInterval(gameState, gameStateId);
-		return { reincarnated: true, ...result };
+		_afterReincarnation(gameStateId, result.avatarIdx, result.oldPlayerStateIdx, result.newPlayerStateIdx);
+		_resetDeathInterval(entry.gameState, gameStateId);
+		return {
+			reincarnated: true,
+			oldPlayerStateIdx: result.oldPlayerStateIdx,
+			newPlayerStateIdx: result.newPlayerStateIdx,
+		};
 	});
 };
 
+/** One player buys one card from another, coins one way and the card the other. */
 PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKey) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const buyer = entry.gameState.playersStates.find((p) => p.idx === buyerIdx);
-		const seller = entry.gameState.playersStates.find((p) => p.idx === sellerIdx);
-		if (!buyer) throw new Error('ERROR.BUYER_NOT_FOUND');
-		if (!seller) throw new Error('ERROR.SELLER_NOT_FOUND');
-		if (buyer.status !== PLAYER_STATUS.ALIVE || seller.status !== PLAYER_STATUS.ALIVE)
-			throw new Error('ERROR.TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER');
+		const { cost, card, buyer, seller } = PlayerEngine.applyTransaction(entry, buyerIdx, sellerIdx, cardKey);
 
-		const card = seller.cards.find((c) => c.key === cardKey);
-		if (!card) throw new Error('ERROR.CARD_NOT_FOUND');
-
-		const cost =
-			entry.gameState.typeMoney === GAME_TYPE.JUNE
-				? Number((card.price * entry.gameState.currentDU).toFixed(2))
-				: card.price;
-		if (buyer.coins < cost) throw new Error('ERROR.NOT_ENOUGH_COINS');
-
-		// Update coins states
-		buyer.coins = Number((buyer.coins - cost).toFixed(2));
-		seller.coins = Number((seller.coins + cost).toFixed(2));
-
-		// Update cards states
-		buyer.cards.push(card);
-		seller.cards = seller.cards.filter((c) => c.key !== cardKey);
-
-		// add transaction event
-		entry.events.push(
-			EventHelper.createEvent(DB_EVENTS.TRANSACTION, entry.gameState, {
-				emitter: buyerIdx,
-				receiver: sellerIdx,
-				payload: { cost, card },
-			})
-		);
-
-		// Emit transaction event to results room
-		const resultsRoom = `gs:${gameStateId}:${PLAYER_TYPE.RESULTS}`;
-		socket.emitTo(resultsRoom, IO.EVENT, {
+		socket.emitTo(`gs:${gameStateId}:${PLAYER_TYPE.RESULTS}`, IO.EVENT, {
 			event: DB_EVENTS.TRANSACTION,
 			sessionId: entry.gameState.sessionId,
-			gameStateId: gameStateId,
+			gameStateId,
 			emitter: buyerIdx,
 			receiver: sellerIdx,
-			payload: {
-				cost: cost,
-				card: card,
-			},
+			payload: { cost, card },
 		});
 
-		// Notify seller
 		socket.emitAckTo(ROOMS.playerState(gameStateId, sellerIdx), IO.PLAYER.TRANSACTION_DONE, {
 			sellerIdx,
 			cardKey: card.key,
 			coinsLK: seller.coins,
 		});
 
-		// Table: both sides' coins + hands moved (peer transfer, mass unchanged).
 		SyncHelper.emitPlayerSync(gameStateId, [buyer, seller]);
 
-		return {
-			buyedCard: card,
-			coinsLK: buyer.coins,
-		};
+		return { buyedCard: card, coinsLK: buyer.coins };
 	});
 };
 

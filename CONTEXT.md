@@ -50,7 +50,9 @@ Sized as `%` of their zone container, not `vw`. Action dialog: items at `~22%` o
 
 ## Avatar
 
-The persistent player identity within a game, identified by `avatarIdx`. Survives across deaths — an avatar has 1..N Lives over the course of a single gameState. Avatars (and their lives) are scoped to one gameState; the June game and the debt game are independent and do not share lives.
+The player's character for the whole **session**, identified by `avatarIdx` and held on the Session (`session.avatars`), never on a gameState. One Avatar is one device and one person: it carries the styling, waits in the lobby between games, and is the only thing that means *the same player* in both games — which is what lets [[session-results]] compare them face to face.
+
+Each game mints its own Lives from that one shared avatar list, so an Avatar owns 1..N Lives **per gameState** and four across a typical session: two games × two Lives, since the [[death-queue]] kills every avatar exactly once per game and the second Life exists precisely to show death's impact on the economy. Lives are never shared between games — only the Avatar is.
 
 ## Life (Incarnation)
 
@@ -74,9 +76,17 @@ The shuffled list of `avatarIdx` scheduled to die during the round, held at `gam
 
 Whether avatars die on a schedule during the round. When `true` (the default), the Death Queue is active and every avatar is automatically reincarnated once, at its scheduled tick. When `false`, **there is no scheduled death**: no avatar dies unless the animator manually kills a Life via **Force Death** (which still reincarnates a first death and is terminal thereafter). A "pour de faux" / practice game turns this off. Note this differs from the legacy meaning, where `autoDeath` off still scheduled each death but required the animator to trigger it by hand ("death pass"); v2 drops the manual-pass concept entirely.
 
+## DU Tick
+
+One distribution of the DU to every living Life in the June game. Persisted as **one event per recipient**, never one event for the whole tick: the events log filters by `receiver`, so a per-player row is what lets an animator ask what a given player received and confirm nobody living was skipped. All rows of one tick share a single timestamp, which is what makes a tick identifiable — counting distinct timestamps is the DU count — and lands the money mass's step at one x instead of smeared across milliseconds.
+
+Because the mass is incremented inside the same loop, a tick's rows carry rising partial sums of it. All of them are kept and all are plotted; every one is a true reading, and Σ coins over Lives equals the declared mass at each, since both advance in lockstep through the loop. So the [[data-health-block]] reconciles cleanly row by row rather than flagging the tick, and would still notice a living Life the DU skipped.
+
 ## Ghost Money
 
 Coins that remain in a `DEAD` Life's frozen snapshot and are never reclaimed by anyone. Death never destroys these coins — they persist inside `currentMassMonetary` in **both** game types. In the June game there is no seizure, so *all* of a dead life's coins become ghost money. In the debt game, `seizureOnDead` claws back only up to the outstanding credit obligation (interest + principal, from coins then cards); any coins the dead player held **beyond** their debts are left on the snapshot and stay in the money mass — those excess coins are ghost money too. Ghost money is tracked per session so results can compare it across games; in the June game it is valued in **last-DU-equivalent** (ghost coins ÷ final DU) since June money is only meaningful relative to the DU.
+
+A Life's ghost money is read off its death event — `player-died` or `player-died-with-seizure`, per [[seizure-on-death]] — which is emitted **after** the seizure and the return of cards to the decks and so carries the post-seizure remainder. That ordering is what makes a death event mean the same thing in both game types — the final, frozen holdings of that Life, and therefore the last point of its curve — rather than needing a debt-game special case. Since either form can carry it, a reader must match **both**; `isDeathEvent` is the shared test.
 
 ## Session Code
 
@@ -171,6 +181,14 @@ The debt game's automated credit facility. Instead of the animator issuing every
 
 Recovering a defaulted (`FAULT`) credit's amount + interest from a player's coins and cards. Coins are taken first, up to what's owed and never more (money is divisible). Any remainder is covered by cards, valued per whichever mode the game is configured with: **Decote** (each seized card counts at a discounted percentage of its face price toward the debt) or **Fees** (cards count at full face price, but a flat fee is added to the amount owed). Cards can't be split, so the last card taken to close the gap may overshoot what's owed — no change is returned. When more than one card could still be taken, the biggest card that fits *without* overshooting is always taken first; only once no remaining card fits without overshooting is the smallest overshooting card taken, to close the gap with as little waste as possible. Today driven entirely by the animator via the seizure dialog. *Avoid*: conflating with `seizureOnDead`, a separate, decote/fees-blind path that seizes at face value only.
 
+## Seizure on Death
+
+The debt game's claw-back when a Life ends: its outstanding credits are settled from the dead Life's coins and then its cards, at **face value only** — blind to decote/fees, unlike the animator's [[seizure]]. Whatever coins survive it are that Life's [[ghost-money]].
+
+Recorded on the death event itself rather than as a second row. A Life's end emits **`player-died`** when nothing was seized, or **`player-died-with-seizure`** when something was — the latter additionally declaring the money mass and the four bank counters that only a real claw-back moves. The split is keyed on **effect, not game type**: a debt player who owed nothing at death emits the plain event exactly as a June player does, so no reader anywhere branches on `typeMoney`. Both are emitted after the claw-back and after the cards return to the decks, so either one carries the Life's final frozen state and is the last point of its curve.
+
+This replaced a separate `credit-seized-dead` event, which fired back-to-back with the death and so wrote a second [[last-known]] sample for the same Life at the same instant — a redundant curve vertex and two rows that could disagree about one moment.
+
 ## Auto Seizure
 
 A rule/toggle **independent of `autoBank`** that automates the debt game's collections side: when on, a `FAULT` credit is resolved automatically via the same Seizure math the animator's manual dialog uses, instead of waiting on the animator. Deliberately a separate switch from Auto-Bank (which only automates lending terms) so an animator can mix, e.g., manual lending with auto collections, or the reverse. *Avoid*: conflating with Auto-Bank.
@@ -233,7 +251,9 @@ Its figures always come from the server's rate for that player, fetched when the
 
 ## Settlement Call
 
-The bank asking a player to repay (settle) or pay interest when a credit's timer expires — the maturity event carried today by `IO.CREDIT.REQUEST`. Named here only to keep it distinct from a player's Credit Request. *Avoid*: credit request (ambiguous).
+The bank asking a player to repay (settle) or pay interest when a credit's timer expires — the maturity event carried today by `IO.CREDIT.REQUEST`. Named here only to keep it distinct from a player's Credit Request.
+
+Maturity has **three** outcomes, not two, and they are tested in order: a borrower who can cover amount + interest gets the Settlement Call and the credit waits at `REQUESTING`; one who can cover only the interest has it taken and the credit runs again; one who can cover neither goes to `FAULT`. Only the first involves the player at all — the other two are the bank acting unilaterally, which is why a debt player can be extended or defaulted without ever being asked. *Avoid*: credit request (ambiguous).
 
 ## Credit Origin
 
@@ -280,11 +300,27 @@ The one economic thing it does carry is the **money-mass aggregate**, because th
 
 Two unrelated meanings of "bank" that only share a word. The Bank **actor** (`PLAYER_TYPE.BANK`) is the in-game money issuer — it emits DU and credit and performs seizures, and tags those events as its own. The Bank **room** was the animator's credit feed; it is gone, renamed to the `table` room and folded into the Table Console. Removing the room does **not** touch the actor. *Avoid*: using "bank" unqualified when the room (now Table) is meant.
 
+## Engine
+
+Where a game rule's *behaviour* lives: the validation, the state change, and the events it records, as a function of the [[queue-entry]] alone. Everything about *when* a rule fires and *who gets told* stays outside it — the per-game serialisation queue, the timers, and every socket emit belong to the services.
+
+The split exists so that a rule can run without a room full of people: the deck simulator and the unit tests call the very same functions a live session calls. A behaviour with two implementations is the failure it prevents, and that failure has already happened twice — one copy seized at face value while the other applied a decote, and a credit extension recorded two events on one path and one on the other.
+
+Timers are deliberately *not* part of it. A timer decides *when*; the simulator replaces when with rounds. What a timer callback **does** is Engine. Because a timer can fire against a credit that has since been settled or cancelled, the Engine treats resolving a credit that is no longer running as a **no-op rather than an error** — the guard sits with the rule, so it holds in every ordering and for every caller rather than depending on someone remembering a `try`/`catch`. *Avoid*: engine helper (the retired name), game logic, business logic.
+
+## Queue Entry
+
+The `{ gameState, rules, events }` triple that one mutation runs against, handed to it by the per-game serialisation queue. It is the entire input to an [[engine]] function — the game's id included, read off `gameState._id` — so no rule depends on ambient state and every engine signature has the same shape.
+
+`events` is a plain array the Engine appends to, never a database write. That is what lets the simulator collect a real event stream in memory and hand it straight to the front, and what makes the [[lk-contract]] testable without persistence.
+
+Awaits inside a mutation do **not** release the queue, so nothing can interleave mid-mutation. A stale timer callback is therefore never a partial-state hazard — it is simply a mutation that arrives late, which is why the Engine guards it by returning a no-op rather than the queue guarding it by ordering.
+
 ## Last-Known (LK)
 
 The absolute-snapshot convention behind the Table's live state. A state-changing broadcast carries the affected entity's authoritative **post-value** — `coinsLK`, `cardsLK`, action tokens, a deck level's full card array — and the receiver *replaces* that field. Never a delta. Chosen because observer-room broadcasts are unacked: an absolute snapshot is idempotent and self-healing (a dropped or duplicated message can't corrupt a balance), whereas a delta corrupts permanently. See [[player-state-sync]] and ADR-0008.
 
-The same convention governs the **persisted event stream**, which is what [[session-results]] reads. There, LK is always **keyed by `playerStateIdx`**, never by side: a life's post-values live under its own index, so a value is attributed to the [[life-incarnation]] it belongs to whatever role that life played. `emitter` / `receiver` survive purely as **role pointers** — who acted upon whom, used for the events log and for activity counts — and carry no values of their own. Side-keying was the earlier form and is ambiguous by construction: an event whose counterparty is the Bank or the animator has no meaningful "receiver's coins". *Avoid*: emitterCoinsLK, receiverCardsValueLK (the retired side-keyed form).
+The same convention governs the **persisted event stream**, which is what [[session-results]] reads. There, LK is always **keyed by `playerStateIdx`**, never by side: a life's post-values live under its own index, so a value is attributed to the [[life-incarnation]] it belongs to whatever role that life played. `emitter` / `receiver` survive purely as **role pointers** — who acted upon whom, used for the events log and for activity counts — and carry no values of their own. The two slots stay **semantic**: `emitter` is whoever acted, `receiver` whoever was acted upon, whichever of them happens to be a Life. A structural rule ("the Life always sits in `receiver`") was rejected: since LK is keyed by `playerStateIdx`, nothing that reads a *value* consults a role pointer at all, so flattening them would discard the only thing they still say. Side-keying was the earlier form and is ambiguous by construction: an event whose counterparty is the Bank or the animator has no meaningful "receiver's coins". *Avoid*: emitterCoinsLK, receiverCardsValueLK (the retired side-keyed form).
 
 Crucially the stream's LK is **taken, not supplied**: the [[lk-contract]] declares what each event carries and the event builder extracts it from the gameState itself. A call site states only who was involved, never what to record.
 
@@ -300,6 +336,30 @@ A guard backs it up, refusing to build an event whose declared piece is absent o
 
 The two sibling [[last-known]] channels to the `table` room, each single-responsibility. `PLAYER_STATE_SYNC` carries `{ players: [{ idx, coinsLK, cardsLK, actionTokens }] }` for only the *concerned* players (both sides of a transaction, the giver + targets of an action, the whole alive set on DU). `DECKS_STATE_SYNC` carries `{ decks: [{ level, cards }] }` for only the deck *levels that changed*. Aggregates (`currentMassMonetary`, bank indicators) are **not** here — they ride their causing domain events (credit, DU, death). Emitted *in addition* to the unchanged player-facing events. *Avoid*: state broadcast, table update.
 
+## Recipe
+
+One letter at one weight, together with the distinct copies that completing it requires. Copies are individually keyed (`A01`…`A05`), so a player needs `amountCardsForProd` **different** copies of the same letter and weight — never several of the same one. Producing exchanges them for a card one weight up. *Avoid*: combination, set.
+
+## Recipe Shape
+
+The pair *(copies needed, copies minted)* that decides what a [[recipe]] costs: **triangle** 3-of-*n*, **square** 4-of-*n* (today's default, 4-of-5), **quinte** 5-of-*n*. Needed is `amountCardsForProd`, minted is `generatedIdenticalLetters`. The **ratio between them governs whether a table can produce at all**, far more than deck size does — 4-of-5 demands almost every copy of a letter, 3-of-5 demands a bare majority. "Square" stays the everyday word for a completed Recipe whatever the shape; it names the default, not the concept. *Avoid*: carré (when the general concept is meant).
+
+## Ready Square
+
+A [[recipe]] whose copies are all in **one hand** — the player can build now. Measures how fast the game resolves, so it is the tempo dial: many Ready Squares at once means production fires without negotiation, which is scarcity gone.
+
+## Latent Square
+
+A [[recipe]] whose copies exist across **all living hands** taken together — chaseable, because every copy still missing is held by someone who could sell it. This is the honest measure of whether a table can still produce, and the one a deck configuration is judged on. The tension the game wants lives in the gap between Latent (chaseable) and [[ready-square]] (done).
+
+## Theoretical Square
+
+A [[recipe]] whose copies exist **anywhere**, decks included. Never a promise to a player: a Recipe that is Theoretical but not [[latent-square]] is a chase that cannot succeed, since deck cards are unreachable until a production or a death recirculates them.
+
+## Stranded Card
+
+A copy sitting in a deck rather than a living hand, making a [[recipe]] look completable when it is not. The source of the animator conversation *"I asked everyone and my card isn't in the game"* — `whoHaveCard` answers `deck`, so the player learns their chase is doomed only after paying a token for the news. Decks are reachable only through production and [[reincarnate]], so a Stranded Card is inert until one of those fires. *Avoid*: dead card, missing card.
+
 ## Production Reveal
 
 The player-facing celebration when a completed square (`amountCardsForProd` matching cards) is built. The existing square-zone box holds its position and swaps its ingredients-and-button content for the new leveled-up card, a rotating sunburst scaled to the box (not the screen), confetti, and "built"/"cards redrawn" text, for a fixed ~2.5s auto-dismiss (no tap needed) before the hand resolves to its new state. Scoped to the card-area only: unlike Reincarnate/Fault Lockout, the title bar and action buttons stay visible and interactive throughout, and other complete-but-unbuilt squares stay fully clickable underneath a visual dim — nothing is input-blocked. The new hand state (produced card + redrawn replacement cards) is deliberately **held** and only applied once the reveal completes, so the box isn't pulled out from under itself mid-animation. Every production gets the identical reveal regardless of `producedCard.weight` — there is no end-of-game/top-tier special case; the eventual "technology shift" endgame is unbuilt, unscoped future work, and production is deliberately treated as endless/circular until that's designed.
@@ -307,11 +367,21 @@ The player-facing celebration when a completed square (`amountCardsForProd` matc
 
 ## Session Results
 
-The post-session debrief screen comparing the two games of one session face to face. Reads three sources with distinct roles: each **gameState** is authoritative for every end-state number (final coins, cards, statuses — and so for the podium, the Gini and [[ghost-money]]); the **persisted event stream** supplies only what varies over time, i.e. the curves; the **survey** answers supply the feelings radar. Splitting the roles this way means a gap in the event stream can distort a curve but can never corrupt a headline figure. *Avoid*: results page (ambiguous — the legacy per-game view still lives at `ogame/:idGame/results`).
+The post-session debrief screen comparing the two games of one session face to face. Reads three sources with distinct roles: each **gameState** is authoritative for every end-state number (final coins, cards, statuses — and so for the podium, the Gini and [[ghost-money]]); the **persisted event stream** supplies only what varies over time, i.e. the curves; the **survey** answers supply the feelings radar. Splitting the roles this way means a gap in the event stream can distort a curve but can never corrupt a headline figure.
+
+The survey is the one source that keeps arriving after the games are over, so the radar rebuilds on the `NEW_FEEDBACK` socket rather than snapshotting at load — on a revision as well as a first submission, since someone filling a survey late is exactly who reconsiders. That notification is deliberately **not** a game event: survey answers are their own collection, so nothing about it belongs in `DB_EVENTS` or the [[lk-contract]]. It carries no answers either, only who answered, so the page refetches. *Avoid*: results page (ambiguous — the legacy per-game view still lives at `ogame/:idGame/results`).
 
 ## Cards Included
 
 The toggle governing how [[session-results]] draws player wealth, applying to both game columns at once. **On**: one chart per game, each [[life-incarnation]] a single line of coins + card value. **Off**: three charts stacked in the column — coins, card value, and a game-specific third (coins ÷ DU for the June game, net wealth `coins + cards − debt` for the debt game) — again one line per Life throughout. Purely a view concern: it never changes the [[avatar-score]], which sums coins and cards across all Lives whatever the toggle shows. *Avoid*: resources toggle, combined view.
+
+**On** carries no [[indicator-series]] at all — its lines aggregate coins and card value *per player*, and no aggregate indicator is the sum of that. The money mass is coin-denominated, so it belongs only on the coins chart; drawing it here would put a line below the pack that reads as their envelope while understating it by the whole of goods in play. Aggregates therefore appear only in **Off**, where each chart has one unit and the summation identity that justifies co-location actually holds.
+
+## Relative View
+
+The June game's coins-÷-DU lines — what makes devaluation legible, since a holding that never moves still loses value as the DU grows. Derived from the finished absolute coins series rather than read from the event stream: each [[life-incarnation]]'s relative line is sampled at **its own coin vertices plus every DU vertex**, reading coins as the step function it is and dividing by the DU in force. Uniform across Lives — a `DEAD` Life is only the degenerate case where nothing but DU vertices remain, so its line becomes a pure downward staircase of [[ghost-money]] devaluing.
+
+Deliberately *not* v1's mechanism, which persisted a synthetic `remind-dead` event per dead player per DU tick purely to produce graph vertices: that wrote a row per dead player per tick carrying no information, and still missed the alive holdings that devalue exactly the same way. Composing two declared series client-side needs no event and no [[lk-contract]] entry. *Avoid*: remind-dead, relative graph, devaluation curve.
 
 ## Avatar Score
 
@@ -323,7 +393,17 @@ Deliberately *not* the same as the coins curve either, which shows holdings at a
 
 ## Data Health Block
 
-A permanent panel on [[session-results]] listing every checked quantity with its agreement status: each [[indicator-series]]' last sample against the gameState's authoritative value, and each Life's last curve point against its stored coins and card value. Values are integers, so agreement is exact equality — there is no tolerance. It exists because the two data sources are deliberately different ([[session-results]]), so a silent disagreement between them would otherwise be indistinguishable from a true result. Animator-facing only, which holds by construction: results are reached from the animator's history screen, never from a player's device.
+A permanent panel on [[session-results]] listing every checked quantity with its agreement status: each [[indicator-series]]' last sample against the gameState's authoritative value, and each Life's last **LK sample** against its stored coins and card value. Values are integers, so agreement is exact equality — there is no tolerance.
+
+The check must anchor on the last LK sample and never on the last plotted point, because every curve is deliberately closed at game-end time with the gameState's authoritative value so the lines span the round. Comparing the curve's final point would therefore compare that value with itself — a check that can only pass, on the one instrument built to notice a gap in the event stream. Beyond those end-state checks it reconciles the aggregates **at every vertex**, not only at the last one. An [[indicator-series]] that the [[lk-contract]] declares is also obtainable by summing the per-[[life-incarnation]] step functions — the money mass is Σ coins over Lives, goods in play is Σ card value over current Lives — and those are two genuinely independent readings of one quantity. The declared series stays the source of truth; the summed one is computed alongside purely to be compared against it. Any vertex where they part company gets a **red row naming the moment and the Life**, which is what turns "a number looks wrong" into "this event failed to carry its `playersLK`". A Life whose coins moved without an event declaring `P` is invisible to every other instrument and shows up here as the exact step where the two lines diverge.
+
+It exists because the two data sources are deliberately different ([[session-results]]), so a silent disagreement between them would otherwise be indistinguishable from a true result. Animator-facing only, which holds by construction: results are reached from the animator's history screen, never from a player's device.
+
+## Event Group
+
+The filter taxonomy of the events log — transaction, credit, DU, death, seizure, action, system. **Many-to-many**: one event type may belong to several groups, because `player-died-with-seizure` is genuinely both a death and a seizure, and an animator filtering on either expects to find it. Filtering therefore tests membership rather than equality.
+
+Because a type has no single group, groups are a **display concern only**. Every tally, count and series keys on `typeEvent` directly — reading the first of an event's groups would make the answer depend on declaration order. *Avoid*: event category, event kind.
 
 ## Ghost Cards
 
@@ -332,5 +412,7 @@ The cumulative card value held by `DEAD` Lives at the moment they died. Named as
 ## Indicator Series
 
 An aggregate quantity of one game drawn against time — money mass, DU, total debt, the bank counters, [[ghost-money]], goods in play, average money per player. Every Indicator Series is a **step function**: it holds its value between the events that move it. So an indicator is declared only on its **concerned events** (the ones that actually move it), never on every event — sampling a transaction for the money mass would add a vertex carrying no information. Introducing a new indicator means naming which events must carry it in the [[lk-contract]]; that is a declaration rather than a migration, but games played before the change still hold no samples for it. Indicators are rendered stepped, never interpolated — a straight line between two samples would assert a gradual drift that never happened.
+
+A **derived indicator** — [[average-money]] is the only one today — is composed from two declared series rather than by carrying game state forward: mass ÷ alive count, each read as the step function it is at the moment wanted. This is deliberately **not** the retired fold, which replayed the game's own rules (add the credit amount, subtract the transaction cost) and so could drift from the backend; reading a declared series at a point in time replicates no rule and cannot drift. A derived indicator's inputs therefore need not be co-sampled on the same event — `aliveCountLK` moves only on a [[life-incarnation]]'s birth and death and holds between them, so it is always known at any mass sample.
 
 Indicators are **not given their own chart**: each is drawn alongside the [[life-incarnation]] lines it aggregates, in whichever chart shares its unit — the money indicators with coins, the goods indicators with card value. That co-location is the point: the mass genuinely *is* the sum of the coin lines and goods-in-play *is* the sum of the card lines, so separating them, or moving them to a second axis, would render a true relationship as a visual lie. Every coin-denominated series therefore shares **one linear axis**; only quantities that were never coin amounts (DU, average money per player) take the secondary axis. Crowding is handled by visibility instead of by splitting: legend toggling per series, plus select-all / unselect-all so a single series can be isolated. *Avoid*: metric, aggregate, stat.

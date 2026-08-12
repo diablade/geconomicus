@@ -399,6 +399,10 @@
 					<mat-radio-button class="d-flex ms-3" [value]="5">
 						5 {{ 'OPTION.PLAYERS_16+' | translate }}
 					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="rules.generatedIdenticalLetters">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.generatedIdenticalLetters" />
+					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ 'OPTION.START_DISTRIB_CARDS' | translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="rules.distribInitCards">
@@ -408,14 +412,22 @@
 					<mat-radio-button class="d-flex ms-3" [value]="4">
 						4 {{ 'OPTION.PLAYERS_6+' | translate }}
 					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="rules.distribInitCards">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.distribInitCards" />
+					</mat-radio-button>
 				</mat-radio-group>
-				<mat-label class="mt-2fw-bold">{{ 'OPTION.BUILD_AMOUNT' | translate }}</mat-label>
+				<mat-label class="mt-2 fw-bold">{{ 'OPTION.BUILD_AMOUNT' | translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="rules.amountCardsForProd">
 					<mat-radio-button class="d-flex ms-3" [value]="3">
 						3 {{ 'OPTION.PLAYERS_3TO5' | translate }} ⚠️EXPERIMENTAL
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="4">
 						4 {{ 'OPTION.PLAYERS_6+' | translate }}
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="rules.amountCardsForProd">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.amountCardsForProd" />
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>

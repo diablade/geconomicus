@@ -1,49 +1,242 @@
 // Panneau évènements v2 — styles alignés sur le DC 2a (frame-light + box-shadowed hérités de styles.scss)
 
 .ev2 {
-	width: 340px;
+	width: 100%;
 	padding: 14px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 
 	.ev2-head {
-		display: flex; align-items: baseline; gap: 8px;
-		.ev2-title { font-family: 'Geconomicus'; font-size: 22px; color: #fff;
-			text-shadow: 0 -1.5px 0 #000, 1.5px -1.5px 0 #000, 1.5px 0 0 #000, 0 1.5px 0 #000,
-				1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 0 0 #000, -1.5px -1.5px 0 #000; }
-		.ev2-count { font-size: 12px; color: #fff; opacity: .85; }
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		width: 100%;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		padding: 0;
+		.ev2-title {
+			font-family: 'Geconomicus';
+			font-size: 22px;
+			color: #fff;
+			text-shadow:
+				0 -1.5px 0 #000,
+				1.5px -1.5px 0 #000,
+				1.5px 0 0 #000,
+				0 1.5px 0 #000,
+				1.5px 1.5px 0 #000,
+				-1.5px 1.5px 0 #000,
+				-1.5px 0 0 #000,
+				-1.5px -1.5px 0 #000;
+		}
+		.ev2-count {
+			font-size: 12px;
+			color: #fff;
+			opacity: 0.85;
+		}
+		.ev2-fold {
+			font-size: 12.5px;
+			font-weight: bold;
+			white-space: nowrap;
+			border: 1.5px solid rgba(0, 0, 0, 0.45);
+			border-radius: 10px;
+			padding: 3px 8px;
+			background: rgba(255, 255, 255, 0.85);
+			color: #14142b;
+		}
 	}
 
-	.ev2-game-tabs { display: flex; gap: 6px;
-		button { flex: 1; cursor: pointer; font-family: 'GecoFont10'; font-size: 13px; padding: 6px 4px;
-			border-radius: 20px; border: 2px solid #14142b; background: rgba(255,255,255,.85);
-			color: #14142b; font-weight: 700;
-			&.on { background: #14142b; color: #fff; } } }
+	&.collapsed {
+		padding: 12px 0;
+		.ev2-head {
+			flex-direction: column;
+			height: 100%;
+			justify-content: flex-start;
+		}
+		.ev2-title,
+		.ev2-fold {
+			writing-mode: vertical-rl;
+			text-orientation: mixed;
+		}
+		.ev2-title {
+			font-size: 18px;
+		}
+	}
 
-	.ev2-chips { display: flex; flex-wrap: wrap; gap: 5px;
-		button { cursor: pointer; font-family: 'GecoFont10'; font-size: 12px; padding: 4px 10px;
-			border-radius: 14px; border: 1.5px solid #14142b; background: rgba(255,255,255,.85); color: #14142b;
-			&.on { background: #14142b; color: #fff; } } }
+	.ev2-game-tabs {
+		display: flex;
+		gap: 6px;
+		button {
+			flex: 1;
+			cursor: pointer;
+			font-family: 'GecoFont10';
+			font-size: 13px;
+			padding: 6px 4px;
+			border-radius: 20px;
+			border: 2px solid #14142b;
+			background: rgba(255, 255, 255, 0.85);
+			color: #14142b;
+			font-weight: 700;
+			&.on {
+				background: #14142b;
+				color: #fff;
+			}
+		}
+	}
 
-	.ev2-actors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-		label { font-size: 11px; color: #fff; display: flex; flex-direction: column; gap: 3px; }
-		select { font-family: 'GecoFont10'; font-size: 13px; padding: 5px; border-radius: 8px;
-			border: 1.5px solid #14142b; background: #fff; } }
+	.ev2-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+		button {
+			cursor: pointer;
+			font-family: 'GecoFont10';
+			font-size: 12px;
+			padding: 4px 10px;
+			border-radius: 14px;
+			border: 1.5px solid #14142b;
+			background: rgba(255, 255, 255, 0.85);
+			color: #14142b;
+			&.on {
+				background: #14142b;
+				color: #fff;
+			}
+		}
+	}
 
-	.ev2-list { display: flex; flex-direction: column; gap: 5px; max-height: 800px; overflow: auto; padding-right: 2px;
+	.ev2-actors {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+		label {
+			font-size: 11px;
+			color: #fff;
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+		}
+		select {
+			font-family: 'GecoFont10';
+			font-size: 13px;
+			padding: 5px;
+			border-radius: 8px;
+			border: 1.5px solid #14142b;
+			background: #fff;
+			min-width: 0;
+		}
+	}
 
-		.ev2-event { background: rgba(255,255,255,.9); border-radius: 8px; border-left: 5px solid #2c7fb8; padding: 6px 8px;
-			.ev2-line { display: flex; align-items: center; gap: 8px;
-				.t { font-size: 11px; color: rgba(20,20,43,.5); width: 36px; flex: none; }
-				.badge { flex: none; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 9px; color: #fff; }
-				.who { flex: 1; font-size: 12.5px; color: #14142b; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-				.amt { flex: none; font-size: 12px; font-weight: 700; color: #14142b; font-family: 'GecoFont7'; } }
-			.ev2-cards { display: flex; align-items: center; gap: 3px; margin: 5px 0 1px 44px;
-				.mini { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 22px;
-					border-radius: 4px; border: 1.5px solid #14142b; font-size: 12px; font-weight: 800;
-					color: #14142b; font-family: 'GecoFont7';
-					&.arrow { border: none; background: transparent; } } } }
+	.ev2-list {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		overflow: auto;
+		padding-right: 2px;
+		max-height: min(800px, calc(100vh - 260px));
 
-		.ev2-empty { font-size: 12.5px; color: #fff; text-align: center; padding: 14px 0; } }
+		.ev2-event {
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 8px;
+			border-left: 5px solid #2c7fb8;
+			padding: 6px 8px;
+			.ev2-line {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				.t {
+					font-size: 11px;
+					color: rgba(20, 20, 43, 0.5);
+					width: 36px;
+					flex: none;
+				}
+				.badge {
+					flex: none;
+					font-size: 10.5px;
+					font-weight: 700;
+					padding: 2px 7px;
+					border-radius: 9px;
+					color: #fff;
+				}
+				.what {
+					flex: 1;
+					font-size: 12.5px;
+					font-weight: 700;
+					color: #14142b;
+					min-width: 0;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+				.amt {
+					flex: none;
+					font-size: 12px;
+					font-weight: 700;
+					color: #14142b;
+					font-family: 'GecoFont7';
+				}
+			}
+			.ev2-who {
+				font-size: 12px;
+				color: #14142b;
+				margin: 2px 0 0 44px;
+			}
+			.ev2-detail {
+				font-size: 11.5px;
+				color: rgba(20, 20, 43, 0.65);
+				margin: 2px 0 0 44px;
+				span + span::before {
+					content: ' · ';
+				}
+			}
+			.ev2-cards {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 3px;
+				margin: 5px 0 1px 44px;
+				.mini {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					width: 18px;
+					height: 22px;
+					border-radius: 4px;
+					border: 1.5px solid #14142b;
+					font-size: 12px;
+					font-weight: 800;
+					color: #14142b;
+					font-family: 'GecoFont7';
+					&.arrow {
+						border: none;
+						background: transparent;
+					}
+				}
+			}
+		}
+
+		.ev2-empty {
+			font-size: 12.5px;
+			color: #fff;
+			text-align: center;
+			padding: 14px 0;
+		}
+	}
+}
+
+@media (max-width: 1100px) {
+	.ev2.collapsed {
+		padding: 14px;
+		.ev2-head {
+			flex-direction: row;
+		}
+		.ev2-title,
+		.ev2-fold {
+			writing-mode: horizontal-tb;
+		}
+		.ev2-title {
+			font-size: 22px;
+		}
+	}
 }

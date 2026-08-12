@@ -10,7 +10,8 @@ import Timer from '../../misc/Timer.js';
 import socket from '#config/socket';
 import log from '#config/log';
 import PlayersStateConnectionManager from '../managers/PlayersStateConnectionManager.js';
-import MoneyHelper from '../helpers/money.helper.js';
+import GameEngine from '../engine/game.engine.js';
+import SyncHelper from '../helpers/sync.helper.js';
 import BankStateService from './bank.state.service.js';
 import PlayerStateService from './player.state.service.js';
 import EventHelper from '../helpers/event.helper.js';
@@ -95,25 +96,13 @@ const _timerDeathCallback = async (timerInstance) => {
 	log.debug(`[GameStateService] callback death for game: ${timerInstance.data.gameStateId}`);
 	const gameStateId = timerInstance.data.gameStateId;
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const { gameState, rules } = entry;
-		if (!gameState) {
+		if (!entry.gameState) {
 			log.error(`[GameStateService] Game state not in memory — no-op : ${gameStateId}`);
 			return;
 		}
-		// autoDeath off = no scheduled death at all: nobody dies unless the animator
-		// manually kills a player via Force Death. The timer still ticks; it just no-ops here.
-		if (!rules?.autoDeath) {
-			return;
-		}
-		const deathState = gameState.gameTimers?.deathState;
-		const queue = deathState?.deathQueue;
-		if (!Array.isArray(queue) || queue.length === 0) {
-			// Everyone scheduled has already died — nothing left to do.
-			return;
-		}
-		// Refresh time-to-next-death so a save/crash-recovery keeps a full interval.
-		deathState.intervalDeathLeft = deathState.deathIntervalMs;
-		const avatarIdx = queue.shift();
+		const avatarIdx = GameEngine.popScheduledDeath(entry);
+		if (avatarIdx === null) return;
+
 		log.info(`[GameStateService] death tick: reincarnating avatar ${avatarIdx} in game ${gameStateId}`);
 		await PlayerStateService.reincarnateWithinLock(entry, avatarIdx);
 	});
@@ -141,9 +130,20 @@ const _timerDUCallback = async (timerInstance) => {
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
 		try {
 			if (!entry.gameState) return;
-			if (entry.gameState.typeMoney === GAME_TYPE.JUNE) {
-				await MoneyHelper.distributeNewDU(entry);
+			if (!GameEngine.paysDividend(entry.gameState)) return;
+
+			const { du, alive, currentMassMonetary } = await GameEngine.distributeDU(entry);
+			log.info(`[GameStateService] DU ${du} distributed to ${alive.length} players in game: ${gameStateId}`);
+
+			for (const playerState of alive) {
+				socket.emitAckTo(ROOMS.playerState(gameStateId, playerState.idx), IO.PLAYER.DISTRIB_DU, {
+					du,
+					coinsLK: playerState.coins,
+				});
 			}
+			// Emitted after the loop so the mass is final. See docs/adr/0008.
+			socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.CURRENT_DU, { du, currentMassMonetary });
+			SyncHelper.emitPlayerSync(gameStateId, alive);
 		} catch (err) {
 			log.error(`[GameStateService] Error in timer DU callback for game ${gameStateId}`, err);
 		}
@@ -491,30 +491,32 @@ GameStateService.resume = async (gameStateId) => {
 GameStateService.stop = async (gameStateId) => {
 	log.debug(`[GameStateService] Stopping game: ${gameStateId}`);
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
-	const entry = await GameStateManager.get(gameStateId);
-	if (entry) {
-		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-			await BankStateService.stopAllTimersCreditGame(gameStateId);
-		}
-		entry.gameState.status = GAME_STATUS.STOPPED;
-		if (entry.gameState.gameTimers) {
-			entry.gameState.gameTimers.remainingTime = 0;
-			// Round over: clear any avatars still scheduled to die — they simply never die.
-			if (entry.gameState.gameTimers.deathState) {
-				entry.gameState.gameTimers.deathState.deathQueue = [];
-				entry.gameState.gameTimers.deathState.intervalDeathLeft = 0;
+	if (GameStateManager.has(gameStateId)) {
+		await GameStateManager.withQueue(gameStateId, async (entry) => {
+			if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
+				await BankStateService.stopAllTimersCreditGame(gameStateId);
 			}
-		}
-		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState }, { new: true }).lean();
-		await EventService.postMany(entry.events, gameStateId);
-		await EventService.postNow(
-			DB_EVENTS.GAME_ENDED,
-			entry.gameState.sessionId,
-			gameStateId,
-			PLAYER_TYPE.MASTER,
-			null,
-			null
-		);
+			entry.gameState.status = GAME_STATUS.STOPPED;
+			if (entry.gameState.gameTimers) {
+				entry.gameState.gameTimers.remainingTime = 0;
+				// Round over: clear any avatars still scheduled to die — they simply never die.
+				if (entry.gameState.gameTimers.deathState) {
+					entry.gameState.gameTimers.deathState.deathQueue = [];
+					entry.gameState.gameTimers.deathState.intervalDeathLeft = 0;
+				}
+			}
+			await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState }, { new: true }).lean();
+			await EventService.postMany(entry.events, gameStateId);
+			entry.events = [];
+			await EventService.postNow(
+				DB_EVENTS.GAME_ENDED,
+				entry.gameState.sessionId,
+				gameStateId,
+				PLAYER_TYPE.MASTER,
+				null,
+				null
+			);
+		});
 
 		GameStateManager.remove(gameStateId);
 		log.debug(`[GameStateService] Game state deleted from memory: ${gameStateId}`);

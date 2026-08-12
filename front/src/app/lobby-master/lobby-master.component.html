@@ -199,7 +199,7 @@
 									mat-stroked-button
 									*ngIf="rule.gameStatus === STOPPED"
 									class="m-2 box-shadowed"
-									(click)="showResults()">
+									[routerLink]="['/results', sessionId]">
 									<mat-icon>analytics</mat-icon>
 									{{ 'MASTER.SHOW_RESULTS' | translate }}
 								</button>

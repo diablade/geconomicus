@@ -65,7 +65,7 @@ const { default: PlayerStateService } = await import('../src/gameState/services/
 const { default: ActionStateService } = await import('../src/gameState/services/action.state.service.js');
 const { default: DecksStateService } = await import('../src/gameState/services/decks.state.service.js');
 const { default: BankStateService } = await import('../src/gameState/services/bank.state.service.js');
-const { default: MoneyHelper } = await import('../src/gameState/helpers/money.helper.js');
+const { default: GameEngine } = await import('../src/gameState/engine/game.engine.js');
 const { default: GameStateService } = await import('../src/gameState/services/game.state.service.js');
 const { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS } = await import('@geco/shared');
 
@@ -115,6 +115,8 @@ const makeGame = ({ typeMoney = GAME_TYPE.JUNE, credits = [], overrides = {} } =
 		startingTokens: 2,
 		amountCardsForProd: 4,
 		distribInitCards: 4,
+		generatedIdenticalLetters: 5,
+		generateLettersAuto: true,
 		durationCredit: 5,
 		timerPrison: 5,
 		tauxCroissance: 10,
@@ -175,7 +177,7 @@ describe('LK emission — player lifecycle', () => {
 	test('distrib-du carries LK', async () => {
 		const { id } = makeGame();
 		const entry = GameStateManager.get(id);
-		await expect(MoneyHelper.distributeNewDU(entry)).resolves.not.toThrow?.();
+		await expect(GameEngine.distributeDU(entry)).resolves.toBeDefined();
 	});
 });
 
@@ -252,12 +254,10 @@ describe('LK emission — bank', () => {
 		await expect(BankStateService.seizure(id, credit.id, 0, seizure)).resolves.toBeDefined();
 	});
 
-	test('credit-seized-dead carries LK', async () => {
+	test('player-died-with-seizure carries LK', async () => {
 		const credit = creditOf(0, CREDIT_STATUS.RUNNING);
-		const { id, gameState } = makeGame({ typeMoney: GAME_TYPE.DEBT, credits: [credit] });
-		const entry = GameStateManager.get(id);
-		const player = gameState.playersStates[0];
-		await expect(BankStateService.seizureOnDead(gameState, entry.events, player)).resolves.not.toThrow?.();
+		const { id } = makeGame({ typeMoney: GAME_TYPE.DEBT, credits: [credit] });
+		await expect(PlayerStateService.killPlayer(id, 0)).resolves.toBeDefined();
 	});
 
 	test('prison-ended carries LK', async () => {

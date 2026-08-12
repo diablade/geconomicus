@@ -85,6 +85,7 @@ await jest.unstable_mockModule('../src/gameState/helpers/event.helper.js', () =>
 // ─── Late imports (after mocking) ────────────────────────────────────────────
 
 const { default: BankStateService } = await import('../src/gameState/services/bank.state.service.js');
+const { default: BankEngine } = await import('../src/gameState/engine/bank.engine.js');
 const { default: creditTimerManager } = await import('../src/gameState/managers/CreditTimerManager.js');
 const { default: GameStateManager } = await import('../src/gameState/managers/GameStateManager.js');
 const { default: socket } = await import('#config/socket');
@@ -277,13 +278,15 @@ describe('BankStateService — cancelCredit', () => {
         expect(socket.emitTo).toHaveBeenCalled();
     });
 
-    it('throws when credit is not found', async () => {
-        await expect(BankStateService.cancelCredit('game-001', 'no-such-credit')).rejects.toThrow('Credit not found');
+    it('throws an i18n key when credit is not found', async () => {
+        await expect(BankStateService.cancelCredit('game-001', 'no-such-credit')).rejects.toThrow(
+            'ERROR.CREDIT_NOT_FOUND'
+        );
     });
 
-    it('throws when player does not have enough coins', async () => {
+    it('throws an i18n key when player does not have enough coins', async () => {
         gameState.playersStates[0].coins = 0; // can't repay 3
-        await expect(BankStateService.cancelCredit('game-001', 'credit-1')).rejects.toThrow('Not enough coins');
+        await expect(BankStateService.cancelCredit('game-001', 'credit-1')).rejects.toThrow('ERROR.NOT_ENOUGH_COINS');
     });
 });
 
@@ -392,15 +395,11 @@ describe('BankStateService — settleCredit', () => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('BankStateService — seizureOnDead', () => {
+describe('BankEngine — seizureOnDead', () => {
     /**
-     * seizureOnDead is NOT a BankStateService method that goes through withQueue.
-     * It is a pure synchronous helper called with (gameState, events, player).
-     * We test its accounting logic directly.
-     *
-     * NOTE: Because it imports DecksHelper (which does real DB calls), we only
-     * exercise the financial accounting path here and accept that DecksHelper will
-     * be a no-op when cards array is empty (nothing to seize → no call needed).
+     * seizureOnDead is a pure engine function called with (entry, player). It never
+     * goes through withQueue and, since ADR-0016, never records an event of its own:
+     * the death owns the single event and picks its type from these totals.
      */
 
     const makePlayer = (overrides = {}) => ({
@@ -426,7 +425,7 @@ describe('BankStateService — seizureOnDead', () => {
         const gameState = makeGameState({ credits: [credit] });
         const events = [];
 
-        await BankStateService.seizureOnDead(gameState, events, player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
 
         expect(credit.status).toBe(CREDIT_STATUS.DONE);
     });
@@ -436,7 +435,7 @@ describe('BankStateService — seizureOnDead', () => {
         const credit = makeCredit({ amount: 3, interest: 2 });
         const gameState = makeGameState({ credits: [credit] });
 
-        await BankStateService.seizureOnDead(gameState, [credit], player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
 
         // interest (2) paid from coins, then amount (3) paid from coins
         expect(player.coins).toBe(5); // 10 - 2 - 3
@@ -447,7 +446,7 @@ describe('BankStateService — seizureOnDead', () => {
         const credit = makeCredit({ amount: 5, interest: 2 });
         const gameState = makeGameState({ credits: [credit], bankMoneyDestroyed: 0, bankInterestEarned: 0 });
 
-        await BankStateService.seizureOnDead(gameState, [], player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
 
         // Paid interest from coins → bankInterestEarned += 2
         expect(gameState.bankInterestEarned).toBe(2);
@@ -461,7 +460,7 @@ describe('BankStateService — seizureOnDead', () => {
         const credit2 = makeCredit({ id: 'c2', amount: 4, interest: 2, playerStateIdx: 1 });
         const gameState = makeGameState({ credits: [credit1, credit2] });
 
-        await BankStateService.seizureOnDead(gameState, [], player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
 
         expect(credit1.status).toBe(CREDIT_STATUS.DONE);
         expect(credit2.status).toBe(CREDIT_STATUS.DONE);
@@ -475,22 +474,57 @@ describe('BankStateService — seizureOnDead', () => {
         const otherCredit = makeCredit({ id: 'c2', amount: 3, interest: 1, playerStateIdx: 2 });
         const gameState   = makeGameState({ credits: [myCredit, otherCredit] });
 
-        await BankStateService.seizureOnDead(gameState, [], player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
 
         expect(myCredit.status).toBe(CREDIT_STATUS.DONE);
         expect(otherCredit.status).toBe(CREDIT_STATUS.RUNNING); // untouched
     });
 
-    it('pushes a CREDIT_SEIZED_DEAD event', async () => {
+    it('records no event of its own — the death owns the single event (ADR-0016)', () => {
         const player = makePlayer({ coins: 20 });
         const credit = makeCredit();
         const gameState = makeGameState({ credits: [credit] });
         const events = [];
 
-        await BankStateService.seizureOnDead(gameState, events, player);
+        BankEngine.seizureOnDead({ gameState, rules: makeRules(), events }, player);
 
-        expect(events).toHaveLength(1);
-        expect(events[0].typeEvent).toBe('credit-seized-dead');
+        expect(events).toHaveLength(0);
+    });
+
+    it('reports the totals the death event keys its type on', () => {
+        const player = makePlayer({ coins: 20 });
+        const credit = makeCredit({ amount: 5, interest: 2 });
+        const gameState = makeGameState({ credits: [credit] });
+
+        const result = BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
+
+        expect(result.totalCoinSeized).toBe(7);
+        expect(result.totalSeizedCardsValue).toBe(0);
+        expect(result.totalNotPayed).toBe(0);
+    });
+
+    it('charges the cards it took against the interest still owed', () => {
+        const player = makePlayer({ coins: 0, cards: [{ key: 'A01', letter: 'A', weight: 0, price: 1 }] });
+        const credit = makeCredit({ amount: 3, interest: 5 });
+        const gameState = makeGameState({ credits: [credit] });
+
+        const result = BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
+
+        // The single card covers 1 of the 5 interest, so 4 interest + 3 amount go unpaid.
+        expect(result.totalNotPayed).toBe(7);
+        expect(gameState.bankMoneyLost).toBe(7);
+    });
+
+    it('reports nothing seized when the Life owed nothing, so the plain death event is chosen', () => {
+        const player = makePlayer({ coins: 20 });
+        const gameState = makeGameState({ credits: [] });
+
+        const result = BankEngine.seizureOnDead({ gameState, rules: makeRules() }, player);
+
+        expect(result.totalCoinSeized).toBe(0);
+        expect(result.totalSeizedCardsValue).toBe(0);
+        expect(result.totalNotPayed).toBe(0);
+        expect(player.coins).toBe(20);
     });
 });
 

@@ -18,19 +18,26 @@ const walk = (dir) =>
 
 const sourceFiles = walk(SRC);
 
+/** Every place in src/ that builds an event, mapped from event type to "file:line" call sites. */
 const emissionSites = () => {
 	const sites = new Map();
+	const record = (name, file, lineNumber) => {
+		if (!DB_EVENTS[name]) return;
+		const previous = sites.get(DB_EVENTS[name]) ?? [];
+		previous.push(`${file.slice(SRC.length + 1).replace(/\\/g, '/')}:${lineNumber}`);
+		sites.set(DB_EVENTS[name], previous);
+	};
+
 	for (const file of sourceFiles) {
-		const text = readFileSync(file, 'utf8');
-		const lines = text.split('\n');
+		const lines = readFileSync(file, 'utf8').split('\n');
 		lines.forEach((line, i) => {
-			const match = line.match(/(?:createEvent|postNow)\(\s*DB_EVENTS\.([A-Z_]+)|DB_EVENTS\.([A-Z_]+),\s*$/);
-			if (!match) return;
-			const name = match[1] ?? match[2];
-			if (!DB_EVENTS[name]) return;
-			const previous = sites.get(DB_EVENTS[name]) ?? [];
-			previous.push(`${file.slice(SRC.length + 1).replace(/\\/g, '/')}:${i + 1}`);
-			sites.set(DB_EVENTS[name], previous);
+			const buildsAnEvent = /(?:createEvent|postNow)\(/.test(line);
+			if (buildsAnEvent) {
+				for (const match of line.matchAll(/DB_EVENTS\.([A-Z_]+)/g)) record(match[1], file, i + 1);
+				return;
+			}
+			const typeOnItsOwnLine = line.match(/DB_EVENTS\.([A-Z_]+),\s*$/);
+			if (typeOnItsOwnLine) record(typeOnItsOwnLine[1], file, i + 1);
 		});
 	}
 	return sites;

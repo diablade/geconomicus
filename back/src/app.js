@@ -14,6 +14,7 @@ import surveyRoutes from './survey/survey.routes.js';
 import avatarRoutes from './session/avatar/avatar.routes.js';
 import rulesRoutes from './session/rules/rules.routes.js';
 import gameStateRoutes from './gameState/game.state.routes.js';
+import toolsRoutes from './tools/tools.routes.js';
 
 const app = express();
 // Enable trust proxy for correct client IP detection
@@ -76,6 +77,7 @@ app.use('/survey', surveyRoutes);
 app.use('/events', eventsRoutes);
 app.use('/avatar', avatarRoutes);
 app.use('/game-state', gameStateRoutes);
+app.use('/tools', toolsRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {

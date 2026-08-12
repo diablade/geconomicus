@@ -1,4 +1,4 @@
-import { DB_EVENTS, DbEvent } from '@geco/shared';
+import { DB_EVENTS, DbEvent, LK_KEYS } from '@geco/shared';
 import { Card } from './game';
 
 /**
@@ -26,52 +26,48 @@ export const SPECIAL_ACTOR = {
 } as const;
 
 /**
- * ─── "LK" SNAPSHOT CONVENTION (LK = Last Knowledge) ──────────────────────────
- * Every event that CHANGES a balance should carry the ABSOLUTE state right
- * AFTER the mutation, so the results view plots points directly instead of
- * re-folding the whole event history (less boilerplate, no drift when an
- * event is missing or a game was recovered mid-way).
- *
- *   emitterCoinsLK / receiverCoinsLK   coins of each side after the event
- *   emitterCardsCountLK / receiverCardsCountLK   hand size after
- *   emitterCardsValueLK / receiverCardsValueLK   hand value (Σ card.price) after
- *   massMonetaryLK   gameState.currentMassMonetary after the event
- *   duLK             gameState.currentDU at the event date (june only)
- *   bankCoinsLK      bank balance after the event (debt only)
- *
- * The front (SessionResultsService) uses these when present and only falls
- * back to fold-reconstruction when absent (legacy events).
- *
- * TODO(back): enrich EventHelper.createEvent call sites with the LK fields:
- *   - player.state.service.js  transaction → { cost, card, emitterCoinsLK,
- *     receiverCoinsLK, emitterCardsCountLK, receiverCardsCountLK, massMonetaryLK, duLK }
- *   - bank.state.service.js    credit-new / credit-settled / credit-fault /
- *     credit-seized-dead / free-money → { ..., receiverCoinsLK, bankCoinsLK, massMonetaryLK }
- *   - game.state.service.js    distrib-du → { du, receiverCoinsLK?, massMonetaryLK, duLK }
- *     (a single 'distrib-du' event with receiver='all' + per-player coinsLK map
- *      `coinsByPlayerLK: { [playerStateIdx]: number }` is even better than N events)
- *   - action.state.service.js  action-* → add emitter/receiver CardsCountLK + CardsValueLK
+ * ─── LAST-KNOWN, AS THE CONTRACT PRODUCES IT ─────────────────────────────────
+ * EVENT_LK_CONTRACT declares which pieces each event type carries, and the
+ * backend event builder extracts them from the gameState. Per-life values are
+ * keyed by playerStateIdx under `playersLK`; aggregates sit beside it as flat
+ * numbers under their LK_KEYS name. `emitter` / `receiver` are role pointers
+ * only and carry no values. See docs/adr/0012 and CONTEXT.md → Last-Known.
  */
-export interface LkSnapshot {
-	emitterCoinsLK?: number;
-	receiverCoinsLK?: number;
-	emitterCardsCountLK?: number;
-	receiverCardsCountLK?: number;
-	emitterCardsValueLK?: number;
-	receiverCardsValueLK?: number;
-	massMonetaryLK?: number;
-	duLK?: number;
-	bankCoinsLK?: number;
-	/** distrib-du broadcast variant: absolute coins per player after DU */
-	coinsByPlayerLK?: { [playerStateIdx: string]: number };
+export interface LifeSnapshot {
+	coins: number;
+	cardsValue: number;
+	debt?: number;
 }
 
-export interface TransactionPayload extends LkSnapshot {
+export type PlayersLk = { [playerStateIdx: string]: LifeSnapshot };
+
+export function playersLkOf(payload: Record<string, any> | undefined): PlayersLk {
+	const raw = payload?.[LK_KEYS.PLAYERS];
+	if (!raw || typeof raw !== 'object') return {};
+	const out: PlayersLk = {};
+	for (const [idx, snapshot] of Object.entries(raw as Record<string, any>)) {
+		if (!snapshot || typeof snapshot !== 'object') continue;
+		if (!Number.isFinite(snapshot.coins) || !Number.isFinite(snapshot.cardsValue)) continue;
+		out[idx] = {
+			coins: snapshot.coins,
+			cardsValue: snapshot.cardsValue,
+			...(Number.isFinite(snapshot.debt) ? { debt: snapshot.debt } : {}),
+		};
+	}
+	return out;
+}
+
+export function lkNumberOf(payload: Record<string, any> | undefined, key: string): number | undefined {
+	const value = payload?.[key];
+	return Number.isFinite(value) ? (value as number) : undefined;
+}
+
+export interface TransactionPayload {
 	cost: number;
 	card: Card;
 }
 
-export interface CreditPayload extends LkSnapshot {
+export interface CreditPayload {
 	creditId?: string;
 	amount: number;
 	interest: number;
@@ -79,17 +75,24 @@ export interface CreditPayload extends LkSnapshot {
 	origin?: string;
 }
 
-export interface DistribDuPayload extends LkSnapshot {
+export interface DistribDuPayload {
 	du: number;
 }
 
-export interface DeathPayload extends LkSnapshot {
-	coins: number;
+/** player-died and player-died-with-seizure; `seizure` only on the latter. */
+export interface DeathPayload {
 	cards: Card[];
+	seizure?: {
+		totalCoinSeized: number;
+		interest: number;
+		amount: number;
+		cards: Card[];
+		notPayed: number;
+	};
 }
 
 /** action-give / action-steal / action-silent-steal / action-war / action-ong */
-export interface ActionPayload extends LkSnapshot {
+export interface ActionPayload {
 	card?: Card;
 	cards?: Card[];
 	stolen?: Card[];
@@ -98,13 +101,13 @@ export interface ActionPayload extends LkSnapshot {
 }
 
 /**
- * TODO(back): production is not persisted as a DB_EVENT in v2 yet
- * (IO.PLAYER.PROD_DISCARDS / PROD_DRAW_CARDS exist but no DB_EVENTS.PRODUCTION).
- * Add DB_EVENTS.PRODUCTION = 'production' emitted from the produce flow with:
- *   { discards: Card[], newCards: Card[], emitterCardsCountLK, emitterCardsValueLK }
+ * `consumed` are the cards handed in, `produced` the higher-weight card they bought,
+ * `newCards` the same-weight cards redrawn to refill the hand. Events written before
+ * 2026-08-12 carry `newCards` only.
  */
-export interface ProductionPayload extends LkSnapshot {
-	discards: Card[];
+export interface ProductionPayload {
+	consumed?: Card[];
+	produced?: Card;
 	newCards: Card[];
 }
 
@@ -121,12 +124,14 @@ export type EventPayload =
  * ─── EVENT GROUPS (client-side filter chips) ─────────────────────────────────
  * All type/emitter/receiver filtering happens on the client; the back only
  * ships the raw ordered event list of the session.
+ *
+ * These values double as i18n keys: `EVENTS.EVENT_GROUP.<value>` in
+ * assets/i18n/events/*.json, as DB_EVENTS does under `EVENTS.DB_EVENTS.<value>`.
  */
 export const EVENT_GROUP = {
 	ALL: 'all',
 	TRANSACTION: 'transaction',
 	CREDIT: 'credit',
-	INTEREST: 'interest',
 	DU: 'du',
 	PRODUCTION: 'production',
 	DEATH: 'death',
@@ -136,35 +141,43 @@ export const EVENT_GROUP = {
 } as const;
 export type EventGroup = (typeof EVENT_GROUP)[keyof typeof EVENT_GROUP];
 
-const GROUP_BY_TYPE: { [typeEvent: string]: EventGroup } = {
-	[DB_EVENTS.TRANSACTION]: EVENT_GROUP.TRANSACTION,
-	[DB_EVENTS.FREE_MONEY]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_NEW]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_REQUEST]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_EXTENDED]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_SETTLED]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_FAULT]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_CANCELED]: EVENT_GROUP.CREDIT,
-	[DB_EVENTS.CREDIT_SEIZED_DEAD]: EVENT_GROUP.SEIZURE,
-	// TODO(back): DB_EVENTS.CREDIT_INTEREST_PAID is missing (interest is only an IO event today).
-	// Persist it so the "Intérêts" filter has data: map it here to EVENT_GROUP.INTEREST.
-	'credit-interest-paid': EVENT_GROUP.INTEREST,
-	[DB_EVENTS.DISTRIB_DU]: EVENT_GROUP.DU,
-	[DB_EVENTS.FIRST_DU]: EVENT_GROUP.DU,
-	// TODO(back): see ProductionPayload note.
-	'production': EVENT_GROUP.PRODUCTION,
-	[DB_EVENTS.PLAYER_DIED]: EVENT_GROUP.DEATH,
-	[DB_EVENTS.PLAYER_BIRTH]: EVENT_GROUP.DEATH,
-	[DB_EVENTS.ACTION_GIVE]: EVENT_GROUP.ACTION,
-	[DB_EVENTS.ACTION_STEAL]: EVENT_GROUP.ACTION,
-	[DB_EVENTS.ACTION_SILENT_STEAL]: EVENT_GROUP.ACTION,
-	[DB_EVENTS.ACTION_ASSOCIATION]: EVENT_GROUP.ACTION,
-	[DB_EVENTS.ACTION_WAR]: EVENT_GROUP.ACTION,
-	[DB_EVENTS.ACTION_ONG]: EVENT_GROUP.ACTION,
+const GROUPS_BY_TYPE: { [typeEvent: string]: EventGroup[] } = {
+	[DB_EVENTS.TRANSACTION]: [EVENT_GROUP.TRANSACTION],
+	[DB_EVENTS.FREE_MONEY]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_NEW]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_REQUEST]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_EXTENDED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_SETTLED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_FAULT]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_CANCELED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_REFUSED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_QUESTION_ASKED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_QUESTION_ANSWERED]: [EVENT_GROUP.CREDIT],
+	[DB_EVENTS.CREDIT_SEIZURE]: [EVENT_GROUP.SEIZURE],
+	[DB_EVENTS.PRISON]: [EVENT_GROUP.SEIZURE],
+	[DB_EVENTS.PRISON_ENDED]: [EVENT_GROUP.SEIZURE],
+	[DB_EVENTS.DISTRIB_DU]: [EVENT_GROUP.DU],
+	[DB_EVENTS.FIRST_DU]: [EVENT_GROUP.DU],
+	[DB_EVENTS.PRODUCTION]: [EVENT_GROUP.PRODUCTION],
+	[DB_EVENTS.PLAYER_DIED]: [EVENT_GROUP.DEATH],
+	[DB_EVENTS.PLAYER_DIED_WITH_SEIZURE]: [EVENT_GROUP.DEATH, EVENT_GROUP.SEIZURE],
+	[DB_EVENTS.PLAYER_BIRTH]: [EVENT_GROUP.DEATH],
+	[DB_EVENTS.ACTION_GIVE]: [EVENT_GROUP.ACTION],
+	[DB_EVENTS.ACTION_STEAL]: [EVENT_GROUP.ACTION],
+	[DB_EVENTS.ACTION_SILENT_STEAL]: [EVENT_GROUP.ACTION],
+	[DB_EVENTS.ACTION_ASSOCIATION]: [EVENT_GROUP.ACTION],
+	[DB_EVENTS.ACTION_WAR]: [EVENT_GROUP.ACTION],
+	[DB_EVENTS.ACTION_ONG]: [EVENT_GROUP.ACTION],
 };
 
-export function groupOfEvent(typeEvent: string): EventGroup {
-	return GROUP_BY_TYPE[typeEvent] ?? EVENT_GROUP.SYSTEM;
+/** Every group an event belongs to — a type can be in several, so filtering tests membership. */
+export function groupsOfEvent(typeEvent: string): EventGroup[] {
+	return GROUPS_BY_TYPE[typeEvent] ?? [EVENT_GROUP.SYSTEM];
+}
+
+/** The group an event is drawn as. Display only — never tally or count on this. */
+export function primaryGroupOfEvent(typeEvent: string): EventGroup {
+	return groupsOfEvent(typeEvent)[0];
 }
 
 /** Client-side filter state of the events panel */
@@ -175,12 +188,18 @@ export interface EventFilter {
 	receiver: string | null;
 }
 
+/**
+ * Apply the events panel's filter chips, testing group membership rather than equality.
+ * Session-scoped events carry no gameStateId (session-started / -ended) and stay visible
+ * under either game. Ids are compared as strings — they reach the client from two routes.
+ */
 export function filterEvents(events: GecoEventV2[], f: EventFilter): GecoEventV2[] {
+	const sameId = (a?: string | null, b?: string | null) => String(a ?? '') === String(b ?? '');
 	return events.filter(
 		(ev) =>
-			(!f.gameStateId || ev.gameStateId === f.gameStateId) &&
-			(f.group === EVENT_GROUP.ALL || groupOfEvent(ev.typeEvent) === f.group) &&
-			(!f.emitter || ev.emitter === f.emitter) &&
-			(!f.receiver || ev.receiver === f.receiver)
+			(!f.gameStateId || !ev.gameStateId || sameId(ev.gameStateId, f.gameStateId)) &&
+			(f.group === EVENT_GROUP.ALL || groupsOfEvent(ev.typeEvent).includes(f.group)) &&
+			(!f.emitter || sameId(ev.emitter, f.emitter)) &&
+			(!f.receiver || sameId(ev.receiver, f.receiver))
 	);
 }

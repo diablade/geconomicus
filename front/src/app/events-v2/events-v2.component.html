@@ -1,63 +1,85 @@
 <!-- Panneau évènements v2 — rendu cible : DC "Comparaison Résultats v2" option 2a -->
-<div class="ev2 frame frame-light box-shadowed">
-	<div class="ev2-head">
-		<span class="ev2-title">Évènements</span>
-		<span class="ev2-count">{{ filtered.length }} évènements</span>
-	</div>
+<div class="ev2 frame frame-light box-shadowed" [class.collapsed]="collapsed">
+	<button class="ev2-head" type="button" (click)="toggle()">
+		<span class="ev2-title">🧾 {{ 'EVENTS.TITLE' | translate }}</span>
+		<span class="ev2-count">{{ filtered.length }}</span>
+		<span class="ev2-fold">{{ (collapsed ? 'EVENTS.UNFOLD' : 'EVENTS.FOLD') | translate }}</span>
+	</button>
 
-	<!-- une partie à la fois -->
-	<div class="ev2-game-tabs">
-		<button *ngFor="let g of games" [class.on]="filter.gameStateId === g.id" (click)="setGame(g.id)">
-			{{ g.label }}
-		</button>
-	</div>
-
-	<!-- filtre par type -->
-	<div class="ev2-chips">
-		<button *ngFor="let g of groups" [class.on]="filter.group === g.id" (click)="setGroup(g.id)">
-			{{ g.label }}
-		</button>
-	</div>
-
-	<!-- filtre par émetteur / récepteur -->
-	<div class="ev2-actors">
-		<label>
-			FAIT PAR
-			<select [ngModel]="filter.emitter" (ngModelChange)="setEmitter($event)">
-				<option [ngValue]="null">Tous</option>
-				<option value="bank">Banque</option>
-				<option *ngFor="let p of players" [value]="p.idx">{{ p.name }}</option>
-			</select>
-		</label>
-		<label>
-			REÇU PAR
-			<select [ngModel]="filter.receiver" (ngModelChange)="setReceiver($event)">
-				<option [ngValue]="null">Tous</option>
-				<option value="bank">Banque</option>
-				<option *ngFor="let p of players" [value]="p.idx">{{ p.name }}</option>
-			</select>
-		</label>
-	</div>
-
-	<!-- liste -->
-	<div class="ev2-list">
-		<div class="ev2-event" *ngFor="let ev of filtered" [style.border-left-color]="badgeColor(ev)">
-			<div class="ev2-line">
-				<span class="t">{{ ev.at | date: 'HH:mm' }}</span>
-				<span class="badge" [style.background]="badgeColor(ev)">{{ groupOf(ev.typeEvent) }}</span>
-				<span class="who">{{ nameOf(ev.emitter) }} → {{ nameOf(ev.receiver) }}</span>
-				<span class="amt">{{ amountOf(ev) }}</span>
-			</div>
-			<div class="ev2-cards" *ngIf="cardsOf(ev).length">
-				<span
-					class="mini"
-					*ngFor="let c of cardsOf(ev)"
-					[style.background]="c.color"
-					[class.arrow]="c.color === 'transparent'">
-					{{ c.letter }}
-				</span>
-			</div>
+	<ng-container *ngIf="!collapsed">
+		<!-- une partie à la fois -->
+		<div class="ev2-game-tabs">
+			<button
+				type="button"
+				*ngFor="let g of games; trackBy: trackById"
+				[class.on]="filter.gameStateId === g.id"
+				(click)="setGame(g.id)">
+				{{ g.label | translate }}
+			</button>
 		</div>
-		<div class="ev2-empty" *ngIf="!filtered.length">Aucun évènement ne correspond aux filtres.</div>
-	</div>
+
+		<!-- filtre par type -->
+		<div class="ev2-chips">
+			<button
+				type="button"
+				*ngFor="let g of groups; trackBy: trackByGroup"
+				[class.on]="filter.group === g"
+				(click)="setGroup(g)">
+				{{ 'EVENTS.EVENT_GROUP.' + g | translate }}
+			</button>
+		</div>
+
+		<!-- filtre par émetteur / récepteur -->
+		<div class="ev2-actors">
+			<label>
+				{{ 'EVENTS.FROM' | translate }}
+				<select [ngModel]="filter.emitter" (ngModelChange)="setEmitter($event)">
+					<option [ngValue]="null">{{ 'EVENTS.ALL' | translate }}</option>
+					<option ngValue="bank">{{ 'EVENTS.BANK' | translate }}</option>
+					<option ngValue="master">{{ 'EVENTS.MASTER' | translate }}</option>
+					<option *ngFor="let p of gamePlayers" [ngValue]="'' + p.idx">{{ labelOf(p) }}</option>
+				</select>
+			</label>
+			<label>
+				{{ 'EVENTS.TO' | translate }}
+				<select [ngModel]="filter.receiver" (ngModelChange)="setReceiver($event)">
+					<option [ngValue]="null">{{ 'EVENTS.ALL' | translate }}</option>
+					<option ngValue="bank">{{ 'EVENTS.BANK' | translate }}</option>
+					<option ngValue="master">{{ 'EVENTS.MASTER' | translate }}</option>
+					<option *ngFor="let p of gamePlayers" [ngValue]="'' + p.idx">{{ labelOf(p) }}</option>
+				</select>
+			</label>
+		</div>
+
+		<!-- liste -->
+		<div class="ev2-list">
+			<div
+				class="ev2-event"
+				*ngFor="let ev of filtered; trackBy: trackByEvent"
+				[style.border-left-color]="badgeColor(ev)">
+				<div class="ev2-line">
+					<span class="t">{{ ev.at | date: 'HH:mm' }}</span>
+					<span class="badge" [style.background]="badgeColor(ev)">
+						{{ 'EVENTS.EVENT_GROUP.' + groupOf(ev) | translate }}
+					</span>
+					<span class="what">{{ 'EVENTS.DB_EVENTS.' + ev.typeEvent | translate }}</span>
+					<span class="amt">{{ amountOf(ev) }}</span>
+				</div>
+				<div class="ev2-who" *ngIf="whoOf(ev)">{{ whoOf(ev) }}</div>
+				<div class="ev2-cards" *ngIf="cardsOf(ev).length">
+					<span
+						class="mini"
+						*ngFor="let c of cardsOf(ev)"
+						[style.background]="c.color"
+						[class.arrow]="c.arrow">
+						{{ c.letter }}
+					</span>
+				</div>
+				<div class="ev2-detail" *ngIf="detailOf(ev).length">
+					<span *ngFor="let d of detailOf(ev)">{{ d.key | translate: d.params }}</span>
+				</div>
+			</div>
+			<div class="ev2-empty" *ngIf="!filtered.length">{{ 'EVENTS.EMPTY' | translate }}</div>
+		</div>
+	</ng-container>
 </div>

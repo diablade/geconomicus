@@ -1,11 +1,9 @@
-<!-- Design "2a — Face à face" (validated in Comparaison Résultats v2.dc.html #2a).
-     Background: .bgGradien7 (v2 styles.scss) · cards: .frame-light .box-shadowed -->
 <div class="bgGradien7 bgFixedLayer"></div>
 <div class="compare-page aboveBg">
 	<!-- ── header ── -->
 	<div class="cp-header">
 		<img src="assets/images/geconomicus.png" class="cp-logo glow" alt="Géconomicus" />
-		<div class="cp-titles">
+		<div class="cp-titles d-flex flex-row gap-2 align-items-center">
 			<div class="cp-title geconomicusFont contourText ombreText">{{ sessionName || 'Résultats' }}</div>
 			<div class="cp-sub white" *ngIf="location">📍 {{ location }}</div>
 		</div>
@@ -13,183 +11,181 @@
 		<img src="assets/images/guny.png" class="cp-guny" alt="Guny" />
 	</div>
 
+	<div class="cp-warn frame frame-light box-shadowed" *ngIf="partial">
+		⚠️ Image partielle : une seule partie a été jouée pour l'instant. La colonne manquante restera vide.
+	</div>
+
 	<!-- ── layout : contenu principal + tiroir évènements à droite ── -->
-	<div class="cp-layout" [class.eventsCollapsed]="!showEvents">
+	<div class="cp-layout" [class.eventsCollapsed]="eventsCollapsed">
 		<main class="cp-main">
-			<!-- synthesis table -->
-			<section>
-				<div class="d-flex justify-content-between align-items-center mb-2">
-					<div class="geco-title collapsible mb-0">Synthèse comparée</div>
-				</div>
-				<div class="cp-table frame frame-light box-shadowed">
-					<div class="cp-thead">
-						<div>INDICATEUR</div>
-						<div class="dette">🪙 Monnaie dette</div>
-						<div class="libre">☀️ Monnaie libre</div>
-					</div>
-					<div class="cp-trow" *ngFor="let row of synthesisRows">
-						<div>{{ row.label }}</div>
-						<div class="dette">{{ row.dette }}</div>
-						<div class="libre">{{ row.libre }}</div>
-					</div>
-					<div class="cp-trow" *ngIf="synthesisRows.length === 0">
-						<div>Aucune donnée pour cette session.</div>
-						<div class="dette">-</div>
-						<div class="libre">-</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- podiums -->
-			<section class="cp-two-cols">
-				<div class="frame-light box-shadowed cp-podium" *ngIf="dette">
-					<h3>🪙 MONNAIE DETTE</h3>
-					<div class="pod-row" *ngFor="let p of dette.podium">
-						<span class="avatar" [style.background]="p.player.color">{{ p.player.name[0] }}</span>
-						<span class="name">
-							{{ p.player.name }}
-							<small>{{ p.score }}</small>
-						</span>
-						<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
-					</div>
-					<div class="pod-empty" *ngIf="dette.podium.length === 0">Aucun classement.</div>
-					<div class="most-active" *ngIf="dette.mostActive">
-						⏰ Plus actif·ve :
-						<b>{{ dette.mostActive.player.name }}</b>
-						— {{ dette.mostActive.transactions }} transactions
-					</div>
-				</div>
-				<div class="frame-light box-shadowed cp-podium" *ngIf="libre">
-					<h3>☀️ MONNAIE LIBRE</h3>
-					<div class="pod-row" *ngFor="let p of libre.podium">
-						<span class="avatar" [style.background]="p.player.color">{{ p.player.name[0] }}</span>
-						<span class="name">
-							{{ p.player.name }}
-							<small>{{ p.score }}</small>
-						</span>
-						<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
-					</div>
-					<div class="pod-empty" *ngIf="libre.podium.length === 0">Aucun classement.</div>
-					<div class="most-active" *ngIf="libre.mostActive">
-						⏰ Plus actif·ve :
-						<b>{{ libre.mostActive.player.name }}</b>
-						— {{ libre.mostActive.transactions }} transactions
-					</div>
-				</div>
-			</section>
-
-			<!-- actions -->
-			<section class="cp-two-cols cp-actions" *ngIf="dette && libre">
-				<div class="frame-light box-shadowed">
-					<h3 class="good">😇 BONS COMPORTEMENTS</h3>
-					<div class="act-row" *ngFor="let a of goodActions">
-						<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-						<div class="act-bars">
-							<div class="act-bar dette">
-								<span
-									class="fill"
-									[style.width.%]="(a.dette / maxActionCount(goodActions)) * 100"></span>
-								<b>{{ a.dette }}</b>
-							</div>
-							<div class="act-bar libre">
-								<span
-									class="fill"
-									[style.width.%]="(a.libre / maxActionCount(goodActions)) * 100"></span>
-								<b>{{ a.libre }}</b>
-							</div>
+			<!-- synthèse à gauche, podiums + comportements empilés à droite -->
+			<div class="cp-top">
+				<!-- synthesis table -->
+				<section>
+					<div class="cp-table frame frame-light box-shadowed">
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<div class="geco-title collapsible mt-2">Synthèse comparée</div>
+						</div>
+						<div class="cp-thead">
+							<div>INDICATEUR</div>
+							<div class="dette">🪙 Monnaie dette</div>
+							<div class="libre">☀️ Monnaie libre</div>
+						</div>
+						<div class="cp-trow" *ngFor="let row of synthesisRows">
+							<div>{{ row.label }}</div>
+							<div class="dette">{{ row.dette }}</div>
+							<div class="libre">{{ row.libre }}</div>
+						</div>
+						<div class="cp-trow" *ngIf="synthesisRows.length === 0">
+							<div>Aucune donnée pour cette session.</div>
+							<div class="dette">-</div>
+							<div class="libre">-</div>
 						</div>
 					</div>
-				</div>
-				<div class="frame-light box-shadowed">
-					<h3 class="bad">😈 MAUVAIS COMPORTEMENTS</h3>
-					<div class="act-row" *ngFor="let a of badActions">
-						<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-						<div class="act-bars">
-							<div class="act-bar dette">
-								<span
-									class="fill"
-									[style.width.%]="(a.dette / maxActionCount(badActions)) * 100"></span>
-								<b>{{ a.dette }}</b>
+				</section>
+
+				<div class="cp-side">
+					<!-- podiums — Avatar Score : somme de toutes les vies (ADR-0014) -->
+					<section class="cp-stack">
+						<div class="frame-light frame box-shadowed cp-podium" *ngFor="let card of podiumCards">
+							<div class="pod-head">
+								<h3>{{ card.title }}</h3>
+								<button class="cp-toggle" type="button" (click)="toggleScoreBars(card.key)">
+									{{ scoreBars[card.key] ? '🏆 Podium' : '📊 Tous les scores' }}
+								</button>
 							</div>
-							<div class="act-bar libre">
-								<span
-									class="fill"
-									[style.width.%]="(a.libre / maxActionCount(badActions)) * 100"></span>
-								<b>{{ a.libre }}</b>
+
+							<ng-container *ngIf="!scoreBars[card.key]">
+								<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
+									<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
+									<span class="name">
+										{{ p.avatar.name }}
+										<small>{{ p.score }} ({{ p.coins }} 🪙 + {{ p.cardsValue }} 📦)</small>
+									</span>
+									<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
+								</div>
+							</ng-container>
+
+							<div class="pod-scores" *ngIf="scoreBars[card.key] && card.board as board">
+								<div class="score-plot">
+									<div class="score-lines">
+										<div class="score-line avg" [style.left.%]="board.averagePercent">
+											<span>Moyenne {{ board.average }}</span>
+										</div>
+										<div class="score-line dev" [style.left.%]="board.deviationPercent">
+											<span>Écart type {{ board.deviation }}</span>
+										</div>
+									</div>
+									<div class="score-row" *ngFor="let bar of board.bars">
+										<span class="score-name">{{ bar.entry.avatar.name }}</span>
+										<div class="score-bar" [ngClass]="card.key">
+											<span class="fill" [style.width.%]="bar.percent"></span>
+											<b>{{ bar.entry.score }}</b>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
+							<div class="most-active" *ngIf="card.game.mostActive">
+								⏰ Plus actif·ve :
+								<b>{{ card.game.mostActive.avatar.name }}</b>
+								— {{ card.game.mostActive.count }} actions
 							</div>
 						</div>
-					</div>
-				</div>
-			</section>
+					</section>
 
-			<!-- Comptes (collapsible) -->
-			<section>
-				<h2 class="geco-title collapsible" (click)="toggleSection('accounts')">
-					{{ sections.accounts ? '▾' : '▸' }} Comptes
-				</h2>
-				<div class="cp-two-cols" *ngIf="sections.accounts">
-					<div class="frame-light box-shadowed cp-chart">
-						<header>
-							🪙 Dette — Comptes absolus
-							<button (click)="toggleLegend('accD')">Légende {{ legends['accD'] ? '✓' : '' }}</button>
-						</header>
-						<canvas
-							baseChart
-							*ngIf="chartDetteAbs"
-							[type]="'line'"
-							[data]="chartDetteAbs"
-							[options]="lineOpts(legends['accD'])"></canvas>
-					</div>
-					<div class="frame-light box-shadowed cp-chart">
-						<header>
-							☀️ Libre — Comptes absolus
-							<button (click)="toggleLegend('accL')">Légende {{ legends['accL'] ? '✓' : '' }}</button>
-						</header>
-						<canvas
-							baseChart
-							*ngIf="chartLibreAbs"
-							[type]="'line'"
-							[data]="chartLibreAbs"
-							[options]="lineOpts(legends['accL'])"></canvas>
-					</div>
-					<div class="frame-light box-shadowed cp-chart col2">
-						<header>
-							☀️ Libre — Comptes relatifs (Ğ1 rapporté au DU)
-							<button (click)="toggleLegend('relL')">Légende {{ legends['relL'] ? '✓' : '' }}</button>
-						</header>
-						<canvas
-							baseChart
-							*ngIf="chartLibreRel"
-							[type]="'line'"
-							[data]="chartLibreRel"
-							[options]="lineOpts(legends['relL'])"></canvas>
-					</div>
+					<!-- actions -->
+					<section class="cp-stack cp-actions" *ngIf="dette || libre">
+						<div class="frame-light frame box-shadowed">
+							<h3 class="good">😇 BONS COMPORTEMENTS</h3>
+							<div class="act-row" *ngFor="let a of goodActions">
+								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
+								<div class="act-bars">
+									<div class="act-bar dette">
+										<span
+											class="fill"
+											[style.width.%]="(a.dette / maxActionCount(goodActions)) * 100"></span>
+										<b>{{ a.dette }}</b>
+									</div>
+									<div class="act-bar libre">
+										<span
+											class="fill"
+											[style.width.%]="(a.libre / maxActionCount(goodActions)) * 100"></span>
+										<b>{{ a.libre }}</b>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="frame-light frame box-shadowed">
+							<h3 class="bad">😈 MAUVAIS COMPORTEMENTS</h3>
+							<div class="act-row" *ngFor="let a of badActions">
+								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
+								<div class="act-bars">
+									<div class="act-bar dette">
+										<span
+											class="fill"
+											[style.width.%]="(a.dette / maxActionCount(badActions)) * 100"></span>
+										<b>{{ a.dette }}</b>
+									</div>
+									<div class="act-bar libre">
+										<span
+											class="fill"
+											[style.width.%]="(a.libre / maxActionCount(badActions)) * 100"></span>
+										<b>{{ a.libre }}</b>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
 				</div>
-			</section>
+			</div>
 
-			<!-- Ressources (collapsible) -->
+			<!-- Comptes (collapsible) — une ligne par vie, agrégats co-localisés par unité -->
 			<section>
-				<h2 class="geco-title collapsible" (click)="toggleSection('resources')">
-					{{ sections.resources ? '▾' : '▸' }} Ressources
-				</h2>
-				<div class="cp-two-cols" *ngIf="sections.resources">
-					<div class="frame-light box-shadowed cp-chart">
-						<header>🪙 Dette — Ressources</header>
-						<canvas
-							baseChart
-							*ngIf="chartDetteRes"
-							[type]="'line'"
-							[data]="chartDetteRes"
-							[options]="lineOpts(false)"></canvas>
-					</div>
-					<div class="frame-light box-shadowed cp-chart">
-						<header>☀️ Libre — Ressources</header>
-						<canvas
-							baseChart
-							*ngIf="chartLibreRes"
-							[type]="'line'"
-							[data]="chartLibreRes"
-							[options]="lineOpts(false)"></canvas>
+				<div class="cp-charts-head">
+					<h2 class="geco-title collapsible" (click)="toggleSection('accounts')">
+						{{ sections.accounts ? '▾' : '▸' }} Comptes
+					</h2>
+					<button class="cp-toggle" type="button" (click)="toggleCardsIncluded()" *ngIf="sections.accounts">
+						{{ cardsIncluded ? '📦 Biens inclus' : '🪙 Séparés' }}
+					</button>
+				</div>
+				<div class="cp-charts" *ngIf="sections.accounts">
+					<div class="cp-two-cols" *ngFor="let row of chartRows">
+						<div class="frame-light frame box-shadowed cp-chart" *ngIf="row.dette">
+							<header>
+								{{ row.dette.title }}
+								<button (click)="toggleLegend(row.dette.key)">
+									Légende {{ legends[row.dette.key] ? '✓' : '' }}
+								</button>
+							</header>
+							<div class="cp-canvas">
+								<canvas
+									baseChart
+									[type]="'line'"
+									[data]="row.dette.data"
+									[options]="lineOpts(row.dette)"></canvas>
+							</div>
+						</div>
+						<div
+							class="frame-light frame box-shadowed cp-chart"
+							[class.col2]="!row.dette"
+							*ngIf="row.libre">
+							<header>
+								{{ row.libre.title }}
+								<button (click)="toggleLegend(row.libre.key)">
+									Légende {{ legends[row.libre.key] ? '✓' : '' }}
+								</button>
+							</header>
+							<div class="cp-canvas">
+								<canvas
+									baseChart
+									[type]="'line'"
+									[data]="row.libre.data"
+									[options]="lineOpts(row.libre)"></canvas>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -200,44 +196,74 @@
 					{{ sections.feelings ? '▾' : '▸' }} Sondage des ressentis
 				</h2>
 				<div class="cp-two-cols" *ngIf="sections.feelings">
-					<div class="frame-light box-shadowed cp-chart">
+					<div class="frame-light frame box-shadowed cp-chart cp-feel">
 						<header>🪙 Dette — Ressentis</header>
-						<canvas
-							baseChart
-							*ngIf="chartDetteFeel"
-							[type]="'radar'"
-							[data]="chartDetteFeel"
-							[options]="radarOpts"></canvas>
+						<div class="cp-canvas">
+							<canvas
+								baseChart
+								*ngIf="chartDetteFeel"
+								[type]="'bubble'"
+								[data]="chartDetteFeel"
+								[options]="feelingsOpts"></canvas>
+						</div>
 					</div>
-					<div class="frame-light box-shadowed cp-chart">
+					<div class="frame-light frame box-shadowed cp-chart cp-feel">
 						<header>☀️ Libre — Ressentis</header>
-						<canvas
-							baseChart
-							*ngIf="chartLibreFeel"
-							[type]="'radar'"
-							[data]="chartLibreFeel"
-							[options]="radarOpts"></canvas>
+						<div class="cp-canvas">
+							<canvas
+								baseChart
+								*ngIf="chartLibreFeel"
+								[type]="'bubble'"
+								[data]="chartLibreFeel"
+								[options]="feelingsOpts"></canvas>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Santé des données : les deux sources doivent tomber d'accord (docs/adr/0012) -->
+			<section>
+				<h2 class="geco-title collapsible" (click)="showHealth = !showHealth">
+					{{ showHealth ? '▾' : '▸' }} Santé des données
+					<span class="cp-health-badge ok" *ngIf="healthMismatches === 0 && healthDivergences === 0">✓</span>
+					<span class="cp-health-badge bad" *ngIf="healthMismatches > 0 || healthDivergences > 0">
+						{{ healthMismatches + healthDivergences }}
+					</span>
+				</h2>
+				<div *ngIf="showHealth" class="cp-health">
+					<div class="frame-light frame box-shadowed" *ngFor="let game of [dette, libre]">
+						<ng-container *ngIf="game">
+							<h3>{{ game.isJune ? '☀️ Monnaie libre' : '🪙 Monnaie dette' }}</h3>
+							<div class="cp-health-row" *ngFor="let row of game.health.rows" [class.bad]="!row.agrees">
+								<span class="hl">{{ row.label }}</span>
+								<span class="hv">{{ row.authoritative }}</span>
+								<span class="hv">{{ row.sampled === null ? '∅' : row.sampled }}</span>
+								<span class="hs">{{ row.agrees ? '✓' : '✗' }}</span>
+							</div>
+							<div class="cp-health-div" *ngIf="game.health.divergences.length > 0">
+								<h4>Divergences par vertex</h4>
+								<div class="cp-health-row bad" *ngFor="let d of game.health.divergences">
+									<span class="hl">{{ timeOf(d.at) }} · {{ d.typeEvent }}</span>
+									<span class="hv">déclaré {{ d.declared }}</span>
+									<span class="hv">sommé {{ d.derived }}</span>
+									<span class="hs">Δ {{ d.delta }} · vies {{ d.touched.join(', ') }}</span>
+								</div>
+							</div>
+						</ng-container>
 					</div>
 				</div>
 			</section>
 		</main>
 
 		<!-- ── tiroir évènements (slide depuis la droite, comme les règles de la vue table) ── -->
-		<aside class="cp-events frame frame-light box-shadowed" [class.collapsed]="!showEvents">
-			<button class="panelHead" type="button" (click)="showEvents = !showEvents">
-				<span class="panelTitle contourText ombreText">🧾 Évènements</span>
-				<span class="foldChip">{{ showEvents ? '▸ Replier' : '◂ Déplier' }}</span>
-			</button>
+		<aside class="cp-events">
 			<app-events-v2
-				*ngIf="showEvents"
-				class="cp-events-inner"
 				[events]="events"
-				[players]="players"
-				[games]="[
-					{ id: detteGsId, label: '🪙 Dette' },
-					{ id: libreGsId, label: '☀️ Libre' },
-				]"
-				[initialGameId]="detteGsId"
+				[players]="lives"
+				[games]="games"
+				[initialGameId]="detteGsId || libreGsId"
+				[collapsed]="eventsCollapsed"
+				(collapsedChange)="eventsCollapsed = $event"
 				(filterChange)="onEventsFilter($event)"></app-events-v2>
 		</aside>
 	</div>

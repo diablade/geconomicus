@@ -9,15 +9,17 @@ SurveyController.addFeedback = async (req, res, next) => {
 	try {
 		const { sessionId, gameStateId, avatarIdx } = req.body;
 		let surveyFound = await SurveyService.getBySessionGameStateAvatarIdx(sessionId, gameStateId, avatarIdx);
+		const notifyFeedback = () =>
+			socket.emitTo(ROOMS.gameState(gameStateId), IO.SESSION.NEW_FEEDBACK, {
+				sessionId,
+				gameStateId,
+				avatarIdx,
+			});
 		if (!surveyFound) {
 			log.info(`[SurveyController] adding new feedback for game state ${gameStateId}, avatar ${avatarIdx}`);
 			let newFeedback = await SurveyService.create(req.body);
 			if (newFeedback && newFeedback._id) {
-				socket.emitTo(ROOMS.gameState(gameStateId), IO.SESSION.NEW_FEEDBACK, {
-					sessionId,
-					gameStateId,
-					avatarIdx,
-				});
+				notifyFeedback();
 				return res.status(200).json(newFeedback);
 			} else {
 				return res.status(500).json({ message: 'internal server error' });
@@ -25,6 +27,7 @@ SurveyController.addFeedback = async (req, res, next) => {
 		} else {
 			log.info(`[SurveyController] updating feedback for game state ${gameStateId}, avatar ${avatarIdx}`);
 			await SurveyService.update(surveyFound._id, req.body);
+			notifyFeedback();
 			return res.status(200).json({ message: 'Feedback updated successfully' });
 		}
 	} catch (error) {

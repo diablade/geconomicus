@@ -168,7 +168,7 @@ DecksHelper.drawReincarnationCards = (gameState, units) => {
  * @param {object} rules       - game rules (amountCardsForProd, etc.)
  * @param {number} playerLifeIdx - player's idx field
  * @param {Array}  cards       - the cards to exchange (must pass validation)
- * @returns {{ newCards: Array, discardEvent: object, newCardsEvent: object }}
+ * @returns {{ cardsLK: Array, consumed: Array, newCards: Array, producedCard: object, weight: number }}
  * @throws Error if validation fails
  */
 DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
@@ -193,8 +193,15 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 
 	if (weight >= 3) throw new Error('Technological change not yet implemented');
 
+	const sameLevelAfterReturn = (gameState.decks[weight]?.length ?? 0) + cardsToExchange.length;
+	if (sameLevelAfterReturn < amountCardsForProd || (gameState.decks[weight + 1]?.length ?? 0) < 1) {
+		throw new Error('ERROR.NOT_ENOUGH_CARDS_IN_DECK');
+	}
+
 	// Remove production cards from player's hand
 	playerState.cards = playerState.cards.filter((card) => !idsToFilter.includes(card.key));
+
+	const consumed = cardsToExchange.map((card) => ({ ...card }));
 
 	// Return exchanged cards to deck and shuffle
 	gameState.decks[weight] = _.shuffle([...gameState.decks[weight], ...cardsToExchange]);
@@ -205,15 +212,12 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	const newCardSup = gameState.decks[weight + 1].splice(0, 1)[0];
 	const cardsDraw = [...newCards, newCardSup];
 
-	if (cardsDraw.length < amountCardsForProd + 1 || newCardSup === undefined) {
-		throw new Error('ERROR.NOT_ENOUGH_CARDS_IN_DECK');
-	}
-
 	// Add new cards to player's hand
 	playerState.cards = [...playerState.cards, ...cardsDraw];
 
 	return {
 		cardsLK: playerState.cards,
+		consumed, // snapshot: the originals go back to the deck and get reshuffled
 		newCards: newCards,
 		producedCard: newCardSup,
 		weight, // the two deck levels touched are `weight` and `weight + 1`

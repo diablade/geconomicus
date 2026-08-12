@@ -194,6 +194,7 @@ export declare const DB_EVENTS: {
     readonly PLAYER_INIT: "player-init";
     readonly PLAYER_JOINED: "player-joined";
     readonly PLAYER_DIED: "player-died";
+    readonly PLAYER_DIED_WITH_SEIZURE: "player-died-with-seizure";
     readonly PRODUCTION: "production";
     readonly FREE_MONEY: "free-money";
     readonly CREDIT_NEW: "credit-new";
@@ -203,7 +204,6 @@ export declare const DB_EVENTS: {
     readonly CREDIT_FAULT: "credit-fault";
     readonly CREDIT_CANCELED: "credit-canceled";
     readonly CREDIT_SEIZURE: "credit-seizure";
-    readonly CREDIT_SEIZED_DEAD: "credit-seized-dead";
     readonly CREDIT_QUESTION_ASKED: "credit-question-asked";
     readonly CREDIT_QUESTION_ANSWERED: "credit-question-answered";
     readonly CREDIT_REFUSED: "credit-refused";
@@ -217,6 +217,10 @@ export declare const DB_EVENTS: {
     readonly ACTION_ONG: "action-ong";
 };
 export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];
+/** The event types that mean a Life ended. Match against this, never against one type. */
+export declare const DEATH_EVENT_TYPES: readonly string[];
+/** True when the event marks the end of a Life, whichever of the two forms it took. */
+export declare function isDeathEvent(typeEvent: string): boolean;
 export declare const ROOMS: {
     session: (sessionId: string) => string;
     lobbyMaster: (sessionId: string) => string;

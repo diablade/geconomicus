@@ -19,6 +19,7 @@ export class I18nService {
 	private missingTranslations = new Set<string>();
 	private loadedNamespaces = new Set<string>();
 	private fetchedNamespaces = new Set<string>();
+	private namespaceFallbacks = new Map<string, string>();
 	private langReady$ = new ReplaySubject<string>(1);
 
 	constructor(private translate: TranslateService, private http: HttpClient) {
@@ -30,8 +31,11 @@ export class I18nService {
 		this.initializeLanguage();
 	}
 
-	loadNamespace(namespace: string): void {
+	loadNamespace(namespace: string, fallbackLang?: string): void {
 		this.loadedNamespaces.add(namespace);
+		if (fallbackLang) {
+			this.namespaceFallbacks.set(namespace, fallbackLang);
+		}
 		this.langReady$.pipe(take(1)).subscribe(lang => this.fetchNamespace(namespace, lang));
 	}
 
@@ -51,7 +55,28 @@ export class I18nService {
 			},
 			error: () => {
 				this.fetchedNamespaces.delete(fetchKey);
+				const fallbackLang = this.namespaceFallbacks.get(namespace);
+				if (fallbackLang && fallbackLang !== lang) {
+					this.fetchNamespaceFallback(namespace, lang, fallbackLang);
+					return;
+				}
 				console.error(`Failed to load i18n namespace: ${path}`);
+			}
+		});
+	}
+
+	private fetchNamespaceFallback(namespace: string, lang: string, fallbackLang: string): void {
+		const fetchKey = `${namespace}|${lang}`;
+		this.fetchedNamespaces.add(fetchKey);
+
+		this.http.get(`assets/i18n/${namespace}/${fallbackLang}.json`).subscribe({
+			next: (extra: any) => {
+				this.translate.setTranslation(lang, extra, true);
+				this.translationCache.clear();
+			},
+			error: () => {
+				this.fetchedNamespaces.delete(fetchKey);
+				console.error(`Failed to load i18n namespace fallback: assets/i18n/${namespace}/${fallbackLang}.json`);
 			}
 		});
 	}

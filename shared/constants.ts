@@ -247,6 +247,7 @@ export const DB_EVENTS = {
 	PLAYER_INIT: 'player-init',
 	PLAYER_JOINED: 'player-joined',
 	PLAYER_DIED: 'player-died',
+	PLAYER_DIED_WITH_SEIZURE: 'player-died-with-seizure',
 	PRODUCTION: 'production',
 	// Credit events
 	FREE_MONEY: 'free-money',
@@ -257,7 +258,6 @@ export const DB_EVENTS = {
 	CREDIT_FAULT: 'credit-fault',
 	CREDIT_CANCELED: 'credit-canceled',
 	CREDIT_SEIZURE: 'credit-seizure',
-	CREDIT_SEIZED_DEAD: 'credit-seized-dead',
 	CREDIT_QUESTION_ASKED: 'credit-question-asked',
 	CREDIT_QUESTION_ANSWERED: 'credit-question-answered',
 	CREDIT_REFUSED: 'credit-refused',
@@ -272,6 +272,17 @@ export const DB_EVENTS = {
 } as const;
 
 export type DbEvent = (typeof DB_EVENTS)[keyof typeof DB_EVENTS];
+
+/** The event types that mean a Life ended. Match against this, never against one type. */
+export const DEATH_EVENT_TYPES: readonly string[] = [
+	DB_EVENTS.PLAYER_DIED,
+	DB_EVENTS.PLAYER_DIED_WITH_SEIZURE,
+];
+
+/** True when the event marks the end of a Life, whichever of the two forms it took. */
+export function isDeathEvent(typeEvent: string): boolean {
+	return DEATH_EVENT_TYPES.includes(typeEvent);
+}
 
 export const ROOMS = {
 	session: (sessionId: string) => `s:${sessionId}`,
@@ -312,6 +323,7 @@ export const EVENT_LK_CONTRACT: Record<string, readonly LkKey[]> = {
 	[DB_EVENTS.PLAYER_INIT]: [P, MM],
 	[DB_EVENTS.PLAYER_BIRTH]: [P, ALIVE],
 	[DB_EVENTS.PLAYER_DIED]: [P, ALIVE],
+	[DB_EVENTS.PLAYER_DIED_WITH_SEIZURE]: [P, ALIVE, MM, B_INT, B_GOODS, B_LOST, B_DESTROYED],
 	[DB_EVENTS.TRANSACTION]: [P],
 	[DB_EVENTS.PRODUCTION]: [P],
 	[DB_EVENTS.PRISON_ENDED]: [P],
@@ -323,7 +335,6 @@ export const EVENT_LK_CONTRACT: Record<string, readonly LkKey[]> = {
 	[DB_EVENTS.CREDIT_SETTLED]: [P, MM, B_INT, B_DESTROYED],
 	[DB_EVENTS.CREDIT_EXTENDED]: [P, MM, B_INT],
 	[DB_EVENTS.CREDIT_SEIZURE]: [P, MM, B_INT, B_GOODS, B_LOST],
-	[DB_EVENTS.CREDIT_SEIZED_DEAD]: [P, MM, B_INT, B_GOODS, B_LOST, B_DESTROYED],
 	[DB_EVENTS.ACTION_GIVE]: [P],
 	[DB_EVENTS.ACTION_STEAL]: [P],
 	[DB_EVENTS.ACTION_SILENT_STEAL]: [P],

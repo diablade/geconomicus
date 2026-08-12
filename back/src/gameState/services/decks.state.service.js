@@ -1,31 +1,24 @@
-import DecksHelper from '../helpers/decks.helper.js';
 import GameStateManager from '../managers/GameStateManager.js';
-import EventHelper from '../helpers/event.helper.js';
+import DecksEngine from '../engine/decks.engine.js';
 import SyncHelper from '../helpers/sync.helper.js';
-import { DB_EVENTS } from '@geco/shared';
 
 const DecksStateService = {};
 
+/**
+ * Build a completed recipe, then tell the Table what moved.
+ *
+ * Produce emits nothing to any room on its own, so the Table would otherwise never see
+ * the producer's new hand and tokens or the two deck levels that changed. See docs/adr/0008.
+ *
+ * @param {string} gameStateId
+ * @param {number} playerStateIdx
+ * @param {Array<{key: string}>} cards
+ * @returns {Promise<object>} the production result, including the producer's new token count
+ */
 DecksStateService.produce = async (gameStateId, playerStateIdx, cards) => {
 	return await GameStateManager.withQueue(gameStateId, async (entry) => {
-		const result = await DecksHelper.produce(entry.gameState, entry.rules, playerStateIdx, cards);
+		const { player, ...result } = DecksEngine.produce(entry, playerStateIdx, cards);
 
-		const player = entry.gameState.playersStates.find((p) => p.idx === playerStateIdx);
-		if (player) {
-			player.actionTokens = (player.actionTokens ?? 0) + 1;
-			result.actionTokens = player.actionTokens;
-		}
-
-		entry.events.push(
-			EventHelper.createEvent(DB_EVENTS.PRODUCTION, entry.gameState, {
-				emitter: playerStateIdx,
-				receiver: playerStateIdx,
-				payload: { newCards: result.newCards },
-			})
-		);
-
-		// Table sync: the producer's hand + tokens changed, and two deck levels moved (produce
-		// emits nothing to any room otherwise). See docs/adr/0008.
 		SyncHelper.emitPlayerSync(gameStateId, [player]);
 		SyncHelper.emitDecksSync(gameStateId, entry.gameState, [result.weight, result.weight + 1]);
 

@@ -1,6 +1,7 @@
 import { PLAYER_STATUS, GAME_STATUS } from '@geco/shared';
 import decksService from './decks.helper.js';
 import { generateDU } from './money.helper.js';
+import log from '#config/log';
 import _ from 'lodash';
 
 //***************** DEFAULT VALUES *******//
@@ -28,6 +29,40 @@ export async function generateInequality(nbPlayer, pctRich, pctPoor) {
 }
 //******************************************************************************//
 
+/**
+ * Deal every player their opening hand from the level-0 deck.
+ *
+ * Both game types read `distribInitCards`, so the field that is named for distributing the
+ * initial cards is the one that does it — the June game used to deal from `amountCardsForProd`,
+ * the recipe size, which silently gave the two games different openings.
+ *
+ * Refuses to deal at all when the deck cannot supply every player, because dealing past the end
+ * of the deck puts `undefined` in the last hands instead of cards.
+ *
+ * @param {object} gameState - mutated
+ * @param {Array<Array<object>>} decks
+ * @param {{distribInitCards: number}} rules
+ * @throws {Error} ERROR.NOT_ENOUGH_CARDS_IN_DECK when the level-0 deck is too small
+ */
+function dealOpeningHands(gameState, decks, rules) {
+	const handSize = rules.distribInitCards;
+	const players = gameState.playersStates.length;
+	const needed = players * handSize;
+
+	if (decks[0].length < needed) {
+		log.error(
+			`[SetupHelper] level-0 deck holds ${decks[0].length} cards, ${players} players × ${handSize} needs ${needed}`
+		);
+		throw new Error('ERROR.NOT_ENOUGH_CARDS_IN_DECK');
+	}
+
+	for (const playerState of gameState.playersStates) {
+		playerState.cards = _.pullAt(decks[0], _.range(handSize));
+		playerState.status = PLAYER_STATUS.ALIVE;
+		playerState.actionTokens = rules.startingTokens ?? 1;
+	}
+}
+
 //***************** SETUP JUNE GAME *************************************************//
 export async function setupGameJune(gameState, rules) {
 	let decks = await decksService.generateDecks(rules, gameState.playersStates.length);
@@ -36,13 +71,9 @@ export async function setupGameJune(gameState, rules) {
 		? await generateInequality(gameState.playersStates.length, rules.pctRich, rules.pctPoor)
 		: [];
 
-	for await (let playerState of gameState.playersStates) {
-		// pull 4 cards from the deck and distribute to the player
-		const cards = _.pullAt(decks[0], rules.amountCardsForProd === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
-		playerState.cards = cards;
-		playerState.status = PLAYER_STATUS.ALIVE;
-		playerState.actionTokens = rules.startingTokens ?? 1;
+	dealOpeningHands(gameState, decks, rules);
 
+	for (const playerState of gameState.playersStates) {
 		if (rules.inequalityStart) {
 			if (classes[0] >= 1) {
 				//classe basses
@@ -72,13 +103,9 @@ export async function setupGameJune(gameState, rules) {
 export async function setupGameDebt(gameState, rules) {
 	let decks = await decksService.generateDecks(rules, gameState.playersStates.length);
 
-	for await (let playerState of gameState.playersStates) {
-		// pull cards from the deck and distribute to the player
-		const cards = _.pullAt(decks[0], rules.distribInitCards === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
-		playerState.cards = cards;
-		playerState.status = PLAYER_STATUS.ALIVE;
+	dealOpeningHands(gameState, decks, rules);
+	for (const playerState of gameState.playersStates) {
 		playerState.coins = 0;
-		playerState.actionTokens = rules.startingTokens ?? 1;
 	}
 	gameState.decks = decks;
 	gameState.status = GAME_STATUS.INITIALIZED;

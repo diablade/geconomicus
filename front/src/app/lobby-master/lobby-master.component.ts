@@ -338,11 +338,6 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 		this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SURVEY_REDO_ALLOWED'));
 	}
 
-	showResults() {
-		// TODO: Implement show results logic
-		console.log('Showing results');
-	}
-
 	isBothGamesStopped(): boolean {
 		if (!this.session || !this.session.gamesRules) {
 			return false;
