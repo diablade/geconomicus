@@ -18,36 +18,34 @@
 	<!-- ── layout : contenu principal + tiroir évènements à droite ── -->
 	<div class="cp-layout" [class.eventsCollapsed]="eventsCollapsed">
 		<main class="cp-main">
-			<!-- synthèse à gauche, podiums + comportements empilés à droite -->
-			<div class="cp-top">
-				<!-- synthesis table -->
-				<section>
-					<div class="cp-table frame frame-light box-shadowed">
-						<div class="d-flex justify-content-between align-items-center mb-2">
-							<div class="geco-title collapsible mt-2">Synthèse comparée</div>
-						</div>
-						<div class="cp-thead">
-							<div>INDICATEUR</div>
-							<div class="dette">🪙 Monnaie dette</div>
-							<div class="libre">☀️ Monnaie libre</div>
-						</div>
-						<div class="cp-trow" *ngFor="let row of synthesisRows">
-							<div>{{ row.label }}</div>
-							<div class="dette">{{ row.dette }}</div>
-							<div class="libre">{{ row.libre }}</div>
-						</div>
-						<div class="cp-trow" *ngIf="synthesisRows.length === 0">
-							<div>Aucune donnée pour cette session.</div>
-							<div class="dette">-</div>
-							<div class="libre">-</div>
+			<!-- synthèse pleine largeur : les deux monnaies dans une même tuile -->
+			<section class="frame frame-light box-shadowed">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<div class="geco-title mt-2">Synthèse comparée</div>
+					<div class="cp-legend">
+						<span class="dette">🪙 Monnaie dette</span>
+						<span class="libre">☀️ Monnaie libre</span>
+					</div>
+				</div>
+				<div class="cp-metrics">
+					<div class="frame frame-light box-shadowed cp-metric" *ngFor="let row of synthesisRows">
+						<span class="cp-metric-label fw-bold">{{ row.label }}</span>
+						<div class="cp-metric-values">
+							<span class="dette" [class.void]="row.dette === '-'">🪙 {{ row.dette }}</span>
+							<span class="libre" [class.void]="row.libre === '-'">☀️ {{ row.libre }}</span>
 						</div>
 					</div>
-				</section>
+					<div class="frame frame-light box-shadowed cp-metric" *ngIf="synthesisRows.length === 0">
+						<span class="cp-metric-label">Aucune donnée pour cette session.</span>
+					</div>
+				</div>
+			</section>
 
-				<div class="cp-side">
-					<!-- podiums — Avatar Score : somme de toutes les vies (ADR-0014) -->
+			<!-- une colonne par monnaie : podium puis comportements — Avatar Score = somme de toutes les vies (ADR-0014) -->
+			<div class="cp-two-cols">
+				<div class="cp-side" *ngFor="let card of podiumCards" [class.col2]="card.key === 'libre'">
 					<section class="cp-stack">
-						<div class="frame-light frame box-shadowed cp-podium" *ngFor="let card of podiumCards">
+						<div class="frame-light frame box-shadowed cp-podium">
 							<div class="pod-head">
 								<h3>{{ card.title }}</h3>
 								<button class="cp-toggle" type="button" (click)="toggleScoreBars(card.key)">
@@ -96,24 +94,18 @@
 					</section>
 
 					<!-- actions -->
-					<section class="cp-stack cp-actions" *ngIf="dette || libre">
+					<section class="cp-stack cp-actions">
 						<div class="frame-light frame box-shadowed">
 							<h3 class="good">😇 BONS COMPORTEMENTS</h3>
 							<div class="act-row" *ngFor="let a of goodActions">
 								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-								<div class="act-bars">
-									<div class="act-bar dette">
-										<span
-											class="fill"
-											[style.width.%]="(a.dette / maxActionCount(goodActions)) * 100"></span>
-										<b>{{ a.dette }}</b>
-									</div>
-									<div class="act-bar libre">
-										<span
-											class="fill"
-											[style.width.%]="(a.libre / maxActionCount(goodActions)) * 100"></span>
-										<b>{{ a.libre }}</b>
-									</div>
+								<div class="act-bar" [ngClass]="card.key">
+									<span
+										class="fill"
+										[style.width.%]="
+											(actionCount(a, card.key) / maxActionCount(goodActions)) * 100
+										"></span>
+									<b>{{ actionCount(a, card.key) }}</b>
 								</div>
 							</div>
 						</div>
@@ -121,19 +113,13 @@
 							<h3 class="bad">😈 MAUVAIS COMPORTEMENTS</h3>
 							<div class="act-row" *ngFor="let a of badActions">
 								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-								<div class="act-bars">
-									<div class="act-bar dette">
-										<span
-											class="fill"
-											[style.width.%]="(a.dette / maxActionCount(badActions)) * 100"></span>
-										<b>{{ a.dette }}</b>
-									</div>
-									<div class="act-bar libre">
-										<span
-											class="fill"
-											[style.width.%]="(a.libre / maxActionCount(badActions)) * 100"></span>
-										<b>{{ a.libre }}</b>
-									</div>
+								<div class="act-bar" [ngClass]="card.key">
+									<span
+										class="fill"
+										[style.width.%]="
+											(actionCount(a, card.key) / maxActionCount(badActions)) * 100
+										"></span>
+									<b>{{ actionCount(a, card.key) }}</b>
 								</div>
 							</div>
 						</div>

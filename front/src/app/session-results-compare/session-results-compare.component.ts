@@ -288,13 +288,13 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			row('📦 Biens en jeu', d?.goodsInPlay, l?.goodsInPlay),
 			row('🃏 Biens fantômes', d?.ghostCards, l?.ghostCards),
 			row('🏦 Crédits contractés', d?.creditsTaken, dash),
-			row('🧾 Dette restante', d?.totalDebt, dash),
+			row('🧾 Dette totale', this.range(d?.debtFirst, d?.totalDebt), dash),
 			row('📈 Intérêts encaissés', d?.interestPaid, dash),
 			row('🔒 Saisies', d?.seizures, dash),
 			row('🕳️ Monnaie perdue', d?.bankMoneyLost, dash),
 			row('🔥 Monnaie détruite', d?.bankMoneyDestroyed, dash),
 			row('⚖️ Biens saisis', d?.bankGoodsEarned, dash),
-			row('☀️ DU final', dash, l?.duFinal),
+			row('☀️ Dividende Universel', dash, this.range(l?.duFirst, l?.duFinal)),
 			row('☀️ Nombre de DU', dash, l?.duCount),
 		];
 
@@ -311,6 +311,12 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 				row('⛔ Crédits refusés', cd.refused, dash)
 			);
 		}
+	}
+
+	/** Start → end of an indicator, its whole run in one reading. */
+	private range(first: number | undefined, last: number | undefined): string | undefined {
+		if (last === undefined) return undefined;
+		return `${first ?? 0} → ${last}`;
 	}
 
 	private buildActions(): void {
@@ -332,6 +338,11 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 
 	maxActionCount(rows: ActionRow[]): number {
 		return Math.max(1, ...rows.map((r) => Math.max(r.dette, r.libre)));
+	}
+
+	/** Count of one action for the currency the column belongs to. */
+	actionCount(row: ActionRow, key: GameKey): number {
+		return key === 'dette' ? row.dette : row.libre;
 	}
 
 	/** One card per played game, each carrying both readings of the same ranking. */

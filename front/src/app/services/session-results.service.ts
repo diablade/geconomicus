@@ -146,8 +146,10 @@ export interface GameSynthesis {
 	bankMoneyLost?: number;
 	bankMoneyDestroyed?: number;
 	bankGoodsEarned?: number;
+	debtFirst?: number;
 	totalDebt?: number;
 	creditDecisions?: CreditDecisions;
+	duFirst?: number;
 	duFinal?: number;
 	duCount?: number;
 	ghostMoneyInDu?: number;
@@ -326,7 +328,11 @@ export class SessionResultsService {
 				totalDebt: totalDebtPts,
 				averageMoney: averageMoneyPts,
 			}),
-			synthesis: this.buildSynthesis(gameState, lives, isJune, tally, firstQ, origin, duTimestamps.size),
+			synthesis: this.buildSynthesis(gameState, lives, isJune, tally, firstQ, origin, {
+				duCount: duTimestamps.size,
+				duFirst: duSeries[0]?.y ?? 0,
+				debtFirst: totalDebtPts[0]?.y ?? 0,
+			}),
 			actions: [...actionCounts.entries()].map(([typeEvent, count]) => ({
 				typeEvent,
 				count,
@@ -561,7 +567,7 @@ export class SessionResultsService {
 		tally: any,
 		firstQ: any,
 		origin: any,
-		duCount: number
+		curves: { duCount: number; duFirst: number; debtFirst: number }
 	): GameSynthesis {
 		const states = gameState.playersStates ?? [];
 		const aliveCount = states.filter((p) => p.status !== PLAYER_STATUS.DEAD).length;
@@ -594,8 +600,9 @@ export class SessionResultsService {
 			const duFinal = gameState.currentDU ?? 0;
 			return {
 				...base,
+				duFirst: this.round2(curves.duFirst),
 				duFinal,
-				duCount,
+				duCount: curves.duCount,
 				ghostMoneyInDu: duFinal ? this.round2(ghostMoney / duFinal) : 0,
 			};
 		}
@@ -612,6 +619,7 @@ export class SessionResultsService {
 			bankMoneyLost: gameState.bankMoneyLost ?? 0,
 			bankMoneyDestroyed: gameState.bankMoneyDestroyed ?? 0,
 			bankGoodsEarned: gameState.bankGoodsEarned ?? 0,
+			debtFirst: this.round2(curves.debtFirst),
 			totalDebt: this.round2(totalDebt),
 			creditDecisions: {
 				acceptSingle: firstQ.acceptSingle,
