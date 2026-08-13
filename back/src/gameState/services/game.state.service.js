@@ -313,14 +313,26 @@ GameStateService.loadGameStateToMemory = async (gameStateId) => {
 	return { state, rules };
 };
 
-GameStateService.delete = async (gameStateId) => {
+/** Drop every in-memory trace of a game: round timer, bank timers, state payload and presence. */
+const _teardownGameState = async (gameStateId) => {
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
-	await BankStateService.stopAllTimersCreditGame(gameStateId);
+	await BankStateService.stopAllTimersGame(gameStateId);
 	GameStateManager.remove(gameStateId);
+	PlayersStateConnectionManager.removeGame(gameStateId);
+};
+
+GameStateService.delete = async (gameStateId) => {
+	await _teardownGameState(gameStateId);
 	return await GameStateModel.findByIdAndDelete(gameStateId).exec();
 };
 
 GameStateService.removeAllBySessionId = async (id) => {
+	const gameStates = await GameStateModel.find({ sessionId: id }, { _id: 1 }).lean();
+	for (const { _id } of gameStates) {
+		await _teardownGameState(_id.toString());
+	}
+	// Sweep any payload whose DB document was already gone before we listed them.
+	GameStateManager.clearSession(id);
 	return await GameStateModel.deleteMany({ sessionId: id }).exec();
 };
 
@@ -494,7 +506,7 @@ GameStateService.stop = async (gameStateId) => {
 	if (GameStateManager.has(gameStateId)) {
 		await GameStateManager.withQueue(gameStateId, async (entry) => {
 			if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-				await BankStateService.stopAllTimersCreditGame(gameStateId);
+				await BankStateService.stopAllTimersGame(gameStateId);
 			}
 			entry.gameState.status = GAME_STATUS.STOPPED;
 			if (entry.gameState.gameTimers) {
@@ -535,6 +547,7 @@ GameStateService.stop = async (gameStateId) => {
 		// Still emit the event to notify clients
 		socket.emitTo(ROOMS.gameState(gameStateId), IO.GAME.STOPPED, {});
 	}
+	PlayersStateConnectionManager.removeGame(gameStateId);
 	return {
 		status: GAME_STATUS.STOPPED,
 	};

@@ -75,20 +75,21 @@ class GameStateManager {
 
 	/**
 	 * Get the full payload { state, rules } for a game, reloading from DB if not in memory.
+	 *
+	 * A game whose status no longer belongs in memory (STOPPED/ENDED) cannot be reloaded, so it
+	 * comes back detached and flagged `resident: false` — readable (the results page needs it),
+	 * but not tracked by the manager, so mutating it would silently lose the write.
 	 * @param {string} gameStateId
-	 * @returns {{ gameState: object, rules: object, events: object[] } | null}
+	 * @returns {{ gameState: object, rules: object, events?: object[], resident?: boolean } | null}
 	 */
 	async getOrReload(gameStateId) {
-		let entry = this.get(gameStateId);
-		if (!entry) {
-			const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
-			if (reload.reloaded) {
-				entry = this.get(gameStateId);
-			} else {
-				return reload;
-			}
-		}
-		return entry;
+		const entry = this.get(gameStateId);
+		if (entry) return entry;
+
+		const reload = await this.reload(gameStateId); // recharge si PLAYING/PAUSED
+		if (reload.reloaded) return this.get(gameStateId);
+
+		return { gameState: reload.gameState, rules: reload.rules, resident: false };
 	}
 
 	/**
@@ -121,12 +122,13 @@ class GameStateManager {
 	}
 
 	/**
-	 * Clear all games for a session.
+	 * Clear all games for a session. Entries are keyed by bare gameStateId, so the session is
+	 * read off each payload rather than off the key.
 	 * @param {string} sessionId
 	 */
 	clearSession(sessionId) {
-		for (const key of this._games.keys()) {
-			if (key.startsWith(`${sessionId}:`)) {
+		for (const [key, entry] of Array.from(this._games.entries())) {
+			if (String(entry.gameState?.sessionId) === String(sessionId)) {
 				this.remove(key);
 			}
 		}
@@ -172,8 +174,13 @@ class GameStateManager {
 	 */
 	async withQueue(gameStateId, fn) {
 		return gameQueueManager.enqueue(gameStateId, async () => {
-			let entry = await this.getOrReload(gameStateId);
+			const entry = await this.getOrReload(gameStateId);
 			if (!entry) throw new Error(`[GameStateManager] Game ${gameStateId} still not found after reload`);
+			if (entry.resident === false) {
+				throw new Error(
+					`[GameStateManager] Game ${gameStateId} is ${entry.gameState.status} and not in memory — refusing to mutate a detached state`
+				);
+			}
 			const result = await fn(entry);
 			for (const hook of this._afterMutations) {
 				try {

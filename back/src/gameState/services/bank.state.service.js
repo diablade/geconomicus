@@ -116,10 +116,14 @@ const _prisonProgressCallback = async (timerInstance) => {
 	socket.emitTo(ROOMS.playerState(gameStateId, playerStateIdx), IO.PLAYER.PROGRESS_PRISON, payload);
 };
 
-/** A sentence ran its course. */
+/**
+ * A sentence ran its course. The spent timer is dropped from the manager before the release,
+ * so a game that is no longer in memory cannot strand it there.
+ */
 const _prisonEndCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
 	log.info(`[BankStateService] Prison ended for player ${playerStateIdx} in game ${gameStateId}`);
+	await prisonTimerManager.stopAndRemoveTimer(timerInstance.id);
 	try {
 		await GameStateManager.withQueue(gameStateId, async (entry) => {
 			await _releasePlayer(entry, playerStateIdx);
@@ -615,10 +619,12 @@ BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules)
 	}
 };
 
-/** Drop every credit timer of a finished game. */
-BankStateService.stopAllTimersCreditGame = async (gameStateId) => {
-	log.debug(`[BankStateService] Stopping all credit timers for game state ${gameStateId}`);
+/** Drop every bank-side timer of a finished game: credits, prison sentences and pending auto-seizures. */
+BankStateService.stopAllTimersGame = async (gameStateId) => {
+	log.debug(`[BankStateService] Stopping all bank timers for game state ${gameStateId}`);
 	await creditTimerManager.removeGameTimers(gameStateId);
+	await prisonTimerManager.stopAndRemoveAllGameStateTimers(gameStateId);
+	await autoSeizureTimerManager.stopAndRemoveAllGameStateTimers(gameStateId);
 };
 
 export default BankStateService;

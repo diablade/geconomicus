@@ -20,8 +20,13 @@ export class SocketManager {
 			throw new Error('Use SocketManager.getInstance() to get the singleton instance.');
 		}
 		this.ioInstance = null;
-		this.connections = new Map(); // idPlayer -> { socket, lastActive, idGame }
-		// Acknowledgment pool: idPlayer -> Map(eventId -> { event, data, timestamp })
+		// socketId -> { socket, lastActive, publicChannel, privateChannel, ... }. Keyed by socket
+		// and not by channel because master cockpits and assist sessions legitimately share a
+		// private channel — keying by channel dropped the incumbent out of reach of every cleanup.
+		this.connections = new Map();
+		// privateChannel -> Set<socketId>, the sockets currently registered on that channel
+		this.channelSockets = new Map();
+		// Acknowledgment pool: privateChannel -> Map(eventId -> { event, data, timestamp })
 		this.ackPool = new Map();
 		// init connection store
 		PlayersStateConnectionManager.getInstance();
@@ -29,13 +34,13 @@ export class SocketManager {
 		// Setup cleanup interval for stale connections
 		this.cleanupInterval = setInterval(() => {
 			const now = Date.now();
-			for (const [idPlayer, data] of this.connections.entries()) {
+			for (const [socketId, data] of this.connections.entries()) {
 				const { lastActive } = data;
 
 				if (now - lastActive > 3600000) {
 					// 1 hour
-					log.info(`[socket] Cleaning up stale socket for player ${idPlayer}`);
-					this.cleanupConnection(idPlayer);
+					log.info(`[socket] Cleaning up stale socket ${socketId} (${data.privateChannel})`);
+					this.cleanupConnection(socketId);
 				}
 			}
 
@@ -113,6 +118,32 @@ export class SocketManager {
 		return true;
 	}
 
+	/** Every live connection registered on a private channel, oldest first. */
+	_connectionsOf(privateChannel) {
+		const socketIds = this.channelSockets.get(privateChannel);
+		if (!socketIds) return [];
+		return Array.from(socketIds, (id) => this.connections.get(id)).filter(Boolean);
+	}
+
+	/**
+	 * The connection that owns a Seat: the newest non-assist one, falling back to the newest
+	 * of any kind. Assist sessions overlay a Seat, they never become its owner.
+	 */
+	_incumbentOf(privateChannel) {
+		const connections = this._connectionsOf(privateChannel);
+		return connections.filter((c) => !c.isAssist).pop() ?? connections.pop() ?? null;
+	}
+
+	/** Index a connection under both its socket id and its private channel. */
+	_register(connectionData) {
+		const { socket, privateChannel } = connectionData;
+		this.connections.set(socket.id, connectionData);
+		if (!this.channelSockets.has(privateChannel)) {
+			this.channelSockets.set(privateChannel, new Set());
+		}
+		this.channelSockets.get(privateChannel).add(socket.id);
+	}
+
 	handleNewConnection(socket, publicChannel, privateChannel, assistMode = null, assistTarget = null) {
 		const isAssist = !!assistMode;
 		socket.data = socket.data || {};
@@ -139,7 +170,7 @@ export class SocketManager {
 		// Assist sessions use a unique identity (they never collide), and master
 		// cockpits are allowed to co-exist — in both cases we do NOT displace the
 		// incumbent. See docs/adr/0010-animator-assist-sessions.md
-		const previousConnection = this.connections.get(privateChannel);
+		const previousConnection = this._incumbentOf(privateChannel);
 		const isMaster = typeof privateChannel === 'string' && privateChannel.endsWith(':master');
 		if (previousConnection && previousConnection.socket.connected) {
 			if (isAssist || isMaster) {
@@ -160,19 +191,15 @@ export class SocketManager {
 					log.warn(`[socket] Failed to notify kicked socket for player ${privateChannel}: ${e}`);
 				}
 
-				this.cleanupConnection(privateChannel);
+				this.cleanupConnection(previousConnection.socket.id);
 			}
 		}
 
-		// Set up event handlers — capture socket.id so stale handlers from a
-		// previous socket don't accidentally clean up a newer connection that
-		// reused the same privateChannel key.
 		const socketId = socket.id;
-		connectionData.disconnectHandler = (reason) => this.handleDisconnect(privateChannel, socketId, reason);
-		connectionData.errorHandler = (error) => this.handleError(privateChannel, error);
+		connectionData.disconnectHandler = (reason) => this.handleDisconnect(socketId, reason);
+		connectionData.errorHandler = (error) => this.handleError(socketId, error);
 
-		// Store the new connection
-		this.connections.set(privateChannel, connectionData);
+		this._register(connectionData);
 		log.info(`[socket] Stored connection for ${privateChannel} -> socket ${socket.id}`);
 		// Join rooms
 		socket.join(publicChannel);
@@ -221,7 +248,7 @@ export class SocketManager {
 		socket.on('error', connectionData.errorHandler);
 		socket.onAny(() => {
 			// Track last activity on any socket event
-			const connData = this.connections.get(privateChannel);
+			const connData = this.connections.get(socketId);
 			if (connData) {
 				connData.lastActive = Date.now();
 			}
@@ -260,10 +287,7 @@ export class SocketManager {
 					// they belong to the animator, not the player.
 					if (playerIdx >= 0 && !socket.data?.isAssist) {
 						const lastSeen = new Date();
-						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, {
-							isConnected: true,
-							lastSeen,
-						});
+						PlayersStateConnectionManager.markConnected(gameStateId, playerIdx, lastSeen);
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
 						this.emitTo(masterRoom, IO.PLAYER.CONNECTED, { idx: parseInt(playerStateIdx), lastSeen });
@@ -293,7 +317,7 @@ export class SocketManager {
 				if (roomType === 'gs' && avatarIdx !== 'master' && avatarIdx !== 'table' && avatarIdx !== 'results') {
 					const playerIdx = parseInt(playerStateIdx);
 					if (playerIdx >= 0 && !socket.data?.isAssist) {
-						PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
+						PlayersStateConnectionManager.markDisconnected(gameStateId, playerIdx);
 						// Emit to master room
 						const masterRoom = ROOMS.gameStateMaster(gameStateId);
 						this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, { idx: playerIdx });
@@ -311,14 +335,14 @@ export class SocketManager {
 			if (!sessionId || avatarIdx === undefined || avatarIdx === null) return;
 			const targetChannel = ROOMS.lobbyAvatar(sessionId, parseInt(avatarIdx));
 			log.info(`[socket] Retake requested for ${targetChannel}; dropping assist sessions`);
-			for (const [channel, conn] of this.connections.entries()) {
+			for (const [id, conn] of Array.from(this.connections.entries())) {
 				if (conn.isAssist && conn.assistTarget === targetChannel && conn.socket.connected) {
 					try {
 						conn.socket.emit('kicked', { reason: KICK_REASON.RETAKEN, timestamp: Date.now() });
 					} catch (e) {
-						log.warn(`[socket] retake kick failed for ${channel}: ${e}`);
+						log.warn(`[socket] retake kick failed for ${conn.privateChannel}: ${e}`);
 					}
-					this.cleanupConnection(channel);
+					this.cleanupConnection(id);
 				}
 			}
 		});
@@ -367,7 +391,7 @@ export class SocketManager {
 	// assist session onto it. Coexist = do nothing (both act); Take-over =
 	// overlay the incumbent (it stays connected); Kick = hard-disconnect it.
 	_signalIncumbent(mode, targetChannel) {
-		const incumbent = this.connections.get(targetChannel);
+		const incumbent = this._incumbentOf(targetChannel);
 		if (!incumbent || !incumbent.socket.connected) return;
 
 		if (mode === ASSIST_MODE.KICK) {
@@ -379,7 +403,7 @@ export class SocketManager {
 			} catch (e) {
 				log.warn(`[socket] Failed to notify kicked incumbent ${targetChannel}: ${e}`);
 			}
-			this.cleanupConnection(targetChannel);
+			this.cleanupConnection(incumbent.socket.id);
 			log.info(`[socket] Assist KICK displaced incumbent ${targetChannel}`);
 		} else if (mode === ASSIST_MODE.TAKEOVER) {
 			incumbent.socket.emit(IO.PLAYER.TAKEN_OVER, { timestamp: Date.now() });
@@ -389,45 +413,38 @@ export class SocketManager {
 	}
 
 	// Handle disconnection
-	handleDisconnect(privateChannel, socketId, reason) {
-		const connection = this.connections.get(privateChannel);
+	handleDisconnect(socketId, reason) {
+		const connection = this.connections.get(socketId);
 		if (!connection) {
 			return;
 		}
 
-		// Guard against a stale disconnect firing after a newer socket has
-		// already replaced this channel — avoids race on fast reconnects.
-		if (connection.socket.id !== socketId) {
-			log.debug(`[socket] Ignoring stale disconnect for socket ${socketId} (channel ${privateChannel} now owned by ${connection.socket.id})`);
-			return;
-		}
-
-		const { socket, publicChannel } = connection;
+		const { publicChannel, privateChannel } = connection;
 
 		log.info(
 			`[socket] game ${publicChannel},Player ${privateChannel} disconnected. Reason: ${reason}`
 		);
 
-		this.cleanupConnection(privateChannel);
+		this.cleanupConnection(socketId);
 	}
 
 	// Handle socket errors
-	handleError(roomId, error) {
-		log.error(`[socket] Socket error for player ${roomId}:`, error);
-		const connection = this.connections.get(roomId);
+	handleError(socketId, error) {
+		const connection = this.connections.get(socketId);
+		log.error(`[socket] Socket error for player ${connection?.privateChannel ?? socketId}:`, error);
 		if (connection) {
 			connection.lastActive = Date.now();
 		}
 	}
 
 	// Clean up connection resources
-	cleanupConnection(roomId) {
-		const connection = this.connections.get(roomId);
+	cleanupConnection(socketId) {
+		const connection = this.connections.get(socketId);
 		if (!connection) {
 			return;
 		}
 
-		const { socket, disconnectHandler, errorHandler } = connection;
+		const { socket, disconnectHandler, errorHandler, privateChannel } = connection;
 
 		// Remove event listeners
 		if (disconnectHandler) {
@@ -442,12 +459,19 @@ export class SocketManager {
 			socket.disconnect(true);
 		}
 
-		// Remove from connections map
-		this.connections.delete(roomId);
-		log.info(`[socket] Cleaned up connection for player ${roomId}`);
+		this.connections.delete(socketId);
+		log.info(`[socket] Cleaned up connection ${socketId} for player ${privateChannel}`);
 
-		// Clean up ack pool
-		this.ackPool.delete(roomId);
+		// The ack pool is per channel: only drop it once the channel has no socket left,
+		// so one of two co-existing cockpits leaving does not wipe the other's pending events.
+		const socketIds = this.channelSockets.get(privateChannel);
+		if (socketIds) {
+			socketIds.delete(socketId);
+			if (socketIds.size === 0) {
+				this.channelSockets.delete(privateChannel);
+				this.ackPool.delete(privateChannel);
+			}
+		}
 	}
 
 	// Clean up all connections (for server shutdown)
@@ -455,12 +479,13 @@ export class SocketManager {
 		log.info('[socket] Cleaning up all socket connections...');
 
 		// Create a copy of the keys to avoid modification during iteration
-		const roomIds = Array.from(this.connections.keys());
+		const socketIds = Array.from(this.connections.keys());
 
 		PlayersStateConnectionManager.cleanupAll();
-		for (const roomId of roomIds) {
-			this.cleanupConnection(roomId);
+		for (const socketId of socketIds) {
+			this.cleanupConnection(socketId);
 		}
+		this.channelSockets.clear();
 
 		// Clear the cleanup interval
 		if (this.cleanupInterval) {
@@ -471,7 +496,7 @@ export class SocketManager {
 	}
 
 	emitDisconnecting(gameStateId, avatarIdx, playerIdx) {
-		PlayersStateConnectionManager.upsertPlayer(gameStateId, playerIdx, { isConnected: false });
+		PlayersStateConnectionManager.markDisconnected(gameStateId, playerIdx);
 		// Emit to master room
 		const masterRoom = ROOMS.gameStateMaster(gameStateId);
 		this.emitTo(masterRoom, IO.PLAYER.DISCONNECTED, {
@@ -511,12 +536,11 @@ export class SocketManager {
 		}
 
 		for (const socket of sockets) {
-			// Recherche par socket.id dans les connections
-			const [privateChannel, playerData] =
-				Array.from(this.connections.entries()).find(([, conn]) => conn.socket.id === socket.id) ?? [];
+			const playerData = this.connections.get(socket.id);
+			const privateChannel = playerData?.privateChannel;
 
 			if (!playerData) {
-				const knownIds = Array.from(this.connections.values()).map((c) => c.socket.id);
+				const knownIds = Array.from(this.connections.keys());
 				log.warn(
 					`[socket] emitAckTo: socket ${socket.id} in room ${roomId} not in connections map. ` +
 					`Known socket IDs: [${knownIds.join(', ')}]. Emitting without ack tracking.`
@@ -528,12 +552,19 @@ export class SocketManager {
 
 			this.addToAckPool(privateChannel, eventId, event, data);
 
-			socket.emit(event, { ...data, _ackId: eventId }, (ack) => {
+			// A RemoteSocket carries no ack timeout of its own — without .timeout() the
+			// underlying broadcast operator calls back immediately with a timeout error
+			// and drops the client's real answer, so the pool entry would never clear.
+			socket.timeout(ACK_TIMEOUT).emit(event, { ...data, _ackId: eventId }, (err, ack) => {
+				if (err) {
+					log.error(`[socket] Ack timeout from ${socket.id} for event ${eventId}: ${err.message}`);
+					return;
+				}
 				if (ack?.status === 'ok') {
-					log.debug(`[socket] Ack ok from ${socket.id} for event ${ack._ackId}`);
-					this.removeFromAckPool(ack.idPlayer, ack._ackId);
+					log.debug(`[socket] Ack ok from ${socket.id} for event ${eventId}`);
+					this.removeFromAckPool(privateChannel, eventId);
 				} else {
-					log.error(`[socket] Ack failed/timeout from ${socket.id} for event ${eventId}`, ack);
+					log.error(`[socket] Ack failed from ${socket.id} for event ${eventId}`, ack);
 				}
 			});
 		}
