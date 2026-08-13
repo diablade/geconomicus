@@ -174,6 +174,16 @@
 			font-weight: 600;
 		}
 	}
+
+	&.good {
+		border-color: #9ec7a6;
+		background-color: rgba(46, 125, 50, 0.16);
+	}
+
+	&.bad {
+		border-color: #dba9a4;
+		background-color: rgba(179, 38, 30, 0.13);
+	}
 }
 
 /* podium */
@@ -315,60 +325,6 @@
 	.most-active {
 		margin-top: 9px;
 		font-size: 13px;
-	}
-}
-
-/* actions */
-.cp-actions {
-	h3 {
-		font-size: 15px;
-		font-weight: 800;
-		margin: 0 0 12px;
-		&.good {
-			color: #1e7a3c;
-		}
-		&.bad {
-			color: #b3261e;
-		}
-	}
-	> div {
-		padding: 14px 18px;
-	}
-	.act-row {
-		margin-bottom: 12px;
-		.act-label {
-			display: block;
-			font-size: 13.5px;
-			font-weight: 700;
-			margin-bottom: 4px;
-		}
-		.act-bar {
-			position: relative;
-			display: flex;
-			align-items: center;
-			height: 16px;
-			border: 1.5px solid #14142b;
-			border-radius: 4px;
-			background: rgba(255, 255, 255, 0.6);
-			overflow: hidden;
-			.fill {
-				display: block;
-				height: 100%;
-				transition: width 0.3s ease;
-			}
-			b {
-				position: absolute;
-				right: 6px;
-				font-size: 11px;
-				font-weight: 800;
-			}
-			&.dette .fill {
-				background: #2c7fb8;
-			}
-			&.libre .fill {
-				background: #f0932a;
-			}
-		}
 	}
 }
 

@@ -35,96 +35,78 @@
 							<span class="libre" [class.void]="row.libre === '-'">☀️ {{ row.libre }}</span>
 						</div>
 					</div>
+					<ng-container *ngIf="dette || libre">
+						<div class="frame frame-light box-shadowed cp-metric good" *ngFor="let a of goodActions">
+							<span class="cp-metric-label fw-bold">😇 {{ a.icon }} {{ a.label }}</span>
+							<div class="cp-metric-values">
+								<span class="dette" [class.void]="!a.dette">🪙 {{ a.dette }}</span>
+								<span class="libre" [class.void]="!a.libre">☀️ {{ a.libre }}</span>
+							</div>
+						</div>
+						<div class="frame frame-light box-shadowed cp-metric bad" *ngFor="let a of badActions">
+							<span class="cp-metric-label fw-bold">😈 {{ a.icon }} {{ a.label }}</span>
+							<div class="cp-metric-values">
+								<span class="dette" [class.void]="!a.dette">🪙 {{ a.dette }}</span>
+								<span class="libre" [class.void]="!a.libre">☀️ {{ a.libre }}</span>
+							</div>
+						</div>
+					</ng-container>
 					<div class="frame frame-light box-shadowed cp-metric" *ngIf="synthesisRows.length === 0">
 						<span class="cp-metric-label">Aucune donnée pour cette session.</span>
 					</div>
 				</div>
 			</section>
 
-			<!-- une colonne par monnaie : podium puis comportements — Avatar Score = somme de toutes les vies (ADR-0014) -->
+			<!-- un podium par monnaie : dette à gauche, libre à droite — Avatar Score = somme de toutes les vies (ADR-0014) -->
 			<div class="cp-two-cols">
-				<div class="cp-side" *ngFor="let card of podiumCards" [class.col2]="card.key === 'libre'">
-					<section class="cp-stack">
-						<div class="frame-light frame box-shadowed cp-podium">
-							<div class="pod-head">
-								<h3>{{ card.title }}</h3>
-								<button class="cp-toggle" type="button" (click)="toggleScoreBars(card.key)">
-									{{ scoreBars[card.key] ? '🏆 Podium' : '📊 Tous les scores' }}
-								</button>
+				<section class="cp-side" *ngFor="let card of podiumCards" [class.col2]="card.key === 'libre'">
+					<div class="frame-light frame box-shadowed cp-podium">
+						<div class="pod-head">
+							<h3>{{ card.title }}</h3>
+							<button class="cp-toggle" type="button" (click)="toggleScoreBars(card.key)">
+								{{ scoreBars[card.key] ? '🏆 Podium' : '📊 Tous les scores' }}
+							</button>
+						</div>
+
+						<ng-container *ngIf="!scoreBars[card.key]">
+							<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
+								<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
+								<span class="name">
+									{{ p.avatar.name }}
+									<small>{{ p.score }} ({{ p.coins }} 🪙 + {{ p.cardsValue }} 📦)</small>
+								</span>
+								<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
 							</div>
+						</ng-container>
 
-							<ng-container *ngIf="!scoreBars[card.key]">
-								<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
-									<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
-									<span class="name">
-										{{ p.avatar.name }}
-										<small>{{ p.score }} ({{ p.coins }} 🪙 + {{ p.cardsValue }} 📦)</small>
-									</span>
-									<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
-								</div>
-							</ng-container>
-
-							<div class="pod-scores" *ngIf="scoreBars[card.key] && card.board as board">
-								<div class="score-plot">
-									<div class="score-lines">
-										<div class="score-line avg" [style.left.%]="board.averagePercent">
-											<span>Moyenne {{ board.average }}</span>
-										</div>
-										<div class="score-line dev" [style.left.%]="board.deviationPercent">
-											<span>Écart type {{ board.deviation }}</span>
-										</div>
+						<div class="pod-scores" *ngIf="scoreBars[card.key] && card.board as board">
+							<div class="score-plot">
+								<div class="score-lines">
+									<div class="score-line avg" [style.left.%]="board.averagePercent">
+										<span>Moyenne {{ board.average }}</span>
 									</div>
-									<div class="score-row" *ngFor="let bar of board.bars">
-										<span class="score-name">{{ bar.entry.avatar.name }}</span>
-										<div class="score-bar" [ngClass]="card.key">
-											<span class="fill" [style.width.%]="bar.percent"></span>
-											<b>{{ bar.entry.score }}</b>
-										</div>
+									<div class="score-line dev" [style.left.%]="board.deviationPercent">
+										<span>Écart type {{ board.deviation }}</span>
+									</div>
+								</div>
+								<div class="score-row" *ngFor="let bar of board.bars">
+									<span class="score-name">{{ bar.entry.avatar.name }}</span>
+									<div class="score-bar" [ngClass]="card.key">
+										<span class="fill" [style.width.%]="bar.percent"></span>
+										<b>{{ bar.entry.score }}</b>
 									</div>
 								</div>
 							</div>
+						</div>
 
-							<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
-							<div class="most-active" *ngIf="card.game.mostActive">
-								⏰ Plus actif·ve :
-								<b>{{ card.game.mostActive.avatar.name }}</b>
-								— {{ card.game.mostActive.count }} actions
-							</div>
+						<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
+						<div class="most-active" *ngIf="card.game.mostActive">
+							⏰ Plus actif·ve :
+							<b>{{ card.game.mostActive.avatar.name }}</b>
+							— {{ card.game.mostActive.count }} actions
 						</div>
-					</section>
-
-					<!-- actions -->
-					<section class="cp-stack cp-actions">
-						<div class="frame-light frame box-shadowed">
-							<h3 class="good">😇 BONS COMPORTEMENTS</h3>
-							<div class="act-row" *ngFor="let a of goodActions">
-								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-								<div class="act-bar" [ngClass]="card.key">
-									<span
-										class="fill"
-										[style.width.%]="
-											(actionCount(a, card.key) / maxActionCount(goodActions)) * 100
-										"></span>
-									<b>{{ actionCount(a, card.key) }}</b>
-								</div>
-							</div>
-						</div>
-						<div class="frame-light frame box-shadowed">
-							<h3 class="bad">😈 MAUVAIS COMPORTEMENTS</h3>
-							<div class="act-row" *ngFor="let a of badActions">
-								<span class="act-label">{{ a.icon }} {{ a.label }}</span>
-								<div class="act-bar" [ngClass]="card.key">
-									<span
-										class="fill"
-										[style.width.%]="
-											(actionCount(a, card.key) / maxActionCount(badActions)) * 100
-										"></span>
-									<b>{{ actionCount(a, card.key) }}</b>
-								</div>
-							</div>
-						</div>
-					</section>
-				</div>
+					</div>
+				</section>
 			</div>
 
 			<!-- Comptes (collapsible) — une ligne par vie, agrégats co-localisés par unité -->

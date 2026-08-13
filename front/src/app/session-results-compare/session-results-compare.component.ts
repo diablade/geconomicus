@@ -265,7 +265,11 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		const d = this.dette?.synthesis;
 		const l = this.libre?.synthesis;
 		const dash = '-';
-		const row = (label: string, dv: string | number | undefined, lv: string | number | undefined): SynthesisRow => ({
+		const row = (
+			label: string,
+			dv: string | number | undefined,
+			lv: string | number | undefined
+		): SynthesisRow => ({
 			label,
 			dette: dv ?? dash,
 			libre: lv ?? dash,
@@ -334,15 +338,6 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			dette: this.dette?.actions.find((a) => a.typeEvent === typeEvent)?.count ?? 0,
 			libre: this.libre?.actions.find((a) => a.typeEvent === typeEvent)?.count ?? 0,
 		};
-	}
-
-	maxActionCount(rows: ActionRow[]): number {
-		return Math.max(1, ...rows.map((r) => Math.max(r.dette, r.libre)));
-	}
-
-	/** Count of one action for the currency the column belongs to. */
-	actionCount(row: ActionRow, key: GameKey): number {
-		return key === 'dette' ? row.dette : row.libre;
 	}
 
 	/** One card per played game, each carrying both readings of the same ranking. */
@@ -419,7 +414,9 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			},
 			{
 				key: `${game.gameStateId}-third`,
-				title: game.isJune ? `${prefix} — Pièces rapportées au DU` : `${prefix} — Richesse nette (pièces + biens − dette)`,
+				title: game.isJune
+					? `${prefix} — Pièces rapportées au DU`
+					: `${prefix} — Richesse nette (pièces + biens − dette)`,
 				data: { datasets: this.toLines(game.third) },
 				hasSecondaryAxis: false,
 			},
