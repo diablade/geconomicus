@@ -505,9 +505,7 @@ GameStateService.stop = async (gameStateId) => {
 	await gameTimerManager.stopAndRemoveTimer(gameStateId);
 	if (GameStateManager.has(gameStateId)) {
 		await GameStateManager.withQueue(gameStateId, async (entry) => {
-			if (entry.rules.typeMoney === GAME_TYPE.DEBT) {
-				await BankStateService.stopAllTimersGame(gameStateId);
-			}
+			await BankStateService.stopAllTimersGame(gameStateId);
 			entry.gameState.status = GAME_STATUS.STOPPED;
 			if (entry.gameState.gameTimers) {
 				entry.gameState.gameTimers.remainingTime = 0;
@@ -538,6 +536,7 @@ GameStateService.stop = async (gameStateId) => {
 		log.info(`[GameStateService] Game stopped : ${gameStateId}`);
 	} else {
 		log.debug(`[GameStateService] Game state not found in memory, saving STOPPED status in DB: ${gameStateId}`);
+		await BankStateService.stopAllTimersGame(gameStateId);
 		await GameStateModel.findByIdAndUpdate(gameStateId, {
 			$set: {
 				status: GAME_STATUS.STOPPED,

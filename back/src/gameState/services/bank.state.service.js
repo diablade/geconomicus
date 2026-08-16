@@ -140,13 +140,15 @@ const _prisonEndCallback = async (timerInstance) => {
  * when the credit was extended, and tells the rooms. A callback that fires against a credit
  * already settled or cancelled resolves to `gone` and does nothing — the timer cannot be
  * recalled once it has queued, so the engine is where that has to be tolerated.
+ *
+ * The spent timer is dropped from the manager before the queue is entered, so a game that is no
+ * longer in memory cannot strand it there.
  */
 const _creditTimeoutCallback = async (timerInstance) => {
 	const { gameStateId, id: creditId } = timerInstance.data;
+	await creditTimerManager.stopAndRemoveTimer(timerInstance.id);
 	try {
 		await GameStateManager.withQueue(gameStateId, async (entry) => {
-			await creditTimerManager.stopAndRemoveTimer(timerInstance.id);
-
 			const { outcome, credit, playerState } = BankEngine.resolveCreditMaturity(entry, creditId);
 			if (outcome === 'gone') {
 				log.debug('[BankStateService] maturity fired on a credit no longer running', { gameStateId, creditId });
@@ -186,13 +188,18 @@ const _creditTimeoutCallback = async (timerInstance) => {
 	}
 };
 
-/** The police wait elapsed: collect on every faulted credit of this player at once. */
+/**
+ * The police wait elapsed: collect on every faulted credit of this player at once.
+ *
+ * The spent timer is dropped from the manager before the queue is entered, so a game that is no
+ * longer in memory cannot strand it there.
+ */
 const _autoSeizureCallback = async (timerInstance) => {
 	const { gameStateId, playerStateIdx } = timerInstance.data;
+	await autoSeizureTimerManager.stopAndRemoveTimer(timerInstance.id);
 	try {
 		await GameStateManager.withQueue(gameStateId, async (entry) => {
 			const { gameState, events } = entry;
-			await autoSeizureTimerManager.stopAndRemoveTimer(timerInstance.id);
 
 			const eventsBefore = events.length;
 			const outcome = BankEngine.applyAutoSeizure(entry, playerStateIdx);
