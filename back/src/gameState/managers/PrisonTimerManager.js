@@ -69,6 +69,20 @@ class PrisonTimerManager {
 		}
 	}
 
+	/**
+	 * Whether any prison sentence of this game is still held in memory. A paused sentence lives
+	 * only here — the game state does not carry its remaining time — so a caller dropping the game
+	 * from memory has to know.
+	 * @param {string} gameStateId
+	 * @returns {boolean}
+	 */
+	hasTimersOfGameState(gameStateId) {
+		for (const timer of this.timers.values()) {
+			if (timer?.data?.gameStateId === gameStateId) return true;
+		}
+		return false;
+	}
+
 	startAllTimersOfGameState(gameStateId) {
 		for (const timer of this.timers.values()) {
 			if (timer?.data?.gameStateId === gameStateId) {

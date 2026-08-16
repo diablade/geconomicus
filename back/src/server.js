@@ -7,6 +7,9 @@ import socket from '#config/socket';
 import log from '#config/log';
 
 import * as db from '#config/database';
+import GameStateService from './gameState/services/game.state.service.js';
+
+const IDLE_SWEEP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 if (env.environment !== 'test') {
 	db.connect();
@@ -39,6 +42,10 @@ if (env.environment !== 'test') {
 		};
 		log.info(`[Server] Memory usage: ${JSON.stringify(memoryUsage)}`);
 	}, 3600000); // Log every hours
+
+	setInterval(() => {
+		GameStateService.sweepIdleGames().catch((err) => log.error('[Server] Idle game sweep failed', err));
+	}, IDLE_SWEEP_INTERVAL);
 }
 
 server.listen(env.port, '0.0.0.0', () => {

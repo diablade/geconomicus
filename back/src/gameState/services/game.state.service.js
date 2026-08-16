@@ -25,6 +25,37 @@ const _initEventSource = (initializedGame, gameState, gameStateId) => ({
 
 const minute = 60 * 1000;
 const TIMER_HEARTBEAT_INTERVAL = 10000; // 10 seconds
+const MAX_BUFFERED_EVENTS = 5000;
+const IDLE_EVICTION_MS = 30 * minute;
+
+/**
+ * Persist a resident game and drain its buffered events. Must be called under the game's queue.
+ *
+ * The buffer is detached before the write so events produced during the await are not lost; a
+ * failed write puts it back, oldest-first and capped, so a DB that stays down cannot grow it
+ * without bound.
+ * @param {{ gameState: object, events: object[] }} entry
+ * @param {string} gameStateId
+ * @returns {Promise<boolean>} true when the write succeeded
+ */
+const _persistAndDrain = async (entry, gameStateId) => {
+	const pending = entry.events;
+	entry.events = [];
+	try {
+		await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState });
+		await EventService.postMany(pending, gameStateId);
+		return true;
+	} catch (err) {
+		const restored = pending.concat(entry.events);
+		const dropped = Math.max(0, restored.length - MAX_BUFFERED_EVENTS);
+		if (dropped > 0) {
+			log.error(`[GameStateService] Event buffer full for game ${gameStateId}, dropping ${dropped} oldest`);
+		}
+		entry.events = restored.slice(-MAX_BUFFERED_EVENTS);
+		log.error(`[GameStateService] Error saving state for game ${gameStateId}`, err);
+		return false;
+	}
+};
 
 //--------------------------
 // PRIVATE METHODS
@@ -111,17 +142,10 @@ const _timerSaveCallback = async (timerInstance) => {
 	log.debug(`[GameStateService] callback save state for game: ${timerInstance.data.gameStateId}`);
 	const gameStateId = timerInstance.data.gameStateId;
 	await GameStateManager.withQueue(gameStateId, async (entry) => {
-		try {
-			if (!entry.gameState) return;
-			log.info(`[GameStateService] Saving state and post events for game: ${gameStateId}`);
-			// Non-blocking save to prevent event loop blocking and socket disconnects
-			await GameStateModel.findByIdAndUpdate(gameStateId, { $set: entry.gameState });
-			await EventService.postMany(entry.events, gameStateId);
-			// clean events after successful save
-			entry.events = [];
-		} catch (err) {
-			log.error(`[GameStateService] Error in timer save state callback for game ${gameStateId}`, err);
-		}
+		if (!entry.gameState) return;
+		log.info(`[GameStateService] Saving state and post events for game: ${gameStateId}`);
+		// Non-blocking save to prevent event loop blocking and socket disconnects
+		await _persistAndDrain(entry, gameStateId);
 	});
 };
 const _timerDUCallback = async (timerInstance) => {
@@ -324,6 +348,43 @@ const _teardownGameState = async (gameStateId) => {
 GameStateService.delete = async (gameStateId) => {
 	await _teardownGameState(gameStateId);
 	return await GameStateModel.findByIdAndDelete(gameStateId).exec();
+};
+
+/**
+ * Evict games that have sat idle in memory past IDLE_EVICTION_MS, so an abandoned workshop cannot
+ * hold its payload forever.
+ *
+ * A PLAYING game is never a candidate, nor is one still holding a prison sentence — that lives
+ * only in its timer, so dropping it would strand the prisoner on resume. Everything else is
+ * persisted under its own queue before being dropped, so the eviction is lossless — the next
+ * access reloads it through getOrReload.
+ * @returns {Promise<number>} how many games were evicted
+ */
+GameStateService.sweepIdleGames = async () => {
+	const candidates = GameStateManager.idleGameIds(IDLE_EVICTION_MS);
+	let evicted = 0;
+
+	for (const gameStateId of candidates) {
+		if (BankStateService.hasPrisonTimers(gameStateId)) {
+			log.debug(`[GameStateService] Idle game ${gameStateId} kept in memory: prison sentence pending`);
+			continue;
+		}
+		try {
+			const persisted = await GameStateManager.withQueue(gameStateId, async (entry) => {
+				if (GameStateManager.idleMs(gameStateId) <= IDLE_EVICTION_MS) return false;
+				return await _persistAndDrain(entry, gameStateId);
+			});
+			if (!persisted) continue;
+
+			await _teardownGameState(gameStateId);
+			evicted++;
+			log.info(`[GameStateService] Evicted idle game from memory: ${gameStateId}`);
+		} catch (err) {
+			log.error(`[GameStateService] Error evicting idle game ${gameStateId}`, err);
+		}
+	}
+
+	return evicted;
 };
 
 GameStateService.removeAllBySessionId = async (id) => {

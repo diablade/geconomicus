@@ -626,6 +626,14 @@ BankStateService.resumeAllTimersCreditGame = async (gameStateId, credits, rules)
 	}
 };
 
+/**
+ * Whether the game still holds a prison sentence in memory. Credits rebuild from the state on
+ * resume, prison sentences do not — they live only in their timer.
+ * @param {string} gameStateId
+ * @returns {boolean}
+ */
+BankStateService.hasPrisonTimers = (gameStateId) => prisonTimerManager.hasTimersOfGameState(gameStateId);
+
 /** Drop every bank-side timer of a finished game: credits, prison sentences and pending auto-seizures. */
 BankStateService.stopAllTimersGame = async (gameStateId) => {
 	log.debug(`[BankStateService] Stopping all bank timers for game state ${gameStateId}`);

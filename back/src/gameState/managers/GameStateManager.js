@@ -51,8 +51,35 @@ class GameStateManager {
 	 * @param {object[]} events — array of historical events (buffered in memory)
 	 */
 	store(gameStateId, gameState, rules, events = []) {
-		this._games.set(gameStateId, { gameState, rules, events });
+		this._games.set(gameStateId, { gameState, rules, events, lastTouchedAt: Date.now() });
 		log.debug(`[GameStateManager] Game ${gameStateId} loaded into memory`);
+	}
+
+	/**
+	 * How long a resident game has gone without a mutation. A game absent from memory reads as
+	 * infinitely idle, so a caller sweeping on this value never has to special-case it.
+	 * @param {string} gameStateId
+	 * @returns {number} milliseconds since the last withQueue mutation
+	 */
+	idleMs(gameStateId) {
+		const entry = this.get(gameStateId);
+		if (!entry) return Infinity;
+		return Date.now() - (entry.lastTouchedAt ?? 0);
+	}
+
+	/**
+	 * Resident games idle beyond maxIdleMs. A PLAYING game is never listed — its round timer
+	 * mutates it on every heartbeat, and stopping owns its removal.
+	 * @param {number} maxIdleMs
+	 * @returns {string[]}
+	 */
+	idleGameIds(maxIdleMs) {
+		const ids = [];
+		for (const [gameStateId, entry] of this._games) {
+			if (entry.gameState?.status === GAME_STATUS.PLAYING) continue;
+			if (this.idleMs(gameStateId) > maxIdleMs) ids.push(gameStateId);
+		}
+		return ids;
 	}
 
 	/**
@@ -182,6 +209,7 @@ class GameStateManager {
 				);
 			}
 			const result = await fn(entry);
+			entry.lastTouchedAt = Date.now();
 			for (const hook of this._afterMutations) {
 				try {
 					await hook(entry);
