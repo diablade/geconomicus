@@ -285,7 +285,8 @@ export class PlayerStateService {
 		this.takenOverSubject.next(false);
 	}
 	private setupGameSocketListeners(): void {
-		this.wsService.on(IO.GAME.STARTED, async () => {
+		this.wsService.on(IO.GAME.STARTED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data?._ackId });
 			console.log('game started');
 			this.firstCreditPendingSubject.next(false);
 			this.refreshRate();
@@ -323,7 +324,8 @@ export class PlayerStateService {
 			this.snackbarService.showNotif(this.i18nService.instant('GAME.PAUSED'));
 		});
 
-		this.wsService.on(IO.GAME.RESUMED, async () => {
+		this.wsService.on(IO.GAME.RESUMED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data?._ackId });
 			console.log('game resumed');
 			const currentGameState = this.gameStateSubject.getValue();
 			if (currentGameState) {

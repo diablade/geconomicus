@@ -228,12 +228,14 @@ export class GameStateService {
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.STOPPED });
 		});
 
-		this.wsService.on(IO.GAME.STARTED, () => {
+		this.wsService.on(IO.GAME.STARTED, (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data?._ackId });
 			const currentState = this.gameStateSubject.getValue();
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
 		});
 
-		this.wsService.on(IO.GAME.RESUMED, () => {
+		this.wsService.on(IO.GAME.RESUMED, (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', _ackId: data?._ackId });
 			const currentState = this.gameStateSubject.getValue();
 			this.gameStateSubject.next({ ...currentState, status: GAME_STATUS.PLAYING });
 		});

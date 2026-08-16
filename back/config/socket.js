@@ -558,6 +558,7 @@ export class SocketManager {
 			socket.timeout(ACK_TIMEOUT).emit(event, { ...data, _ackId: eventId }, (err, ack) => {
 				if (err) {
 					log.error(`[socket] Ack timeout from ${socket.id} for event ${eventId}: ${err.message}`);
+					this.removeFromAckPool(privateChannel, eventId);
 					return;
 				}
 				if (ack?.status === 'ok') {
