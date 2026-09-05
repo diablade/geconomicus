@@ -26,16 +26,13 @@ export class InformationDialogComponent {
 		this.message2 = data.message2 || '';
 		this.title = data.title || this.title;
 		this.labelBtn = data.labelBtn || this.labelBtn;
-		this.disableClose = data.disableClose === undefined ? false : data.disableClose;
 		this.timerBtn = data.timerBtn || this.timerBtn;
 		if (data.sound) {
 			this.audioService.playSound(data.sound);
 		}
 	}
 
-	back(): void {
-		if (!this.disableClose) {
-			this.dialogRef.close();
-		}
-	}
+    timerEnd(): void {
+        this.dialogRef.close();
+    }
 }

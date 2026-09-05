@@ -48,7 +48,6 @@ export class WebSocketService {
 				disableClose: true,
 				data: {
 					title: this.i18nService.instant('SOCKET.OFFLINE.TITLE'),
-					disableClose: true,
 					message: this.i18nService.instant('SOCKET.OFFLINE.TEXT'),
 				},
 			});
@@ -138,7 +137,6 @@ export class WebSocketService {
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
-					disableClose: true,
 					title: 'SOCKET.KICKED.TITLE',
 					message: this.kickedMessageKey(data?.reason),
 				},
@@ -282,8 +280,8 @@ export class WebSocketService {
 	private showReconnectingDialog() {
         this.dialog
         .open(InformationDialogComponent, {
+            disableClose: true,
             data: {
-                disableClose: true,
                 title: this.i18nService.instant('SOCKET.RECONNECTING.TITLE'),
                 message: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
                 timerBtn: 5,

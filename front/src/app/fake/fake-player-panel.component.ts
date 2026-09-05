@@ -163,7 +163,8 @@ export class FakePlayerPanelComponent {
 
 	testRateDialog(): void {
 		const rate = makeFakeRate();
-		this.dialog.open(InformationDialogComponent, {
+        this.dialog.open(InformationDialogComponent, {
+            disableClose:true,
 			data: {
 				title: this.i18nService.instant('DIALOG.RATE_CHANGED.TITLE'),
 				message: this.i18nService.instant('CREDIT.RATE_CHANGED', {

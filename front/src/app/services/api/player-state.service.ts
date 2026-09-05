@@ -1,6 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, from, map, Observable, Subject } from 'rxjs';
+import {
+	BehaviorSubject,
+	catchError,
+	combineLatest,
+	debounceTime,
+	distinctUntilChanged,
+	from,
+	map,
+	Observable,
+	Subject,
+} from 'rxjs';
 import { GameState, Card, Credit } from '../../models/gameState';
 import { Rules } from '../../models/rules';
 import { environment } from '../../../environments/environment';
@@ -79,9 +89,18 @@ export class PlayerStateService {
 	rules$ = this.rulesSubject.asObservable();
 	private avatarsSubject = new BehaviorSubject<{ idx: number; name: string; image: string }[]>([]);
 	avatars$ = this.avatarsSubject.asObservable();
-	private reincarnationSubject = new Subject<{ oldPlayerStateIdx: number; newPlayerStateIdx: number; avatarIdx: number }>();
+	private reincarnationSubject = new Subject<{
+		oldPlayerStateIdx: number;
+		newPlayerStateIdx: number;
+		avatarIdx: number;
+	}>();
 	reincarnation$ = this.reincarnationSubject.asObservable();
-	private productionRevealSubject = new Subject<{ letter: string; weight: number; producedCard: Card; newCards: Card[] }>();
+	private productionRevealSubject = new Subject<{
+		letter: string;
+		weight: number;
+		producedCard: Card;
+		newCards: Card[];
+	}>();
 	productionReveal$ = this.productionRevealSubject.asObservable();
 	private pendingProduction: { cardsLK: Card[]; actionTokens: number } | null = null;
 	private takenOverSubject = new BehaviorSubject<boolean>(false);
@@ -124,8 +143,8 @@ export class PlayerStateService {
 		}),
 		map(({ cards, typeTheme }: { cards: Card[]; typeTheme: string }) => {
 			let annotated;
-            const countByResult = _.countBy(cards, (c: Card) => this.cardKeyCount(c));
-            const keyDuplicates: string[] = [];
+			const countByResult = _.countBy(cards, (c: Card) => this.cardKeyCount(c));
+			const keyDuplicates: string[] = [];
 
 			if (typeTheme !== 'CARD') {
 				annotated = _.orderBy(cards, ['weight', 'letter'], ['asc', 'asc']).map((c) => {
@@ -351,23 +370,21 @@ export class PlayerStateService {
 				this.gameStateSubject.next(currentGameState);
 			}
 			const surveyEnabled = this.rulesSubject.getValue().surveyEnabled;
-			this.dialog
-				.open(InformationDialogComponent, {
-					data: {
-						title: this.i18nService.instant('EVENTS.GAME_ENDED'),
-						message: this.i18nService.instant('EVENTS.GAME_ENDED_MESSAGE'),
-						message2: surveyEnabled ? this.i18nService.instant('EVENTS.SURVEY_MESSAGE') : undefined,
-						disableClose: true,
-					},
-				})
-				.afterClosed()
-				.subscribe(() => {
-					if (surveyEnabled) {
-						this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx, 'false']);
-					} else {
-						this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
-					}
-				});
+			const dialogRef = this.dialog.open(InformationDialogComponent, {
+				disableClose: true,
+				data: {
+					title: this.i18nService.instant('EVENTS.GAME_ENDED'),
+					message: this.i18nService.instant('EVENTS.GAME_ENDED_MESSAGE'),
+					message2: surveyEnabled ? this.i18nService.instant('EVENTS.SURVEY_MESSAGE') : undefined,
+				},
+			});
+			dialogRef.afterClosed().subscribe(() => {
+				if (surveyEnabled) {
+					this.router.navigate(['/survey', this.sessionId, this.gameStateId, this.avatarIdx, 'false']);
+				} else {
+					this.router.navigate(['/avatar', this.sessionId, this.avatarIdx]);
+				}
+			});
 		});
 
 		this.wsService.on(IO.GAME.DELETED, async (data: any) => {
@@ -500,8 +517,8 @@ export class PlayerStateService {
 			console.log('transaction done', data);
 			cb?.({ status: 'ok', _ackId: data._ackId });
 			if (Number(this.playerStateIdx) === Number(data.sellerIdx)) {
-                this.audioService.playSound("coin");
-                this.audioService.playSound("cardFlipGet");
+				this.audioService.playSound('coin');
+				this.audioService.playSound('cardFlipGet');
 				this.coinsSubject.next(data.coinsLK);
 				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
 				this.cardsSubject.next(updatedCards);
@@ -511,11 +528,12 @@ export class PlayerStateService {
 		// Action events
 		this.wsService.on(IO.PLAYER.ACTION_DONE, async (data: any, cb: (response: any) => void) => {
 			cb?.({ status: 'ok', _ackId: data._ackId });
-            const avatar = this.avatarsSubject.getValue().find(a => a.idx==data.fromAvatarIdx);
+			const avatar = this.avatarsSubject.getValue().find((a) => a.idx == data.fromAvatarIdx);
 			if (data.card) {
 				const cards = this.cardsSubject.getValue();
 				this.cardsSubject.next([...cards, data.card]);
-				const msgKey = data.actionKey === 'association' ? 'ACTION.RECEIVED_ASSOCIATION' : 'ACTION.RECEIVED_GIVE';
+				const msgKey =
+					data.actionKey === 'association' ? 'ACTION.RECEIVED_ASSOCIATION' : 'ACTION.RECEIVED_GIVE';
 				this.dialog.open(InformationDialogComponent, {
 					data: {
 						message: this.i18nService.instant(msgKey, { fromName: avatar?.name }),
@@ -627,13 +645,13 @@ export class PlayerStateService {
 		});
 
 		this.wsService.on(IO.CREDIT.FAULT, async (data: any, cb: (response: any) => void) => {
-            cb?.({ status: 'ok', _ackId: data._ackId });
+			cb?.({ status: 'ok', _ackId: data._ackId });
 			this.onCreditTimeout();
 			const updatedCredits = this.creditsSubject.getValue().map((c) => {
-                if (c.id === data.credit.id) {
-                    c.status = data.credit.status;
+				if (c.id === data.credit.id) {
+					c.status = data.credit.status;
 					c.remainingTime = 0;
-                    c.progress = 0;
+					c.progress = 0;
 				}
 				return c;
 			});
@@ -683,8 +701,15 @@ export class PlayerStateService {
 				disableClose: true,
 				data: {
 					title: this.i18nService.instant('DIALOG.SEIZURE_RESULT.TITLE'),
-					message: this.i18nService.instant('DIALOG.SEIZURE_RESULT.MESSAGE', { coins: data.seizure.coins, cardsCount, cardsValue }),
-					message2: prisonMinutes > 0 ? this.i18nService.instant('DIALOG.SEIZURE_RESULT.PRISON', { minutes: prisonMinutes }) : '',
+					message: this.i18nService.instant('DIALOG.SEIZURE_RESULT.MESSAGE', {
+						coins: data.seizure.coins,
+						cardsCount,
+						cardsValue,
+					}),
+					message2:
+						prisonMinutes > 0
+							? this.i18nService.instant('DIALOG.SEIZURE_RESULT.PRISON', { minutes: prisonMinutes })
+							: '',
 					timerBtn: 0,
 				},
 			});
@@ -854,7 +879,7 @@ export class PlayerStateService {
 		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
 			disableClose: true,
 			data: {
-                beep: true,
+				beep: true,
 				title: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.TITLE'),
 				message: this.i18nService.instant('DIALOG.CREDIT_SETTLE_EXTEND.MESSAGE', {
 					amount: credit.amount + credit.interest,
@@ -961,7 +986,9 @@ export class PlayerStateService {
 			this.snackbarService.showError(this.i18nService.instant('PLAYER.NOT_ALIVE'));
 			return;
 		}
-		this.bankService.requestCredit(this.gameStateId, this.playerStateIdx, amount, interest).subscribe(() => this.refreshRate());
+		this.bankService
+			.requestCredit(this.gameStateId, this.playerStateIdx, amount, interest)
+			.subscribe(() => this.refreshRate());
 	}
 
 	answerFirstCreditQuestion(answer: string): void {

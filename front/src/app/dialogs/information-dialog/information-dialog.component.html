@@ -1,10 +1,10 @@
 <div class="info">
-	<h1 (click)="back()" mat-dialog-title>{{ title | translate }}</h1>
-	<div (click)="back()" mat-dialog-content>
+	<h1 mat-dialog-title>{{ title | translate }}</h1>
+	<div mat-dialog-content>
 		<p [innerHTML]="message | translate"></p>
 		<p *ngIf="message2" [innerHTML]="message2 | translate"></p>
 	</div>
 	<div mat-dialog-actions class="d-flex justify-content-end">
-		<button-timer [secondsTimer]="timerBtn" [label]="labelBtn | translate" (timerEnd)="back()"></button-timer>
+		<button-timer [secondsTimer]="timerBtn" [label]="labelBtn | translate" (timerEnd)="timerEnd()"></button-timer>
 	</div>
 </div>
