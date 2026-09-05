@@ -172,4 +172,28 @@ describe('EVENT controller tests', () => {
             spy.mockRestore();
         });
     });
+
+    describe('replay order', () => {
+        test('one DU tick, all events sharing a timestamp, replays in insertion order', async () => {
+            const sessionId = new mongoose.Types.ObjectId().toString();
+            const gameStateId = new mongoose.Types.ObjectId().toString();
+            const at = new Date();
+
+            const tick = [0, 1, 2, 3, 4, 5].map((idx) => ({
+                _id: new mongoose.Types.ObjectId(),
+                typeEvent: 'distrib-du',
+                sessionId: new mongoose.Types.ObjectId(sessionId),
+                gameStateId: new mongoose.Types.ObjectId(gameStateId),
+                emitter: 'bank',
+                receiver: String(idx),
+                payload: { du: 10, massMonetary: 110 + 10 * idx },
+                at,
+            }));
+            await EventModel.insertMany([...tick].reverse());
+
+            const read = await EventService.getBySessionId(sessionId);
+            expect(read.map((e) => e.receiver)).toEqual(['0', '1', '2', '3', '4', '5']);
+            expect(read.map((e) => e.payload.massMonetary)).toEqual([110, 120, 130, 140, 150, 160]);
+        });
+    });
 });

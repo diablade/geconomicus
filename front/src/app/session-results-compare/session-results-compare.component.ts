@@ -26,11 +26,15 @@ import { GameState } from '../models/gameState';
 import { Rules } from '../models/rules';
 import { Session } from '../models/session';
 import { Avatar } from '../models/avatar';
+import { I18nService } from '../services/i18n.service';
 import { AddGameDialogComponent, AddGamePick } from '../dialogs/add-game-dialog/add-game-dialog.component';
 
 /** One indicator of one game, already formatted for display. */
 interface MetricRow {
+	/** i18n key ; the template pipes it with params so a language switch redraws the row */
 	label: string;
+	params?: Record<string, string | number>;
+	icon?: string;
 	value: string | number;
 	growth?: string;
 }
@@ -40,6 +44,7 @@ interface ChartBlock {
 	label: string;
 	data: ChartConfiguration<'line'>['data'];
 	hasSecondaryAxis: boolean;
+	logY?: boolean;
 	options: ChartConfiguration<'line'>['options'];
 }
 
@@ -77,7 +82,15 @@ interface GameCard {
 }
 
 /** Left ladder of the feelings chart, read top (+3, positive) to bottom (-3, negative). */
-const FEELINGS_INTENSITIES = ['😊 Très', 'Assez', 'Un peu', 'neutre', 'Un peu', 'Assez', 'Très 😒'];
+const FEELINGS_INTENSITIES = [
+	'SURVEY.VERY',
+	'SURVEY.ENOUGH',
+	'SURVEY.LITTLE',
+	'SURVEY.NUTRAL',
+	'SURVEY.LITTLE',
+	'SURVEY.ENOUGH',
+	'SURVEY.VERYNOT',
+];
 
 /** Tones of the two money colours already used by the score bars, one per game of that type. */
 const DEBT_TONES = ['#1d5c87', '#2c7fb8', '#6aa9d4', '#9fd0f5'];
@@ -137,27 +150,28 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private rules: Rules[] = [];
 	private joinedRooms: string[] = [];
 
-	private readonly ACTION_META: { [type: string]: { label: string; icon: string } } = {
-		[DB_EVENTS.ACTION_GIVE]: { label: 'Don', icon: '🫴' },
-		[DB_EVENTS.ACTION_ONG]: { label: 'ONG', icon: '🤝' },
-		[DB_EVENTS.ACTION_ASSOCIATION]: { label: 'Association', icon: '👥' },
-		[DB_EVENTS.ACTION_STEAL]: { label: 'Vol', icon: '💥' },
-		[DB_EVENTS.ACTION_SILENT_STEAL]: { label: 'Vol silencieux', icon: '🤫' },
-		[DB_EVENTS.ACTION_WAR]: { label: 'Guerre', icon: '⚔' },
+	/** Only the icon: the action name is already translated under EVENTS.DB_EVENTS.<type>. */
+	private readonly ACTION_ICONS: { [type: string]: string } = {
+		[DB_EVENTS.ACTION_GIVE]: '🫴',
+		[DB_EVENTS.ACTION_ONG]: '🤝',
+		[DB_EVENTS.ACTION_ASSOCIATION]: '👥',
+		[DB_EVENTS.ACTION_STEAL]: '💥',
+		[DB_EVENTS.ACTION_SILENT_STEAL]: '🤫',
+		[DB_EVENTS.ACTION_WAR]: '⚔',
 	};
 
 	private readonly INDICATOR_META: { [key: string]: { label: string; color: string; dash: boolean } } = {
-		[LK_KEYS.MASS_MONETARY]: { label: 'Masse monétaire', color: '#000000', dash: true },
-		[LK_KEYS.DU]: { label: 'DU', color: '#f0932a', dash: true },
-		ghostMoney: { label: 'Monnaie fantôme', color: '#9e9e9e', dash: true },
-		averageMoney: { label: 'Monnaie moyenne / vie', color: '#5c6bc0', dash: true },
-		goodsInPlay: { label: 'Biens en jeu', color: '#2e7d32', dash: true },
-		ghostCards: { label: 'Biens fantômes', color: '#9e9e9e', dash: true },
-		totalDebt: { label: 'Dette totale', color: '#b3261e', dash: true },
-		[LK_KEYS.BANK_INTEREST_EARNED]: { label: 'Intérêts encaissés', color: '#8e24aa', dash: true },
-		[LK_KEYS.BANK_MONEY_LOST]: { label: 'Monnaie perdue', color: '#d81b60', dash: true },
-		[LK_KEYS.BANK_MONEY_DESTROYED]: { label: 'Monnaie détruite', color: '#6d4c41', dash: true },
-		[LK_KEYS.BANK_GOODS_EARNED]: { label: 'Biens saisis', color: '#00897b', dash: true },
+		[LK_KEYS.MASS_MONETARY]: { label: 'RESULTS.COMPARE.MONETARY_MASS', color: '#000000', dash: true },
+		[LK_KEYS.DU]: { label: 'CURRENCY.DU', color: '#f0932a', dash: true },
+		ghostMoney: { label: 'RESULTS.COMPARE.GHOST_MONEY', color: '#9e9e9e', dash: true },
+		averageMoney: { label: 'RESULTS.COMPARE.AVERAGE_MONEY', color: '#5c6bc0', dash: true },
+		goodsInPlay: { label: 'RESULTS.COMPARE.GOODS_IN_PLAY', color: '#2e7d32', dash: true },
+		ghostCards: { label: 'RESULTS.COMPARE.GHOST_CARDS', color: '#9e9e9e', dash: true },
+		totalDebt: { label: 'RESULTS.COMPARE.TOTAL_DEBT', color: '#b3261e', dash: true },
+		[LK_KEYS.BANK_INTEREST_EARNED]: { label: 'RESULTS.COMPARE.INTEREST_EARNED', color: '#8e24aa', dash: true },
+		[LK_KEYS.BANK_MONEY_LOST]: { label: 'RESULTS.COMPARE.MONEY_LOST', color: '#d81b60', dash: true },
+		[LK_KEYS.BANK_MONEY_DESTROYED]: { label: 'RESULTS.COMPARE.MONEY_DESTROYED', color: '#6d4c41', dash: true },
+		[LK_KEYS.BANK_GOODS_EARNED]: { label: 'RESULTS.COMPARE.GOODS_SEIZED', color: '#00897b', dash: true },
 	};
 
 	constructor(
@@ -168,11 +182,15 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		private gameStateService: GameStateService,
 		private wsService: WebSocketService,
 		private results: SessionResultsService,
+		private i18n: I18nService,
 		private dialog: MatDialog
 	) {}
 
 	ngOnInit(): void {
 		this.sessionId = this.route.snapshot.params['sessionId'];
+		this.i18n.loadNamespace('results');
+		this.i18n.loadNamespace('events');
+		this.i18n.loadNamespace('survey');
 		forkJoin({
 			session: this.sessionService.getById(this.sessionId).pipe(catchError(() => of(null as Session | null))),
 			events: this.eventService.getBySessionId(this.sessionId).pipe(catchError(() => of([] as GecoEventV2[]))),
@@ -247,16 +265,16 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		origin?: string
 	): GameCard {
 		const tones = isJune ? JUNE_TONES : DEBT_TONES;
-		const game = this.results.compute(gameState, events, avatars);
+		const game = this.results.compute(gameState, events, avatars, rule.distribInitCards);
 		const onPage = this.cards.filter((card) => card.isJune === isJune).length;
 		return {
 			id: game.gameStateId,
-			label: `${isJune ? 'Libre' : 'Dette'} ${ordinal}`,
+			label: this.i18n.instant(isJune ? 'RESULTS.COMPARE.GAME_JUNE' : 'RESULTS.COMPARE.GAME_DEBT', { n: ordinal }),
 			meta: this.metaOf(rule, game, isJune),
 			color: tones[(origin ? onPage : ordinal - 1) % tones.length],
 			isJune,
 			game,
-			primary: this.tidy(this.primaryRows(game)),
+			primary: this.tidy(this.primaryRows(game, isJune)),
 			specific: this.tidy(this.specificRows(game, isJune)),
 			secondary: this.tidy(this.secondaryRows(game, isJune)),
 			board: this.scoreBoard(game),
@@ -283,11 +301,17 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	/** Identity line under a fiche title: what was configured, then how long it actually ran. */
 	private metaOf(rule: Rules, game: GameResults, isJune: boolean): string {
 		const parts: string[] = [];
-		if (isJune && rule.tauxCroissance) parts.push(`croissance ${rule.tauxCroissance} %`);
-		if (!isJune && rule.defaultInterestAmount) parts.push(`intérêt ${rule.defaultInterestAmount}`);
-		if (!isJune && rule.autoBank) parts.push('banque auto');
-		if (rule.roundMax) parts.push(`${rule.roundMax} tours`);
-		if (game.synthesis.durationMin) parts.push(`${game.synthesis.durationMin} min`);
+		if (isJune && rule.tauxCroissance) {
+			parts.push(this.i18n.instant('RESULTS.COMPARE.META_GROWTH', { value: rule.tauxCroissance }));
+		}
+		if (!isJune && rule.defaultInterestAmount) {
+			parts.push(this.i18n.instant('RESULTS.COMPARE.META_INTEREST', { value: rule.defaultInterestAmount }));
+		}
+		if (!isJune && rule.autoBank) parts.push(this.i18n.instant('RESULTS.COMPARE.META_AUTO_BANK'));
+		if (rule.roundMax) parts.push(this.i18n.instant('RESULTS.COMPARE.META_ROUNDS', { value: rule.roundMax }));
+		if (game.synthesis.durationMin) {
+			parts.push(this.i18n.instant('RESULTS.COMPARE.META_MINUTES', { value: game.synthesis.durationMin }));
+		}
 		return parts.join(' · ');
 	}
 
@@ -368,19 +392,32 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/** The four indicators every game has, whatever its money type. */
-	private primaryRows(game: GameResults): MetricRow[] {
+	/**
+	 * The four indicators every game has, whatever its money type. Resources count every card
+	 * still on the table — the dead keep theirs — so start and end compare like for like.
+	 * A June card already carries its price in dividends, so its worth needs no conversion.
+	 */
+	private primaryRows(game: GameResults, isJune: boolean): MetricRow[] {
 		const s = game.synthesis;
+		const worthFirst = s.goodsFirst;
+		const worthLast = s.goodsInPlay + s.ghostCards;
+		const unit = this.i18n.instant(isJune ? 'CURRENCY.DU' : 'CURRENCY.EURO');
 		return [
-			{ label: 'Transactions', value: s.transactions },
-			{ label: 'Productions', value: s.productions },
+			{ label: 'RESULTS.COMPARE.TRANSACTIONS', value: s.transactions },
+			{ label: 'RESULTS.COMPARE.PRODUCTIONS', value: s.productions },
 			{
-				label: 'Ressources en jeu',
-				value: this.range(s.goodsFirst, s.goodsInPlay),
-				growth: this.growth(s.goodsFirst, s.goodsInPlay),
+				label: 'RESULTS.COMPARE.RESOURCES_IN_PLAY',
+				value: this.i18n.instant('RESULTS.COMPARE.RESOURCES_RANGE', {
+					cardsFirst: s.goodsCountFirst,
+					worthFirst: this.num(worthFirst),
+					cardsLast: s.goodsCount,
+					worthLast: this.num(worthLast),
+					unit,
+				}),
+				growth: this.growth(worthFirst, worthLast),
 			},
 			{
-				label: 'Masse monétaire',
+				label: 'RESULTS.COMPARE.MONETARY_MASS',
 				value: this.range(s.massFirst, s.finalMassMonetary),
 				growth: this.growth(s.massFirst, s.finalMassMonetary),
 			},
@@ -393,26 +430,26 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		if (isJune) {
 			return [
 				{
-					label: 'Dividende Universel',
+					label: 'RESULTS.COMPARE.DU',
 					value: this.range(s.duFirst, s.duFinal),
 					growth: this.growth(s.duFirst, s.duFinal),
 				},
-				{ label: 'Nombre de DU', value: s.duCount ?? 0 },
-				{ label: 'Monnaie fantôme (en DU)', value: s.ghostMoneyInDu ?? 0 },
+				{ label: 'RESULTS.COMPARE.DU_COUNT', value: s.duCount ?? 0 },
+				{ label: 'RESULTS.COMPARE.GHOST_MONEY_IN_DU', value: s.ghostMoneyInDu ?? 0 },
 			];
 		}
 		return [
 			{
-				label: 'Dette totale',
+				label: 'RESULTS.COMPARE.TOTAL_DEBT',
 				value: this.range(s.debtFirst, s.totalDebt),
 				growth: this.growth(s.debtFirst, s.totalDebt),
 			},
-			{ label: 'Crédits contractés', value: s.creditsTaken ?? 0 },
-			{ label: 'Intérêts encaissés', value: s.interestPaid ?? 0 },
-			{ label: 'Saisies', value: s.seizures ?? 0 },
-			{ label: 'Monnaie perdue', value: s.bankMoneyLost ?? 0 },
-			{ label: 'Monnaie détruite', value: s.bankMoneyDestroyed ?? 0 },
-			{ label: 'Biens saisis', value: s.bankGoodsEarned ?? 0 },
+			{ label: 'RESULTS.COMPARE.CREDITS_TAKEN', value: s.creditsTaken ?? 0 },
+			{ label: 'RESULTS.COMPARE.INTEREST_EARNED', value: s.interestPaid ?? 0 },
+			{ label: 'RESULTS.COMPARE.SEIZURES', value: s.seizures ?? 0 },
+			{ label: 'RESULTS.COMPARE.MONEY_LOST', value: s.bankMoneyLost ?? 0 },
+			{ label: 'RESULTS.COMPARE.MONEY_DESTROYED', value: s.bankMoneyDestroyed ?? 0 },
+			{ label: 'RESULTS.COMPARE.GOODS_SEIZED', value: s.bankGoodsEarned ?? 0 },
 		];
 	}
 
@@ -420,30 +457,33 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private secondaryRows(game: GameResults, isJune: boolean): MetricRow[] {
 		const s = game.synthesis;
 		const rows: MetricRow[] = [
-			{ label: 'Valeur échangée', value: s.totalExchangedValue },
-			{ label: 'Monnaie moyenne / vie', value: s.averageMoney },
-			{ label: 'Monnaie fantôme', value: s.ghostMoney },
-			{ label: 'Biens fantômes', value: s.ghostCards },
-			{ label: 'Joueur·euses', value: s.avatars },
-			{ label: 'Vies', value: s.lives },
-			{ label: 'Morts', value: s.deaths },
-			{ label: 'Renaissances', value: s.rebirths },
+			{ label: 'RESULTS.COMPARE.EXCHANGED_VALUE', value: s.totalExchangedValue },
+			{ label: 'RESULTS.COMPARE.AVERAGE_MONEY', value: s.averageMoney },
+			{ label: 'RESULTS.COMPARE.GHOST_MONEY', value: s.ghostMoney },
+			{ label: 'RESULTS.COMPARE.GHOST_CARDS', value: s.ghostCards },
+			{ label: 'RESULTS.COMPARE.PLAYERS', value: s.avatars },
+			{ label: 'RESULTS.COMPARE.LIVES', value: s.lives },
+			{ label: 'RESULTS.COMPARE.DEATHS', value: s.deaths },
+			{ label: 'RESULTS.COMPARE.REBIRTHS', value: s.rebirths },
 		];
 		game.actions.forEach((action) => {
-			const meta = this.ACTION_META[action.typeEvent] ?? { label: action.typeEvent, icon: '•' };
-			rows.push({ label: `${meta.icon} ${meta.label}`, value: action.count });
+			rows.push({
+				label: `EVENTS.DB_EVENTS.${action.typeEvent}`,
+				icon: this.ACTION_ICONS[action.typeEvent] ?? '•',
+				value: action.count,
+			});
 		});
 		const cd = !isJune ? s.creditDecisions : undefined;
 		if (cd) {
 			rows.push(
-				{ label: '1er crédit — oui (simple)', value: cd.acceptSingle },
-				{ label: '1er crédit — oui (×2)', value: cd.acceptDouble },
-				{ label: '1er crédit — non', value: cd.decline },
-				{ label: '1er crédit — sans réponse', value: cd.noAnswer },
-				{ label: 'Crédits (animateur)', value: cd.fromAnimator },
-				{ label: 'Crédits (1re question)', value: cd.fromFirstQuestion },
-				{ label: 'Crédits (auto-service)', value: cd.fromPlayerRequest },
-				{ label: 'Crédits refusés', value: cd.refused }
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_SINGLE', value: cd.acceptSingle },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DOUBLE', value: cd.acceptDouble },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DECLINE', value: cd.decline },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_NO_ANSWER', value: cd.noAnswer },
+				{ label: 'RESULTS.COMPARE.CREDITS_ANIMATOR', value: cd.fromAnimator },
+				{ label: 'RESULTS.COMPARE.CREDITS_FIRST_QUESTION', value: cd.fromFirstQuestion },
+				{ label: 'RESULTS.COMPARE.CREDITS_SELF_SERVICE', value: cd.fromPlayerRequest },
+				{ label: 'RESULTS.COMPARE.CREDITS_REFUSED', value: cd.refused }
 			);
 		}
 		return rows;
@@ -530,29 +570,30 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		const blocks: ChartBlock[] = [
 			{
 				key: `${game.gameStateId}-combined`,
-				label: 'Richesse',
+				label: this.i18n.instant('RESULTS.COMPARE.CHART_WEALTH'),
 				data: { datasets: this.toLines(game.combined) },
 				hasSecondaryAxis: false,
 				options: {},
 			},
 			{
 				key: `${game.gameStateId}-coins`,
-				label: 'Monnaie',
+				label: this.i18n.instant('RESULTS.COMPARE.CHART_MONEY'),
 				data: { datasets: [...this.toLines(game.coins), ...this.toIndicatorLines(coinsIndicators)] },
 				hasSecondaryAxis: coinsIndicators.some((i) => i.axis === 'secondary'),
+				logY: isJune,
 				options: {},
 			},
 			{
 				key: `${game.gameStateId}-cards`,
-				label: 'Ressources',
+				label: this.i18n.instant('RESULTS.COMPARE.CHART_RESOURCES'),
 				data: { datasets: [...this.toLines(game.cardsValue), ...this.toIndicatorLines(cardsIndicators)] },
 				hasSecondaryAxis: cardsIndicators.some((i) => i.axis === 'secondary'),
 				options: {},
 			},
 			{
 				key: `${game.gameStateId}-third`,
-				label: isJune ? 'Relatif (DU)' : 'Richesse nette',
-				data: { datasets: this.toLines(game.third) },
+				label: this.i18n.instant(isJune ? 'RESULTS.COMPARE.CHART_RELATIVE' : 'RESULTS.COMPARE.CHART_NET_WEALTH'),
+				data: { datasets: this.toLines(game.third, isJune ? false : 'before') },
 				hasSecondaryAxis: false,
 				options: {},
 			},
@@ -572,7 +613,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private buildFeelings(): void {
 		this.cards.forEach((card) => {
 			const dims = this.results.feelings(this.answers, card.id);
-			card.feelings = dims.length ? this.feelingsData(dims) : undefined;
+			card.feelings = dims.some((dim) => dim.points.length > 0) ? this.feelingsData(dims) : undefined;
 			card.feelingsOpts = this.feelingsOptions(dims);
 		});
 	}
@@ -594,7 +635,8 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private toLines(series: LifeSeries[]): ChartDataset<'line'>[] {
+	/** One line per life ; `stepped` is off when the series already carries its own step vertices. */
+	private toLines(series: LifeSeries[], stepped: 'before' | false = 'before'): ChartDataset<'line'>[] {
 		return series
 			.filter((s) => s.points.length > 0)
 			.map((s) => ({
@@ -607,7 +649,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 				borderWidth: 2,
 				borderDash: s.life.ordinal > 1 ? [4, 3] : undefined,
 				pointRadius: 1,
-				stepped: 'before',
+				stepped,
 				tension: 0,
 			})) as ChartDataset<'line'>[];
 	}
@@ -637,7 +679,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private feelingsData(dims: FeelingDimension[]): ChartConfiguration<'bubble'>['data'] {
 		return {
 			datasets: dims.map((dim) => ({
-				label: `${dim.negative} ↔ ${dim.positive}`,
+				label: `${this.i18n.instant(dim.negative)} ↔ ${this.i18n.instant(dim.positive)}`,
 				data: dim.points.map((pt) => ({ x: pt.x, y: pt.y, r: Math.log(pt.count * 2) * 6, count: pt.count })),
 				backgroundColor: FEELING_COLORS[dim.index % FEELING_COLORS.length],
 			})),
@@ -661,7 +703,8 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 						title: (items) => String(items[0]?.dataset?.label ?? ''),
 						label: (item) => {
 							const point = item.raw as FeelingPoint;
-							return `${point.count} réponse(s) · ${point.y > 0 ? '+' : ''}${point.y}`;
+							const answers = this.i18n.instant('RESULTS.COMPARE.ANSWERS', { count: point.count });
+							return `${answers} · ${point.y > 0 ? '+' : ''}${point.y}`;
 						},
 					},
 				},
@@ -672,20 +715,25 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 				xPositive: {
 					position: 'top',
 					type: 'category',
-					labels: dims.map((d) => d.positive),
+					labels: dims.map((d) => this.i18n.instant(d.positive)),
 					grid: { display: false },
 				},
 				xNegative: {
 					position: 'bottom',
 					type: 'category',
-					labels: dims.map((d) => d.negative),
+					labels: dims.map((d) => this.i18n.instant(d.negative)),
 					grid: { display: false },
 				},
-				yIntensity: { position: 'left', type: 'category', labels: FEELINGS_INTENSITIES },
+				yIntensity: {
+					position: 'left',
+					type: 'category',
+					labels: FEELINGS_INTENSITIES.map((key) => this.i18n.instant(key)),
+				},
 			},
 		};
 	}
 
+	/** Chart options for one block ; a log left axis keeps a libre-money mass readable as it grows. */
 	private lineOpts(block: ChartBlock): ChartConfiguration<'line'>['options'] {
 		return {
 			responsive: true,
@@ -702,7 +750,9 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 					time: { unit: 'minute', displayFormats: { minute: 'HH:mm' } },
 					ticks: { source: 'auto' },
 				},
-				y: { min: 0, position: 'left' },
+				y: block.logY
+					? { type: 'logarithmic' as const, position: 'left' as const }
+					: { min: 0, position: 'left' as const },
 				...(block.hasSecondaryAxis
 					? { y1: { min: 0, position: 'right' as const, grid: { drawOnChartArea: false } } }
 					: {}),

@@ -6,27 +6,37 @@ import LkGuard from '../gameState/helpers/lk.guard.js';
 const EventService = {};
 
 /* Retrieve */
+/**
+ * Replay order. Sorting on `at` alone leaves ties unordered, and a batch such as one DU tick
+ * stamps every event it emits with the same `at`. `_id` breaks the tie in insertion order, so
+ * the rising partial sums those events carry are read back in the order they were written.
+ */
+const REPLAY_ORDER = { at: 1, _id: 1 };
+
+/** Every event of a session, in replay order. */
 EventService.getBySessionId = async (sessionId) => {
 	return await EventModel.find({
 		sessionId,
 	})
-		.sort({ at: 1 })
+		.sort(REPLAY_ORDER)
 		.exec();
 };
+/** Every event of one game, in replay order. */
 EventService.getByGameStateId = async (gameStateId) => {
 	return await EventModel.find({
 		gameStateId,
 	})
-		.sort({ at: 1 })
+		.sort(REPLAY_ORDER)
 		.exec();
 };
 
+/** Every event one avatar emitted or received in a game, in replay order. */
 EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
 	return await EventModel.find({
 		gameStateId,
 		$or: [{ emitter: avatarIdx }, { receiver: avatarIdx }],
 	})
-		.sort({ at: 1 })
+		.sort(REPLAY_ORDER)
 		.exec();
 };
 

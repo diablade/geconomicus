@@ -4,7 +4,7 @@
 	<div class="cp-header">
 		<img src="assets/images/geconomicus.png" class="cp-logo glow" alt="Géconomicus" />
 		<div class="cp-titles">
-			<div class="cp-title geconomicusFont contourText ombreText">{{ sessionName || 'Résultats' }}</div>
+			<div class="cp-title geconomicusFont contourText ombreText">{{ sessionName || ('RESULTS.COMPARE.TITLE_FALLBACK' | translate) }}</div>
 			<div class="cp-sub white" *ngIf="location">{{ location }}</div>
 		</div>
 		<app-language-btn [white]="true"></app-language-btn>
@@ -24,19 +24,20 @@
 				<span class="cp-chip-name">{{ card.label }}</span>
 				<span class="cp-chip-fig">
 					<ng-container *ngIf="card.origin">{{ card.origin }} ·</ng-container>
-					{{ card.game.synthesis.transactions }} tr · {{ card.game.synthesis.productions }} pr
+					{{ card.game.synthesis.transactions }} {{ 'RESULTS.COMPARE.TRANSACTIONS_SHORT' | translate }} ·
+					{{ card.game.synthesis.productions }} {{ 'RESULTS.COMPARE.PRODUCTIONS_SHORT' | translate }}
 				</span>
 			</span>
 			<span
 				class="cp-chip-drop"
 				*ngIf="card.origin"
-				title="Retirer cette partie empruntée"
+				[title]="'RESULTS.COMPARE.REMOVE_BORROWED' | translate"
 				(click)="$event.stopPropagation(); removeCard(card)">
 				✕
 			</span>
 		</button>
 
-		<button type="button" class="cp-add" (click)="addGame()">+ ajouter une partie</button>
+		<button type="button" class="cp-add" (click)="addGame()">{{ 'RESULTS.COMPARE.ADD_GAME' | translate }}</button>
 	</div>
 
 	<!-- ── fiches défilant ensemble + tiroir évènements pleine hauteur ── -->
@@ -49,16 +50,21 @@
 						<div>
 							<h3>
 								{{ card.label }}
-								<span class="cp-fiche-origin" *ngIf="card.origin">empruntée à {{ card.origin }}</span>
+								<span class="cp-fiche-origin" *ngIf="card.origin">
+									{{ 'RESULTS.COMPARE.BORROWED_FROM' | translate: { name: card.origin } }}
+								</span>
 							</h3>
 							<div class="cp-fiche-meta">{{ card.meta }}</div>
 						</div>
 					</header>
 					<div class="cp-fiche-body">
 						<div class="cp-metrics">
-							<div class="cp-block-head"><span>Chiffres clés de la partie</span></div>
+							<div class="cp-block-head"><span>{{ 'RESULTS.COMPARE.KEY_FIGURES' | translate }}</span></div>
 							<div class="cp-metric" *ngFor="let row of card.primary">
-								<span class="cp-metric-label">{{ row.label }}</span>
+								<span class="cp-metric-label">
+									<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
+									{{ row.label | translate: row.params }}
+								</span>
 								<span class="cp-metric-value">{{ row.value }}</span>
 								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
 							</div>
@@ -66,10 +72,15 @@
 
 						<div class="cp-specific" [class.june]="card.isJune">
 							<div class="cp-specific-head">
-								{{ card.isJune ? 'Propre à la monnaie libre' : 'Propre à la monnaie dette' }}
+								{{
+									(card.isJune ? 'RESULTS.COMPARE.SPECIFIC_JUNE' : 'RESULTS.COMPARE.SPECIFIC_DEBT') | translate
+								}}
 							</div>
 							<div class="cp-metric" *ngFor="let row of card.specific">
-								<span class="cp-metric-label">{{ row.label }}</span>
+								<span class="cp-metric-label">
+									<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
+									{{ row.label | translate: row.params }}
+								</span>
 								<span class="cp-metric-value">{{ row.value }}</span>
 								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
 							</div>
@@ -78,11 +89,14 @@
 						<div class="cp-secondary">
 							<button type="button" class="cp-block-head cp-collapser" (click)="toggleSecondary(card)">
 								<span class="cp-caret">{{ secondaryOpen.has(card.id) ? '▾' : '▸' }}</span>
-								<span>Chiffres détaillés</span>
+								<span>{{ 'RESULTS.COMPARE.DETAILED' | translate }}</span>
 							</button>
 							<ng-container *ngIf="secondaryOpen.has(card.id)">
 								<div class="cp-metric" *ngFor="let row of card.secondary">
-									<span class="cp-metric-label">{{ row.label }}</span>
+									<span class="cp-metric-label">
+										<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
+										{{ row.label | translate: row.params }}
+									</span>
 									<span class="cp-metric-value small">{{ row.value }}</span>
 								</div>
 							</ng-container>
@@ -90,9 +104,9 @@
 
 						<div class="cp-podium">
 							<div class="cp-block-head">
-								<span>Classement des joueurs</span>
+								<span>{{ 'RESULTS.COMPARE.RANKING' | translate }}</span>
 								<button type="button" class="cp-toggle" (click)="toggleScoreBars(card)">
-									{{ scoreBars.has(card.id) ? 'Podium' : 'Tous les scores' }}
+									{{ (scoreBars.has(card.id) ? 'RESULTS.COMPARE.PODIUM' : 'RESULTS.COMPARE.ALL_SCORES') | translate }}
 								</button>
 							</div>
 
@@ -111,10 +125,10 @@
 								<div class="score-plot">
 									<div class="score-lines">
 										<div class="score-line avg" [style.left.%]="board.averagePercent">
-											<span>Moyenne {{ board.average }}</span>
+											<span>{{ 'RESULTS.COMPARE.AVERAGE' | translate }} {{ board.average }}</span>
 										</div>
 										<div class="score-line dev" [style.left.%]="board.deviationPercent">
-											<span>Écart type {{ board.deviation }}</span>
+											<span>{{ 'RESULTS.COMPARE.DEVIATION' | translate }} {{ board.deviation }}</span>
 										</div>
 									</div>
 									<div class="score-row" *ngFor="let bar of board.bars">
@@ -130,22 +144,22 @@
 								</div>
 							</div>
 
-							<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
+							<div class="pod-empty" *ngIf="card.game.podium.length === 0">{{ 'RESULTS.COMPARE.NO_RANKING' | translate }}</div>
 							<div class="most-active" *ngIf="card.game.mostActive">
-								Plus actif·ve :
+								{{ 'RESULTS.COMPARE.MOST_ACTIVE' | translate }}
 								<b>{{ card.game.mostActive.avatar.name }}</b>
-								— {{ card.game.mostActive.count }} actions
+								— {{ card.game.mostActive.count }} {{ 'RESULTS.COMPARE.ACTIONS' | translate }}
 							</div>
 							<div class="cp-dev" *ngIf="card.board">
-								moyenne
+								{{ 'RESULTS.COMPARE.AVERAGE_SHORT' | translate }}
 								<b>{{ card.board.average }}</b>
-								· écart-type
+								· {{ 'RESULTS.COMPARE.DEVIATION_SHORT' | translate }}
 								<b>{{ card.board.deviation }}</b>
 							</div>
 						</div>
 
 						<div class="cp-chart" *ngIf="chartOf(card) as block">
-							<div class="cp-block-head"><span>Évolution au fil du temps</span></div>
+							<div class="cp-block-head"><span>{{ 'RESULTS.COMPARE.OVER_TIME' | translate }}</span></div>
 							<div class="cp-chart-switch">
 								<button
 									type="button"
@@ -155,7 +169,7 @@
 									{{ b.label }}
 								</button>
 								<button type="button" class="cp-legend-btn" (click)="toggleLegend(block)">
-									Légende {{ legends[block.key] ? '✓' : '' }}
+									{{ 'RESULTS.COMPARE.LEGEND' | translate }} {{ legends[block.key] ? '✓' : '' }}
 								</button>
 							</div>
 							<div class="cp-canvas">
@@ -168,7 +182,7 @@
 						</div>
 
 						<div class="cp-feel">
-							<div class="cp-block-head"><span>Ressentis des joueurs</span></div>
+							<div class="cp-block-head"><span>{{ 'RESULTS.COMPARE.FEELINGS' | translate }}</span></div>
 							<div class="cp-canvas feel">
 								<canvas
 									baseChart
@@ -176,7 +190,7 @@
 									[type]="'bubble'"
 									[data]="card.feelings"
 									[options]="card.feelingsOpts"></canvas>
-								<div class="cp-empty" *ngIf="!card.feelings">Aucune réponse.</div>
+								<div class="cp-empty" *ngIf="!card.feelings">{{ 'RESULTS.COMPARE.NO_ANSWER' | translate }}</div>
 							</div>
 						</div>
 
@@ -184,7 +198,7 @@
 						<div class="cp-health">
 							<button type="button" class="cp-block-head cp-collapser" (click)="toggleHealth(card)">
 								<span class="cp-caret">{{ healthOpen.has(card.id) ? '▾' : '▸' }}</span>
-								<span>Santé des données</span>
+								<span>{{ 'RESULTS.COMPARE.DATA_HEALTH' | translate }}</span>
 								<span class="cp-health-badge ok" *ngIf="healthIssues(card) === 0">✓</span>
 								<span class="cp-health-badge bad" *ngIf="healthIssues(card) > 0">
 									{{ healthIssues(card) }}
@@ -195,13 +209,15 @@
 									class="cp-health-row"
 									*ngFor="let row of card.game.health.rows"
 									[class.bad]="!row.agrees">
-									<span class="hl">{{ row.label }}</span>
+									<span class="hl">{{ row.label | translate: row.labelParams }}</span>
 									<span class="hv">{{ num(row.authoritative) }}</span>
 									<span class="hv">{{ row.sampled === null ? '∅' : num(row.sampled) }}</span>
 									<span class="hs">{{ row.agrees ? '✓' : '✗' }}</span>
 								</div>
 								<div class="cp-health-row bad" *ngFor="let d of card.game.health.divergences">
-									<span class="hl">{{ timeOf(d.at) }} · {{ d.typeEvent }}</span>
+									<span class="hl">
+										{{ timeOf(d.at) }} · {{ 'EVENTS.DB_EVENTS.' + d.typeEvent | translate }}
+									</span>
 									<span class="hv">{{ num(d.declared) }}</span>
 									<span class="hv">{{ num(d.derived) }}</span>
 									<span class="hs">Δ {{ num(d.delta) }}</span>

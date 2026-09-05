@@ -48,7 +48,9 @@ export interface IndicatorSeries {
 
 export interface HealthRow {
 	key: string;
+	/** i18n key ; the component pipes it with labelParams so a language switch redraws it */
 	label: string;
+	labelParams?: Record<string, string | number>;
 	agrees: boolean;
 	authoritative: number | null;
 	sampled: number | null;
@@ -77,6 +79,7 @@ export interface FeelingPoint {
 
 export interface FeelingDimension {
 	key: keyof SurveyAnswer;
+	/** i18n keys of the two poles, translated by whoever draws the axis */
 	negative: string;
 	positive: string;
 	index: number;
@@ -91,16 +94,16 @@ const avatarColor = (hairColor: string | undefined): string => {
 
 /** The ten survey questions, in the order they are asked (front/src/app/survey). */
 const FEELING_DIMS: { key: keyof SurveyAnswer; negative: string; positive: string }[] = [
-	{ key: 'depressedHappy', negative: 'Déprimé·e', positive: 'Joyeux·se' },
-	{ key: 'insatisfiedAccomplished', negative: 'Insatisfait·e', positive: 'Accompli·e' },
-	{ key: 'poorRich', negative: 'Pauvre', positive: 'Riche' },
-	{ key: 'anxiousConfident', negative: 'Anxieux·se', positive: 'Confiant·e' },
-	{ key: 'agressiveAvenant', negative: 'Agressif·ve', positive: 'Avenant·e' },
-	{ key: 'greedyGenerous', negative: 'Avare', positive: 'Généreux·se' },
-	{ key: 'irritableTolerant', negative: 'Irritable', positive: 'Tolérant·e' },
-	{ key: 'individualCollective', negative: 'Individuel', positive: 'Collectif' },
-	{ key: 'competitiveCooperative', negative: 'Compétitif', positive: 'Coopératif' },
-	{ key: 'dependantAutonomous', negative: 'Dépendant·e', positive: 'Autonome' },
+	{ key: 'depressedHappy', negative: 'SURVEY.DEPRESSED', positive: 'SURVEY.HAPPY' },
+	{ key: 'insatisfiedAccomplished', negative: 'SURVEY.INSATISFIED', positive: 'SURVEY.ACCOMPLISHED' },
+	{ key: 'poorRich', negative: 'SURVEY.POOR', positive: 'SURVEY.RICH' },
+	{ key: 'anxiousConfident', negative: 'SURVEY.ANXIOUS', positive: 'SURVEY.CONFIDENT' },
+	{ key: 'agressiveAvenant', negative: 'SURVEY.AGGRESSIVE', positive: 'SURVEY.PLEASANT' },
+	{ key: 'greedyGenerous', negative: 'SURVEY.GREEDY', positive: 'SURVEY.GENEROUS' },
+	{ key: 'irritableTolerant', negative: 'SURVEY.IRRITABLE', positive: 'SURVEY.TOLERANT' },
+	{ key: 'individualCollective', negative: 'SURVEY.INDIVIDUAL', positive: 'SURVEY.COLLECTIVE' },
+	{ key: 'competitiveCooperative', negative: 'SURVEY.COMPETITIVE', positive: 'SURVEY.COOPERATIVE' },
+	{ key: 'dependantAutonomous', negative: 'SURVEY.DEPENDENT', positive: 'SURVEY.AUTONOMOUS' },
 ];
 
 export interface PodiumEntry {
@@ -144,6 +147,9 @@ export interface GameSynthesis {
 	ghostMoney: number;
 	ghostCards: number;
 	goodsInPlay: number;
+	goodsCountFirst: number;
+	/** every card still on the table, the dead's hands included, so start and end compare like for like */
+	goodsCount: number;
 	creditsTaken?: number;
 	interestPaid?: number;
 	seizures?: number;
@@ -183,7 +189,11 @@ const cardsValueOf = (playerState: PlayerState): number =>
 
 @Injectable({ providedIn: 'root' })
 export class SessionResultsService {
-	compute(gameState: GameState, events: GecoEventV2[], avatars: Avatar[]): GameResults {
+	/**
+	 * @param handSize rules.distribInitCards — the opening hand, the only source for how many
+	 * cards were on the table at start, since the event snapshots carry values and never counts.
+	 */
+	compute(gameState: GameState, events: GecoEventV2[], avatars: Avatar[], handSize = 0): GameResults {
 		const gameStateId = String(gameState._id);
 		const isJune = gameState.typeMoney === GAME_TYPE.JUNE;
 		const stream = events
@@ -244,9 +254,10 @@ export class SessionResultsService {
 		const activityByAvatar = new Map<number, number>();
 		const duTimestamps = new Set<string>();
 
-		const lastInitIndex = stream.reduce((last, ev, i) => (ev.typeEvent === DB_EVENTS.PLAYER_INIT ? i : last), -1);
+		const startAt = this.playStartAt(gameState, stream);
+		const startMs = new Date(startAt).getTime();
 
-		stream.forEach((ev, index) => {
+		stream.forEach((ev) => {
 			const payload = (ev.payload ?? {}) as Record<string, any>;
 			this.tallyEvent(ev, payload, tally, firstQ, origin, actionCounts, activityByAvatar, lifeByIdx, duTimestamps);
 			if (isDeathEvent(ev.typeEvent)) {
@@ -284,19 +295,20 @@ export class SessionResultsService {
 			if (!isJune) totalDebtPts.push({ x: ev.at, y: sums.debt });
 
 			const declaredMass = lkNumberOf(payload, LK_KEYS.MASS_MONETARY);
-			if (declaredMass === undefined || index <= lastInitIndex) return;
+			if (declaredMass === undefined || new Date(ev.at).getTime() < startMs) return;
 
 			const aliveNow = seenLives.size - deadLives.size;
 			if (aliveNow > 0) averageMoneyPts.push({ x: ev.at, y: this.round2(declaredMass / aliveNow) });
 
-			if (sums.coins !== declaredMass) {
+			const delta = this.round2(sums.coins - declaredMass);
+			if (delta !== 0) {
 				divergences.push({
 					at: ev.at,
 					typeEvent: ev.typeEvent,
 					key: LK_KEYS.MASS_MONETARY,
-					declared: declaredMass,
+					declared: this.round2(declaredMass),
 					derived: sums.coins,
-					delta: this.round2(sums.coins - declaredMass),
+					delta,
 					touched: [...touched],
 				});
 			}
@@ -322,10 +334,10 @@ export class SessionResultsService {
 			lives,
 			coins: coinsSeries,
 			cardsValue: cardsSeries,
-			combined: this.combineSeries(coinsSeries, cardsSeries),
+			combined: this.wealthSeries(coinsSeries, cardsSeries, []),
 			third: isJune
 				? this.relativeSeries(coinsSeries, duSeries)
-				: this.netWealthSeries(coinsSeries, cardsSeries, debtSeries),
+				: this.wealthSeries(coinsSeries, cardsSeries, debtSeries),
 			indicators: this.buildIndicators(declared, isJune, {
 				ghostMoney: ghostMoneyPts,
 				ghostCards: ghostCardsPts,
@@ -335,10 +347,11 @@ export class SessionResultsService {
 			}),
 			synthesis: this.buildSynthesis(gameState, lives, isJune, tally, firstQ, origin, {
 				duCount: duTimestamps.size,
-				duFirst: duSeries[0]?.y ?? 0,
-				debtFirst: totalDebtPts[0]?.y ?? 0,
-				massFirst: declared.get(LK_KEYS.MASS_MONETARY)?.[0]?.y ?? 0,
-				goodsFirst: goodsInPlayPts[0]?.y ?? 0,
+				duFirst: this.stepValueAt(duSeries, startAt) ?? 0,
+				debtFirst: this.stepValueAt(totalDebtPts, startAt) ?? 0,
+				massFirst: this.stepValueAt(declared.get(LK_KEYS.MASS_MONETARY) ?? [], startAt) ?? 0,
+				goodsFirst: this.stepValueAt(goodsInPlayPts, startAt) ?? 0,
+				handSize,
 				durationMin: this.durationMin(gameState, endAt),
 			}),
 			actions: [...actionCounts.entries()].map(([typeEvent, count]) => ({
@@ -357,8 +370,9 @@ export class SessionResultsService {
 
 	/**
 	 * Distribution of the survey answers, one entry per feeling dimension, in the
-	 * order the survey asks them: each answered value (-3..3, 0 never offered)
-	 * keeps its count so the chart can size a bubble per (dimension, value).
+	 * order the survey asks them: each value (-3..3) keeps its count so the chart
+	 * can size a bubble per (dimension, value). A question left blank is stored as 0
+	 * and counts as a neutral answer.
 	 */
 	feelings(answers: SurveyAnswer[], gameStateId: string): FeelingDimension[] {
 		const rows = answers.filter((a) => a.gameStateId === gameStateId);
@@ -366,7 +380,7 @@ export class SessionResultsService {
 			const counts = new Map<number, number>();
 			rows.forEach((row) => {
 				const value = Number(row[dim.key]);
-				if (!value) return;
+				if (!Number.isFinite(value)) return;
 				counts.set(value, (counts.get(value) ?? 0) + 1);
 			});
 			return {
@@ -520,23 +534,31 @@ export class SessionResultsService {
 		return out;
 	}
 
+	/**
+	 * Coins expressed in DU, carrying their own step shape: every vertex but a DU issuance
+	 * repeats the previous timestamp so the segment draws as a step-before, while a DU vertex
+	 * is left alone so the line ramps into its new value — the devaluation, sloped.
+	 */
 	private relativeSeries(coins: LifeSeries[], du: SeriesPoint[]): LifeSeries[] {
 		if (!du.length) return [];
+		const duAt = new Set(du.map((p) => p.x));
 		return coins.map((series) => {
-			const vertices = this.mergeTimestamps(series.points, du);
-			const points = vertices
-				.map((x) => {
-					const value = this.stepValueAt(series.points, x);
-					const duValue = this.stepValueAt(du, x);
-					if (value === undefined || !duValue) return null;
-					return { x, y: this.round2(value / duValue) };
-				})
-				.filter((p): p is SeriesPoint => p !== null);
+			const points: SeriesPoint[] = [];
+			for (const x of this.mergeTimestamps(series.points, du)) {
+				const value = this.stepValueAt(series.points, x);
+				const duValue = this.stepValueAt(du, x);
+				if (value === undefined || !duValue) continue;
+				const y = this.round2(value / duValue);
+				const previous = points[points.length - 1];
+				if (previous && !duAt.has(x)) points.push({ x: previous.x, y });
+				points.push({ x, y });
+			}
 			return { life: series.life, points };
 		});
 	}
 
-	private netWealthSeries(coins: LifeSeries[], cards: LifeSeries[], debt: LifeSeries[]): LifeSeries[] {
+	/** Coins + cards − debt per life; pass an empty debt list for the gross wealth curve. */
+	private wealthSeries(coins: LifeSeries[], cards: LifeSeries[], debt: LifeSeries[]): LifeSeries[] {
 		return coins.map((series, i) => {
 			const cardPoints = cards[i]?.points ?? [];
 			const debtPoints = debt[i]?.points ?? [];
@@ -548,21 +570,6 @@ export class SessionResultsService {
 					const v = this.stepValueAt(cardPoints, x) ?? 0;
 					const d = this.stepValueAt(debtPoints, x) ?? 0;
 					return { x, y: this.round2(c + v - d) };
-				})
-				.filter((p): p is SeriesPoint => p !== null);
-			return { life: series.life, points };
-		});
-	}
-
-	private combineSeries(coins: LifeSeries[], cards: LifeSeries[]): LifeSeries[] {
-		return coins.map((series, i) => {
-			const cardPoints = cards[i]?.points ?? [];
-			const vertices = this.mergeTimestamps(series.points, cardPoints);
-			const points = vertices
-				.map((x) => {
-					const c = this.stepValueAt(series.points, x);
-					if (c === undefined) return null;
-					return { x, y: this.round2(c + (this.stepValueAt(cardPoints, x) ?? 0)) };
 				})
 				.filter((p): p is SeriesPoint => p !== null);
 			return { life: series.life, points };
@@ -582,6 +589,7 @@ export class SessionResultsService {
 			debtFirst: number;
 			massFirst: number;
 			goodsFirst: number;
+			handSize: number;
 			durationMin: number;
 		}
 	): GameSynthesis {
@@ -596,6 +604,7 @@ export class SessionResultsService {
 		const goodsInPlay = states
 			.filter((p) => p.status !== PLAYER_STATUS.DEAD)
 			.reduce((sum, p) => sum + cardsValueOf(p), 0);
+		const goodsCount = states.reduce((sum, p) => sum + (p.cards ?? []).length, 0);
 		const avatars = new Set(lives.map((l) => l.avatarIdx));
 
 		const base: GameSynthesis = {
@@ -614,6 +623,8 @@ export class SessionResultsService {
 			ghostMoney: this.round2(ghostMoney),
 			ghostCards: this.round2(ghostCards),
 			goodsInPlay: this.round2(goodsInPlay),
+			goodsCountFirst: avatars.size * curves.handSize,
+			goodsCount,
 		};
 
 		if (isJune) {
@@ -699,8 +710,21 @@ export class SessionResultsService {
 		isJune: boolean
 	): HealthRow[] {
 		const rows: HealthRow[] = [];
-		const record = (key: string, label: string, authoritative: number, sampled: number | null) => {
-			rows.push({ key, label, authoritative, sampled, agrees: sampled !== null && sampled === authoritative });
+		const record = (
+			key: string,
+			label: string,
+			authoritative: number,
+			sampled: number | null,
+			labelParams?: Record<string, string | number>
+		) => {
+			rows.push({
+				key,
+				label,
+				labelParams,
+				authoritative,
+				sampled,
+				agrees: sampled !== null && this.round2(sampled - authoritative) === 0,
+			});
 		};
 		const compare = (key: string, label: string, authoritative: number, samples: SeriesPoint[]) => {
 			record(key, label, authoritative, samples.length ? samples[samples.length - 1].y : null);
@@ -708,41 +732,41 @@ export class SessionResultsService {
 
 		compare(
 			LK_KEYS.MASS_MONETARY,
-			'Masse monétaire',
+			'RESULTS.COMPARE.MONETARY_MASS',
 			gameState.currentMassMonetary ?? 0,
 			declared.get(LK_KEYS.MASS_MONETARY) ?? []
 		);
 		if (isJune) {
-			compare(LK_KEYS.DU, 'DU', gameState.currentDU ?? 0, declared.get(LK_KEYS.DU) ?? []);
+			compare(LK_KEYS.DU, 'CURRENCY.DU', gameState.currentDU ?? 0, declared.get(LK_KEYS.DU) ?? []);
 		} else {
 			compare(
 				LK_KEYS.BANK_INTEREST_EARNED,
-				'Intérêts encaissés',
+				'RESULTS.COMPARE.INTEREST_EARNED',
 				gameState.bankInterestEarned ?? 0,
 				declared.get(LK_KEYS.BANK_INTEREST_EARNED) ?? []
 			);
 			compare(
 				LK_KEYS.BANK_MONEY_LOST,
-				'Monnaie perdue',
+				'RESULTS.COMPARE.MONEY_LOST',
 				gameState.bankMoneyLost ?? 0,
 				declared.get(LK_KEYS.BANK_MONEY_LOST) ?? []
 			);
 			compare(
 				LK_KEYS.BANK_MONEY_DESTROYED,
-				'Monnaie détruite',
+				'RESULTS.COMPARE.MONEY_DESTROYED',
 				gameState.bankMoneyDestroyed ?? 0,
 				declared.get(LK_KEYS.BANK_MONEY_DESTROYED) ?? []
 			);
 			compare(
 				LK_KEYS.BANK_GOODS_EARNED,
-				'Biens saisis',
+				'RESULTS.COMPARE.GOODS_SEIZED',
 				gameState.bankGoodsEarned ?? 0,
 				declared.get(LK_KEYS.BANK_GOODS_EARNED) ?? []
 			);
 		}
 		compare(
 			LK_KEYS.ALIVE_COUNT,
-			'Vies en jeu',
+			'RESULTS.COMPARE.HEALTH_ALIVE_COUNT',
 			(gameState.playersStates ?? []).filter((p) => p.status !== PLAYER_STATUS.DEAD).length,
 			declared.get(LK_KEYS.ALIVE_COUNT) ?? []
 		);
@@ -750,9 +774,9 @@ export class SessionResultsService {
 		for (const life of lives) {
 			const state = (gameState.playersStates ?? []).find((p) => Number(p.idx) === life.idx);
 			if (!state) continue;
-			const label = `${life.name} — vie ${life.ordinal}`;
-			record(`life-${life.idx}-coins`, `${label} · pièces`, state.coins ?? 0, heldCoins.get(life.idx) ?? null);
-			record(`life-${life.idx}-cards`, `${label} · biens`, cardsValueOf(state), heldCards.get(life.idx) ?? null);
+			const params = { name: life.name, ordinal: life.ordinal };
+			record(`life-${life.idx}-coins`, 'RESULTS.COMPARE.HEALTH_LIFE_COINS', state.coins ?? 0, heldCoins.get(life.idx) ?? null, params);
+			record(`life-${life.idx}-cards`, 'RESULTS.COMPARE.HEALTH_LIFE_CARDS', cardsValueOf(state), heldCards.get(life.idx) ?? null, params);
 		}
 		return rows;
 	}
@@ -770,6 +794,18 @@ export class SessionResultsService {
 		if (!started) return 0;
 		const ms = new Date(endAt).getTime() - new Date(started).getTime();
 		return ms > 0 ? Math.round(ms / 60000) : 0;
+	}
+
+	/**
+	 * When play actually began — everything before it is setup (player-init, first credits, first DU)
+	 * and must not be read as a starting figure. Falls back to the timer, then to the last player-init.
+	 */
+	private playStartAt(gameState: GameState, stream: GecoEventV2[]): string {
+		const started = stream.find((e) => e.typeEvent === DB_EVENTS.GAME_STARTED);
+		if (started) return started.at;
+		if (gameState.gameTimers?.startedAt) return new Date(gameState.gameTimers.startedAt).toISOString();
+		const inits = stream.filter((e) => e.typeEvent === DB_EVENTS.PLAYER_INIT);
+		return inits.length ? inits[inits.length - 1].at : (stream[0]?.at ?? new Date(0).toISOString());
 	}
 
 	private gameEndAt(gameState: GameState, stream: GecoEventV2[]): string {
