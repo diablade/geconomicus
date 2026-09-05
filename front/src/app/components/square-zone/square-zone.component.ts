@@ -25,6 +25,7 @@ export class SquareZoneComponent implements OnInit, OnDestroy {
 	@Input() generatedIdenticalLetters = 5;
 	@Input() screenWidth = 1;
 	@Input() screenHeight = 1;
+	@Input() flippable = true;
 
 	@Input() revealMs = 2500;
 

@@ -210,6 +210,7 @@
 						*ngIf="card.displayed"
 						[card]="card"
 						[typeMoney]="vm.rules.typeMoney"
+						[flippable]="vm.playerStatus !== DEAD"
 						[ownerIdx]="playerStateIdx"
 						[gameStateId]="gameStateId"
 						[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
@@ -228,6 +229,7 @@
 							*ngFor="let group of cardsView.groups; trackBy: trackByGroup"
 							[group]="group"
 							[typeMoney]="vm.rules.typeMoney"
+							[flippable]="vm.playerStatus !== DEAD"
 							[typeTheme]="vm.typeTheme"
 							[ownerIdx]="playerStateIdx"
 							[gameStateId]="gameStateId"
@@ -245,6 +247,7 @@
 								@item
 								[card]="card"
 								[typeMoney]="vm.rules.typeMoney"
+								[flippable]="vm.playerStatus !== DEAD"
 								[ownerIdx]="playerStateIdx"
 								[gameStateId]="gameStateId"
 								[typeTheme]="vm.typeTheme"

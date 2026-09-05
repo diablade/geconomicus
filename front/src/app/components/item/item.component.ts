@@ -89,6 +89,9 @@ export class ItemComponent implements OnChanges, OnDestroy {
 	) {}
 
 	ngOnChanges(changes: SimpleChanges) {
+		if (changes['flippable'] && !this.flippable && this.state === 'flipped') {
+			this.closeCard();
+		}
 		if (changes['screenWidth'] || changes['screenHeight']) {
 			const prevW = changes['screenWidth']?.previousValue;
 			const prevH = changes['screenHeight']?.previousValue;
