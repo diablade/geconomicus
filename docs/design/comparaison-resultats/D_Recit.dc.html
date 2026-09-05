@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap">
+  <style>
+    :root{
+      --paper:#f4f2ec; --card:#fffdf7; --ink:#1c1a17; --soft:#6f6a63;
+      --fill:#e5e1d8; --d1:#1c1a17; --d2:#8c867d; --l1:#c8552f; --l2:#e0a06a;
+    }
+    body{margin:0;background:var(--paper);color:var(--ink);
+      font-family:'Architects Daughter','Segoe Print',ui-rounded,cursive;font-size:15px;}
+    a{color:#c8552f;} a:hover{color:#9c3a20;}
+    .mono{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;letter-spacing:-1px;}
+    .chip{display:flex;align-items:center;gap:7px;border:2px solid var(--ink);border-radius:20px;
+      padding:5px 13px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .dot{width:12px;height:12px;border-radius:50%;display:inline-block;}
+    .card{border:2px solid var(--ink);border-radius:9px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .sub{font-size:12.5px;color:var(--soft);}
+    .beatno{width:44px;height:44px;border-radius:50%;border:2.5px solid var(--ink);display:flex;
+      align-items:center;justify-content:center;font-size:22px;flex:none;background:var(--paper);}
+    .q{font-size:38px;line-height:1.1;}
+    .big{font-size:64px;line-height:1;}
+  </style>
+</helmet>
+
+<div style="width:1360px;box-sizing:border-box;padding:22px 24px 26px;display:flex;flex-direction:column;gap:13px">
+
+  <div style="display:flex;align-items:flex-end;gap:16px">
+    <div style="flex-grow:1">
+      <div style="font-size:31px;line-height:1.1">Comparaison des résultats</div>
+      <div style="font-size:14px;color:var(--soft)">Les Fabriques du Sud — Toulouse · 4 parties</div>
+    </div>
+    <div style="border:2px dashed var(--ink);border-radius:8px;padding:5px 11px;font-size:13px;color:var(--soft)">FR / EN</div>
+  </div>
+
+  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+    <div class="chip"><span class="dot" style="background:var(--d1)"></span><span>Dette 1</span></div>
+    <div class="chip"><span class="dot" style="background:var(--d2)"></span><span>Dette 2</span></div>
+    <div class="chip"><span class="dot" style="background:var(--l1)"></span><span>Libre 1</span></div>
+    <div class="chip"><span class="dot" style="background:var(--l2)"></span><span>Libre 2</span></div>
+    <div style="border:2px dashed var(--soft);border-radius:20px;padding:5px 13px;color:var(--soft)">+ une partie d&#39;une autre session…</div>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <span class="sub">fil du débrief</span>
+      <span style="width:26px;height:8px;border-radius:4px;background:var(--ink)"></span>
+      <span style="width:26px;height:8px;border-radius:4px;background:var(--fill);border:1.5px solid var(--ink)"></span>
+      <span style="width:26px;height:8px;border-radius:4px;background:var(--fill);border:1.5px solid var(--ink)"></span>
+      <span style="width:26px;height:8px;border-radius:4px;background:var(--fill);border:1.5px solid var(--ink)"></span>
+    </div>
+  </div>
+
+  <div style="border:2px solid var(--ink);border-radius:9px;background:var(--fill);padding:9px 14px;line-height:1.45">
+    <b>D · Récit</b> — la page est une suite de temps forts, une question par écran, dimensionnée pour être lue du fond de la salle.
+    <span style="color:var(--soft)">Pour : c&#39;est le débrief lui-même ; l&#39;animateur fait défiler et la salle suit. Ça oblige à trancher une hiérarchie, et chaque temps fort est assez grand pour être projeté. — Contre : catastrophique pour l&#39;animateur qui veut vérifier un chiffre — tout est à plusieurs défilements — et l&#39;ordre du récit s&#39;impose même quand le débrief part ailleurs.</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:14px;align-items:start">
+    <div style="min-width:0;display:flex;flex-direction:column;gap:14px">
+
+      <div class="card" style="padding:18px 22px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <span class="beatno">1</span>
+          <div class="q">Combien d&#39;échanges&nbsp;?</div>
+          <div class="sub" style="margin-left:auto;text-align:right">transactions&nbsp;· productions<br>toute la partie</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:14px">
+          <div style="border-top:6px solid var(--d1);padding-top:8px">
+            <div class="sub">Dette 1</div><div class="big mono">142</div>
+            <div class="mono" style="font-size:22px;color:var(--soft)">38 productions</div>
+          </div>
+          <div style="border-top:6px solid var(--d2);padding-top:8px">
+            <div class="sub">Dette 2</div><div class="big mono">118</div>
+            <div class="mono" style="font-size:22px;color:var(--soft)">31 productions</div>
+          </div>
+          <div style="border-top:6px solid var(--l1);padding-top:8px">
+            <div class="sub">Libre 1</div><div class="big mono" style="color:var(--l1)">167</div>
+            <div class="mono" style="font-size:22px;color:var(--soft)">52 productions</div>
+          </div>
+          <div style="border-top:6px solid var(--l2);padding-top:8px">
+            <div class="sub">Libre 2</div><div class="big mono" style="color:var(--l1)">155</div>
+            <div class="mono" style="font-size:22px;color:var(--soft)">49 productions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:18px 22px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+          <span class="beatno">2</span>
+          <div class="q">Où est passée la monnaie&nbsp;?</div>
+          <div class="sub" style="margin-left:auto;text-align:right">masse monétaire · ressources<br>début → fin</div>
+        </div>
+        <svg width="100%" height="250" viewBox="0 0 1180 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Masse monetaire du debut a la fin pour les quatre parties">
+          <line x1="150" y1="20" x2="150" y2="205" stroke="#6f6a63" stroke-width="1.5"></line>
+          <line x1="1000" y1="20" x2="1000" y2="205" stroke="#6f6a63" stroke-width="1.5" stroke-dasharray="5 5"></line>
+          <text x="150" y="230" font-size="18" fill="#6f6a63" text-anchor="middle">début</text>
+          <text x="1000" y="230" font-size="18" fill="#6f6a63" text-anchor="middle">fin</text>
+          <line x1="150" y1="160" x2="1000" y2="88" stroke="#1c1a17" stroke-width="4"></line>
+          <line x1="150" y1="160" x2="1000" y2="104" stroke="#8c867d" stroke-width="4" stroke-dasharray="12 7"></line>
+          <line x1="150" y1="137" x2="1000" y2="36" stroke="#c8552f" stroke-width="4"></line>
+          <line x1="150" y1="137" x2="1000" y2="50" stroke="#e0a06a" stroke-width="4" stroke-dasharray="12 7"></line>
+          <circle cx="150" cy="160" r="6" fill="#1c1a17"></circle>
+          <circle cx="150" cy="137" r="6" fill="#c8552f"></circle>
+          <text x="136" y="166" font-size="24" fill="#1c1a17" text-anchor="end">240</text>
+          <text x="136" y="130" font-size="24" fill="#c8552f" text-anchor="end">360</text>
+          <text x="1016" y="42" font-size="26" fill="#c8552f">884</text>
+          <text x="1016" y="58" font-size="22" fill="#e0a06a">812</text>
+          <text x="1016" y="94" font-size="26" fill="#1c1a17">612</text>
+          <text x="1016" y="112" font-size="22" fill="#8c867d">533</text>
+        </svg>
+      </div>
+
+      <div class="card" style="padding:18px 22px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <span class="beatno">3</span>
+          <div class="q">Qui s&#39;est enrichi&nbsp;?</div>
+          <div class="sub" style="margin-left:auto;text-align:right">écart-type des scores<br>podium et barres inchangés</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:14px;align-items:end">
+          <div style="border-top:6px solid var(--d1);padding-top:8px">
+            <div class="sub">Dette 1</div><div class="big mono">48</div>
+            <div style="height:60px;background:var(--d1);border:2px solid var(--ink);border-radius:5px;margin-top:7px"></div>
+          </div>
+          <div style="border-top:6px solid var(--d2);padding-top:8px">
+            <div class="sub">Dette 2</div><div class="big mono">52</div>
+            <div style="height:66px;background:var(--d2);border:2px solid var(--ink);border-radius:5px;margin-top:7px"></div>
+          </div>
+          <div style="border-top:6px solid var(--l1);padding-top:8px">
+            <div class="sub">Libre 1</div><div class="big mono" style="color:var(--l1)">21</div>
+            <div style="height:26px;background:var(--l1);border:2px solid var(--ink);border-radius:5px;margin-top:7px"></div>
+          </div>
+          <div style="border-top:6px solid var(--l2);padding-top:8px">
+            <div class="sub">Libre 2</div><div class="big mono" style="color:var(--l1)">24</div>
+            <div style="height:31px;background:var(--l2);border:2px solid var(--ink);border-radius:5px;margin-top:7px"></div>
+          </div>
+        </div>
+        <div class="sub" style="margin-top:11px">Plus la barre est haute, plus les fortunes de fin de partie sont écartées.</div>
+      </div>
+
+      <div class="card" style="padding:16px 22px;opacity:.55">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span class="beatno">4</span>
+          <div class="q">Qu&#39;ont-ils ressenti&nbsp;?</div>
+          <div class="sub" style="margin-left:auto">nuages de bulles, un par partie — défile pour l&#39;atteindre</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:13px">
+        <div class="card" style="flex-grow:1;padding:10px 14px;display:flex;align-items:center;gap:12px">
+          <b>▸ Tous les chiffres</b><span class="sub">le tableau complet, replié sous le récit — pour l&#39;animateur, pas pour la salle</span>
+        </div>
+        <div class="card" style="width:250px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <b>▸ Santé des données</b><span style="margin-left:auto;background:#2e7d32;color:#fff;border-radius:11px;padding:1px 9px;font-size:12.5px">ok</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="border:2px solid var(--ink);border-radius:9px;background:var(--fill);box-shadow:3px 3px 0 var(--ink);height:1060px;display:flex;align-items:center;justify-content:center">
+      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:14px;letter-spacing:1px">◀ Évènements — 4 parties</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

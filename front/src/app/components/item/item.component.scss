@@ -188,7 +188,7 @@
 	align-items: center;
     gap:2px;
 	.ingredient-name {
-		font-size: 1rem;
+		font-size: 1.1rem;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -203,4 +203,5 @@
 }
 .check {
 	font-size: 1rem;
+    width: 1.5rem;
 }

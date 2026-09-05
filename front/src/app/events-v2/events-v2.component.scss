@@ -1,11 +1,26 @@
 // Panneau évènements v2 — styles alignés sur le DC 2a (frame-light + box-shadowed hérités de styles.scss)
 
+:host {
+	display: block;
+	height: 100%;
+}
+
 .ev2 {
 	width: 100%;
+	height: 100%;
+	min-height: 0;
+	box-sizing: border-box;
 	padding: 14px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+
+	.ev2-head,
+	.ev2-game-tabs,
+	.ev2-chips,
+	.ev2-actors {
+		flex: none;
+	}
 
 	.ev2-head {
 		display: flex;
@@ -18,7 +33,7 @@
 		cursor: pointer;
 		padding: 0;
 		.ev2-title {
-			font-family: 'Geconomicus';
+			// font-family: 'Geconomicus';
 			font-size: 22px;
 			color: #fff;
 			text-shadow:
@@ -132,9 +147,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 5px;
-		overflow: auto;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		overscroll-behavior: contain;
 		padding-right: 2px;
-		max-height: min(800px, calc(100vh - 260px));
 
 		.ev2-event {
 			background: rgba(255, 255, 255, 0.9);
@@ -226,6 +243,14 @@
 }
 
 @media (max-width: 1100px) {
+	:host,
+	.ev2 {
+		height: auto;
+	}
+	.ev2 .ev2-list {
+		max-height: min(800px, calc(100vh - 260px));
+	}
+
 	.ev2.collapsed {
 		padding: 14px;
 		.ev2-head {

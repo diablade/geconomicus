@@ -10,6 +10,7 @@ router.get('/:sessionId', validate(sanitize.getById, true), SessionController.ge
 router.get('/short/:shortId', validate(sanitize.getByShortId, true), SessionController.getByShortId);
 router.post('/create', validate(sanitize.create), SessionController.create);
 router.post('/start', validate(sanitize.start), SessionController.start);
+router.post('/reopen', validate(sanitize.reopen), SessionController.reopen);
 router.put('/update', validate(sanitize.update), SessionController.update);
 router.post('/delete', validate(sanitize.deleteSession), SessionController.delete);
 router.post('/kill-game', validate(sanitize.killGame), SessionController.killGame);

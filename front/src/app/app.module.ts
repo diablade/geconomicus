@@ -49,6 +49,7 @@ import { FreeMoneyDialogComponent } from './dialogs/free-money-dialog/free-money
 import { CreditComponent } from './components/credit/credit.component';
 import { CreditChipComponent } from './components/credit-chip/credit-chip.component';
 import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
+import { AddGameDialogComponent } from './dialogs/add-game-dialog/add-game-dialog.component';
 import { BtnTimerAutoClickComponent } from './components/btn-timer-auto-click/btn-timer-auto-click.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CdkMenuTrigger } from '@angular/cdk/menu';
@@ -86,6 +87,7 @@ import { SessionEditDialogComponent } from './dialogs/session-edit/session-edit-
 import { CoinComponent } from './components/coin/coin.component';
 import { BulleComponent } from './components/bulle/bulle.component';
 import { OnlineStatusComponent } from './components/online-status/online-status.component';
+import { GameControlsComponent } from './components/game-controls/game-controls.component';
 import { TableBoardComponent } from './table-board/table-board.component';
 import { EventsV2Component } from './events-v2/events-v2.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
@@ -131,6 +133,7 @@ LOAD_WASM().subscribe();
 		CreditComponent,
 		CreditChipComponent,
 		ConfirmDialogComponent,
+		AddGameDialogComponent,
 		BtnTimerAutoClickComponent,
 		SeizureDialogComponent,
 		ActionDialogComponent,
@@ -160,6 +163,7 @@ LOAD_WASM().subscribe();
 		CoinComponent,
 		BulleComponent,
 		OnlineStatusComponent,
+		GameControlsComponent,
 		TableBoardComponent,
         EventsV2Component,
         SessionResultsCompareComponent,

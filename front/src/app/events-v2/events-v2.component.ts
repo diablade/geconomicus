@@ -40,7 +40,7 @@ interface DetailBit {
  * Usage :
  *   <app-events-v2
  *       [events]="events" [players]="lives" [games]="games"
- *       [initialGameId]="detteGsId"
+ *       [initialGameId]="games.length ? games[0].id : null"
  *       [(collapsed)]="eventsCollapsed"
  *       (filterChange)="onEventsFilter($event)">
  *   </app-events-v2>

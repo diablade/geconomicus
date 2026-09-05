@@ -27,6 +27,12 @@ export const sanitize = {
 			'any.required': 'Session ID is required',
 		}),
 	}).required(),
+	reopen: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}).required(),
 	update: Joi.object({
 		sessionId: Joi.string().custom(isValidObjectId).required().messages({
 			'any.invalid': 'Invalid session ID format',

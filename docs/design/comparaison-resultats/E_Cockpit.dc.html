@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap">
+  <style>
+    :root{
+      --paper:#f4f2ec; --card:#fffdf7; --ink:#1c1a17; --soft:#6f6a63;
+      --fill:#e5e1d8; --d1:#1c1a17; --d2:#8c867d; --l1:#c8552f; --l2:#e0a06a;
+    }
+    body{margin:0;background:var(--paper);color:var(--ink);
+      font-family:'Architects Daughter','Segoe Print',ui-rounded,cursive;font-size:15px;}
+    a{color:#c8552f;} a:hover{color:#9c3a20;}
+    .mono{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:14px;letter-spacing:-0.3px;}
+    .chip{display:flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:20px;
+      padding:4px 11px;background:var(--card);box-shadow:3px 3px 0 var(--ink);font-size:14px;}
+    .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+    .card{border:2px solid var(--ink);border-radius:9px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .sub{font-size:12px;color:var(--soft);}
+    .tab{border:2px solid var(--ink);border-radius:8px 8px 0 0;padding:6px 15px;background:var(--fill);border-bottom:none;}
+    .tab.on{background:var(--card);box-shadow:3px -3px 0 var(--ink);}
+    .ev{display:grid;grid-template-columns:44px 12px minmax(0,1fr);gap:7px;align-items:center;
+      padding:5px 0;border-bottom:1px dotted var(--soft);font-size:12.5px;}
+  </style>
+</helmet>
+
+<div style="width:1360px;height:880px;box-sizing:border-box;padding:18px 24px;display:flex;flex-direction:column;gap:11px">
+
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="font-size:25px">Comparaison des résultats</div>
+    <div class="sub">Les Fabriques du Sud — Toulouse · 4 parties</div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <div style="border:2px solid var(--ink);border-radius:20px;padding:4px 11px;background:var(--fill);font-size:14px">Tous les joueurs ▾</div>
+      <div style="border:2px dashed var(--ink);border-radius:8px;padding:4px 10px;font-size:12.5px;color:var(--soft)">FR / EN</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div class="chip"><span class="dot" style="background:var(--d1)"></span>Dette 1</div>
+    <div class="chip"><span class="dot" style="background:var(--d2)"></span>Dette 2</div>
+    <div class="chip"><span class="dot" style="background:var(--l1)"></span>Libre 1</div>
+    <div class="chip"><span class="dot" style="background:var(--l2)"></span>Libre 2</div>
+    <div style="border:2px dashed var(--soft);border-radius:20px;padding:4px 11px;color:var(--soft);font-size:14px">+ autre session…</div>
+  </div>
+
+  <div style="border:2px solid var(--ink);border-radius:9px;background:var(--fill);padding:8px 13px;line-height:1.4;font-size:14px">
+    <b>E · Cockpit</b> — rien ne défile. Bandeau d&#39;indicateurs figé en haut, un seul grand panneau en dessous qu&#39;on commute.
+    <span style="color:var(--soft)">Pour : l&#39;essentiel reste toujours à l&#39;écran et on saute à n&#39;importe quelle vue en un clic pendant un débrief en direct ; c&#39;est la meilleure sur tablette. — Contre : une seule vue profonde à la fois — impossible de voir podium et ressentis ensemble — et tout le reste est caché derrière un onglet.</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:14px;align-items:start;flex-grow:1;min-height:0">
+
+    <div style="min-width:0;display:flex;flex-direction:column;gap:10px;height:100%">
+
+      <div class="card" style="padding:10px 13px 12px">
+        <div style="display:grid;grid-template-columns:130px repeat(4, minmax(0,1fr));gap:0 9px;align-items:center">
+          <div class="sub"></div>
+          <div style="text-align:right;font-size:13.5px;border-bottom:3px solid var(--d1)">Dette 1</div>
+          <div style="text-align:right;font-size:13.5px;border-bottom:3px solid var(--d2)">Dette 2</div>
+          <div style="text-align:right;font-size:13.5px;border-bottom:3px solid var(--l1)">Libre 1</div>
+          <div style="text-align:right;font-size:13.5px;border-bottom:3px solid var(--l2)">Libre 2</div>
+
+          <div style="font-size:13px;padding:5px 0">Transactions</div>
+          <div class="mono" style="text-align:right;font-size:17px">142</div>
+          <div class="mono" style="text-align:right;font-size:17px">118</div>
+          <div class="mono" style="text-align:right;font-size:17px">167</div>
+          <div class="mono" style="text-align:right;font-size:17px">155</div>
+
+          <div style="font-size:13px;padding:5px 0">Productions</div>
+          <div class="mono" style="text-align:right;font-size:17px">38</div>
+          <div class="mono" style="text-align:right;font-size:17px">31</div>
+          <div class="mono" style="text-align:right;font-size:17px">52</div>
+          <div class="mono" style="text-align:right;font-size:17px">49</div>
+
+          <div style="font-size:13px;padding:5px 0">Ressources</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">40→</span>86</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">40→</span>74</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">40→</span>112</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">40→</span>104</div>
+
+          <div style="font-size:13px;padding:5px 0">Masse mon.</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">240→</span>612</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">240→</span>533</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">360→</span>884</div>
+          <div class="mono" style="text-align:right"><span style="color:var(--soft)">360→</span>812</div>
+
+          <div style="font-size:13px;padding:5px 0;color:var(--soft)">DU / Dette</div>
+          <div class="mono" style="text-align:right;color:var(--soft)"><span style="opacity:.6">dette</span> 0→418</div>
+          <div class="mono" style="text-align:right;color:var(--soft)"><span style="opacity:.6">dette</span> 0→377</div>
+          <div class="mono" style="text-align:right;color:var(--soft)"><span style="opacity:.6">DU</span> 10→31</div>
+          <div class="mono" style="text-align:right;color:var(--soft)"><span style="opacity:.6">DU</span> 10→28</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:5px;align-items:flex-end;padding-left:3px">
+        <div class="tab on">Podium</div>
+        <div class="tab">Richesse</div>
+        <div class="tab">Ressentis</div>
+        <div class="tab">Comptes</div>
+        <div class="tab">Santé <span style="background:#2e7d32;color:#fff;border-radius:9px;padding:0 6px;font-size:11.5px">ok</span></div>
+      </div>
+
+      <div class="card" style="padding:13px 15px;flex-grow:1;min-height:0;margin-top:-11px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <b style="font-size:16px">Podium</b>
+          <span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 8px;background:var(--fill)">podium</span>
+          <span style="font-size:11.5px;border:1.5px dashed var(--soft);border-radius:12px;padding:1px 8px;color:var(--soft)">tous les scores + écart-type</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:11px">
+          <div style="border:1.5px solid var(--ink);border-radius:7px;padding:8px 10px">
+            <div style="font-size:13.5px;border-bottom:3px solid var(--d1);display:inline-block;margin-bottom:7px">Dette 1</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Ana</span><b class="mono" style="font-size:13px">184</b></div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Milo</span><b class="mono" style="font-size:13px">151</b></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Sacha</span><b class="mono" style="font-size:13px">133</b></div>
+            <div class="mono" style="font-size:12px;margin-top:8px;color:var(--soft)">moyenne 96 · écart-type 48</div>
+          </div>
+          <div style="border:1.5px solid var(--ink);border-radius:7px;padding:8px 10px">
+            <div style="font-size:13.5px;border-bottom:3px solid var(--d2);display:inline-block;margin-bottom:7px">Dette 2</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Noor</span><b class="mono" style="font-size:13px">171</b></div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Tao</span><b class="mono" style="font-size:13px">148</b></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Iris</span><b class="mono" style="font-size:13px">119</b></div>
+            <div class="mono" style="font-size:12px;margin-top:8px;color:var(--soft)">moyenne 92 · écart-type 52</div>
+          </div>
+          <div style="border:1.5px solid var(--ink);border-radius:7px;padding:8px 10px">
+            <div style="font-size:13.5px;border-bottom:3px solid var(--l1);display:inline-block;margin-bottom:7px">Libre 1</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Sacha</span><b class="mono" style="font-size:13px">142</b></div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Ana</span><b class="mono" style="font-size:13px">136</b></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Iris</span><b class="mono" style="font-size:13px">129</b></div>
+            <div class="mono" style="font-size:12px;margin-top:8px;color:var(--l1)">moyenne 118 · écart-type 21</div>
+          </div>
+          <div style="border:1.5px solid var(--ink);border-radius:7px;padding:8px 10px">
+            <div style="font-size:13.5px;border-bottom:3px solid var(--l2);display:inline-block;margin-bottom:7px">Libre 2</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Milo</span><b class="mono" style="font-size:13px">138</b></div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Noor</span><b class="mono" style="font-size:13px">131</b></div>
+            <div style="display:flex;align-items:center;gap:7px"><span style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:var(--fill)"></span><span style="font-size:13px;flex-grow:1">Tao</span><b class="mono" style="font-size:13px">122</b></div>
+            <div class="mono" style="font-size:12px;margin-top:8px;color:var(--l1)">moyenne 114 · écart-type 24</div>
+          </div>
+        </div>
+        <div class="sub" style="margin-top:12px">Le bandeau du haut ne bouge jamais : on change d&#39;onglet, pas de page.</div>
+      </div>
+
+    </div>
+
+    <div class="card" style="padding:11px 13px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;min-height:0">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <b>Évènements</b><span class="sub">toutes parties</span>
+        <span style="margin-left:auto;font-size:13px;color:var(--soft)">▶</span>
+      </div>
+      <div style="display:flex;gap:5px;margin-bottom:9px;flex-wrap:wrap">
+        <span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:11px;padding:1px 8px;background:var(--fill)">toutes</span>
+        <span style="font-size:11.5px;border:1.5px solid var(--soft);border-radius:11px;padding:1px 8px;color:var(--soft)">D1</span>
+        <span style="font-size:11.5px;border:1.5px solid var(--soft);border-radius:11px;padding:1px 8px;color:var(--soft)">D2</span>
+        <span style="font-size:11.5px;border:1.5px solid var(--soft);border-radius:11px;padding:1px 8px;color:var(--soft)">L1</span>
+        <span style="font-size:11.5px;border:1.5px solid var(--soft);border-radius:11px;padding:1px 8px;color:var(--soft)">L2</span>
+      </div>
+      <div style="border:1.5px dashed var(--soft);border-radius:6px;padding:6px 9px;font-size:12px;color:var(--soft);margin-bottom:9px">filtres · type d&#39;évènement, joueur·euse</div>
+      <div style="flex-grow:1;min-height:0;overflow:hidden">
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:02</span><span class="dot" style="background:var(--d1)"></span><span>crédit accordé — Ana</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:03</span><span class="dot" style="background:var(--l1)"></span><span>production — Sacha</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:03</span><span class="dot" style="background:var(--d2)"></span><span>transaction — Tao → Noor</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:05</span><span class="dot" style="background:var(--d1)"></span><span>saisie — Milo</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:06</span><span class="dot" style="background:var(--l2)"></span><span>DU distribué</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:07</span><span class="dot" style="background:var(--l1)"></span><span>transaction — Iris → Ana</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:08</span><span class="dot" style="background:var(--d2)"></span><span>mort — Iris</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:09</span><span class="dot" style="background:var(--d1)"></span><span>production — Sacha</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:11</span><span class="dot" style="background:var(--l2)"></span><span>transaction — Milo → Tao</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:12</span><span class="dot" style="background:var(--d1)"></span><span>renaissance — Iris</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:13</span><span class="dot" style="background:var(--l1)"></span><span>don — Ana → Noor</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:14</span><span class="dot" style="background:var(--d2)"></span><span>crédit refusé — Tao</span></div>
+        <div class="ev"><span class="mono" style="color:var(--soft)">14:15</span><span class="dot" style="background:var(--l2)"></span><span>production — Noor</span></div>
+      </div>
+      <div class="sub" style="margin-top:7px">composant v2 inchangé</div>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

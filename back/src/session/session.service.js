@@ -97,9 +97,24 @@ SessionService.start = async (sessionId) => {
 		return null;
 	}
 	session.status = SESSION_STATUS.IN_PROGRESS;
-	session.gamesRules.push({ ...defaultDebtRules, idx: session.rulesIndexSeq + 1 });
-	session.gamesRules.push({ ...defaultJuneRules, idx: session.rulesIndexSeq + 2 });
-	session.rulesIndexSeq += 2;
+	if (session.gamesRules.length === 0) {
+		session.gamesRules.push({ ...defaultDebtRules, idx: session.rulesIndexSeq + 1 });
+		session.gamesRules.push({ ...defaultJuneRules, idx: session.rulesIndexSeq + 2 });
+		session.rulesIndexSeq += 2;
+	}
+	await session.save({ validateModifiedOnly: true });
+	return populateStatusForGameRules(session);
+};
+
+/** Puts a started session back to OPEN so new avatars can join again. */
+SessionService.reopen = async (sessionId) => {
+	log.info(`[SessionService] reopen: ${sessionId}`);
+
+	const session = await SessionModel.findById(sessionId).exec();
+	if (!session) {
+		return null;
+	}
+	session.status = SESSION_STATUS.OPEN;
 	await session.save({ validateModifiedOnly: true });
 	return populateStatusForGameRules(session);
 };

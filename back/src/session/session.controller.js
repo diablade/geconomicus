@@ -60,6 +60,23 @@ SessionController.start = async (req, res, next) => {
 		return res.status(500).json({ message: 'ERROR.START' });
 	}
 };
+/** Reopens a started session so new avatars can join again. */
+SessionController.reopen = async (req, res, next) => {
+	try {
+		const sessionUpdated = await SessionService.reopen(req.body.sessionId);
+		socket.emitTo(ROOMS.session(req.body.sessionId), IO.SESSION.UPDATED, {
+			_id: sessionUpdated._id,
+			name: sessionUpdated.name,
+			animator: sessionUpdated.animator,
+			status: sessionUpdated.status,
+			theme: sessionUpdated.theme,
+		});
+		return res.status(200).json(sessionUpdated);
+	} catch (err) {
+		log.error(`[SessionController] reopen error:`, err);
+		return res.status(500).json({ message: 'ERROR.REOPEN' });
+	}
+};
 SessionController.update = async (req, res, next) => {
 	try {
 		const sessionUpdated = await SessionService.update(req.body.sessionId, req.body.updates);

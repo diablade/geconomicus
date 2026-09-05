@@ -12,6 +12,7 @@ export const environment = {
 		UPDATE: 'session/update',
 		DELETE: 'session/delete',
 		START: 'session/start',
+		REOPEN: 'session/reopen',
 		KILL_GAME: 'session/kill-game',
 	},
 	RULES: {

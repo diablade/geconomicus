@@ -126,54 +126,7 @@
 							<mat-icon class="outlined">contact_support</mat-icon>
 							{{ 'MASTER.ASK_FIRST_CREDIT' | translate }}
 						</button>
-						<button
-							*ngIf="
-								(vm.gameState.status === INITIALIZED &&
-									(vm.rules.typeMoney !== DEBT || vm.gameState.firstCreditAsked)) ||
-								vm.gameState.status === PAUSED
-							"
-							class="ms-2 box-shadowed"
-							mat-raised-button
-							color="warn"
-							(click)="launchGame(vm.gameState.status)">
-							<mat-icon>play_arrow</mat-icon>
-							{{
-								vm.gameState.status === INITIALIZED
-									? ('MASTER.START_GAME' | translate)
-									: ('MASTER.RESUME_GAME' | translate)
-							}}
-						</button>
-						<!-- Average money per player, with the target status -->
-						<span
-							*ngIf="vm.gameState.status === INITIALIZED && vm.rules.typeMoney === DEBT"
-							class="avg-warning ms-2 d-inline-flex align-items-center"
-							[matTooltip]="
-								(vm.avgMoney < AVG_MONEY_TARGET ? 'MASTER.LOW_AVG_WARNING' : 'MASTER.AVG_OK')
-									| translate: { avg: (vm.avgMoney | number: '1.2-2'), target: AVG_MONEY_TARGET }
-							">
-							<mat-icon [color]="vm.avgMoney < AVG_MONEY_TARGET ? 'warn' : 'accent'">
-								{{ vm.avgMoney < AVG_MONEY_TARGET ? 'warning' : 'check_circle' }}
-							</mat-icon>
-							<b class="ms-1">{{ vm.avgMoney | number: '1.2-2' }} €</b>
-						</span>
-						<button
-							*ngIf="vm.gameState.status === PLAYING"
-							mat-raised-button
-							color="warn"
-							class="ms-2 box-shadowed"
-							(click)="pauseGame()">
-							<mat-icon>pause</mat-icon>
-							{{ 'MASTER.PAUSE_GAME' | translate }}
-						</button>
-						<button
-							*ngIf="vm.gameState.status === PLAYING || vm.gameState.status === PAUSED"
-							mat-raised-button
-							color="warn"
-							class="ms-2 box-shadowed"
-							(click)="stopGame()">
-							<mat-icon>stop</mat-icon>
-							{{ 'MASTER.END_GAME' | translate }}
-						</button>
+						<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
 					</div>
 					<div class="d-flex flex-row mt-4 align-items-center justify-content-center">
 						<button

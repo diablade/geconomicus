@@ -3,236 +3,225 @@
 	<!-- ── header ── -->
 	<div class="cp-header">
 		<img src="assets/images/geconomicus.png" class="cp-logo glow" alt="Géconomicus" />
-		<div class="cp-titles d-flex flex-row gap-2 align-items-center">
+		<div class="cp-titles">
 			<div class="cp-title geconomicusFont contourText ombreText">{{ sessionName || 'Résultats' }}</div>
-			<div class="cp-sub white" *ngIf="location">📍 {{ location }}</div>
+			<div class="cp-sub white" *ngIf="location">{{ location }}</div>
 		</div>
 		<app-language-btn [white]="true"></app-language-btn>
 		<img src="assets/images/guny.png" class="cp-guny" alt="Guny" />
 	</div>
 
-	<div class="cp-warn frame frame-light box-shadowed" *ngIf="partial">
-		⚠️ Image partielle : une seule partie a été jouée pour l'instant. La colonne manquante restera vide.
+	<!-- ── une puce par partie : le libellé vient de l'ordre des règles (docs/adr/0020) ── -->
+	<div class="cp-chips">
+		<button
+			type="button"
+			class="cp-chip"
+			*ngFor="let card of cards"
+			[class.off]="!selected.has(card.id)"
+			(click)="toggle(card)">
+			<span class="cp-chip-mark" [style.background]="card.color"></span>
+			<span class="cp-chip-body">
+				<span class="cp-chip-name">{{ card.label }}</span>
+				<span class="cp-chip-fig">
+					<ng-container *ngIf="card.origin">{{ card.origin }} ·</ng-container>
+					{{ card.game.synthesis.transactions }} tr · {{ card.game.synthesis.productions }} pr
+				</span>
+			</span>
+			<span
+				class="cp-chip-drop"
+				*ngIf="card.origin"
+				title="Retirer cette partie empruntée"
+				(click)="$event.stopPropagation(); removeCard(card)">
+				✕
+			</span>
+		</button>
+
+		<button type="button" class="cp-add" (click)="addGame()">+ ajouter une partie</button>
 	</div>
 
-	<!-- ── layout : contenu principal + tiroir évènements à droite ── -->
+	<!-- ── fiches défilant ensemble + tiroir évènements pleine hauteur ── -->
 	<div class="cp-layout" [class.eventsCollapsed]="eventsCollapsed">
-		<main class="cp-main">
-			<!-- synthèse pleine largeur : les deux monnaies dans une même tuile -->
-			<section class="frame frame-light box-shadowed">
-				<div class="d-flex justify-content-between align-items-center mb-2">
-					<div class="geco-title mt-2">Synthèse comparée</div>
-					<div class="cp-legend">
-						<span class="dette">🪙 Monnaie dette</span>
-						<span class="libre">☀️ Monnaie libre</span>
-					</div>
-				</div>
-				<div class="cp-metrics">
-					<div class="frame frame-light box-shadowed cp-metric" *ngFor="let row of synthesisRows">
-						<span class="cp-metric-label fw-bold">{{ row.label }}</span>
-						<div class="cp-metric-values">
-							<span class="dette" [class.void]="row.dette === '-'">🪙 {{ row.dette }}</span>
-							<span class="libre" [class.void]="row.libre === '-'">☀️ {{ row.libre }}</span>
+		<div class="cp-scroller">
+			<div class="cp-rail">
+				<article class="cp-fiche frame frame-light box-shadowed" *ngFor="let card of shown">
+					<header class="cp-fiche-head">
+						<span class="cp-fiche-mark" [style.background]="card.color"></span>
+						<div>
+							<h3>
+								{{ card.label }}
+								<span class="cp-fiche-origin" *ngIf="card.origin">empruntée à {{ card.origin }}</span>
+							</h3>
+							<div class="cp-fiche-meta">{{ card.meta }}</div>
 						</div>
-					</div>
-					<ng-container *ngIf="dette || libre">
-						<div class="frame frame-light box-shadowed cp-metric good" *ngFor="let a of goodActions">
-							<span class="cp-metric-label fw-bold">😇 {{ a.icon }} {{ a.label }}</span>
-							<div class="cp-metric-values">
-								<span class="dette" [class.void]="!a.dette">🪙 {{ a.dette }}</span>
-								<span class="libre" [class.void]="!a.libre">☀️ {{ a.libre }}</span>
+					</header>
+					<div class="cp-fiche-body">
+						<div class="cp-metrics">
+							<div class="cp-block-head"><span>Chiffres clés de la partie</span></div>
+							<div class="cp-metric" *ngFor="let row of card.primary">
+								<span class="cp-metric-label">{{ row.label }}</span>
+								<span class="cp-metric-value">{{ row.value }}</span>
+								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
 							</div>
 						</div>
-						<div class="frame frame-light box-shadowed cp-metric bad" *ngFor="let a of badActions">
-							<span class="cp-metric-label fw-bold">😈 {{ a.icon }} {{ a.label }}</span>
-							<div class="cp-metric-values">
-								<span class="dette" [class.void]="!a.dette">🪙 {{ a.dette }}</span>
-								<span class="libre" [class.void]="!a.libre">☀️ {{ a.libre }}</span>
-							</div>
-						</div>
-					</ng-container>
-					<div class="frame frame-light box-shadowed cp-metric" *ngIf="synthesisRows.length === 0">
-						<span class="cp-metric-label">Aucune donnée pour cette session.</span>
-					</div>
-				</div>
-			</section>
 
-			<!-- un podium par monnaie : dette à gauche, libre à droite — Avatar Score = somme de toutes les vies (ADR-0014) -->
-			<div class="cp-two-cols">
-				<section class="cp-side" *ngFor="let card of podiumCards" [class.col2]="card.key === 'libre'">
-					<div class="frame-light frame box-shadowed cp-podium">
-						<div class="pod-head">
-							<h3>{{ card.title }}</h3>
-							<button class="cp-toggle" type="button" (click)="toggleScoreBars(card.key)">
-								{{ scoreBars[card.key] ? '🏆 Podium' : '📊 Tous les scores' }}
+						<div class="cp-specific" [class.june]="card.isJune">
+							<div class="cp-specific-head">
+								{{ card.isJune ? 'Propre à la monnaie libre' : 'Propre à la monnaie dette' }}
+							</div>
+							<div class="cp-metric" *ngFor="let row of card.specific">
+								<span class="cp-metric-label">{{ row.label }}</span>
+								<span class="cp-metric-value">{{ row.value }}</span>
+								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
+							</div>
+						</div>
+
+						<div class="cp-secondary">
+							<button type="button" class="cp-block-head cp-collapser" (click)="toggleSecondary(card)">
+								<span class="cp-caret">{{ secondaryOpen.has(card.id) ? '▾' : '▸' }}</span>
+								<span>Chiffres détaillés</span>
 							</button>
+							<ng-container *ngIf="secondaryOpen.has(card.id)">
+								<div class="cp-metric" *ngFor="let row of card.secondary">
+									<span class="cp-metric-label">{{ row.label }}</span>
+									<span class="cp-metric-value small">{{ row.value }}</span>
+								</div>
+							</ng-container>
 						</div>
 
-						<ng-container *ngIf="!scoreBars[card.key]">
-							<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
-								<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
-								<span class="name">
-									{{ p.avatar.name }}
-									<small>{{ p.score }} ({{ p.coins }} 🪙 + {{ p.cardsValue }} 📦)</small>
+						<div class="cp-podium">
+							<div class="cp-block-head">
+								<span>Classement des joueurs</span>
+								<button type="button" class="cp-toggle" (click)="toggleScoreBars(card)">
+									{{ scoreBars.has(card.id) ? 'Podium' : 'Tous les scores' }}
+								</button>
+							</div>
+
+							<ng-container *ngIf="!scoreBars.has(card.id)">
+								<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
+									<avatar [avatar]="p.avatar" width="34px" height="34px"></avatar>
+									<span class="name">
+										{{ p.avatar.name }}
+										<small>{{ num(p.score) }} ({{ num(p.coins) }} + {{ num(p.cardsValue) }})</small>
+									</span>
+									<span class="medal">{{ medalOf(p.rank) }}</span>
+								</div>
+							</ng-container>
+
+							<div class="pod-scores" *ngIf="scoreBars.has(card.id) && card.board as board">
+								<div class="score-plot">
+									<div class="score-lines">
+										<div class="score-line avg" [style.left.%]="board.averagePercent">
+											<span>Moyenne {{ board.average }}</span>
+										</div>
+										<div class="score-line dev" [style.left.%]="board.deviationPercent">
+											<span>Écart type {{ board.deviation }}</span>
+										</div>
+									</div>
+									<div class="score-row" *ngFor="let bar of board.bars">
+										<span class="score-name">{{ bar.entry.avatar.name }}</span>
+										<div class="score-bar">
+											<span
+												class="fill"
+												[style.width.%]="bar.percent"
+												[style.background]="card.color"></span>
+											<b>{{ num(bar.entry.score) }}</b>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
+							<div class="most-active" *ngIf="card.game.mostActive">
+								Plus actif·ve :
+								<b>{{ card.game.mostActive.avatar.name }}</b>
+								— {{ card.game.mostActive.count }} actions
+							</div>
+							<div class="cp-dev" *ngIf="card.board">
+								moyenne
+								<b>{{ card.board.average }}</b>
+								· écart-type
+								<b>{{ card.board.deviation }}</b>
+							</div>
+						</div>
+
+						<div class="cp-chart" *ngIf="chartOf(card) as block">
+							<div class="cp-block-head"><span>Évolution au fil du temps</span></div>
+							<div class="cp-chart-switch">
+								<button
+									type="button"
+									*ngFor="let b of card.charts"
+									[class.on]="b.key === block.key"
+									(click)="chooseChart(card, b)">
+									{{ b.label }}
+								</button>
+								<button type="button" class="cp-legend-btn" (click)="toggleLegend(block)">
+									Légende {{ legends[block.key] ? '✓' : '' }}
+								</button>
+							</div>
+							<div class="cp-canvas">
+								<canvas
+									baseChart
+									[type]="'line'"
+									[data]="block.data"
+									[options]="block.options"></canvas>
+							</div>
+						</div>
+
+						<div class="cp-feel">
+							<div class="cp-block-head"><span>Ressentis des joueurs</span></div>
+							<div class="cp-canvas feel">
+								<canvas
+									baseChart
+									*ngIf="card.feelings"
+									[type]="'bubble'"
+									[data]="card.feelings"
+									[options]="card.feelingsOpts"></canvas>
+								<div class="cp-empty" *ngIf="!card.feelings">Aucune réponse.</div>
+							</div>
+						</div>
+
+						<!-- Santé des données : les deux sources doivent tomber d'accord (docs/adr/0012) -->
+						<div class="cp-health">
+							<button type="button" class="cp-block-head cp-collapser" (click)="toggleHealth(card)">
+								<span class="cp-caret">{{ healthOpen.has(card.id) ? '▾' : '▸' }}</span>
+								<span>Santé des données</span>
+								<span class="cp-health-badge ok" *ngIf="healthIssues(card) === 0">✓</span>
+								<span class="cp-health-badge bad" *ngIf="healthIssues(card) > 0">
+									{{ healthIssues(card) }}
 								</span>
-								<span class="medal">{{ ['🥇', '🥈', '🥉'][p.rank - 1] }}</span>
-							</div>
-						</ng-container>
-
-						<div class="pod-scores" *ngIf="scoreBars[card.key] && card.board as board">
-							<div class="score-plot">
-								<div class="score-lines">
-									<div class="score-line avg" [style.left.%]="board.averagePercent">
-										<span>Moyenne {{ board.average }}</span>
-									</div>
-									<div class="score-line dev" [style.left.%]="board.deviationPercent">
-										<span>Écart type {{ board.deviation }}</span>
-									</div>
+							</button>
+							<ng-container *ngIf="healthOpen.has(card.id)">
+								<div
+									class="cp-health-row"
+									*ngFor="let row of card.game.health.rows"
+									[class.bad]="!row.agrees">
+									<span class="hl">{{ row.label }}</span>
+									<span class="hv">{{ num(row.authoritative) }}</span>
+									<span class="hv">{{ row.sampled === null ? '∅' : num(row.sampled) }}</span>
+									<span class="hs">{{ row.agrees ? '✓' : '✗' }}</span>
 								</div>
-								<div class="score-row" *ngFor="let bar of board.bars">
-									<span class="score-name">{{ bar.entry.avatar.name }}</span>
-									<div class="score-bar" [ngClass]="card.key">
-										<span class="fill" [style.width.%]="bar.percent"></span>
-										<b>{{ bar.entry.score }}</b>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="pod-empty" *ngIf="card.game.podium.length === 0">Aucun classement.</div>
-						<div class="most-active" *ngIf="card.game.mostActive">
-							⏰ Plus actif·ve :
-							<b>{{ card.game.mostActive.avatar.name }}</b>
-							— {{ card.game.mostActive.count }} actions
-						</div>
-					</div>
-				</section>
-			</div>
-
-			<!-- Comptes (collapsible) — une ligne par vie, agrégats co-localisés par unité -->
-			<section>
-				<div class="cp-charts-head">
-					<h2 class="geco-title collapsible" (click)="toggleSection('accounts')">
-						{{ sections.accounts ? '▾' : '▸' }} Comptes
-					</h2>
-					<button class="cp-toggle" type="button" (click)="toggleCardsIncluded()" *ngIf="sections.accounts">
-						{{ cardsIncluded ? '📦 Biens inclus' : '🪙 Séparés' }}
-					</button>
-				</div>
-				<div class="cp-charts" *ngIf="sections.accounts">
-					<div class="cp-two-cols" *ngFor="let row of chartRows">
-						<div class="frame-light frame box-shadowed cp-chart" *ngIf="row.dette">
-							<header>
-								{{ row.dette.title }}
-								<button (click)="toggleLegend(row.dette.key)">
-									Légende {{ legends[row.dette.key] ? '✓' : '' }}
-								</button>
-							</header>
-							<div class="cp-canvas">
-								<canvas
-									baseChart
-									[type]="'line'"
-									[data]="row.dette.data"
-									[options]="lineOpts(row.dette)"></canvas>
-							</div>
-						</div>
-						<div
-							class="frame-light frame box-shadowed cp-chart"
-							[class.col2]="!row.dette"
-							*ngIf="row.libre">
-							<header>
-								{{ row.libre.title }}
-								<button (click)="toggleLegend(row.libre.key)">
-									Légende {{ legends[row.libre.key] ? '✓' : '' }}
-								</button>
-							</header>
-							<div class="cp-canvas">
-								<canvas
-									baseChart
-									[type]="'line'"
-									[data]="row.libre.data"
-									[options]="lineOpts(row.libre)"></canvas>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Sondage (collapsible) -->
-			<section>
-				<h2 class="geco-title collapsible" (click)="toggleSection('feelings')">
-					{{ sections.feelings ? '▾' : '▸' }} Sondage des ressentis
-				</h2>
-				<div class="cp-two-cols" *ngIf="sections.feelings">
-					<div class="frame-light frame box-shadowed cp-chart cp-feel">
-						<header>🪙 Dette — Ressentis</header>
-						<div class="cp-canvas">
-							<canvas
-								baseChart
-								*ngIf="chartDetteFeel"
-								[type]="'bubble'"
-								[data]="chartDetteFeel"
-								[options]="feelingsOpts"></canvas>
-						</div>
-					</div>
-					<div class="frame-light frame box-shadowed cp-chart cp-feel">
-						<header>☀️ Libre — Ressentis</header>
-						<div class="cp-canvas">
-							<canvas
-								baseChart
-								*ngIf="chartLibreFeel"
-								[type]="'bubble'"
-								[data]="chartLibreFeel"
-								[options]="feelingsOpts"></canvas>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<!-- Santé des données : les deux sources doivent tomber d'accord (docs/adr/0012) -->
-			<section>
-				<h2 class="geco-title collapsible" (click)="showHealth = !showHealth">
-					{{ showHealth ? '▾' : '▸' }} Santé des données
-					<span class="cp-health-badge ok" *ngIf="healthMismatches === 0 && healthDivergences === 0">✓</span>
-					<span class="cp-health-badge bad" *ngIf="healthMismatches > 0 || healthDivergences > 0">
-						{{ healthMismatches + healthDivergences }}
-					</span>
-				</h2>
-				<div *ngIf="showHealth" class="cp-health">
-					<div class="frame-light frame box-shadowed" *ngFor="let game of [dette, libre]">
-						<ng-container *ngIf="game">
-							<h3>{{ game.isJune ? '☀️ Monnaie libre' : '🪙 Monnaie dette' }}</h3>
-							<div class="cp-health-row" *ngFor="let row of game.health.rows" [class.bad]="!row.agrees">
-								<span class="hl">{{ row.label }}</span>
-								<span class="hv">{{ row.authoritative }}</span>
-								<span class="hv">{{ row.sampled === null ? '∅' : row.sampled }}</span>
-								<span class="hs">{{ row.agrees ? '✓' : '✗' }}</span>
-							</div>
-							<div class="cp-health-div" *ngIf="game.health.divergences.length > 0">
-								<h4>Divergences par vertex</h4>
-								<div class="cp-health-row bad" *ngFor="let d of game.health.divergences">
+								<div class="cp-health-row bad" *ngFor="let d of card.game.health.divergences">
 									<span class="hl">{{ timeOf(d.at) }} · {{ d.typeEvent }}</span>
-									<span class="hv">déclaré {{ d.declared }}</span>
-									<span class="hv">sommé {{ d.derived }}</span>
-									<span class="hs">Δ {{ d.delta }} · vies {{ d.touched.join(', ') }}</span>
+									<span class="hv">{{ num(d.declared) }}</span>
+									<span class="hv">{{ num(d.derived) }}</span>
+									<span class="hs">Δ {{ num(d.delta) }}</span>
 								</div>
-							</div>
-						</ng-container>
+							</ng-container>
+						</div>
 					</div>
-				</div>
-			</section>
-		</main>
+				</article>
+			</div>
+		</div>
 
-		<!-- ── tiroir évènements (slide depuis la droite, comme les règles de la vue table) ── -->
+		<!-- ── tiroir évènements : toutes les parties, sélecteur interne inchangé ── -->
 		<aside class="cp-events">
 			<app-events-v2
 				[events]="events"
 				[players]="lives"
 				[games]="games"
-				[initialGameId]="detteGsId || libreGsId"
+				[initialGameId]="games.length ? games[0].id : null"
 				[collapsed]="eventsCollapsed"
-				(collapsedChange)="eventsCollapsed = $event"
-				(filterChange)="onEventsFilter($event)"></app-events-v2>
+				(collapsedChange)="eventsCollapsed = $event"></app-events-v2>
 		</aside>
 	</div>
 </div>

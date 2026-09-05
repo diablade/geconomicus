@@ -61,6 +61,7 @@ When encountering v1 code:
 - Use schema validation and indexes appropriately
 - Version schema changes when breaking changes occur
 - Express schema relationships and constraints through schema definitions and naming (not code comments)
+- Return translation keys, not prose, in any response the user will see: `res.json({ message: 'ERROR.X' })`. Raw English reaches the user untranslated — `SnackbarService` does not translate.
 
 **Angular/Frontend:**
 - Use functional components with composition over class inheritance
@@ -69,6 +70,7 @@ When encountering v1 code:
 - Manage state consistently (NgRx or services with RxJS Observables)
 - Implement proper unsubscription patterns to prevent memory leaks
 - Use ChangeDetectionStrategy.OnPush where appropriate
+- **Never write a user-visible string literal.** Every readable string is a translation key — `{{ 'KEY' | translate }}` in templates, `i18nService.instant('KEY')` in TypeScript. Add the key to `fr.json` only, and confirm the component calls `loadNamespace` for its feature. See the i18n section in CLAUDE.md for placement rules and the root/namespace collision trap.
 
 **Shared/constants:**
 - Define constants and shared utilities in TypeScript

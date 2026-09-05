@@ -37,6 +37,7 @@
 					{{ 'TABLE.CONNECTED' | translate }} &middot; 🔴 {{ vm.alive.length - vm.connectedCount }}
 					{{ 'TABLE.DISCONNECTED' | translate }}
 				</div>
+				<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
 				<div class="chip frame frame-light box-shadowed">
 					⏱️
 					<b>{{ vm.minutes }}:{{ vm.seconds }}</b>

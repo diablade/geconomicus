@@ -49,7 +49,7 @@ PlayerEngine.applyTransaction = (entry, buyerIdx, sellerIdx, cardKey) => {
 	if (!buyer) throw new Error('ERROR.BUYER_NOT_FOUND');
 	if (!seller) throw new Error('ERROR.SELLER_NOT_FOUND');
 	if (buyer.status !== PLAYER_STATUS.ALIVE || seller.status !== PLAYER_STATUS.ALIVE)
-		throw new Error('ERROR.TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER');
+		throw new Error('ERROR.TRANSACTION_CANNOT_INVOLVE_DEAD');
 
 	const card = seller.cards.find((c) => c.key === cardKey);
 	if (!card) throw new Error('ERROR.CARD_NOT_FOUND');

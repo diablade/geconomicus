@@ -174,7 +174,15 @@ class GameStateManager {
 		}
 
 		// Only reload if the game is in a state that should be in memory
-		if (![GAME_STATUS.INITIALIZED, GAME_STATUS.PLAYING, GAME_STATUS.PAUSED].includes(gameState.status)) {
+		if (
+			![
+				GAME_STATUS.CREATED,
+				GAME_STATUS.INITIALIZED,
+				GAME_STATUS.PLAYING,
+				GAME_STATUS.PAUSED,
+				GAME_STATUS.FINISHED,
+			].includes(gameState.status)
+		) {
 			log.warn(
 				`[GameStateManager] Game ${gameStateId} has status: ${gameState.status}, will not be stored in memory`
 			);

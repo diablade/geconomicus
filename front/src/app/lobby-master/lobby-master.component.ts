@@ -171,7 +171,11 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 			data: { session: sessionData },
 		});
 		dialogRef.afterClosed().subscribe((results) => {
-			if (results) {
+			if (results === 'reopen') {
+				this.sessionService.reopen(this.sessionId).subscribe(() => {
+					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
+				});
+			} else if (results) {
 				this.sessionService.update(this.sessionId, results).subscribe((data) => {
 					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SAVED'));
 					// Reload session to get updated data

@@ -284,6 +284,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private firstCreditSub: Subscription | undefined;
 	private creditCountdownSub: Subscription | undefined;
 	private creditTimeoutSub: Subscription | undefined;
+	private deathSub: Subscription | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
 	creditCountdown: CreditCountdown | null = null;
 	alarmConfig: OverlayConfig | null = null;
@@ -349,6 +350,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
 		if (this.creditCountdownSub) this.creditCountdownSub.unsubscribe();
 		if (this.creditTimeoutSub) this.creditTimeoutSub.unsubscribe();
+		if (this.deathSub) this.deathSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -389,6 +391,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.creditCountdownSub = this.creditCountdown$.subscribe((countdown) => (this.creditCountdown = countdown));
 
 		this.creditTimeoutSub = this.playerStateService.creditTimeout$.subscribe(() => this.clearMaturityOverlays());
+
+		this.deathSub = this.playerStatus$.pipe(distinctUntilChanged()).subscribe((status) => {
+			if (status === PLAYER_STATUS.DEAD) this.dialog.closeAll();
+		});
 
 		this.firstCreditSub = this.firstCreditPending$.pipe(distinctUntilChanged()).subscribe((pending) => {
 			if (pending) {

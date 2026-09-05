@@ -1,0 +1,50 @@
+<div class="ag-dialog">
+	<div class="ag-head">
+		<h2>Ajouter une partie</h2>
+		<button type="button" class="ag-close" (click)="dialogRef.close()">✕</button>
+	</div>
+	<p class="ag-note">
+		Elle s&#39;ajoute à côté des autres le temps de la comparaison. Rien n&#39;est enregistré : au rechargement, la
+		page revient aux parties de cette session.
+	</p>
+
+	<input
+		class="ag-search"
+		type="text"
+		placeholder="Chercher une session — nom, lieu, animateur·rice…"
+		[(ngModel)]="query"
+		(ngModelChange)="search()" />
+
+	<div class="ag-list">
+		<div class="ag-empty" *ngIf="loading">Chargement…</div>
+		<div class="ag-empty" *ngIf="!loading && filtered.length === 0">Aucune autre session avec une partie jouée.</div>
+
+		<ng-container *ngFor="let row of filtered">
+			<button type="button" class="ag-session" [class.on]="openedId === row._id" (click)="open(row)">
+				<span class="ag-session-name">{{ row.name || 'Sans nom' }}</span>
+				<span class="ag-session-meta">
+					{{ row.location }}
+					<ng-container *ngIf="row.animator">· {{ row.animator }}</ng-container>
+				</span>
+				<span class="ag-session-count">{{ row.gamesRulesCount }}</span>
+			</button>
+
+			<div class="ag-games" *ngIf="openedId === row._id">
+				<div class="ag-empty small" *ngIf="loadingGames">Chargement des parties…</div>
+				<div class="ag-empty small" *ngIf="!loadingGames && games.length === 0">Aucune partie jouée.</div>
+				<button
+					type="button"
+					class="ag-game"
+					*ngFor="let game of games"
+					[class.june]="game.isJune"
+					[disabled]="alreadyShown(game)"
+					(click)="pick(game)">
+					<span class="ag-game-mark"></span>
+					<span class="ag-game-label">{{ game.label }}</span>
+					<span class="ag-game-state" *ngIf="alreadyShown(game)">déjà affichée</span>
+					<span class="ag-game-state" *ngIf="!alreadyShown(game)">ajouter</span>
+				</button>
+			</div>
+		</ng-container>
+	</div>
+</div>

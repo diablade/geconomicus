@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map, Subscription, take } from 'rxjs';
+import { combineLatest, Subscription, take } from 'rxjs';
 import { GameStateService } from '../services/api/game-state.service';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,6 @@ import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog
 import { I18nService } from '../services/i18n.service';
 import { WebSocketService } from '../services/web-socket.service';
 import { formatAvatarCode } from '../services/avatarCode';
-import { AudioService } from '../services/audio.service';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash-es';
@@ -33,8 +32,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly PENDING = CREDIT_QUESTION_ANSWER.PENDING;
 	protected readonly environment = environment;
-	// Auto-bank: target average money per player the animator aims for before starting.
-	protected readonly AVG_MONEY_TARGET = 2;
 
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;
@@ -56,24 +53,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	minutes$ = this.gameStateService.minutes$;
 	seconds$ = this.gameStateService.seconds$;
 	playersAC$ = this.gameStateService.playersAC$;
-	// Auto-bank: average money per living player (drives the low-money warning near Start).
-	avgMoney$ = combineLatest([this.gameState$, this.playersAC$]).pipe(
-		map(([gs, players]) => {
-			const alive = (players || []).filter((p: any) => p.status !== PLAYER_STATUS.DEAD);
-			return alive.length ? (gs?.currentMassMonetary || 0) / alive.length : 0;
-		})
-	);
-
-	pendingFirstCredit$ = this.playersAC$.pipe(
-		map(
-			(players: any[]) =>
-				(players || []).filter(
-					(p: any) =>
-						p.status !== PLAYER_STATUS.DEAD && p.firstCreditAnswer === CREDIT_QUESTION_ANSWER.PENDING
-				).length
-		)
-	);
-
 	vm$ = combineLatest({
 		gameState: this.gameState$,
 		rules: this.rules$,
@@ -81,7 +60,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		timerProgress: this.timerProgress$,
 		minutes: this.minutes$,
 		seconds: this.seconds$,
-		avgMoney: this.avgMoney$,
 	});
 
 	constructor(
@@ -91,7 +69,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		private translate: TranslateService,
 		private router: Router,
 		private i18nService: I18nService,
-		private audioService: AudioService,
 		private wsService: WebSocketService,
 		public dialog: MatDialog
 	) {
@@ -266,100 +243,6 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	launchGame(status: string) {
-		if (status !== this.INITIALIZED) {
-			this.doLaunchGame(status);
-			return;
-		}
-		combineLatest([this.rules$, this.avgMoney$, this.pendingFirstCredit$])
-			.pipe(take(1))
-			.subscribe(([rules, avgMoney, pending]) => {
-				const lowMoney = rules.typeMoney === this.DEBT && avgMoney < this.AVG_MONEY_TARGET;
-				const missing = rules.typeMoney === this.DEBT ? pending : 0;
-				if (!lowMoney && !missing) {
-					this.doLaunchGame(status);
-					return;
-				}
-				const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-					data: {
-						title: this.i18nService.instant('MASTER.START_GAME'),
-						message: lowMoney
-							? this.i18nService.instant('MASTER.LOW_AVG_WARNING', {
-									avg: avgMoney.toFixed(2),
-									target: this.AVG_MONEY_TARGET,
-							  })
-							: '',
-						message2: missing
-							? this.i18nService.instant('MASTER.START_PENDING_ANSWERS', { missing })
-							: '',
-						labelBtnConfirm: this.i18nService.instant('MASTER.START_GAME'),
-					},
-				});
-				confirmRef.afterClosed().subscribe((result) => {
-					if (result === 'btnConfirm') this.doLaunchGame(status);
-				});
-			});
-	}
-
-	private doLaunchGame(status: string) {
-		if (status === this.INITIALIZED) {
-			this.gameStateService.startGame(this.gameStateId).subscribe({
-				next: (result) => {
-					this.rules$.pipe(take(1)).subscribe((rules) => {
-						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_STARTED'));
-						this.audioService.playSound('start');
-						const remainingMs = result?.remainingTimeMs || rules.roundMinutes * 60 * 1000;
-						this.gameStateService.startTimer(remainingMs);
-					});
-				},
-				error: (error) => {
-					this.snackbarService.showError(this.i18nService.instant(error.message));
-				},
-			});
-		} else if (status === this.PAUSED) {
-			this.gameStateService.resumeGame(this.gameStateId).subscribe({
-				next: (result) => {
-					this.rules$.pipe(take(1)).subscribe((rules) => {
-						this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_RESUMED'));
-						this.audioService.playSound('start');
-						const remainingMs = result?.remainingTimeMs || rules.roundMinutes * 60 * 1000;
-						this.gameStateService.startTimer(remainingMs);
-					});
-				},
-				error: (error) => {
-					this.snackbarService.showError(this.i18nService.instant(error.message));
-				},
-			});
-		}
-	}
-
-	stopGame() {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				message: this.i18nService.instant('EVENTS.ASK_END_ROUND'),
-			},
-		});
-		confDialogRef.afterClosed().subscribe((result) => {
-			if (result && result == 'btnConfirm') {
-				this.gameStateService.stopGame(this.gameStateId).subscribe(() => {
-					this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_ENDED'));
-					this.gameStateService.stopTimer();
-				});
-			}
-		});
-	}
-
-	pauseGame() {
-		this.gameStateService.pauseGame(this.gameStateId).subscribe({
-			next: () => {
-				this.snackbarService.showSuccess(this.i18nService.instant('MASTER.GAME_PAUSED'));
-				this.gameStateService.pauseTimer();
-			},
-			error: (error) => {
-				this.snackbarService.showError(this.i18nService.instant(error.message));
-			},
-		});
-	}
 
 	killUserNow(playerState: any) {
 		// TODO: Wire to backend killUser when endpoint is ready

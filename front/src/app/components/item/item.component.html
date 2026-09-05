@@ -35,7 +35,10 @@
 			class="frame frame-light d-flex flex-row justify-content-between align-items-center p-2"
 			*ngIf="flipState === 'back'"
 			[style.top]="gapBackItems + 'px'">
-			<div *ngIf="!isPNG(card.key)" class="card-icon-back emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+			<div
+				*ngIf="!isPNG(card.key)"
+				class="card-icon-back emoji"
+				[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 				{{ getIcon(card.key) }}
 			</div>
 			<div *ngIf="isPNG(card.key)" class="card-icon-back-png">
@@ -112,14 +115,17 @@
 					class="recipe-ingredient"
 					[class.have]="ingredient.have > 0"
 					[class.missing]="ingredient.have === 0">
-					<span *ngIf="!isPNG(ingredient.key)" class="emoji" [ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+					<span class="check">{{ ingredient.have > 0 ? '✅' : '' }}</span>
+					<span
+						*ngIf="!isPNG(ingredient.key)"
+						class="emoji"
+						[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 						{{ getIcon(ingredient.key) }}
 					</span>
 					<span *ngIf="isPNG(ingredient.key)" class="ingredient-png">
 						<img alt="" class="item-png" [ngSrc]="getPNG(ingredient.key)" fill />
 					</span>
 					<span class="ingredient-name">{{ ingredient.key | translate }}</span>
-					<span class="check" *ngIf="ingredient.have > 0">✅</span>
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,52 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Fiches — retenue" },
+    { "id": "page-2", "name": "Directions écartées" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Fiches — écran complet 1440 × 900", "page": "page-1", "x": 0, "y": 0, "w": 1440, "h": 900 },
+    { "file": "Selecteur.dc.html", "title": "Sélection des parties", "page": "page-1", "x": 1540, "y": 0, "w": 900, "h": 680 },
+    { "file": "Mobile_Joueur.dc.html", "title": "Mobile — la vue joueur·euse", "page": "page-1", "x": 2540, "y": 0, "w": 390, "h": 1160 },
+
+    { "file": "A_Colonnes.dc.html", "title": "A · Colonnes", "page": "page-2", "x": 0, "y": 0, "w": 1360, "h": 1250 },
+    { "file": "B_Trajectoires.dc.html", "title": "B · Trajectoires", "page": "page-2", "x": 1460, "y": 0, "w": 1360, "h": 1290 },
+    { "file": "C_Fiches.dc.html", "title": "C · Fiches — le croquis d'origine", "page": "page-2", "x": 2920, "y": 0, "w": 1360, "h": 1200 },
+    { "file": "D_Recit.dc.html", "title": "D · Récit", "page": "page-2", "x": 0, "y": 1430, "w": 1360, "h": 1400 },
+    { "file": "E_Cockpit.dc.html", "title": "E · Cockpit", "page": "page-2", "x": 1460, "y": 1430, "w": 1360, "h": 880 }
+  ],
+  "annotations": [
+    {
+      "id": "ce-qui-change",
+      "page": "page-1",
+      "x": 0,
+      "y": -300,
+      "w": 1440,
+      "text": "C, construite pour de bon — et la maquette quitte le registre croquis : c'est aussi la proposition de style.\n\nCoquille à hauteur d'écran : rien ne défile sauf deux zones. Les fiches défilent ENSEMBLE (un seul conteneur, donc les lignes restent alignées d'une fiche à l'autre) et débordent horizontalement dès la 5e — largeur mini 302 px, sinon 1fr. Le tiroir d'évènements prend toute la hauteur restante.\n\nDans chaque fiche : la durée de la partie dans l'en-tête, un % de croissance début→fin quand il a un sens (rien pour la dette, qui part de 0), et la richesse détaillée avec son commutateur — Richesse / Monnaie & ressources en dette, Richesse / Quantitatif / Relatif (DU) en libre. Le bloc du bas a disparu.\n\nLes % sont volontairement GRIS et pas vert/rouge : une masse monétaire qui double n'est pas une bonne nouvelle en jeu dette."
+    },
+    {
+      "id": "style",
+      "page": "page-1",
+      "x": 1540,
+      "y": 760,
+      "w": 900,
+      "text": "Style : fond clair, cartes blanches, 1 px de filet, IBM Plex Sans + Plex Mono (chiffres tabulaires).\nLes deux couleurs monnaie sortent telles quelles du SCSS actuel — #2c7fb8 dette, #f0932a / #d97e12 libre — déclinées en tons pour tenir 5 parties. Le titre appelle d'abord 'Geconomicus' : dans l'app la vraie fonte s'affiche, ici elle retombe sur Plex.\n\nCe qui se perd : le fond dégradé, le verre dépoli et l'ombre noire de 4 px. C'est ce qui rend la page lisible au vidéoprojecteur et à l'impression — mais dis-moi si la marque te manque, on peut en réinjecter."
+    },
+    {
+      "id": "planches",
+      "page": "page-1",
+      "x": 2540,
+      "y": 1220,
+      "w": 390,
+      "text": "Ces deux planches restent valables telles quelles : le sélecteur (et sa règle de lignes) et la vue joueur·euse sur mobile se greffent sur les fiches sans changement."
+    },
+    {
+      "id": "archive",
+      "page": "page-2",
+      "x": 0,
+      "y": -190,
+      "w": 1300,
+      "text": "Les 5 croquis d'origine, gardés pour mémoire. C est celle qui a été retenue et développée sur la page précédente."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

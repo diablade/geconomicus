@@ -31,6 +31,9 @@
 	</div>
 	<div mat-dialog-actions>
 		<button mat-button [mat-dialog-close]="null">{{ 'CANCEL' | translate }}</button>
+		<button *ngIf="session.devMode" mat-button color="warn" [mat-dialog-close]="'reopen'">
+			{{ 'REOPEN' | translate }}
+		</button>
 		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="session" cdkFocusInitial>
 			{{ 'SAVE' | translate }}
 		</button>

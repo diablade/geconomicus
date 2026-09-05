@@ -137,6 +137,24 @@ export class SessionService {
 			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.START')));
 	}
 
+	/** Puts a started session back to OPEN so new players can join again. */
+	reopen(sessionId: string): Observable<any> {
+		return new Observable((observer: any) => {
+			this.http
+				.post<any>(environment.API_HOST + environment.SESSION.REOPEN, { sessionId })
+				.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.UPDATE')))
+				.subscribe((data) => {
+					let currentSession = this.sessionSubject.value;
+					if (currentSession) {
+						currentSession = { ...currentSession, ...data };
+						this.sessionSubject.next(currentSession);
+					}
+					observer.next({ success: true, data });
+					observer.complete();
+				});
+		});
+	}
+
 	update(sessionId: string, updates: Partial<Session>) {
         return new Observable((observer: any) => {
 		this.http

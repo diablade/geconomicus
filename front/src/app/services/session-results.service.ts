@@ -134,8 +134,12 @@ export interface GameSynthesis {
 	deaths: number;
 	rebirths: number;
 	transactions: number;
+	productions: number;
 	totalExchangedValue: number;
+	durationMin: number;
+	massFirst: number;
 	finalMassMonetary: number;
+	goodsFirst: number;
 	averageMoney: number;
 	ghostMoney: number;
 	ghostCards: number;
@@ -226,6 +230,7 @@ export class SessionResultsService {
 
 		const tally = {
 			transactions: 0,
+			productions: 0,
 			totalExchangedValue: 0,
 			deaths: 0,
 			rebirths: 0,
@@ -332,6 +337,9 @@ export class SessionResultsService {
 				duCount: duTimestamps.size,
 				duFirst: duSeries[0]?.y ?? 0,
 				debtFirst: totalDebtPts[0]?.y ?? 0,
+				massFirst: declared.get(LK_KEYS.MASS_MONETARY)?.[0]?.y ?? 0,
+				goodsFirst: goodsInPlayPts[0]?.y ?? 0,
+				durationMin: this.durationMin(gameState, endAt),
 			}),
 			actions: [...actionCounts.entries()].map(([typeEvent, count]) => ({
 				typeEvent,
@@ -414,6 +422,7 @@ export class SessionResultsService {
 			tally.transactions++;
 			tally.totalExchangedValue += payload['cost'] ?? 0;
 		}
+		if (ev.typeEvent === DB_EVENTS.PRODUCTION) tally.productions++;
 		if (ev.typeEvent === DB_EVENTS.CREDIT_NEW) {
 			tally.creditsTaken++;
 			const o = payload['origin'];
@@ -567,7 +576,14 @@ export class SessionResultsService {
 		tally: any,
 		firstQ: any,
 		origin: any,
-		curves: { duCount: number; duFirst: number; debtFirst: number }
+		curves: {
+			duCount: number;
+			duFirst: number;
+			debtFirst: number;
+			massFirst: number;
+			goodsFirst: number;
+			durationMin: number;
+		}
 	): GameSynthesis {
 		const states = gameState.playersStates ?? [];
 		const aliveCount = states.filter((p) => p.status !== PLAYER_STATUS.DEAD).length;
@@ -588,8 +604,12 @@ export class SessionResultsService {
 			deaths: tally.deaths,
 			rebirths: tally.rebirths,
 			transactions: tally.transactions,
+			productions: tally.productions,
 			totalExchangedValue: this.round2(tally.totalExchangedValue),
+			durationMin: curves.durationMin,
+			massFirst: this.round2(curves.massFirst),
 			finalMassMonetary: gameState.currentMassMonetary ?? 0,
+			goodsFirst: this.round2(curves.goodsFirst),
 			averageMoney: aliveCount ? this.round2((gameState.currentMassMonetary ?? 0) / aliveCount) : 0,
 			ghostMoney: this.round2(ghostMoney),
 			ghostCards: this.round2(ghostCards),
@@ -742,6 +762,14 @@ export class SessionResultsService {
 		const last = points[points.length - 1];
 		if (new Date(last.x).getTime() >= new Date(endAt).getTime()) return;
 		points.push({ x: endAt, y: authoritative });
+	}
+
+	/** Wall-clock minutes the game ran, 0 when it never started. */
+	private durationMin(gameState: GameState, endAt: string): number {
+		const started = gameState.gameTimers?.startedAt;
+		if (!started) return 0;
+		const ms = new Date(endAt).getTime() - new Date(started).getTime();
+		return ms > 0 ? Math.round(ms / 60000) : 0;
 	}
 
 	private gameEndAt(gameState: GameState, stream: GecoEventV2[]): string {
