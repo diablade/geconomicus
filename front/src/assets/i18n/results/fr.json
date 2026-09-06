@@ -61,6 +61,8 @@
 			"SPECIFIC_JUNE": "Propre à la monnaie libre",
 			"SPECIFIC_DEBT": "Propre à la monnaie dette",
 			"DETAILED": "Chiffres détaillés",
+			"BEHAVIOURS": "Comportements entre joueurs",
+			"BEHAVIOURS_UNUSED": "Aucune action n'a été jouée pendant cette partie.",
 			"RANKING": "Classement des joueurs",
 			"PODIUM": "Podium",
 			"ALL_SCORES": "Tous les scores",

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { GAME_TYPE } from '@geco/shared';
+import { DB_EVENTS, GAME_TYPE, LK_KEYS } from '@geco/shared';
 import {
 	EVENT_GROUP,
 	EventFilter,
@@ -13,7 +13,8 @@ import { LifeRef } from '../services/session-results.service';
 
 interface MiniCard {
 	letter: string;
-	color: string;
+	/** nom de la classe couleur du jeu (red / yellow / green / blue), pas une couleur CSS */
+	colorClass: string;
 	arrow?: boolean;
 }
 
@@ -65,6 +66,8 @@ export class EventsV2Component {
 
 	filter: EventFilter = { gameStateId: null, group: EVENT_GROUP.ALL, emitter: null, receiver: null };
 	private touched = false;
+	private duSource: GecoEventV2[] = [];
+	private duSteps = new Map<string, { at: number; du: number }[]>();
 
 	readonly groups: EventGroup[] = [
 		EVENT_GROUP.ALL,
@@ -154,8 +157,8 @@ export class EventsV2Component {
 	/** cartes miniatures à afficher sous la ligne (transaction / production / saisie / action) */
 	cardsOf(ev: GecoEventV2): MiniCard[] {
 		const p: any = ev.payload ?? {};
-		const toMini = (c: any): MiniCard => ({ letter: c?.letter ?? '?', color: c?.color ?? '#ccc' });
-		const arrow: MiniCard = { letter: '→', color: 'transparent', arrow: true };
+		const toMini = (c: any): MiniCard => ({ letter: c?.letter ?? '?', colorClass: c?.color ?? '' });
+		const arrow: MiniCard = { letter: '→', colorClass: '', arrow: true };
 		if (Array.isArray(p.consumed) && p.produced) return [...p.consumed.map(toMini), arrow, toMini(p.produced)];
 		if (p.card) return [toMini(p.card)];
 		if (Array.isArray(p.stolen)) return p.stolen.map(toMini);
@@ -165,13 +168,56 @@ export class EventsV2Component {
 		return [];
 	}
 
-	/** la somme en jeu, quand l'évènement en porte une */
+	/** la somme en jeu, quand l'évènement en porte une ; un achat porte la sienne sous ses cartes */
 	amountOf(ev: GecoEventV2): string {
 		const p: any = ev.payload ?? {};
+		if (ev.typeEvent === DB_EVENTS.TRANSACTION) return '';
 		if (p.cost != null) return `${p.cost}`;
 		if (p.amount != null) return `${p.amount}${p.interest ? ' +' + p.interest : ''}`;
 		if (p.du != null) return `DU ${p.du}`;
 		return '';
+	}
+
+	/** les paliers de DU de chaque partie, recalculés seulement quand le flux change */
+	private stepsOf(gameStateId?: string): { at: number; du: number }[] {
+		if (this.duSource !== this.events) {
+			this.duSource = this.events;
+			this.duSteps = new Map();
+			this.events.forEach((ev) => {
+				const payload: any = ev.payload ?? {};
+				const du = [payload[LK_KEYS.DU], payload.du, payload.firstDU].find((value) => Number.isFinite(value));
+				if (du === undefined) return;
+				const key = String(ev.gameStateId ?? '');
+				const steps = this.duSteps.get(key) ?? [];
+				steps.push({ at: new Date(ev.at).getTime(), du });
+				this.duSteps.set(key, steps);
+			});
+			this.duSteps.forEach((steps) => steps.sort((a, b) => a.at - b.at));
+		}
+		return this.duSteps.get(String(gameStateId ?? '')) ?? [];
+	}
+
+	/**
+	 * Le DU en vigueur à cet instant.
+	 * @returns undefined en monnaie dette, où aucun DU n'a jamais été distribué.
+	 */
+	private duAt(ev: GecoEventV2): number | undefined {
+		const steps = this.stepsOf(ev.gameStateId);
+		if (!steps.length) return undefined;
+		const at = new Date(ev.at).getTime();
+		const passed = steps.filter((step) => step.at <= at);
+		return passed.length ? passed[passed.length - 1].du : steps[0].du;
+	}
+
+	/** prix d'un achat, dans sa monnaie et — en monnaie libre — aussi en dividendes */
+	priceOf(ev: GecoEventV2): string {
+		if (ev.typeEvent !== DB_EVENTS.TRANSACTION) return '';
+		const cost = (ev.payload as any)?.cost;
+		if (!Number.isFinite(cost)) return '';
+		const du = this.duAt(ev);
+		if (!du) return `${cost} ${this.i18n.instant('CURRENCY.EURO')}`;
+		const inDu = Math.round((cost / du) * 100) / 100;
+		return `${cost} ${this.i18n.instant('CURRENCY.JUNE')} · ${inDu} ${this.i18n.instant('CURRENCY.DU')}`;
 	}
 
 	/** seconde ligne en clair : ce que le payload dit de plus que le titre */

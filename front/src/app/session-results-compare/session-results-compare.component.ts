@@ -72,6 +72,7 @@ interface GameCard {
 	game: GameResults;
 	primary: MetricRow[];
 	specific: MetricRow[];
+	behaviours: MetricRow[];
 	secondary: MetricRow[];
 	board?: ScoreBoard;
 	charts: ChartBlock[];
@@ -149,6 +150,16 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 
 	private rules: Rules[] = [];
 	private joinedRooms: string[] = [];
+
+	/** Which event each configurable action writes, so an action never played still shows a zero. */
+	private readonly ACTION_EVENTS: { [key: string]: string } = {
+		give: DB_EVENTS.ACTION_GIVE,
+		steal: DB_EVENTS.ACTION_STEAL,
+		silentSteal: DB_EVENTS.ACTION_SILENT_STEAL,
+		association: DB_EVENTS.ACTION_ASSOCIATION,
+		war: DB_EVENTS.ACTION_WAR,
+		ong: DB_EVENTS.ACTION_ONG,
+	};
 
 	/** Only the icon: the action name is already translated under EVENTS.DB_EVENTS.<type>. */
 	private readonly ACTION_ICONS: { [type: string]: string } = {
@@ -276,6 +287,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			game,
 			primary: this.tidy(this.primaryRows(game, isJune)),
 			specific: this.tidy(this.specificRows(game, isJune)),
+			behaviours: this.tidy(this.behaviourRows(rule, game)),
 			secondary: this.tidy(this.secondaryRows(game, isJune)),
 			board: this.scoreBoard(game),
 			charts: this.chartsFor(game, isJune),
@@ -403,10 +415,11 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		const worthLast = s.goodsInPlay + s.ghostCards;
 		const unit = this.i18n.instant(isJune ? 'CURRENCY.DU' : 'CURRENCY.EURO');
 		return [
-			{ label: 'RESULTS.COMPARE.TRANSACTIONS', value: s.transactions },
-			{ label: 'RESULTS.COMPARE.PRODUCTIONS', value: s.productions },
+			{ label: 'RESULTS.COMPARE.TRANSACTIONS', icon: '🛒', value: s.transactions },
+			{ label: 'RESULTS.COMPARE.PRODUCTIONS', icon: '🏭', value: s.productions },
 			{
 				label: 'RESULTS.COMPARE.RESOURCES_IN_PLAY',
+				icon: '📦',
 				value: this.i18n.instant('RESULTS.COMPARE.RESOURCES_RANGE', {
 					cardsFirst: s.goodsCountFirst,
 					worthFirst: this.num(worthFirst),
@@ -418,6 +431,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			},
 			{
 				label: 'RESULTS.COMPARE.MONETARY_MASS',
+				icon: '💰',
 				value: this.range(s.massFirst, s.finalMassMonetary),
 				growth: this.growth(s.massFirst, s.finalMassMonetary),
 			},
@@ -431,25 +445,27 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			return [
 				{
 					label: 'RESULTS.COMPARE.DU',
+					icon: '🌞',
 					value: this.range(s.duFirst, s.duFinal),
 					growth: this.growth(s.duFirst, s.duFinal),
 				},
-				{ label: 'RESULTS.COMPARE.DU_COUNT', value: s.duCount ?? 0 },
-				{ label: 'RESULTS.COMPARE.GHOST_MONEY_IN_DU', value: s.ghostMoneyInDu ?? 0 },
+				{ label: 'RESULTS.COMPARE.DU_COUNT', icon: '🔢', value: s.duCount ?? 0 },
+				{ label: 'RESULTS.COMPARE.GHOST_MONEY_IN_DU', icon: '👻', value: s.ghostMoneyInDu ?? 0 },
 			];
 		}
 		return [
 			{
 				label: 'RESULTS.COMPARE.TOTAL_DEBT',
+				icon: '💳',
 				value: this.range(s.debtFirst, s.totalDebt),
 				growth: this.growth(s.debtFirst, s.totalDebt),
 			},
-			{ label: 'RESULTS.COMPARE.CREDITS_TAKEN', value: s.creditsTaken ?? 0 },
-			{ label: 'RESULTS.COMPARE.INTEREST_EARNED', value: s.interestPaid ?? 0 },
-			{ label: 'RESULTS.COMPARE.SEIZURES', value: s.seizures ?? 0 },
-			{ label: 'RESULTS.COMPARE.MONEY_LOST', value: s.bankMoneyLost ?? 0 },
-			{ label: 'RESULTS.COMPARE.MONEY_DESTROYED', value: s.bankMoneyDestroyed ?? 0 },
-			{ label: 'RESULTS.COMPARE.GOODS_SEIZED', value: s.bankGoodsEarned ?? 0 },
+			{ label: 'RESULTS.COMPARE.CREDITS_TAKEN', icon: '🏦', value: s.creditsTaken ?? 0 },
+			{ label: 'RESULTS.COMPARE.INTEREST_EARNED', icon: '💸', value: s.interestPaid ?? 0 },
+			{ label: 'RESULTS.COMPARE.SEIZURES', icon: '🔒', value: s.seizures ?? 0 },
+			{ label: 'RESULTS.COMPARE.MONEY_LOST', icon: '📉', value: s.bankMoneyLost ?? 0 },
+			{ label: 'RESULTS.COMPARE.MONEY_DESTROYED', icon: '🔥', value: s.bankMoneyDestroyed ?? 0 },
+			{ label: 'RESULTS.COMPARE.GOODS_SEIZED', icon: '📥', value: s.bankGoodsEarned ?? 0 },
 		];
 	}
 
@@ -457,36 +473,52 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private secondaryRows(game: GameResults, isJune: boolean): MetricRow[] {
 		const s = game.synthesis;
 		const rows: MetricRow[] = [
-			{ label: 'RESULTS.COMPARE.EXCHANGED_VALUE', value: s.totalExchangedValue },
-			{ label: 'RESULTS.COMPARE.AVERAGE_MONEY', value: s.averageMoney },
-			{ label: 'RESULTS.COMPARE.GHOST_MONEY', value: s.ghostMoney },
-			{ label: 'RESULTS.COMPARE.GHOST_CARDS', value: s.ghostCards },
-			{ label: 'RESULTS.COMPARE.PLAYERS', value: s.avatars },
-			{ label: 'RESULTS.COMPARE.LIVES', value: s.lives },
-			{ label: 'RESULTS.COMPARE.DEATHS', value: s.deaths },
-			{ label: 'RESULTS.COMPARE.REBIRTHS', value: s.rebirths },
+			{ label: 'RESULTS.COMPARE.EXCHANGED_VALUE', icon: '💱', value: s.totalExchangedValue },
+			{ label: 'RESULTS.COMPARE.AVERAGE_MONEY', icon: '📊', value: s.averageMoney },
+			{ label: 'RESULTS.COMPARE.GHOST_MONEY', icon: '👻', value: s.ghostMoney },
+			{ label: 'RESULTS.COMPARE.GHOST_CARDS', icon: '🎴', value: s.ghostCards },
+			{ label: 'RESULTS.COMPARE.PLAYERS', icon: '🎮', value: s.avatars },
+			{ label: 'RESULTS.COMPARE.LIVES', icon: '💓', value: s.lives },
+			{ label: 'RESULTS.COMPARE.DEATHS', icon: '💀', value: s.deaths },
+			{ label: 'RESULTS.COMPARE.REBIRTHS', icon: '🌱', value: s.rebirths },
 		];
-		game.actions.forEach((action) => {
-			rows.push({
-				label: `EVENTS.DB_EVENTS.${action.typeEvent}`,
-				icon: this.ACTION_ICONS[action.typeEvent] ?? '•',
-				value: action.count,
-			});
-		});
 		const cd = !isJune ? s.creditDecisions : undefined;
 		if (cd) {
 			rows.push(
-				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_SINGLE', value: cd.acceptSingle },
-				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DOUBLE', value: cd.acceptDouble },
-				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DECLINE', value: cd.decline },
-				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_NO_ANSWER', value: cd.noAnswer },
-				{ label: 'RESULTS.COMPARE.CREDITS_ANIMATOR', value: cd.fromAnimator },
-				{ label: 'RESULTS.COMPARE.CREDITS_FIRST_QUESTION', value: cd.fromFirstQuestion },
-				{ label: 'RESULTS.COMPARE.CREDITS_SELF_SERVICE', value: cd.fromPlayerRequest },
-				{ label: 'RESULTS.COMPARE.CREDITS_REFUSED', value: cd.refused }
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_SINGLE', icon: '✅', value: cd.acceptSingle },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DOUBLE', icon: '⏫', value: cd.acceptDouble },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_DECLINE', icon: '❌', value: cd.decline },
+				{ label: 'RESULTS.COMPARE.FIRST_CREDIT_NO_ANSWER', icon: '❔', value: cd.noAnswer },
+				{ label: 'RESULTS.COMPARE.CREDITS_ANIMATOR', icon: '🎤', value: cd.fromAnimator },
+				{ label: 'RESULTS.COMPARE.CREDITS_FIRST_QUESTION', icon: '❓', value: cd.fromFirstQuestion },
+				{ label: 'RESULTS.COMPARE.CREDITS_SELF_SERVICE', icon: '🙋', value: cd.fromPlayerRequest },
+				{ label: 'RESULTS.COMPARE.CREDITS_REFUSED', icon: '🚫', value: cd.refused }
 			);
 		}
 		return rows;
+	}
+
+	/**
+	 * How the table treated each other: one row per action the rules opened, counted from the
+	 * events. An action offered but never played stays at zero, so an empty block means the
+	 * rules closed the actions rather than the table ignoring them.
+	 */
+	private behaviourRows(rule: Rules, game: GameResults): MetricRow[] {
+		const counts = new Map(game.actions.map((action) => [action.typeEvent, action.count]));
+		const offered = (rule.actions ?? [])
+			.filter((action) => action.enabled && this.ACTION_EVENTS[action.key])
+			.map((action) => this.ACTION_EVENTS[action.key]);
+		const types = offered.length ? offered : [...counts.keys()];
+		return types.map((typeEvent) => ({
+			label: `EVENTS.DB_EVENTS.${typeEvent}`,
+			icon: this.ACTION_ICONS[typeEvent] ?? '•',
+			value: counts.get(typeEvent) ?? 0,
+		}));
+	}
+
+	/** Whether the table played any of the actions it was offered. */
+	behavioursUsed(card: GameCard): boolean {
+		return card.game.actions.some((action) => action.count > 0);
 	}
 
 	/** Start → end of an indicator, its whole run in one reading. */

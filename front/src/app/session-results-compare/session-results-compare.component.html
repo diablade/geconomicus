@@ -86,6 +86,20 @@
 							</div>
 						</div>
 
+						<div class="cp-behaviour" *ngIf="card.behaviours.length">
+							<div class="cp-block-head"><span>{{ 'RESULTS.COMPARE.BEHAVIOURS' | translate }}</span></div>
+							<div class="cp-metric" *ngFor="let row of card.behaviours">
+								<span class="cp-metric-label">
+									<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
+									{{ row.label | translate }}
+								</span>
+								<span class="cp-metric-value small">{{ row.value }}</span>
+							</div>
+							<div class="cp-empty" *ngIf="!behavioursUsed(card)">
+								{{ 'RESULTS.COMPARE.BEHAVIOURS_UNUSED' | translate }}
+							</div>
+						</div>
+
 						<div class="cp-secondary">
 							<button type="button" class="cp-block-head cp-collapser" (click)="toggleSecondary(card)">
 								<span class="cp-caret">{{ secondaryOpen.has(card.id) ? '▾' : '▸' }}</span>
@@ -146,7 +160,7 @@
 
 							<div class="pod-empty" *ngIf="card.game.podium.length === 0">{{ 'RESULTS.COMPARE.NO_RANKING' | translate }}</div>
 							<div class="most-active" *ngIf="card.game.mostActive">
-								{{ 'RESULTS.COMPARE.MOST_ACTIVE' | translate }}
+								⚡ {{ 'RESULTS.COMPARE.MOST_ACTIVE' | translate }}
 								<b>{{ card.game.mostActive.avatar.name }}</b>
 								— {{ card.game.mostActive.count }} {{ 'RESULTS.COMPARE.ACTIONS' | translate }}
 							</div>

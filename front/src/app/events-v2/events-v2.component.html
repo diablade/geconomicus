@@ -66,14 +66,15 @@
 					<span class="amt">{{ amountOf(ev) }}</span>
 				</div>
 				<div class="ev2-who" *ngIf="whoOf(ev)">{{ whoOf(ev) }}</div>
-				<div class="ev2-cards" *ngIf="cardsOf(ev).length">
+				<div class="ev2-cards" *ngIf="cardsOf(ev).length || priceOf(ev)">
 					<span
 						class="mini"
 						*ngFor="let c of cardsOf(ev)"
-						[style.background]="c.color"
+						[ngClass]="c.colorClass"
 						[class.arrow]="c.arrow">
 						{{ c.letter }}
 					</span>
+					<span class="price" *ngIf="priceOf(ev) as price">{{ price }}</span>
 				</div>
 				<div class="ev2-detail" *ngIf="detailOf(ev).length">
 					<span *ngFor="let d of detailOf(ev)">{{ d.key | translate: d.params }}</span>
