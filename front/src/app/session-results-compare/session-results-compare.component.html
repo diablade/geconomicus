@@ -188,6 +188,7 @@
 							</div>
 							<div class="cp-canvas">
 								<canvas
+									*ngFor="let key of [block.key]"
 									baseChart
 									[type]="'line'"
 									[data]="block.data"

@@ -599,18 +599,19 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	private chartsFor(game: GameResults, isJune: boolean): ChartBlock[] {
 		const coinsIndicators = game.indicators.filter((i) => i.chart === 'coins');
 		const cardsIndicators = game.indicators.filter((i) => i.chart === 'cards');
+		const step = isJune ? false : ('before' as const);
 		const blocks: ChartBlock[] = [
 			{
 				key: `${game.gameStateId}-combined`,
 				label: this.i18n.instant('RESULTS.COMPARE.CHART_WEALTH'),
-				data: { datasets: this.toLines(game.combined) },
+				data: { datasets: this.toLines(game.combined, step) },
 				hasSecondaryAxis: false,
 				options: {},
 			},
 			{
 				key: `${game.gameStateId}-coins`,
 				label: this.i18n.instant('RESULTS.COMPARE.CHART_MONEY'),
-				data: { datasets: [...this.toLines(game.coins), ...this.toIndicatorLines(coinsIndicators)] },
+				data: { datasets: [...this.toLines(game.coins, step), ...this.toIndicatorLines(coinsIndicators)] },
 				hasSecondaryAxis: coinsIndicators.some((i) => i.axis === 'secondary'),
 				logY: isJune,
 				options: {},
@@ -625,7 +626,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			{
 				key: `${game.gameStateId}-third`,
 				label: this.i18n.instant(isJune ? 'RESULTS.COMPARE.CHART_RELATIVE' : 'RESULTS.COMPARE.CHART_NET_WEALTH'),
-				data: { datasets: this.toLines(game.third, isJune ? false : 'before') },
+				data: { datasets: this.toLines(game.third, step) },
 				hasSecondaryAxis: false,
 				options: {},
 			},

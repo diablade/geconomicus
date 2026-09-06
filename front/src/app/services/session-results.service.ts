@@ -327,14 +327,18 @@ export class SessionResultsService {
 		const cardsSeries = lives.map((life) => ({ life, points: cardsPts.get(life.idx)! }));
 		const debtSeries = lives.map((life) => ({ life, points: debtPts.get(life.idx)! }));
 
+		const issuanceAt = new Set(duSeries.map((p) => p.x));
+		const shaped = (series: LifeSeries[]): LifeSeries[] =>
+			isJune ? series.map((s) => ({ life: s.life, points: this.duStepped(s.points, issuanceAt) })) : series;
+
 		return {
 			gameStateId,
 			typeMoney: gameState.typeMoney,
 			isJune,
 			lives,
-			coins: coinsSeries,
+			coins: shaped(coinsSeries),
 			cardsValue: cardsSeries,
-			combined: this.wealthSeries(coinsSeries, cardsSeries, []),
+			combined: shaped(this.wealthSeries(coinsSeries, cardsSeries, [])),
 			third: isJune
 				? this.relativeSeries(coinsSeries, duSeries)
 				: this.wealthSeries(coinsSeries, cardsSeries, debtSeries),
@@ -535,10 +539,28 @@ export class SessionResultsService {
 	}
 
 	/**
-	 * Coins expressed in DU, carrying their own step shape: every vertex but a DU issuance
-	 * repeats the previous timestamp so the segment draws as a step-before, while a DU vertex
-	 * is left alone so the line ramps into its new value — the devaluation, sloped.
+	 * Rewrites one life's vertices so a DU issuance ramps into its new value while every other
+	 * event holds the previous value up to its own timestamp — the jump lands on the event that
+	 * caused it, and the issuance keeps a clean slope.
+	 *
+	 * An event that moved nothing is dropped rather than plotted: a death fires on the same beat
+	 * as an issuance, and keeping its flat vertex squeezed the ramp that follows into a cliff.
+	 * Issuance vertices are never dropped — they are what gives the ramp its width.
 	 */
+	private duStepped(points: SeriesPoint[], duAt: Set<string>): SeriesPoint[] {
+		const shaped: SeriesPoint[] = [];
+		for (const point of points) {
+			const previous = shaped[shaped.length - 1];
+			if (previous && !duAt.has(point.x)) {
+				if (previous.y === point.y) continue;
+				shaped.push({ x: point.x, y: previous.y });
+			}
+			shaped.push(point);
+		}
+		return shaped;
+	}
+
+	/** Coins expressed in DU, shaped so the devaluation at each issuance reads as a slope. */
 	private relativeSeries(coins: LifeSeries[], du: SeriesPoint[]): LifeSeries[] {
 		if (!du.length) return [];
 		const duAt = new Set(du.map((p) => p.x));
@@ -548,12 +570,9 @@ export class SessionResultsService {
 				const value = this.stepValueAt(series.points, x);
 				const duValue = this.stepValueAt(du, x);
 				if (value === undefined || !duValue) continue;
-				const y = this.round2(value / duValue);
-				const previous = points[points.length - 1];
-				if (previous && !duAt.has(x)) points.push({ x: previous.x, y });
-				points.push({ x, y });
+				points.push({ x, y: this.round2(value / duValue) });
 			}
-			return { life: series.life, points };
+			return { life: series.life, points: this.duStepped(points, duAt) };
 		});
 	}
 
