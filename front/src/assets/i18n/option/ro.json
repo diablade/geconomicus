@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6+ jucători)",
 		"START_DISTRIB_CARDS": "Numărul de cărți distribuite jucătorilor la începutul jocului",
 		"BUILD_AMOUNT": "Numărul identic de cărți pentru a construi o carte superioară:",
+		"LATENT_SQUARES": "Menține pătrate latente",
+		"LATENT_SQUARES_INFO": "După fiecare construcție, jucătorul care tocmai a produs trage cu prioritate cartea care le lipsește altor jucători pentru a completa un pătrat. Pătratul devine posibil în joc, dar numai prin schimb: trebuie să vorbiți între voi.",
+		"LATENT_SQUARES_PCT": "% dintre jucători, adică {{count}} pătrat(e) latent(e) vizate permanent",
 		"ACTIONS_TITLE": "Acțiuni",
 		"STARTING_TOKENS": "Jetoane inițiale",
 		"COST": "Cost"

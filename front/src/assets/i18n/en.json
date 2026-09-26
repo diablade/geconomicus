@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "player non-existent",
 		"UPDATE": "modification impossible",
 		"EXCHANGE": "exchange impossible",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Trade impossible with a dead or imprisoned player",
 		"ID_PLAYER_MISSING": "Player ID missing",
 		"INSUFFICIENT_FUNDS": "Insufficient funds",
 		"DELETE": "deletion impossible",

@@ -6,6 +6,7 @@ await jest.unstable_mockModule('#config/log', () => ({
 }));
 
 const { default: DecksEngine } = await import('../src/gameState/engine/decks.engine.js');
+const { default: DecksHelper } = await import('../src/gameState/helpers/decks.helper.js');
 
 const card = (letter, weight, copy) => ({
 	key: `${letter}${weight}${copy}`,
@@ -38,9 +39,11 @@ const makeGameState = (overrides = {}) => ({
 	...overrides,
 });
 
+const baseRules = { amountCardsForProd: 4, generatedIdenticalLetters: 5 };
+
 const makeEntry = (gameState = makeGameState()) => ({
 	gameState,
-	rules: { amountCardsForProd: 4, generatedIdenticalLetters: 5 },
+	rules: { ...baseRules },
 	events: [],
 });
 
@@ -166,5 +169,103 @@ describe('DecksEngine — produce', () => {
 		const entry = makeEntry();
 
 		expect(() => DecksEngine.produce(entry, 99, completeRecipe('A', 0))).toThrow('ERROR.PLAYER_NOT_FOUND');
+	});
+});
+
+describe('DecksHelper — latent squares', () => {
+	const rules = { ...baseRules, latentSquares: true, latentSquaresPct: 50 };
+
+	/** Two players: player 1 holds three copies of Z0, so the table is one copy short of a square. */
+	const tableNeedingOneCard = () =>
+		makeGameState({
+			decks: [[card('B', 0, 1), card('Z', 0, 4)], [], [], []],
+			playersStates: [
+				{ idx: 0, avatarIdx: 0, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [], actionTokens: 0 },
+				{
+					idx: 1,
+					avatarIdx: 1,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('Z', 0, 1), card('Z', 0, 2), card('Z', 0, 3)],
+					actionTokens: 0,
+				},
+			],
+		});
+
+	it('takes the copy the table is missing first, then draws blind once the goal is met', () => {
+		const gameState = tableNeedingOneCard();
+
+		const drawn = DecksHelper.drawProductionCards(gameState, rules, gameState.playersStates[0], 0, 2);
+
+		expect(drawn.map((c) => c.key)).toEqual(['Z04', 'B01']);
+		expect(DecksHelper.countLatentSquares(gameState, 4)).toBe(1);
+	});
+
+	it('draws off the top of the deck when the option is off', () => {
+		const gameState = tableNeedingOneCard();
+
+		const drawn = DecksHelper.drawProductionCards(
+			gameState,
+			{ ...rules, latentSquares: false },
+			gameState.playersStates[0],
+			0,
+			1
+		);
+
+		expect(drawn.map((c) => c.key)).toEqual(['B01']);
+	});
+
+	it('never hands the producer the copy that would complete his own square', () => {
+		const gameState = makeGameState({
+			decks: [[card('B', 0, 1), card('Z', 0, 4)], [], [], []],
+			playersStates: [
+				{
+					idx: 0,
+					avatarIdx: 0,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('Z', 0, 1), card('Z', 0, 2), card('Z', 0, 3)],
+					actionTokens: 0,
+				},
+				{ idx: 1, avatarIdx: 1, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [], actionTokens: 0 },
+			],
+		});
+
+		const drawn = DecksHelper.drawProductionCards(gameState, rules, gameState.playersStates[0], 0, 1);
+
+		expect(drawn.map((c) => c.key)).toEqual(['B01']);
+	});
+
+	it('still hands him a copy while another life holds one too', () => {
+		const gameState = makeGameState({
+			decks: [[card('B', 0, 1), card('Z', 0, 4)], [], [], []],
+			playersStates: [
+				{
+					idx: 0,
+					avatarIdx: 0,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('Z', 0, 1), card('Z', 0, 2)],
+					actionTokens: 0,
+				},
+				{ idx: 1, avatarIdx: 1, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [card('Z', 0, 3)], actionTokens: 0 },
+			],
+		});
+
+		const drawn = DecksHelper.drawProductionCards(gameState, rules, gameState.playersStates[0], 0, 1);
+
+		expect(drawn.map((c) => c.key)).toEqual(['Z04']);
+		expect(DecksHelper.countLatentSquares(gameState, 4)).toBe(1);
+	});
+
+	it('counts a square one player already holds alone, since a ready square is latent too', () => {
+		const gameState = makeGameState({
+			decks: [[], [], [], []],
+			playersStates: [
+				{ idx: 0, avatarIdx: 0, status: PLAYER_STATUS.ALIVE, coins: 10, cards: completeRecipe('A', 0), actionTokens: 0 },
+			],
+		});
+
+		expect(DecksHelper.countLatentSquares(gameState, 4)).toBe(1);
 	});
 });

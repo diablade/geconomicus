@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "プレイヤーが存在しません",
 		"UPDATE": "更新できません",
 		"EXCHANGE": "交換できません",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "死亡中または投獄中のプレイヤーとは交換できません",
 		"ID_PLAYER_MISSING": "プレイヤーIDがありません",
 		"INSUFFICIENT_FUNDS": "資金が不足しています",
 		"DELETE": "削除できません",

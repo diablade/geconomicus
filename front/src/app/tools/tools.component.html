@@ -68,6 +68,13 @@
 		<mat-slide-toggle class="runtoggle" [(ngModel)]="request.rules.generateLettersAuto">
 			{{ 'TOOLS.FIELD.AUTO_LETTERS' | translate }}
 		</mat-slide-toggle>
+		<mat-slide-toggle class="runtoggle" [(ngModel)]="request.rules.latentSquares">
+			{{ 'TOOLS.FIELD.LATENT_SQUARES' | translate }}
+		</mat-slide-toggle>
+		<mat-form-field appearance="outline" class="runfield" *ngIf="request.rules.latentSquares">
+			<mat-label>{{ 'TOOLS.FIELD.LATENT_SQUARES_PCT' | translate }}</mat-label>
+			<input matInput type="number" min="0" max="100" [(ngModel)]="request.rules.latentSquaresPct" />
+		</mat-form-field>
 
 		<span class="spacer"></span>
 

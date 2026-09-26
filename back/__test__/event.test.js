@@ -45,9 +45,9 @@ afterAll(async () => {
 });
 
 describe('EVENT controller tests', () => {
-    describe('GET /event/session/:sessionId', () => {
+    describe('GET /events/session/:sessionId', () => {
         test('should return empty data array when no events exist (200)', async () => {
-            const res = await agent.get(`/event/session/${sessionId}`).send();
+            const res = await agent.get(`/events/session/${sessionId}`).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.data).toEqual([]);
@@ -58,7 +58,7 @@ describe('EVENT controller tests', () => {
 
             await EventService.postNow('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
 
-            const res = await agent.get(`/event/session/${sessionId}`).send();
+            const res = await agent.get(`/events/session/${sessionId}`).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(Array.isArray(res.body.data)).toBe(true);
@@ -75,7 +75,7 @@ describe('EVENT controller tests', () => {
             await EventService.postNow('event-A', sessionId1, gameStateId, 'master', '-', { a: 1 });
             await EventService.postNow('event-B', sessionId2, gameStateId, 'master', '-', { b: 2 });
 
-            const res1 = await agent.get(`/event/session/${sessionId1}`).send();
+            const res1 = await agent.get(`/events/session/${sessionId1}`).send();
             expect(res1.status).toBe(200);
             expect(res1.body.data).toHaveLength(1);
             expect(res1.body.data[0].sessionId).toBe(sessionId1);
@@ -83,7 +83,7 @@ describe('EVENT controller tests', () => {
         });
 
         test('should return 400 on invalid sessionId format', async () => {
-            const res = await agent.get('/event/session/not-an-object-id').send();
+            const res = await agent.get('/events/session/not-an-object-id').send();
             expect(res.status).toBe(400);
             expect(res.body).toBeTruthy();
             expect(res.body.status).toBe('validation_error');
@@ -97,7 +97,7 @@ describe('EVENT controller tests', () => {
                 throw new Error('forced failure');
             });
 
-            const res = await agent.get(`/event/session/${sessionId}`).send();
+            const res = await agent.get(`/events/session/${sessionId}`).send();
             expect(res.status).toBe(500);
             expect(res.body).toBeTruthy();
             expect(res.body.message).toBe('Failed to fetch event');
@@ -107,11 +107,11 @@ describe('EVENT controller tests', () => {
         });
     });
 
-    describe('GET /event/game/:gameStateId', () => {
+    describe('GET /events/game/:gameStateId', () => {
         test('should return count=0 and empty data array when no events exist (200)', async () => {
             const gameStateId = new mongoose.Types.ObjectId().toString();
 
-            const res = await agent.get(`/event/game/${gameStateId}`).send();
+            const res = await agent.get(`/events/game/${gameStateId}`).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.count).toBe(0);
@@ -124,7 +124,7 @@ describe('EVENT controller tests', () => {
 
             await EventService.postNow('event-A', sessionId, gameStateId, 'master', '-', { a: 1 });
 
-            const res = await agent.get(`/event/game/${gameStateId}`).send();
+            const res = await agent.get(`/events/game/${gameStateId}`).send();
             expect(res.status).toBe(200);
             expect(res.body).toBeTruthy();
             expect(res.body.count).toBe(1);
@@ -141,7 +141,7 @@ describe('EVENT controller tests', () => {
             await EventService.postNow('event-A', sessionId, gameStateId1, 'master', '-', { a: 1 });
             await EventService.postNow('event-B', sessionId, gameStateId2, 'master', '-', { b: 2 });
 
-            const res1 = await agent.get(`/event/game/${gameStateId1}`).send();
+            const res1 = await agent.get(`/events/game/${gameStateId1}`).send();
             expect(res1.status).toBe(200);
             expect(res1.body.count).toBe(1);
             expect(res1.body.data[0].gameStateId).toBe(gameStateId1);
@@ -149,7 +149,7 @@ describe('EVENT controller tests', () => {
         });
 
         test('should return 400 on invalid gameStateId format', async () => {
-            const res = await agent.get('/event/game/not-an-object-id').send();
+            const res = await agent.get('/events/game/not-an-object-id').send();
             expect(res.status).toBe(400);
             expect(res.body).toBeTruthy();
             expect(res.body.status).toBe('validation_error');
@@ -163,7 +163,7 @@ describe('EVENT controller tests', () => {
                 throw new Error('forced failure');
             });
 
-            const res = await agent.get(`/event/game/${gameStateId}`).send();
+            const res = await agent.get(`/events/game/${gameStateId}`).send();
             expect(res.status).toBe(500);
             expect(res.body).toBeTruthy();
             expect(res.body.message).toBe('Failed to fetch events');

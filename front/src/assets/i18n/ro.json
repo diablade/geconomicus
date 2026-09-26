@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "jucător inexistent",
 		"UPDATE": "modificare imposibilă",
 		"EXCHANGE": "schimb imposibil",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Schimb imposibil cu un jucător mort sau în închisoare",
 		"ID_PLAYER_MISSING": "Lipsește ID-ul jucătorului",
 		"INSUFFICIENT_FUNDS": "Fonduri insuficiente",
 		"DELETE": "ștergere imposibilă",

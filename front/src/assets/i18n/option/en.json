@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6+ players)",
 		"START_DISTRIB_CARDS": "Number of cards distributed to players at game start",
 		"BUILD_AMOUNT": "Identical number of cards to build a superior card:",
+		"LATENT_SQUARES": "Maintain latent squares",
+		"LATENT_SQUARES_INFO": "After each build, the player who just produced draws first the card other players are missing to complete a square. The square becomes possible in play, but only through trade: people have to talk to each other.",
+		"LATENT_SQUARES_PCT": "% of players, i.e. {{count}} latent square(s) targeted at all times",
 		"ACTIONS_TITLE": "Actions",
 		"STARTING_TOKENS": "Starting tokens",
 		"COST": "Cost"

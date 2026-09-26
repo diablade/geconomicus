@@ -18,6 +18,8 @@ let RulesSchema = new Schema(
 		generateLettersAuto: { type: Boolean, required: true, default: true },
 		generateLettersInDeck: { type: Number, required: false },
 		distribInitCards: { type: Number, required: true, default: 4 },
+		latentSquares: { type: Boolean, required: true, default: false },
+		latentSquaresPct: { type: Number, required: true, default: 30 },
 		surveyEnabled: { type: Boolean, required: true, default: true },
 		roundMinutes: { type: Number, required: true, default: 20 },
 		autoDeath: { type: Boolean, required: true, default: true },
@@ -44,12 +46,11 @@ let RulesSchema = new Schema(
 		defaultInterestAmount: { type: Number, required: true, default: 1 },
 		durationCredit: { type: Number, required: true, default: 5 },
 		timerPrison: { type: Number, required: true, default: 5 },
-		manualBank: { type: Boolean, required: true, default: false }, // deprecated — superseded by autoBank
 
 		//auto-bank (see docs/adr/0003-auto-bank-rate-board.md)
-		autoBank: { type: Boolean, required: true, default: false },
+		autoBank: { type: Boolean, required: true, default: true },
 		//auto-seizure (see docs/adr/0005-auto-seizure.md) — independent of autoBank
-		autoSeizure: { type: Boolean, required: true, default: false },
+		autoSeizure: { type: Boolean, required: true, default: true },
 		bankProfile: {
 			type: String,
 			required: true,

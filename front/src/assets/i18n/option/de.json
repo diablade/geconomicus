@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6 Spieler und mehr)",
 		"START_DISTRIB_CARDS": "Anzahl der Karten, die den Spielern am Anfang der Runde verteilt werden",
 		"BUILD_AMOUNT": "Anzahl identischer Karten, die benötigt werden, um eine Karte von höherem Wert zu erhalten :",
+		"LATENT_SQUARES": "Latente Quadrate aufrechterhalten",
+		"LATENT_SQUARES_INFO": "Nach jedem Bau zieht der Spieler, der gerade produziert hat, vorrangig die Karte, die anderen Spielern zum Vervollständigen eines Quadrats fehlt. Das Quadrat wird im Spiel möglich, aber nur durch Tausch: man muss miteinander reden.",
+		"LATENT_SQUARES_PCT": "% der Spieler, also {{count}} latente(s) Quadrat(e) dauerhaft angestrebt",
 		"ACTIONS_TITLE": "Aktionen",
 		"STARTING_TOKENS": "Start-Jetons",
 		"COST": "Kosten"

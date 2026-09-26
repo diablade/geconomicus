@@ -18,6 +18,8 @@ export const sanitize = {
 			generateLettersAuto: Joi.boolean().default(true),
 			generateLettersInDeck: Joi.number().integer().min(1).max(200).empty([null, '']).optional(),
 			distribInitCards: Joi.number().integer().min(1).max(12).default(4),
+			latentSquares: Joi.boolean().default(false),
+			latentSquaresPct: Joi.number().min(0).max(100).empty([null, '']).default(30),
 			autoDeath: Joi.boolean().default(true),
 			inequalityStart: Joi.boolean().default(false),
 			startAmountCoins: Joi.number().min(0).max(100).default(5),

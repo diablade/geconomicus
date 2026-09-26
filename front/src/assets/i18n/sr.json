@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "igrač ne postoji",
 		"UPDATE": "izmena nemoguća",
 		"EXCHANGE": "razmena nemoguća",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Razmena nemoguća sa mrtvim igračem ili igračem u zatvoru",
 		"ID_PLAYER_MISSING": "Nedostaje ID igrača",
 		"INSUFFICIENT_FUNDS": "Nedovoljno sredstava",
 		"DELETE": "brisanje nemoguće",

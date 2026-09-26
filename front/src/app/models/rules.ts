@@ -13,6 +13,8 @@ export class Rules {
 	generateLettersAuto = false;
 	generateLettersInDeck = 0;
 	distribInitCards = 0;
+	latentSquares = false;
+	latentSquaresPct = 0;
 	surveyEnabled = false;
 	roundMax = 0;
 	roundMinutes = 0;
@@ -39,7 +41,6 @@ export class Rules {
 	defaultInterestAmount = 0;
 	durationCredit = 0;
 	timerPrison = 0;
-	manualBank = false;
 	autoBank = false;
 	autoSeizure = false;
 	bankProfile: BankProfile = BANK_PROFILE.NORMAL;

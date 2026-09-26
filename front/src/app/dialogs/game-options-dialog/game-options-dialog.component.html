@@ -430,6 +430,16 @@
 						<input class="smallInput" type="number" [(ngModel)]="rules.amountCardsForProd" />
 					</mat-radio-button>
 				</mat-radio-group>
+				<mat-checkbox class="mt-3" [(ngModel)]="rules.latentSquares">
+					{{ 'OPTION.LATENT_SQUARES' | translate }} ⚠️ EXPERIMENTAL
+				</mat-checkbox>
+				<div class="fs-7 infoLabel">{{ 'OPTION.LATENT_SQUARES_INFO' | translate }}</div>
+				<div *ngIf="rules.latentSquares" class="d-flex flex-row align-items-center ms-3 mt-1">
+					<input class="smallInput" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct" />
+					<span class="ms-2">{{
+						'OPTION.LATENT_SQUARES_PCT' | translate: { count: Math.round(((playersLength || 0) * rules.latentSquaresPct) / 100) }
+					}}</span>
+				</div>
 			</div>
 		</div>
 	</div>

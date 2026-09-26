@@ -160,6 +160,116 @@ DecksHelper.drawReincarnationCards = (gameState, units) => {
 };
 
 /**
+ * Identity of a recipe: the letter and level a card belongs to.
+ *
+ * @param {{letter: string, weight: number}} card
+ * @returns {string} key of the form `"A:0"`
+ */
+DecksHelper.recipeKeyOf = (card) => `${card.letter}:${card.weight}`;
+
+/**
+ * The lives still holding cards — ALIVE or PRISON, since prison is a state of the current life.
+ *
+ * @param {object} gameState
+ * @returns {Array<object>} the living player states
+ */
+const _livingOf = (gameState) => gameState.playersStates.filter((p) => p.status !== PLAYER_STATUS.DEAD);
+
+/**
+ * Map each recipe to the distinct copies living hands hold.
+ *
+ * @param {Array<object>} livingPlayers
+ * @returns {Map<string, Map<string, number>>} recipe key -> (card key -> holder idx)
+ */
+const _heldCopiesByRecipe = (livingPlayers) => {
+	const byRecipe = new Map();
+	livingPlayers.forEach((p) =>
+		(p.cards || []).forEach((card) => {
+			const key = DecksHelper.recipeKeyOf(card);
+			if (!byRecipe.has(key)) byRecipe.set(key, new Map());
+			byRecipe.get(key).set(card.key, p.idx);
+		})
+	);
+	return byRecipe;
+};
+
+/**
+ * Recipes completable from living hands alone — the trades that can actually happen.
+ *
+ * @param {Array<object>} livingPlayers
+ * @param {number} need - copies required by the recipe shape
+ * @returns {Set<string>} latent recipe keys
+ */
+DecksHelper.latentRecipeSet = (livingPlayers, need) => {
+	const latent = new Set();
+	_heldCopiesByRecipe(livingPlayers).forEach((copies, key) => {
+		if (copies.size >= need) latent.add(key);
+	});
+	return latent;
+};
+
+/**
+ * How many latent squares the table currently holds.
+ */
+DecksHelper.countLatentSquares = (gameState, amountCardsForProd) =>
+	DecksHelper.latentRecipeSet(_livingOf(gameState), amountCardsForProd).size;
+
+/**
+ * How many latent squares the table should keep in play: a percentage of the living players.
+ */
+DecksHelper.latentSquaresGoal = (gameState, rules) =>
+	Math.round((_livingOf(gameState).length * (rules.latentSquaresPct ?? 0)) / 100);
+
+/**
+ * Draw a producer's replacement cards, spending the first picks on copies that turn a recipe
+ * another life is chasing into a latent square — never the copy that would complete the
+ * producer's own square — then taking the rest off the shuffled deck. Falls back to a plain
+ * draw once the goal is met, when no deck card qualifies, or when the option is off.
+ *
+ * @param {object} gameState   - mutable in-memory game state
+ * @param {object} rules       - game rules (latentSquares, latentSquaresPct, amountCardsForProd)
+ * @param {object} playerState - the producer, mutated
+ * @param {number} weight      - deck level to draw from
+ * @param {number} amount      - cards to draw
+ * @returns {Array} the cards drawn
+ */
+DecksHelper.drawProductionCards = (gameState, rules, playerState, weight, amount) => {
+	const deck = gameState.decks[weight];
+	const drawn = [];
+	const goal = rules.latentSquares ? DecksHelper.latentSquaresGoal(gameState, rules) : 0;
+
+	while (drawn.length < amount && DecksHelper.countLatentSquares(gameState, rules.amountCardsForProd) < goal) {
+		const byRecipe = _heldCopiesByRecipe(_livingOf(gameState));
+		const index = deck.findIndex((card) => {
+			const holders = byRecipe.get(DecksHelper.recipeKeyOf(card));
+			if (holders?.size !== rules.amountCardsForProd - 1) return false;
+			const ownCopies = [...holders.values()].filter((idx) => idx === playerState.idx).length;
+			return ownCopies < rules.amountCardsForProd - 1;
+		});
+		if (index < 0) break;
+		const card = deck.splice(index, 1)[0];
+		playerState.cards.push(card);
+		drawn.push(card);
+	}
+
+	const filler = deck.splice(0, amount - drawn.length);
+	playerState.cards.push(...filler);
+
+	if (drawn.length + filler.length < amount) {
+		log.warn(
+			`[DecksHelper] production draw short: decks[${weight}] exhausted, dealt ${drawn.length + filler.length} card(s) for target ${amount}`
+		);
+	}
+	if (goal > 0) {
+		log.debug(
+			`[DecksHelper] latent squares: player ${playerState.idx} took ${drawn.length}/${amount} targeted card(s), table at ${DecksHelper.countLatentSquares(gameState, rules.amountCardsForProd)}/${goal}`
+		);
+	}
+
+	return [...drawn, ...filler];
+};
+
+/**
  * Produce / level-up cards for a player (pure in-memory).
  * Exchanges amountCardsForProd same-weight cards for a higher-weight set.
  * Caller must hold the game lock.
@@ -208,12 +318,11 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 	gameState.decks[weight + 1] = _.shuffle(gameState.decks[weight + 1]);
 
 	// Draw new cards
-	const newCards = gameState.decks[weight].splice(0, amountCardsForProd);
+	const newCards = DecksHelper.drawProductionCards(gameState, rules, playerState, weight, amountCardsForProd);
 	const newCardSup = gameState.decks[weight + 1].splice(0, 1)[0];
-	const cardsDraw = [...newCards, newCardSup];
 
 	// Add new cards to player's hand
-	playerState.cards = [...playerState.cards, ...cardsDraw];
+	playerState.cards.push(newCardSup);
 
 	return {
 		cardsLK: playerState.cards,

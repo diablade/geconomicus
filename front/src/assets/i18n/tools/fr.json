@@ -31,6 +31,8 @@
 			"OPENING_HAND": "Main de départ",
 			"AUTO_LETTERS": "Lettres auto (1,25 ×)",
 			"LETTERS_IN_DECK": "Lettres dans le deck",
+			"LATENT_SQUARES": "Entretenir des carrés latents",
+			"LATENT_SQUARES_PCT": "% des joueurs visés en carrés latents",
 			"START_COINS": "Monnaie de départ (libre)",
 			"GROWTH": "Croissance % (libre)",
 			"CREDIT_AMOUNT": "Montant du crédit (dette)",

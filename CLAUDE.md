@@ -33,6 +33,8 @@ In TypeScript use `i18nService.instant('KEY')` — toasts, snackbars, dialog tex
 
 **Never give a root key and a namespace key the same top-level name.** ngx-translate v14 `mergeDeep` recurses whenever the key already exists, so merging namespace `{"TUTORIAL": {...}}` onto root `"TUTORIAL": "Comment jouer ?"` destroys the whole namespace subtree and renders `[object Object]`. It fails silently — no console error.
 
-**Write `fr.json` only.** French is the source language; the other seven (`en`, `it`, `de`, `es`, `ja`, `ro`, `sr`) are a separate pass the user runs. Adding a key to all eight files unasked is churn.
+**Write all eight languages** (reversed 2026-09-27; the previous fr-only rule suited a dev-phase project, and the game is close to production now). French is the source language, but `en`, `it`, `de`, `es`, `ja`, `ro`, `sr` land in the same change — a key that exists in one file and not the others renders raw on screen for those players.
+
+Before inventing a word, grep the target file for how it already translates the domain term (`carré` is `square` / `quadrato` / `Quadrat` / `cuadrado` / スクエア / `pătrat` / `kvadrat`), keep `sr` in Latin script, and carry every `{{interpolation}}` through all eight. Re-parse each file as JSON after editing rather than trusting the eye.
 
 **Backend emits keys too.** `res.json({ message: 'ERROR.X' })` flows through `ErrorService.handleError` → `i18nService.instant()`. Returning raw English prose from `back/` reaches the user untranslated, because `SnackbarService` does not translate. Some legacy responses still do this — don't add more.

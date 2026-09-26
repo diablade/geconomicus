@@ -11,13 +11,19 @@
  * @module tools/sim/metrics
  */
 
+import DecksHelper from '../../src/gameState/helpers/decks.helper.js';
+
 /**
  * Identity of a recipe: the letter and level a card belongs to.
+ *
+ * Re-exported from the engine helper rather than redefined here: the game biases its
+ * production draws on this same key, so a second spelling would silently decouple the
+ * `latent-floor` gate from the rule it is meant to measure.
  *
  * @param {{letter: string, weight: number}} card
  * @returns {string} key of the form `"A:0"`
  */
-export const recipeKeyOf = (card) => `${card.letter}:${card.weight}`;
+export const recipeKeyOf = DecksHelper.recipeKeyOf;
 
 /**
  * Group cards by recipe, counting DISTINCT copies.
@@ -67,23 +73,14 @@ export function countReadySquares(livingPlayers, need) {
 /**
  * Recipes completable from living hands alone — the trades that can actually happen.
  *
+ * Owned by the engine helper, which the game itself consults when drawing production
+ * cards, so the simulator measures exactly what the table plays.
+ *
  * @param {Array<{cards: Array<object>}>} livingPlayers
  * @param {number} need - copies required by the recipe shape
  * @returns {Set<string>} latent recipe keys
  */
-export function latentRecipeSet(livingPlayers, need) {
-	const pooled = new Map();
-	for (const player of livingPlayers) {
-		for (const card of player.cards) {
-			const key = recipeKeyOf(card);
-			if (!pooled.has(key)) pooled.set(key, new Set());
-			pooled.get(key).add(card.key);
-		}
-	}
-	const latent = new Set();
-	for (const [key, copies] of pooled) if (copies.size >= need) latent.add(key);
-	return latent;
-}
+export const latentRecipeSet = DecksHelper.latentRecipeSet;
 
 /**
  * Recipes completable if deck cards counted too — the paper-possible set.

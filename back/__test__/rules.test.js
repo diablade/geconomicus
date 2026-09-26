@@ -116,7 +116,7 @@ describe('RULES controller', () => {
             const raw = await SessionModel.findById(session._id).lean();
             const persisted = raw.gamesRules.find((rule) => rule.idx === ruleIdx);
             expect(persisted.roundMinutes).toBe(20);
-            expect(persisted.autoBank).toBe(false);
+            expect(persisted.autoBank).toBe(true);
             expect(persisted.seizureType).toBeTruthy();
             expect(persisted.actions.length).toBeGreaterThan(0);
             expect(persisted.rateSchedule.length).toBeGreaterThan(0);

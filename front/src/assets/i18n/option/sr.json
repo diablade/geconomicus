@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6+ igrača)",
 		"START_DISTRIB_CARDS": "Broj karata podeljenih igračima na početku igre",
 		"BUILD_AMOUNT": "Identičan broj karata za izgradnju superiorne karte:",
+		"LATENT_SQUARES": "Održavaj latentne kvadrate",
+		"LATENT_SQUARES_INFO": "Posle svake izgradnje, igrač koji je upravo proizveo prvo vuče kartu koja nedostaje drugim igračima da upotpune kvadrat. Kvadrat postaje moguć u igri, ali samo kroz razmenu: morate razgovarati.",
+		"LATENT_SQUARES_PCT": "% igrača, odnosno {{count}} latentni kvadrat(i) koji se stalno ciljaju",
 		"ACTIONS_TITLE": "Akcije",
 		"STARTING_TOKENS": "Početni žetoni",
 		"COST": "Cena"

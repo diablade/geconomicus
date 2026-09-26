@@ -15,19 +15,22 @@ const NUMERIC = new Set([
 	'generatedIdenticalLetters',
 	'generateLettersInDeck',
 	'distribInitCards',
+	'latentSquaresPct',
 	'startAmountCoins',
 	'durationCredit',
 	'timerPrison',
 	'defaultCreditAmount',
 	'defaultInterestAmount',
 ]);
-const BOOLEAN = new Set(['autoDeath', 'generateLettersAuto', 'inequalityStart']);
+const BOOLEAN = new Set(['autoDeath', 'generateLettersAuto', 'inequalityStart', 'latentSquares']);
 const RULE_KEYS = new Set([
 	'amountCardsForProd',
 	'generatedIdenticalLetters',
 	'generateLettersAuto',
 	'generateLettersInDeck',
 	'distribInitCards',
+	'latentSquares',
+	'latentSquaresPct',
 	'startAmountCoins',
 	'autoDeath',
 	'inequalityStart',
@@ -65,6 +68,7 @@ Geconomicus deck simulation — single run
   --generatedIdenticalLetters N   copies minted per letter
   --generateLettersAuto false --generateLettersInDeck N   override the 1.25x formula
   --distribInitCards N        opening hand
+  --latentSquares true --latentSquaresPct N   bias production draws toward keeping N% of living players' worth of latent squares
   --rounds N                  session length in rounds (default 50)
   --autoDeath false           disable the death queue
 

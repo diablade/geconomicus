@@ -31,6 +31,8 @@
 			"OPENING_HAND": "Opening hand",
 			"AUTO_LETTERS": "Auto letters (1.25 ×)",
 			"LETTERS_IN_DECK": "Letters in deck",
+			"LATENT_SQUARES": "Maintain latent squares",
+			"LATENT_SQUARES_PCT": "% of players targeted as latent squares",
 			"START_COINS": "Start coins (june)",
 			"GROWTH": "Growth % (june)",
 			"CREDIT_AMOUNT": "Credit amount (debt)",

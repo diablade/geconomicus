@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "Spieler nicht gefunden",
 		"UPDATE": "Aktualisierung fehlgeschlagen",
 		"EXCHANGE": "Austausch nicht möglich",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Austausch mit einem toten oder inhaftierten Spieler nicht möglich",
 		"ID_PLAYER_MISSING": "Spieler-ID fehlt",
 		"INSUFFICIENT_FUNDS": "Nicht genug Geld",
 		"DELETE": "Löschen fehlgeschlagen",

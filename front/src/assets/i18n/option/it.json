@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6 giocatori et più di 6)",
 		"START_DISTRIB_CARDS": "Numero di carte distribuite ai giocatori all'inizio del gioco",
 		"BUILD_AMOUNT": "Numero di carte identiche necessarie per costruire una carta superiore:",
+		"LATENT_SQUARES": "Mantenere quadrati latenti",
+		"LATENT_SQUARES_INFO": "Dopo ogni costruzione, il giocatore che ha appena prodotto pesca per prima la carta che manca agli altri giocatori per completare un quadrato. Il quadrato diventa possibile in gioco, ma solo tramite lo scambio: bisogna parlarsi.",
+		"LATENT_SQUARES_PCT": "% dei giocatori, ovvero {{count}} quadrato/i latente/i mantenuto/i in permanenza",
 		"ACTIONS_TITLE": "Azioni",
 		"STARTING_TOKENS": "Gettoni iniziali",
 		"COST": "Costo"

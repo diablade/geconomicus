@@ -59,6 +59,8 @@ export class ToolsComponent {
 			generateLettersAuto: true,
 			generateLettersInDeck: 10,
 			distribInitCards: 4,
+			latentSquares: false,
+			latentSquaresPct: 30,
 			autoDeath: true,
 			inequalityStart: false,
 			startAmountCoins: 5,

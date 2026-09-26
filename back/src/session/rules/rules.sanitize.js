@@ -25,6 +25,8 @@ export const sanitize = {
 			generateLettersAuto: Joi.boolean().default(true),
 			generateLettersInDeck: Joi.number(),
 			distribInitCards: Joi.number().default(4),
+			latentSquares: Joi.boolean().default(false),
+			latentSquaresPct: Joi.number().min(0).max(100).default(30),
 			surveyEnabled: Joi.boolean().default(true),
 			roundMax: Joi.number().default(1),
 			roundMinutes: Joi.number().default(20),
@@ -45,9 +47,8 @@ export const sanitize = {
 			defaultInterestAmount: Joi.number().default(1),
 			durationCredit: Joi.number().default(5),
 			timerPrison: Joi.number().default(5),
-			manualBank: Joi.boolean().default(false),
-			autoBank: Joi.boolean().default(false),
-			autoSeizure: Joi.boolean().default(false),
+			autoBank: Joi.boolean().default(true),
+			autoSeizure: Joi.boolean().default(true),
 			bankProfile: Joi.string()
 				.valid(...Object.values(BANK_PROFILE))
 				.default(BANK_PROFILE.NORMAL),
@@ -84,6 +85,8 @@ export const sanitize = {
 			generateLettersAuto: Joi.boolean().optional(),
 			generateLettersInDeck: Joi.number().optional(),
 			distribInitCards: Joi.number().optional(),
+			latentSquares: Joi.boolean().optional(),
+			latentSquaresPct: Joi.number().min(0).max(100).optional(),
 			surveyEnabled: Joi.boolean().optional(),
 			roundMax: Joi.number().optional(),
 			roundMinutes: Joi.number().optional(),
@@ -102,7 +105,6 @@ export const sanitize = {
 			defaultInterestAmount: Joi.number().optional(),
 			durationCredit: Joi.number().optional(),
 			timerPrison: Joi.number().optional(),
-			manualBank: Joi.boolean().optional(),
 			autoBank: Joi.boolean().optional(),
 			autoSeizure: Joi.boolean().optional(),
 			bankProfile: Joi.string()

@@ -11,6 +11,7 @@
 import _ from 'lodash';
 import { DB_EVENTS, PLAYER_STATUS, PLAYER_TYPE } from '@geco/shared';
 import EventHelper from '../../src/gameState/helpers/event.helper.js';
+import DecksHelper from '../../src/gameState/helpers/decks.helper.js';
 
 const COLORS = ['red', 'yellow', 'green', 'blue', 'orange', 'purple'];
 
@@ -301,10 +302,10 @@ export function produceAboveCeiling(entry, playerStateIdx, cards) {
 	gameState.decks[weight] = _.shuffle([...gameState.decks[weight], ...cardsToExchange]);
 	gameState.decks[weight + 1] = _.shuffle(gameState.decks[weight + 1]);
 
-	const newCards = gameState.decks[weight].splice(0, amountCardsForProd);
+	const newCards = DecksHelper.drawProductionCards(gameState, rules, playerState, weight, amountCardsForProd);
 	const newCardSup = gameState.decks[weight + 1].splice(0, 1)[0];
 
-	playerState.cards = [...playerState.cards, ...newCards, newCardSup];
+	playerState.cards.push(newCardSup);
 	playerState.actionTokens = (playerState.actionTokens ?? 0) + 1;
 
 	events.push(

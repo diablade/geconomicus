@@ -103,6 +103,8 @@ export function defaultRules(overrides = {}) {
 		generateLettersAuto: true,
 		generateLettersInDeck: undefined,
 		distribInitCards: 4,
+		latentSquares: false,
+		latentSquaresPct: 30,
 		startAmountCoins: 5,
 		startingTokens: 1,
 		priceWeight1: 1,

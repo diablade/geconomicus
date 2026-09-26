@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6 joueurs et plus)",
 		"START_DISTRIB_CARDS": "Nombre de cartes distribuées aux joueurs en début de manche",
 		"BUILD_AMOUNT": "Nombre de cartes identiques attendues pour obtenir une carte de valeur supérieure :",
+		"LATENT_SQUARES": "Entretenir des carrés latents",
+		"LATENT_SQUARES_INFO": "Après chaque construction, le joueur qui vient de produire pioche en priorité la carte qui manque à d'autres joueurs pour compléter un carré. Le carré devient possible en jeu, mais seulement par l'échange : il faut aller se parler.",
+		"LATENT_SQUARES_PCT": "% des joueurs, soit {{count}} carré(s) latent(s) visé(s) en permanence",
 		"ACTIONS_TITLE": "Actions",
 		"STARTING_TOKENS": "Jetons de départ",
 		"COST": "Coût"

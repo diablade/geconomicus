@@ -9,6 +9,8 @@ export interface SimRules {
 	generateLettersAuto: boolean;
 	generateLettersInDeck?: number;
 	distribInitCards: number;
+	latentSquares: boolean;
+	latentSquaresPct: number;
 	autoDeath: boolean;
 	inequalityStart: boolean;
 	startAmountCoins: number;

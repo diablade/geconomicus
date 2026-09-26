@@ -53,6 +53,9 @@
 		"PLAYERS_6+": "(6 jugadores y más)",
 		"START_DISTRIB_CARDS": "Número de cartas distribuidas a los jugadores al inicio de la manga",
 		"BUILD_AMOUNT": "Número de cartas idénticas que se espera para obtener una carta de valor superior:",
+		"LATENT_SQUARES": "Mantener cuadrados latentes",
+		"LATENT_SQUARES_INFO": "Después de cada construcción, el jugador que acaba de producir roba con prioridad la carta que les falta a otros jugadores para completar un cuadrado. El cuadrado se vuelve posible en juego, pero solo mediante el intercambio: hay que hablarse.",
+		"LATENT_SQUARES_PCT": "% de los jugadores, es decir {{count}} cuadrado(s) latente(s) buscado(s) permanentemente",
 		"ACTIONS_TITLE": "Acciones",
 		"STARTING_TOKENS": "Fichas iniciales",
 		"COST": "Coste"

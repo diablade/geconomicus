@@ -142,6 +142,7 @@
 		"PLAYER_NOT_FOUND": "Jugador inexistente",
 		"UPDATE": "Fallo de la modificación",
 		"EXCHANGE": "Intercambio imposible",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Intercambio imposible con un jugador muerto o en prisión",
 		"ID_PLAYER_MISSING": "Falta el ID del jugador",
 		"INSUFFICIENT_FUNDS": "Fondos insuficientes",
 		"DELETE": "Fallo de la supresión",
