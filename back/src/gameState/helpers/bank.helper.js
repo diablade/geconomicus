@@ -30,12 +30,22 @@ export function baseRate(rules) {
 	};
 }
 
+// The terms a given tier index offers; tierIndex -1 = base.
+// Returns { amount, interest, allowDouble, pct, tierIndex }.
+export function rateAtTier(tierIndex, rateSchedule, rules) {
+	const schedule = _.orderBy(rateSchedule || [], ['threshold'], ['desc']);
+	const tier = tierIndex >= 0 && schedule[tierIndex] ? schedule[tierIndex] : baseRate(rules);
+	const amount = tier.amount;
+	const interest = tier.interest;
+	const allowDouble = tier.allowDouble !== false;
+	const pct = amount > 0 ? interest / amount : 0;
+	return { amount, interest, allowDouble, pct, tierIndex };
+}
+
 // The credit terms currently on offer for a given average money.
-// Returns { amount, interest, allowDouble, pct, tierIndex }; tierIndex -1 = base.
 // The deepest crossed tier wins. Thresholds are sorted descending so, once avg is
 // not below a threshold, no smaller (deeper) threshold can be crossed either.
 export function computeEffectiveRate(avg, rateSchedule, rules) {
-	const base = baseRate(rules);
 	const schedule = _.orderBy(rateSchedule || [], ['threshold'], ['desc']);
 
 	let tierIndex = -1;
@@ -44,19 +54,15 @@ export function computeEffectiveRate(avg, rateSchedule, rules) {
 		else break;
 	}
 
-	const tier = tierIndex >= 0 ? schedule[tierIndex] : base;
-	const amount = tier.amount;
-	const interest = tier.interest;
-	const allowDouble = tier.allowDouble !== false;
-	const pct = amount > 0 ? interest / amount : 0;
-	return { amount, interest, allowDouble, pct, tierIndex };
+	return rateAtTier(tierIndex, rateSchedule, rules);
 }
 
-// live-down / silent-up: a move to a DEEPER tier (money got scarcer → better
-// relief terms) is an improvement worth notifying; climbing back up is silent.
+// live-down / silent-up: a cheaper rate is worth notifying, a dearer one is
+// silent. Compares the price, not the tier depth — the `aggressive` schedule gets
+// DEARER as money grows scarcer, so depth alone would announce a hike as relief.
 export function isRateImprovement(next, prev) {
-	if (!prev) return next.tierIndex >= 0;
-	return next.tierIndex > prev.tierIndex;
+	if (!prev) return false;
+	return next.pct < prev.pct;
 }
 
 // True when the two rates are the same tier (nothing changed).
@@ -187,6 +193,7 @@ export default {
 	baseRate,
 	computeEffectiveRate,
 	isRateImprovement,
+	rateAtTier,
 	sameRateTier,
 	cardsValue,
 	playerWealth,

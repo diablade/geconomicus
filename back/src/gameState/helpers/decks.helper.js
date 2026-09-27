@@ -222,9 +222,10 @@ DecksHelper.latentSquaresGoal = (gameState, rules) =>
 
 /**
  * Draw a producer's replacement cards, spending the first picks on copies that turn a recipe
- * another life is chasing into a latent square — never the copy that would complete the
- * producer's own square — then taking the rest off the shuffled deck. Falls back to a plain
- * draw once the goal is met, when no deck card qualifies, or when the option is off.
+ * another life is chasing into a latent square, then filling the rest off the shuffled deck.
+ * At most one copy per recipe, so the producer leaves holding the piece several tables need
+ * rather than a pair he can chase alone, and never the copy completing his own square.
+ * Falls back to a plain draw off the top when the option is off.
  *
  * @param {object} gameState   - mutable in-memory game state
  * @param {object} rules       - game rules (latentSquares, latentSquaresPct, amountCardsForProd)
@@ -236,37 +237,51 @@ DecksHelper.latentSquaresGoal = (gameState, rules) =>
 DecksHelper.drawProductionCards = (gameState, rules, playerState, weight, amount) => {
 	const deck = gameState.decks[weight];
 	const drawn = [];
+	const taken = new Set();
 	const goal = rules.latentSquares ? DecksHelper.latentSquaresGoal(gameState, rules) : 0;
 
+	const take = (index) => {
+		const card = deck.splice(index, 1)[0];
+		taken.add(DecksHelper.recipeKeyOf(card));
+		playerState.cards.push(card);
+		drawn.push(card);
+	};
+
+	let targeted = 0;
 	while (drawn.length < amount && DecksHelper.countLatentSquares(gameState, rules.amountCardsForProd) < goal) {
 		const byRecipe = _heldCopiesByRecipe(_livingOf(gameState));
 		const index = deck.findIndex((card) => {
-			const holders = byRecipe.get(DecksHelper.recipeKeyOf(card));
+			const key = DecksHelper.recipeKeyOf(card);
+			if (taken.has(key)) return false;
+			const holders = byRecipe.get(key);
 			if (holders?.size !== rules.amountCardsForProd - 1) return false;
 			const ownCopies = [...holders.values()].filter((idx) => idx === playerState.idx).length;
 			return ownCopies < rules.amountCardsForProd - 1;
 		});
 		if (index < 0) break;
-		const card = deck.splice(index, 1)[0];
-		playerState.cards.push(card);
-		drawn.push(card);
+		take(index);
+		targeted++;
 	}
 
-	const filler = deck.splice(0, amount - drawn.length);
-	playerState.cards.push(...filler);
+	while (drawn.length < amount && deck.length) {
+		const spread = rules.latentSquares
+			? deck.findIndex((card) => !taken.has(DecksHelper.recipeKeyOf(card)))
+			: -1;
+		take(spread < 0 ? 0 : spread);
+	}
 
-	if (drawn.length + filler.length < amount) {
+	if (drawn.length < amount) {
 		log.warn(
-			`[DecksHelper] production draw short: decks[${weight}] exhausted, dealt ${drawn.length + filler.length} card(s) for target ${amount}`
+			`[DecksHelper] production draw short: decks[${weight}] exhausted, dealt ${drawn.length} card(s) for target ${amount}`
 		);
 	}
 	if (goal > 0) {
 		log.debug(
-			`[DecksHelper] latent squares: player ${playerState.idx} took ${drawn.length}/${amount} targeted card(s), table at ${DecksHelper.countLatentSquares(gameState, rules.amountCardsForProd)}/${goal}`
+			`[DecksHelper] latent squares: player ${playerState.idx} took ${targeted}/${amount} targeted card(s), table at ${DecksHelper.countLatentSquares(gameState, rules.amountCardsForProd)}/${goal}`
 		);
 	}
 
-	return [...drawn, ...filler];
+	return drawn;
 };
 
 /**

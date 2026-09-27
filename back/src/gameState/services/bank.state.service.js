@@ -8,7 +8,7 @@ import Timer from '../../misc/Timer.js';
 import { CREDIT_STATUS, GAME_STATUS, GAME_TYPE, PLAYER_STATUS, CREDIT_ORIGIN, ROOMS, IO, DB_EVENTS } from '@geco/shared';
 import BankEngine from '../engine/bank.engine.js';
 import SyncHelper from '../helpers/sync.helper.js';
-import { computeAverageMoney, computeEffectiveRate } from '../helpers/bank.helper.js';
+import { computeAverageMoney, computeEffectiveRate, isRateImprovement, rateAtTier } from '../helpers/bank.helper.js';
 
 const minute = 60 * 1000;
 const fiveSeconds = 5 * 1000;
@@ -308,7 +308,7 @@ BankStateService.refreshRateBroadcast = (entry) => {
 	if (rate.tierIndex === prev) return;
 
 	gameState.currentRateTierIndex = rate.tierIndex;
-	const payload = { rate, improved: rate.tierIndex > prev };
+	const payload = { rate, improved: isRateImprovement(rate, rateAtTier(prev, rules.rateSchedule, rules)) };
 	for (const p of gameState.playersStates) {
 		if (p.status !== PLAYER_STATUS.ALIVE) continue;
 		socket.emitTo(ROOMS.playerState(gameState._id, p.idx), IO.CREDIT.RATE, payload);
