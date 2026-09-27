@@ -258,6 +258,68 @@ describe('DecksHelper — latent squares', () => {
 		expect(DecksHelper.countLatentSquares(gameState, 4)).toBe(1);
 	});
 
+	it('spreads the draw across recipes rather than stacking copies of one', () => {
+		const gameState = makeGameState({
+			decks: [
+				[card('A', 0, 4), card('A', 0, 5), card('B', 0, 4), card('B', 0, 5), card('C', 0, 1), card('D', 0, 1)],
+				[],
+				[],
+				[],
+			],
+			playersStates: [
+				{ idx: 0, avatarIdx: 0, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [], actionTokens: 0 },
+				{
+					idx: 1,
+					avatarIdx: 1,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('A', 0, 1), card('A', 0, 2), card('A', 0, 3)],
+					actionTokens: 0,
+				},
+				{
+					idx: 2,
+					avatarIdx: 2,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('B', 0, 1), card('B', 0, 2), card('B', 0, 3)],
+					actionTokens: 0,
+				},
+			],
+		});
+
+		const drawn = DecksHelper.drawProductionCards(
+			gameState,
+			{ ...rules, latentSquaresPct: 100 },
+			gameState.playersStates[0],
+			0,
+			4
+		);
+
+		expect(drawn.map((c) => c.key)).toEqual(['A04', 'B04', 'C01', 'D01']);
+		expect(new Set(drawn.map((c) => c.letter)).size).toBe(4);
+	});
+
+	it('falls back to the top of the deck when every card left repeats a recipe', () => {
+		const gameState = makeGameState({
+			decks: [[card('Z', 0, 4), card('Z', 0, 5)], [], [], []],
+			playersStates: [
+				{ idx: 0, avatarIdx: 0, status: PLAYER_STATUS.ALIVE, coins: 10, cards: [], actionTokens: 0 },
+				{
+					idx: 1,
+					avatarIdx: 1,
+					status: PLAYER_STATUS.ALIVE,
+					coins: 10,
+					cards: [card('Z', 0, 1), card('Z', 0, 2), card('Z', 0, 3)],
+					actionTokens: 0,
+				},
+			],
+		});
+
+		const drawn = DecksHelper.drawProductionCards(gameState, rules, gameState.playersStates[0], 0, 2);
+
+		expect(drawn.map((c) => c.key)).toEqual(['Z04', 'Z05']);
+	});
+
 	it('counts a square one player already holds alone, since a ready square is latent too', () => {
 		const gameState = makeGameState({
 			decks: [[], [], [], []],

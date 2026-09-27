@@ -14,6 +14,7 @@ import {
 
 const rules = { defaultCreditAmount: 3, defaultInterestAmount: 1 };
 const normal = RATE_SCHEDULE_PRESETS.normal;
+const aggressive = RATE_SCHEDULE_PRESETS.aggressive;
 
 describe('computeAverageMoney', () => {
 	it('divides mass by living (non-dead) lives, prison counts as living', () => {
@@ -55,13 +56,33 @@ describe('computeEffectiveRate (normal preset)', () => {
 	});
 });
 
+describe('computeEffectiveRate (aggressive preset — scarcity, inverted curve)', () => {
+	it('offers the cheapest tier (6/1) while money circulates above 2 per player', () => {
+		expect(computeEffectiveRate(2.5, aggressive, rules)).toMatchObject({ amount: 6, interest: 1, tierIndex: 0 });
+		expect(computeEffectiveRate(2.0, aggressive, rules)).toMatchObject({ amount: 6, interest: 1, tierIndex: 0 });
+	});
+
+	it('gets dearer as the mass shrinks, with no 0% relief tier', () => {
+		const pcts = [1.9, 1.4, 0.9, 0.4].map((avg) => computeEffectiveRate(avg, aggressive, rules).pct);
+		expect(pcts).toEqual([...pcts].sort((a, b) => a - b));
+		expect(Math.min(...pcts)).toBeGreaterThan(0);
+	});
+});
+
 describe('isRateImprovement (live-down / silent-up)', () => {
-	it('is true going deeper (scarcer money), false climbing back up', () => {
+	it('is true going cheaper, false going dearer, on the expansionist preset', () => {
 		const base = computeEffectiveRate(1.6, normal, rules);
 		const deep = computeEffectiveRate(0.9, normal, rules);
 		expect(isRateImprovement(deep, base)).toBe(true);
 		expect(isRateImprovement(base, deep)).toBe(false);
 		expect(isRateImprovement(deep, deep)).toBe(false);
+	});
+
+	it('does not announce the aggressive schedule tightening as relief', () => {
+		const rich = computeEffectiveRate(2.5, aggressive, rules);
+		const poor = computeEffectiveRate(0.4, aggressive, rules);
+		expect(isRateImprovement(poor, rich)).toBe(false);
+		expect(isRateImprovement(rich, poor)).toBe(true);
 	});
 });
 
