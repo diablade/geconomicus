@@ -5,6 +5,8 @@
 		"NEW_PLAYER": "Novi igrač",
 		"FROM": "Od",
 		"TO": "Ka",
+		"BUYER": "Kupac",
+		"SELLER": "Prodavac",
 		"TRANSACTION": "Transakcija",
 		"STARTING_MONEY": "Početni novac",
 		"STARTING_CARD": "Početna karta",

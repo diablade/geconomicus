@@ -87,9 +87,17 @@ export interface RateTier {
 	allowDouble: boolean;
 }
 
-// Built-in Rate Schedules. Tiers are ordered by descending threshold; the
-// deepest crossed tier wins. The last tier is a 0%, no-double relief loan that
-// keeps the game alive when money nearly vanishes.
+// Built-in Rate Schedules. Tiers are ordered by descending threshold; a tier
+// applies below its threshold and the deepest crossed tier wins.
+//
+// `normal` is expansionist: the scarcer money gets, the cheaper credit becomes,
+// down to a 0%, no-double relief loan that keeps the game alive when money nearly
+// vanishes.
+//
+// `aggressive` runs the curve the other way — scarcity: credit is cheapest while
+// money circulates (6 for 1 above 2 per player) and gets dearer as the mass
+// shrinks, with no relief tier. Its top threshold is a sentinel above any playable
+// average so the "plenty" band is a tier rather than the animator's base rate.
 export const RATE_SCHEDULE_PRESETS: Record<'normal' | 'aggressive', RateTier[]> = {
 	normal: [
 		{ threshold: 1.5, amount: 4, interest: 1, allowDouble: true },
@@ -98,10 +106,11 @@ export const RATE_SCHEDULE_PRESETS: Record<'normal' | 'aggressive', RateTier[]> 
 		{ threshold: 0.4, amount: 3, interest: 0, allowDouble: false },
 	],
 	aggressive: [
-		{ threshold: 1.0, amount: 4, interest: 1, allowDouble: true },
-		{ threshold: 0.7, amount: 5, interest: 1, allowDouble: true },
-		{ threshold: 0.5, amount: 6, interest: 1, allowDouble: true },
-		{ threshold: 0.3, amount: 3, interest: 0, allowDouble: false },
+		{ threshold: 999, amount: 6, interest: 1, allowDouble: true },
+		{ threshold: 2.0, amount: 5, interest: 1, allowDouble: true },
+		{ threshold: 1.5, amount: 4, interest: 1, allowDouble: true },
+		{ threshold: 1.0, amount: 3, interest: 1, allowDouble: true },
+		{ threshold: 0.5, amount: 2, interest: 1, allowDouble: false },
 	],
 };
 

@@ -5,6 +5,8 @@
 		"NEW_PLAYER": "新しいプレイヤー",
 		"FROM": "送信者",
 		"TO": "受信者",
+		"BUYER": "購入者",
+		"SELLER": "販売者",
 		"TRANSACTION": "取引",
 		"STARTING_MONEY": "開始資金",
 		"STARTING_CARD": "開始カード",

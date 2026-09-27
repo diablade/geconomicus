@@ -146,11 +146,16 @@ export class EventsV2Component {
 		return life.ordinal > 1 ? `${life.name} (${life.ordinal})` : life.name;
 	}
 
-	/** émetteur → récepteur, réduit à un seul nom quand c'est la même personne (production, mort…) */
+	/** émetteur → récepteur, réduit à un seul nom quand c'est la même personne (production, mort…) ; un achat nomme ses deux rôles */
 	whoOf(ev: GecoEventV2): string {
 		const from = this.nameOf(ev.emitter);
 		const to = this.nameOf(ev.receiver);
-		if (from && to && from !== to) return `${from} → ${to}`;
+		if (from && to && from !== to) {
+			if (ev.typeEvent === DB_EVENTS.TRANSACTION) {
+				return `${this.i18n.instant('EVENTS.BUYER')} : ${from} → ${this.i18n.instant('EVENTS.SELLER')} : ${to}`;
+			}
+			return `${from} → ${to}`;
+		}
 		return from || to;
 	}
 
@@ -158,12 +163,20 @@ export class EventsV2Component {
 	cardsOf(ev: GecoEventV2): MiniCard[] {
 		const p: any = ev.payload ?? {};
 		const toMini = (c: any): MiniCard => ({ letter: c?.letter ?? '?', colorClass: c?.color ?? '' });
-		const arrow: MiniCard = { letter: '→', colorClass: '', arrow: true };
-		if (Array.isArray(p.consumed) && p.produced) return [...p.consumed.map(toMini), arrow, toMini(p.produced)];
+		const glyph = (letter: string): MiniCard => ({ letter, colorClass: '', arrow: true });
+		if (Array.isArray(p.consumed) && p.produced) {
+			const drawn: MiniCard[] = Array.isArray(p.newCards) ? p.newCards.map(toMini) : [];
+			return [
+				...p.consumed.map(toMini),
+				glyph('→'),
+				toMini(p.produced),
+				...(drawn.length ? [glyph('+'), ...drawn] : []),
+			];
+		}
 		if (p.card) return [toMini(p.card)];
 		if (Array.isArray(p.stolen)) return p.stolen.map(toMini);
 		if (Array.isArray(p.cards)) return p.cards.map(toMini);
-		if (Array.isArray(p.discards)) return [...p.discards.map(toMini), arrow, ...(p.newCards ?? []).map(toMini)];
+		if (Array.isArray(p.discards)) return [...p.discards.map(toMini), glyph('→'), ...(p.newCards ?? []).map(toMini)];
 		if (Array.isArray(p.newCards)) return p.newCards.map(toMini);
 		return [];
 	}

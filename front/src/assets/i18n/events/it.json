@@ -5,6 +5,8 @@
 		"NEW_PLAYER": "Nuovo giocatore",
 		"FROM": "DA",
 		"TO": "A",
+		"BUYER": "Acquirente",
+		"SELLER": "Venditore",
 		"TRANSACTION": "Transazione",
 		"STARTING_MONEY": "Moneta di partenza",
 		"STARTING_CARD": "Carta di partenza",
