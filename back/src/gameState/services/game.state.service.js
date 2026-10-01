@@ -25,6 +25,8 @@ const _initEventSource = (initializedGame, gameState, gameStateId) => ({
 
 const minute = 60 * 1000;
 const TIMER_HEARTBEAT_INTERVAL = 10000; // 10 seconds
+const DU_INTERVAL = 3;
+const DEATH_INTERVAL = 4;
 const MAX_BUFFERED_EVENTS = 5000;
 const IDLE_EVICTION_MS = 30 * minute;
 
@@ -92,7 +94,11 @@ const _createTimer = async (gameState, rules) => {
 	// On a fresh start intervalDeathLeft == deathIntervalMs, so this is a no-op there.
 	const intervalDeathLeft = gameState.gameTimers.deathState.intervalDeathLeft;
 	if (intervalDeathLeft != null) {
-		timer.setFirstDelayInterval4(intervalDeathLeft);
+		timer.setFirstDelay(DEATH_INTERVAL, intervalDeathLeft);
+	}
+	const duIntervalLeft = gameState.gameTimers.duIntervalLeft;
+	if (duIntervalLeft != null) {
+		timer.setFirstDelay(DU_INTERVAL, duIntervalLeft);
 	}
 	return timer;
 };
@@ -429,6 +435,7 @@ GameStateService.start = async (gameStateId) => {
 			...entry.gameState.gameTimers,
 			createdAt: entry.gameState.gameTimers?.createdAt || Date.now(),
 			remainingTime: remainingTimeMs,
+			duIntervalLeft: null,
 			deathState: {
 				deathIntervalMs,
 				intervalDeathLeft: deathIntervalMs,
@@ -482,8 +489,9 @@ GameStateService.pause = async (gameStateId) => {
 		// Capture time-to-next-death before the timer is torn down, so resume restarts mid-cycle.
 		const runningTimer = gameTimerManager.getTimer(gameStateId);
 		const intervalDeathLeft = runningTimer
-			? runningTimer.getRemainingInterval4Ms()
+			? runningTimer.getRemainingIntervalMs(DEATH_INTERVAL)
 			: entry.gameState.gameTimers?.deathState?.deathIntervalMs;
+		const duIntervalLeft = runningTimer ? runningTimer.getRemainingIntervalMs(DU_INTERVAL) : null;
 
 		const remainingTimeMs = await gameTimerManager.pauseTimer(gameStateId);
 		if (!remainingTimeMs) {
@@ -497,6 +505,9 @@ GameStateService.pause = async (gameStateId) => {
 		entry.gameState.gameTimers.remainingTime = remainingTimeMs;
 		if (entry.gameState.gameTimers.deathState) {
 			entry.gameState.gameTimers.deathState.intervalDeathLeft = intervalDeathLeft;
+		}
+		if (duIntervalLeft != null) {
+			entry.gameState.gameTimers.duIntervalLeft = duIntervalLeft;
 		}
 
 		if (entry.rules.typeMoney === GAME_TYPE.DEBT) {

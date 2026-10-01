@@ -9,6 +9,8 @@ import gameTimerManager from '../managers/GameTimerManager.js';
 import { DB_EVENTS, GAME_TYPE, PLAYER_STATUS, PLAYER_TYPE, IO, ROOMS, GAME_STATUS } from '@geco/shared';
 import socket from '#config/socket';
 
+const DEATH_INTERVAL = 4;
+
 const PlayerStateService = {};
 
 // ── Reincarnation internals (all assume the game lock is already held) ──────────
@@ -23,7 +25,7 @@ const _resetDeathInterval = (gameState, gameStateId) => {
 	const newInterval = remaining / (queueLen + 1);
 	deathState.deathIntervalMs = newInterval;
 	deathState.intervalDeathLeft = newInterval;
-	if (timer) timer.resetInterval4(newInterval, newInterval);
+	if (timer) timer.resetInterval(DEATH_INTERVAL, newInterval, newInterval);
 };
 
 /**

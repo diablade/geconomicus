@@ -1,5 +1,7 @@
 import log from '#config/log';
 
+const INTERVAL_IDS = [1, 2, 3, 4];
+
 export default class Timer {
 	/**
 	 * @param {string} uniqueId
@@ -33,25 +35,18 @@ export default class Timer {
 		this.data = data;
 		this.duration = duration;
 		this.callbackAtEnd = callbackAtEnd;
-		this.durationInterval1 = durationInterval1;
-		this.callbackInterval1 = callbackInterval1;
-		this.durationInterval2 = durationInterval2;
-		this.callbackInterval2 = callbackInterval2;
-		this.durationInterval3 = durationInterval3;
-		this.callbackInterval3 = callbackInterval3;
-		this.durationInterval4 = durationInterval4;
-		this.callbackInterval4 = callbackInterval4;
+
+		this._intervals = {
+			1: { duration: durationInterval1, callback: callbackInterval1 },
+			2: { duration: durationInterval2, callback: callbackInterval2 },
+			3: { duration: durationInterval3, callback: callbackInterval3 },
+			4: { duration: durationInterval4, callback: callbackInterval4 },
+		};
+		for (const n of INTERVAL_IDS) {
+			Object.assign(this._intervals[n], { handle: null, firstHandle: null, firstDelay: null, nextFire: null });
+		}
 
 		this._timer = null;
-		this._interval1 = null;
-		this._interval2 = null;
-		this._interval3 = null;
-		this._interval4 = null;
-		this._interval4First = null; // one-shot setTimeout used to resume interval4 mid-cycle
-
-		// interval4 (death interval) phase tracking, so a pause/resume preserves time-to-next-tick.
-		this._firstDelayInterval4 = null; // ms until the FIRST interval4 fire (null = use full duration)
-		this._nextFireInterval4 = null; // absolute timestamp of the next scheduled interval4 fire
 
 		this.startTime = null;
 		this.remainingMs = duration;
@@ -59,43 +54,50 @@ export default class Timer {
 	}
 
 	/**
-	 * Set the delay (ms) until the FIRST interval4 tick after start/resume.
-	 * Used to preserve time-to-next-death across a pause without losing partial progress.
-	 * Must be called before start(). A value >= durationInterval4 (or null) means "use the full interval".
+	 * Set the delay (ms) until the FIRST tick of interval `n` after start/resume, so a pause does
+	 * not throw away the partial progress of the cycle that was running. Must be called before
+	 * start(). A value >= that interval's duration (or null) means "use the full interval".
+	 * @param {number} n - interval id (1-4)
+	 * @param {number|null} ms
 	 */
-	setFirstDelayInterval4(ms) {
-		this._firstDelayInterval4 = ms;
-	}
-
-	/** Remaining ms until the next interval4 (death) tick, or the full duration if not yet running. */
-	getRemainingInterval4Ms() {
-		if (!this.durationInterval4) return 0;
-		if (this._nextFireInterval4 == null) return this._firstDelayInterval4 ?? this.durationInterval4;
-		return Math.max(0, this._nextFireInterval4 - Date.now());
+	setFirstDelay(n, ms) {
+		this._intervals[n].firstDelay = ms;
 	}
 
 	/**
-	 * Re-space the interval4 (death) cadence on the fly — used when a Force Death removes an avatar
-	 * from the queue and the remaining scheduled deaths must be redistributed over the remaining time.
+	 * Remaining ms until the next tick of interval `n`, or its full duration if not yet running.
+	 * @param {number} n - interval id (1-4)
+	 * @returns {number}
 	 */
-	resetInterval4(newDurationMs, firstDelayMs = null) {
-		if (this._interval4) clearInterval(this._interval4);
-		if (this._interval4First) clearTimeout(this._interval4First);
-		this._interval4 = null;
-		this._interval4First = null;
-		this.durationInterval4 = newDurationMs;
-		this._firstDelayInterval4 = firstDelayMs;
-		this._nextFireInterval4 = null;
-		if (this.status === 'running') this._startInterval4();
+	getRemainingIntervalMs(n) {
+		const interval = this._intervals[n];
+		if (!interval.duration) return 0;
+		if (interval.nextFire == null) return interval.firstDelay ?? interval.duration;
+		return Math.max(0, interval.nextFire - Date.now());
+	}
+
+	/**
+	 * Re-space an interval's cadence on the fly — used when a Force Death removes an avatar
+	 * from the queue and the remaining scheduled deaths must be redistributed over the remaining time.
+	 * @param {number} n - interval id (1-4)
+	 * @param {number} newDurationMs
+	 * @param {number|null} firstDelayMs
+	 */
+	resetInterval(n, newDurationMs, firstDelayMs = null) {
+		const interval = this._intervals[n];
+		this._clearInterval(n);
+		interval.duration = newDurationMs;
+		interval.firstDelay = firstDelayMs;
+		interval.nextFire = null;
+		if (this.status === 'running') this._startInterval(n);
 	}
 
 	start() {
 		if (this.status !== 'idle') return;
 		this.data.startedAt = new Date();
 		this._launchTimers();
-		log.debug(
-			`[Timer] STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, interval1: ${this.durationInterval1}ms, interval2: ${this.durationInterval2}ms, interval3: ${this.durationInterval3}ms, interval4: ${this.durationInterval4}ms`
-		);
+		const cadences = INTERVAL_IDS.map((n) => `interval${n}: ${this._intervals[n].duration}ms`).join(', ');
+		log.debug(`[Timer] STARTED id: ${this.id}, remaining: ${this.remainingMs}ms, ${cadences}`);
 	}
 
 	pause() {
@@ -155,61 +157,33 @@ export default class Timer {
 		}, this.duration);
 	}
 
-	_startInterval1() {
-		if (!this.durationInterval1 || !this.callbackInterval1) return;
-		this._interval1 = setInterval(async () => {
-			try {
-				await this.callbackInterval1(this);
-			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval1 error: `, err);
-			}
-		}, this.durationInterval1);
-	}
-
-	_startInterval2() {
-		if (!this.durationInterval2 || !this.callbackInterval2) return;
-		this._interval2 = setInterval(async () => {
-			try {
-				await this.callbackInterval2(this);
-			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval2 error: `, err);
-			}
-		}, this.durationInterval2);
-	}
-
-	_startInterval3() {
-		if (!this.durationInterval3 || !this.callbackInterval3) return;
-		this._interval3 = setInterval(async () => {
-			try {
-				await this.callbackInterval3(this);
-			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval3 error: `, err);
-			}
-		}, this.durationInterval3);
-	}
-
-	_startInterval4() {
-		if (!this.durationInterval4 || !this.callbackInterval4) return;
+	/**
+	 * Schedule interval `n`, honouring a firstDelay so a resume fires mid-cycle before falling
+	 * back to the normal cadence.
+	 * @param {number} n - interval id (1-4)
+	 */
+	_startInterval(n) {
+		const interval = this._intervals[n];
+		if (!interval.duration || !interval.callback) return;
 
 		const fire = async () => {
-			this._nextFireInterval4 = Date.now() + this.durationInterval4;
+			interval.nextFire = Date.now() + interval.duration;
 			try {
-				await this.callbackInterval4(this);
+				await interval.callback(this);
 			} catch (err) {
-				log.error(`[Timer] ${this.id} callbackInterval4 error: `, err);
+				log.error(`[Timer] ${this.id} callbackInterval${n} error: `, err);
 			}
 		};
 
 		const startRecurring = () => {
-			this._nextFireInterval4 = Date.now() + this.durationInterval4;
-			this._interval4 = setInterval(fire, this.durationInterval4);
+			interval.nextFire = Date.now() + interval.duration;
+			interval.handle = setInterval(fire, interval.duration);
 		};
 
-		const firstDelay = this._firstDelayInterval4;
-		// Resume mid-cycle: fire once after the preserved remaining time, then fall back to the normal cadence.
-		if (firstDelay != null && firstDelay >= 0 && firstDelay < this.durationInterval4) {
-			this._nextFireInterval4 = Date.now() + firstDelay;
-			this._interval4First = setTimeout(async () => {
+		const firstDelay = interval.firstDelay;
+		if (firstDelay != null && firstDelay >= 0 && firstDelay < interval.duration) {
+			interval.nextFire = Date.now() + firstDelay;
+			interval.firstHandle = setTimeout(async () => {
 				await fire();
 				startRecurring();
 			}, firstDelay);
@@ -218,28 +192,28 @@ export default class Timer {
 		}
 	}
 
+	/**
+	 * Clear interval `n`'s pending handles, leaving its phase (nextFire) readable.
+	 * @param {number} n - interval id (1-4)
+	 */
+	_clearInterval(n) {
+		const interval = this._intervals[n];
+		if (interval.handle) clearInterval(interval.handle);
+		if (interval.firstHandle) clearTimeout(interval.firstHandle);
+		interval.handle = null;
+		interval.firstHandle = null;
+	}
+
 	_launchTimers() {
 		this.startTime = new Date();
 		this._startMainTimer();
-		this._startInterval1();
-		this._startInterval2();
-		this._startInterval3();
-		this._startInterval4();
+		for (const n of INTERVAL_IDS) this._startInterval(n);
 		this.status = 'running';
 	}
 
 	_clearTimers() {
 		clearTimeout(this._timer);
-		if (this._interval1) clearInterval(this._interval1);
-		if (this._interval2) clearInterval(this._interval2);
-		if (this._interval3) clearInterval(this._interval3);
-		if (this._interval4) clearInterval(this._interval4);
-		if (this._interval4First) clearTimeout(this._interval4First);
 		this._timer = null;
-		this._interval1 = null;
-		this._interval2 = null;
-		this._interval3 = null;
-		this._interval4 = null;
-		this._interval4First = null;
+		for (const n of INTERVAL_IDS) this._clearInterval(n);
 	}
 }

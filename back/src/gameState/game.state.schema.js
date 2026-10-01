@@ -64,6 +64,7 @@ let GameTimers = new Schema(
 		startedAt: { type: Date },
 		endedAt: { type: Date },
 		remainingTime: { type: Number, required: true, default: 0 },
+		duIntervalLeft: { type: Number, default: null },
 		deathState: { type: DeathState, default: {} },
 	},
 	{ _id: false }
