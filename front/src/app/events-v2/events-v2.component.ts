@@ -240,6 +240,12 @@ export class EventsV2Component {
 		if (p.typeMoney) bits.push({ key: p.typeMoney === GAME_TYPE.JUNE ? 'EVENTS.MONEY_FREE' : 'EVENTS.MONEY_DEBT' });
 		if (p.prisonTime != null) bits.push({ key: 'EVENTS.PRISON_TIME', params: { minutes: p.prisonTime } });
 		if (p.origin) bits.push({ key: `EVENTS.CREDIT_ORIGIN.${p.origin}` });
+		if (Number.isFinite(p.credit?.amount)) {
+			bits.push({
+				key: 'EVENTS.CREDIT_DETAIL',
+				params: { amount: p.credit.amount, interest: p.credit.interest, total: p.credit.amount + p.credit.interest },
+			});
+		}
 		if (p.answer) bits.push({ key: `EVENTS.CREDIT_QUESTION_ANSWER.${p.answer}` });
 		if (Array.isArray(p.victims) && p.victims.length) {
 			bits.push({ key: 'EVENTS.VICTIMS', params: { names: this.namesOf(p.victims) } });
