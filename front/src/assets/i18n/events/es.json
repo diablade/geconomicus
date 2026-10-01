@@ -53,6 +53,7 @@
 		"RECIPIENTS": "beneficiarios: {{names}}",
 		"SEIZED": "{{coins}} 🪙 y {{cards}} 📦 embargados",
 		"UNPAID": "{{amount}} sin reembolsar",
+		"CREDIT_DETAIL": "{{amount}} + {{interest}} de intereses = {{total}} 🪙",
 		"GAMES_PLANNED": "{{count}} partidas previstas",
 		"EVENT_GROUP": {
 			"all": "Todos",

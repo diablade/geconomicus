@@ -53,6 +53,7 @@
 		"RECIPIENTS": "recipients: {{names}}",
 		"SEIZED": "{{coins}} 🪙 and {{cards}} 📦 seized",
 		"UNPAID": "{{amount}} unpaid",
+		"CREDIT_DETAIL": "{{amount}} + {{interest}} interest = {{total}} 🪙",
 		"GAMES_PLANNED": "{{count}} games planned",
 		"EVENT_GROUP": {
 			"all": "All",

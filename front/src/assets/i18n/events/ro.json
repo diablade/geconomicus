@@ -53,6 +53,7 @@
 		"RECIPIENTS": "beneficiari: {{names}}",
 		"SEIZED": "{{coins}} 🪙 și {{cards}} 📦 sechestrate",
 		"UNPAID": "{{amount}} nerambursați",
+		"CREDIT_DETAIL": "{{amount}} + {{interest}} dobândă = {{total}} 🪙",
 		"GAMES_PLANNED": "{{count}} jocuri prevăzute",
 		"EVENT_GROUP": {
 			"all": "Toate",

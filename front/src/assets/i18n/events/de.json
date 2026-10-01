@@ -53,6 +53,7 @@
 		"RECIPIENTS": "Empfänger: {{names}}",
 		"SEIZED": "{{coins}} 🪙 und {{cards}} 📦 gepfändet",
 		"UNPAID": "{{amount}} unbezahlt",
+		"CREDIT_DETAIL": "{{amount}} + {{interest}} Zinsen = {{total}} 🪙",
 		"GAMES_PLANNED": "{{count}} geplante Spiele",
 		"EVENT_GROUP": {
 			"all": "Alle",

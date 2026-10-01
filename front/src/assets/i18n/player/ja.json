@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "クレジットの返済に失敗しました",
 		"EXTEND_FAILED": "クレジットの延長に失敗しました",
 		"INVALID_STATE": "ボードが読み込まれていません。ページを更新してください",
-		"INVALID_IDS": "ゲームが見つかりません。ページを更新してください"
+		"INVALID_IDS": "ゲームが見つかりません。ページを更新してください",
+		"SOLD": "売却",
+		"BOUGHT": "購入"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

@@ -166,3 +166,35 @@
 		transform: scale(0.96);
 	}
 }
+
+// ── Trade confirmation (sale / purchase) — transparent and click-through ─────
+.bg-sale,
+.bg-purchase {
+	background: none;
+	pointer-events: none;
+}
+.content-sale,
+.content-purchase {
+	gap: 1.5vmin;
+	animation: trade-rise 1.6s ease-out forwards;
+}
+.glyph-sale,
+.glyph-purchase {
+	font-size: clamp(30px, 11vmin, 92px);
+	font-weight: 900;
+	letter-spacing: -0.02em;
+	white-space: nowrap;
+	filter: drop-shadow(0 0 2vmin rgba(0, 0, 0, 0.9));
+}
+.glyph-sale {
+	color: #7dffb0;
+}
+.glyph-purchase {
+	color: #ffd98a;
+}
+.content-sale .text,
+.content-purchase .text {
+	font-size: clamp(14px, 3.2vmin, 24px);
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+}

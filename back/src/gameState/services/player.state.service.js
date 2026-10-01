@@ -207,6 +207,7 @@ PlayerStateService.transaction = async (gameStateId, buyerIdx, sellerIdx, cardKe
 			sellerIdx,
 			cardKey: card.key,
 			coinsLK: seller.coins,
+			price: card.price,
 		});
 
 		SyncHelper.emitPlayerSync(gameStateId, [buyer, seller]);

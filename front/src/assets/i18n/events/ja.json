@@ -53,6 +53,7 @@
 		"RECIPIENTS": "受取人：{{names}}",
 		"SEIZED": "{{coins}} 🪙 と {{cards}} 📦 を差押え",
 		"UNPAID": "未返済 {{amount}}",
+		"CREDIT_DETAIL": "{{amount}} + 利息 {{interest}} = {{total}} 🪙",
 		"GAMES_PLANNED": "予定ゲーム数 {{count}}",
 		"EVENT_GROUP": {
 			"all": "すべて",

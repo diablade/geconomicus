@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "Rimborso del credito fallito",
 		"EXTEND_FAILED": "Proroga del credito fallita",
 		"INVALID_STATE": "Tavolo non caricato, ricarica la pagina",
-		"INVALID_IDS": "Partita non trovata, ricarica la pagina"
+		"INVALID_IDS": "Partita non trovata, ricarica la pagina",
+		"SOLD": "Venduto",
+		"BOUGHT": "Acquistato"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

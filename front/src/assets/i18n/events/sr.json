@@ -53,6 +53,7 @@
 		"RECIPIENTS": "primaoci: {{names}}",
 		"SEIZED": "{{coins}} 🪙 i {{cards}} 📦 zaplenjeno",
 		"UNPAID": "{{amount}} neotplaćeno",
+		"CREDIT_DETAIL": "{{amount}} + {{interest}} kamate = {{total}} 🪙",
 		"GAMES_PLANNED": "{{count}} planiranih igara",
 		"EVENT_GROUP": {
 			"all": "Sve",

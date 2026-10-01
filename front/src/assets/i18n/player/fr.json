@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "Échec du remboursement du crédit",
 		"EXTEND_FAILED": "Échec de la prolongation du crédit",
 		"INVALID_STATE": "Plateau non chargé, rafraîchissez la page",
-		"INVALID_IDS": "Partie introuvable, rafraîchissez la page"
+		"INVALID_IDS": "Partie introuvable, rafraîchissez la page",
+		"SOLD": "Vendu",
+		"BOUGHT": "Acheté"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

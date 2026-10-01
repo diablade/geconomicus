@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "Error al devolver el crédito",
 		"EXTEND_FAILED": "Error al prolongar el crédito",
 		"INVALID_STATE": "Tablero no cargado, actualiza la página",
-		"INVALID_IDS": "Partida no encontrada, actualiza la página"
+		"INVALID_IDS": "Partida no encontrada, actualiza la página",
+		"SOLD": "Vendido",
+		"BOUGHT": "Comprado"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

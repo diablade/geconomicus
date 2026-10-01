@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "Rückzahlung des Kredits fehlgeschlagen",
 		"EXTEND_FAILED": "Verlängerung des Kredits fehlgeschlagen",
 		"INVALID_STATE": "Brett nicht geladen, lade die Seite neu",
-		"INVALID_IDS": "Spiel nicht gefunden, lade die Seite neu"
+		"INVALID_IDS": "Spiel nicht gefunden, lade die Seite neu",
+		"SOLD": "Verkauft",
+		"BOUGHT": "Gekauft"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

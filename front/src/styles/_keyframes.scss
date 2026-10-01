@@ -229,3 +229,26 @@
 		transform: rotate(10deg) scale(1.15);
 	}
 }
+
+@keyframes trade-rise {
+	0% {
+		transform: translateY(10vmin) scale(0.6);
+		opacity: 0;
+	}
+	15% {
+		transform: translateY(0) scale(1.15);
+		opacity: 1;
+	}
+	28% {
+		transform: translateY(0) scale(1);
+		opacity: 1;
+	}
+	70% {
+		transform: translateY(-3vmin) scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(-14vmin) scale(0.9);
+		opacity: 0;
+	}
+}

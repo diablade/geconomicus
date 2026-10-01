@@ -18,6 +18,25 @@ export interface OverlayConfig {
 	loop?: boolean;
 }
 
+/**
+ * Transient click-through confirmation that a card changed hands.
+ *
+ * @param sold - true for the seller's side, false for the buyer's
+ * @param amount - already-signed, already-formatted price, e.g. "+12.00 €"
+ */
+export function tradeOverlay(sold: boolean, amount: string): OverlayConfig {
+	return {
+		phases: [
+			{
+				icon: `${sold ? '💰' : '🛒'} ${amount}`,
+				text: sold ? 'PLAYER.SOLD' : 'PLAYER.BOUGHT',
+				bg: sold ? 'sale' : 'purchase',
+				durationMs: 1600,
+			},
+		],
+	};
+}
+
 @Component({
 	selector: 'app-overlay',
 	templateUrl: './overlay.component.html',

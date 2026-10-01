@@ -26,7 +26,9 @@
 		"SETTLE_FAILED": "Rambursarea creditului a eșuat",
 		"EXTEND_FAILED": "Prelungirea creditului a eșuat",
 		"INVALID_STATE": "Tabla nu este încărcată, reîmprospătează pagina",
-		"INVALID_IDS": "Joc negăsit, reîmprospătează pagina"
+		"INVALID_IDS": "Joc negăsit, reîmprospătează pagina",
+		"SOLD": "Vândut",
+		"BOUGHT": "Cumpărat"
 	},
 	"DIALOG": {
 		"CREDIT_EXTENDED": {

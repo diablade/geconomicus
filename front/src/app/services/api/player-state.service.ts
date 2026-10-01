@@ -80,6 +80,8 @@ export class PlayerStateService {
 	prisonEnded$ = this.prisonEndedSubject.asObservable();
 	private creditTimeoutSubject = new Subject<void>();
 	creditTimeout$ = this.creditTimeoutSubject.asObservable();
+	private tradeSubject = new Subject<{ sold: boolean; amount: string }>();
+	trade$ = this.tradeSubject.asObservable();
 	private readonly WARN_FRACTION = 0.5;
 	private readonly FINAL_MS = 60_000;
 
@@ -264,6 +266,14 @@ export class PlayerStateService {
 		this.wsService.joinRoom(this.roomGameState);
 		this.wsService.joinRoom(this.roomPlayerState);
 	}
+	/** Signed, unit-suffixed price of a finished trade, e.g. "+12.00 €". */
+	private tradeAmount(sold: boolean, price: number): string {
+		const unit = this.i18nService.instant(
+			this.gameStateSubject.value?.typeMoney === GAME_TYPE.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU'
+		);
+		return `${sold ? '+' : '−'}${Number(price).toFixed(2)} ${unit}`;
+	}
+
 	getCurrency() {
 		return this.i18nService.instant(
 			this.gameStateSubject.value?.typeMoney === GAME_TYPE.DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE'
@@ -522,6 +532,7 @@ export class PlayerStateService {
 				this.coinsSubject.next(data.coinsLK);
 				const updatedCards = this.cardsSubject.getValue().filter((c: Card) => c.key !== data.cardKey);
 				this.cardsSubject.next(updatedCards);
+				this.tradeSubject.next({ sold: true, amount: this.tradeAmount(true, data.price) });
 			}
 		});
 
@@ -936,6 +947,7 @@ export class PlayerStateService {
 				const rules = this.rulesSubject.getValue();
 
 				const cost = rules.typeMoney === GAME_TYPE.JUNE ? (data.p * gameState.currentDU).toFixed(2) : data.p;
+				const price = Number(data.p);
 
 				if (this.gameStateId && data.g && this.gameStateId !== data.g) {
 					observer.next({ success: false, error: 'ERROR.WRONG_GAME' });
@@ -955,6 +967,7 @@ export class PlayerStateService {
 							const cards = this.cardsSubject.getValue();
 							this.cardsSubject.next([...cards, data.buyedCard]);
 							this.coinsSubject.next(data.coinsLK);
+							this.tradeSubject.next({ sold: false, amount: this.tradeAmount(false, price) });
 							observer.next({ success: true, data: data });
 						} else {
 							observer.next({ success: false, error: 'PLAYER.NO_CARD_RECEIVED' });

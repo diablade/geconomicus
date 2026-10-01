@@ -8,7 +8,7 @@ import { I18nService } from '../services/i18n.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { ThemesService } from '../services/themes.service';
 import { PlayerStateService } from '../services/api/player-state.service';
-import { OverlayConfig } from '../components/overlay/overlay.component';
+import { OverlayConfig, tradeOverlay } from '../components/overlay/overlay.component';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 import { Recipe } from '../models/recipe';
 import { Card } from '../models/gameState';
@@ -209,6 +209,12 @@ export class FakePlayerPanelComponent {
 			],
 		};
 		confetti({ particleCount: 160, spread: 110, origin: { y: 0.6 } });
+	}
+
+	testTrade(sold: boolean): void {
+		const unit = this.i18nService.instant(this.isJune ? 'CURRENCY.DU' : 'CURRENCY.EURO');
+		this.overlayConfig = tradeOverlay(sold, `${sold ? '+' : '−'}12.00 ${unit}`);
+		this.audioService.playSound(sold ? 'coin' : 'cardFlipBack');
 	}
 
 	testTakeover(): void {

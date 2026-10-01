@@ -23,6 +23,9 @@
     onCreditFault the instant a Seizure resolves every FAULT credit. Text depends on Auto Seizure. -->
 <app-overlay *ngIf="faultConfig" [config]="faultConfig"></app-overlay>
 
+<!-- Trade confirmation: transparent, click-through "+/− price" that rises and fades on both sides of a sale. -->
+<app-overlay *ngIf="tradeConfig" [config]="tradeConfig" (done)="tradeConfig = null"></app-overlay>
+
 <!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it via the button. -->
 <app-overlay *ngIf="takenOver$ | async" [config]="takeoverConfig" (action)="retake()"></app-overlay>
 

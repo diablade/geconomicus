@@ -33,7 +33,7 @@ import { AvatarService } from '../services/api/avatar.service';
 import { PlayerStateService } from '../services/api/player-state.service';
 import { DeckService } from '../services/api/deck.service';
 import { Rules } from '../models/rules';
-import { OverlayConfig } from '../components/overlay/overlay.component';
+import { OverlayConfig, tradeOverlay } from '../components/overlay/overlay.component';
 import { CreditCountdown, creditCountdownAt } from '../services/creditTools';
 import { makeFakeAvatar, makeFakeBundle } from '../fake/fake-data';
 
@@ -285,6 +285,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private creditCountdownSub: Subscription | undefined;
 	private creditTimeoutSub: Subscription | undefined;
 	private deathSub: Subscription | undefined;
+	private tradeSub: Subscription | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
 	creditCountdown: CreditCountdown | null = null;
 	alarmConfig: OverlayConfig | null = null;
@@ -293,6 +294,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	prisonFreeConfig: OverlayConfig | null = null;
 	faultConfig: OverlayConfig | null = null;
 	reincarnateConfig: OverlayConfig | null = null;
+	tradeConfig: OverlayConfig | null = null;
 
 	fakeMode = false;
 	scanV3 = true;
@@ -351,6 +353,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.creditCountdownSub) this.creditCountdownSub.unsubscribe();
 		if (this.creditTimeoutSub) this.creditTimeoutSub.unsubscribe();
 		if (this.deathSub) this.deathSub.unsubscribe();
+		if (this.tradeSub) this.tradeSub.unsubscribe();
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -381,6 +384,10 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		});
 
 		this.prisonEndedSub = this.playerStateService.prisonEnded$.subscribe(() => this.playPrisonFreeOverlay());
+
+		this.tradeSub = this.playerStateService.trade$.subscribe(
+			({ sold, amount }) => (this.tradeConfig = tradeOverlay(sold, amount))
+		);
 
 		this.creditFaultSub = this.warningCredit$
 			.pipe(distinctUntilChanged())
