@@ -1,0 +1,249 @@
+{
+	"HELLO": "Olá !",
+	"WELCOME": "Bem-vindo(a) !",
+	"ANIMATOR": "Animador",
+	"LOCATION": "Local",
+	"FREE_MONEY": "Moeda livre",
+	"DEBT_MONEY": "Moeda débito",
+	"GAME_NOTICE": "Manual do jogo",
+	"BY_DEFAULT": "por padrão",
+	"PUBLIC_KEY": "Chave pública:",
+	"LAST_SEEN": "Última conexão : {{lastSeen}}",
+	"VALUES_BY_DEFAULT": "Valores padrões",
+	"BACK_TO_LOBBY": "Voltar à sala de espera",
+	"CANCEL": "Cancelar",
+	"CLOSE": "Fechar",
+	"REFRESH": "Atualizar",
+	"FULLSCREEN": "Tela cheia",
+	"FULLSCREEN_EXIT": "Sair da tela cheia",
+	"OK": "OK",
+	"ALL": "Todos",
+	"SAVE": "Salvar",
+	"DELETE": "Excluir",
+	"GAME": {
+		"OPEN": "Partida aberta, para se juntar",
+		"PLAYING": "Em progresso",
+		"END_GAME": "Rodada encerrada",
+		"STOP_ROUND": "Rodada encerrada",
+		"PAUSED": "Partida em pausa",
+		"STARTED": "Partida iniciada",
+		"RESUMED": "Partida retomada"
+	},
+	"CARD": {
+		"LV1": "Alimentação",
+		"LV2": "Saber",
+		"LV3": "Energia",
+		"LV4": "Tecnologia",
+		"BUILD_UP_0": "Criar uma carta de Saber",
+		"BUILD_UP_1": "Criar uma carta de Energia",
+		"BUILD_UP_2": "Criar uma carta de Tecnologia",
+		"BUILD_UP": "Criar uma carta de valor superior",
+		"IN_DECK": "a carta <b>{{cardName}}</b> está no <b>baralho</b>",
+		"IN_PLAYER": "a carta <b>{{cardName}}</b> está com o jogador <b>{{player}}</b>"
+	},
+	"THEME": {
+		"TITLE": "Tema",
+		"CLASSIC": "Cartas antigas",
+		"EMOJIS": "Itens emoji",
+		"TWEMOJIS": "Itens twemoji (uniforme)"
+	},
+	"EVENTS": {
+		"GAME_ENDED": "Partida encerrada",
+		"GAME_ENDED_MESSAGE": "A partida terminou. Obrigado por jogar !",
+		"SURVEY_MESSAGE": "Você será redirecionado para um questionário, para recolher a quente os seus sentimentos sobre esta partida. Obrigado por dedicar 5 minutos para respondê-lo !",
+		"ROUND_END": "Rodada encerrada",
+		"PRISON_ENDED": "um prisioneiro acaba de cumprir a sua pena",
+		"BREAK_FREE": "Eu quero ser LIVREEEEEEEE !",
+		"DEATH_PASS": "A morte acabou de passar 😈",
+		"NEED_DEATH_PASS": "A morte tem que passar 😈! (cabe a você jogar)",
+		"ASK_END_ROUND": "A rodada ainda não terminou, tem certeza que quer encerrá-la ?",
+		"SHORT_CODE_SEND": "Código enviado",
+		"COPY_SUCCESS": "Copiado !"
+	},
+	"GO_NEW_LIFE": "Ğo para a minha nova vida !",
+	"REINCARNATED": "Hey ! Você reencarnou !",
+	"DIALOG": {
+		"CLOSE": "Fechar",
+		"YES": "Sim",
+		"NO": "Não",
+		"CANCEL": "Cancelar",
+		"CONTINUE_SESSION": "Retomar a sua sessão",
+		"ACTIVE_SESSION": "Você tem uma sessão em curso :",
+		"DISMISS": "Descartar",
+		"RESUME": "Continuar",
+		"INFORMATION": {
+			"TITLE": "Informação !"
+		},
+		"CONFIRM": {
+			"TITLE": "Confirmar ?",
+			"MESSAGE": "Você confirma ?"
+		},
+		"CREATE_GAME": {
+			"TITLE": "Criar uma partida",
+			"FIELD1": "Nomear a partida",
+			"FIELD2": "Nome do animador",
+			"FIELD3": "Local",
+			"BTN1": "Criar",
+			"BTN2": "Cancelar"
+		},
+		"INSTALL": {
+			"MESSAGE1": "No Safari, abra o menu de compartilhamento com o botão",
+			"MESSAGE2": "em seguida escolha \"Adicionar à Tela Inicial\""
+		},
+		"SHORT_CODE": {
+			"PLACEHOLDER": "Insira o código...",
+			"BUY": "Comprar"
+		},
+		"QR_SCAN": {
+			"TITLE": "Escanear o QR Code",
+			"CAMERA": "Câmera",
+			"SELECT_DEVICE": "Selecionar a câmera"
+		},
+		"SEIZURE": {
+			"TITLE": "Pagamento padrão - inserir os bens",
+			"SOLD": "Saldo : {{amount}}",
+			"SEIZE": "Penhorar",
+			"TO_SEIZE": "À inserir: {{seized}} / {{objective}}",
+			"FEES": "Taxa adicional {{num}}",
+			"DECOTE": "Desconto de {{num}} % nas cartas",
+			"DROP_ZONE": "Coloque aqui as cartas \n à serem inseridas",
+			"PROGRESS": "Progressão",
+			"TOOLTIP_PRISON_INFO": "Se o objetivo for cumprido: 0 minutos. A prisão é apenas para o jogador que não tem mais cartas: pelo menos 1 minuto. Se o erro for significativo, a sanção deve ser grande (no máximo {{max}} min).",
+			"PRISON_DECISION": "Duração da prisão :",
+			"MINUTES": "minuto(s)",
+			"VALIDATE": "Validar a apreensão",
+			"SUCCESS": "Apreensão efetuada !"
+		}
+	},
+	"RESSOURCES": {
+		"LEARN_FORWARD": "Aprenda mais com",
+		"TITLE": "Módulos pedagógicos",
+		"BUTTON": "Módulos pedagógicos"
+	},
+	"ERROR": {
+		"SESSION_ALREADY_STARTED": "A sessão já começou, você não pode mais criar um avatar.",
+		"GENERIC": "Ocorreu um erro, tente mais tarde.",
+		"UNKNOWN": "Ocorreu um erro inesperado",
+		"DISTRIBUTE_CARDS": "Falha na distribuição das cartas",
+		"GAME_NOT_FOUND": "Jogo não encontrado",
+		"SESSION_NOT_FOUND": "Sessão não encontrada",
+		"GAME_ALREADY_LAUNCHED": "A partida já está aberta, os jogadores podem se juntar a ela.",
+		"DELETE_AVATAR": "Erro ao excluir o avatar.",
+		"IN_PROGRESS": "Já em andamento",
+		"CARDS_NOT_UNIQUE": "Cartas não únicas",
+		"NOT_ENOUGH_CARDS": "Cartas insuficientes",
+		"NOT_ENOUGH_CARDS_IN_DECK": "Cartas insuficiente no baralho",
+		"NOT_ENOUGH_MONEY": "Fundo insuficiente.",
+		"JOIN_REINCARNATE": "Impossível de se juntar",
+		"REINCARNATE": "Falha na ressurreição",
+		"JOIN": "Impossível de se juntar",
+		"CREATE": "Não foi possível criar",
+		"GAME_UNAVAILABLE": "Partida indisponível",
+		"PLAYER_NOT_FOUND": "Jogador inexistente",
+		"UPDATE": "Não foi possível modificar",
+		"EXCHANGE": "Troca impossível",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Troca impossível com um jogador morto ou na prisão",
+		"ID_PLAYER_MISSING": "ID do jogador ausente",
+		"INSUFFICIENT_FUNDS": "Fundos insuficientes",
+		"DELETE": "Não foi possível excluir",
+		"START_GAME": "Não foi possível inicializar a partida",
+		"RESET_GAME": "Não foi possível reinicializar a partida",
+		"START_ROUND": "Não foi possível inicializar o tour",
+		"STOP_ROUND": "Não foi possível interromper o tour",
+		"INTER_ROUND": "Inter-tour impossível",
+		"END_GAME": "Não foi possível concluir o jogo",
+		"KILL": "Impossível matar",
+		"SAVE_OPTIONS": "Não foi possível salvar as opções",
+		"FEEDBACKS_UNAVAILABLE": "Feedbacks inpossíveis",
+		"SEND_SURVEY": "Não foi possível enviar o questionário",
+		"CREATE_CREDIT": "Não foi possível criar o empréstimo",
+		"GET_CREDITS": "Não foi possível recuperar os empréstimos",
+		"REPAY_CREDIT": "Não foi possível o reembolso do empréstimo",
+		"PAY_INTEREST": "Impossível pagar os juros",
+		"SEIZURE": "Impossível de penhorar os bens",
+		"BREAK_PRISON": "Não foi possível sair da prisão :/",
+		"LOCK_DOWN_PLAYER": "Não foi possível colocar o jogador na prisão",
+		"DELETE_GAME": "Não foi possível suprimir",
+		"CONNECTION_EXPIRED": "A conexão expirou. Recarregamento automático da página...",
+		"IO_SOCKET_ERROR": "Ocorreu um erro, tente mais tarde.",
+		"FINDING_CARD": "Carta não encontrada",
+		"GAME_STATE_OVER": "Partida encerrada",
+		"NOT_FOUND": "Não encontrado",
+		"GET_ALL": "Falha ao carregar as sessões",
+		"GET_BY_ID": "Falha ao carregar a sessão",
+		"GET_BY_SHORT_ID": "Nenhuma sessão para este código",
+		"START": "Falha ao iniciar a sessão",
+		"SESSION_REMOVE_BY_ID": "Falha ao excluir a sessão",
+		"KILL_GAME": "Falha ao excluir a partida",
+		"DEFAULT": "Falha ao voltar aos valores padrões",
+		"GET_BY_IDX": "Falha ao carregar as regras",
+		"REMOVE_BY_IDX": "Falha ao excluir as regras",
+		"ALLOW_AVATAR_EDIT_SURVEY": "Falha ao abrir o questionário para este avatar",
+		"FINDING_INGREDIENT": "Ingrediente não encontrado",
+		"REFRESH": "Falha ao atualizar a partida"
+	},
+	"SOCKET": {
+		"KICKED": {
+			"TITLE": "Conexão interrompida ⚠️",
+			"ANOTHER_CONNECTION": "O seu lugar foi retomado a partir de outro aparelho.",
+			"KICKED_BY_ANIMATOR": "O animador te desconectou. Junte-se à partida para voltar.",
+			"RETAKEN": "O jogador retomou o seu lugar.",
+			"GENERIC": "A sua conexão foi substituída."
+		},
+		"OFFLINE": {
+			"TITLE": "Off-line (Desconectado) ⚠️",
+			"TEXT": "☎️ Aguardando reconexão..."
+		},
+		"DISCONNECTED": {
+			"TITLE": "Desconectado ⚠️",
+			"MESSAGE": "Falha nas tentativas de reconexão",
+			"REFRESH": "Atualizar",
+			"TIMER": "8"
+		},
+		"RECONNECTING": {
+			"TITLE": "Off-line (Desconectado)⚠️",
+			"TEXT": "☎️ Reconexão em andamento..."
+		},
+		"CONNECTED": "✅ Você está conectado(a).",
+		"RECONNECTED": "✅ Você está reconectado(a).",
+		"TIMEOUT": "Tempo de conexão ultrapassado."
+	},
+	"CURRENCY": {
+		"EURO": "R$",
+		"JUNE": "Ğ1",
+		"DU": "DU"
+	},
+	"DATE_FORMAT": {
+		"DATETIME": "dd-MM-YYYY à HH:mm"
+	},
+	"CONTRIBUTION": {
+		"TITLE": "Contribuições",
+		"SUBTITLE": "Um grande OBRIGADO  ❤️ às pessoas seguintes por suas contribuições, apoios, conselhos, ideias, correções ortográficas, traduções, etc."
+	},
+	"TASK": {
+		"MASTER_TASK": "Animador",
+		"UNSELECT_ALL": "Desselecionar tudo",
+		"TITLE": "Lista de tarefas do animador",
+		"PREPARE": "Escolher as opções do jogo",
+		"PRESENT_YOURSELF": "Apresente-se",
+		"PRESENT_ML": "Apresentar o objetivo do jogo (2 moedas, 2 resultados de partidas diferentes)",
+		"SOUND": "Pedir aos jogadores para ativar o som do telefone, para uma melhor imersão",
+		"DELAY": "Explique o prazo para cada uma das rodadas",
+		"SQUARES": "Crie valor reunindo cartas idênticas através das transações",
+		"TRANSACTIONS": "Explique como fazer compras (via câmera ou digicode) e faça uma partida sem valer durante 5 min. (utilize o modo experimental para poder ter o botão reinicialização)",
+		"DEATH": "Explique a morte (que acontece arbitrariamente) e o renascimento ou reencarnação imediata",
+		"START_1": "Comece assim que todos os jogadores se juntaram à partida, inicie a partida assim que eles receberem as cartas",
+		"SURVEY_1": "Fim da rodada, colete os sentimentos através de uma sondagem via telefone",
+		"NEXT_MONEY": "Inicie a rodada com a outra moeda",
+		"START_2": "Comece assim que todos os jogadores se juntaram à partida, inicie a rodada assim que eles recebem as cartas",
+		"SURVEY_2": "Final de rodada, colete os sentimentos através de uma sondagem via telefone",
+		"RESULTS": "Fim da partida, revelação dos resultados e comparação das duas rodadas"
+	},
+	"MODULE": {
+		"BACK_HOME": "Voltar ao início"
+	},
+	"PWA": {
+		"NEW_VERSION": "Nova versão disponível, reiniciando...",
+		"UNRECOVERABLE": "Ocorreu um erro, o aplicativo precisa ser recarregado"
+	}
+}

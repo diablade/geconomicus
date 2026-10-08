@@ -1,0 +1,65 @@
+{
+	"MODULE": {
+		"FISCALITE": {
+			"TITLE": "Tributação por decil",
+			"SUB_TITLE": "40 anos de escolhas políticas e o seu efeito sobre o patrimônio",
+			"SUMMARY": "Simular o impacto de 40 anos de reformas tributárias francesas sobre a acumulação de patrimônio dos dez decis de renda.",
+			"INTRO": "Este módulo percorre quarenta anos de políticas tributárias francesas (1983-2023) e o seu efeito sobre a acumulação de patrimônio dos dez decis de renda. A partir de um mesmo ponto de partida — onde o patrimônio inicial é proporcional à renda e onde a poupança e o rendimento do capital são idênticos — somente a tributação varia conforme a reforma escolhida. Ano após ano, uma alíquota efetiva mais elevada desacelera a « bola de neve » patrimonial de um decil, enquanto um capital menos tributado a acelera (r > g). As diferenças, imperceptíveis no primeiro ano, tornam-se espetaculares ao fim de quatro décadas.",
+			"DISCLAIMER": "Os presets se baseiam em referências históricas reais e documentadas (alíquotas marginais, número de faixas, escudo fiscal, contribuição de 75 %, PFU/flat tax, mudança do ISF para o IFI ; fontes IPP e INSEE). Em contrapartida, as alíquotas efetivas por decil, as taxas de poupança, os rendimentos do capital e os resultados da simulação constituem um modelo pedagógico simplificado e ajustável : respeitam ordens de grandeza (dados do INSEE, trabalhos de Piketty) mas não pretendem reconstituir exatamente a carga tributária de cada domicílio. Você pode modificar todos os parâmetros para testar outros cenários.",
+			"PRESETS_TITLE": "Referências históricas (alíquotas reais documentadas)",
+			"MARGINAL_TOP": "Alíquota marginal máxima",
+			"CUSTOM": "personalizada",
+			"CUSTOM_HELP": "Você ajustou manualmente as alíquotas : cenário personalizado. Clique em uma referência histórica para recarregar um preset.",
+			"PRESETS": {
+				"mitterrand": {
+					"LABEL": "Mitterrand 1983-1986",
+					"BRACKETS": "14 faixas, alíquota marginal 65 %",
+					"CONTEXT": "No início do primeiro septenato de François Mitterrand, a tabela do imposto de renda tem 14 faixas e culmina em uma alíquota marginal de 65 %, um dos pontos altos da progressividade da tabela moderna (a alíquota marginal superior havia ultrapassado 60 % antes da guerra e após 1945). Os rendimentos do capital são então tributados pela tabela. A faixa de 65 % é reduzida a 58 % a partir da tributação dos rendimentos de 1986."
+				},
+				"sarkozy": {
+					"LABEL": "Sarkozy 2007-2012",
+					"BRACKETS": "Alíquota marginal 40-41 % + escudo fiscal 50 %",
+					"CONTEXT": "O escudo fiscal, criado pela lei de finanças de 2006 (teto dos impostos diretos em 60 % dos rendimentos), é reduzido a 50 % e estendido às contribuições sociais pela lei TEPA (agosto de 2007) ; a alíquota marginal do imposto de renda situa-se então em torno de 40-41 %. Muito favorável aos maiores patrimônios, o dispositivo é extinto em 2011."
+				},
+				"hollande": {
+					"LABEL": "Hollande 2012-2017",
+					"BRACKETS": "Alíquota marginal 45 % + contribuição excepcional 75 % (> 1 M€)",
+					"CONTEXT": "O mandato cria uma faixa de imposto de renda de 45 % e uma contribuição excepcional de 75 % sobre os rendimentos superiores a 1 M€. Censurada pelo Conselho Constitucional no fim de 2012 por quebra da igualdade diante dos encargos públicos, essa taxa é reintroduzida em 2013-2014 na forma de uma contribuição paga pelas empresas. A progressividade no topo se recupera temporariamente."
+				},
+				"macron": {
+					"LABEL": "Macron 2017-hoje",
+					"BRACKETS": "5 faixas, alíquota marginal 45 % + PFU 30 % sobre o capital ; ISF → IFI",
+					"CONTEXT": "Desde 2018, a alíquota marginal da tabela permanece em 45 % sobre os rendimentos do trabalho, mas os rendimentos do capital passam a um imposto fixo único (« flat tax ») de 30 %, e o ISF é substituído pelo IFI, limitado aos imóveis. As maiores rendas, provenientes majoritariamente do capital, veem a sua alíquota efetiva se achatar no topo da distribuição."
+				}
+			},
+			"DECILES_TITLE": "Alíquota efetiva de tributação por decil",
+			"DECILES_HELP": "Ajuste a alíquota efetiva média aplicada a cada decil, de D1 (os mais modestos) a D10 (os mais abastados). O gradiente azul → vermelho visualiza a progressividade.",
+			"TAX_RATE": "Alíquota de tributação",
+			"POOREST": "D1 · mais modestos",
+			"RICHEST": "D10 · mais abastados",
+			"SIM_TITLE": "Parâmetros de simulação",
+			"GROWTH": "Crescimento econômico anual",
+			"CAPITAL_RETURN": "Rendimento do capital (decis elevados)",
+			"CAPITAL_RETURN_HELP": "Rendimento real anual do capital para o decil mais abastado. Quando esse rendimento supera o crescimento (r > g), o patrimônio do topo da distribuição faz « bola de neve ».",
+			"DURATION": "Duração da simulação",
+			"YEARS": "anos",
+			"EDIT_INCOMES": "Editar as rendas de referência por decil",
+			"HIDE_INCOMES": "Ocultar as rendas de referência",
+			"INCOME_REF": "Renda anual de referência por decil (€)",
+			"RESET_PARAMS": "Reinicializar",
+			"VIZ_TITLE": "Patrimônio acumulado por decil",
+			"VIZ_LEGEND": "O tamanho de cada bolha é proporcional ao patrimônio acumulado (e não à renda instantânea).",
+			"YEAR": "Ano",
+			"CURRENT_RATIO": "o decil mais abastado (D10) detém <b>{{ratio}}×</b> o patrimônio do mais modesto (D1)",
+			"PLAY": "Reproduzir",
+			"PAUSE": "Pausa",
+			"RESET_ANIM": "Voltar ao início",
+			"COMPARE_TOGGLE": "Comparar duas tributações",
+			"COMPARE_WITH": "Comparar com",
+			"COMPARE_TITLE": "Leitura comparativa",
+			"KEY_FIGURE": "Com a tributação {{preset}}, o decil mais abastado (D10) detém {{ratio}}× o patrimônio do decil mais modesto (D1) após {{years}} anos.",
+			"SOURCES_TITLE": "Para ir mais longe",
+			"GO_FURTHER": "Para ir mais longe : compare o efeito de uma mesma alíquota marginal anunciada mas com bases de cálculo diferentes (trabalho contra capital), ajuste você mesmo as alíquotas efetivas por decil, e observe como o rendimento líquido do capital — mais do que a própria tabela — governa a concentração do patrimônio no topo da distribuição no longo prazo."
+		}
+	}
+}

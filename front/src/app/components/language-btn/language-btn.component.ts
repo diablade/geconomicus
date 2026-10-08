@@ -21,7 +21,8 @@ export class LanguageBtnComponent implements OnInit {
 		{flag: "🇷🇸", language: "Srpski", lang: "sr"},
 		{flag: "🇯🇵", language: "日本語", lang: "ja"},
 		{flag: "🇩🇪", language: "Deutsch", lang: "de"},
-		{flag: "🇷🇴", language: "Romanian", lang: "ro"}
+		{flag: "🇷🇴", language: "Romanian", lang: "ro"},
+		{flag: "🇧🇷", language: "Português", lang: "pt"}
 	];
 
 	supportedLanguages: Language[]=[];
