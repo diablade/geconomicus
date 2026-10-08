@@ -1,0 +1,54 @@
+services:
+  geco-qa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: geco-api-qa:${GECO_VERSION}
+    restart: always
+    environment:
+      GECO_NODE_ENV: ${GECO_NODE_ENV}
+      GECO_VERSION: ${GECO_VERSION}
+      GECO_PORT_NODE: ${GECO_PORT_NODE}
+      GECO_LOG_DEBUG: ${GECO_LOG_DEBUG}
+      GECO_WEB_HOST: ${GECO_WEB_HOST}
+      GECO_DB_CONFIG_HOSTNAME: ${GECO_DB_CONFIG_HOSTNAME}
+      GECO_DB_CONFIG_PORT: ${GECO_DB_CONFIG_PORT}
+      GECO_DB_CONFIG_COLLECTION: ${GECO_DB_CONFIG_COLLECTION}
+      GECO_DB_CONFIG_USER: ${GECO_DB_CONFIG_USER}
+      GECO_DB_CONFIG_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+    ports:
+      - "8086:${GECO_PORT_NODE}"
+    volumes:
+      - /volume1/docker/geco/logs-qa:/logs
+    depends_on:
+      mongodb:
+        condition: service_started
+    networks:
+      - backnet
+
+  mongodb:
+    image: mongo:8.0.9-noble
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+    volumes:
+      - /volume1/docker/mongoData8:/data/db
+    networks:
+      - backnet
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8099:8081"
+    environment:
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: ${ME_CONFIG_MONGODB_ENABLE_ADMIN}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${GECO_DB_CONFIG_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${GECO_DB_CONFIG_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - backnet
+
+networks:
+  backnet:

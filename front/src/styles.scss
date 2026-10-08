@@ -1,247 +1,655 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '@angular/cdk/overlay-prebuilt.css';
 @import 'simple-keyboard/build/css/index.css';
-
-html, body {
-  height: 100%;
-  background: #ffd89b !important;
-  font-family: Arial, "Roboto", "Helvetica", sans-serif;
-}
+@import 'styles/keyframes';
 
 body {
-  margin: 0;
+	margin: 0;
+}
+
+app-root {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	box-sizing: border-box;
+	padding-top: env(safe-area-inset-top);
+	overflow: hidden;
+}
+
+app-root > div {
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
 }
 
 * {
-  touch-action: manipulation;
+	touch-action: manipulation;
 }
 
-.guny {
-  width: 300px;
+body,
+html {
+	height: 100%;
+	overscroll-behavior: none;
+	background: rgb(32, 7, 46) !important;
+	// font-family: 'GecoFont5', 'Roboto', 'Helvetica', sans-serif !important;
 }
 
-.contour {
-  color: white !important;
-  font-weight: bold;
-
-  text-shadow: //TOP
-          0px -1.5px 0px black,
-            //TOP RIGHT
-          1.5px -1.5px 0px black,
-            //RIGHT
-          1.5px 0px 0px black,
-            //BOTTOM
-          0px 1.5px 0px black,
-            //BOTTOM RIGHT
-          1.5px 1.5px 0px black,
-            //BOTTOM LEFT
-          -1.5px 1.5px 0px black,
-            //LEFT
-          -1.5px 0px 0px black,
-            //TOP LEFT
-          -1.5px -1.5px 0px black,
+.bulleFont {
+	// font-family: 'GecoFont5', 'Roboto', sans-serif !important;
 }
 
-.sunyBg {
-  background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+*:not(.bulleFont, .geconomicusFont) {
+	font-family: 'GecoFont10', 'Roboto', 'Helvetica', sans-serif;
 }
 
-.shadowed {
-  color: white;
-  text-shadow: //TOP
-          0px -1.5px 0px black,
-            //TOP RIGHT
-          1.5px -1.5px 0px black,
-            //RIGHT
-          1.5px 0px 0px black,
-            //BOTTOM
-          0px 1.5px 0px black,
-            //BOTTOM RIGHT
-          1.5px 1.5px 0px black,
-            //BOTTOM LEFT
-          -1.5px 1.5px 0px black,
-            //LEFT
-          -1.5px 0px 0px black,
-            //TOP LEFT
-          -1.5px -1.5px 0px black,
-            //la trainé vers en bas à droite
-          1px 1px 0px black,
-          2px 2px 0px black,
-          3px 3px 0px black,
-          4px 4px 0px black,
-          1px 1px 1px black,
-          2px 2px 1px black,
-          3px 3px 1px black,
-          4px 4px 1px black;
-}
-
-.gecoFont {
-  font-family: GecoFont, 'Roboto', sans-serif !important;
+.geconomicusFont {
+	font-family: 'Geconomicus', 'Roboto', sans-serif !important;
 }
 
 @font-face {
-  font-family: 'GecoFont';
-  src: url('/assets/Retrow Mentho.woff') format('woff');
+	font-family: 'Geconomicus';
+	src: url('/assets/fonts/Retrow Mentho.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'GecoFont1';
+	src: url('/assets/fonts/Rondouillard.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont1.2';
+	src: url('/assets/fonts/Rondouillard Gras.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont2';
+	src: url('/assets/fonts/Stanberry.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont3';
+	src: url('/assets/fonts/HVD_Comic_Serif_Pro.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'GecoFont4';
+	src: url('/assets/fonts/Homer_Simpson_Revised.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont5';
+	src: url('/assets/fonts/KRONIKA_.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont6';
+	src: url('/assets/fonts/MulledWineSeason-Medium.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont7';
+	src: url('/assets/fonts/ComicHelvetic_Medium.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont8';
+	src: url('/assets/fonts/ComickBook_Simple.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont9';
+	src: url('/assets/fonts/Hey Comic.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'GecoFont10';
+	src: url('/assets/fonts/BadComic-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.guny {
+	width: 300px;
+}
+
+.contour {
+	color: white !important;
+	font-weight: bold;
+
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black;
+}
+
+.halo {
+	filter: drop-shadow(0 0 0.75rem white);
+}
+
+.glow {
+	// animation: shadow-rotate 2s linear infinite;
+	filter: drop-shadow(0px 0px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
+		drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+}
+
+// @property --glow-angle {
+//     syntax: '<angle>';
+//     initial-value: 0deg;
+//     inherits: false;
+// }
+// .glow{
+// 	position: relative;
+// 	display: inline-block;
+// 	line-height: 0;
+// }
+
+// .glow > * {
+// 	position: relative;
+// 	z-index: 1;
+// }
+
+// .glow::before {
+// 	content: '';
+// 	position: absolute;
+// 	inset: 0;
+// 	z-index: 0;
+// 	pointer-events: none;
+// 	transform: scale(1.015);
+// 	background: conic-gradient(
+// 		from var(--glow-angle, 0deg),
+// 		rgb(255, 230, 0),
+// 		rgb(255, 28, 141, 0.77),
+// 		rgb(149, 36, 255, 0.77),
+// 		rgb(27, 31, 253, 0.77),
+// 		rgb(255, 230, 0)
+// 	);
+// 	-webkit-mask: url('/assets/images/geconomicus.png') center / contain no-repeat;
+// 	mask: url('/assets/images/geconomicus.png') center / contain no-repeat;
+// 	filter: blur(3px);
+// 	animation: glow-race 3s linear infinite;
+// }
+
+@media (prefers-reduced-motion: reduce) {
+	.glow::before {
+		animation: none;
+	}
+}
+
+.box-shadowed {
+	box-shadow: (4px 4px 0px rgba(0, 0, 0, 1)) !important;
+}
+
+.shadowed {
+	color: white;
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black,
+		//la trainé vers en bas à droite
+		1px 1px 0px black,
+		2px 2px 0px black,
+		3px 3px 0px black,
+		4px 4px 0px black,
+		1px 1px 1px black,
+		2px 2px 1px black,
+		3px 3px 1px black,
+		4px 4px 1px black;
+}
+
+.item-overlay-backdrop {
+	background: rgba(0, 0, 0, 0.4);
+}
+
+.frame {
+	border-radius: 10px;
+	backdrop-filter: blur(10px);
+	padding: 0.5em;
+
+	&-light {
+		border: 1px solid #dfdfdf;
+		background-color: rgba(255, 255, 255, 0.4);
+	}
+	&-dark {
+		border: solid 2px black !important;
+		background: rgba(0, 0, 0, 0.1);
+	}
+}
+
+.blur {
+	backdrop-filter: blur(20px);
+}
+
+.white {
+	color: rgb(230, 230, 230) !important;
+}
+
+.whiteBtn {
+	border: solid 1px #e9e9e9aa !important;
+	color: #e9e9e9 !important;
+	background: #ffffff36 !important;
+}
+
+.blackBtn {
+	border: solid 2px black !important;
+	color: #000000 !important;
+	background: #ffffff42 !important;
+}
+
+.contourText {
+	color: white;
+	text-shadow: //TOP
+		0px -1.5px 0px black,
+		//TOP RIGHT
+		1.5px -1.5px 0px black,
+		//RIGHT
+		1.5px 0px 0px black,
+		//BOTTOM
+		0px 1.5px 0px black,
+		//BOTTOM RIGHT
+		1.5px 1.5px 0px black,
+		//BOTTOM LEFT
+		-1.5px 1.5px 0px black,
+		//LEFT
+		-1.5px 0px 0px black,
+		//TOP LEFT
+		-1.5px -1.5px 0px black;
+}
+.ombreText {
+	text-shadow:
+	//la trainé vers en bas à droite
+		1px 1px 0px black,
+		2px 2px 0px black,
+		3px 3px 0px black,
+		4px 4px 0px black,
+		1px 1px 1px black,
+		2px 2px 1px black,
+		3px 3px 1px black,
+		4px 4px 1px black;
 }
 
 .bgBlur {
-  backdrop-filter: blur(5px);
-  background-color: rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(5px);
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
+.divider {
+	height: 1px;
+	background-color: #e9e9e9;
+	margin: 15px 0;
+}
 
-.bulle {
-  background: #ffffff69;
-  padding: 12px;
-  border-radius: 200px;
-  position: relative;
-  width: fit-content;
-  height: fit-content;
+.mousePointer {
+	cursor: pointer;
 }
 
 .bulleResult {
-  background: #ffffff69;
-  padding: 12px;
-  border-radius: 200px;
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-}
-
-.bulle::after {
-  content: '';
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  left: 30px;
-  bottom: -30px;
-  background: #ffffff69;
-  clip-path: polygon(38% 0, 100% 100%, 100% 0);
+	background: #ffffff69;
+	padding: 12px;
+	border-radius: 200px;
+	position: relative;
+	width: fit-content;
+	height: fit-content;
 }
 
 .bulleResult::after {
-  content: "";
-  position: absolute;
-  width: 17px;
-  height: 17px;
-  right: -16px;
-  bottom: 37%;
-  background: rgba(255, 255, 255, 0.4117647059);
-  clip-path: polygon(100% 0%, 0 0, 0 100%);
+	content: '';
+	position: absolute;
+	width: 17px;
+	height: 17px;
+	right: -16px;
+	bottom: 37%;
+	background: rgba(255, 255, 255, 0.4117647059);
+	clip-path: polygon(100% 0%, 0 0, 0 100%);
 }
 
 .hg-button {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .hg-button-buy {
-  background-color: green !important;
-  color: white; /* Optional: Change text color for contrast */
+	background-color: green !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .hg-button-cancel {
-  background-color: red !important;
-  color: white; /* Optional: Change text color for contrast */
+	background-color: red !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .hg-button-bksp {
-  background-color: orange !important;
-  color: white; /* Optional: Change text color for contrast */
+	background-color: orange !important;
+	color: white;
+	/* Optional: Change text color for contrast */
 }
 
 .notice {
-  max-height: 600px;
-  max-width: 400px;
-  padding: 10px;
+	max-height: 600px;
+	max-width: 400px;
+	padding: 10px;
 }
 
 .icon {
-  height: 20px;
-  width: 20px;
-  background-size: cover;
-  cursor: pointer;
+	height: 20px;
+	width: 20px;
+	background-size: cover;
+	cursor: pointer;
 }
 
-
-.red {
-  background-color: #E8A7A6;
-
-  .mat-badge-content {
-    background: #ce1421;
-  }
+.action-dialog-panel .mat-mdc-dialog-surface,
+.action-dialog-panel .mat-dialog-container {
+	background: #1e1e2e !important;
+	color: #e0e0f0 !important;
+	border-radius: 12px !important;
+	padding: 0 !important;
 }
 
-.yellow {
-  background-color: #F3EFAD;
+// .card.<color> selectors carry extra specificity so they beat Bootstrap's own
+// .card { background-color } rule (bootstrap.css loads after this file).
+.red,
+.card.red {
+	background-color: #e8a7a6;
 
-  .mat-badge-content {
-    background: #c4bb13;
-  }
+	.mat-badge-content {
+		background: #ce1421;
+	}
 }
 
-.green {
-  background-color: #A2CBA2;
+.yellow,
+.card.yellow {
+	background-color: #f3efad;
 
-  .mat-badge-content {
-    background: #14a549;
-  }
+	.mat-badge-content {
+		background: #c4bb13;
+	}
 }
 
-.blue {
-  background-color: #BBDAE3;
+.green,
+.card.green {
+	background-color: #a2cba2;
 
-  .mat-badge-content {
-    background: #3c8fa2;
-  }
+	.mat-badge-content {
+		background: #14a549;
+	}
+}
+
+.blue,
+.card.blue {
+	background-color: #bbdae3;
+
+	.mat-badge-content {
+		background: #3c8fa2;
+	}
 }
 
 /* emoji */
 .emoji {
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  line-height: 1;
-  vertical-align: -0.125em;
-  font-size: 1em;
+	font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Android Emoji', sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	display: inline-block;
+	line-height: 1;
+	vertical-align: -0.125em;
+	font-size: 1em;
 }
 
 /* twemoji */
 .twemoji {
-  font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-  'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
-  'EmojiOne Color', 'Android Emoji', sans-serif;
+	font-family:
+		'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+		'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
 /* Target landscape mode */
 @media only screen and (orientation: landscape) {
-  .keyboard-dialog {
-    transform: scale(0.85) !important;
-  }
-  .keyboard-dialog input {
-    height: 57px !important;
-  }
+	.keyboard-dialog {
+		transform: scale(0.85) !important;
+	}
+
+	.keyboard-dialog input {
+		height: 57px !important;
+	}
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1.5);
-  }
-  50% {
-    transform: scale(2.5);
-  }
-  100% {
-    transform: scale(1.5);
-  }
+.spinning {
+	animation: spin 200ms ease-in-out infinite;
 }
 
+.giftBounce {
+	font-size: 1.3em;
+	padding: 10px 20px;
+	border-radius: 22px;
+	animation: pulse 1.5s infinite;
+}
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.wheel-host {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	filter: blur(3px);
+}
+
+.wheel {
+	width: clamp(240px, 80vmin, 520px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	opacity: 0.85;
+	animation: rotate 2.5s linear infinite;
+	background: repeating-conic-gradient(
+		#ff990000 0% 8.33%,
+		#ffe179c2 8.33% 16.66%,
+		#ff000000 16.66% 25%,
+		#ffe179c2 25% 33.33%,
+		#ff000000 33.33% 41.66%,
+		#ffe179c2 41.66% 50%,
+		#ffffff00 50% 58.33%,
+		#ffe179c2 58.33% 66.66%,
+		#ffffff00 66.66% 75%,
+		#ffe179c2 75% 83.33%,
+		#ffffff00 83.33% 91.66%,
+		#ffe179c2 91.66% 100%
+	);
+}
+
+/* Fix for Material Icons - ensure correct font-family */
+mat-icon.outlined {
+	font-family: 'Material Symbols Outlined' !important;
+	// font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+}
+
+/* Fix for Material Icons Outlined - ensure correct font-family */
+mat-icon.material-icons {
+	font-family: 'Material Icons';
+	// font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+}
+
+mat-chip {
+	cursor: pointer;
+
+	mat-icon,
+	span {
+		pointer-events: none; // ✅ laisse passer les clics au chip parent
+	}
+}
+
+.z1 {
+	z-index: 1 !important;
+}
+
+.z2 {
+	z-index: 2 !important;
+}
+
+.z3 {
+	z-index: 3 !important;
+}
+
+// .clouds {
+// 	width: 100vw;
+// 	height: 100vh;
+// 	background-image: url('/assets/images/texture_cloud.svg');
+// 	background-size: cover;
+// }
+
+.dots {
+	position: relative; /* needed for pseudo-element */
+	z-index: 1;
+}
+
+.dots::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image: url('/assets/images/texture.png');
+	background-size: contain;
+	background-repeat: repeat;
+	background-position: center;
+	opacity: 0.4;
+	pointer-events: none;
+	z-index: -1;
+}
+
+/* Override: dark version */
+.dots-dark::before {
+	opacity: 0.9;
+}
+
+/* Override: light version */
+.dots-light::before {
+	opacity: 0.25;
+}
+
+.debtBg {
+	@extend .dots;
+	background: -webkit-linear-gradient(250deg, #090152 0%, #19547b 35%, #ffd89b 100%); /* Chrome 10-25, Safari 5.1-6 */
+}
+
+.juneBg {
+	@extend .dots;
+	background: linear-gradient(315deg, #ffd89b 10%, #fc9088 35%, #090152 100%);
+}
+
+.riseSunyBg {
+	@extend .dots;
+	background: -webkit-linear-gradient(90deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+}
+
+.bgWood {
+	background-image: url('/assets/images/woodJapAlt.jpg');
+}
+.bgGreen {
+	background-image: url('/assets/images/green-carpet.jpg');
+}
+.bgGradien1 {
+	@extend .dots;
+	background: linear-gradient(109.6deg, rgba(83, 94, 161, 1) 44.5%, rgba(188, 14, 107, 1) 100.2%);
+}
+.bgGradien2 {
+	@extend .dots;
+	background: linear-gradient(111.9deg, #19547b, #ffd89b);
+}
+.bgGradien3 {
+	@extend .dots;
+	background: linear-gradient(to bottom, #fddf62 0%, #fc9088 50%, #ff59d1 100%);
+}
+.bgGradien4 {
+	@extend .dots;
+	background: conic-gradient(
+		from 11.1deg,
+		rgba(0, 40, 70, 1) -4.8%,
+		rgba(255, 115, 115, 1) 82.7%,
+		rgba(255, 175, 123, 1) 97.2%
+	);
+}
+.bgGradien5 {
+	@extend .dots;
+	background: linear-gradient(
+		111.9deg,
+		rgba(255, 255, 169, 1) 0.2%,
+		rgba(255, 208, 120, 1) 14.1%,
+		rgba(255, 156, 94, 1) 27.4%,
+		rgba(251, 99, 95, 1) 41.4%,
+		rgba(226, 28, 114, 1) 55.8%,
+		rgba(176, 0, 140, 1) 65.2%,
+		rgba(83, 0, 166, 1) 88.1%
+	);
+}
+.bgGradien6 {
+	@extend .dots;
+	background: linear-gradient(20.5deg, #ffd89b 0%, #fc9088 50%, #090152 100%);
+}
+.bgGradien7 {
+	@extend .dots;
+	background:
+		radial-gradient(ellipse at 20% 30%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),
+		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
+		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
+		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
+}
+
+.bgFixedLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background-size: cover;
+}
+
+.aboveBg {
+	position: relative;
+	z-index: 1;
+}
+
+// credit-chip detail popover: let the app-credit card breathe inside the mat-menu panel
+.creditDetailMenu.mat-mdc-menu-panel {
+	max-width: none;
+	.mat-mdc-menu-content {
+		padding: 0;
+	}
 }

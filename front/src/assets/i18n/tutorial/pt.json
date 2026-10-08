@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Como jogar ?",
+		"PREV": "Anterior",
+		"NEXT": "Próximo",
+		"FINISH": "Concluído",
+		"GO_TO": "Ir para o slide {{n}}",
+		"CARDS": {
+			"TITLE": "As cartas de recursos",
+			"DESC": "Cada carta representa um recurso : Alimentação (vermelha, 1), Saber (amarela, 2), Energia (verde, 4), Tecnologia (azul, 8). Cada família de cartas tem uma letra (A, B, C…). Sua riqueza = suas moedas + o valor das suas cartas."
+		},
+		"WEALTH": {
+			"TITLE": "O objetivo : enriquecer",
+			"DESC": "Acumule o máximo de riqueza (moedas + valor das cartas) antes do fim da partida. A classificação premia o jogador mais rico, o que tem mais moedas, o que tem mais recursos, e o mais ativo."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "As transações",
+			"DESC": "Qualquer jogador pode vender uma carta virando-a (QR code ou código curto). O comprador escaneia ou digita o código para comprá-la ao preço do recurso. É assim que a riqueza circula entre os jogadores."
+		},
+		"PRODUCTION": {
+			"TITLE": "A produção",
+			"DESC": "Reúna 4 cartas da mesma letra E do mesmo nível → aperte em Produzir → você recebe 1 carta do nível superior + 4 novas cartas. Alimentação×4 → 1 Saber. Cada produção também te dá +1 ficha de ação."
+		},
+		"ACTIONS": {
+			"TITLE": "As ações",
+			"DESC": "Gaste as suas fichas de ação para interagir com os outros jogadores : procurar quem tem uma carta, doar uma, roubar uma, desencadear um conflito… Você começa com 1 ficha e ganha mais a cada produção."
+		},
+		"JUNE": {
+			"TITLE": "Modo Moeda Livre (JUNE)",
+			"DESC": "A cada minuto, uma quantidade de moeda (o Dividendo Universal) é distribuída igualmente a todos os jogadores vivos. Os preços das cartas se ajustam com o DU. Sem banco, sem dívida — a moeda é criada e compartilhada automaticamente."
+		},
+		"DEBT": {
+			"TITLE": "Modo Moeda Débito",
+			"DESC": "Você começa com 0 moeda. Você precisa pedir um empréstimo ao banco para jogar. Em cada empréstimo : você recebe moedas, e deve reembolsar o principal + os juros no prazo determinado."
+		},
+		"REPAYMENT": {
+			"TITLE": "Reembolsar ou prolongar",
+			"DESC": "No vencimento : reembolse tudo (empréstimo encerrado), ou pague somente os juros para prolongar o prazo (você continua devendo o principal). Se não puder pagar → penhora."
+		},
+		"SEIZURE": {
+			"TITLE": "Penhora e prisão",
+			"DESC": "Em caso de inadimplência, o banco penhora as suas cartas (com um desconto de 33%) e as suas moedas para recuperar a dívida. Se não for suficiente, você vai para a prisão por alguns minutos — excluído do jogo até o fim da pena."
+		}
+	}
+}

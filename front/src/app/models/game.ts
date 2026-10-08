@@ -125,7 +125,7 @@ export class Game {
 	bankMoneyLost = 0;
 	defaultCreditAmount = 3;
 	defaultInterestAmount = 1;
-	timerCredit = 5;
+	durationCredit = 5;
 	timerPrison = 5;
 	manualBank = true;
 	seizureType = "decote";

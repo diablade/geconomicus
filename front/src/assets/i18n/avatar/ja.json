@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "待機ルーム",
+		"ANIMATOR": "進行役: {{name}}",
+		"NAME": "名前またはニックネーム",
+		"YOUR_AVATAR": "あなたのアバター",
+		"SYS_SCAN": "購入方法",
+		"EYES": "目",
+		"EYEBROWS": "眉",
+		"MOUTH": "口",
+		"GLASSES": "メガネ",
+		"EARRINGS": "耳",
+		"FEATURES": "その他",
+		"GAME_TABLE": "ゲームテーブル",
+		"SKIN": "肌",
+		"HAIR": "髪",
+		"PLAY": "ゲームに参加",
+		"YOUR_CODE": "戻るためのコード：",
+		"UPDATED": "アバターを更新しました",
+		"MODIFY_FEEDBACK": "回答を修正する",
+		"MODIFY_FEEDBACK_MESSAGE": "進行役に回答の修正を許可してもらってから、もう一度お試しください。",
+		"SURVEY_AUTORIZED": "アンケートに再度回答できます"
+	}
+}

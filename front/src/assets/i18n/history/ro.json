@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "Istoricul jocurilor create",
+		"DELETE_CONFIRM": "Ștergi jocul?",
+		"AUTO_DELETE": "Jocurile mai vechi de 2 luni vor fi șterse automat în curând.",
+		"IMPORT_EXPORT": "(Importul și exportul jocurilor vor fi, de asemenea, posibile în curând).",
+		"JOIN_AS_NEW_PLAYER": "Alătură-te (jucător nou)",
+		"JOIN_AS_MASTER": "Alătură-te ca animator",
+		"CREATED_ON": "Creat pe",
+		"PLAYERS": "jucători",
+		"GAMES": "jocuri",
+		"SESSION": "Sesiune",
+		"TYPE": "tip:",
+		"LOCATION": "Locație:",
+		"ANIMATOR": "Animator:",
+		"VIEW_RESULTS": "Vezi rezultatele",
+		"VIEW": "Vezi",
+		"NAME_PARTY": "Numele partii",
+		"TYPE_MONEY": "Tipul monedei",
+		"STATUS_TEXT": "Status",
+		"SORT": "Sortare",
+		"BY_DATE": "Data",
+		"BY_PLAYERS": "Număr de jucători",
+		"BY_TYPE": "Tip",
+		"BY_LOCATION": "Locație",
+		"BY_ANIMATOR": "Animator",
+		"BY_STATUS": "Status",
+		"STATUS": {
+			"ENDED": "Încheiat",
+			"OPEN": "Deschis",
+			"IN_PROGRESS": "În desfășurare"
+		},
+		"DELETE_SESSION": "Sesiunea a fost ștearsă",
+		"DELETE_GAME": "sesiunea a fost ștearsă",
+		"DELETE_DIALOG": {
+			"TITLE": "Confirmi?",
+			"MESSAGE": "Această acțiune este ireversibilă."
+		}
+	}
+}

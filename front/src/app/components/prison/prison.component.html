@@ -1,0 +1,17 @@
+<div class="blocked">
+	<div class="prison" [@prisonDoor]="'in'">
+		<div class="countDownContainer">
+			<div class="time">
+				<div class="minute shadowed">{{ minutesPrison | number: '2.0' }}</div>
+				<div class="deuxpoints shadowed">:</div>
+				<div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
+			</div>
+			<mat-progress-spinner
+				[color]="'warn'"
+				[mode]="'determinate'"
+				[diameter]="300"
+				strokeWidth="20"
+				[value]="prisonProgress"></mat-progress-spinner>
+		</div>
+	</div>
+</div>

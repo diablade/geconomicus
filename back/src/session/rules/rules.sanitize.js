@@ -1,0 +1,160 @@
+import Joi from 'joi';
+import { isValidObjectId, isValidNanoId4 } from '../../misc/validate.tool.js';
+import { GAME_TYPE, CREDIT_STATUS, BANK_PROFILE } from '@geco/shared';
+
+const rateTier = Joi.object({
+	threshold: Joi.number().required(),
+	amount: Joi.number().min(0).required(),
+	interest: Joi.number().min(0).required(),
+	allowDouble: Joi.boolean().default(true),
+});
+
+export const sanitize = {
+	create: Joi.object({
+		rules: Joi.object({
+			//not commun
+			typeMoney: Joi.string().default(GAME_TYPE.DEBT),
+			priceWeight1: Joi.number().default(1),
+			priceWeight2: Joi.number().default(2),
+			priceWeight3: Joi.number().default(4),
+			priceWeight4: Joi.number().default(8),
+
+			//common
+			amountCardsForProd: Joi.number().default(4),
+			generatedIdenticalLetters: Joi.number().default(5),
+			generateLettersAuto: Joi.boolean().default(true),
+			generateLettersInDeck: Joi.number(),
+			distribInitCards: Joi.number().default(4),
+			latentSquares: Joi.boolean().default(false),
+			latentSquaresPct: Joi.number().min(0).max(100).default(30),
+			surveyEnabled: Joi.boolean().default(true),
+			roundMax: Joi.number().default(1),
+			roundMinutes: Joi.number().default(20),
+			autoDeath: Joi.boolean().default(true),
+			deathPassTimer: Joi.number().default(5),
+			timerSaveInterval: Joi.number().default(20),
+			timerDUInterval: Joi.number().default(60),
+
+			//option june
+			inequalityStart: Joi.boolean().default(false),
+			tauxCroissance: Joi.number().default(10),
+			startAmountCoins: Joi.number().default(5),
+			pctPoor: Joi.number().default(10),
+			pctRich: Joi.number().default(10),
+
+			//option debt
+			defaultCreditAmount: Joi.number().default(3),
+			defaultInterestAmount: Joi.number().default(1),
+			durationCredit: Joi.number().default(5),
+			timerPrison: Joi.number().default(5),
+			autoBank: Joi.boolean().default(true),
+			autoSeizure: Joi.boolean().default(true),
+			bankProfile: Joi.string()
+				.valid(...Object.values(BANK_PROFILE))
+				.default(BANK_PROFILE.NORMAL),
+			rateSchedule: Joi.array().items(rateTier).optional(),
+			seizureType: Joi.string().default(CREDIT_STATUS.DECOTE),
+			seizureCosts: Joi.number().default(2),
+			seizureDecote: Joi.number().default(33),
+		}).required(),
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}),
+	default: Joi.object({
+		ruleIdx: Joi.number().required().messages({
+			'any.invalid': 'Invalid rule ID format',
+			'any.required': 'Rule ID is required',
+		}),
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}),
+	update: Joi.object({
+		updates: Joi.object({
+			typeMoney: Joi.string().valid(GAME_TYPE.JUNE, GAME_TYPE.DEBT),
+			priceWeight1: Joi.number().optional(),
+			priceWeight2: Joi.number().optional(),
+			priceWeight3: Joi.number().optional(),
+			priceWeight4: Joi.number().optional(),
+
+			amountCardsForProd: Joi.number().optional(),
+			generatedIdenticalLetters: Joi.number().optional(),
+			generateLettersAuto: Joi.boolean().optional(),
+			generateLettersInDeck: Joi.number().optional(),
+			distribInitCards: Joi.number().optional(),
+			latentSquares: Joi.boolean().optional(),
+			latentSquaresPct: Joi.number().min(0).max(100).optional(),
+			surveyEnabled: Joi.boolean().optional(),
+			roundMax: Joi.number().optional(),
+			roundMinutes: Joi.number().optional(),
+			autoDeath: Joi.boolean().optional(),
+			deathPassTimer: Joi.number().optional(),
+			timerSaveInterval: Joi.number().optional(),
+			timerDUInterval: Joi.number().optional(),
+
+			inequalityStart: Joi.boolean().optional(),
+			tauxCroissance: Joi.number().optional(),
+			startAmountCoins: Joi.number().optional(),
+			pctPoor: Joi.number().optional(),
+			pctRich: Joi.number().optional(),
+
+			defaultCreditAmount: Joi.number().optional(),
+			defaultInterestAmount: Joi.number().optional(),
+			durationCredit: Joi.number().optional(),
+			timerPrison: Joi.number().optional(),
+			autoBank: Joi.boolean().optional(),
+			autoSeizure: Joi.boolean().optional(),
+			bankProfile: Joi.string()
+				.valid(...Object.values(BANK_PROFILE))
+				.optional(),
+			rateSchedule: Joi.array().items(rateTier).optional(),
+			seizureType: Joi.string().optional(),
+			seizureCosts: Joi.number().optional(),
+			seizureDecote: Joi.number().optional(),
+
+			startingTokens: Joi.number().optional(),
+			actions: Joi.array()
+				.items(
+					Joi.object({
+						key: Joi.string().required(),
+						labelKey: Joi.string().required(),
+						descriptionKey: Joi.string().required(),
+						cost: Joi.number().required(),
+						enabled: Joi.boolean().required(),
+					})
+				)
+				.optional(),
+		}).required(),
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		ruleIdx: Joi.number().required().messages({
+			'any.invalid': 'Invalid rule ID format',
+			'any.required': 'Rule ID is required',
+		}),
+	}),
+	getByIdx: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		ruleIdx: Joi.number().required().messages({
+			'any.invalid': 'Invalid rule ID format',
+			'any.required': 'Rule ID is required',
+		}),
+	}),
+	remove: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		ruleIdx: Joi.number().required().messages({
+			'any.invalid': 'Invalid rule ID format',
+			'any.required': 'Rule ID is required',
+		}),
+	}),
+};

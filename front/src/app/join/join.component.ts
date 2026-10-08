@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {BackService} from "../services/back.service";
-import {Subscription} from "rxjs";
-import {AudioService} from '../services/audio.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { SessionService } from "../services/api/session.service";
+import { Subscription } from "rxjs";
+import { I18nService } from '../services/i18n.service';
 
 @Component({
 	selector: 'app-join',
@@ -10,23 +10,20 @@ import {AudioService} from '../services/audio.service';
 	styleUrls: ['./join.component.scss']
 })
 export class JoinComponent implements OnInit, OnDestroy {
-	idGame = "";
-	fromId: string | undefined;
+	sessionId = "";
 	name = "";
+	fromUnknownAvatar = false;
 	private subscription: Subscription | undefined;
 
-	constructor(private route: ActivatedRoute, private router: Router, private backService: BackService, private audioService: AudioService) {
+	constructor(private route: ActivatedRoute, private router: Router, private sessionService: SessionService, private i18n: I18nService) {
+		this.i18n.loadNamespace('join');
 	}
 
 	ngOnInit(): void {
 		this.subscription = this.route.params.subscribe(params => {
-			this.idGame = params['idGame'];
-			this.fromId = params['fromId'];
-			if (this.fromId) {
-				this.name = params['name'];
-				this.audioService.playSound("angel");
-			}
+			this.sessionId = params['sessionId'];
 		});
+		this.fromUnknownAvatar = this.route.snapshot.queryParamMap.get('newAvatar') === '1';
 	}
 
 	//To prevent memory leak
@@ -36,24 +33,10 @@ export class JoinComponent implements OnInit, OnDestroy {
 	}
 
 	join() {
-		this.backService.join(this.idGame, this.name).subscribe(idPlayer => {
-			this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
-		});
+		if (this.name) {
+			this.sessionService.join(this.sessionId, this.name).subscribe((data: any) => {
+				this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings']);
+			});
+		}
 	}
-
-	joinReincarnate() {
-		this.backService.joinReincarnate(this.idGame, this.name, this.fromId).subscribe(idPlayer => {
-			this.router.navigate(['game', this.idGame, 'player', idPlayer]).then(() =>
-				// Force a complete page reload to ensure clean state
-				window.location.reload()
-			);
-		});
-	}
-
-	//
-	// joinInGame() {
-	// 	this.backService.joinInGame(this.idGame, this.name).subscribe(idPlayer => {
-	// 		this.router.navigate(['game', this.idGame, 'player', idPlayer, 'settings']);
-	// 	});
-	// }
 }

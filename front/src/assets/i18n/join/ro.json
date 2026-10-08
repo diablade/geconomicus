@@ -1,0 +1,10 @@
+{
+	"JOIN": {
+		"TITLE": "Alătură-te jocului!",
+		"GUNY_INTRO": "Hei! Eu sunt Ğuny.",
+		"GUNY_INTRO2": "și pe tine cum te cheamă?",
+		"NAME_PROMPT": "Porecla ta?",
+		"GO_BUTTON": "Ğo!",
+		"UNKNOWN_AVATAR_NOTICE": "Niciun avatar nu avea numărul pe care l-ai tastat: vei crea unul nou, cu un număr diferit."
+	}
+}

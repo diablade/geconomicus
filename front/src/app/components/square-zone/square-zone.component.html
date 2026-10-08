@@ -1,0 +1,73 @@
+<div class="square-zone" [class.square-zone--revealing]="productionReveal">
+	<div class="wheel-host">
+		<div *ngIf="productionReveal" class="wheel"></div>
+	</div>
+	<div class="square-zone-header">
+		<span
+			*ngIf="!isPNG(group.recipe.letter)"
+			class="square-zone-icon emoji"
+			[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+			{{ getIcon(group.recipe.letter) }}
+		</span>
+		<span *ngIf="isPNG(group.recipe.letter)" class="square-zone-icon-png">
+			<img alt="" class="item-png" [ngSrc]="getPNG(group.recipe.letter)" fill />
+		</span>
+		<span class="square-zone-title contour">{{ group.recipe.letter | translate }}</span>
+		<span class="square-zone-count">{{ group.cards.length }}/{{ amountCardsForProd }}</span>
+	</div>
+
+	<ng-container *ngIf="!productionReveal; else revealBody">
+		<div class="square-zone-cards">
+			<app-item
+				class="square-zone-card"
+				*ngFor="let card of group.cards; trackBy: trackByCard"
+				[card]="card"
+				[typeMoney]="typeMoney"
+				[flippable]="flippable"
+				[ownerIdx]="ownerIdx"
+				[gameStateId]="gameStateId"
+				[typeTheme]="typeTheme"
+				[suffixShortCode]="suffixShortCode"
+				[currentDU]="currentDU"
+				[allCards]="allCards"
+				[amountCardsForProd]="amountCardsForProd"
+				[generatedIdenticalLetters]="generatedIdenticalLetters"
+				(shortCodeChanged)="onChangedShortCode($event)"
+				[screenWidth]="screenWidth"
+				[screenHeight]="screenHeight"></app-item>
+		</div>
+		<button class="square-zone-btn h-auto" mat-raised-button (click)="build()">
+			<div>
+				<span class="square-zone-gift">🛠️</span>
+				<span class="">{{ 'PRODUCTION.BUILD' | translate }}</span>
+			</div>
+		</button>
+		<div class="square-zone-hint contourText white">
+			<span class="square-zone-gift">={{ getBuildHint(group.recipe.weight) }}+🎁+⚡</span>
+			<!-- {{ 'PRODUCTION.HINT' | translate: { amount: amountCardsForProd } }} -->
+		</div>
+	</ng-container>
+
+	<ng-template #revealBody>
+		<div class="production-reveal-card">
+			<app-item
+				[card]="productionReveal!.producedCard"
+				[typeMoney]="typeMoney"
+				[ownerIdx]="ownerIdx"
+				[gameStateId]="gameStateId"
+				[typeTheme]="typeTheme"
+				[flippable]="false"
+				[width]="'clamp(120px, 40vmin, 220px)'"
+				[height]="'clamp(120px, 40vmin, 220px)'"
+				[letterSize]="'2rem'"
+				[textSize]="'1rem'"
+				[screenWidth]="screenWidth"
+				[screenHeight]="screenHeight"></app-item>
+		</div>
+		<div class="production-reveal-title contour">{{ 'PRODUCTION.REVEAL_TITLE' | translate }}</div>
+		<div class="square-zone-hint contourText white">
+			<span class="square-zone-gift">+{{ getBuildHint(group.recipe.weight) }}+⚡</span>
+		</div>
+		<!-- {{ 'PRODUCTION.REVEAL_HINT' | translate: { count: amountCardsForProd, level: group.recipe.weight + 1 } }} -->
+	</ng-template>
+</div>

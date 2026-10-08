@@ -1,8 +1,9 @@
-<div class="wrapper">
-  <button mat-raised-button class="content transparentButton" (click)="click()" [mat-dialog-close]="false">
-    {{ label }}
-  </button>
-  <div class="background progress progress-bar-striped progress-bar-animated" role="progressbar"
-    [style.width.%]="progress">
-  </div>
+<div class="wrapper" (click)="click()" [mat-dialog-close]="false">
+	<button mat-raised-button class="content transparentButton">
+		{{ label }}
+	</button>
+	<div
+		class="background progress progress-bar-striped progress-bar-animated"
+		role="progressbar"
+		[style.width.%]="progress"></div>
 </div>

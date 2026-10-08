@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Strana početka",
+		"CONTRIBUTION": "Donacije",
+		"WELCOME": "Otkrijte slobodnu valutu kroz igru!",
+		"INSTALL": "Instalirajte aplikaciju",
+		"CREATE_SESSION": "Napravi sesiju",
+		"JOIN_SESSION": "Pridruži se sesiji",
+		"JOIN_VIA_SHORT_ID": "Preko kratkog koda",
+		"JOIN_VIA_QR_CODE": "Preko QR koda",
+		"HOW_TO_PLAY": "Kako to funkcioniše?",
+		"FUND_RAISE": "Donacija za podršku, ",
+		"IN": "u",
+		"OR_IN": " ili u",
+		"SAY_HI": "Treba vam pomoć, imate ideju, pronašli ste grešku, ili jednostavno želite da pozdravite?",
+		"LINK_SAY_HI": "ovde",
+		"LOOKING_FOR_PAPER_GAME": "Tražite originalnu papirnu igru?",
+		"CLOSE": "Zatvori",
+		"YES": "Da",
+		"NO": "Ne",
+		"CANCEL": "Otkaži",
+		"CONTINUE_SESSION": "Nastavi svoju sesiju",
+		"ACTIVE_SESSION": "Imaš aktivnu sesiju:",
+		"DISMISS": "Zatvori",
+		"RESUME": "Nastavi"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Napravi sesiju",
+		"NAME": "Naziv sesije",
+		"ANIMATOR": "Ime animatora",
+		"LOCATION": "Mesto",
+		"THEME": "Tema",
+		"BTN1": "Napravi",
+		"BTN2": "Otkaži"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "U Safariju otvori meni za deljenje pomoću dugmeta",
+		"MESSAGE2": "pa izaberi \"Dodaj na početni ekran\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Unesi kod...",
+		"SHORT_ID_TITLE": "Unesi kod sesije ili svoj pun kod",
+		"SHORT_ID_DESC": "4 cifre da se pridružiš kao novi igrač (npr.: 0042). Dodaj svoj broj da pronađeš svoj avatar (npr.: 0042-7) — animator može da ti ga da.",
+		"SEARCH": "Pretraži",
+		"INVALID_FORMAT": "Očekivani format: 4 cifre, eventualno praćene sa - i tvojim brojem. Npr.: 0042 ili 0042-7",
+		"UNKNOWN_SESSION": "Nijedna sesija ne odgovara ovom kodu.",
+		"UNKNOWN_AVATAR": "Ova sesija ne sadrži nijedan avatar sa tim brojem.",
+		"NEEDS_AVATAR_CODE": "Ova sesija je već počela: potreban ti je pun kod, sa tvojim brojem (npr.: 0042-7)."
+	}
+}

@@ -1,0 +1,57 @@
+{
+	"ACTION": {
+		"TITLE": "Ações",
+		"PICK_TARGET": "Escolher um jogador",
+		"PICK_TARGET2": "Escolher um segundo jogador",
+		"PICK_CARD": "Escolher uma carta",
+		"PICK_ONG_CARDS": "Escolher 4 cartas para doar",
+		"PICK_ASSOCIATION_CARDS": "Escolher 2 cartas para doar",
+		"CONFIRMING": "Em andamento...",
+		"CONFIRM": "Confirmar",
+		"NO_CARDS": "Nenhuma carta disponível",
+		"ONG_SELECT_HINT": "{{selected}}/4 cartas selecionadas",
+		"ONG_AUTO_TARGET": "Doar aos 2 jogadores mais pobres",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 cartas selecionadas",
+		"ASSOCIATION_TARGET_HINT": "Esta carta irá para o jogador escolhido abaixo",
+		"RECEIVED_GIVE": "{{fromName}} te deu uma carta !",
+		"RECEIVED_ONG": "{{fromName}} te doou {{count}} carta(s) (ação ONG) !",
+		"RECEIVED_ASSOCIATION": "{{fromName}} te deu uma carta (ação Associação) !",
+		"ROBBED_STEAL": "Alguém te roubou uma carta !",
+		"ROBBED_WAR": "Você foi atacado(a) ! 2 cartas te foram tomadas.",
+		"SHOP_HINT": "Produza um quadrado para marcar pontos !",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Quem tem esta carta ?",
+			"DESC": "Descubra quem possui uma carta da família que te falta. Custa 1 ficha.",
+			"PICK": "Escolher a família a localizar",
+			"HINT": "Selecione a família da carta que você procura, e saberá quem possui uma",
+			"SEARCH": "Pesquisar",
+			"RESULT_PLAYER": "{{name}} possui uma carta desta família.",
+			"RESULT_DECK": "Uma carta desta família está no baralho.",
+			"RESULT_UNKNOWN": "Ninguém possui uma carta desta família no momento."
+		},
+		"GIVE": {
+			"LABEL": "Doar uma carta",
+			"DESC": "Ofereça uma das suas cartas a um jogador da sua escolha."
+		},
+		"STEAL": {
+			"LABEL": "Roubar uma carta",
+			"DESC": "Pegue uma carta de outro jogador. Ele será notificado."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Roubo silencioso",
+			"DESC": "Pegue uma carta sem que o outro jogador seja notificado."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Associação",
+			"DESC": "Doe 2 das suas cartas a 2 jogadores da sua escolha (1 para cada)."
+		},
+		"WAR": {
+			"LABEL": "Guerra",
+			"DESC": "Roube 2 cartas aleatórias de cada um de 2 jogadores."
+		},
+		"ONG": {
+			"LABEL": "ONG",
+			"DESC": "Doe 4 das suas cartas aos 2 jogadores mais pobres (2 para cada)."
+		}
+	}
+}

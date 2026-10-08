@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Módulo de reparto",
+			"SUB_TITLE": "Comprensión de las desigualdades monetarias con el índice de Gini",
+			"SUMMARY": "Este módulo permite visualizar el reparto de una moneda entre sus miembros, gracias al índice de Gini.",
+			"SUMMARY2": "El índice de Gini mide las desigualdades de distribución (suelen ser de ingresos o riquezas) en una población.",
+			"SUMMARY3": "La cantidad total se reparte de manera diferente según el parámetro P. 💸",
+			"SUMMARY4": "Un P bajo significa una distribución más uniforme. 🤝",
+			"SUMMARY5": "Un P alto crea más diferencias entre las personas. 📊",
+			"DESCRIPTION": "Este gráfico permite visualizar el reparto de riqueza según diferentes tipos de moneda: euro, dólar, bitcoin o moneda libre. Cada sistema monetario conlleva dinámicas diferentes: algunos favorecen la concentración de riqueza, otros una distribución más justa. Al jugar con los cursores, modificas el reparto monetario. Así, se puede observar cómo estas elecciones influyen en el índice de Gini, un indicador simple que mide las desigualdades.",
+			"SUMMARY7": "El índice de Gini mide las desigualdades de distribución (a menudo de ingresos o riquezas) en una población.",
+			"SUMMARY8": "- 0 = igualdad perfecta (todo el mundo tiene lo mismo)",
+			"SUMMARY9": "- 1 = desigualdad total (una sola persona lo tiene todo)",
+			"SUMMARY10": "☝️ En moneda libre, el índice de Gini tiende constantemente hacia 0.",
+			"TOTAL": "Cantidad total",
+			"NUM_PLAYERS": "Número de personas",
+			"RESULTS": "Resultados de la distribución",
+			"PARAM_P": "Parámetro P (desigualdad)",
+			"PERSON": "Persona",
+			"AMOUNT": "Cantidad",
+			"GINI": "Índice de Gini",
+			"RATIO": "Ratio alta/baja",
+			"SIMULATION": "Simulación",
+			"PERCENTAGE": "% del total",
+			"GRAPHIC": "Columnas",
+			"CURVE": "Lineal",
+			"CAMBER": "Sectores"
+		}
+	}
+}

@@ -1,136 +1,207 @@
 .card {
-  box-shadow: 10px 10px 43px -18px rgba(0, 0, 0, 0.75);
-  border-radius: 5px;
-  max-width: 300px;
-  max-height: 300px;
-  cursor: pointer;
-  position: relative;
-  transform-style: preserve-3d;
-  margin: 0.4rem;
+	box-shadow: 10px 10px 43px -18px rgba(0, 0, 0, 0.75);
+	border-radius: 5px;
+	cursor: pointer;
+	position: relative;
 
-  &-text {
-    z-index: 2;
-    font-size: 0.5rem;
-    line-break: auto;
-    line-height: 0.7rem;
-    font-weight: bold;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    padding: 5px;
-    text-wrap: auto;
-  }
-
-  &-icon {
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-
-    &-back {
-      font-size: 1rem;
-      line-height: 1rem;
-    }
-  }
-
-  &-letter {
-    z-index: 2;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin: 5px;
-  }
+	&-text {
+		position: relative;
+		z-index: 1;
+		font-size: 0.5rem;
+		line-break: auto;
+		line-height: 0.7rem;
+		font-weight: bold;
+		display: flex;
+		width: 100%;
+		height: 100%;
+		padding: 5px;
+		text-wrap: auto;
+		&-back {
+			font-size: 1rem;
+			line-height: 1rem;
+			line-break: auto;
+			font-weight: bold;
+			text-wrap: auto;
+            margin-bottom: 6px;
+		}
+	}
+	&-icon {
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		&-back {
+			font-size: 3rem;
+			line-height: 3rem;
+		}
+	}
+	&-letter {
+		z-index: 2;
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		margin: 5px;
+		letter-spacing: -2px;
+		&-back {
+			font-size: 3rem;
+			line-height: 3rem;
+			letter-spacing: -2px;
+		}
+	}
+}
+.item-png {
+	object-fit: contain;
+	padding: 4%;
 }
 
-
-.face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background-size: contain;
+.card-icon-back-png {
+	position: relative;
+	width: 3rem;
+	height: 3rem;
+	flex: none;
 }
 
-.back {
-  border-radius: 5px;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  transform: rotateY(180deg);
-}
-
-.overlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  display: flex;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.shortCode {
-  position: absolute;
-  padding: 5px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1rem;
-  font-family: Arial, 'Roboto', Helvetica, sans-serif;
-  font-weight: bold;
-  color: #FF9818;
-  text-shadow: -1px -1px 0 black,
-  1px -1px 0 black,
-  -1px 1px 0 black,
-  1px 1px 0 black;
-}
-
-.qrcodeWrapper {
-  height: 100%;
-  width: 100%;
-  padding: 0 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  contain: content;
+.ingredient-png {
+	position: relative;
+	display: inline-block;
+	width: 1.4rem;
+	height: 1.4rem;
+	flex: none;
 }
 
 .price {
-  font-family: Times, Arial, serif;
+	font-family: Times, Arial, serif;
+    font-size: 1.7rem;
+	&-eq {
+		font-size: 0.8rem;
+	}
 }
 
-.red {
-  background-color: #E8A7A6;
-
-  .mat-badge-content {
-    background: #ce1421;
-  }
+.face {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	background-size: contain;
+	overflow: hidden;
 }
 
-.yellow {
-  background-color: #F3EFAD;
-
-  .mat-badge-content {
-    background: #c4bb13;
-  }
+// Occupe la place de la carte dans la grille pendant qu'elle est dans l'overlay
+.card-placeholder {
+	visibility: hidden;
 }
 
-.green {
-  background-color: #A2CBA2;
-
-  .mat-badge-content {
-    background: #14a549;
-  }
+// ── Flip 3D ──────────────────────────────────────────────────────────────
+.flip-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
-.blue {
-  background-color: #BBDAE3;
+.flip-scene-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-  .mat-badge-content {
-    background: #3c8fa2;
-  }
+.flip-scene {
+	perspective: 1400px;
+	margin: 0 auto;
+	transform: scale(2);
+}
+
+.flip-card {
+	position: relative;
+	transform-style: preserve-3d;
+	border-radius: 5px;
+	transform: rotateY(0deg);
+	transition: transform 450ms cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.is-back {
+		transform: rotateY(180deg);
+	}
+}
+
+.flip-face {
+	position: absolute;
+	inset: 0;
+	backface-visibility: hidden;
+	border-radius: inherit;
+	overflow: hidden;
+    z-index: 3;
+}
+
+.flip-face-back {
+	transform: rotateY(180deg);
+	cursor: pointer;
+}
+
+.shortCode {
+	position: absolute;
+	padding: 5px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 1rem;
+	font-family: Arial, 'Roboto', Helvetica, sans-serif;
+	font-weight: bold;
+	color: #ff9818;
+	text-shadow:
+		-1px -1px 0 black,
+		1px -1px 0 black,
+		-1px 1px 0 black,
+		1px 1px 0 black;
+}
+
+.qrcodeWrapper {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	padding: 0 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	contain: content;
+}
+
+.recipe-title {
+	font-size: 1.7rem;
+	line-height: 2rem;
+	font-weight: bold;
+	text-align: center;
+}
+.recipe-ingredients {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+.recipe-ingredient {
+	display: flex;
+	align-items: center;
+    gap:2px;
+	.ingredient-name {
+		font-size: 1.1rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	&.have {
+		opacity: 1;
+		font-weight: 600;
+	}
+	&.missing {
+		opacity: 0.8;
+	}
+}
+.check {
+	font-size: 1rem;
+    width: 1.5rem;
 }

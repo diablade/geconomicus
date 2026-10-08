@@ -1,147 +1,113 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import env from '#config/env';
 import morgan from 'morgan';
 import cors from 'cors';
-import socket from '../config/socket.js';
-import http from 'http';
-import log from '../config/log.js';
+import { errorHandler } from './middleware/errorHandler.middleware.js';
 
 // IMPORT ROUTES
-import bankRoutes from "./bank/bank.routes.js";
-import gameRoutes from './game/game.routes.js';
-import playerRoutes from './player/player.routes.js';
-
-import * as db from "../config/database.js";
-// import {connect} from "../config/database2.js";
-
-dotenv.config();
-if (process.env.GECO_NODE_ENV !== "test") {
-    db.connect();
-    // connect();
-}
+import legacyGameRoutes from './legacy/game/game.routes.js';
+import legacyBankRoutes from './legacy/bank/bank.routes.js';
+import legacyPlayerRoutes from './legacy/player/player.routes.js';
+import sessionRoutes from './session/session.routes.js';
+import eventsRoutes from './event/event.routes.js';
+import surveyRoutes from './survey/survey.routes.js';
+import avatarRoutes from './session/avatar/avatar.routes.js';
+import rulesRoutes from './session/rules/rules.routes.js';
+import gameStateRoutes from './gameState/game.state.routes.js';
+import toolsRoutes from './tools/tools.routes.js';
 
 const app = express();
 // Enable trust proxy for correct client IP detection
 app.set('trust proxy', true);
 // CORS POLICY
-app.use(cors())
+// app.use(cors())
+app.use(
+	cors({
+		origin: ['http://localhost:4200', 'https://geconomicus.fr', 'https://geco.ovh'],
+		credentials: false,
+	})
+);
 
 // USE MIDDLEWARE
 
-// // Middleware to block bots
-// app.use((req, res, next) => {
-// 	// Regex to match bot user-agents
-// 	const botPattern = /bot|crawler|spider|crawling/i;
-// 	if (botPattern.test(req.headers['user-agent'])) {
-// 		// End the connection without responding
-// 		req.destroy();
-// 		return;
-// 	}
-// 	next();
-// });
-const botPattern = /bot|crawler|spider|crawling/i;
-const acceptedPathToBeLogged = /^\/(bank|game|player|status)(\/|$)/;
 // Middleware to block bots
+const botPattern = /bot|crawler|spider|crawling/i;
 app.use((req, res, next) => {
-    if (botPattern.test(req.headers['user-agent'])) {
-        // Respond with 403 Forbidden for bots
-        return res.status(403).json({message: 'Forbidden'});
-    }
-    next();
+	if (botPattern.test(req.headers['user-agent'])) {
+		// Respond with 403 Forbidden for bots
+		return res.status(403).json({ message: 'Forbidden' });
+	}
+	next();
 });
+
+// Middleware to allow only specific paths to be logged by Morgan (for better readability of logs)
+const acceptedPathToBeLogged =
+	/^\/(bank|game|player|session|rules|survey|event|avatar|game-state|bank-state|status)(\/|$)/;
+app.use((req, res, next) => {
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
+	req.headers['accept-charset'] = 'utf-8';
+	next();
+});
+
+// Morgan logger setup: Log only defined routes
+app.use(
+	morgan(
+		':remote-addr | :remote-user | [:date[clf]] | :method | ":url" | :status | res-size: :res[content-length] | :response-time ms',
+		{
+			skip: (req, res) => {
+				return !acceptedPathToBeLogged.test(req.originalUrl);
+			},
+		}
+	)
+);
 
 // Ensure all requests and responses use UTF-8 encoding
-app.use((req, res, next) => {
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    req.headers['accept-charset'] = 'utf-8';
-    next();
-});
-
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-// Morgan logger setup: Log only defined routes
-app.use(morgan(":remote-addr | :remote-user | [:date[clf]] | :method | \":url\" | :status | res-size: :res[content-length] | :response-time ms", {
-    skip: (req, res) => {
-        return !acceptedPathToBeLogged.test(req.originalUrl);
-    }
-}));
+app.use(express.urlencoded({ extended: true }));
 
 // MAIN ROUTES middleware
-app.use('/bank', bankRoutes);
-app.use('/game', gameRoutes);
-app.use('/player', playerRoutes);
+//legacy routes for old version of the app
+app.use('/bank', legacyBankRoutes);
+app.use('/game', legacyGameRoutes);
+app.use('/player', legacyPlayerRoutes);
+//new app routes
+app.use('/session', sessionRoutes);
+app.use('/rules', rulesRoutes);
+app.use('/survey', surveyRoutes);
+app.use('/events', eventsRoutes);
+app.use('/avatar', avatarRoutes);
+app.use('/game-state', gameStateRoutes);
+app.use('/tools', toolsRoutes);
 
 //api health routes
 app.get('/status', (req, res) => {
-    return res.status(200).json({
-        status:  'running',
-        version: process.env.GECO_VERSION
-    })
+	return res.status(200).json({
+		status: 'running',
+		version: env.version,
+	});
 });
+
 //api memory routes
 app.get('/debug/memory', (req, res) => {
-    const used = process.memoryUsage();
-    return res.status(200).json({
-        status:      'running',
-        version:     process.env.GECO_VERSION,
-        memoryUsage: {
-            rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
-            heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-            heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-            external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
-        }
-    })
+	const used = process.memoryUsage();
+	return res.status(200).json({
+		status: 'running',
+		version: env.version,
+		memoryUsage: {
+			rss: `${Math.round((used.rss / 1024 / 1024) * 100) / 100} MB`,
+			heapTotal: `${Math.round((used.heapTotal / 1024 / 1024) * 100) / 100} MB`,
+			heapUsed: `${Math.round((used.heapUsed / 1024 / 1024) * 100) / 100} MB`,
+			external: `${Math.round((used.external / 1024 / 1024) * 100) / 100} MB`,
+		},
+	});
 });
 
 // Catch-all for non-matching routes (404 handler)
 app.use((req, res, next) => {
-    return res.status(404).json({"not": "Found"});
+	return res.status(404).json({ not: 'Found' });
 });
 
-// Add to your main app.js or server startup
-setInterval(() => {
-    const used = process.memoryUsage();
-    const memoryUsage = {
-        rss:       `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
-        heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
-        heapUsed:  `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
-        external:  `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`
-    };
-    log.info('Memory usage:', memoryUsage);
-}, 3600000); // Log every hours
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
-// handle errors
-app.use((err, req, res) => {
-    log.error(err);
-
-    // Set error response
-    return res.status(err.status || 500).json({
-        message: err.message || err || "Something looks wrong :(",
-    });
-});
-if (process.env.GECO_NODE_ENV !== "test") {
-    const server = http.createServer(app);
-    // Timeout settings
-    server.keepAliveTimeout = 70000;     // 70 secondes
-    server.headersTimeout = 75000;       // Doit être > keepAliveTimeout
-
-    let io = socket.initIo(server);
-    // Verify initialization
-    if (!io) {
-        log.error('Socket.IO failed to initialize');
-    }
-
-    server.listen(process.env.GECO_PORT_NODE, '0.0.0.0', () => console.log(
-        "\n" + "   ____                                      _                \n" + "  / ___| ___  ___ ___  _ __   ___  _ __ ___ (_) ___ _   _ ___ \n"
-        + " | |  _ / _ \\/ __/ _ \\| '_ \\ / _ \\| '_ ` _ \\| |/ __| | | / __|\n" + " | |_| |  __/ (_| (_) | | | | (_) | | | | | | | (__| |_| \\__ \\\n"
-        + "  \\____|\\___|\\___\\___/|_| |_|\\___/|_| |_| |_|_|\\___|\\__,_|___/\n" + "                                                              \n"
-        + process.env.GECO_VERSION + '                    made with <3 by Markovic Nicolas Copyright ©\n' + '   server is started and ready'));
-    try {
-        socket.getIo(); // This should not throw an error if initialized correctly
-        log.info('Socket.IO successfully initialized');
-    }
-    catch (error) {
-        log.error('Socket.IO initialization failed:', error);
-    }
-}
 export default app;

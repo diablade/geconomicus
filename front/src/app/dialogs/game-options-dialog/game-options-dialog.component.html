@@ -1,198 +1,366 @@
 <div class="option">
 	<div class="w-100 d-flex flex-column overflow-auto">
-		<div class="text-center fs-4 m-4 gecoFont shadowed">
-			{{ "OPTION.TITLE"|translate }}
-		</div>
 		<div class="text-center">
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.PARTY_NAME"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.name">
+			<div class="fs-4 m-4 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE' | translate }}
+			</div>
+			<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+				<mat-label>{{ 'OPTION.DURATION' | translate }}</mat-label>
+				<input
+					type="number"
+					min="1"
+					matInput
+					[placeholder]="'25 ' + getTranslate('BY_DEFAULT')"
+					[(ngModel)]="rules.roundMinutes" />
 			</mat-form-field>
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.PARTY_ANIM"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.animator">
-			</mat-form-field>
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.LOCALIZATION"|translate }}</mat-label>
-				<input type="text" matInput placeholder="" [(ngModel)]="game.location">
-			</mat-form-field>
-			<mat-form-field>
-				<mat-label>{{ "THEME.TITLE"|translate }}</mat-label>
-				<mat-select class="m-auto" [(ngModel)]="game.theme">
-					<mat-option *ngFor="let theme of themes" [value]="theme">
-						{{ theme | translate }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="game.surveyEnabled">
-					{{ "OPTION.SURVEY_Q"|translate }}
-				</mat-checkbox>
+		</div>
+		<div *ngIf="devMode" class="text-center">
+			<div class="fs-4 m-4 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE_ADV' | translate }}
 			</div>
 			<div>
-				<mat-checkbox class="m-auto" [(ngModel)]="game.devMode">
-					{{ "OPTION.DEVMODE"|translate }}
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.surveyEnabled">
+					{{ 'OPTION.SURVEY_Q' | translate }}
 				</mat-checkbox>
 			</div>
-			<div class="fs-4 mt-5 m-4 gecoFont shadowed">
-				{{ "OPTION.MONEY"|translate: {money: game.typeMoney === C.JUNE ? "libre" : "dette"} }}
-			</div>
-			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]='"OPTION.WARNING"|translate'>
-			</div>
-			<!--			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">-->
-			<!--				<mat-label>nombre de tours</mat-label>-->
-			<!--				<input type="number" min="1" matInput placeholder="'10 '+getTranslate('BY_DEFAULT')'" [(ngModel)]="game.roundMax">-->
-			<!--			</mat-form-field>-->
-			<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-				<mat-label>{{ "OPTION.DURATION"|translate }}</mat-label>
-				<input type="number" min="1" matInput [placeholder]="'25 '+getTranslate('BY_DEFAULT')"
-				       [(ngModel)]="game.roundMinutes">
-			</mat-form-field>
+			<div class="m-auto fs-6 mt-2 mb-4" [innerHTML]="'OPTION.WARNING' | translate"></div>
+
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level1.png">
-					{{ "CARD.LV1"|translate }}
+					<img class="imgCardValeur" src="assets/images/level1.png" />
+					{{ 'CARD.LV1' | translate }}
 				</div>
-				<mat-form-field *ngIf="game" class="input" appearance="fill">
-					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
-					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'3 ':'1 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight1">
+				<mat-form-field *ngIf="rules" class="input" appearance="fill">
+					<mat-label>{{ rules.typeMoney === 'june' ? 'prix DU:' : 'prix net:' }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="(rules.typeMoney === 'june' ? '3 ' : '1 ') + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.priceWeight1" />
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level2.png">
-					{{ "CARD.LV2"|translate }}
+					<img class="imgCardValeur" src="assets/images/level2.png" />
+					{{ 'CARD.LV2' | translate }}
 				</div>
-				<mat-form-field *ngIf="game" class="input">
-					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
-					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'6 ':'2 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight2">
+				<mat-form-field *ngIf="rules" class="input">
+					<mat-label>{{ rules.typeMoney === 'june' ? 'prix DU:' : 'prix net:' }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="(rules.typeMoney === 'june' ? '6 ' : '2 ') + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.priceWeight2" />
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
-				<div class="imgText"><img class="imgCardValeur" src="assets/images/level3.png">
-					{{ "CARD.LV3"|translate }}
+				<div class="imgText">
+					<img class="imgCardValeur" src="assets/images/level3.png" />
+					{{ 'CARD.LV3' | translate }}
 				</div>
-				<mat-form-field *ngIf="game" class="input">
-					<mat-label>{{ game.typeMoney === 'june' ? "prix DU:" : "prix net:" }}</mat-label>
-					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'9 ':'4 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight3">
+				<mat-form-field *ngIf="rules" class="input">
+					<mat-label>{{ rules.typeMoney === 'june' ? 'prix DU:' : 'prix net:' }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="(rules.typeMoney === 'june' ? '9 ' : '4 ') + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.priceWeight3" />
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
-				<div class="imgText"><img class="imgCardValeur" src="assets/images/level4.png">
-					{{ "CARD.LV4"|translate }}
+				<div class="imgText">
+					<img class="imgCardValeur" src="assets/images/level4.png" />
+					{{ 'CARD.LV4' | translate }}
 				</div>
-				<mat-form-field *ngIf="game" class="input">
-					<mat-label>{{
-                            (game.typeMoney === 'june' ? "OPTION.PRICE_DU" : "OPTION.PRICE_NET")|translate
-						}}
+				<mat-form-field *ngIf="rules" class="input">
+					<mat-label>
+						{{ (rules.typeMoney === 'june' ? 'OPTION.PRICE_DU' : 'OPTION.PRICE_NET') | translate }}
 					</mat-label>
-					<input type="number" min="0" matInput
-					       [placeholder]="(game.typeMoney === 'june' ?'12 ':'8 ')+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.priceWeight4">
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="(rules.typeMoney === 'june' ? '12 ' : '8 ') + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.priceWeight4" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney===C.JUNE">
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.DU_RATES"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.tauxCroissance">
-				</mat-form-field>
-			</div>
-			<div *ngIf="game.typeMoney===C.JUNE">
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.START_MONEY_AMOUNT"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.startAmountCoins">
+			<div>
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.SAVE_INTERVAL' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'10' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.timerSaveInterval" />
 				</mat-form-field>
 			</div>
 			<div class="d-flex flex-column">
-				<mat-checkbox class="" [(ngModel)]="game.autoDeath">
-					{{ "OPTION.DEATH"|translate }}
+				<mat-checkbox class="" [(ngModel)]="rules.autoDeath">
+					{{ 'OPTION.DEATH' | translate }}
 				</mat-checkbox>
-				<p>{{
-                        "OPTION.DEATH_MINUTES"|translate : {
-                            deathMinute: (Math.round(game.roundMinutes / game.players.length))
-                        }
+				<p>
+					{{
+						'OPTION.DEATH_MINUTES'
+							| translate
+								: {
+										deathMinute: Math.round(rules.roundMinutes / playersLength),
+								  }
 					}}
 				</p>
-				<p>{{ "OPTION.DEATH_MINUTES_FORMULA"|translate }}
-				</p>
+				<p>frq = {{ 'OPTION.DEATH_MINUTES_FORMULA' | translate }}</p>
 			</div>
-			<div *ngIf="game.typeMoney===C.JUNE" class="mb-4 d-flex flex-column">
-				<mat-checkbox class="m-auto" [(ngModel)]="game.inequalityStart">
-					{{ "OPTION.START_MONEY_INEQUALITY"|translate }}
+			<!-- Actions section -->
+			<div class="text-center mt-3">
+				<div class="fs-5 m-3 geconomicusFont shadowed">{{ 'OPTION.ACTIONS_TITLE' | translate }}</div>
+				<mat-form-field class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.STARTING_TOKENS' | translate }}</mat-label>
+					<input type="number" min="0" matInput [(ngModel)]="rules.startingTokens" />
+				</mat-form-field>
+				<div
+					*ngFor="let action of rules.actions; let i = index"
+					class="d-flex justify-content-center align-items-center gap-1">
+					<mat-checkbox [(ngModel)]="rules.actions[i].enabled"></mat-checkbox>
+					<span class="fs-4">{{ getActionIcon(action.key) }}</span>
+					<span class="action-text">{{ action.labelKey | translate }}</span>
+					<mat-form-field class="input" appearance="fill">
+						<mat-label>{{ 'OPTION.COST' | translate }}</mat-label>
+						<input type="number" min="0" matInput [(ngModel)]="rules.actions[i].cost" />
+					</mat-form-field>
+				</div>
+			</div>
+			<!-- DU section -->
+			<div *ngIf="rules.typeMoney === JUNE" class="fs-5 m-3 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE_DU' | translate }}
+			</div>
+			<div *ngIf="rules.typeMoney === JUNE">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.DU_INTERVAL' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'60' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.timerDUInterval" />
+				</mat-form-field>
+			</div>
+			<div *ngIf="rules.typeMoney === JUNE">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.DU_RATES' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.tauxCroissance" />
+				</mat-form-field>
+			</div>
+			<div *ngIf="rules.typeMoney === JUNE">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.START_MONEY_AMOUNT' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.startAmountCoins" />
+				</mat-form-field>
+			</div>
+			<div *ngIf="rules.typeMoney === JUNE" class="mb-4 d-flex flex-column">
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.inequalityStart">
+					{{ 'OPTION.START_MONEY_INEQUALITY' | translate }}
 				</mat-checkbox>
 				<div class="infoLabel">
 					<div>
-						•<input class="smallInput" type="number" [disabled]="!game.inequalityStart"
-						        [(ngModel)]="game.pctRich">{{ "OPTION.RICH"|translate }}
+						•
+						<input
+							class="smallInput"
+							type="number"
+							[disabled]="!rules.inequalityStart"
+							[(ngModel)]="rules.pctRich" />
+						{{ 'OPTION.RICH' | translate }}
 					</div>
+					<div>•{{ 100 - (rules.pctPoor + rules.pctRich) }}{{ 'OPTION.MIDDLE' | translate }}</div>
 					<div>
-						•{{ 100 - (game.pctPoor + game.pctRich) }}{{ "OPTION.MIDDLE"|translate }}
-					</div>
-					<div>
-						•<input class="smallInput" type="number" [disabled]="!game.inequalityStart"
-						        [(ngModel)]="game.pctPoor">{{ "OPTION.POOR"|translate }}
+						•
+						<input
+							class="smallInput"
+							type="number"
+							[disabled]="!rules.inequalityStart"
+							[(ngModel)]="rules.pctPoor" />
+						{{ 'OPTION.POOR' | translate }}
 					</div>
 				</div>
 			</div>
-			<div *ngIf="game.typeMoney===C.DEBT">
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.DEFAULT_CREDIT"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'3 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.defaultCreditAmount">
+			<div *ngIf="rules.typeMoney === DEBT" class="fs-5 m-3 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE_DEBT' | translate }}
+			</div>
+			<div *ngIf="rules.typeMoney === DEBT">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.DEFAULT_CREDIT' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'3 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.defaultCreditAmount" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney===C.DEBT">
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.DEFAULT_INTEREST"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'1 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.defaultInterestAmount">
+			<div *ngIf="rules.typeMoney === DEBT">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.DEFAULT_INTEREST' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'1 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.defaultInterestAmount" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney===C.DEBT">
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.INTEREST_FREQ"|translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.timerCredit">
+			<div *ngIf="rules.typeMoney === DEBT">
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.INTEREST_FREQ' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.durationCredit" />
 				</mat-form-field>
 			</div>
-			<div *ngIf="game.typeMoney===C.DEBT" class="w-100">
-				<mat-label>{{ "OPTION.BANKROUTE_WTD"|translate }}</mat-label>
-				<mat-radio-group class="w-100" [(ngModel)]="game.seizureType">
+			<!-- Auto-bank: profile + variable-length rate schedule -->
+			<div *ngIf="rules.typeMoney === DEBT" class="mt-2 d-flex flex-column">
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.autoBank">
+					{{ 'OPTION.AUTO_BANK' | translate }}
+				</mat-checkbox>
+				<div class="m-auto fs-7 infoLabel" [innerHTML]="'OPTION.AUTO_BANK_INFO' | translate"></div>
+
+				<div *ngIf="rules.autoBank" class="mt-2 d-flex flex-column align-items-center">
+					<mat-label class="fw-bold">{{ 'OPTION.BANK_PROFILE' | translate }}</mat-label>
+					<mat-radio-group [ngModel]="rules.bankProfile" (ngModelChange)="onProfileChange($event)">
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.NORMAL">
+							{{ 'OPTION.PROFILE_NORMAL' | translate }}
+						</mat-radio-button>
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.AGGRESSIVE">
+							{{ 'OPTION.PROFILE_AGGRESSIVE' | translate }}
+						</mat-radio-button>
+						<mat-radio-button class="ms-2" [value]="BANK_PROFILE.CUSTOM">
+							{{ 'OPTION.PROFILE_CUSTOM' | translate }}
+						</mat-radio-button>
+					</mat-radio-group>
+
+					<div class="tier-editor w-100 mt-2">
+						<div class="d-flex flex-row gap-2 fs-7 fw-bold justify-content-center">
+							<span class="tier-col">{{ 'OPTION.TIER_THRESHOLD' | translate }}</span>
+							<span class="tier-col">{{ 'OPTION.TIER_AMOUNT' | translate }}</span>
+							<span class="tier-col">{{ 'OPTION.TIER_INTEREST' | translate }}</span>
+							<span class="tier-col">%</span>
+							<span class="tier-col">×2</span>
+							<span class="tier-col"></span>
+						</div>
+						<div
+							*ngFor="let tier of rules.rateSchedule; let i = index"
+							class="d-flex flex-row align-items-center gap-2 justify-content-center">
+							<input
+								type="number"
+								step="0.1"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.threshold" />
+							<input
+								type="number"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.amount" />
+							<input
+								type="number"
+								min="0"
+								class="smallInput tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.interest" />
+							<span class="tier-col fs-7">
+								{{ tier.amount ? ((tier.interest / tier.amount) * 100 | number: '1.0-0') : 0 }}%
+							</span>
+							<mat-checkbox
+								class="tier-col"
+								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
+								[(ngModel)]="tier.allowDouble"></mat-checkbox>
+							<button
+								class="tier-col"
+								*ngIf="rules.bankProfile === BANK_PROFILE.CUSTOM"
+								mat-button
+								color="warn"
+								(click)="removeTier(i)">
+								✕
+							</button>
+						</div>
+						<button
+							*ngIf="rules.bankProfile === BANK_PROFILE.CUSTOM"
+							mat-stroked-button
+							class="mt-1"
+							(click)="addTier()">
+							+ {{ 'OPTION.TIER_ADD' | translate }}
+						</button>
+					</div>
+					<div class="m-auto fs-7 infoLabel mt-1">{{ 'OPTION.TIER_HELP' | translate }}</div>
+				</div>
+			</div>
+			<div *ngIf="rules.typeMoney === DEBT" class="w-100">
+				<mat-label>{{ 'OPTION.BANKROUTE_WTD' | translate }}</mat-label>
+				<mat-radio-group class="w-100" [(ngModel)]="rules.seizureType">
 					<mat-radio-button class="d-flex ms-3" [value]="'fees'">
 						<div class="d-flex flex-row infoLabel">
 							<div class="d-flex flex-column">
-								<div>{{ "OPTION.SEIZURE_FIX1"|translate }}</div>
-								<div>{{ "OPTION.SEIZURE_FIX2"|translate }}</div>
+								<div>{{ 'OPTION.SEIZURE_FIX1' | translate }}</div>
+								<div>{{ 'OPTION.SEIZURE_FIX2' | translate }}</div>
 							</div>
-							<input type="number" min="0" class="smallInput" placeholder="2"
-							       [(ngModel)]="game.seizureCosts">
+							<input
+								type="number"
+								min="0"
+								class="smallInput"
+								placeholder="2"
+								[(ngModel)]="rules.seizureCosts" />
 						</div>
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="'decote'">
-						<div class="d-flex flex-row infoLabel">{{ "OPTION.SEIZURE_DECOTE"|translate }}<input
-								type="number" min="0" class="smallInput" placeholder="33"
-								[(ngModel)]="game.seizureDecote">%
+						<div class="d-flex flex-row infoLabel">
+							{{ 'OPTION.SEIZURE_DECOTE' | translate }}
+							<input
+								type="number"
+								min="0"
+								class="smallInput"
+								placeholder="33"
+								[(ngModel)]="rules.seizureDecote" />
+							%
 						</div>
 					</mat-radio-button>
 				</mat-radio-group>
 			</div>
-			<div *ngIf="game.typeMoney===C.DEBT">
-				{{ "OPTION.IF_PRISON"|translate }}
-				<mat-form-field *ngIf="game" class="largeInput" appearance="fill">
-					<mat-label>{{ "OPTION.PRISON_TIMER"| translate }}</mat-label>
-					<input type="number" min="0" matInput [placeholder]="'5 '+getTranslate('BY_DEFAULT')"
-					       [(ngModel)]="game.timerPrison">
+			<div *ngIf="rules.typeMoney === DEBT">
+				{{ 'OPTION.IF_PRISON' | translate }}
+				<mat-form-field *ngIf="rules" class="largeInput" appearance="fill">
+					<mat-label>{{ 'OPTION.PRISON_TIMER' | translate }}</mat-label>
+					<input
+						type="number"
+						min="0"
+						matInput
+						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
+						[(ngModel)]="rules.timerPrison" />
 				</mat-form-field>
 			</div>
-			<!--			<div *ngIf="game.typeMoney===C.DEBT" class="mb-4 d-flex flex-column">-->
+			<!-- Auto-seizure: independent of autoBank — automates collections on a FAULT credit -->
+			<div *ngIf="rules.typeMoney === DEBT" class="mt-2 d-flex flex-column">
+				<mat-checkbox class="m-auto" [(ngModel)]="rules.autoSeizure">
+					{{ 'OPTION.AUTO_SEIZURE' | translate }}
+				</mat-checkbox>
+				<div class="m-auto fs-7 infoLabel" [innerHTML]="'OPTION.AUTO_SEIZURE_INFO' | translate"></div>
+			</div>
+			<!--			<div *ngIf="game.typeMoney===DEBT" class="mb-4 d-flex flex-column">-->
 			<!--				<mat-checkbox class="m-auto" [disabled]="true">-->
 			<!--					Convertir un joueur en banquier d'affaire (comming soon)-->
 			<!--				</mat-checkbox>-->
@@ -202,56 +370,86 @@
 			<!--					</div>-->
 			<!--				</div>-->
 			<!--			</div>-->
+			<div class="fs-5 m-3 geconomicusFont shadowed">
+				{{ 'OPTION.TITLE_CARDS' | translate }}
+			</div>
 			<div class="d-flex flex-column">
-				<mat-label class="mt-2 fw-bold">{{ "OPTION.GEN_LETTERS"|translate }}</mat-label>
-				<mat-radio-group [(ngModel)]="game.generateLettersAuto">
-					<mat-radio-button class="d-flex ms-3" [value]=true>
-						{{ "OPTION.GEN_LETTERS_AUTO"|translate }}
+				<mat-label class="mt-2 fw-bold">{{ 'OPTION.GEN_LETTERS' | translate }}</mat-label>
+				<mat-radio-group [(ngModel)]="rules.generateLettersAuto">
+					<mat-radio-button class="d-flex ms-3" [value]="true">
+						{{ 'OPTION.GEN_LETTERS_AUTO' | translate }}
 					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=false>
-						{{ "OPTION.GEN_LETTERS_MANU"|translate }} <input class="smallInput" type="number"
-						                                                 [disabled]="game.generateLettersAuto" [(ngModel)]="game.generateLettersInDeck">
-					</mat-radio-button>
-				</mat-radio-group>
-				<mat-label class="mt-2 fw-bold">{{ "OPTION.GEN_LETTERS_IDENTICAL"|translate }}</mat-label>
-				<mat-radio-group [(ngModel)]="game.generatedIdenticalLetters">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
-						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️ EXPERIMENTAL
-					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=4>
-						4 {{ "OPTION.PLAYERS_6TO15"|translate }}
-					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=5>
-						5 {{ "OPTION.PLAYERS_16+"|translate }}
+					<mat-radio-button class="d-flex ms-3" [value]="false">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input
+							class="smallInput"
+							type="number"
+							[disabled]="rules.generateLettersAuto"
+							[(ngModel)]="rules.generateLettersInDeck" />
 					</mat-radio-button>
 				</mat-radio-group>
-				<mat-label class="mt-2 fw-bold">{{ "OPTION.START_DISTRIB_CARDS"|translate }}</mat-label>
-				<mat-radio-group [(ngModel)]="game.distribInitCards">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
-						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️ EXPERIMENTAL
+				<mat-label class="mt-2 fw-bold">{{ 'OPTION.GEN_LETTERS_IDENTICAL' | translate }}</mat-label>
+				<mat-radio-group [(ngModel)]="rules.generatedIdenticalLetters">
+					<mat-radio-button class="d-flex ms-3" [value]="3">
+						3 {{ 'OPTION.PLAYERS_3TO5' | translate }} ⚠️ EXPERIMENTAL
 					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=4>
-						4 {{ "OPTION.PLAYERS_6+"|translate }}
+					<mat-radio-button class="d-flex ms-3" [value]="4">
+						4 {{ 'OPTION.PLAYERS_6TO15' | translate }}
 					</mat-radio-button>
-				</mat-radio-group>
-				<mat-label class="mt-2fw-bold">{{ "OPTION.BUILD_AMOUNT"|translate }}</mat-label>
-				<mat-radio-group [(ngModel)]="game.amountCardsForProd">
-					<mat-radio-button class="d-flex ms-3" [disabled]="!game.devMode" [value]=3>
-						3 {{ "OPTION.PLAYERS_3TO5"|translate }} ⚠️EXPERIMENTAL
+					<mat-radio-button class="d-flex ms-3" [value]="5">
+						5 {{ 'OPTION.PLAYERS_16+' | translate }}
 					</mat-radio-button>
-					<mat-radio-button class="d-flex ms-3" [value]=4>
-						4 {{ "OPTION.PLAYERS_6+"|translate }}
+					<mat-radio-button class="d-flex ms-3" [value]="rules.generatedIdenticalLetters">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.generatedIdenticalLetters" />
 					</mat-radio-button>
 				</mat-radio-group>
+				<mat-label class="mt-2 fw-bold">{{ 'OPTION.START_DISTRIB_CARDS' | translate }}</mat-label>
+				<mat-radio-group [(ngModel)]="rules.distribInitCards">
+					<mat-radio-button class="d-flex ms-3" [value]="3">
+						3 {{ 'OPTION.PLAYERS_3TO5' | translate }} ⚠️ EXPERIMENTAL
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="4">
+						4 {{ 'OPTION.PLAYERS_6+' | translate }}
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="rules.distribInitCards">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.distribInitCards" />
+					</mat-radio-button>
+				</mat-radio-group>
+				<mat-label class="mt-2 fw-bold">{{ 'OPTION.BUILD_AMOUNT' | translate }}</mat-label>
+				<mat-radio-group [(ngModel)]="rules.amountCardsForProd">
+					<mat-radio-button class="d-flex ms-3" [value]="3">
+						3 {{ 'OPTION.PLAYERS_3TO5' | translate }} ⚠️EXPERIMENTAL
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="4">
+						4 {{ 'OPTION.PLAYERS_6+' | translate }}
+					</mat-radio-button>
+					<mat-radio-button class="d-flex ms-3" [value]="rules.amountCardsForProd">
+						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
+						<input class="smallInput" type="number" [(ngModel)]="rules.amountCardsForProd" />
+					</mat-radio-button>
+				</mat-radio-group>
+				<mat-checkbox class="mt-3" [(ngModel)]="rules.latentSquares">
+					{{ 'OPTION.LATENT_SQUARES' | translate }} ⚠️ EXPERIMENTAL
+				</mat-checkbox>
+				<div class="fs-7 infoLabel">{{ 'OPTION.LATENT_SQUARES_INFO' | translate }}</div>
+				<div *ngIf="rules.latentSquares" class="d-flex flex-row align-items-center ms-3 mt-1">
+					<input class="smallInput" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct" />
+					<span class="ms-2">{{
+						'OPTION.LATENT_SQUARES_PCT' | translate: { count: Math.round(((playersLength || 0) * rules.latentSquaresPct) / 100) }
+					}}</span>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div mat-dialog-actions>
-		<button mat-button (click)="onNoClick()">{{ "COMMON.CANCEL"|translate }}</button>
-		<button mat-button [color]="'warn'" (click)="onReset()">{{ "VALUES_BY_DEFAULT"|translate }}</button>
-		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="game" cdkFocusInitial>{{
-                "OK"|translate
-			}}
+		<button mat-button [mat-dialog-close]="">{{ 'CANCEL' | translate }}</button>
+		<button mat-button [mat-dialog-close]="'default'" [color]="'warn'">
+			{{ 'VALUES_BY_DEFAULT' | translate }}
+		</button>
+		<button mat-button color="accent" mat-raised-button [mat-dialog-close]="rules" cdkFocusInitial>
+			{{ 'OK' | translate }}
 		</button>
 	</div>
 </div>

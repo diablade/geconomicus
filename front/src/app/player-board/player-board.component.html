@@ -1,171 +1,271 @@
-<div class="blocked" *ngIf="prison || defaultCredit">
-	<div class="default-credit" *ngIf="defaultCredit">
-		{{ "PLAYER.GO_TO_BANK" | translate }}
-	</div>
-	<div class="prison" *ngIf="prison" [@prisonDoor]="'in'">
-		<div class="countDownContainer">
-			<div class="time">
-				<div class="minute shadowed">{{ minutesPrison | number:'2.0' }}</div>
-				<div class="deuxpoints shadowed">:</div>
-				<div class="seconds shadowed">{{ secondsPrison | number: '2.0' }}</div>
-			</div>
-			<mat-progress-spinner
-					[color]="'warn'"
-					[mode]="'determinate'"
-					[diameter]="300"
-					strokeWidth="20"
-					[value]="prisonProgress">
-			</mat-progress-spinner>
-		</div>
-	</div>
-</div>
-<div class="blocked" *ngIf="player.status === C.DEAD">
-	<div class="default-credit d-flex flex-column">
-		<div class="shadowed gecoFont fs-3">{{ "PLAYER.THIS_LIFE_IS_GONE" | translate }}</div>
-		<button (click)="tryReincarnate()" mat-raised-button
-		        color="accent">
-			{{ "PLAYER.GO_TO_SECOND_LIFE" | translate }}
-		</button>
-	</div>
-</div>
-<div class="p-2 w-100 h-100 game d-flex flex-column overflow-auto" [ngStyle]="getBackgroundStyle()">
-	<div class="titleBar d-flex flex-row">
-		<div class="position-relative" (click)="refresh()">
-			<div class="coin-container" [ngSwitch]="game.typeMoney">
-				<ng-container *ngSwitchCase="C.JUNE">
-					<img [src]="'/assets/images/g1coin.png'" class="imgCoin free"
-					     [@coinFlip]="flipCoin"/>
-				</ng-container>
-				<ng-container *ngSwitchCase="C.DEBT">
-					<img [src]="'/assets/images/eurocoin.png'" class="imgCoin debt"
-					     [@coinFlip]="flipCoin"/>
-				</ng-container>
-			</div>
-			<div class="username">{{ "PLAYER.BALANCE" | translate }}</div>
-		</div>
-		<div *ngIf="game.typeMoney===C.JUNE" class="sold flex-grow-1 contour">
-			{{ (player.coins / game.currentDU) | number : '1.2-2' }}<span class="du">{{ "CURRENCY.DU" | translate }}</span>
-			<div class="smallSold">{{ player.coins | number : '1.2-2' }}{{ "CURRENCY.JUNE" | translate }}</div>
-		</div>
-		<div *ngIf="game.typeMoney===C.DEBT" class="sold flex-grow-1 contour">
-			{{ player.coins| number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
-			<div *ngIf="game.typeMoney===C.DEBT" class="smallSold">{{ "PLAYER.DEBT" | translate }}
-				: {{ getDebts() | number : '1.2-2' }} {{ "CURRENCY.EURO" | translate }}
-			</div>
-		</div>
-		<div class="">
-			<div class="d-flex justify-content-end">
-				<div (click)="updatePlayer()" class="imgTitle"
-				     [ngStyle]="{'border-color':'#'+player.hairColor}" #svgContainer></div>
-			</div>
-			<div class="username">{{ player.name }}</div>
-		</div>
-	</div>
-	<div class="" *ngIf="game.status!==C.PLAYING">
-		<div class="text-center gecoFont shadowed fs-1 m-4">
-			{{
-                game.status !== C.END_GAME ? ("PLAYER.WAITING" | translate) : ("PLAYER.GAME_OVER" | translate)
-			}}
-		</div>
-		<app-notice-btn [amountCardsForProd]="game.amountCardsForProd" [timerCredit]="game.timerCredit"
-		                *ngIf="game.status !== C.END_GAME"></app-notice-btn>
-		<button *ngIf="game.status===C.END_GAME && !player.survey" [routerLink]="['/game',idGame,'player',idPlayer,'survey']"
-		        mat-raised-button
-		        color="accent">
-			{{ "PLAYER.ANSWER_SURVEY" | translate }}
-		</button>
-		<button class="ms-1" *ngIf="game.status===C.END_GAME && player.survey" [routerLink]="['/game',idGame,'results']"
-		        mat-raised-button
-		        color="warn">
-			{{ "HISTORY.VIEW_RESULTS" | translate }}
-		</button>
-	</div>
-	<div *ngIf="(typeTheme$ | async)==='CARD'" @list class="d-flex flex-row flex-wrap">
-		<ng-container *ngFor="let card of cards">
-			<app-card
-					@item *ngIf="card.displayed"
-					[card]="card"
-					[typeMoney]="game.typeMoney"
-					[idOwner]="idPlayer"
-					[idGame]="idGame"
-					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-					[currentDU]="game.currentDU"
-					[amountCardsForProd]="game.amountCardsForProd"
-					(onBuildCardLvlUp)="produceLevelUp($event)"
-					(onCreateShortCode)="onCreateShortCode($event)"
-					[screenWidth]="screenWidth"
-					[screenHeight]="screenHeight"
-					[width]="screenWidth < screenHeight ? '28vw':'28vh'"
-					[height]="screenWidth < screenHeight ? 'calc(28vw * 1.5)':'calc(28vh * 1.5)'"
-					[letterSize]="screenWidth < screenHeight ? 'calc(28vw * 0.33)' : 'calc(28vh * 0.33)'"
-					[priceSize]="screenWidth < screenHeight ? 'calc(18vw * 0.2)' : 'calc(18vh * 0.2)'"
-			></app-card>
-		</ng-container>
-	</div>
-	<div @list *ngIf="(typeTheme$ | async)!=='CARD'" class="d-flex flex-row flex-wrap justify-content-center">
-		<div @item *ngFor="let card of cards">
-			<app-item
-					@item
-					[card]="card"
-					[typeMoney]="game.typeMoney"
-					[idOwner]="idPlayer"
-					[idGame]="idGame"
-					[typeTheme]="(typeTheme$ | async)"
-					[suffixShortCode]="player.idx.toString().padStart(2, '0')"
-					[currentDU]="game.currentDU"
-					(onCreateShortCode)="onCreateShortCode($event)"
-					[screenWidth]="screenWidth"
-					[screenHeight]="screenHeight"
-					[height]="screenWidth < screenHeight ? '28vw':'28vh'"
-					[width]="screenWidth < screenHeight ? '28vw':'28vh'"
-					[iconSize]="screenWidth < screenHeight ? '16vw' : '16vh'"
-					[letterSize]="screenWidth < screenHeight ? '2rem' : '2rem'"
-					[textSize]="screenWidth < screenHeight ? '1rem' : '1rem'"
-					[priceSize]="screenWidth < screenHeight ? '1rem' : '1rem'"
-			></app-item>
-		</div>
-	</div>
-	<div class="credits w-100 d-flex flex-row" [ngClass]="panelRecipeOpenState || panelCreditOpenState ? 'panelOpen':'' ">
-		<div class="d-flex flex-row overflow-auto" *ngIf="panelCreditOpenState" [ngClass]="panelRecipeOpenState ? 'w-50':'w-100'">
-			<app-credit *ngFor="let credit of credits" [small]="true" [interestMinutes]="game.timerCredit" [credit]="credit"
-			            [contractor]="player.name"
-			            (actionBtn)="creditActionBtn($event,credit)"></app-credit>
-		</div>
-		<div *ngIf="panelCreditOpenState && panelRecipeOpenState" class="separator"></div>
-		<div class="d-flex flex-row overflow-auto" *ngIf="panelRecipeOpenState" [ngClass]="panelCreditOpenState ? 'w-50':'w-100'">
-			<div class="m-1" *ngFor="let recipe of recipes">
-				<app-recipe *ngIf="typeTheme$ | async as typeTheme" [recipe]="recipe"
-				            [typeTheme]="typeTheme"
-				            [width]="screenWidth < screenHeight ? '36vw':'36vh'"
-				            [height]="screenWidth < screenHeight ? 'calc(35vw * 1.5)':'calc(35vh * 1.5)'"
-				            (onReceipeCompleted)="recipeCompleted($event)"
-				            (onIngredientClick)="whoHaveCard($event)">
-				</app-recipe>
-			</div>
-		</div>
-	</div>
-	<div class="bottomBtn d-flex flex-row justify-content-between">
-		<button *ngIf="game.typeMoney===C.DEBT && !panelCreditOpenState" class="buy" mat-icon-button color="primary"
-		        (click)="togglePanel('credit')">
-			<fa-icon *ngIf="!panelCreditOpenState" [icon]="faFileContract"></fa-icon>
-		</button>
-		<button *ngIf="game.typeMoney===C.DEBT && panelCreditOpenState" class="buy" mat-fab color="primary"
-		        (click)="togglePanel('credit')">
-			<fa-icon *ngIf="panelCreditOpenState" [icon]="faFileContract"></fa-icon>
-		</button>
-		<button *ngIf="(typeTheme$ | async)!=='CARD' && !panelRecipeOpenState" class="buy" mat-icon-button color="primary"
-		        (click)="togglePanel('recipe')">
-			<fa-icon *ngIf="!panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
-		</button>
-		<button *ngIf="(typeTheme$ | async)!=='CARD' && panelRecipeOpenState" class="buy" mat-fab color="primary"
-		        (click)="togglePanel('recipe')">
-			<fa-icon *ngIf="panelRecipeOpenState" [icon]="faClipboardCheck"></fa-icon>
-		</button>
-		<button class="buy" mat-fab color="accent"
-		        [disabled]="game.status!== C.PLAYING||player.status=== C.DEAD||player.status=== C.NEED_ANSWER"
-		        (click)="buyWith()">
-			<fa-icon [icon]="faCreditCardAlt"></fa-icon>
-		</button>
-	</div>
-</div>
+<!-- Fake-player harness: demo/test controls, only present on the /fake route. -->
+<app-fake-player-panel
+	*ngIf="fakeMode"
+	[screenWidth]="screenWidth"
+	[screenHeight]="screenHeight"></app-fake-player-panel>
 
+<!-- Death → rebirth overlay: skull cross-fades to sprout, then the board navigates to the new life. -->
+<app-overlay *ngIf="reincarnateConfig" [config]="reincarnateConfig" (done)="onReincarnateDone()"></app-overlay>
+
+<!-- Halfway nudge: ⏰ reminder that the credit is half-way to maturity. -->
+<app-overlay *ngIf="halfwayConfig" [config]="halfwayConfig" (done)="halfwayConfig = null"></app-overlay>
+
+<!-- Final-minute credit alarm: ⚠️ flash, then the credit panel force-opens with a live countdown. -->
+<app-overlay *ngIf="alarmConfig" [config]="alarmConfig" (done)="alarmConfig = null"></app-overlay>
+
+<!-- Zero-rate window: spinning wheel behind a huge 0% — borrow before the rate climbs back. -->
+<app-overlay *ngIf="rateZeroConfig" [config]="rateZeroConfig" (done)="rateZeroConfig = null"></app-overlay>
+
+<!-- Prison release: 🕊️ + confetti the moment the sentence ends. -->
+<app-overlay *ngIf="prisonFreeConfig" [config]="prisonFreeConfig" (done)="prisonFreeConfig = null"></app-overlay>
+
+<!-- Faulty-credit police overlay: state-derived (survives refresh), un-skippable (loop) — cleared by
+    onCreditFault the instant a Seizure resolves every FAULT credit. Text depends on Auto Seizure. -->
+<app-overlay *ngIf="faultConfig" [config]="faultConfig"></app-overlay>
+
+<!-- Trade confirmation: transparent, click-through "+/− price" that rises and fades on both sides of a sale. -->
+<app-overlay *ngIf="tradeConfig" [config]="tradeConfig" (done)="tradeConfig = null"></app-overlay>
+
+<!-- Take-over overlay: an animator is driving this Seat; the player can reclaim it via the button. -->
+<app-overlay *ngIf="takenOver$ | async" [config]="takeoverConfig" (action)="retake()"></app-overlay>
+
+<ng-container *ngIf="vm$ | async as vm">
+	<app-prison *ngIf="vm.playerStatus === PRISON" [prison]="prison$ | async"></app-prison>
+	<div class="blocked" *ngIf="vm.playerStatus === DEAD">
+		<div class="default-credit d-flex flex-column">
+			<div class="shadowed fs-3">{{ 'PLAYER.THIS_LIFE_IS_GONE' | translate }}</div>
+			<button (click)="tryReincarnate()" mat-raised-button color="accent">
+				{{ 'PLAYER.GO_TO_SECOND_LIFE' | translate }}
+			</button>
+		</div>
+	</div>
+	<div
+		class="game"
+		[class.landscape]="isLandscape"
+		[ngClass]="vm.avatar?.boardConf"
+		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)">
+		<!-- Title bar -->
+		<!-- Portrait: avatar left, coins right -->
+		<!-- Landscape: coins top, avatar bottom -->
+		<div class="marginArround sold-container frame frame-light" (click)="refresh()">
+			<div class="sold-1 d-flex flex-column">
+				<div class="sold contourText">
+					{{
+						(vm.gameState.typeMoney === DEBT ? vm.coins : vm.coins / vm.gameState.currentDU)
+							| number: '1.2-2'
+					}}
+					{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.DU') | translate }}
+				</div>
+				<div class="sold-small">
+					{{ vm.gameState.typeMoney === DEBT ? ('PLAYER.DEBT' | translate) + ':' : '' }}
+					{{ vm.gameState.typeMoney === DEBT ? currentDebts(vm.credits) : (vm.coins | number: '1.2-2') }}
+					{{ (vm.gameState.typeMoney === DEBT ? 'CURRENCY.EURO' : 'CURRENCY.JUNE') | translate }}
+				</div>
+			</div>
+			<coin
+				class="sold-2"
+				[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
+				[height]="'2.5em'"
+				[width]="'2.5em'"
+				[forceRotate]="flipCoin"></coin>
+		</div>
+		<div class="marginArround avatar-wrap">
+			<avatar
+				[routerLink]="fakeMode ? [] : ['/avatar', sessionId, avatarIdx]"
+				[avatar]="vm.avatar"
+				[width]="'4em'"
+				[height]="'4em'"
+				[namePosition]="'right'"
+				[onlineStatus]="true"
+				[connection]="playerConnection$ | async"></avatar>
+		</div>
+		<div class="btn-buy">
+			<button
+				class="styleBtn marginArround size-center box-shadowed z2"
+				mat-raised-button
+				color="primary"
+				[disabled]="vm.gameState.status !== PLAYING || vm.playerStatus === DEAD"
+				(click)="buyWith()">
+				<div class="d-flex flex-row gap-1 align-items-center">
+					<span class="styleBtn-label">{{ 'PLAYER.BUY' | translate }}</span>
+					<fa-icon [icon]="faCreditCardAlt"></fa-icon>
+				</div>
+			</button>
+		</div>
+		<div class="btn-credit marginArround gap-2">
+			<div class="credit-btn-host">
+				<span
+					*ngIf="creditCountdown"
+					class="credit-ring"
+					[style.background]="creditRing(creditCountdown)"></span>
+				<button
+					[matBadge]="vm.credits.length"
+					[matBadgeColor]="'warn'"
+					[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
+					*ngIf="vm.gameState.typeMoney === DEBT && !panelCreditOpenState"
+					class="styleBtn size box-shadowed z2"
+					mat-icon-button
+					[style.color]="'#117fd0'"
+					[style.background-color]="creditCountdown?.color"
+					color="primary"
+					(click)="togglePanel('credit')">
+					<ng-container *ngTemplateOutlet="creditBtnFace"></ng-container>
+				</button>
+				<button
+					[matBadge]="vm.credits.length"
+					[matBadgeColor]="'warn'"
+					[style.background-color]="creditCountdown ? creditCountdown.color : '#117fd0'"
+					[matBadgePosition]="isLandscape ? 'above before' : 'above after'"
+					*ngIf="vm.gameState.typeMoney === DEBT && panelCreditOpenState"
+					class="styleBtn size box-shadowed z2"
+					mat-fab
+					color="primary"
+					(click)="togglePanel('credit')">
+					<ng-container *ngTemplateOutlet="creditBtnFace"></ng-container>
+				</button>
+			</div>
+			<!-- Auto-bank: persistent current-rate chip beside the credit button -->
+			<div
+				*ngIf="vm.gameState.typeMoney === DEBT && vm.rules.autoBank && vm.rate"
+				[class.flex-reverse-column]="!isLandscape"
+				class="rate-chip box-shadowed">
+				{{ vm.rate.amount }}/{{ vm.rate.interest }}
+				<span class="rate-pct">{{ vm.rate.pct * 100 | number: '1.0-0' }}%</span>
+			</div>
+		</div>
+		<ng-template #creditBtnFace>
+			<span
+				*ngIf="creditCountdown as countdown; else creditBtnIcon"
+				class="credit-countdown"
+				[class.final]="countdown.finalMinute">
+				{{ countdown.label }}
+			</span>
+			<ng-template #creditBtnIcon>
+				<fa-icon [icon]="faFileContract"></fa-icon>
+			</ng-template>
+		</ng-template>
+		<div class="btn-action marginArround">
+			<button
+				class="styleBtn size box-shadowed z2"
+				mat-fab
+				color="accent"
+				[matBadge]="vm.actionTokens"
+				matBadgeColor="warn"
+				[matBadgePosition]="isLandscape ? 'below before' : 'above before'"
+				(click)="openActionDialog(vm)">
+				<mat-icon class="fs-2">bolt</mat-icon>
+			</button>
+		</div>
+		<div class="credits w-100 d-flex flex-row" [ngClass]="panelCreditOpenState ? 'panelOpen' : ''">
+			<!-- Auto-bank: self-service request buttons, shown with the open credit panel -->
+			<div
+				[class.creditsLandscape]="isLandscape"
+				class="d-flex flex-row overflow-auto w-100"
+				*ngIf="panelCreditOpenState">
+				<div
+					*ngIf="panelCreditOpenState && vm.rules.autoBank && vm.playerStatus === ALIVE"
+					class="request-credit frame frame-light d-flex flex-column align-items-center justify-content-center">
+					<button mat-raised-button color="accent" (click)="requestCredit()">
+						<fa-icon [icon]="faFileSignature"></fa-icon>
+						{{ 'CREDIT.BORROW' | translate }}
+					</button>
+				</div>
+				<app-credit
+					*ngFor="let credit of vm.credits"
+					[small]="true"
+					[duration]="vm.rules.durationCredit"
+					[credit]="credit"
+					(actionBtn)="creditActionBtn($event, credit)"></app-credit>
+			</div>
+		</div>
+
+		<!-- Card area (scrollable, goes edge to edge, padding accounts for fixed chrome) -->
+		<div class="card-area">
+			<div *ngIf="vm.gameState.status !== PLAYING" class="w-100 text-center">
+				<div class="text-center m-4 fs-1">⌛</div>
+				<div class="text-center shadowed fs-1 m-3">
+					{{
+						vm.gameState.status !== STOPPED
+							? ('PLAYER.WAITING' | translate)
+							: ('PLAYER.GAME_OVER' | translate)
+					}}
+				</div>
+				<button
+					class="text-center m-1"
+					*ngIf="vm.gameState.status === STOPPED"
+					[routerLink]="['/survey', sessionId, gameStateId, avatarIdx, 'false']"
+					mat-raised-button
+					color="warn">
+					{{ 'PLAYER.ANSWER_SURVEY' | translate }}
+				</button>
+				<button
+					class="text-center ms-1 blur box-shadowed blackBtn"
+					mat-stroked-button
+					*ngIf="vm.gameState.status === STOPPED"
+					[routerLink]="['/avatar', sessionId, avatarIdx]">
+					{{ 'BACK_TO_LOBBY' | translate }}
+				</button>
+			</div>
+			<ng-container *ngIf="vm.typeTheme === 'CARD'">
+				<ng-container *ngFor="let card of cards$ | async; trackBy: trackByCard">
+					<app-card
+						@item
+						*ngIf="card.displayed"
+						[card]="card"
+						[typeMoney]="vm.rules.typeMoney"
+						[flippable]="vm.playerStatus !== DEAD"
+						[ownerIdx]="playerStateIdx"
+						[gameStateId]="gameStateId"
+						[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
+						[currentDU]="vm.gameState.currentDU"
+						[amountCardsForProd]="vm.rules.amountCardsForProd"
+						(buildCardLvlUp)="produceLevelUp($event)"
+						(shortCodeChanged)="onChangedShortCode($event)"
+						[screenWidth]="screenWidth"
+						[screenHeight]="screenHeight"></app-card>
+				</ng-container>
+			</ng-container>
+			<ng-container *ngIf="vm.typeTheme !== 'CARD'">
+				<ng-container *ngIf="cardsView$ | async as cardsView">
+					<div class="zones" *ngIf="cardsView.groups.length">
+						<app-square-zone
+							*ngFor="let group of cardsView.groups; trackBy: trackByGroup"
+							[group]="group"
+							[typeMoney]="vm.rules.typeMoney"
+							[flippable]="vm.playerStatus !== DEAD"
+							[typeTheme]="vm.typeTheme"
+							[ownerIdx]="playerStateIdx"
+							[gameStateId]="gameStateId"
+							[currentDU]="vm.gameState.currentDU"
+							[allCards]="vm.cards"
+							[amountCardsForProd]="vm.rules.amountCardsForProd"
+							[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
+							[screenWidth]="screenWidth"
+							[screenHeight]="screenHeight"></app-square-zone>
+					</div>
+
+					<div class="cards" *ngIf="cardsView.remaining.length">
+						<ng-container *ngFor="let card of cardsView.remaining; trackBy: trackByCard">
+							<app-item
+								@item
+								[card]="card"
+								[typeMoney]="vm.rules.typeMoney"
+								[flippable]="vm.playerStatus !== DEAD"
+								[ownerIdx]="playerStateIdx"
+								[gameStateId]="gameStateId"
+								[typeTheme]="vm.typeTheme"
+								[suffixShortCode]="playerStateIdx?.toString()?.padStart(2, '0')"
+								[currentDU]="vm.gameState.currentDU"
+								[allCards]="vm.cards"
+								[amountCardsForProd]="vm.rules.amountCardsForProd"
+								[generatedIdenticalLetters]="vm.rules.generatedIdenticalLetters"
+								(shortCodeChanged)="onChangedShortCode($event)"
+								[screenWidth]="screenWidth"
+								[screenHeight]="screenHeight"></app-item>
+						</ng-container>
+					</div>
+				</ng-container>
+			</ng-container>
+		</div>
+	</div>
+</ng-container>

@@ -1,0 +1,10 @@
+{
+	"JOIN": {
+		"TITLE": "Spiel beitreten!",
+		"GUNY_INTRO": "Hey! Ich heiße Ğuny.",
+		"GUNY_INTRO2": "und wie heißt du?",
+		"NAME_PROMPT": "Dein Spitzname?",
+		"GO_BUTTON": "Ğo!",
+		"UNKNOWN_AVATAR_NOTICE": "Kein Avatar hatte die von dir eingegebene Nummer: Du legst einen neuen an, mit einer anderen Nummer."
+	}
+}

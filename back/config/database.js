@@ -1,42 +1,41 @@
 //Set up mongoose connection
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import log from "./log.js";
+import env from '#config/env';
+import log from "#config/log";
 
-dotenv.config({path:'./../config/.env'});
+const hostname = env.db_config_hostname;
+const port = env.db_config_port;
+const user = env.db_config_user;
+const pass = env.db_config_password;
+const collection = env.db_config_collection;
 
-const hostname = process.env.GECO_DB_CONFIG_HOSTNAME;
-const port = process.env.GECO_DB_CONFIG_PORT;
-const user = process.env.GECO_DB_CONFIG_USER;
-const pass = process.env.GECO_DB_CONFIG_PASSWORD;
-const collection = process.env.GECO_DB_CONFIG_COLLECTION;
-
-const env = user ? user + ":" + pass + "@" : "";
-const uri = "mongodb://" + env + hostname + ":" + port + "/" + collection + (user ? "?authSource=admin" : "");
+const credentials = user ? user + ":" + pass + "@" : "";
+const uri = "mongodb://" + credentials + hostname + ":" + port + "/" + collection + (user ? "?authSource=admin" : "");
 
 const options = {
-    family:             4, // Use IPv4, skip trying IPv6
-    maxPoolSize:        10
+    family:      4, // Use IPv4, skip trying IPv6
+    maxPoolSize: 10
 }
 
 const connect = async () => {
     try {
         await mongoose.connect(uri, options);
-        log.info("Database connected!");
-    } catch (err) {
-        log.error("Failed to connect to database:", err);
+        log.info("[Database] connected");
     }
-    mongoose.connection.on("error", function (err) {
-        log.error("Mongoose connection error: ", err);
+    catch (err) {
+        log.error("[Database] Failed to connect to database: ", err);
+    }
+    mongoose.connection.on("error", function(err) {
+        log.error("[Database] Mongoose connection error: ", err);
     });
-    mongoose.connection.on("connected", function () {
-        log.info("Mongoose connected");
+    mongoose.connection.on("connected", function() {
+        log.info("[Database] Mongoose connected");
     });
-    mongoose.connection.on("disconnected", function () {
-        log.info("Mongoose disconnected");
+    mongoose.connection.on("disconnected", function() {
+        log.info("[Database] Mongoose disconnected");
     });
     mongoose.Promise = global.Promise;
 }
 
-export { connect };
+export {connect};
 export default mongoose;

@@ -1,22 +1,20 @@
 import {Component, Inject, Input} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {faListAlt} from "@fortawesome/free-solid-svg-icons";
 import {SessionStorageService} from 'src/app/services/local-storage/session-storage.service';
-import {I18nService} from "../../services/i18n.service";
-
 @Component({
 	selector: 'app-tasklist-btn',
 	templateUrl: './tasklist-btn.component.html',
 	styleUrls: ['./tasklist-btn.component.scss']
 })
 export class TaskListBtnComponent {
-	protected readonly faListAlt = faListAlt;
 	@Input() labelBtn = "TASK.MASTER_TASK";
 	@Input() icon = true;
 	@Input() stroked = false;
+    @Input() white = false;
 
 	presentYourself = false;
 	presentML = false;
+	sound = false;
 	prepare = false;
 	delay = false;
 	squares = false;
@@ -32,6 +30,7 @@ export class TaskListBtnComponent {
 	constructor(public dialog: MatDialog, private SessionStorageService: SessionStorageService) {
 		this.presentYourself = this.SessionStorageService.getItem("pY") || false;
 		this.presentML = this.SessionStorageService.getItem("pML") || false;
+		this.sound = this.SessionStorageService.getItem("So") || false;
 		this.prepare = this.SessionStorageService.getItem("pP") || false;
 		this.delay = this.SessionStorageService.getItem("D") || false;
 		this.squares = this.SessionStorageService.getItem("S") || false;
@@ -50,6 +49,7 @@ export class TaskListBtnComponent {
 			data: {
 				presentYourself: this.presentYourself,
 				presentML: this.presentML,
+				sound: this.sound,
 				prepare: this.prepare,
 				delay: this.delay,
 				squares: this.squares,
@@ -66,6 +66,7 @@ export class TaskListBtnComponent {
 			if (result) {
 				this.presentYourself = result.presentYourself;
 				this.presentML = result.presentML;
+				this.sound = result.sound;
 				this.prepare = result.prepare;
 				this.delay = result.delay;
 				this.squares = result.squares;
@@ -79,6 +80,7 @@ export class TaskListBtnComponent {
 				this.results = result.results;
 				this.SessionStorageService.setItem("pY", this.presentYourself);
 				this.SessionStorageService.setItem("pML", this.presentML);
+				this.SessionStorageService.setItem("So", this.sound);
 				this.SessionStorageService.setItem("pP", this.prepare);
 				this.SessionStorageService.setItem("D", this.delay);
 				this.SessionStorageService.setItem("S", this.squares);
@@ -97,7 +99,7 @@ export class TaskListBtnComponent {
 
 @Component({
 	selector: 'animator-tasklist-dialog',
-	templateUrl: '../../dialogs/animator-tasklist-dialog.html',
+	templateUrl: './animator-tasklist-dialog.html',
 })
 export class AnimatorTaskListDialog {
 	data: any;
@@ -114,6 +116,7 @@ export class AnimatorTaskListDialog {
 		this.data = {
 			presentYourself: false,
 			presentML: false,
+			sound: false,
 			prepare: false,
 			delay: false,
 			squares: false,

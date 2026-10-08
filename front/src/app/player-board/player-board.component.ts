@@ -1,477 +1,493 @@
-import {createAvatar, Options} from '@dicebear/core';
-import {adventurer} from '@dicebear/collection';
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Card, Credit, Game, Player} from "../models/game";
-import {BackService} from "../services/back.service";
-import {MatDialog} from "@angular/material/dialog";
-import {I18nService} from "../services/i18n.service";
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { combineLatest, distinctUntilChanged, map, of, Subscription, switchMap, timer, withLatestFrom } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Card, Credit, ConnectionStatus } from '../models/gameState';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import confetti from 'canvas-confetti';
+import { ContractDialogComponent } from '../dialogs/contract-dialog/contract-dialog.component';
+import { I18nService } from '../services/i18n.service';
 import * as _ from 'lodash-es';
+import { faClipboardCheck, faFileContract, faCreditCardAlt, faFileSignature } from '@fortawesome/free-solid-svg-icons';
+import { SnackbarService } from '../services/snackbar.service';
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { ActionDialogComponent } from '../dialogs/action-dialog/action-dialog.component';
+import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
 import {
-	faClipboardCheck,
-	faFileContract,
-	faCreditCardAlt
-} from "@fortawesome/free-solid-svg-icons";
-import {SnackbarService} from "../services/snackbar.service";
-import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
-import {CongratsDialogComponent} from "../dialogs/congrats-dialog/congrats-dialog.component";
-import {ScannerDialogV3Component} from "../dialogs/scanner-dialog-v3/scanner-dialog-v3.component";
-// @ts-ignore
-import * as C from "../../../../config/constantes";
-import {ShortCode} from "../models/shortCode";
-import {Recipe, Ingredient, getAvailableRecipes} from "../models/recipe";
-import {ShortcodeDialogComponent} from "../dialogs/shortcode-dialog/shortcode-dialog.component";
-import {WebSocketService} from "../services/web-socket.service";
-import {GameInfosDialog} from "../components/notice-btn/notice-btn.component";
-import createCountdown from "../services/countDown";
-import {LocalStorageService} from "../services/local-storage/local-storage.service";
-import {AudioService} from '../services/audio.service';
-import {animations} from "../services/animations";
-import {ThemesService} from '../services/themes.service';
+	AssistMode,
+	ASSIST_MODE,
+	CREDIT_STATUS,
+	GAME_STATUS,
+	GAME_TYPE,
+	PLAYER_STATUS,
+} from '@geco/shared';
+import { ShortCode } from '../models/shortCode';
+import { Recipe, getAvailableRecipes } from '../models/recipe';
+import { ShortcodeDialogComponent } from '../dialogs/shortcode-dialog/shortcode-dialog.component';
+import { GameInfosDialog } from '../components/notice-btn/notice-btn.component';
+import { LocalStorageService } from '../services/local-storage/local-storage.service';
+import { AudioService } from '../services/audio.service';
+import { animations } from '../services/animations';
+import { ThemesService } from '../services/themes.service';
+import { getBackgroundStyle } from '../services/avatarTools';
+import { AvatarService } from '../services/api/avatar.service';
+import { PlayerStateService } from '../services/api/player-state.service';
+import { DeckService } from '../services/api/deck.service';
+import { Rules } from '../models/rules';
+import { OverlayConfig, tradeOverlay } from '../components/overlay/overlay.component';
+import { CreditCountdown, creditCountdownAt } from '../services/creditTools';
+import { makeFakeAvatar, makeFakeBundle } from '../fake/fake-data';
 
 @Component({
 	selector: 'app-player-board',
 	templateUrl: './player-board.component.html',
 	animations,
-	styleUrls: ['./player-board.component.scss']
+	styleUrls: ['./player-board.component.scss'],
 })
-export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
-	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	private socket: any;
+export class PlayerBoardComponent implements OnInit, OnDestroy {
+	protected readonly PLAYING = GAME_STATUS.PLAYING;
+	protected readonly PRISON = PLAYER_STATUS.PRISON;
+	protected readonly DEAD = PLAYER_STATUS.DEAD;
+	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
+	protected readonly JUNE = GAME_TYPE.JUNE;
+	protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly STOPPED = GAME_STATUS.STOPPED;
+	protected readonly faFileContract = faFileContract;
+	protected readonly faClipboardCheck = faClipboardCheck;
+	protected readonly faCreditCardAlt = faCreditCardAlt;
+	protected readonly faFileSignature = faFileSignature;
+	protected readonly getBackgroundStyle = getBackgroundStyle;
+
+	private readonly REINCARNATE_OVERLAY_MS = 4000;
+	private readonly CREDIT_ALARM_MS = 4000;
+	private readonly CREDIT_HALFWAY_MS = 4000;
+	private readonly RATE_ZERO_MS = 6000;
+	private readonly PRISON_FREE_MS = 5000;
+	readonly takeoverConfig: OverlayConfig = {
+		phases: [
+			{
+				icon: '🎬',
+				title: 'PLAYER.TAKEN_OVER_TITLE',
+				text: 'PLAYER.TAKEN_OVER_TEXT',
+				bg: 'takeover',
+				button: { labelKey: 'PLAYER.RETAKE' },
+			},
+		],
+	};
+
+	private readonly reincarnateOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '☠️',
+				text: 'PLAYER.THIS_LIFE_IS_GONE',
+				bg: 'reincarnate-death',
+				sound: 'dead',
+				durationMs: this.REINCARNATE_OVERLAY_MS,
+			},
+			{
+				icon: '👶',
+				text: 'PLAYER.GO_TO_SECOND_LIFE',
+				bg: 'reincarnate-rebirth',
+				sound: 'angel',
+				durationMs: this.REINCARNATE_OVERLAY_MS,
+			},
+		],
+	};
+
+	private readonly creditHalfwayOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '⏰',
+				text: 'CREDIT.HALFWAY_NUDGE',
+				bg: 'halfway',
+				sound: 'nudge',
+				durationMs: this.CREDIT_HALFWAY_MS,
+				dismissable: true,
+			},
+		],
+	};
+
+	private readonly creditAlarmOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '⚠️',
+				text: 'CREDIT.FINAL_MINUTE',
+				bg: 'alarm',
+				sound: 'high_alarm',
+				durationMs: this.CREDIT_ALARM_MS,
+			},
+		],
+	};
+
+	private readonly rateZeroOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '0%',
+				text: 'CREDIT.RATE_HURRY',
+				bg: 'rate-zero',
+				wheel: true,
+				sound: 'notif2',
+				durationMs: this.RATE_ZERO_MS,
+				dismissable: true,
+			},
+		],
+	};
+
+	private readonly prisonFreeOverlay: OverlayConfig = {
+		phases: [
+			{
+				icon: '🕊️',
+				title: 'PLAYER.OUT_PRISON_TITLE',
+				text: 'PLAYER.OUT_PRISON_TEXT',
+				bg: 'free',
+				sound: 'outPrison',
+				durationMs: this.PRISON_FREE_MS,
+				dismissable: true,
+			},
+		],
+	};
+
+	private readonly creditFaultOverlay = (autoSeizure: boolean): OverlayConfig => ({
+		loop: true,
+		phases: [
+			{
+				icon: '🚨',
+				title: 'CREDIT.FAULT_OVERLAY_TITLE',
+				text: autoSeizure ? 'CREDIT.FAULT_OVERLAY_TEXT_AUTO' : 'CREDIT.FAULT_OVERLAY_TEXT',
+				bg: 'police',
+			},
+		],
+	});
+
+	private subscription: Subscription | undefined;
+
 	screenWidth = 0;
 	screenHeight = 0;
-	idGame: string | undefined;
-	idPlayer: string | undefined;
-	player: Player = new Player();
-	private subscription: Subscription | undefined;
-	options: Partial<adventurer.Options & Options> = {};
-	game: Game = new Game();
-	typeTheme$ = this.themesService.typeTheme$;
-	cards: Card[] = [];
-	credits: Credit[] = [];
-	recipes: Recipe[] = [];
-	faFileContract = faFileContract;
-	faClipboardCheck = faClipboardCheck;
-	faCreditCardAlt = faCreditCardAlt;
+
+	get isLandscape(): boolean {
+		return this.screenWidth > this.screenHeight;
+	}
+
+	sessionId: string | undefined;
+	gameStateId: string | undefined;
+	avatarIdx: number | undefined;
+	playerStateIdx: number | undefined;
+	assistMode: AssistMode | null = null;
+
+	typeTheme$ = inject(ThemesService).typeTheme$;
+	theme: string = this.themesService.getCurrentTheme();
+	avatar$ = inject(AvatarService).avatar$;
+	session$ = inject(AvatarService).session$;
+	playerStatus$ = inject(PlayerStateService).playerStatus$;
+	playerConnection$ = inject(PlayerStateService).playerConnection$;
+	takenOver$ = inject(PlayerStateService).takenOver$;
+	prison$ = inject(PlayerStateService).prison$;
+
+	coins$ = inject(PlayerStateService).coins$;
+	cards$ = inject(PlayerStateService).cards$;
+	credits_NotOrdered$ = inject(PlayerStateService).credits$;
+	rate$ = inject(PlayerStateService).rate$;
+	firstCreditPending$ = inject(PlayerStateService).firstCreditPending$;
+
+	order = (status: string): number => {
+		switch (status) {
+			case CREDIT_STATUS.REQUESTING:
+				return 0;
+			case CREDIT_STATUS.RUNNING:
+				return 1;
+			case CREDIT_STATUS.PAUSED:
+				return 2;
+			case CREDIT_STATUS.IDLE:
+				return 3;
+			case CREDIT_STATUS.DONE:
+				return 4;
+			default:
+				return 999;
+		}
+	};
+	credits$ = this.credits_NotOrdered$.pipe(
+		map((credits) => {
+			return [...credits].filter((c) => c.status !== CREDIT_STATUS.DONE).sort((a, b) => {
+				return this.order(a.status) - this.order(b.status);
+			});
+		})
+	);
+	gameState$ = inject(PlayerStateService).gameState$;
+	rules$ = inject(PlayerStateService).rules$;
+	cardsView$ = combineLatest([this.cards$, this.rules$]).pipe(
+		map(([cards, rules]) => {
+			const recipes = getAvailableRecipes(
+				cards,
+				rules.amountCardsForProd,
+				rules.generatedIdenticalLetters
+			).filter((r) => r.completed);
+
+			const usedKeys = new Set<string>();
+			const groups = recipes.map((recipe) => {
+				const matchKeys = new Set(recipe.ingredients.filter((i) => i.have > 0).map((i) => i.key));
+				const groupCards = cards.filter((c) => matchKeys.has(c.key)).slice(0, rules.amountCardsForProd);
+				groupCards.forEach((c) => usedKeys.add(c.key));
+				return { recipe, cards: groupCards };
+			});
+
+			const remaining = cards.filter((c) => !usedKeys.has(c.key));
+			return { groups, remaining };
+		})
+	);
+
+	get warningCredit$() {
+		return this.credits$.pipe(map((credits) => credits.some((credit) => credit.status === CREDIT_STATUS.FAULT)));
+	}
+
+	creditCountdown$ = combineLatest([this.credits$, this.rules$]).pipe(
+		map(([credits, rules]) => {
+			const durationMs = (rules?.durationCredit ?? 0) * 60 * 1000;
+			const running = credits.filter((c) => c.status === CREDIT_STATUS.RUNNING && c.remainingTime > 0);
+			if (durationMs <= 0 || running.length === 0) return null;
+			const soonest = running.reduce((a, b) => (a.remainingTime <= b.remainingTime ? a : b));
+			return { endsAt: Date.now() + soonest.remainingTime, durationMs };
+		}),
+		switchMap((maturity) =>
+			maturity
+				? timer(0, 1000).pipe(map(() => creditCountdownAt(maturity.endsAt, maturity.durationMs, Date.now())))
+				: of(null)
+		)
+	);
+
+	actionTokens$ = inject(PlayerStateService).actionTokens$;
+	sessionAvatars$ = inject(PlayerStateService).avatars$;
+
+	vm$ = combineLatest({
+		playerStatus: this.playerStatus$,
+		coins: this.coins$,
+		cards: this.cards$,
+		gameState: this.gameState$,
+		rules: this.rules$,
+		credits: this.credits$,
+		avatar: this.avatar$,
+		session: this.session$,
+		typeTheme: this.typeTheme$,
+		actionTokens: this.actionTokens$,
+		sessionAvatars: this.sessionAvatars$,
+		rate: this.rate$,
+	});
+
+	private pendingReincarnateIdx: number | null = null;
+	private reincarnationSub: Subscription | undefined;
+	private finalMinuteSub: Subscription | undefined;
+	private halfwaySub: Subscription | undefined;
+	private zeroRateSub: Subscription | undefined;
+	private prisonEndedSub: Subscription | undefined;
+	private faultSound: string | null = null;
+	private autoSeizure = false;
+	private creditFaultSub: Subscription | undefined;
+	private rulesSub: Subscription | undefined;
+	private firstCreditSub: Subscription | undefined;
+	private creditCountdownSub: Subscription | undefined;
+	private creditTimeoutSub: Subscription | undefined;
+	private deathSub: Subscription | undefined;
+	private tradeSub: Subscription | undefined;
+	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
+	creditCountdown: CreditCountdown | null = null;
+	alarmConfig: OverlayConfig | null = null;
+	halfwayConfig: OverlayConfig | null = null;
+	rateZeroConfig: OverlayConfig | null = null;
+	prisonFreeConfig: OverlayConfig | null = null;
+	faultConfig: OverlayConfig | null = null;
+	reincarnateConfig: OverlayConfig | null = null;
+	tradeConfig: OverlayConfig | null = null;
+
+	fakeMode = false;
 	scanV3 = true;
 	flipCoin = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
-	C = C;
-	prison = false;
-	defaultCredit = false;
-	prisonProgress = 0;
-	minutesPrison = 5;
-	secondsPrison = 0;
 	shortCode: ShortCode | undefined;
 	isBuying = false;
 	isProducing = false;
-	prisonTimer = createCountdown({h: 0, m: 0, s: 0}, {
-		listen: ({hh, mm, ss, s, h, m}) => {
-			this.minutesPrison = m;
-			this.secondsPrison = s;
-		},
-		done: () => {
-			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.PRISON_END"));
-		}
-	});
+	playerConnection: ConnectionStatus | null = null;
 
-	constructor(private route: ActivatedRoute,
-				public dialog: MatDialog,
-				private router: Router,
-				private localStorageService: LocalStorageService,
-				private backService: BackService,
-				private wsService: WebSocketService,
-				private i18nService: I18nService,
-				private themesService: ThemesService,
-				private audioService: AudioService,
-				private snackbarService: SnackbarService) {
+	currentDebts = (credits: Credit[]): number => {
+		return credits
+			.filter((c) => c.status !== CREDIT_STATUS.DONE && c.status !== CREDIT_STATUS.CANCELED)
+			.reduce((total, c) => total + c.amount + c.interest, 0);
+	};
+
+	creditRing = (countdown: CreditCountdown): string => {
+		return `conic-gradient(from -90deg, ${countdown.color} 0 ${countdown.progress}%, rgba(255, 255, 255, 0.5) ${countdown.progress}% 100%)`;
+	};
+
+	recipies = (cards: Card[], rules: Rules) => {
+		return getAvailableRecipes(cards, rules.amountCardsForProd, rules.generatedIdenticalLetters);
+	};
+
+	constructor(
+		private route: ActivatedRoute,
+		private router: Router,
+		public dialog: MatDialog,
+		private localStorageService: LocalStorageService,
+		private deckService: DeckService,
+		private i18nService: I18nService,
+		private themesService: ThemesService,
+		private audioService: AudioService,
+		private snackbarService: SnackbarService,
+		private avatarService: AvatarService,
+		private playerStateService: PlayerStateService
+	) {
+		this.i18nService.loadNamespace('player');
+		this.i18nService.loadNamespace('action');
+		this.i18nService.loadNamespace('bank');
 	}
 
-	updateScreenSize() {
-		// Listen for window resize events to update the dimensions if the screen size changes
-		this.screenWidth = window.innerWidth;
-		this.screenHeight = window.innerHeight;
-		window.addEventListener('resize', this.updateScreenSize.bind(this));
+	ngOnDestroy(): void {
+		this.playerStateService.leaveRooms();
+		this.playerStateService.offAll();
+		if (this.subscription) this.subscription.unsubscribe();
+		if (this.reincarnationSub) this.reincarnationSub.unsubscribe();
+		if (this.finalMinuteSub) this.finalMinuteSub.unsubscribe();
+		if (this.halfwaySub) this.halfwaySub.unsubscribe();
+		if (this.zeroRateSub) this.zeroRateSub.unsubscribe();
+		if (this.prisonEndedSub) this.prisonEndedSub.unsubscribe();
+		if (this.creditFaultSub) this.creditFaultSub.unsubscribe();
+		if (this.rulesSub) this.rulesSub.unsubscribe();
+		if (this.firstCreditSub) this.firstCreditSub.unsubscribe();
+		if (this.creditCountdownSub) this.creditCountdownSub.unsubscribe();
+		if (this.creditTimeoutSub) this.creditTimeoutSub.unsubscribe();
+		if (this.deathSub) this.deathSub.unsubscribe();
+		if (this.tradeSub) this.tradeSub.unsubscribe();
+		window.removeEventListener('resize', this._resizeHandler);
 	}
 
 	ngOnInit(): void {
+		this.fakeMode = this.route.snapshot.data['fake'] === true;
+
+		this.coins$.subscribe(() => {
+			this.flipCoins();
+		});
+
 		this.updateScreenSize();
-		this.scanV3 = this.localStorageService.getItem("scanV3");
-		this.route.params.subscribe(params => {
-			this.idGame = params['idGame'];
-			this.idPlayer = params['idPlayer'];
-			this.subscription = this.wsService.getReConnectionStatus().subscribe(data => {
-				if (data) {
-					this.refresh();
-				}
-			});
-			this.socket = this.wsService.getSocket(this.idGame, this.idPlayer);
+		this.scanV3 = this.localStorageService.getItem('scanV3');
 
-			// Setup error handling for socket timeouts
-			this.socket.on('error', (error: any) => {
-				console.error('Socket error:', error);
-				if (error && error.message && error.message.includes('timeout')) {
-					this.handleSocketTimeout();
-				}
-			});
+		this.reincarnationSub = this.playerStateService.reincarnation$.subscribe((data) => {
+			this.playReincarnationOverlay(data.newPlayerStateIdx);
+		});
 
-			this.getPlayerInfos();
+		this.finalMinuteSub = this.playerStateService.finalMinute$.subscribe(({ flash }) => {
+			this.onCreditFinalMinute(flash);
+		});
+
+		this.halfwaySub = this.playerStateService.halfway$.subscribe(() => {
+			if (!this.halfwayConfig) this.halfwayConfig = this.creditHalfwayOverlay;
+		});
+
+		this.zeroRateSub = this.playerStateService.zeroRate$.subscribe(() => {
+			if (!this.rateZeroConfig) this.rateZeroConfig = this.rateZeroOverlay;
+		});
+
+		this.prisonEndedSub = this.playerStateService.prisonEnded$.subscribe(() => this.playPrisonFreeOverlay());
+
+		this.tradeSub = this.playerStateService.trade$.subscribe(
+			({ sold, amount }) => (this.tradeConfig = tradeOverlay(sold, amount))
+		);
+
+		this.creditFaultSub = this.warningCredit$
+			.pipe(distinctUntilChanged())
+			.subscribe((fault) => this.onCreditFault(fault));
+
+		this.rulesSub = this.rules$.subscribe((r) => (this.autoSeizure = !!r?.autoSeizure));
+
+		this.creditCountdownSub = this.creditCountdown$.subscribe((countdown) => (this.creditCountdown = countdown));
+
+		this.creditTimeoutSub = this.playerStateService.creditTimeout$.subscribe(() => this.clearMaturityOverlays());
+
+		this.deathSub = this.playerStatus$.pipe(distinctUntilChanged()).subscribe((status) => {
+			if (status === PLAYER_STATUS.DEAD) this.dialog.closeAll();
+		});
+
+		this.firstCreditSub = this.firstCreditPending$.pipe(distinctUntilChanged()).subscribe((pending) => {
+			if (pending) {
+				this.openFirstCreditQuestion();
+			} else {
+				this.firstCreditDialogRef?.close();
+			}
+		});
+
+		if (this.fakeMode) {
+			this.bootFake();
+			return;
+		}
+
+		const rawAssist = this.route.snapshot.queryParamMap.get('assist');
+		this.assistMode =
+			rawAssist && Object.values(ASSIST_MODE).includes(rawAssist as AssistMode)
+				? (rawAssist as AssistMode)
+				: null;
+
+		this.route.params.subscribe((params) => {
+			this.sessionId = params['sessionId'];
+			this.avatarIdx = params['avatarIdx'];
+			this.gameStateId = params['gameStateId'];
+			this.playerStateIdx = params['playerStateIdx'];
+
+			if (this.sessionId && this.gameStateId && this.avatarIdx != undefined && this.playerStateIdx != undefined) {
+				this.playerStateService.loadPlayerState(
+					this.sessionId,
+					this.gameStateId,
+					this.avatarIdx,
+					this.playerStateIdx
+				);
+				this.avatarService.loadAvatar(this.sessionId, this.avatarIdx, true, this.assistMode).subscribe();
+			}
 		});
 	}
 
-	/**
-	 * Handle socket timeout by forcing a complete page reload
-	 */
-	private handleSocketTimeout() {
-		this.snackbarService.showError(this.i18nService.instant("ERROR.CONNECTION_EXPIRED"));
+	private bootFake(): void {
+		this.sessionId = 'fake';
+		this.gameStateId = 'fake';
+		this.avatarIdx = 0;
+		this.playerStateIdx = 0;
+		this.themesService.loadTheme('THEME.EMOJIS');
+		this.avatarService.loadFakeAvatar(makeFakeAvatar());
+		this.playerStateService.loadFake(makeFakeBundle(GAME_TYPE.DEBT, false));
+	}
 
-		// Set a short delay to allow the notification to be shown before reload
-		setTimeout(() => {
-			// Force a complete page reload
-			window.location.reload();
-		}, 2000);
+	retake(): void {
+		this.playerStateService.retake();
+	}
+
+	private _resizeHandler = () => {
+		this.screenWidth = window.innerWidth;
+		this.screenHeight = window.innerHeight;
+	};
+
+	updateScreenSize() {
+		this._resizeHandler();
+		window.addEventListener('resize', this._resizeHandler);
 	}
 
 	initPanels() {
-		const panelC = this.localStorageService.getItem("panelCredit");
-		const panelR = this.localStorageService.getItem("panelRecipe");
+		const panelC = this.localStorageService.getItem('panelCredit');
+		const panelR = this.localStorageService.getItem('panelRecipe');
 		this.panelCreditOpenState = panelC == undefined ? false : panelC;
 		this.panelRecipeOpenState = panelR == undefined ? false : panelR;
-		if (this.game.typeMoney === C.JUNE) {
-			this.localStorageService.setItem('panelCredit', false);
-			if (this.game.theme === "THEME.CLASSIC") {
-				this.localStorageService.setItem('panelRecipe', false);
-				this.panelRecipeOpenState = false;
+		this.gameState$.pipe(withLatestFrom(this.typeTheme$)).subscribe(([gameState, typeTheme]) => {
+			if (gameState.typeMoney === GAME_TYPE.JUNE) {
+				this.localStorageService.setItem('panelCredit', false);
+				if (typeTheme === 'CARD') {
+					this.localStorageService.setItem('panelRecipe', false);
+					this.panelRecipeOpenState = false;
+				} else {
+					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
+				}
 			} else {
-				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
-			}
-		} else {
-			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
-			if (this.game.theme === "THEME.CLASSIC") {
-				this.localStorageService.setItem('panelRecipe', false);
-				this.panelRecipeOpenState = false;
-			} else {
-				this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
-			}
-		}
-	}
-
-	getPlayerInfos() {
-		this.backService.getPlayer(this.idGame, this.idPlayer).subscribe(async data => {
-			this.game = {...this.game, ...data.game};
-			this.themesService.loadTheme(this.game.theme);
-			this.initPanels();
-			this.cards = [];
-			this.player = data.player;
-			if (this.player.image === "") {
-				this.options.seed = data.player.name.toString();
-				const avatar = createAvatar(adventurer, this.options);
-				this.player.image = avatar.toString();
-			}
-			// @ts-ignore
-			this.svgContainer.nativeElement.innerHTML = this.player.image;
-			await this.receiveCards(this.player.cards);
-			if (data.player.status == "prison") {
-				this.prison = true;
-			}
-			if (this.game.typeMoney === C.DEBT) {
-				this.backService.getPlayerCredits(this.idGame, this.idPlayer).subscribe(data => {
-					this.credits = data;
-					_.forEach(data, d => {
-						if (d.status == C.DEFAULT_CREDIT) {
-							this.defaultCredit = true;
-						} else if (d.status == "requesting") {
-							this.requestingWhenCreditEnds(d, true);
-						}
-					});
-				});
-			}
-			this.localStorageService.setItem("session",
-				{
-					idGame: this.idGame,
-					idPlayer: this.idPlayer,
-					gameName: this.game.name,
-					player: this.player
-				});
-		});
-	}
-
-	ngAfterViewInit() {
-		this.socket.on('resync', (data: any) => {
-			if (data.needsResync) {
-				this.getPlayerInfos();
-			}
-		});
-		this.socket.on(C.START_GAME, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.player.coins = data.coins;
-			this.game = {...this.game, ...data.game};
-			await this.receiveCards(data.cards);
-		});
-		this.socket.on(C.START_ROUND, async () => {
-			this.game.status = C.PLAYING;
-			this.credits.forEach(c => {
-				if (c.status == C.PAUSED_CREDIT) {
-					c.status = C.RUNNING_CREDIT;
+				this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+				if (typeTheme === 'CARD') {
+					this.localStorageService.setItem('panelRecipe', false);
+					this.panelRecipeOpenState = false;
+				} else {
+					this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
 				}
-			});
-			this.snackbarService.showNotif(this.i18nService.instant("EVENTS.ROUND_START"));
-		});
-		this.socket.on(C.STOP_ROUND, async () => {
-			this.dialog.closeAll();
-			this.game.status = C.WAITING;
-			this.dialog.open(InformationDialogComponent, {
-				data: {text: this.i18nService.instant("EVENTS.ROUND_END")},
-			});
-		});
-		this.socket.on(C.UPDATED_PLAYER, (data: any) => {
-			if (data.id == this.idPlayer) {
-				this.player = data;
+				this.playerStateService.refreshRate();
 			}
-		});
-		this.socket.on(C.END_GAME, (data: any) => {
-			this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.GAME_END"));
-			this.game.status = C.END_GAME;
-			if (data && data.redirect == 'survey') {
-				this.router.navigate(['game', this.idGame, 'player', this.idPlayer, 'survey']);
-			} else {
-				this.router.navigate(['game', this.idGame, 'results']);
-			}
-		});
-		this.socket.on(C.DISTRIB_DU, (data: any, cb: (response: any) => void) => {
-			if (cb) {
-				cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			}
-			this.audioService.playSound("audioDu");
-			this.player.coins += data.du;
-			this.game.currentDU = data.du;
-			this.flipCoins();
-		});
-		this.socket.on(C.RESET_GAME, async (data: any) => {
-			this.dialog.closeAll();
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			this.panelCreditOpenState = false;
-			this.localStorageService.setItem("panelCredit", false);
-			if (this.player.reincarnateFromId) {
-				this.router.navigate(['game', this.idGame, 'player', this.player.reincarnateFromId]).then(() => {
-					this.refresh();
-				});
-			} else {
-				this.refresh();
-			}
-		});
-		this.socket.on(C.FIRST_DU, async (data: any) => {
-			this.game.currentDU = data.du;
-		});
-		this.socket.on(C.DEAD, async () => {
-			this.player.status = C.DEAD;
-			this.dialog.closeAll();
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: "☠️La mort vient de passer ! ☠️ \n Resurrection en cours....️",
-					sound: "dead"
-				},
-			});
-			this.cards = [];
-			if (this.game.typeMoney === C.DEBT) {
-				this.player.coins = 0;
-			}
-			await new Promise(resolve => setTimeout(resolve, 4000));
-			this.resurrection();
-		});
-		this.socket.on(C.SHORT_CODE_BROADCAST, async (data: any) => {
-			if (this.shortCode && this.shortCode.code === data.code) {
-				this.socket.emit(C.SHORT_CODE_CONFIRMED, {payload: this.shortCode.payload, idBuyer: data.idBuyer});
-			}
-		});
-		this.socket.on(C.SHORT_CODE_CONFIRMED, async (data: any) => {
-			if (data && data.payload) {
-				this.buy(data.payload);
-			}
-		});
-		this.socket.on(C.UPDATE_GAME_OPTION, async (data: any) => {
-			if (data) {
-				//this.game = {...this.game, ...data};
-				//this.themesService.loadTheme(this.game.theme);
-				//this.initPanels(); // not working... in some cases
-				//refresh all
-				this.refresh();
-			}
-		});
-		this.socket.on(C.REFRESH_FORCE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.refresh();
-		});
-		this.socket.on(C.TRANSACTION_DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			if (data.cost > 0) {
-				this.audioService.playSound("coin");
-				this.flipCoins();
-				this.snackbarService.showNotif(this.i18nService.instant("EVENTS.RECEIVED_COINS", {amount: data.cost}) +
-					this.i18nService.instant(this.game.typeMoney == C.DEBT ? "CURRENCY.EURO" : "CURRENCY.JUNE"));
-			}
-			this.player.coins = data.coins;
-			const cardSold = _.find(this.cards, {_id: data.idCardSold});
-			if (cardSold) {
-				_.remove(this.cards, {_id: data.idCardSold});
-				//display the card that was bellow (if stacked)
-				_.forEach(this.cards, c => {
-					if (!c.displayed && c.weight == cardSold.weight && c.letter == cardSold.letter) {
-						c.displayed = true;
-					}
-				});
-				// await new Promise(resolve => setTimeout(resolve, 1000));
-				if (this.game.theme == 'THEME.CLASSIC') {
-					this.countOccurrencesAndHideDuplicates();
-				}
-			}
-		});
-		this.socket.on(C.NEW_CREDIT, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: this.i18nService.instant("CREDIT.NEW_CREDIT", {amount: data.credit.amount})
-				},
-			});
-			this.credits.push(data.credit);
-			this.player.coins += data.credit.amount;
-			this.flipCoins();
-			this.audioService.playSound("coins");
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem("panelCredit", true);
-		});
-		this.socket.on(C.TIMEOUT_CREDIT, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = data.credit.status;
-				}
-			});
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem('panelCredit', true);
-			this.requestingWhenCreditEnds(data, true);
-		});
-		this.socket.on(C.CREDITS_STARTED, async () => {
-			_.forEach(this.credits, c => {
-				if (c.status == C.PAUSED_CREDIT) {
-					c.status = C.RUNNING_CREDIT;
-				}
-			});
-		});
-		this.socket.on(C.COPY_PLAYER, async (payload: any) => {
-			console.log(payload);
-			this.router.navigate(['game', payload.idGame, 'player', payload.idPlayer]).then(() => {
-				// window.location.reload();
-			});
-		});
-		this.socket.on(C.PROGRESS_CREDIT, async (data: any) => {
-			_.forEach(this.credits, c => {
-				if (c._id == data.id) {
-					c.status = C.RUNNING_CREDIT;
-					c.progress = data.progress;
-				}
-			});
-		});
-		this.socket.on(C.DEFAULT_CREDIT, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = data.credit.status;
-				}
-			});
-
-			this.panelCreditOpenState = true;
-			this.localStorageService.setItem("panelCredit", true);
-			this.snackbarService.showError(this.i18nService.instant("CREDIT.DEFAULT_CREDIT"));
-			this.defaultCredit = true;
-			this.audioService.playSound("police");
-		});
-		this.socket.on(C.CREDIT_DONE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = C.CREDIT_DONE;
-				}
-			});
-		});
-		this.socket.on(C.PROGRESS_PRISON, async (data: any) => {
-			this.prisonProgress = data.progress;
-			const minutes = Math.floor((data.remainingTime / (1000 * 60)) % 60);
-			const seconds = Math.floor((data.remainingTime / 1000) % 60);
-			this.prisonTimer.stop();
-			this.prisonTimer.reset();
-			this.prisonTimer.set({h: 0, m: minutes, s: seconds});
-			this.prisonTimer.start();
-		});
-		this.socket.on(C.PRISON_ENDED, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			this.prison = false;
-			if (data && data.cards) {
-				await this.receiveCards(data.cards);
-			}
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: this.i18nService.instant("EVENTS.PRISON_END_TEXT"),
-					sound: "./../../assets/audios/outPrison.mp3"
-				},
-			});
-		});
-		this.socket.on(C.SEIZURE, async (data: any, cb: (response: any) => void) => {
-			cb({status: "ok", idPlayer: this.idPlayer, _ackId: data._ackId});
-			_.forEach(data.seizure.cards, c => {
-				_.remove(this.cards, {_id: c._id});
-			});
-			if (this.game.theme == 'THEME.CLASSIC') {
-				this.countOccurrencesAndHideDuplicates();
-			}
-			this.credits = _.map(this.credits, c => {
-				if (c._id == data.credit._id) {
-					c.status = C.CREDIT_DONE;
-				}
-				return c;
-			});
-			this.player.coins -= data.seizure.coins;
-			this.defaultCredit = false;
-			if (data.prisoner && data.prisoner._id == this.idPlayer) {
-				this.prison = true;
-				this.audioService.playSound("prison");
-			}
-		});
-	}
-
-	countOccurrencesAndHideDuplicates() {
-		this.cards = _.orderBy(this.cards, ["weight", "letter"]);
-		const countByResult = _.countBy(this.cards, (obj: any) => `${obj.weight}-${obj.letter}`);
-		const keyDuplicates: string[] = [];
-		for (const c of this.cards) {
-			const countKey = `${c.weight}-${c.letter}`;
-			c.count = countByResult[countKey] || 0;
-			const existCountKey = _.find(keyDuplicates, (k: string) => k === countKey);
-			if (c.count > 1 && existCountKey) {
-				c.displayed = false;
-			}
-			if (c.count >= 1 && !existCountKey) {
-				keyDuplicates.push(countKey);
-				c.displayed = true;
-			}
-		}
-		this.cards = _.orderBy(this.cards, ["count"], "desc");
-	}
-
-	showGift(card: Card) {
-		this.dialog.open(CongratsDialogComponent, {
-			hasBackdrop: true,
-			backdropClass: 'bgBlur',
-			data: {
-				text: card.weight > 2 ? this.i18nService.instant("EVENTS.TECHNOLOGY") : this.i18nService.instant("EVENTS.GIFT"),
-				card: card,
-				theme: this.game.theme
-			},
-			width: '10px',
-			height: '10px'
 		});
 	}
 
@@ -479,258 +495,229 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.flipCoin = true;
 		setTimeout(() => {
 			this.flipCoin = false;
-		}, 2000);
-	}
-
-	//To prevent memory leak
-	ngOnDestroy(): void {
-		if (this.subscription) this.subscription.unsubscribe();
-	}
-
-	updatePlayer() {
-		this.router.navigate(["game", this.idGame, "player", this.idPlayer, "settings"]);
-	}
-
-	resurrection() {
-		this.router.navigate(['game', this.idGame, 'join', this.player._id, this.player.name]);
-	}
-
-	formatNewCards(newCards: Card[]) {
-		for (const c of newCards) {
-			c.displayed = true;
-			c.count = 1;
-		}
-		return newCards;
-	}
-
-	async receiveCards(newCards: Card[]) {
-		const cards = this.formatNewCards(newCards);
-		this.cards = _.concat(this.cards, cards);
-		this.cards = _.orderBy(this.cards, ["weight", "letter"],);
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		if (this.game.theme == 'THEME.CLASSIC') {
-			this.countOccurrencesAndHideDuplicates();
-		} else {
-			this.recipes = getAvailableRecipes(this.cards, this.game.amountCardsForProd, this.game.generatedIdenticalLetters);
-		}
+		}, 1000);
 	}
 
 	produceLevelUp($event: any) {
-		if (this.isProducing) {
-			return; // Prevent double-clicks
-		}
-		this.isProducing = true;
-		const identicalCards = _.filter(this.cards, {letter: $event.letter, weight: $event.weight});
-		if (identicalCards.length >= this.game.amountCardsForProd) {
-			const cardsForProd = identicalCards.slice(0, this.game.amountCardsForProd);
-			this.backService.produce(this.idGame, this.idPlayer, cardsForProd).subscribe(async newCards => {
-				_.remove(this.cards, c => _.some(cardsForProd, c));
-				const cardGift = _.find(newCards, {weight: $event.weight + 1});
-				if (cardGift) {
-					this.showGift(cardGift);
-				}
-				this.isProducing = false;
-				await this.receiveCards(newCards);
-			});
-		} else {
-			this.isProducing = false;
-			this.snackbarService.showError("are you trying to cheat???");
-		}
+		if (this.fakeMode) return;
+		this.playerStateService.produce($event.letter, $event.weight);
+	}
+
+	trackByGroup(index: number, group: { recipe: Recipe; cards: Card[] }): string {
+		return group.recipe.letter + group.recipe.weight;
 	}
 
 	scan() {
-		const dialogRef = this.dialog.open(ScannerDialogV3Component, {});
-		dialogRef.afterClosed().subscribe(dataRaw => {
+		const dialogRef = this.dialog.open(ScannerQrCode, {});
+		dialogRef.afterClosed().subscribe((dataRaw) => {
 			if (dataRaw) {
 				this.buy(dataRaw);
 			}
 		});
 	}
 
-	buyWith(){
-		if(this.scanV3){
-			this.scan();
+	buyWith() {
+		if (this.fakeMode) {
+			this.openDialogShorCode();
+			return;
 		}
-		else{
+		if (this.scanV3) {
+			this.scan();
+		} else {
 			this.openDialogShorCode();
 		}
 	}
 
 	buyWithCode(code: string) {
-		this.socket.emit(C.SHORT_CODE_EMIT, {code, idBuyer: this.idPlayer}, (ack: any) => {
-			console.log(ack)
-		});
-		this.snackbarService.showSuccess(this.i18nService.instant("EVENTS.SHORT_CODE_SEND"));
+		this.playerStateService.sendBuyingShortCode(code);
+		this.snackbarService.showSuccess(this.i18nService.instant('EVENTS.SHORT_CODE_SEND'));
 	}
 
 	buy(dataRaw: any) {
 		if (this.isBuying) {
-			return; // Prevent double-clicks
+			return;
 		}
 		this.isBuying = true;
 
-		const data = JSON.parse(dataRaw);
-		const cost = this.game.typeMoney == C.JUNE ? (data.p * this.game.currentDU).toFixed(2) : data.p;
-		if (this.idGame && data.g && this.idGame != data.g) {
-			this.snackbarService.showError("petit malin... c'est une carte d'une autre partie...");
-			this.isBuying = false; // Reset flag
-		} else if (this.player.coins >= cost) {
-			this.backService.transaction(this.idGame, this.idPlayer, data.o, data.c).subscribe(async dataReceived => {
-				if (dataReceived?.buyedCard) {
-					await this.receiveCards([dataReceived.buyedCard]);
-					this.player.coins = dataReceived.coins;
-					this.audioService.playSound("cardFlipBack");
-				}
-				this.isBuying = false; // Reset flag on success
-			});
-		} else if (this.player.coins < cost) {
-			console.log(this.player.coins, cost);
-			this.snackbarService.showError("Fond insuffisant !");
-			this.audioService.playSound("error");
-			this.isBuying = false; // Reset flag
-		} else {
-			this.snackbarService.showError("Erreur scan, réessaye !");
-			this.isBuying = false; // Reset flag
-		}
-	}
-
-	getBackgroundStyle() {
-		switch (this.player.boardConf) {
-			case "green":
-				return {"background-image": "url('/assets/images/green-carpet.jpg')"};
-			case "custom":
-				return {"background-color": "" + this.player.boardColor};
-			case "wood":
-			default:
-				return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
-		}
-	}
-
-	requestingWhenCreditEnds(credit: Credit, beep: boolean) {
-		this.player.status = "needAnswer";
-		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				title: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.TITLE"),
-				message: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.MESSAGE", {
-					amount: (credit.amount + credit.interest),
-					interest: credit.interest
-				}),
-				labelBtn1: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN1"),
-				labelBtn2: this.i18nService.instant("DIALOG.CREDIT_EXPIRED.BTN2"),
-				autoClickBtn2: true,
-				timerBtn2: "14",//en secondes
-				beep,
-			}
-		});
-		dialogRef.afterClosed().subscribe(options => {
-			if (options == "btn2") {
-				if (this.player.coins >= credit.interest) {
-					this.backService.payInterest(credit).subscribe(data => {
-						if (data) {
-							_.forEach(this.credits, c => {
-								if (c._id == data._id) {
-									c.status = data.status;
-									c.extended = data.extended;
-									c.progress = 0;
-								}
-							});
-							this.player.coins -= credit.interest;
-							this.player.status = C.ALIVE;
-							this.audioService.playSound("interest");
-						}
-					});
+		this.playerStateService.buy(dataRaw).subscribe({
+			next: (result) => {
+				if (result.success) {
+					this.audioService.playSound('cardFlipBack');
 				} else {
-					this.snackbarService.showError("Fond insuffisant ! allez voir la banque");
+					this.snackbarService.showError(this.i18nService.instant(result.error || 'ERROR.UNKNOWN'));
+					this.audioService.playSound('error');
 				}
-			} else if (options == "btn1") {
-				if (this.player.coins >= (credit.amount + credit.interest)) {
-					this.settleCredit(credit);
-				} else {
-					this.snackbarService.showError("Fond insuffisant !");
-					this.audioService.playSound("error");
-					this.requestingWhenCreditEnds(credit, false);
-				}
-			}
+				this.isBuying = false;
+			},
+			error: () => {
+				this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN'));
+				this.audioService.playSound('error');
+				this.isBuying = false;
+			},
 		});
-	}
-
-	getDebts() {
-		let debts = 0;
-		_.forEach(this.credits, c => {
-			if (c.status != C.CREDIT_DONE) {
-				debts += c.amount;
-				debts += c.interest;
-			}
-		});
-		return debts;
-	}
-
-	settleDebt(credit: Credit) {
-		const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
-			data: {
-				message: this.i18nService.instant("CREDIT.SETTLE_CREDIT", {amount: credit.amount + credit.interest}),
-				labelBtn1: this.i18nService.instant("CREDIT.SETTLE_ALL"),
-				labelBtn2: this.i18nService.instant("DIALOG.CANCEL"),
-			}
-		});
-		confDialogRef.afterClosed().subscribe(result => {
-			if (result && result == "btn1") {
-				this.settleCredit(credit);
-			}
-		});
-	}
-
-	settleCredit(credit: Credit) {
-		if (this.player && this.player.coins >= (credit.amount + credit.interest)) {
-			this.backService.settleCredit(credit).subscribe(data => {
-				if (data) {
-					this.credits = _.map(this.credits, c => {
-						if (c._id == data._id) {
-							c.status = data.status;
-							c.endDate = data.endDate;
-							this.player.coins -= (data.amount + data.interest);
-							this.player.status = C.ALIVE;
-						}
-						return c;
-					});
-					this.snackbarService.showSuccess(this.i18nService.instant("CREDIT.CREDIT_SETTLED"));
-					this.audioService.playSound("interest");
-				}
-			});
-		} else {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.NOT_ENOUGH_MONEY"));
-			this.audioService.playSound("error");
-		}
 	}
 
 	creditActionBtn($event: string, credit: Credit) {
-		if (this.game.status == C.PLAYING && this.player.status != C.DEAD) {
-			if ($event == 'settle') {
-				this.settleDebt(credit);
-			} else if ($event == 'answer') {
-				this.requestingWhenCreditEnds(credit, false);
+		if (this.fakeMode) return;
+		if ($event == 'settle') {
+			const confDialogRef = this.dialog.open(ConfirmDialogComponent, {
+				data: {
+					message: this.i18nService.instant('DIALOG.CREDIT_SETTLE.MESSAGE', {
+						amount: credit.amount + credit.interest,
+					}),
+					labelBtnConfirm: this.i18nService.instant('DIALOG.CREDIT_SETTLE.BTN_CONFIRM'),
+					styleBtnConfirm: 'warn',
+				},
+			});
+			confDialogRef.afterClosed().subscribe((result) => {
+				if (result && result == 'btnConfirm') {
+					this.playerStateService.settleCredit(credit);
+				}
+			});
+		} else if ($event == 'answer') {
+			this.playerStateService.confirmSettleOrExtend(credit);
+		}
+	}
+
+	requestCredit() {
+		if (this.fakeMode) return;
+		const dialogRef = this.dialog.open(ContractDialogComponent, {
+			data: {
+				rules: this.rules$,
+				players: of([]),
+				gameStateId: this.gameStateId,
+				playerStateIdx: this.playerStateIdx,
+				mode: 'request',
+			},
+		});
+		dialogRef.afterClosed().subscribe((contract) => {
+			if (contract) {
+				this.playerStateService.requestCredit(contract.amount, contract.interest);
 			}
+		});
+	}
+
+	private openFirstCreditQuestion() {
+		if (this.fakeMode || this.firstCreditDialogRef) return;
+		this.firstCreditDialogRef = this.dialog.open(ContractDialogComponent, {
+			disableClose: true,
+			data: {
+				rules: this.rules$,
+				players: of([]),
+				gameStateId: this.gameStateId,
+				playerStateIdx: this.playerStateIdx,
+				mode: 'first-question',
+			},
+		});
+		this.firstCreditDialogRef.afterClosed().subscribe((result: any) => {
+			this.firstCreditDialogRef = null;
+			if (result?.answer) {
+				this.playerStateService.answerFirstCreditQuestion(result.answer);
+			}
+		});
+	}
+
+	private playReincarnationOverlay(newPlayerStateIdx: number) {
+		if (this.reincarnateConfig) return;
+		this.pendingReincarnateIdx = newPlayerStateIdx;
+		this.reincarnateConfig = this.reincarnateOverlay;
+	}
+
+	onReincarnateDone(): void {
+		const idx = this.pendingReincarnateIdx;
+		this.pendingReincarnateIdx = null;
+		if (idx == null) {
+			this.reincarnateConfig = null;
+			return;
+		}
+		this.router
+			.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, idx])
+			.finally(() => (this.reincarnateConfig = null));
+	}
+
+	private clearMaturityOverlays(): void {
+		this.alarmConfig = null;
+		this.halfwayConfig = null;
+		this.rateZeroConfig = null;
+	}
+
+	private onCreditFinalMinute(flash: boolean): void {
+		if (!this.panelCreditOpenState) {
+			this.panelCreditOpenState = true;
+			this.localStorageService.setItem('panelCredit', true);
+		}
+		if (flash && !this.alarmConfig) {
+			this.alarmConfig = this.creditAlarmOverlay;
+		}
+	}
+
+	private playPrisonFreeOverlay(): void {
+		if (this.prisonFreeConfig) return;
+		this.prisonFreeConfig = this.prisonFreeOverlay;
+		confetti({ particleCount: 160, spread: 110, origin: { y: 0.6 } });
+	}
+
+	private onCreditFault(fault: boolean): void {
+		if (fault) {
+			this.faultConfig = this.creditFaultOverlay(this.autoSeizure);
+			this.faultSound = this.autoSeizure ? 'police2' : 'police';
+			this.audioService.playSound(this.faultSound);
+		} else {
+			this.faultConfig = null;
+			if (this.faultSound) this.audioService.stopSound(this.faultSound);
+			this.faultSound = null;
 		}
 	}
 
 	tryReincarnate() {
-		this.backService.isReincarnated(this.idGame, this.idPlayer).subscribe(data => {
-			if (data?.playerReIncarnated) {
-				this.router.navigate(['game', this.idGame, 'player', data.playerReIncarnated]);
-			} else {
-				this.resurrection();
-			}
-		})
+		if (!this.sessionId || !this.gameStateId || this.avatarIdx == undefined) return;
+		this.avatarService.getCurrentPlayerStateIdx(this.sessionId, this.gameStateId, this.avatarIdx).subscribe({
+			next: (data) => {
+				if (data?.idx != undefined && data.idx !== -1 && data.idx != this.playerStateIdx) {
+					this.router.navigate(['/player', this.sessionId, this.avatarIdx, this.gameStateId, data.idx]);
+				} else {
+					this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN'));
+				}
+			},
+			error: () => this.snackbarService.showError(this.i18nService.instant('ERROR.UNKNOWN')),
+		});
 	}
 
-	onCreateShortCode($event: ShortCode) {
-		this.shortCode = $event;
+	openActionDialog(vm: any) {
+		this.dialog
+			.open(ActionDialogComponent, {
+				data: {
+					gameStateId: this.gameStateId,
+					gameStatus: vm.gameState.status,
+					sessionId: this.sessionId,
+					playerStateIdx: this.playerStateIdx,
+					actionTokens: vm.actionTokens,
+					actions: vm.rules.actions || [],
+					myCards: vm.cards,
+					typeMoney: vm.gameState.typeMoney,
+					currentDU: vm.gameState.currentDU,
+					typeTheme: vm.typeTheme,
+					sessionAvatars: vm.sessionAvatars || [],
+					fake: this.fakeMode,
+				},
+				panelClass: 'action-dialog-panel',
+			})
+			.afterClosed()
+			.subscribe((result) => {
+				if (result?.success) {
+					this.playerStateService.refreshActionResult(result);
+				}
+			});
+	}
+
+	onChangedShortCode($event: any) {
+		this.playerStateService.shortCode = $event;
 	}
 
 	openDialogShorCode() {
 		const shortCodeDialogRef = this.dialog.open(ShortcodeDialogComponent);
-		shortCodeDialogRef.afterClosed().subscribe(code => {
-			if (code) {
+		shortCodeDialogRef.afterClosed().subscribe((code) => {
+			if (code && !this.fakeMode) {
 				this.buyWithCode(code);
 			}
 		});
@@ -748,6 +735,7 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (panel == 'credit') {
 			this.panelCreditOpenState = !this.panelCreditOpenState;
 			this.localStorageService.setItem('panelCredit', this.panelCreditOpenState);
+			if (this.panelCreditOpenState && !this.fakeMode) this.playerStateService.refreshRate();
 		} else if (panel == 'recipe') {
 			this.panelRecipeOpenState = !this.panelRecipeOpenState;
 			this.localStorageService.setItem('panelRecipe', this.panelRecipeOpenState);
@@ -758,23 +746,13 @@ export class PlayerBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 		console.log(recipe);
 	}
 
-	whoHaveCard(ingredient: Ingredient) {
-		const cardName = this.themesService.getIcon(ingredient.key) + " " + this.i18nService.instant(ingredient.key);
-		this.backService.whoHaveCard(this.idGame, ingredient.key).subscribe((payload: any) => {
-			this.dialog.open(InformationDialogComponent, {
-				data: {
-					text: payload.status == "deck" ? this.i18nService.instant("CARD.IN_DECK", {cardName}) : this.i18nService.instant("CARD.IN_PLAYER", {
-						player: payload.name,
-						cardName
-					}),
-				}
-			});
-		});
+	recipeCompleted(recipe: Recipe) {
+		if (recipe.completed && recipe.ingredients.some((i) => i.have > 0)) {
+			this.produceLevelUp({ letter: recipe.letter, weight: recipe.weight });
+		}
 	}
 
-	recipeCompleted(recipe: Recipe) {
-		if (recipe.completed && recipe.ingredients.some(i => i.have > 0)) {
-			this.produceLevelUp({letter: recipe.letter, weight: recipe.weight});
-		}
+	trackByCard(index: number, card: Card): string {
+		return card.key;
 	}
 }

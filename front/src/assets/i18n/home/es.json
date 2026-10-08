@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Pagina de inicio",
+		"CONTRIBUTION": "Contribuciones",
+		"WELCOME": "¡Descubre la moneda libre a través del juego!",
+		"INSTALL": "Instalar la aplicación (opcional)",
+		"CREATE_SESSION": "Crear una sesión",
+		"JOIN_SESSION": "Unirse a una sesión",
+		"JOIN_VIA_SHORT_ID": "Por medio del código corto",
+		"JOIN_VIA_QR_CODE": "Con el código QR",
+		"HOW_TO_PLAY": "¿Cómo funciona?",
+		"FUND_RAISE": "Un fondo común para sostenerme, ",
+		"IN": "en",
+		"OR_IN": " o en",
+		"SAY_HI": "¿Qué necesitas, ayuda, aportar una idea, señalar un error, o simplemente quieres saludar?",
+		"LINK_SAY_HI": "Es por aquí",
+		"LOOKING_FOR_PAPER_GAME": "¿El juego original en versión papel?",
+		"CLOSE": "Cerrar",
+		"YES": "Sí",
+		"NO": "No",
+		"CANCEL": "Cancelar",
+		"CONTINUE_SESSION": "Reanudar tu sesión",
+		"ACTIVE_SESSION": "Tienes una sesión activa:",
+		"DISMISS": "Cerrar",
+		"RESUME": "Continuar"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Crear una sesión",
+		"NAME": "Nombrar la sesión",
+		"ANIMATOR": "Nombre del animador",
+		"LOCATION": "Lugar",
+		"THEME": "Tema",
+		"BTN1": "Crear",
+		"BTN2": "Cancelar"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "En Safari, abre el menú de compartir con el botón",
+		"MESSAGE2": "y luego elige \"Añadir a pantalla de inicio\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Introduce el código...",
+		"SHORT_ID_TITLE": "Introduce el código de la sesión, o tu código completo",
+		"SHORT_ID_DESC": "4 dígitos para unirte como nuevo jugador (ej.: 0042). Añade tu número para recuperar tu avatar (ej.: 0042-7) — el animador puede dártelo.",
+		"SEARCH": "Buscar",
+		"INVALID_FORMAT": "Formato esperado: 4 dígitos, opcionalmente seguidos de - y tu número. Ej.: 0042 o 0042-7",
+		"UNKNOWN_SESSION": "Ninguna sesión corresponde a este código.",
+		"UNKNOWN_AVATAR": "Esta sesión no contiene ningún avatar con ese número.",
+		"NEEDS_AVATAR_CODE": "Esta sesión ya ha empezado: necesitas tu código completo, con tu número (ej.: 0042-7)."
+	}
+}

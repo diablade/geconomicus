@@ -1,26 +1,26 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Card, Credit, Player} from "../../models/game";
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-// @ts-ignore
-import * as C from "../../../../../config/constantes";
-import {BackService} from "../../services/back.service";
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Card, Credit } from '../../models/gameState';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CREDIT_STATUS } from '@geco/shared';
 import * as _ from 'lodash-es';
-import {faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar} from "@fortawesome/free-solid-svg-icons";
+import { faArrowTurnDown, faInfoCircle, faLandmark, faSackDollar } from '@fortawesome/free-solid-svg-icons';
+import { getBackgroundStyle } from '../../services/avatarTools';
+import { Avatar } from 'src/app/models/avatar';
 
 @Component({
 	selector: 'app-seizure-dialog',
 	templateUrl: './seizure-dialog.component.html',
-	styleUrls: ['./seizure-dialog.component.scss']
+	styleUrls: ['./seizure-dialog.component.scss'],
 })
-export class SeizureDialogComponent implements OnInit {
+export class SeizureDialogComponent {
+	protected readonly getBackgroundStyle = getBackgroundStyle;
 	credit: Credit | undefined;
-	player: Player = new Player();
-	@ViewChild('svgContainer') svgContainer!: ElementRef;
-	C = C;
 	playerCards: Card[] = [];
 	seizureCards: Card[] = [];
 	seizureCoins = 0;
+	playerCoins = 0;
+	avatar: Avatar = new Avatar();
 	faLandMark = faLandmark;
 	faArrowTurnDown = faArrowTurnDown;
 	faInfoCircle = faInfoCircle;
@@ -31,56 +31,43 @@ export class SeizureDialogComponent implements OnInit {
 	seizureDecote: number;
 	timerPrisonMax = 5;
 
-	constructor(private backService: BackService, public dialogRef: MatDialogRef<SeizureDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(
+		public dialogRef: MatDialogRef<SeizureDialogComponent>,
+		@Inject(MAT_DIALOG_DATA) public data: any
+	) {
 		this.credit = data.credit;
 		this.seizureType = data.seizureType;
 		this.seizureCost = data.seizureCosts;
 		this.seizureDecote = data.seizureDecote;
+		this.timerPrisonMax = data.timerPrison ?? 5;
+		// Use player state passed from bank-board (current snapshot)
+		this.playerCards = data.playerCards ?? [];
+		this.playerCoins = data.playerCoins ?? 0;
+		this.avatar = data.avatar ?? new Avatar();
 	}
 
-	ngOnInit(): void {
-		this.backService.getPlayer(this.credit?.idGame, this.credit?.idPlayer).subscribe(async data => {
-			this.player = data.player;
-			this.playerCards = data.player.cards;
-			// @ts-ignore
-			this.svgContainer.nativeElement.innerHTML = this.player.image;
-		});
-	}
-
-	onDrop(event: CdkDragDrop<Card []>) {
+	onDrop(event: CdkDragDrop<Card[]>) {
 		if (event.container === event.previousContainer) {
 			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 		} else {
-			transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
-		}
-	}
-
-	getBackgroundStyle(bank: string) {
-		if (bank) {
-			return {"background-color": "#ffd89b"};
-		} else {
-			switch (this.player?.boardConf) {
-				case "green":
-					return {"background-image": "url('/assets/images/green-carpet.jpg')"};
-				case "custom":
-					return {"background-color": "" + this.player.boardColor};
-				case "wood":
-				default:
-					return {"background-image": "url('/assets/images/woodJapAlt.jpg')"};
-			}
+			transferArrayItem(
+				event.previousContainer.data,
+				event.container.data,
+				event.previousIndex,
+				event.currentIndex
+			);
 		}
 	}
 
 	seizeCoins() {
-		this.seizureCoins = this.player.coins;
-		this.player.coins = 0;
+		this.seizureCoins = this.playerCoins;
 	}
 
 	getSeizure() {
 		let seize = 0;
-		_.forEach(this.seizureCards, c => {
-			if (this.seizureType == "decote") {
-				seize += (c.price - (c.price * this.seizureDecote / 100));
+		_.forEach(this.seizureCards, (c) => {
+			if (this.seizureType == CREDIT_STATUS.DECOTE) {
+				seize += c.price - (c.price * this.seizureDecote) / 100;
 			} else {
 				seize += c.price;
 			}
@@ -90,17 +77,19 @@ export class SeizureDialogComponent implements OnInit {
 
 	getSeizureObjective() {
 		if (this.credit) {
-			if (this.seizureType === "decote") {
-				return this.credit.amount + this.credit.interest - this.seizureCoins;
-			} else {
-				return this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;
-			}
+			const objective =
+				this.seizureType === CREDIT_STATUS.DECOTE
+					? this.credit.amount + this.credit.interest - this.seizureCoins
+					: this.credit.amount + this.credit.interest - this.seizureCoins + this.seizureCost;
+			return Math.max(0, objective);
 		}
 		return 1;
 	}
 
 	getProgressSeizure() {
-		const progress = this.getSeizure() / this.getSeizureObjective() * 100;
+		const objective = this.getSeizureObjective();
+		if (objective <= 0) return 100;
+		const progress = (this.getSeizure() / objective) * 100;
 		return progress > 100 ? 100 : progress;
 	}
 
@@ -112,8 +101,8 @@ export class SeizureDialogComponent implements OnInit {
 		this.dialogRef.close({
 			cards: this.seizureCards,
 			coins: this.seizureCoins,
-			prisonTime: this.prisonTime
-		})
+			prisonTime: this.prisonTime,
+		});
 	}
 
 	getMinTimerPrison() {

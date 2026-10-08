@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "Sală de așteptare",
+		"ANIMATOR": "Animator: {{name}}",
+		"NAME": "Prenume sau poreclă",
+		"YOUR_AVATAR": "Avatarul tău",
+		"SYS_SCAN": "Cumpără cu",
+		"EYES": "Ochi",
+		"EYEBROWS": "Sprâncene",
+		"MOUTH": "Gură",
+		"GLASSES": "Ochelari",
+		"EARRINGS": "Cercei",
+		"FEATURES": "Diverse",
+		"GAME_TABLE": "Masa de joc",
+		"SKIN": "Piele",
+		"HAIR": "Păr",
+		"PLAY": "Intră în joc",
+		"YOUR_CODE": "Codul tău pentru a reveni:",
+		"UPDATED": "Avatar actualizat",
+		"MODIFY_FEEDBACK": "Corectează răspunsurile mele",
+		"MODIFY_FEEDBACK_MESSAGE": "Cere-i animatorului să îți permită să îți corectezi răspunsurile, apoi încearcă din nou.",
+		"SURVEY_AUTORIZED": "Poți răspunde din nou la chestionar"
+	}
+}

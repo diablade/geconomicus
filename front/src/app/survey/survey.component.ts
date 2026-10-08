@@ -1,56 +1,73 @@
-import {Component, OnInit} from '@angular/core';
-import {BackService} from "../services/back.service";
-import {SnackbarService} from "../services/snackbar.service";
-import {Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
-import {I18nService} from "../services/i18n.service";
+import { Component, OnInit } from '@angular/core';
+import { SurveyService } from '../services/api/survey.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { I18nService } from '../services/i18n.service';
+import { Feedback } from '../models/feedback';
+import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
 
 @Component({
-  selector: 'app-survey',
-  templateUrl: './survey.component.html',
-  styleUrls: ['./survey.component.scss']
+	selector: 'app-survey',
+	templateUrl: './survey.component.html',
+	styleUrls: ['./survey.component.scss'],
 })
 export class SurveyComponent implements OnInit {
-  idGame: string | undefined;
-  idPlayer: string | undefined;
-  private subscription: Subscription | undefined;
+	sessionId = '';
+	avatarIdx = '';
+	gameStateId = '';
+	private subscription: Subscription | undefined;
+	feedback: Feedback = new Feedback();
 
-  individualCollective = 0;
-  greedyGenerous = 0;
-  irritableTolerant = 0;
-  depressedHappy = 0;
-  competitiveCooperative = 0;
-  dependantAutonomous = 0;
-  anxiousConfident = 0;
-  agressiveAvenant = 0;
-  insatisfiedAccomplished = 0;
+	constructor(
+		private route: ActivatedRoute,
+		private i18nService: I18nService,
+		private router: Router,
+		private surveyService: SurveyService,
+		private dialog: MatDialog
+	) {
+		this.i18nService.loadNamespace('survey');
+	}
 
-  constructor(private route: ActivatedRoute, private i18nService: I18nService, private router: Router, private backService: BackService, private snackbarService: SnackbarService) {
-  }
+	ngOnInit(): void {
+		this.subscription = this.route.params.subscribe((params) => {
+			this.sessionId = params['sessionId'];
+			this.avatarIdx = params['avatarIdx'];
+			this.gameStateId = params['gameStateId'];
+			const edit = params['edit'];
+			if (edit === 'edit') {
+				this.loadExistingFeedback();
+			}
+		});
+	}
 
-  ngOnInit(): void {
-    this.subscription = this.route.params.subscribe(params => {
-      this.idGame = params['idGame'];
-      this.idPlayer = params['idPlayer'];
-    });
-  }
+	loadExistingFeedback() {
+		this.surveyService
+			.getPreviousFeedback(this.sessionId, this.gameStateId, this.avatarIdx)
+			.subscribe((feedback) => {
+				this.feedback = feedback;
+			});
+	}
 
-  sendFeedback() {
-    this.backService.sendFeedback(this.idGame, this.idPlayer,
-      +this.individualCollective,
-      +this.greedyGenerous,
-      +this.irritableTolerant,
-      +this.depressedHappy,
-      +this.competitiveCooperative,
-      +this.dependantAutonomous,
-      +this.anxiousConfident,
-      +this.insatisfiedAccomplished,
-      +this.agressiveAvenant).subscribe(async () => {
-      this.snackbarService.showSuccess(this.i18nService.instant("SURVEY.THANK_YOU"));
-
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      this.router.navigate(['game', this.idGame, 'results']);
-
-    });
-  }
+	sendFeedback() {
+		if (this.sessionId || this.avatarIdx || this.gameStateId) {
+			this.surveyService
+				.sendFeedback(this.sessionId, this.gameStateId, this.avatarIdx, this.feedback)
+				.subscribe(() => {
+					this.dialog
+						.open(InformationDialogComponent, {
+							disableClose: true,
+							data: {
+								title: this.i18nService.instant('SURVEY.THANK_YOU'),
+								message: this.i18nService.instant('BACK_TO_LOBBY'),
+								timerBtn: 3,
+							},
+						})
+						.afterClosed()
+						.subscribe(() => {
+							this.router.navigate(['avatar', this.sessionId, this.avatarIdx]);
+						});
+				});
+		}
+	}
 }

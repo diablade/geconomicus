@@ -4,6 +4,7 @@ import * as _ from 'lodash-es';
 import {Router} from "@angular/router";
 import 'chartjs-adapter-date-fns';
 import {faCircleInfo} from "@fortawesome/free-solid-svg-icons";
+import {I18nService} from "../../services/i18n.service";
 
 
 class Year {
@@ -238,7 +239,8 @@ export class ModuleGalileoComponent implements OnInit, AfterViewInit {
 	quantitativeChart!: Chart<"line", (number | Point | null)[], number>;
 	relativeChart!: Chart<"line", (number | Point | null)[], number>;
 
-	constructor(private router: Router) {
+	constructor(private router: Router, private i18n: I18nService) {
+		this.i18n.loadNamespace('module-galileo');
 	}
 
 	ngOnInit() {

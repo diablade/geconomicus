@@ -3,6 +3,9 @@
 	max-width: 400px;
 	padding: 10px;
 }
+.bulleHome {
+	font-size: 18px;
+}
 
 .img-top {
 	width: 150px;
@@ -18,13 +21,12 @@
 	display: flex;
 	flex-direction: column;
 	align-content: center;
-	justify-content: space-evenly;
-	flex-wrap: wrap;
 	align-items: center;
+	z-index: 1;
 }
 
 .bg {
-	background: #ffd89b; /* fallback for old browsers */
-	background: -webkit-linear-gradient(to top, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to top, #19547b, #ffd89b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	background: #20072e; /* fallback for old browsers */
+	background: -webkit-linear-gradient(111.9deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(111.9deg, #19547b, #ffd89b);
 }

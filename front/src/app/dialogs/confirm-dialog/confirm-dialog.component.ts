@@ -8,28 +8,36 @@ import {AudioService} from '../../services/audio.service';
 	styleUrls: ['./confirm-dialog.component.scss']
 })
 export class ConfirmDialogComponent {
-	title = "DIALOG.CONFIRM.TITLE" ;
+	title = "DIALOG.CONFIRM.TITLE";
 	message = "DIALOG.CONFIRM.MESSAGE";
-	labelBtn1 = "DIALOG.CONFIRM.BTN1";
-	labelBtn2 = "DIALOG.CONFIRM.BTN2";
-	autoClickBtn2 = false;
-	timerBtn2 = 5;
-	btn1Enable= true;
+	message2 = "";
+	labelBtnCancel = "DIALOG.CANCEL";
+	labelBtnConfirm = "DIALOG.YES";
+	autoClickBtnConfirm = false;
+	timerBtnConfirm = 5;
+	btn1Enable = true;
+	styleBtnConfirm = "warn";
+	styleBtnCancel = "accent";
+    beep = false;
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {
-		this.title = data.title ? data.title : this.title;
-		this.message = data.message;
-		this.labelBtn1 = data.labelBtn1 ? data.labelBtn1: this.labelBtn1;
-		this.labelBtn2 = data.labelBtn2 ? data.labelBtn2: this.labelBtn2;
-		this.autoClickBtn2 = data.autoClickBtn2;
-		this.timerBtn2 = data.timerBtn2;
+		this.title = data.title || this.title;
+		this.message = data.message || this.message;
+		this.message2 = data.message2 || this.message2;
+		this.labelBtnCancel = data.labelBtnCancel || this.labelBtnCancel;
+		this.labelBtnConfirm = data.labelBtnConfirm || this.labelBtnConfirm;
+		this.autoClickBtnConfirm = data.autoClickBtnConfirm;
+		this.timerBtnConfirm = data.timerBtnConfirm;
 		this.btn1Enable = data.btn1Enable == undefined ? true : data.btn1Enable;
-		if (data.beep) {
+		this.styleBtnConfirm = data.styleBtnConfirm || this.styleBtnConfirm;
+		this.styleBtnCancel = data.styleBtnCancel || this.styleBtnCancel;
+        this.beep = data.beep || this.beep;
+		if (this.beep) {
 			this.audioService.playSound("request");
 		}
 	}
 
 	timerEnd() {
-		this.dialogRef.close("btn2");
+		this.dialogRef.close("btnConfirm");
 	}
 }

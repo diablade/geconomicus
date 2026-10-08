@@ -1,92 +1,93 @@
 .contract {
-  background: white;
-  width: 160px;
-  border-radius: 20px;
-  padding: 5px;
-  margin: 5px;
-  box-shadow: 7px 7px 15px -10px rgb(0, 0, 0, 0.5);
+	background: white;
+	width: 160px;
+	border-radius: 20px;
+	padding: 5px;
+	margin: 5px;
+	box-shadow: 7px 7px 15px -10px rgb(0, 0, 0, 0.5);
 }
 
 .fontName {
-  font-size: small;
-
+	font-size: small;
 }
 
 .running {
-  background-color: #A2CBA2 !important;
+	background-color: #a2cba2 !important;
+}
+
+.idle {
+	background-color: #fff04b !important;
 }
 
 .paused {
-  background-color: #fff04b !important;
+	background-color: #fff04b !important;
 }
 
 .requesting {
-  background-color: #ffaf4d !important;
+	background-color: #ffaf4d !important;
 }
 
 .credit-done {
-  background-color: #a4a4a4 !important;
+	background-color: #a4a4a4 !important;
+}
+
+.canceled {
+	background-color: #d10606bd !important;
 }
 
 .buttonContrat {
-  border-radius: 20px;
+	border-radius: 20px;
 }
 
-@keyframes cops {
-  0% {
-    background: #3153ff;
-  }
-  50% {
-    background: #ff0000;
-  }
-  100% {
-    background: #3153ff;
-  }
+.fault {
+	background-color: #ff706e; /* Fallback */
+	animation: cops 1s infinite ease;
+	color: white;
 }
-
-.default-credit {
-  background-color: #ff706e; /* Fallback */
-  animation: cops 1s infinite ease;
-  color: white;
-}
-
 
 .status {
-  position: relative;
-  width: 100%;
-  padding: 5px;
-  height: 30px;
-  border-radius: 20px;
-  z-index: 1;
-  overflow: hidden;
+	position: relative;
+	width: 100%;
+	padding: 5px;
+	height: 30px;
+	border-radius: 20px;
+	z-index: 1;
+	overflow: hidden;
+
+	> div {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .progress {
-  background-color: #4caf50;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%; /* Match parent height */
-  z-index: 0;
+	background-color: #4caf50;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%; /* Match parent height */
+	z-index: 0;
 }
 
 .statusLabel {
-  position: relative;
-  font-weight: bold;
-  vertical-align: middle;
-  z-index: 2;
+	position: relative;
+	font-weight: bold;
+	text-align: center;
+	z-index: 2;
 }
 
-.player {
-  &-frame {
-    background: white;
-  }
-
-  &-svg {
-    width: 60px;
-    height: 60px;
-    border-radius: 80px;
-    border: solid black 2px;
-    box-shadow: 2px 2px 4px -2px black;
-  }
+/* Final-minute countdown: white + strong shadow so it reads over any progress-bar colour
+   (green → amber → red). Pulses once per second by alternating two identical keyframes. */
+.countdown {
+	display: inline-block;
+	transform-origin: center center;
+	color: #fff;
+	font-weight: 800;
+	text-shadow:
+		0 0 4px rgba(0, 0, 0, 0.9),
+		0 1px 2px rgba(0, 0, 0, 0.9);
+	animation: countdown-pulse 1s infinite ease-out;
 }

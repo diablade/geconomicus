@@ -1,0 +1,112 @@
+:host * {
+	transition: all 0.3s ease-in-out;
+}
+
+/* Pour les éléments qui apparaissent/disparaissent */
+.fade-enter {
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-leave {
+	animation: fadeOut 0.3s ease-in-out;
+}
+
+.session {
+	border: 1px solid #e9e9e9aa;
+	border-radius: 10px;
+	padding: 20px;
+	backdrop-filter: blur(10px);
+	background-color: rgba(255, 255, 255, 0.45);
+}
+
+.geco {
+	width: 200px;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.guny {
+	width: 250px;
+}
+
+.content-item {
+	width: 400px;
+	height: 400px;
+
+	&-session {
+		height: 400px;
+		max-width: 350px;
+		position: relative;
+	}
+}
+
+.inner-item {
+	height: 100%;
+	position: relative;
+}
+
+.avatarName {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100px;
+}
+
+.templateQrCode {
+	text-align: center;
+	background-image: url('/assets/images/templateJoinQrCode.svg');
+	background-size: cover;
+	width: 400px;
+	height: 400px;
+}
+.qrcodeImage {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	padding-left: 10px;
+	justify-content: center;
+	align-items: center;
+}
+
+.ngx-kjua {
+	border-radius: 25px;
+	overflow: hidden;
+}
+
+.joinQr {
+	margin-left: 5px;
+}
+
+.delete {
+	padding: 2px;
+	margin-left: 5px;
+	cursor: pointer;
+	z-index: 10;
+	color: #f44336;
+}
+
+.games {
+	animation: fade 2s;
+	display: flex;
+	align-items: center;
+}
+
+.game {
+	width: 190px;
+	border-radius: 50%;
+	cursor: pointer;
+
+	&-empty {
+		border: 4px dashed #333;
+	}
+}
+
+.hide {
+	opacity: 0;
+	display: none;
+}
+
+.players{
+    max-width: 1320px;
+    padding: 20px;
+}

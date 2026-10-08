@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "History of created games",
+		"DELETE_CONFIRM": "Delete a game?",
+		"AUTO_DELETE": "Games older than 2 months will soon be automatically deleted.",
+		"IMPORT_EXPORT": "(Import and export of games will also be possible soon).",
+		"JOIN_AS_NEW_PLAYER": "Join (new player)",
+		"JOIN_AS_MASTER": "Join as facilitator",
+		"CREATED_ON": "Created on",
+		"PLAYERS": "players",
+		"GAMES": "games",
+		"SESSION": "Session",
+		"TYPE": "type:",
+		"LOCATION": "Location:",
+		"ANIMATOR": "Animator:",
+		"VIEW_RESULTS": "View results",
+		"VIEW": "View",
+		"NAME_PARTY": "Name of the party",
+		"TYPE_MONEY": "Type of money",
+		"STATUS_TEXT": "Status",
+		"SORT": "Sort by",
+		"BY_DATE": "Date",
+		"BY_PLAYERS": "Number of players",
+		"BY_TYPE": "Type",
+		"BY_LOCATION": "Location",
+		"BY_ANIMATOR": "Animator",
+		"BY_STATUS": "Status",
+		"STATUS": {
+			"ENDED": "Ended",
+			"OPEN": "Open",
+			"IN_PROGRESS": "In progress"
+		},
+		"DELETE_SESSION": "The session has been deleted",
+		"DELETE_GAME": "the session has been deleted",
+		"DELETE_DIALOG": {
+			"TITLE": "Are you sure?",
+			"MESSAGE": "This action cannot be undone."
+		}
+	}
+}
