@@ -6,6 +6,7 @@
 /logs/all1.log
 /.qodo/history.sqlite
 /.qodo/indexes.sqlite
+/.idea/*
 .qodo
 shared/node_modules/*
 node_modules/*
