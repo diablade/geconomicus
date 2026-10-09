@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "Istorija kreiranih igara",
+		"DELETE_CONFIRM": "Obrisati igru?",
+		"AUTO_DELETE": "Igre starije od 2 meseca će uskoro biti automatski obrisane.",
+		"IMPORT_EXPORT": "(Uvoz i izvoz igara će takođe biti moguće uskoro).",
+		"JOIN_AS_NEW_PLAYER": "Pridruži se (novi igrač)",
+		"JOIN_AS_MASTER": "Pridruži se kao animator",
+		"CREATED_ON": "Kreirano",
+		"PLAYERS": "igrači",
+		"GAMES": "igre",
+		"SESSION": "Sesija",
+		"TYPE": "tip:",
+		"LOCATION": "Lokacija:",
+		"ANIMATOR": "Animator:",
+		"VIEW_RESULTS": "Pogledaj rezultate",
+		"VIEW": "Pogledaj",
+		"NAME_PARTY": "Ime partije",
+		"TYPE_MONEY": "Tip novca",
+		"STATUS_TEXT": "Status",
+		"SORT": "Sortiraj po",
+		"BY_DATE": "Datum",
+		"BY_PLAYERS": "Broj igrača",
+		"BY_TYPE": "Tip",
+		"BY_LOCATION": "Lokacija",
+		"BY_ANIMATOR": "Animator",
+		"BY_STATUS": "Status",
+		"STATUS": {
+			"ENDED": "Završeno",
+			"OPEN": "Otvoreno",
+			"IN_PROGRESS": "U toku"
+		},
+		"DELETE_SESSION": "Sesija je obrisana",
+		"DELETE_GAME": "sesija je obrisana",
+		"DELETE_DIALOG": {
+			"TITLE": "Da li potvrđuješ?",
+			"MESSAGE": "Ova radnja je nepovratna."
+		}
+	}
+}

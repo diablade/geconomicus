@@ -1,0 +1,7 @@
+<div class="bulleWrapper">
+	<div class="text-center bulle" [ngClass]="pointer ? 'bulle-point' : ''">
+		<div class="bulle-content bulleFont">
+			<div *ngFor="let content of contents">{{ content | translate }}</div>
+		</div>
+	</div>
+</div>

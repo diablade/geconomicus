@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Page d'accueil",
+		"CONTRIBUTION": "Contributions",
+		"WELCOME": "Découvrez la monnaie libre par le jeu !",
+		"INSTALL": "Installer l'app (optionnel)",
+		"CREATE_SESSION": "Créer une session",
+		"JOIN_SESSION": "Rejoindre une session",
+		"JOIN_VIA_SHORT_ID": "Via le code court",
+		"JOIN_VIA_QR_CODE": "Via le QR code",
+		"HOW_TO_PLAY": "Comment ça marche ?",
+		"FUND_RAISE": "Une cagnotte pour me soutenir, ",
+		"IN": "en",
+		"OR_IN": " ou en",
+		"SAY_HI": "Tu as besoin d'aide, une idée, un bug, ou simplement envie de faire coucou ?",
+		"LINK_SAY_HI": "C'est par ici",
+		"LOOKING_FOR_PAPER_GAME": "Le jeu original en version papier ?",
+		"CLOSE": "Fermer",
+		"YES": "Oui",
+		"NO": "Non",
+		"CANCEL": "Annuler",
+		"CONTINUE_SESSION": "Reprendre votre session",
+		"ACTIVE_SESSION": "Vous avez une session active :",
+		"DISMISS": "Fermer",
+		"RESUME": "Continuer"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Créer une session",
+		"NAME": "Nommer la session",
+		"ANIMATOR": "Nom de l'animateur",
+		"LOCATION": "Lieu",
+		"THEME": "Thème",
+		"BTN1": "Créer",
+		"BTN2": "Annuler"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "Dans Safari, ouvrez le menu de partage avec le bouton",
+		"MESSAGE2": "puis choisissez \"sur l'écran d'accueil\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Entrez le code...",
+		"SHORT_ID_TITLE": "Entre le code de la session, ou ton code complet",
+		"SHORT_ID_DESC": "4 chiffres pour rejoindre en nouveau joueur (ex : 0042). Ajoute ton numéro pour retrouver ton avatar (ex : 0042-7) — l'animateur peut te le donner.",
+		"SEARCH": "Rechercher",
+		"INVALID_FORMAT": "Format attendu : 4 chiffres, éventuellement suivis de - et de ton numéro. Ex : 0042 ou 0042-7",
+		"UNKNOWN_SESSION": "Aucune session ne correspond à ce code.",
+		"UNKNOWN_AVATAR": "Cette session ne contient aucun avatar portant ce numéro.",
+		"NEEDS_AVATAR_CODE": "Cette session a déjà démarré : il te faut ton code complet, avec ton numéro (ex : 0042-7)."
+	}
+}

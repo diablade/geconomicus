@@ -1,0 +1,200 @@
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 3000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	color: #fff;
+	user-select: none;
+	animation: reincarnate-fade-in 0.35s ease-out;
+}
+.overlayWheel{
+    transform: scale(2);
+}
+.content {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4vmin;
+}
+
+.overlay .wheel-host {
+	pointer-events: none;
+}
+
+.glyph {
+	font-size: 26vmin;
+	line-height: 1;
+	filter: drop-shadow(0 0 3vmin rgba(255, 255, 255, 0.35));
+}
+
+.title {
+	font-size: clamp(22px, 6vmin, 46px);
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	text-shadow: 0 0 2vmin rgba(0, 0, 0, 0.85);
+}
+
+.text {
+	font-size: clamp(16px, 4.5vmin, 34px);
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	max-width: 80vw;
+	text-shadow: 0 0 2vmin rgba(0, 0, 0, 0.8);
+}
+
+// ── Reincarnate (death → rebirth) ─────────────────────────────────────────────
+.bg-reincarnate-death,
+.bg-reincarnate-rebirth {
+	background: radial-gradient(circle at center, rgba(10, 25, 40, 0.92), rgba(0, 5, 10, 0.97));
+}
+.glyph-reincarnate-death {
+	animation: reincarnate-pulse 4s ease-in-out infinite;
+}
+.glyph-reincarnate-rebirth {
+	animation: reincarnate-bloom 1.2s ease-in;
+}
+
+// ── Halfway nudge ─────────────────────────────────────────────────────────────
+.bg-halfway {
+	background: radial-gradient(circle at center, rgba(70, 52, 8, 0.92), rgba(22, 14, 0, 0.96));
+}
+.glyph-halfway {
+	filter: drop-shadow(0 0 3vmin rgba(255, 205, 90, 0.45));
+	animation: credit-alarm-shake 0.9s ease-in-out infinite;
+}
+
+// ── Final-minute alarm ────────────────────────────────────────────────────────
+.bg-alarm {
+	animation: credit-alarm-flash 0.5s steps(1, end) infinite;
+}
+.glyph-alarm {
+	filter: drop-shadow(0 0 3vmin rgba(255, 90, 90, 0.5));
+	animation: credit-alarm-shake 0.4s ease-in-out infinite;
+}
+
+// ── Zero-rate window (spinning wheel behind a huge 0%) ────────────────────────
+.bg-rate-zero {
+	background: radial-gradient(circle at center, rgba(8, 46, 26, 0.9), rgba(0, 10, 5, 0.96));
+}
+.glyph-rate-zero {
+	font-weight: 900;
+	letter-spacing: -0.04em;
+	filter: drop-shadow(0 0 4vmin rgba(120, 255, 175, 0.55));
+	animation: reincarnate-pulse 1.6s ease-in-out infinite;
+}
+
+// ── Prison release ────────────────────────────────────────────────────────────
+.bg-free {
+	background: radial-gradient(circle at center, rgba(20, 70, 45, 0.88), rgba(0, 14, 8, 0.95));
+}
+.glyph-free {
+	filter: drop-shadow(0 0 3vmin rgba(190, 255, 215, 0.5));
+	animation: reincarnate-bloom 1.2s ease-in;
+}
+
+// ── Fault lockout (police) — tops every other overlay ─────────────────────────
+.bg-police {
+	z-index: 4000;
+	animation: police-flash 0.6s steps(1, end) infinite;
+}
+.glyph-police {
+	animation: police-shake 0.4s ease-in-out infinite;
+}
+.bg-police .title {
+	text-transform: uppercase;
+}
+
+// ── Take-over (animator is driving this Seat) ─────────────────────────────────
+.bg-takeover {
+	z-index: 2000;
+	background: rgba(0, 0, 0, 0.72);
+	backdrop-filter: blur(3px);
+	color: #222;
+}
+.content-takeover {
+	background: #fff;
+	max-width: 86vw;
+	width: 340px;
+	border-radius: 20px;
+	padding: 26px 22px;
+	gap: 8px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+.content-takeover .glyph {
+	font-size: 46px;
+	filter: none;
+}
+.content-takeover .title {
+	font-size: 20px;
+	font-weight: 700;
+	letter-spacing: normal;
+	text-shadow: none;
+	margin-top: 6px;
+}
+.content-takeover .text {
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: normal;
+	text-shadow: none;
+	opacity: 0.8;
+}
+
+.overlay-btn {
+	margin-top: 12px;
+	border: none;
+	border-radius: 999px;
+	padding: 12px 28px;
+	font-size: 16px;
+	font-weight: 700;
+	color: #fff;
+	background: #2e7d32;
+	cursor: pointer;
+	transition:
+		transform 0.08s ease,
+		background 0.2s ease;
+
+	&:hover {
+		background: #276b2a;
+	}
+	&:active {
+		transform: scale(0.96);
+	}
+}
+
+// ── Trade confirmation (sale / purchase) — transparent and click-through ─────
+.bg-sale,
+.bg-purchase {
+	background: none;
+	pointer-events: none;
+}
+.content-sale,
+.content-purchase {
+	gap: 1.5vmin;
+	animation: trade-rise 1.6s ease-out forwards;
+}
+.glyph-sale,
+.glyph-purchase {
+	font-size: clamp(30px, 11vmin, 92px);
+	font-weight: 900;
+	letter-spacing: -0.02em;
+	white-space: nowrap;
+	filter: drop-shadow(0 0 2vmin rgba(0, 0, 0, 0.9));
+}
+.glyph-sale {
+	color: #7dffb0;
+}
+.glyph-purchase {
+	color: #ffd98a;
+}
+.content-sale .text,
+.content-purchase .text {
+	font-size: clamp(14px, 3.2vmin, 24px);
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+}

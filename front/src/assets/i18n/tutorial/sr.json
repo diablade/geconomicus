@@ -1,0 +1,45 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Kako se igra?",
+		"PREV": "Nazad",
+		"NEXT": "Dalje",
+		"FINISH": "Završeno",
+		"GO_TO": "Idi na slajd {{n}}",
+		"CARDS": {
+			"TITLE": "Karte resursa",
+			"DESC": "Svaka karta predstavlja resurs: Hrana (crvena, 1), Znanje (žuta, 2), Energija (zelena, 4), Tehnologija (plava, 8). Svaka porodica karata nosi slovo (A, B, C…). Tvoje bogatstvo = tvoji novčići + vrednost tvojih karata."
+		},
+		"WEALTH": {
+			"TITLE": "Cilj: obogatiti se",
+			"DESC": "Sakupi što više bogatstva (novčići + vrednost karata) pre kraja igre. Rang-lista nagrađuje najbogatijeg igrača, onog sa najviše novčića, sa najviše resursa i najaktivnijeg."
+		},
+		"TRANSACTIONS": {
+			"TITLE": "Transakcije",
+			"DESC": "Svaki igrač može da proda kartu tako što je okrene (QR kod ili kratki kod). Kupac skenira ili unese kod da bi kupio po ceni resursa. Tako bogatstvo kruži među igračima."
+		},
+		"PRODUCTION": {
+			"TITLE": "Proizvodnja",
+			"DESC": "Sakupi 4 karte istog slova I istog nivoa → pritisni Proizvedi → dobijaš 1 kartu višeg nivoa + 4 nove karte. Hrana×4 → 1 Znanje. Svaka proizvodnja ti donosi i +1 žeton akcije."
+		},
+		"ACTIONS": {
+			"TITLE": "Akcije",
+			"DESC": "Potroši svoje žetone akcije da bi stupio u interakciju sa drugim igračima: potraži ko ima kartu, pokloni je, ukradi je, izazovi sukob… Počinješ sa 1 žetonom i dobijaš još pri svakoj proizvodnji."
+		},
+		"JUNE": {
+			"TITLE": "Režim Slobodnog Novca (JUNE)",
+			"DESC": "Svakog minuta se određena količina novca (Univerzalni Dividend) ravnomerno deli svim živim igračima. Cene karata se prilagođavaju UD-u. Nema banke, nema duga — novac se stvara i deli automatski."
+		},
+		"DEBT": {
+			"TITLE": "Režim Dužničkog Novca",
+			"DESC": "Počinješ sa 0 novčića. Moraš da pozajmiš od banke da bi igrao. Za svaki kredit: dobijaš novčiće i moraš da vratiš glavnicu + kamatu u zadatom roku."
+		},
+		"REPAYMENT": {
+			"TITLE": "Otplatiti ili produžiti",
+			"DESC": "O roku dospeća: otplati sve (kredit zatvoren) ili plati samo kamatu da produžiš rok (glavnicu i dalje duguješ). Ako ne možeš da platiš → zaplena."
+		},
+		"SEIZURE": {
+			"TITLE": "Zaplena i zatvor",
+			"DESC": "U slučaju neplaćanja, banka zaplenjuje tvoje karte (uz umanjenje od 33%) i tvoje novčiće da bi naplatila dug. Ako to nije dovoljno, ideš u zatvor na nekoliko minuta — isključen iz igre do kraja kazne."
+		}
+	}
+}

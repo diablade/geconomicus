@@ -1,0 +1,389 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <style>
+    :root{
+      --bg:#f2f1ed; --card:#ffffff; --ink:#17171a; --soft:#6a6a72; --line:#dcdad4; --sunk:#f7f6f3;
+      --d1:#1d5c87; --d2:#2c7fb8; --d3:#6aa9d4; --l1:#d97e12; --l2:#f0932a;
+    }
+    body{margin:0;background:var(--bg);color:var(--ink);
+      font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;font-size:14px;}
+    a{color:#1d5c87;} a:hover{color:#12405f;}
+    .mono{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums;font-weight:600;}
+    h1,h2,h3{margin:0;font-weight:600;}
+
+    .shell{width:1440px;height:900px;box-sizing:border-box;padding:16px 20px 18px;
+      display:flex;flex-direction:column;gap:11px;}
+
+    .topbar{display:flex;align-items:center;gap:14px;flex:none;}
+    .brand{font-family:'Geconomicus','IBM Plex Sans',sans-serif;font-size:25px;letter-spacing:.2px;}
+    .meta{font-size:13px;color:var(--soft);}
+    .ctl{border:1px solid var(--line);border-radius:8px;background:var(--card);
+      padding:7px 12px;font-size:13px;display:flex;align-items:center;gap:7px;height:36px;box-sizing:border-box;}
+
+    .chips{display:flex;gap:8px;align-items:center;flex:none;flex-wrap:nowrap;overflow:hidden;}
+    .chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;
+      background:var(--card);padding:6px 11px;height:38px;box-sizing:border-box;flex:none;
+      box-shadow:0 1px 2px rgba(23,23,26,.05);}
+    .chip .nm{font-weight:600;font-size:13.5px;}
+    .chip .fig{font-size:11.5px;color:var(--soft);}
+    .mark{width:4px;height:22px;border-radius:2px;flex:none;}
+    .add{border:1px dashed #bdbab3;border-radius:9px;padding:6px 12px;height:38px;box-sizing:border-box;
+      display:flex;align-items:center;color:var(--soft);font-size:13px;flex:none;}
+
+    .cond{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--soft);flex:none;
+      border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 2px;}
+
+    .body{flex-grow:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:14px;}
+
+    .scroller{min-width:0;overflow:auto;padding-right:2px;}
+    .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(302px,1fr);gap:12px;align-items:start;}
+
+    .fiche{background:var(--card);border:1px solid var(--line);border-radius:11px;overflow:hidden;
+      box-shadow:0 1px 3px rgba(23,23,26,.06);}
+    .fh{display:flex;align-items:center;gap:9px;padding:11px 13px 9px;}
+    .fh h3{font-size:16.5px;}
+    .fh .meta{font-size:11.5px;margin-top:1px;}
+
+    .mblock{padding:2px 13px 10px;}
+    .m{display:grid;grid-template-columns:minmax(0,1fr) auto 58px;gap:8px;align-items:baseline;
+      height:33px;border-bottom:1px solid var(--sunk);}
+    .m:last-child{border-bottom:none;}
+    .ml{font-size:12.5px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .mv{font-size:16px;text-align:right;}
+    .mv i{font-style:normal;font-size:12px;color:#a3a09a;font-weight:500;}
+    .mp{font-size:11px;text-align:right;color:var(--soft);background:var(--sunk);
+      border-radius:5px;padding:2px 0;}
+
+    .gblock{padding:8px 13px 11px;border-top:1px solid var(--sunk);}
+    .sw{display:flex;gap:4px;margin-bottom:7px;}
+    .sw span{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:3px 7px;color:var(--soft);}
+    .sw span.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+    .gcap{font-size:11px;color:var(--soft);margin-top:3px;}
+
+    .pblock{padding:9px 13px 11px;border-top:1px solid var(--sunk);}
+    .plab{font-size:11px;letter-spacing:.6px;color:var(--soft);margin-bottom:6px;}
+    .prow{display:flex;align-items:center;gap:8px;height:28px;}
+    .av{width:21px;height:21px;border-radius:50%;background:var(--sunk);border:1px solid var(--line);flex:none;}
+    .pn{flex-grow:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .ps{font-size:13px;}
+    .dev{margin-top:7px;font-size:11.5px;color:var(--soft);display:flex;align-items:center;gap:6px;}
+
+    .fblock{padding:9px 13px 12px;border-top:1px solid var(--sunk);}
+    .bub{position:relative;height:104px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:5px;}
+    .bub span{position:absolute;border-radius:50%;}
+
+    .drawer{background:var(--card);border:1px solid var(--line);border-radius:11px;
+      display:flex;flex-direction:column;min-height:0;box-shadow:0 1px 3px rgba(23,23,26,.06);}
+    .dh{display:flex;align-items:center;gap:8px;padding:11px 13px 9px;border-bottom:1px solid var(--sunk);flex:none;}
+    .dfil{display:flex;gap:5px;flex-wrap:wrap;padding:9px 13px;border-bottom:1px solid var(--sunk);flex:none;}
+    .dfil span{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--soft);}
+    .dfil span.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+    .dlist{flex-grow:1;min-height:0;overflow:auto;padding:4px 13px 10px;}
+    .ev{display:grid;grid-template-columns:38px 4px minmax(0,1fr);gap:8px;align-items:center;
+      padding:7px 0;border-bottom:1px solid var(--sunk);font-size:12.5px;}
+    .ev .t{font-size:11px;color:#a3a09a;}
+    .ev .b{width:4px;height:15px;border-radius:2px;}
+  </style>
+</helmet>
+
+<div class="shell">
+
+  <div class="topbar">
+    <div>
+      <h1 class="brand">Comparaison des résultats</h1>
+      <div class="meta">Les Fabriques du Sud — Toulouse · 5 parties · 12 joueur·euses</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <div class="ctl"><span style="color:var(--soft)">Vue</span> <b style="font-weight:600">Tous les joueurs</b> <span style="color:var(--soft)">▾</span></div>
+      <div class="ctl" style="color:var(--soft)">FR ▾</div>
+    </div>
+  </div>
+
+  <div class="chips">
+    <div class="chip"><span class="mark" style="background:var(--d1)"></span><span><span class="nm">Dette 1</span><br><span class="fig mono">142 tr · 38 pr</span></span></div>
+    <div class="chip"><span class="mark" style="background:var(--d2)"></span><span><span class="nm">Dette 2</span><br><span class="fig mono">118 tr · 31 pr</span></span></div>
+    <div class="chip"><span class="mark" style="background:var(--d3)"></span><span><span class="nm">Dette 3</span><br><span class="fig mono">127 tr · 35 pr</span></span></div>
+    <div class="chip"><span class="mark" style="background:var(--l1)"></span><span><span class="nm">Libre 1</span><br><span class="fig mono">167 tr · 52 pr</span></span></div>
+    <div class="chip"><span class="mark" style="background:var(--l2)"></span><span><span class="nm">Libre 2</span><br><span class="fig mono">155 tr · 49 pr</span></span></div>
+    <div class="add">+ une partie d&#39;une autre session…</div>
+    <div style="margin-left:auto;font-size:11.5px;color:var(--soft);white-space:nowrap">5 fiches — glisse pour voir la 5<sup>e</sup> →</div>
+  </div>
+
+  <div class="cond">
+    <span style="letter-spacing:.6px">CONDITIONS DE SESSION</span>
+    <span class="mono">18 vies</span><span class="mono">6 morts</span><span class="mono">6 renaissances</span>
+    <span style="margin-left:auto">identiques pour les 5 parties — ne servent pas la comparaison</span>
+  </div>
+
+  <div class="body">
+
+    <div class="scroller">
+      <div class="rail">
+
+        <article class="fiche">
+          <div class="fh"><span class="mark" style="height:30px;background:var(--d1)"></span>
+            <div><h3>Dette 1</h3><div class="meta">banque 3 % · 9 tours · 42 min</div></div></div>
+          <div class="mblock">
+            <div class="m"><span class="ml">Transactions</span><span class="mv mono">142</span><span></span></div>
+            <div class="m"><span class="ml">Productions</span><span class="mv mono">38</span><span></span></div>
+            <div class="m"><span class="ml">Ressources</span><span class="mv mono"><i>40 →</i> 86</span><span class="mp mono">+115 %</span></div>
+            <div class="m"><span class="ml">Masse monétaire</span><span class="mv mono"><i>240 →</i> 612</span><span class="mp mono">+155 %</span></div>
+            <div class="m"><span class="ml">Dette totale</span><span class="mv mono"><i>0 →</i> 418</span><span class="mp mono" style="background:none;color:#a3a09a">—</span></div>
+          </div>
+          <div class="gblock">
+            <div class="sw"><span class="on">Richesse</span><span>Monnaie &amp; ressources</span></div>
+            <svg width="100%" height="132" viewBox="0 0 300 132" preserveAspectRatio="none" role="img" aria-label="Richesse par vie au fil de la partie, Dette 1">
+              <line x1="18" y1="8" x2="18" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <line x1="18" y1="112" x2="292" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <polyline points="20,100 70,94 120,86 170,74 220,58 288,32" fill="none" stroke="#1d5c87" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,92 120,88 170,82 220,76 288,64" fill="none" stroke="#1d5c87" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,96 120,92 170,88 220,84 288,78" fill="none" stroke="#1d5c87" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,98 120,97 170,99 220,102 288,106" fill="none" stroke="#1d5c87" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,99 120,101 170,104 220,108 288,111" fill="none" stroke="#1d5c87" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,95 120,91 170,87 220,82 288,76" fill="none" stroke="#1d5c87" stroke-width="2.4"></polyline>
+            </svg>
+            <div class="gcap">une ligne par vie, moyenne en gras — les écarts se creusent</div>
+          </div>
+          <div class="pblock">
+            <div class="plab">PODIUM</div>
+            <div class="prow"><span class="av"></span><span class="pn">Ana</span><b class="ps mono">184</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Milo</span><b class="ps mono">151</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Sacha</span><b class="ps mono">133</b></div>
+            <div class="dev"><span>moyenne <b class="mono">96</b></span><span>écart-type <b class="mono">48</b></span>
+              <span style="margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:1px 6px">tous les scores</span></div>
+          </div>
+          <div class="fblock">
+            <div class="plab">RESSENTIS</div>
+            <div class="bub">
+              <span style="left:10%;top:12%;width:22px;height:22px;background:rgba(29,92,135,.22);border:1px solid #1d5c87"></span>
+              <span style="left:38%;top:44%;width:34px;height:34px;background:rgba(29,92,135,.22);border:1px solid #1d5c87"></span>
+              <span style="left:70%;top:22%;width:16px;height:16px;background:rgba(29,92,135,.22);border:1px solid #1d5c87"></span>
+              <span style="left:56%;top:66%;width:13px;height:13px;background:rgba(29,92,135,.22);border:1px solid #1d5c87"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fiche">
+          <div class="fh"><span class="mark" style="height:30px;background:var(--d2)"></span>
+            <div><h3>Dette 2</h3><div class="meta">banque 7 % · 9 tours · 39 min</div></div></div>
+          <div class="mblock">
+            <div class="m"><span class="ml">Transactions</span><span class="mv mono">118</span><span></span></div>
+            <div class="m"><span class="ml">Productions</span><span class="mv mono">31</span><span></span></div>
+            <div class="m"><span class="ml">Ressources</span><span class="mv mono"><i>40 →</i> 74</span><span class="mp mono">+85 %</span></div>
+            <div class="m"><span class="ml">Masse monétaire</span><span class="mv mono"><i>240 →</i> 533</span><span class="mp mono">+122 %</span></div>
+            <div class="m"><span class="ml">Dette totale</span><span class="mv mono"><i>0 →</i> 377</span><span class="mp mono" style="background:none;color:#a3a09a">—</span></div>
+          </div>
+          <div class="gblock">
+            <div class="sw"><span class="on">Richesse</span><span>Monnaie &amp; ressources</span></div>
+            <svg width="100%" height="132" viewBox="0 0 300 132" preserveAspectRatio="none" role="img" aria-label="Richesse par vie au fil de la partie, Dette 2">
+              <line x1="18" y1="8" x2="18" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <line x1="18" y1="112" x2="292" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <polyline points="20,100 70,95 120,85 170,70 220,52 288,28" fill="none" stroke="#2c7fb8" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,93 120,89 170,84 220,79 288,70" fill="none" stroke="#2c7fb8" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,97 120,94 170,92 220,90 288,86" fill="none" stroke="#2c7fb8" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,99 120,100 170,103 220,107 288,110" fill="none" stroke="#2c7fb8" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,100 120,103 170,107 220,111 288,114" fill="none" stroke="#2c7fb8" stroke-width="1.2" opacity=".55"></polyline>
+              <polyline points="20,100 70,96 120,93 170,90 220,86 288,80" fill="none" stroke="#2c7fb8" stroke-width="2.4"></polyline>
+            </svg>
+            <div class="gcap">taux plus élevé — la dispersion est plus forte encore</div>
+          </div>
+          <div class="pblock">
+            <div class="plab">PODIUM</div>
+            <div class="prow"><span class="av"></span><span class="pn">Noor</span><b class="ps mono">171</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Tao</span><b class="ps mono">148</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Iris</span><b class="ps mono">119</b></div>
+            <div class="dev"><span>moyenne <b class="mono">92</b></span><span>écart-type <b class="mono">52</b></span>
+              <span style="margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:1px 6px">tous les scores</span></div>
+          </div>
+          <div class="fblock">
+            <div class="plab">RESSENTIS</div>
+            <div class="bub">
+              <span style="left:12%;top:16%;width:26px;height:26px;background:rgba(44,127,184,.22);border:1px solid #2c7fb8"></span>
+              <span style="left:44%;top:46%;width:30px;height:30px;background:rgba(44,127,184,.22);border:1px solid #2c7fb8"></span>
+              <span style="left:72%;top:30%;width:14px;height:14px;background:rgba(44,127,184,.22);border:1px solid #2c7fb8"></span>
+              <span style="left:26%;top:68%;width:15px;height:15px;background:rgba(44,127,184,.22);border:1px solid #2c7fb8"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fiche">
+          <div class="fh"><span class="mark" style="height:30px;background:var(--d3)"></span>
+            <div><h3>Dette 3</h3><div class="meta">banque 5 % · 9 tours · 38 min</div></div></div>
+          <div class="mblock">
+            <div class="m"><span class="ml">Transactions</span><span class="mv mono">127</span><span></span></div>
+            <div class="m"><span class="ml">Productions</span><span class="mv mono">35</span><span></span></div>
+            <div class="m"><span class="ml">Ressources</span><span class="mv mono"><i>40 →</i> 81</span><span class="mp mono">+103 %</span></div>
+            <div class="m"><span class="ml">Masse monétaire</span><span class="mv mono"><i>240 →</i> 571</span><span class="mp mono">+138 %</span></div>
+            <div class="m"><span class="ml">Dette totale</span><span class="mv mono"><i>0 →</i> 402</span><span class="mp mono" style="background:none;color:#a3a09a">—</span></div>
+          </div>
+          <div class="gblock">
+            <div class="sw"><span class="on">Richesse</span><span>Monnaie &amp; ressources</span></div>
+            <svg width="100%" height="132" viewBox="0 0 300 132" preserveAspectRatio="none" role="img" aria-label="Richesse par vie au fil de la partie, Dette 3">
+              <line x1="18" y1="8" x2="18" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <line x1="18" y1="112" x2="292" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <polyline points="20,100 70,94 120,85 170,72 220,55 288,31" fill="none" stroke="#6aa9d4" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,93 120,88 170,83 220,77 288,67" fill="none" stroke="#6aa9d4" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,97 120,93 170,90 220,87 288,82" fill="none" stroke="#6aa9d4" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,98 120,99 170,101 220,104 288,108" fill="none" stroke="#6aa9d4" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,100 120,102 170,105 220,109 288,112" fill="none" stroke="#6aa9d4" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,96 120,92 170,88 220,84 288,78" fill="none" stroke="#6aa9d4" stroke-width="2.4"></polyline>
+            </svg>
+            <div class="gcap">une ligne par vie, moyenne en gras</div>
+          </div>
+          <div class="pblock">
+            <div class="plab">PODIUM</div>
+            <div class="prow"><span class="av"></span><span class="pn">Tao</span><b class="ps mono">177</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Ana</span><b class="ps mono">144</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Noor</span><b class="ps mono">126</b></div>
+            <div class="dev"><span>moyenne <b class="mono">94</b></span><span>écart-type <b class="mono">45</b></span>
+              <span style="margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:1px 6px">tous les scores</span></div>
+          </div>
+          <div class="fblock">
+            <div class="plab">RESSENTIS</div>
+            <div class="bub">
+              <span style="left:14%;top:14%;width:24px;height:24px;background:rgba(106,169,212,.3);border:1px solid #6aa9d4"></span>
+              <span style="left:42%;top:48%;width:31px;height:31px;background:rgba(106,169,212,.3);border:1px solid #6aa9d4"></span>
+              <span style="left:70%;top:26%;width:15px;height:15px;background:rgba(106,169,212,.3);border:1px solid #6aa9d4"></span>
+              <span style="left:30%;top:70%;width:12px;height:12px;background:rgba(106,169,212,.3);border:1px solid #6aa9d4"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fiche">
+          <div class="fh"><span class="mark" style="height:30px;background:var(--l1)"></span>
+            <div><h3>Libre 1</h3><div class="meta">DU 10 % · 9 tours · 41 min</div></div></div>
+          <div class="mblock">
+            <div class="m"><span class="ml">Transactions</span><span class="mv mono">167</span><span></span></div>
+            <div class="m"><span class="ml">Productions</span><span class="mv mono">52</span><span></span></div>
+            <div class="m"><span class="ml">Ressources</span><span class="mv mono"><i>40 →</i> 112</span><span class="mp mono">+180 %</span></div>
+            <div class="m"><span class="ml">Masse monétaire</span><span class="mv mono"><i>360 →</i> 884</span><span class="mp mono">+146 %</span></div>
+            <div class="m"><span class="ml">Dividende Universel</span><span class="mv mono"><i>10 →</i> 31</span><span class="mp mono">+210 %</span></div>
+          </div>
+          <div class="gblock">
+            <div class="sw"><span class="on">Richesse</span><span>Quantitatif</span><span>Relatif (DU)</span></div>
+            <svg width="100%" height="132" viewBox="0 0 300 132" preserveAspectRatio="none" role="img" aria-label="Richesse par vie au fil de la partie, Libre 1">
+              <line x1="18" y1="8" x2="18" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <line x1="18" y1="112" x2="292" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <polyline points="20,100 70,92 120,84 170,74 220,64 288,50" fill="none" stroke="#d97e12" stroke-width="1.2" opacity=".6"></polyline>
+              <polyline points="20,100 70,94 120,86 170,78 220,68 288,57" fill="none" stroke="#d97e12" stroke-width="1.2" opacity=".6"></polyline>
+              <polyline points="20,100 70,90 120,80 170,70 220,60 288,46" fill="none" stroke="#d97e12" stroke-width="1.2" opacity=".6"></polyline>
+              <polyline points="20,100 70,95 120,88 170,80 220,71 288,60" fill="none" stroke="#d97e12" stroke-width="1.2" opacity=".6"></polyline>
+              <polyline points="20,100 70,96 120,90 170,82 220,73 288,63" fill="none" stroke="#d97e12" stroke-width="1.2" opacity=".6"></polyline>
+              <polyline points="20,100 70,93 120,85 170,76 220,66 288,55" fill="none" stroke="#d97e12" stroke-width="2.4"></polyline>
+            </svg>
+            <div class="gcap">les lignes montent ensemble — l&#39;écart reste faible</div>
+          </div>
+          <div class="pblock">
+            <div class="plab">PODIUM</div>
+            <div class="prow"><span class="av"></span><span class="pn">Sacha</span><b class="ps mono">142</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Ana</span><b class="ps mono">136</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Iris</span><b class="ps mono">129</b></div>
+            <div class="dev"><span>moyenne <b class="mono">118</b></span><span>écart-type <b class="mono" style="color:var(--l1)">21</b></span>
+              <span style="margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:1px 6px">tous les scores</span></div>
+          </div>
+          <div class="fblock">
+            <div class="plab">RESSENTIS</div>
+            <div class="bub">
+              <span style="left:50%;top:10%;width:32px;height:32px;background:rgba(217,126,18,.2);border:1px solid #d97e12"></span>
+              <span style="left:72%;top:40%;width:22px;height:22px;background:rgba(217,126,18,.2);border:1px solid #d97e12"></span>
+              <span style="left:30%;top:54%;width:14px;height:14px;background:rgba(217,126,18,.2);border:1px solid #d97e12"></span>
+              <span style="left:60%;top:72%;width:12px;height:12px;background:rgba(217,126,18,.2);border:1px solid #d97e12"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fiche">
+          <div class="fh"><span class="mark" style="height:30px;background:var(--l2)"></span>
+            <div><h3>Libre 2</h3><div class="meta">DU 8 % · 9 tours · 40 min</div></div></div>
+          <div class="mblock">
+            <div class="m"><span class="ml">Transactions</span><span class="mv mono">155</span><span></span></div>
+            <div class="m"><span class="ml">Productions</span><span class="mv mono">49</span><span></span></div>
+            <div class="m"><span class="ml">Ressources</span><span class="mv mono"><i>40 →</i> 104</span><span class="mp mono">+160 %</span></div>
+            <div class="m"><span class="ml">Masse monétaire</span><span class="mv mono"><i>360 →</i> 812</span><span class="mp mono">+126 %</span></div>
+            <div class="m"><span class="ml">Dividende Universel</span><span class="mv mono"><i>10 →</i> 28</span><span class="mp mono">+180 %</span></div>
+          </div>
+          <div class="gblock">
+            <div class="sw"><span class="on">Richesse</span><span>Quantitatif</span><span>Relatif (DU)</span></div>
+            <svg width="100%" height="132" viewBox="0 0 300 132" preserveAspectRatio="none" role="img" aria-label="Richesse par vie au fil de la partie, Libre 2">
+              <line x1="18" y1="8" x2="18" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <line x1="18" y1="112" x2="292" y2="112" stroke="#dcdad4" stroke-width="1"></line>
+              <polyline points="20,100 70,93 120,86 170,77 220,67 288,54" fill="none" stroke="#f0932a" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,95 120,88 170,80 220,71 288,61" fill="none" stroke="#f0932a" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,91 120,82 170,73 220,63 288,50" fill="none" stroke="#f0932a" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,96 120,90 170,83 220,74 288,64" fill="none" stroke="#f0932a" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,97 120,92 170,85 220,77 288,67" fill="none" stroke="#f0932a" stroke-width="1.2" opacity=".7"></polyline>
+              <polyline points="20,100 70,94 120,88 170,80 220,70 288,59" fill="none" stroke="#f0932a" stroke-width="2.4"></polyline>
+            </svg>
+            <div class="gcap">une ligne par vie, moyenne en gras</div>
+          </div>
+          <div class="pblock">
+            <div class="plab">PODIUM</div>
+            <div class="prow"><span class="av"></span><span class="pn">Milo</span><b class="ps mono">138</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Noor</span><b class="ps mono">131</b></div>
+            <div class="prow"><span class="av"></span><span class="pn">Tao</span><b class="ps mono">122</b></div>
+            <div class="dev"><span>moyenne <b class="mono">114</b></span><span>écart-type <b class="mono" style="color:var(--l1)">24</b></span>
+              <span style="margin-left:auto;border:1px solid var(--line);border-radius:5px;padding:1px 6px">tous les scores</span></div>
+          </div>
+          <div class="fblock">
+            <div class="plab">RESSENTIS</div>
+            <div class="bub">
+              <span style="left:46%;top:14%;width:29px;height:29px;background:rgba(240,147,42,.22);border:1px solid #f0932a"></span>
+              <span style="left:70%;top:44%;width:20px;height:20px;background:rgba(240,147,42,.22);border:1px solid #f0932a"></span>
+              <span style="left:26%;top:58%;width:15px;height:15px;background:rgba(240,147,42,.22);border:1px solid #f0932a"></span>
+              <span style="left:56%;top:74%;width:12px;height:12px;background:rgba(240,147,42,.22);border:1px solid #f0932a"></span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <div class="drawer">
+      <div class="dh"><b style="font-size:14.5px">Évènements</b><span class="meta">les 5 parties</span>
+        <span style="margin-left:auto;color:var(--soft)">▶</span></div>
+      <div class="dfil">
+        <span class="on">toutes</span><span>Dette 1</span><span>Dette 2</span><span>Dette 3</span><span>Libre 1</span><span>Libre 2</span>
+      </div>
+      <div class="dfil" style="border-bottom:1px solid var(--sunk)">
+        <span>transactions</span><span>productions</span><span>crédits</span><span>morts</span><span>actions</span>
+      </div>
+      <div class="dlist">
+        <div class="ev"><span class="t mono">14:02</span><span class="b" style="background:var(--d1)"></span><span>crédit accordé — Ana</span></div>
+        <div class="ev"><span class="t mono">14:03</span><span class="b" style="background:var(--l1)"></span><span>production — Sacha</span></div>
+        <div class="ev"><span class="t mono">14:03</span><span class="b" style="background:var(--d2)"></span><span>transaction — Tao → Noor</span></div>
+        <div class="ev"><span class="t mono">14:05</span><span class="b" style="background:var(--d1)"></span><span>saisie — Milo</span></div>
+        <div class="ev"><span class="t mono">14:06</span><span class="b" style="background:var(--l2)"></span><span>DU distribué</span></div>
+        <div class="ev"><span class="t mono">14:07</span><span class="b" style="background:var(--l1)"></span><span>transaction — Iris → Ana</span></div>
+        <div class="ev"><span class="t mono">14:08</span><span class="b" style="background:var(--d3)"></span><span>mort — Iris</span></div>
+        <div class="ev"><span class="t mono">14:09</span><span class="b" style="background:var(--d1)"></span><span>production — Sacha</span></div>
+        <div class="ev"><span class="t mono">14:11</span><span class="b" style="background:var(--l2)"></span><span>transaction — Milo → Tao</span></div>
+        <div class="ev"><span class="t mono">14:12</span><span class="b" style="background:var(--d1)"></span><span>renaissance — Iris</span></div>
+        <div class="ev"><span class="t mono">14:13</span><span class="b" style="background:var(--l1)"></span><span>don — Ana → Noor</span></div>
+        <div class="ev"><span class="t mono">14:14</span><span class="b" style="background:var(--d2)"></span><span>crédit refusé — Tao</span></div>
+        <div class="ev"><span class="t mono">14:15</span><span class="b" style="background:var(--d3)"></span><span>production — Noor</span></div>
+        <div class="ev"><span class="t mono">14:16</span><span class="b" style="background:var(--l2)"></span><span>transaction — Ana → Sacha</span></div>
+        <div class="ev"><span class="t mono">14:17</span><span class="b" style="background:var(--d1)"></span><span>vol — Tao → Milo</span></div>
+        <div class="ev"><span class="t mono">14:18</span><span class="b" style="background:var(--l1)"></span><span>production — Iris</span></div>
+        <div class="ev"><span class="t mono">14:19</span><span class="b" style="background:var(--d2)"></span><span>saisie — Noor</span></div>
+        <div class="ev"><span class="t mono">14:21</span><span class="b" style="background:var(--l2)"></span><span>DU distribué</span></div>
+        <div class="ev"><span class="t mono">14:22</span><span class="b" style="background:var(--d3)"></span><span>crédit accordé — Milo</span></div>
+        <div class="ev"><span class="t mono">14:23</span><span class="b" style="background:var(--l1)"></span><span>transaction — Sacha → Tao</span></div>
+        <div class="ev"><span class="t mono">14:24</span><span class="b" style="background:var(--d1)"></span><span>production — Ana</span></div>
+        <div class="ev"><span class="t mono">14:26</span><span class="b" style="background:var(--l2)"></span><span>don — Noor → Iris</span></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,72 @@
+import Joi from 'joi';
+import { isValidObjectId, isValidNumberId4 } from '../misc/validate.tool.js';
+
+export const sanitize = {
+	getById: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}),
+	getByShortId: Joi.object({
+		shortId: Joi.string().custom(isValidNumberId4).required().messages({
+			'any.invalid': 'Invalid short ID format',
+			'any.required': 'Short ID is required',
+		}),
+	}),
+	create: Joi.object({
+		name: Joi.string().required(),
+		animator: Joi.string().default('-'),
+		location: Joi.string().default('-'),
+		devMode: Joi.boolean().default(false),
+		theme: Joi.string().default('CLASSIC'),
+	}).required(),
+	start: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}).required(),
+	reopen: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+	}).required(),
+	update: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		updates: Joi.object({
+			name: Joi.string().required(),
+			animator: Joi.string(),
+			location: Joi.string(),
+			devMode: Joi.boolean(),
+			theme: Joi.string(),
+		}).required(),
+	}).required(),
+	deleteSession: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		password: Joi.string().required().min(5).messages({
+			'any.required': 'Password is required',
+			'string.min': 'Password must be at least 5 characters long',
+		}),
+	}),
+	killGame: Joi.object({
+		sessionId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid session ID format',
+			'any.required': 'Session ID is required',
+		}),
+		ruleIdx: Joi.number().required().messages({
+			'any.required': 'Rule index is required',
+		}),
+		gameStateId: Joi.string().custom(isValidObjectId).required().messages({
+			'any.invalid': 'Invalid game state ID format',
+			'any.required': 'Game state ID is required',
+		}),
+	}),
+};

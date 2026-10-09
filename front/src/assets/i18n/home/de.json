@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Startseite",
+		"CONTRIBUTION": "Beiträge",
+		"WELCOME": "Entdecke spielerisch das Freigeld!",
+		"INSTALL": "App installieren (optional)",
+		"CREATE_SESSION": "Eine Sitzung erstellen",
+		"JOIN_SESSION": "Einer Sitzung beitreten",
+		"JOIN_VIA_SHORT_ID": "Mit Kurzcode",
+		"JOIN_VIA_QR_CODE": "Über den QR-Code",
+		"HOW_TO_PLAY": "Wie funktioniert es?",
+		"FUND_RAISE": "Eine Spende um mich zu unterstützen, ",
+		"IN": "in",
+		"OR_IN": " oder in",
+		"SAY_HI": "Brauchst du Hilfe, hast du eine Idee, einen Fehler gefunden oder möchtest du einfach Hallo sagen?",
+		"LINK_SAY_HI": "Hier entlang",
+		"LOOKING_FOR_PAPER_GAME": "Das ursprüngliche Spiel in analoger Form?",
+		"CLOSE": "Schließen",
+		"YES": "Ja",
+		"NO": "Nein",
+		"CANCEL": "Abbrechen",
+		"CONTINUE_SESSION": "Sitzung fortsetzen",
+		"ACTIVE_SESSION": "Du hast eine aktive Sitzung:",
+		"DISMISS": "Schließen",
+		"RESUME": "Weiter"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Eine Sitzung erstellen",
+		"NAME": "Sitzung benennen",
+		"ANIMATOR": "Name des Spielleiters",
+		"LOCATION": "Ort",
+		"THEME": "Thema",
+		"BTN1": "Erstellen",
+		"BTN2": "Abbrechen"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "Öffne in Safari das Teilen-Menü mit der Schaltfläche",
+		"MESSAGE2": "und wähle dann \"Zum Home-Bildschirm\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Code eingeben...",
+		"SHORT_ID_TITLE": "Gib den Sitzungscode ein oder deinen vollständigen Code",
+		"SHORT_ID_DESC": "4 Ziffern, um als neuer Spieler beizutreten (z. B. 0042). Füge deine Nummer hinzu, um deinen Avatar wiederzufinden (z. B. 0042-7) — der Spielleiter kann sie dir geben.",
+		"SEARCH": "Suchen",
+		"INVALID_FORMAT": "Erwartetes Format: 4 Ziffern, optional gefolgt von - und deiner Nummer. Z. B. 0042 oder 0042-7",
+		"UNKNOWN_SESSION": "Keine Sitzung entspricht diesem Code.",
+		"UNKNOWN_AVATAR": "Diese Sitzung enthält keinen Avatar mit dieser Nummer.",
+		"NEEDS_AVATAR_CODE": "Diese Sitzung hat bereits begonnen: Du brauchst deinen vollständigen Code mit deiner Nummer (z. B. 0042-7)."
+	}
+}

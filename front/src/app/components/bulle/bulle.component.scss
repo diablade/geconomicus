@@ -1,0 +1,31 @@
+.bulleWrapper {
+	filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.8));
+	position: relative;
+	z-index: 1;
+}
+.bulle {
+	background: #ffffff;
+	padding: 12px;
+	border-radius: 200px;
+	z-index: 1;
+
+	&-point {
+		position: relative;
+	}
+
+	&-content {
+		z-index: 2;
+	}
+}
+
+.bulle::after {
+	content: '';
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	left: 30px;
+	bottom: -29px;
+	background: #ffffff;
+	clip-path: polygon(38% 0, 100% 100%, 100% 0);
+	z-index: 1;
+}

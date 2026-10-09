@@ -1,40 +1,54 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {PlayerBoardComponent} from './player-board/player-board.component';
-import {MasterBoardComponent} from './master-board/master-board.component';
-import {HomeComponent} from "./home/home.component";
-import {JoinComponent} from "./join/join.component";
-import {PlayerSettingsComponent} from "./player-settings/player-settings.component";
-import {ResultsComponent} from "./results/results.component";
-import {HistoryGamesComponent} from "./history-games/history-games.component";
-import {SurveyComponent} from "./survey/survey.component";
-import {BankBoardComponent} from "./bank-board/bank-board.component";
-import {MasterAdminComponent} from "./master-admin/master-admin.component";
-import {ModuleGalileoComponent} from "./components/module-galileo/module-galileo.component";
-import {ModuleWealthDistribComponent} from "./components/module-wealth-distrib/module-wealth-distrib.component";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { PlayerBoardComponent } from './player-board/player-board.component';
+import { MasterBoardComponent } from './master-board/master-board.component';
+import { HomeComponent } from './home/home.component';
+import { JoinComponent } from './join/join.component';
+import { AvatarSettingsComponent } from './avatar-settings/avatar-settings.component';
+import { ResultsComponent } from './results/results.component';
+import { HistoryGamesComponent } from './history-games/history-games.component';
+import { SurveyComponent } from './survey/survey.component';
+import { MasterAdminComponent } from './master-admin/master-admin.component';
+import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
+import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
+import { ModuleFiscaliteComponent } from './components/module-fiscalite/module-fiscalite.component';
+import { LobbyMasterComponent } from './lobby-master/lobby-master.component';
+import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
+import { TableBoardComponent } from './table-board/table-board.component';
+import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
+import { ToolsComponent } from './tools/tools.component';
 
 const routes: Routes = [
-    {path: '', component: HomeComponent},
-    {path: 'results/:idGame', component: ResultsComponent},
-    {path: 'games', component: HistoryGamesComponent},
-    {path: 'game/:idGame/admin', component: MasterAdminComponent},
-    {path: 'game/:idGame/master', component: MasterBoardComponent},
-    {path: 'game/:idGame/reset', component: MasterBoardComponent},
-    {path: 'game/:idGame/bank', component: BankBoardComponent},
-    {path: 'game/:idGame/join/:fromId/:name', component: JoinComponent},
-    {path: 'game/:idGame/join', component: JoinComponent},
-    {path: 'game/:idGame/results', component: ResultsComponent},
-    {path: 'game/:idGame/player/:idPlayer', component: PlayerBoardComponent},
-    {path: 'game/:idGame/player/:idPlayer/survey', component: SurveyComponent},
-    {path: 'game/:idGame/player/:idPlayer/settings', component: PlayerSettingsComponent},
-    {path: 'module/galileo', component: ModuleGalileoComponent},
-    {path: 'module/gini', component: ModuleWealthDistribComponent},
-    {path: '**', redirectTo: '/'},
+	{ path: '', component: HomeComponent },
+	{ path: 'history', component: HistoryGamesComponent },
+	{ path: 'session/:sessionId', component: LobbyMasterComponent },
+	{ path: 'join/:sessionId', component: JoinComponent },
+	{ path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent },
+	{ path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent },
+	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent },
+	{ path: 'fake', component: PlayerBoardComponent, data: { fake: true } },
+	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent },
+	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent },
+	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent },
+	{ path: 'results/:sessionId', component: SessionResultsCompareComponent },
+	{ path: 'tools', component: ToolsComponent },
+	{ path: 'module/galileo', component: ModuleGalileoComponent },
+	{ path: 'module/gini', component: ModuleWealthDistribComponent },
+	{ path: 'module/fiscalite', component: ModuleFiscaliteComponent },
+	//deprecated routes below
+	{ path: 'ogame/:idGame/admin', component: MasterAdminComponent },
+	{ path: 'ogame/:idGame/master', component: MasterBoardComponent },
+	{ path: 'ogame/:idGame/reset', component: MasterBoardComponent },
+	{ path: 'ogame/:idGame/join/:fromId/:name', component: JoinComponent },
+	{ path: 'ogame/:idGame/join', component: JoinComponent },
+	{ path: 'ogame/:idGame/results', component: ResultsComponent },
+	{ path: 'ogame/:idGame/player/:idPlayer', component: PlayerBoardComponent },
+	{ path: 'ogame/:idGame/player/:idPlayer/settings', component: AvatarSettingsComponent },
+	{ path: '**', redirectTo: '/' },
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

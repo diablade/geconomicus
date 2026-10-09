@@ -1,0 +1,67 @@
+.assist-sub {
+	margin: 0 0 12px;
+	opacity: 0.75;
+	font-size: 14px;
+}
+
+.assist-options {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 320px;
+	max-width: 420px;
+}
+
+.assist-opt {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	text-align: left;
+	padding: 12px 14px;
+	border: 2px solid rgba(0, 0, 0, 0.12);
+	border-radius: 14px;
+	background: rgba(0, 0, 0, 0.02);
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease, transform 0.08s ease;
+
+	&:hover {
+		background: rgba(0, 0, 0, 0.05);
+	}
+	&:active {
+		transform: scale(0.99);
+	}
+
+	&.coexist:hover {
+		border-color: #2e7d32;
+	}
+	&.takeover:hover {
+		border-color: #1565c0;
+	}
+	&.kick:hover {
+		border-color: #c62828;
+	}
+}
+
+.assist-opt-icon {
+	font-size: 26px;
+	line-height: 1;
+	flex: 0 0 auto;
+}
+
+.assist-opt-body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.assist-opt-label {
+	font-weight: 700;
+	font-size: 15px;
+}
+
+.assist-opt-desc {
+	font-size: 12.5px;
+	opacity: 0.72;
+	line-height: 1.25;
+}

@@ -1,0 +1,154 @@
+import mongoose from 'mongoose';
+import { GAME_STATUS, GAME_TYPE, CREDIT_STATUS, PLAYER_STATUS, CREDIT_QUESTION_ANSWER } from '@geco/shared';
+
+const Schema = mongoose.Schema;
+
+const CardSchema = new Schema(
+	{
+		key: { type: String, required: true },
+		letter: { type: String, required: true },
+		color: { type: String, required: true },
+		weight: { type: Number, required: true },
+		price: { type: Number, required: true },
+	},
+	{ _id: false }
+);
+
+let Credit = new Schema(
+	{
+		id: { type: String, required: true },
+		amount: { type: Number, required: true },
+		interest: { type: Number, required: true },
+		playerStateIdx: { type: Number, required: true },
+		status: { type: String, enum: Object.values(CREDIT_STATUS), required: true },
+		extended: { type: Number, required: true, default: 0 },
+		createdAt: { type: Date, required: true },
+		startedAt: { type: Date },
+		endAt: { type: Date },
+		remainingTime: { type: Number, required: true },
+		// When this credit entered FAULT — drives Auto Seizure's FIFO ordering (docs/adr/0005).
+		faultAt: { type: Date },
+	},
+	{ _id: false }
+);
+
+let PlayerState = new Schema(
+	{
+		idx: { type: Number, required: true },
+		avatarIdx: { type: Number, required: true },
+		status: { type: String, required: true, enum: Object.values(PLAYER_STATUS) },
+		coins: { type: Number, required: true },
+		cards: { type: [CardSchema], required: true },
+		actionTokens: { type: Number, required: true, default: 1 },
+		firstCreditAnswer: {
+			type: String,
+			enum: [...Object.values(CREDIT_QUESTION_ANSWER), null],
+			default: null,
+		},
+	},
+	{ _id: false }
+);
+
+let DeathState = new Schema(
+	{
+		deathIntervalMs: { type: Number, required: true, default: 0 },
+		intervalDeathLeft: { type: Number, required: true, default: 0 },
+		deathQueue: { type: Array, required: true, default: [] },
+	},
+	{ _id: false }
+);
+
+let GameTimers = new Schema(
+	{
+		createdAt: { type: Date },
+		startedAt: { type: Date },
+		endedAt: { type: Date },
+		remainingTime: { type: Number, required: true, default: 0 },
+		duIntervalLeft: { type: Number, default: null },
+		deathState: { type: DeathState, default: {} },
+	},
+	{ _id: false }
+);
+
+let GameStateSchema = new Schema(
+	{
+		typeMoney: {
+			type: String,
+			enum: Object.values(GAME_TYPE),
+			required: true,
+		},
+		sessionId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Session',
+			required: true,
+		},
+		ruleIdx: {
+			type: Number,
+			required: true,
+		},
+		status: {
+			type: String,
+			required: true,
+			enum: Object.values(GAME_STATUS),
+			default: GAME_STATUS.CREATED,
+		},
+		decks: {
+			type: [[CardSchema]],
+			required: true,
+			default: [],
+		},
+		playerStateIndexSeq: { type: Number, required: true, default: 0 },
+		playersStates: {
+			type: [PlayerState],
+			required: true,
+			default: [],
+		},
+		currentMassMonetary: {
+			type: Number,
+			required: true,
+			default: 0,
+		},
+		//state june
+		currentDU: {
+			type: Number,
+			default: 0,
+		},
+		//state debt
+		firstCreditAsked: { type: Boolean, default: false },
+		creditIndexSeq: { type: Number, required: true, default: 0 },
+		credits: {
+			type: [Credit],
+			default: [],
+		},
+		// Auto-bank: the deepest avg-money rate tier last broadcast to players
+		// (-1 = base rate). Persisted so live-down / silent-up change detection
+		// survives a memory reload. null = never computed yet.
+		currentRateTierIndex: {
+			type: Number,
+			default: null,
+		},
+		bankInterestEarned: {
+			type: Number,
+			default: 0,
+		},
+		bankGoodsEarned: {
+			type: Number,
+			default: 0,
+		},
+		bankMoneyLost: {
+			type: Number,
+			default: 0,
+		},
+		bankMoneyDestroyed: {
+			type: Number,
+			default: 0,
+		},
+		gameTimers: {
+			type: GameTimers,
+			default: {},
+		},
+	},
+	{ timestamps: true }
+);
+
+export default GameStateSchema;

@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "ホームページ",
+		"CONTRIBUTION": "寄付",
+		"WELCOME": "ゲームを通じて自由な通貨を発見しましょう！",
+		"INSTALL": "アプリをインストール",
+		"CREATE_SESSION": "セッションを作成",
+		"JOIN_SESSION": "セッションに参加",
+		"JOIN_VIA_SHORT_ID": "短いコードで",
+		"JOIN_VIA_QR_CODE": "QRコードで",
+		"HOW_TO_PLAY": "どうやって遊ぶの？",
+		"FUND_RAISE": "サポートのためのコーヒー☕️、",
+		"IN": "で",
+		"OR_IN": "または",
+		"SAY_HI": "助けが必要ですか、アイデアがありますか、バグを見つけましたか、それともただ挨拶したいですか？",
+		"LINK_SAY_HI": "こちら",
+		"LOOKING_FOR_PAPER_GAME": "オリジナルの紙のゲームを探していますか？",
+		"CLOSE": "閉じる",
+		"YES": "はい",
+		"NO": "いいえ",
+		"CANCEL": "キャンセル",
+		"CONTINUE_SESSION": "セッションを再開する",
+		"ACTIVE_SESSION": "進行中のセッションがあります：",
+		"DISMISS": "閉じる",
+		"RESUME": "続ける"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "セッションを作成",
+		"NAME": "セッション名",
+		"ANIMATOR": "進行役の名前",
+		"LOCATION": "場所",
+		"THEME": "テーマ",
+		"BTN1": "作成",
+		"BTN2": "キャンセル"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "Safariで、共有メニューを次のボタンから開きます",
+		"MESSAGE2": "そして「ホーム画面に追加」を選びます"
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "コードを入力...",
+		"SHORT_ID_TITLE": "セッションのコード、またはあなたの完全なコードを入力してください",
+		"SHORT_ID_DESC": "新しいプレイヤーとして参加するには4桁（例：0042）。自分のアバターに戻るには番号を追加してください（例：0042-7）— 進行役から教えてもらえます。",
+		"SEARCH": "検索",
+		"INVALID_FORMAT": "想定される形式：4桁の数字、必要に応じて「-」とあなたの番号。例：0042 または 0042-7",
+		"UNKNOWN_SESSION": "このコードに一致するセッションはありません。",
+		"UNKNOWN_AVATAR": "このセッションにはその番号のアバターがありません。",
+		"NEEDS_AVATAR_CODE": "このセッションはすでに始まっています。あなたの番号を含む完全なコードが必要です（例：0042-7）。"
+	}
+}

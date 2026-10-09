@@ -1,56 +1,57 @@
-import {Injectable} from '@angular/core';
-import {I18nService} from "./i18n.service";
-import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject} from "rxjs";
+import { Injectable } from '@angular/core';
+import { I18nService } from './i18n.service';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-	providedIn: 'root'
+	providedIn: 'root',
 })
 export class ThemesService {
 	icons: Record<string, string> = {};
-	namespace = "";
+	currentTheme = '';
 	themes: Record<string, string> = {
-		"THEME.CLASSIC": "classic",
-		"THEME.EMOJIS": "emojis",
-		"THEME.TWEMOJIS": "twemojis",
-		"THEME.CUSTOM1": "custom1"
+		'THEME.TWEMOJIS': 'twemojis',
+		'THEME.EMOJIS': 'emojis',
+		'THEME.CLASSIC': 'classic',
+        'THEME.POKE':'poke'
 	};
 
-	private _typeTheme$ = new BehaviorSubject<string>("CARD");
+	private _typeTheme$ = new BehaviorSubject<string>('CARD');
 	readonly typeTheme$ = this._typeTheme$.asObservable();
 
 	setTypeTheme(typeTheme: string) {
 		this._typeTheme$.next(typeTheme);
 	}
-	getTypeTheme(): any {
-		return this._typeTheme$.getValue();
-	}
 
-	constructor(private i18nService: I18nService, private http: HttpClient) {
-	}
+	constructor(
+		private i18nService: I18nService,
+		private http: HttpClient
+	) {}
 
-	loadTheme(themeKey: string): void {
+	async loadTheme(themeKey: string): Promise<void> {
 		//load language translations for the theme
-		if (themeKey === "THEME.CLASSIC") {
-			this.setTypeTheme("CARD");
+		if (themeKey === 'THEME.CLASSIC') {
+			this.setTypeTheme('CARD');
 		} else {
-			this.namespace = this.themes[themeKey];
+			const namespace = this.themes[themeKey];
+			let pathIcon = this.themes[themeKey];
 			//load icons for the theme
-			if (this.namespace === "twemojis") {
+			if (namespace === 'twemojis') {
 				//use emojis from twemojis  (twemoji is loaded via css)
 				this.loadTwemojiCss();
-				this.namespace = "emojis";
+				pathIcon = 'emojis';
 			} else {
 				this.unloadTwemojiCss();
 			}
-			this.i18nService.loadNamespace("themes/" + this.namespace);
-			const path = `assets/i18n/themes/${this.namespace}/icons.json`;
+			this.i18nService.loadNamespace('themes/' + pathIcon);
+			const path = `assets/i18n/themes/${pathIcon}/icons.json`;
 			this.http.get<Record<string, string>>(path).subscribe((icons: Record<string, string>) => {
-				this.icons = icons;
-				if (this.themes[themeKey] === "twemojis") {
-					this.setTypeTheme("TWEMOJI");
+				this.icons = namespace === 'twemojis' ? this.stripVariationSelectors(icons) : icons;
+				this.currentTheme = namespace;
+				if (namespace === 'twemojis') {
+					this.setTypeTheme('TWEMOJI');
 				} else {
-					this.setTypeTheme(icons["type"] as "CARD" | "EMOJI" | "TWEMOJI" | "SVG" | "PNG");
+					this.setTypeTheme(icons['type'] as 'CARD' | 'EMOJI' | 'TWEMOJI' | 'SVG' | 'PNG');
 				}
 			});
 		}
@@ -61,7 +62,7 @@ export class ThemesService {
 		const link = document.createElement('link');
 		link.id = 'twemoji-css';
 		link.rel = 'stylesheet';
-		link.href = 'https://cdn.jsdelivr.net/npm/twemoji-colr-font@latest/twemoji.css';
+		link.href = 'https://cdn.jsdelivr.net/npm/twemoji-colr-font@15.0.3/twemoji.css';
 		document.head.appendChild(link);
 	}
 
@@ -70,12 +71,38 @@ export class ThemesService {
 		if (link) link.remove();
 	}
 
+	private stripVariationSelectors(icons: Record<string, string>): Record<string, string> {
+		return Object.fromEntries(
+			Object.entries(icons).map(([key, value]) => [key, value.replace(/\uFE0F/g, '')])
+		);
+	}
+
 	getIcon(key: string): string {
 		return this.icons[key];
 	}
 
 	getPNG(key: string): string {
-		return `assets/i18n/themes/${this.namespace}/images/${this.icons[key]}`;
+		return `assets/i18n/themes/${this.currentTheme}/images/${this.icons[key]}`;
+	}
+
+	hasPNG(key: string): boolean {
+		return this.getTypeTheme() === 'PNG' && !!this.icons[key]?.endsWith('.png');
+	}
+
+	getTypeTheme(): string {
+		return this._typeTheme$.value!;
+	}
+
+	getThemeName(theme: string): string {
+		return this.themes[theme];
+	}
+
+	getCurrentTheme(): string {
+		return this.currentTheme;
+	}
+
+	getThemes(): Record<string, string> {
+		return this.themes;
 	}
 
 	getThemesKeys(): string[] {

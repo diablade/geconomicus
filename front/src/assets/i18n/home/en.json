@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Homepage",
+		"CONTRIBUTION": "Contributions",
+		"WELCOME": "Discover free currency through play!",
+		"INSTALL": "Install the application",
+		"CREATE_SESSION": "Create a session",
+		"JOIN_SESSION": "Join a session",
+		"JOIN_VIA_SHORT_ID": "Via the short code",
+		"JOIN_VIA_QR_CODE": "Via the QR code",
+		"HOW_TO_PLAY": "How does it work?",
+		"FUND_RAISE": "A coffee ☕️ to support me, ",
+		"IN": "in",
+		"OR_IN": " or in",
+		"SAY_HI": "Need help, got an idea, found a bug, or just want to say hi?",
+		"LINK_SAY_HI": "this way",
+		"LOOKING_FOR_PAPER_GAME": "Looking for the original paper game?",
+		"CLOSE": "Close",
+		"YES": "Yes",
+		"NO": "No",
+		"CANCEL": "Cancel",
+		"CONTINUE_SESSION": "Resume your session",
+		"ACTIVE_SESSION": "You have an active session:",
+		"DISMISS": "Close",
+		"RESUME": "Continue"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Create a session",
+		"NAME": "Name the session",
+		"ANIMATOR": "Facilitator name",
+		"LOCATION": "Place",
+		"THEME": "Theme",
+		"BTN1": "Create",
+		"BTN2": "Cancel"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "In Safari, open the share menu with the button",
+		"MESSAGE2": "then choose \"Add to Home Screen\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Enter the code...",
+		"SHORT_ID_TITLE": "Enter the session code, or your full code",
+		"SHORT_ID_DESC": "4 digits to join as a new player (e.g. 0042). Add your number to find your avatar again (e.g. 0042-7) — the facilitator can give it to you.",
+		"SEARCH": "Search",
+		"INVALID_FORMAT": "Expected format: 4 digits, optionally followed by - and your number. E.g. 0042 or 0042-7",
+		"UNKNOWN_SESSION": "No session matches this code.",
+		"UNKNOWN_AVATAR": "This session contains no avatar with that number.",
+		"NEEDS_AVATAR_CODE": "This session has already started: you need your full code, with your number (e.g. 0042-7)."
+	}
+}

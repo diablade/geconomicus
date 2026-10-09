@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { Router } from "@angular/router";
+import { I18nService } from "../../services/i18n.service";
 // Enregistrer tous les contrôleurs, éléments, etc. de Chart.js
 Chart.register(...registerables);
 
@@ -35,7 +36,9 @@ export class ModuleWealthDistribComponent implements AfterViewInit {
 
 	@ViewChild('distributionCanvas') distributionCanvas!: ElementRef;
 
-	constructor(private router: Router) { }
+	constructor(private router: Router, private i18n: I18nService) {
+		this.i18n.loadNamespace('module-wealth-distrib');
+	}
 
 	ngAfterViewInit(): void {
 		this.initChart();

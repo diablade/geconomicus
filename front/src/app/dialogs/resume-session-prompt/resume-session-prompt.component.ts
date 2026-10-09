@@ -29,7 +29,7 @@ export class ResumeSessionPromptComponent implements OnInit, AfterViewInit{
 
 
   resume() {
-    this.router.navigate(['game', this.session.idGame, 'player', this.session.idPlayer]);
+    this.router.navigate(['ogame', this.session.idGame, 'player', this.session.idPlayer]);
     this.dialogRef.close();
   }
 

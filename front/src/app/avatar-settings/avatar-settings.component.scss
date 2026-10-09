@@ -1,0 +1,78 @@
+.settings {
+	border: dashed red 4px;
+	background-size: cover;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+
+.thumbnail-bg {
+	height: 40px;
+	width: 40px;
+	border-radius: 15%;
+	border: solid white 4px;
+	box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.4);
+}
+
+.boardConf {
+	max-width: 300px;
+}
+
+.optionsLabel {
+	width: 160px;
+	text-align: center;
+	margin-right: 10px;
+
+	&-withColor {
+		width: 130px;
+		text-align: center;
+		margin-right: 10px;
+	}
+
+	&Number {
+		width: 70px;
+		text-align: center;
+	}
+}
+
+.items {
+	font-size: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 350px;
+	height: 380px;
+
+	&-box {
+		border: solid gray 4px;
+		border-radius: 25px;
+		background: rgba(255, 255, 255, 0.65);
+		max-width: 400px;
+		height: 100%;
+		min-height: 210px;
+		max-height: 380px;
+
+		overflow-y: scroll;
+		display: flex;
+		justify-content: center;
+
+		&-container {
+			display: flex;
+			justify-content: center;
+			min-height: 210px;
+			max-height: 380px;
+		}
+	}
+}
+
+.item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+:host ::ng-deep .mdc-radio {
+	display: none !important;
+}

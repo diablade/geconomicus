@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap">
+  <style>
+    :root{
+      --paper:#f4f2ec; --card:#fffdf7; --ink:#1c1a17; --soft:#6f6a63;
+      --fill:#e5e1d8; --d1:#1c1a17; --d2:#8c867d; --l1:#c8552f; --l2:#e0a06a;
+    }
+    body{margin:0;background:var(--paper);color:var(--ink);
+      font-family:'Architects Daughter','Segoe Print',ui-rounded,cursive;font-size:15px;}
+    a{color:#c8552f;} a:hover{color:#9c3a20;}
+    .mono{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:13px;letter-spacing:-0.3px;}
+    .chip{display:flex;align-items:center;gap:7px;border:2px solid var(--ink);border-radius:20px;
+      padding:5px 13px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .dot{width:12px;height:12px;border-radius:50%;display:inline-block;}
+    .card{border:2px solid var(--ink);border-radius:9px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .sub{font-size:12.5px;color:var(--soft);}
+    .row{display:grid;grid-template-columns:22px 14px minmax(0,1fr) auto;gap:9px;align-items:center;
+      padding:8px 9px;border:1.5px solid var(--ink);border-radius:7px;margin-bottom:6px;}
+    .cb{width:20px;height:20px;border:2px solid var(--ink);border-radius:4px;background:var(--paper);}
+    .cbon{background:var(--ink);}
+  </style>
+</helmet>
+
+<div style="width:900px;box-sizing:border-box;padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px">
+
+  <div>
+    <div style="font-size:26px;line-height:1.15">Sélection des parties</div>
+    <div class="sub">Commun aux 5 directions — dessiné une fois ici plutôt que répété sur chaque maquette.</div>
+  </div>
+
+  <div class="card" style="padding:13px 15px">
+    <div class="sub" style="margin-bottom:9px">Le bandeau, toujours visible. Le libellé vient de l&#39;ordre dans <span class="mono">rules</span> et du type de monnaie — pas de nom stocké (ADR-0020).</div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <div class="chip"><span class="dot" style="background:var(--d1)"></span><span>Dette 1</span><span class="mono" style="color:var(--soft)">142 tr · 38 pr</span></div>
+      <div class="chip"><span class="dot" style="background:var(--d2)"></span><span>Dette 2</span><span class="mono" style="color:var(--soft)">118 tr · 31 pr</span></div>
+      <div class="chip"><span class="dot" style="background:var(--l1)"></span><span>Libre 1</span><span class="mono" style="color:var(--soft)">167 tr · 52 pr</span></div>
+      <div class="chip"><span class="dot" style="background:var(--l2)"></span><span>Libre 2</span><span class="mono" style="color:var(--soft)">155 tr · 49 pr</span></div>
+      <div style="border:2px dashed var(--soft);border-radius:20px;padding:5px 13px;color:var(--soft)">+ une partie d&#39;une autre session…</div>
+    </div>
+    <div class="sub" style="margin-top:9px">Chaque puce porte ses deux chiffres comparables d&#39;un coup d&#39;œil. Cliquer une puce la retire ; en sélectionner une 5<sup>e</sup> retire la plus ancienne.</div>
+  </div>
+
+  <div class="card" style="padding:14px 16px">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+      <div style="font-size:19px">Ajouter une partie</div>
+      <div class="sub">une autre session de la même animatrice ou du même animateur</div>
+      <div style="margin-left:auto;font-size:18px;color:var(--soft)">✕</div>
+    </div>
+
+    <div style="border:2px solid var(--ink);border-radius:8px;padding:8px 12px;background:var(--paper);color:var(--soft);margin-bottom:12px">
+      Rechercher une session — nom, lieu, date…
+    </div>
+
+    <div class="sub" style="margin-bottom:6px">LYCÉE JEAN-JAURÈS — CARCASSONNE · 12 mars</div>
+    <div class="row"><span class="cb"></span><span class="dot" style="background:var(--d1)"></span>
+      <span>Dette 1 <span class="sub">— banque 5 %</span></span><span class="mono" style="color:var(--soft)">131 tr · 34 pr</span></div>
+    <div class="row"><span class="cb"></span><span class="dot" style="background:var(--l1)"></span>
+      <span>Libre 1 <span class="sub">— DU 10 %</span></span><span class="mono" style="color:var(--soft)">158 tr · 47 pr</span></div>
+
+    <div class="sub" style="margin:12px 0 6px">MJC DU MIRAIL — TOULOUSE · 4 février</div>
+    <div class="row" style="background:rgba(200,85,47,.09);border-color:var(--l1)"><span class="cb cbon"></span><span class="dot" style="background:var(--l2)"></span>
+      <span>Libre 2 <span class="sub">— DU 8 %</span></span><span class="mono" style="color:var(--soft)">149 tr · 44 pr</span></div>
+    <div class="row"><span class="cb"></span><span class="dot" style="background:var(--d2)"></span>
+      <span>Dette 1 <span class="sub">— banque 3 %</span></span><span class="mono" style="color:var(--soft)">122 tr · 29 pr</span></div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+      <div class="sub">4 parties au maximum — au-delà les colonnes deviennent illisibles sur un vidéoprojecteur.</div>
+      <div style="margin-left:auto;border:2px solid var(--ink);border-radius:8px;padding:6px 16px;background:var(--fill);box-shadow:3px 3px 0 var(--ink)">Ajouter</div>
+    </div>
+  </div>
+
+  <div style="border:2px dashed var(--ink);border-radius:9px;background:rgba(200,85,47,0.07);padding:12px 15px">
+    <b>La règle des lignes, en une phrase</b>
+    <div style="margin-top:5px;line-height:1.5">
+      Un indicateur monte dans le tableau principal quand <b>toutes</b> les parties sélectionnées peuvent l&#39;avoir ;
+      il tombe dans le bandeau « propre au type de monnaie » dès qu&#39;une seule ne le peut pas.
+      <span class="sub">Deux parties en dette côte à côte&nbsp;: dette, intérêts et saisies deviennent des lignes de comparaison à part entière.
+      Une dette face à une libre&nbsp;: elles redescendent, et l&#39;absence est écrite en toutes lettres plutôt que laissée en tiret.</span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

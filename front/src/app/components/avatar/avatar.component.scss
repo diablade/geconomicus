@@ -1,0 +1,32 @@
+.avatar {
+	border-radius: 50%;
+	border: 4px solid #333;
+	background-color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+
+	&-name {
+		max-width: 100px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&-container {
+		position: relative;
+		display: inline-block; // ou width: fit-content
+	}
+
+	&-wrapper {
+		position: relative;
+	}
+
+	&-online-status {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+	}
+}

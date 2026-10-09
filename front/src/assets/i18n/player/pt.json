@@ -1,0 +1,107 @@
+{
+	"PLAYER": {
+		"INIT": "Você recebeu {{cardsLength}} cartas 🎴 e {{coins}}{{currency}} 👛. Boa sorte !",
+		"INIT_DEBT": "Você recebeu {{cardsLength}} cartas 🎴 e {{coins}}{{currency}} 👛. Vá ver o banqueiro para conseguir dinheiro. Boa sorte !",
+		"GO_TO_BANK": "🚨 VA ATÉ AO BANCO !!! 🚨",
+		"THIS_LIFE_IS_GONE": "Esta vida terminou🪦",
+		"GO_TO_SECOND_LIFE": "Começar sua segunda vida !",
+		"OUT_PRISON_TITLE": "Você está livre !",
+		"OUT_PRISON_TEXT": "Sua pena foi cumprida, volte a jogar",
+		"WAITING": "Aguardando o animador...",
+		"GAME_OVER": "Jogo encerrado...",
+		"GAME_PAUSED": "Partida em pausa",
+		"ANSWER_SURVEY": "Responder ao questionário",
+		"DEBT": "Dívidas",
+		"BUY": "COMPRAR",
+		"CREDITS": "EMPRÉSTIMOS",
+		"OBJECTIVES": "Objetivos",
+		"TAKEN_OVER_TITLE": "O animador está comandando o seu tabuleiro",
+		"TAKEN_OVER_TEXT": "Alguém está jogando no seu lugar neste momento. Retome o controle quando quiser.",
+		"RETAKE": "Retomar o controle",
+		"NOT_ALIVE": "Você não está mais vivo",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "A partida não está em andamento, ou você não está mais vivo",
+		"GAME_NOT_PLAYING": "A partida não está em andamento",
+		"INSUFFICIENT_FUNDS": "Fundos insuficientes",
+		"INSUFFICIENT_CARDS": "Cartas idênticas insuficientes para produzir",
+		"SETTLE_FAILED": "Falha no reembolso do empréstimo",
+		"EXTEND_FAILED": "Falha na prolongação do empréstimo",
+		"INVALID_STATE": "Tabuleiro não carregado, atualize a página",
+		"INVALID_IDS": "Partida não encontrada, atualize a página",
+		"SOLD": "Vendido",
+		"BOUGHT": "Comprado"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "O empréstimo venceu !",
+			"MESSAGE": "Cobramos os juros de {{interest}} e prolongamos o seu empréstimo por 5 minutos adicionais"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Reembolsar ou prolongar o empréstimo ?",
+			"MESSAGE": "Você pode reembolsar integralmente o empréstimo pagando {{amount}} agora mesmo",
+			"MESSAGE2": "ou prolongar por 5 min adicionais pagando os juros de {{interest}}",
+			"BTN_SETTLE": "Reembolsar",
+			"BTN_EXTEND": "Prolongar"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Reembolsar o empréstimo ?",
+			"MESSAGE": "Você confirma o reembolso do seu empréstimo, pelo pagamento de {{amount}} € ?",
+			"BTN_CONFIRM": "Reembolsar integralmente"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Reembolsar o empréstimo ?",
+			"MESSAGE": "!!! UM EMPRÉSTIMO ESTÁ EM INADIMPLÊNCIA !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Confirme a solicitação de empréstimo",
+			"MESSAGE": "Para um valor de {{amount}} € e {{interest}} € de juros",
+			"MESSAGE2": "Para um total de {{total}} € a reembolsar ?  (ou seja {{rate}}% de taxa de juros)",
+			"BTN_CONFIRM": "Solicitar"
+		},
+		"RATE_CHANGED": {
+			"TITLE": "Nova taxa de empréstimo !"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Penhora efetuada",
+			"MESSAGE": "-{{coins}} 💰 e {{cardsCount}} carta(s) penhorada(s) (-{{cardsValue}} 💰)",
+			"PRISON": "Não te resta mais nada a penhorar : direto para a prisão por {{minutes}} minuto(s)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "simples",
+		"DOUBLE": "dobrado",
+		"IDLE": "Aguardando...",
+		"PAUSED": "Jogo em pausa...",
+		"RUNNING": "Em andamento...",
+		"REQUEST": "Solicitação...",
+		"DEFAULT": "Inadimplência",
+		"DONE": "Encerrado",
+		"NEW": "Empréstimo recebido (+{{amount}}💰)",
+		"FREE_MONEY": "Dinheiro gratuito recebido (+{{amount}}💰)",
+		"ANSWER": "Responder",
+		"SETTLE": "Reembolsar",
+		"DEBT": "Débito",
+		"INTEREST": "Juros",
+		"CANCEL_SUCCESS": "Empréstimo cancelado, {{amount}} € reembolsados",
+		"CANCELED": "Empréstimo cancelado",
+		"NOTICE_INTEREST": "Juros, pagáveis para prolongar por {{ interestMinutes }} minutos",
+		"DONE_AT": "Encerrado em",
+		"EXTENDED": "Prolongado",
+		"CREDIT_SETTLED": "Empréstimo reembolsado",
+		"BORROW": "Pegar um empréstimo",
+		"REFUSED_NEGOTIATE": "Empréstimo recusado — negocie com o animador",
+		"RATE_CHANGED": "Nova taxa : {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Rápido ! Peça emprestado antes que a taxa suba",
+		"FIRST_Q_TITLE": "Você quer pegar um primeiro empréstimo ?",
+		"DECLINE": "Não, obrigado",
+		"HALFWAY_NUDGE": "Metade do tempo para reembolsar o seu empréstimo",
+		"FINAL_MINUTE": "Menos de um minuto ! Reembolse o seu empréstimo, rápido !",
+		"FAULT_OVERLAY_TITLE": "Empréstimo em inadimplência",
+		"FAULT_OVERLAY_TEXT": "Você não reembolsou a tempo. Vá ver o animador para a penhora.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Você não reembolsou a tempo. Penhora em andamento..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Construir",
+		"REVEAL_TITLE": "Construído !",
+		"REVEAL_HINT": "{{count}} cartas Nív. {{level}} compradas novamente... +1 ficha (⚡)"
+	}
+}

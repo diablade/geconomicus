@@ -1,0 +1,232 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, Observable } from 'rxjs';
+import { Avatar } from '../../models/avatar';
+import { Session } from '../../models/session';
+import { environment } from '../../../environments/environment';
+import { ERROR, ERROR_RELOAD, ErrorService } from '../error.service';
+import { WebSocketService } from '../web-socket.service';
+import { ThemesService } from '../themes.service';
+import { AssistMode, IO, ROOMS } from '@geco/shared';
+import { I18nService } from '../i18n.service';
+import { SnackbarService } from '../snackbar.service';
+import { AudioService } from '../audio.service';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class AvatarService {
+	private avatarSubject = new BehaviorSubject<Avatar | undefined>(undefined);
+	avatar$ = this.avatarSubject.asObservable();
+	private sessionSubject = new BehaviorSubject<Session | null>(null);
+	session$ = this.sessionSubject.asObservable();
+	private sessionId: string | undefined;
+	private avatarIdx: number | undefined;
+	// Unique per browser tab, so an animator's "play the user" tab connects with a
+	// non-colliding identity and never kicks the player's own device.
+	private readonly assistNonce = Math.random().toString(36).slice(2);
+	private surveyRedoSubject = new BehaviorSubject<boolean>(false);
+	surveyRedo$ = this.surveyRedoSubject.asObservable();
+
+	constructor(
+		public http: HttpClient,
+		private errorService: ErrorService,
+		private wsService: WebSocketService,
+		private themesService: ThemesService,
+		private audioService: AudioService,
+		private snackbarService: SnackbarService,
+		private i18n: I18nService
+	) {}
+
+	loadFakeAvatar(avatar: Avatar): void {
+		this.avatarSubject.next(avatar);
+	}
+
+	private readonly onAvatarUpdated = (data: any) => {
+		const updatedAvatar = data?.updatedAvatar ?? data;
+		if (updatedAvatar && Number(updatedAvatar.idx) === Number(this.avatarIdx)) {
+			this.avatarSubject.next(updatedAvatar);
+		}
+	};
+
+	loadAvatar(
+		sessionId: string,
+		avatarIdx: number,
+		fetchSession = false,
+		assistMode: AssistMode | null = null
+	): Observable<any> {
+		return new Observable( (observer: any) => {
+			this.http
+				.get<any>(
+					environment.API_HOST + environment.AVATAR.GET + sessionId + '/' + avatarIdx + '/' + fetchSession
+				)
+				.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.PLAYER_NOT_FOUND')))
+				.subscribe(async (data) => {
+					if (fetchSession && data.avatar) {
+						await this.themesService.loadTheme(data.session.theme);
+						this.avatarSubject.next(data.avatar);
+						if (data.session) {
+							this.sessionSubject.next(data.session);
+						}
+					} else {
+						this.avatarSubject.next(data);
+					}
+					observer.next({ success: true, data: fetchSession ? data.avatar : data });
+					observer.complete();
+				});
+			if (sessionId !== this.sessionId || avatarIdx !== this.avatarIdx) {
+				this.initializeSocket(sessionId, avatarIdx, assistMode);
+			} else {
+				this.setupSocketListeners();
+			}
+		});
+	}
+
+	initializeSocket(sessionId: string, avatarIdx: number, assistMode: AssistMode | null = null): void {
+		this.sessionId = sessionId;
+		this.avatarIdx = avatarIdx;
+		const seat = ROOMS.lobbyAvatar(sessionId, avatarIdx);
+		this.wsService.initializeSocket(
+			assistMode
+				? {
+						publicChannel: ROOMS.session(sessionId),
+						// Unique identity → no collision with the player's device.
+						privateChannel: `${seat}:assist:${this.assistNonce}`,
+						assist: assistMode,
+						assistTarget: seat,
+				  }
+				: {
+						publicChannel: ROOMS.session(sessionId),
+						privateChannel: seat,
+				  }
+		);
+		this.setupSocketListeners();
+	}
+
+	private setupSocketListeners(): void {
+		// Avatar events
+		this.wsService.on(IO.AVATAR.UPDATED, this.onAvatarUpdated);
+
+		this.wsService.on(IO.AVATAR.SURVEY_REDO, (data: { avatarIdx: number; sessionId: string }) => {
+			if (data.avatarIdx === this.avatarIdx && this.sessionId === data.sessionId) {
+				this.snackbarService.showSuccess(this.i18n.instant('AVATAR.SURVEY_AUTORIZED'));
+				this.audioService.playSound('request');
+				this.surveyRedoSubject.next(true);
+			}
+		});
+
+		// Session events
+		this.wsService.on(IO.SESSION.STARTED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: data.gamesRules,
+				});
+			}
+		});
+
+		this.wsService.on(IO.SESSION.UPDATED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					...data,
+				});
+			}
+		});
+
+		// Game events
+		this.wsService.on(IO.GAME.DELETED, (data: any) => {
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((rules: any) => {
+						if (rules.gameStateId === data.gameStateId) {
+							rules.gameStatus = data.gameStatus;
+							rules.gameStateId = '';
+						}
+						return rules;
+					}),
+				});
+			}
+		});
+
+		this.wsService.on(IO.GAME.CREATED, async (data: any, cb: (response: any) => void) => {
+			cb?.({ status: 'ok', avatarIdx: this.avatarIdx, _ackId: data._ackId });
+			const currentSession = this.sessionSubject.getValue();
+			if (currentSession) {
+				this.sessionSubject.next({
+					...currentSession,
+					gamesRules: currentSession.gamesRules.map((rules: any) => {
+						if (rules.idx === data.idx) {
+							rules.gameStateId = data.gameStateId;
+							rules.typeMoney = data.typeMoney;
+							rules.gameStatus = data.gameStatus;
+						}
+						return rules;
+					}),
+				});
+			}
+		});
+
+		this.wsService.on(IO.REFRESH_FORCE, async (data: any) => {
+			window.location.reload();
+		});
+	}
+
+	updateAvatar(sessionId: string, avatarIdx: number, updates: Partial<Avatar>, sendRefresh = false): Observable<any> {
+		return new Observable((observer: any) => {
+			try {
+				this.http
+					.put<any>(environment.API_HOST + environment.AVATAR.UPDATE, {
+						sessionId,
+						avatarIdx,
+						updates,
+						sendRefresh,
+					})
+					.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.UPDATE')))
+					.subscribe((updatedAvatar) => {
+						this.avatarSubject.next(updatedAvatar);
+						if (sendRefresh) {
+							this.refreshForceAvatar(sessionId, avatarIdx);
+						}
+						observer.next({ success: true, data: updatedAvatar });
+						observer.complete();
+					});
+			} catch (e) {
+				observer.next({ success: false, error: 'parse_error' });
+				observer.complete();
+			}
+		});
+	}
+
+	getCurrentPlayerStateIdx(sessionId: string, gameStateId: string, avatarIdx: number): Observable<any> {
+		return this.http
+			.get<any>(
+				environment.API_HOST +
+					environment.PLAYER_STATE.GET_PLAYER_CURRENT_STATE_IDX +
+					sessionId +
+					'/' +
+					gameStateId +
+					'/' +
+					avatarIdx
+			)
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR, 'ERROR.PLAYER_NOT_FOUND')));
+	}
+
+	refreshForceAvatar(sessionId: string, avatarIdx: number): void {
+		this.http
+			.post<any>(environment.API_HOST + environment.AVATAR.REFRESH, {
+				sessionId,
+				avatarIdx,
+			})
+			.pipe(catchError((err) => this.errorService.handleError(err, ERROR_RELOAD, 'ERROR.REFRESH')))
+			.subscribe(() => {
+				// Refresh is successful, no need to update avatar subject
+				// The actual avatar update will come through WebSocket events
+			});
+	}
+}

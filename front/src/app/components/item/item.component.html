@@ -1,41 +1,133 @@
-<ng-container *ngIf="state==='flipped'">
-	<div class="overlay" (click)="closeCard()"></div>
-</ng-container>
-<div class="card" [ngClass]="[card.color]"
-     [@itemFlip]="{value: state, params: { translateX: translateX, translateY: translateY, height, width}}">
-	<div class="face" *ngIf="state==='default'" (click)="cardClicked()">
-		<div *ngIf="typeTheme==='TWEMOJI'|| typeTheme==='EMOJI'" [style.font-size]="iconSize" class="card-icon emoji" [ngClass]="typeTheme==='TWEMOJI' ? 'twemoji' : ''">
+<!-- Carte dans la grille -->
+<div
+	*ngIf="state === 'default'"
+	class="card"
+	[class.box-shadowed]="shadow"
+	[ngClass]="[card.color]"
+	[style.width]="width"
+	[style.height]="height">
+	<div class="face" (click)="cardClicked()">
+		<div
+			*ngIf="!isPNG(card.key)"
+			[style.font-size]="iconSize"
+			class="card-icon emoji"
+			[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
 			{{ getIcon(card.key) }}
 		</div>
-		<div *ngIf="typeTheme==='PNG'">
-			<img alt="" class="card-png" ngSrc="{{getPNG(card.key)}}" fill>
+		<div *ngIf="isPNG(card.key)" class="card-icon">
+			<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
 		</div>
 		<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
-		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">&nbsp;{{ card.letter }}&nbsp;</div>
-	</div>
-	<div class="back d-flex flex-column align-items-center" [ngClass]="[card.color]" *ngIf="state==='flipped'"
-	     (click)="cardClicked()">
-		<div class="d-flex flex-row justify-content-between w-100">
-			<div *ngIf="typeTheme==='TWEMOJI'|| typeTheme==='EMOJI'" class="card-icon-back emoji" [ngClass]="typeTheme==='TWEMOJI' ? 'twemoji' : ''">{{ getIcon(card.key) }}</div>
-			<div *ngIf="typeTheme==='PNG'">
-				<img alt="" class="card-png-back" ngSrc="{{getPNG(card.key)}}" width="25" height="25">
-			</div>
-			<div class="card-text">{{ card.key | translate }}</div>
-			<div class="contour">&nbsp;{{ card.letter }}&nbsp;</div>
-		</div>
-		<div class="prices d-flex flex-column justify-content-between">
-			<div class="price">
-				{{ card.price }} {{ typeMoney === C.JUNE ? ("CURRENCY.DU" | translate) : ("CURRENCY.EURO" | translate) }}
-			</div>
-			<div class="price"
-			     *ngIf="typeMoney==='june'">({{ (currentDU * card.price)| number:'1.2-2' }} {{ "CURRENCY.JUNE" | translate }})
-			</div>
-		</div>
-		<div class="flex-grow-1 w-100 h-100">
-			<div class="qrcodeWrapper">
-				<div class="shortCode" *ngIf="shortCode">{{ shortCode.code }}</div>
-				<ngx-kjua [text]="getData()" [minVersion]="1" [crisp]="true" [ecLevel]="'M'" [render]="'svg'"></ngx-kjua>
-			</div>
+		<div [style.font-size]="letterSize" [style.line-height]="letterSize" class="card-letter contour">
+			&nbsp;{{ card.letter }}&nbsp;
 		</div>
 	</div>
 </div>
+
+<!-- Placeholder : garde la place dans la grille pendant que la carte est dans l'overlay -->
+<div *ngIf="state === 'flipped'" class="card-placeholder" [style.width]="width" [style.height]="height"></div>
+
+<!-- Contenu affiché dans le CDK Overlay -->
+<ng-template #flippedTemplate>
+	<div class="flip-container">
+		<!-- Header -->
+		<div
+			class="frame frame-light d-flex flex-row justify-content-between align-items-center p-2"
+			*ngIf="flipState === 'back'"
+			[style.top]="gapBackItems + 'px'">
+			<div
+				*ngIf="!isPNG(card.key)"
+				class="card-icon-back emoji"
+				[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+				{{ getIcon(card.key) }}
+			</div>
+			<div *ngIf="isPNG(card.key)" class="card-icon-back-png">
+				<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
+			</div>
+			<div class="d-flex flex-column">
+				<div class="card-text-back">{{ card.key | translate }}</div>
+				<div class="prices d-flex flex-row justify-content-around">
+					<div class="price">
+						{{ card.price }}
+						{{ typeMoney === JUNE ? ('CURRENCY.DU' | translate) : ('CURRENCY.EURO' | translate) }}
+					</div>
+					<div class="price-eq" *ngIf="typeMoney === JUNE">
+						({{ (currentDU ? currentDU * card.price : 0) | number: '1.2-2' }}
+						{{ 'CURRENCY.JUNE' | translate }})
+					</div>
+				</div>
+			</div>
+			<div class="contour card-letter-back">&nbsp;{{ card.letter }}&nbsp;</div>
+		</div>
+
+		<!-- Carte qui flip en 3D -->
+		<div
+			class="flip-scene-wrapper"
+			[style.width]="'calc(' + width + ' * 2)'"
+			[style.height]="'calc(' + height + ' * 2)'">
+			<div class="flip-scene" [style.width]="width">
+				<div
+					class="flip-card"
+					[style.width]="width"
+					[style.height]="height"
+					[class.is-back]="flipState === 'back'">
+					<div class="flip-face flip-face-front" [ngClass]="[card.color]">
+						<div
+							*ngIf="!isPNG(card.key)"
+							[style.font-size]="iconSize"
+							class="card-icon emoji"
+							[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+							{{ getIcon(card.key) }}
+						</div>
+						<div *ngIf="isPNG(card.key)" class="card-icon">
+							<img alt="" class="item-png" [ngSrc]="getPNG(card.key)" fill />
+						</div>
+						<div [style.font-size]="textSize" class="card-text">{{ card.key | translate }}</div>
+						<div
+							[style.font-size]="letterSize"
+							[style.line-height]="letterSize"
+							class="card-letter contour">
+							&nbsp;{{ card.letter }}&nbsp;
+						</div>
+					</div>
+
+					<div class="flip-face flip-face-back" [ngClass]="[card.color]" (click)="closeCard()">
+						<div class="qrcodeWrapper">
+							<div class="shortCode" *ngIf="code">{{ code }}</div>
+							<ngx-kjua
+								[text]="getData()"
+								[minVersion]="1"
+								[crisp]="true"
+								[ecLevel]="'M'"
+								[render]="'svg'"></ngx-kjua>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div *ngIf="flipState === 'back'" class="frame frame-light p-2">
+			<div class="recipe-title">{{ card.letter | translate }}</div>
+			<div class="recipe-ingredients">
+				<div
+					*ngFor="let ingredient of recipe?.ingredients"
+					class="recipe-ingredient"
+					[class.have]="ingredient.have > 0"
+					[class.missing]="ingredient.have === 0">
+					<span class="check">{{ ingredient.have > 0 ? '✅' : '' }}</span>
+					<span
+						*ngIf="!isPNG(ingredient.key)"
+						class="emoji"
+						[ngClass]="typeTheme === 'TWEMOJI' ? 'twemoji' : ''">
+						{{ getIcon(ingredient.key) }}
+					</span>
+					<span *ngIf="isPNG(ingredient.key)" class="ingredient-png">
+						<img alt="" class="item-png" [ngSrc]="getPNG(ingredient.key)" fill />
+					</span>
+					<span class="ingredient-name">{{ ingredient.key | translate }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template>

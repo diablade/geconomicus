@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "Wartebereich",
+		"ANIMATOR": "Spielleiter: {{name}}",
+		"NAME": "Vorname oder Spitzname",
+		"YOUR_AVATAR": "Dein Avatar",
+		"SYS_SCAN": "Kaufen mit",
+		"EYES": "Augen",
+		"EYEBROWS": "Augenbrauen",
+		"MOUTH": "Mund",
+		"GLASSES": "Brille",
+		"EARRINGS": "Ohrringe",
+		"FEATURES": "Sonstiges",
+		"GAME_TABLE": "Spieltisch",
+		"SKIN": "Haut",
+		"HAIR": "Haare",
+		"PLAY": "Zum Spiel",
+		"YOUR_CODE": "Dein Code zum Zurückkommen:",
+		"UPDATED": "Avatar aktualisiert",
+		"MODIFY_FEEDBACK": "Meine Antworten korrigieren",
+		"MODIFY_FEEDBACK_MESSAGE": "Bitte den Spielleiter, dir das Korrigieren deiner Antworten zu erlauben, und versuche es dann erneut.",
+		"SURVEY_AUTORIZED": "Du kannst den Fragebogen erneut beantworten"
+	}
+}

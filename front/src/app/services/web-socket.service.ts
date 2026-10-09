@@ -1,24 +1,29 @@
-import {Injectable} from '@angular/core';
-import {io, Socket} from 'socket.io-client';
-import {environment} from '../../environments/environment';
-import {SnackbarService} from "./snackbar.service";
-import {InformationDialogComponent} from "../dialogs/information-dialog/information-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
-import {BehaviorSubject} from "rxjs";
-import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
-import {I18nService} from "./i18n.service";
-import {LocalStorageService} from "./local-storage/local-storage.service";
+import { inject, Injectable } from '@angular/core';
+import { io, Socket } from 'socket.io-client';
+import { environment } from '../../environments/environment';
+import { SnackbarService } from './snackbar.service';
+import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject } from 'rxjs';
+import { ConfirmDialogComponent } from '../dialogs/confirm-dialog/confirm-dialog.component';
+import { I18nService } from './i18n.service';
+import { LocalStorageService } from './local-storage/local-storage.service';
+import { IO, KICK_REASON } from '@geco/shared';
+import { ConnectionStatus } from '../models/gameState';
 
 @Injectable({
-	providedIn: 'root'
+	providedIn: 'root',
 })
 export class WebSocketService {
 	private socket: Socket | undefined;
 	private ioUrl: string = environment.API_HOST;
-	private idGame: string | undefined;
-	private idPlayer: string | undefined;
 	private disconnected = false;
-	private isReConnected = new BehaviorSubject<boolean>(false);
+	private kicked = false;
+	private connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(new ConnectionStatus());
+	connectionStatus$ = this.connectionStatusSubject.asObservable();
+	private currentQuery: any = null;
+	private eventHandlers: Map<string, Function[]> = new Map();
+	private joinedRooms: Set<string> = new Set();
 
 	constructor(
 		private snackbarService: SnackbarService,
@@ -26,192 +31,296 @@ export class WebSocketService {
 		public localStorageService: LocalStorageService,
 		private i18nService: I18nService
 	) {
+		const lastConnected = this.getLastConnectedTime();
+		this.updateConnectionStatus(this.isConnected(), lastConnected ? new Date(lastConnected) : null);
+
 		window.addEventListener('offline', () => {
 			console.log('Browser is offline');
+			if (this.kicked) return;
 			this.dialog.closeAll();
 			this.disconnected = true;
 			this.socket?.disconnect();
-			this.socket?.removeAllListeners();
+			// Keep listeners registered so a later socket.connect() can
+			// trigger connection status updates and restore UI indicators.
+			const lastConnectedTime = this.getLastConnectedTime();
+			this.updateConnectionStatus(false, lastConnectedTime ? new Date(lastConnectedTime) : null);
 			this.dialog.open(InformationDialogComponent, {
 				disableClose: true,
 				data: {
-					title: this.i18nService.instant("SOCKET.OFFLINE.TITLE"),
-					disableClose: true,
-					text: this.i18nService.instant("SOCKET.OFFLINE.TEXT")
+					title: this.i18nService.instant('SOCKET.OFFLINE.TITLE'),
+					message: this.i18nService.instant('SOCKET.OFFLINE.TEXT'),
 				},
 			});
 		});
 
 		window.addEventListener('online', () => {
 			console.log('Browser is back online');
+			if (this.kicked) return;
+			this.dialog.closeAll();
+
 			this.socket?.connect();
+			// Rejoin rooms after a short delay to allow connection to establish
+			setTimeout(() => {
+				if (this.socket?.connected) {
+					console.log('Rejoining rooms after browser came back online:', Array.from(this.joinedRooms));
+					this.rejoinAllRooms();
+				}
+			}, 500);
 		});
 	}
 
-	private connect(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
-
+	private connect(query: any): void {
+		this.currentQuery = query;
+		this.kicked = false;
 		this.socket?.disconnect();
 		this.socket?.removeAllListeners();
 
-		this.idGame = idGame;
-		this.idPlayer = idPlayer;
-
-		if (idGame && idPlayer) {
+		if (query) {
 			this.socket = io(this.ioUrl, {
-				query: {
-					idPlayer: this.idPlayer,
-					idGame: this.idGame
-				},
-				ackTimeout: 4000,            // timeout to 4 seconds
+				query,
+				ackTimeout: 4000, // timeout to 4 seconds
 				// allowEIO3: true,
 				tryAllTransports: true,
 				autoConnect: true,
-				reconnection: true,       // Enable automatic reconnection
+				reconnection: true, // Enable automatic reconnection
 				reconnectionAttempts: 6, // Number of reconnection attempts// Increase attempts
-				reconnectionDelay: 1000,  // Delay between reconnections
-				reconnectionDelayMax: 2000,  // Maximum delay between reconnections (2s)
-				timeout: 6000,               // connection timeout (6s)
-				transports: ['websocket'],  // Explicitly set transports
+				reconnectionDelay: 1000, // Delay between reconnections
+				reconnectionDelayMax: 2000, // Maximum delay between reconnections (2s)
+				timeout: 6000, // connection timeout (6s)
+				transports: ['websocket'], // Explicitly set transports
 				// forceNew: true     // may not recconnect
 			});
 
 			this.setupConnectionListeners();
-			return this.socket;
+			this.reattachEventHandlers();
 		}
-		this.snackbarService.showError("SOCKET UNDEFINED");
-		return undefined;
+	}
+
+	private reattachEventHandlers(): void {
+		if (!this.socket) return;
+		this.eventHandlers.forEach((handlers, event) => {
+			handlers.forEach((handler) => this.socket?.on(event, handler as any));
+		});
+	}
+
+	private kickedMessageKey(reason: string | undefined): string {
+		switch (reason) {
+			case KICK_REASON.ANOTHER_CONNECTION:
+				return 'SOCKET.KICKED.ANOTHER_CONNECTION';
+			case KICK_REASON.KICKED_BY_ANIMATOR:
+				return 'SOCKET.KICKED.KICKED_BY_ANIMATOR';
+			case KICK_REASON.RETAKEN:
+				return 'SOCKET.KICKED.RETAKEN';
+			default:
+				return 'SOCKET.KICKED.GENERIC';
+		}
 	}
 
 	private setupConnectionListeners(): void {
 		if (!this.socket) return;
-		const last = this.getLastConnectedTime();
-		const now = Date.now();
 		const maxOfflineDuration = 10000; // 10 secondes
 
+		const handleConnectedState = () => {
+			if (this.disconnected) {
+				this.disconnected = false;
+				this.dialog.closeAll();
+				this.snackbarService.showNotif(this.i18nService.instant('SOCKET.CONNECTED'));
+			}
+			this.updateConnectedStatus();
+		};
+
 		this.socket.on('kicked', (data) => {
-			console.warn("kicked : " + data.reason);
+			console.warn('kicked : ' + data.reason);
+			this.kicked = true;
+			this.socket?.io.reconnection(false);
+			this.dialog.closeAll();
 			this.dialog.open(InformationDialogComponent, {
+				disableClose: true,
 				data: {
-					disableClose: true,
-					title: this.i18nService.instant("SOCKET.KICKED.TITLE"),
-					text: this.i18nService.instant("SOCKET.KICKED.TEXT") + " " + data.reason
+					title: 'SOCKET.KICKED.TITLE',
+					message: this.kickedMessageKey(data?.reason),
 				},
 			});
 		});
+		this.socket.on(IO.INFO, (data: any) => {
+			inject(SnackbarService).showNotif(data.message);
+		});
 		this.socket.io.on('reconnect', (attemptNumber: number) => {
 			console.log('Reconnect after', attemptNumber, 'attempts');
-			if (last && now - last > maxOfflineDuration) {
+			// Rejoin all previously joined rooms
+			console.log('Rejoining rooms after socket reconnect:', Array.from(this.joinedRooms));
+			this.dialog.closeAll();
+			this.rejoinAllRooms();
+			const lastConnected = this.getLastConnectedTime();
+			const now = Date.now();
+			if (lastConnected && now - lastConnected > maxOfflineDuration) {
 				console.warn('Reconnected after long offline time — reloading page');
 				window.location.reload(); // force refresh
 			} else {
 				console.log('Reconnected — normal flow');
-				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTED"));
+				this.snackbarService.showNotif(this.i18nService.instant('SOCKET.RECONNECTED'));
 			}
 		});
+		this.socket.io.on('reconnect_attempt', (attempt: number) => {
+			console.log('Reconnection attempt:', attempt);
+		});
+		this.socket.io.on('reconnect_error', () => {
+			console.log('Reconnection error');
+		});
+		this.socket.io.on('reconnect_failed', () => {
+			console.log('Reconnection failed — all attempts exhausted');
+			if (this.kicked) return;
+			this.dialog.closeAll();
+			this.showDisconnectedDialog();
+		});
+		this.socket.on('connect', () => {
+			console.log('Socket connect');
+			handleConnectedState();
+		});
 		//this.socket.io.on('ping', () => console.log('ping sent'));
-		this.socket.on("connected", (data: any) => {
-			console.log('Connected to the server');
-			if (this.disconnected) {
-				this.disconnected = false;
-				this.dialog.closeAll();
-				this.snackbarService.showNotif(this.i18nService.instant("SOCKET.CONNECTED"));
-				this.isReConnected.next(true);
-			}
-			this.saveLastConnectedTime();
+		this.socket.on('connected', (data: any) => {
+			console.log('Socket IO acknowledged connection');
+			handleConnectedState();
 		});
 		this.socket.on('connect_error', (error) => {
 			console.log('Connection failed due to error:', error);
-			this.dialog.closeAll();
-			this.showDisconnectedDialog();
-			// this.socket?.io?.reconnection();
+			this.updateDisconnectedStatus();
 		});
-		this.socket.on("disconnect", (data: any) => {
+		this.socket.on('disconnect', (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
+			this.updateDisconnectedStatus();
+			if (this.kicked) return;
 			this.showReconnectingDialog();
-			//try reconnection
-			// this.socket?.io?.reconnection();
 		});
-		this.socket.on("reconnecting", (data: any) => {
-			this.snackbarService.showNotif(this.i18nService.instant("SOCKET.RECONNECTING"));
-			console.log('reconnecting...');
-		});
-		this.socket.on("connect_timeout", (data: any) => {
-			console.log('time out');
-			this.handleTimeout();
-			// this.socket?.io?.reconnection();
-		});
-		this.socket.on('reconnect_attempt', (attempt) => {
-			console.log('Reconnection attempt:', attempt);
-		});
-
-		this.socket.on('reconnect_error', () => {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
-			console.log('Reconnection error');
-		});
-		this.socket.on('error', () => {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
-			console.log('error');
-		});
-		this.socket.on('reconnect_failed', () => {
-			this.snackbarService.showError(this.i18nService.instant("ERROR.IO_SOCKET_ERROR"));
-			console.log('Reconnection failed');
+		this.socket.on('error', (error: any) => {
+			this.snackbarService.showError(this.i18nService.instant('ERROR.IO_SOCKET_ERROR'));
+			console.error('Socket error:', error);
+			if (error && error.message && error.message.includes('timeout')) {
+				this.handleTimeout();
+			}
 		});
 	}
 
-	getSocket(idGame: string | undefined, idPlayer: string | undefined): Socket | undefined {
-		if (this.socket && this.socket.connected) {
+	initializeSocket(query: any): void {
+		// Check if we need to reconnect due to query parameter change
+		const queryChanged =
+			this.currentQuery &&
+			(this.currentQuery.publicChannel !== query.publicChannel ||
+				this.currentQuery.privateChannel !== query.privateChannel);
+
+		if (this.socket && this.socket.connected && !queryChanged) {
 			this.disconnected = false;
-			return this.socket;
-		} else {
-			let sock = this.connect(idGame, idPlayer);
-			if (sock) {
-				return sock;
-			} else {
-				throw Error("WebSocketService: idGame or idPlayer is undefined");
+			this.updateConnectedStatus();
+			return;
+		}
+
+		// If query changed, disconnect old socket first
+		if (queryChanged) {
+			console.log('Query parameters changed, reconnecting socket');
+			this.socket?.disconnect();
+			this.socket?.removeAllListeners();
+			this.joinedRooms.clear();
+			this.updateDisconnectedStatus();
+		}
+
+		this.connect({
+			privateChannel: query.privateChannel,
+			publicChannel: query.publicChannel,
+			// Assist sessions ("play the user" tab) carry the mode + the incumbent
+			// Seat they target, so the server knows how to treat the collision.
+			...(query.assist ? { assist: query.assist, assistTarget: query.assistTarget } : {}),
+		});
+	}
+
+	on(event: string, handler: (...args: any[]) => void): void {
+		if (!this.eventHandlers.has(event)) {
+			this.eventHandlers.set(event, []);
+		}
+		const handlers = this.eventHandlers.get(event)!;
+		if (handlers.includes(handler)) {
+			return;
+		}
+		handlers.push(handler);
+		this.socket?.on(event, handler as any);
+	}
+
+	off<T>(event: string, handler?: (data: T) => void): void {
+		if (handler) {
+			const handlers = this.eventHandlers.get(event);
+			if (handlers) {
+				const idx = handlers.indexOf(handler as any);
+				if (idx > -1) handlers.splice(idx, 1);
 			}
+			this.socket?.off(event, handler as any);
+		} else {
+			this.eventHandlers.delete(event);
+			this.socket?.off(event);
 		}
 	}
 
-	getReConnectionStatus() {
-		return this.isReConnected.asObservable();
-	}
-
 	private showDisconnectedDialog() {
-		this.dialog.open(ConfirmDialogComponent, {
-			disableClose: true,
-			data: {
-				title: this.i18nService.instant("SOCKET.DISCONNECTED.TITLE"),
-				message: this.i18nService.instant("SOCKET.DISCONNECTED.MESSAGE"),
-				btn1Enable: false,
-				labelBtn2: this.i18nService.instant("SOCKET.DISCONNECTED.REFRESH"),
-				autoClickBtn2: true,
-				timerBtn2: this.i18nService.instant("SOCKET.DISCONNECTED.TIMER"),
-			}
-		}).afterClosed().subscribe(() => {
-			this.socket?.connect();
-		});
-	}
+		this.dialog
+			.open(ConfirmDialogComponent, {
+				disableClose: true,
+				data: {
+					title: this.i18nService.instant('SOCKET.DISCONNECTED.TITLE'),
+					message: this.i18nService.instant('SOCKET.DISCONNECTED.MESSAGE'),
+					labelBtnConfirm: this.i18nService.instant('SOCKET.DISCONNECTED.REFRESH'),
+				},
+			})
+			.afterClosed()
+			.subscribe((result) => {
+				if (result === 'btnConfirm') {
+					window.location.reload();
+				}
+			});
+        }
 
 	private showReconnectingDialog() {
-		this.dialog.open(InformationDialogComponent, {
-			data: {
-				disableClose: true,
-				title: this.i18nService.instant("SOCKET.RECONNECTING.TITLE"),
-				text: this.i18nService.instant("SOCKET.RECONNECTING.TEXT")
-			},
-		}).afterClosed().subscribe(() => {
-			this.socket?.connect();
-		});
+        this.dialog
+        .open(InformationDialogComponent, {
+            disableClose: true,
+            data: {
+                title: this.i18nService.instant('SOCKET.RECONNECTING.TITLE'),
+                message: this.i18nService.instant('SOCKET.RECONNECTING.TEXT'),
+                timerBtn: 5,
+				},
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.socket?.connect();
+			});
 	}
 
 	private handleTimeout() {
-		this.snackbarService.showError(this.i18nService.instant("SOCKET.TIMEOUT"));
-		this.socket?.connect();
+		this.snackbarService.showError(this.i18nService.instant('SOCKET.TIMEOUT'));
+		// this.socket?.connect();
+		setTimeout(() => {
+			// Force a complete page reload
+			window.location.reload();
+		}, 2000);
 	}
 
 	private saveLastConnectedTime(): void {
 		this.localStorageService.setItem('lastSocketConnected', Date.now().toString());
+	}
+
+	private updateConnectionStatus(isConnected: boolean, lastSeen: Date | null): void {
+		const conn = new ConnectionStatus();
+		conn.isConnected = isConnected;
+		conn.lastSeen = lastSeen;
+		this.connectionStatusSubject.next(conn);
+	}
+
+	private updateConnectedStatus(): void {
+		this.saveLastConnectedTime();
+		this.updateConnectionStatus(true, new Date());
+	}
+
+	private updateDisconnectedStatus(): void {
+		const lastConnected = this.getLastConnectedTime();
+		this.updateConnectionStatus(false, lastConnected ? new Date(lastConnected) : null);
 	}
 
 	private getLastConnectedTime(): number | null {
@@ -219,4 +328,43 @@ export class WebSocketService {
 		return val ? parseInt(val, 10) : null;
 	}
 
+	emit(event: string, data?: any, callback?: (response: any) => void): void {
+		if (this.socket) {
+			this.socket.emit(event, data, callback);
+		}
+	}
+
+	joinRoom(room: string): void {
+		if (room) {
+			this.joinedRooms.add(room);
+			if (this.socket && this.socket.connected) {
+				console.log('Joining room:', room);
+				this.socket.emit('join', room);
+			}
+		}
+	}
+
+	leaveRoom(room: string): void {
+		this.joinedRooms.delete(room);
+		if (this.socket && this.socket.connected) {
+			this.socket.emit('leave', room);
+		}
+	}
+
+	private rejoinAllRooms(): void {
+		if (this.socket && this.socket.connected) {
+			this.joinedRooms.forEach((room) => {
+				console.log('Auto-rejoining room:', room);
+				this.socket!.emit('join', room);
+			});
+		}
+	}
+
+	clearJoinedRooms(): void {
+		this.joinedRooms.clear();
+	}
+
+	isConnected(): boolean {
+		return !!this.socket?.connected;
+	}
 }

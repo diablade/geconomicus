@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "Sala de espera",
+		"ANIMATOR": "Animador: {{name}}",
+		"NAME": "Primeiro nome ou apelido",
+		"YOUR_AVATAR": "Seu avatar",
+		"SYS_SCAN": "Comprar com",
+		"EYES": "Olhos",
+		"EYEBROWS": "Sobrancelhas",
+		"MOUTH": "Boca",
+		"GLASSES": "Óculos",
+		"EARRINGS": "Orelhas",
+		"FEATURES": "Diversos",
+		"GAME_TABLE": "Tabuleiro do jogo",
+		"SKIN": "Pele",
+		"HAIR": "Cabelos",
+		"PLAY": "Acessar o jogo",
+		"YOUR_CODE": "Seu código para voltar :",
+		"UPDATED": "Avatar atualizado",
+		"MODIFY_FEEDBACK": "Corrigir minhas respostas",
+		"MODIFY_FEEDBACK_MESSAGE": "Peça ao animador para liberar a correção das suas respostas, depois tente novamente.",
+		"SURVEY_AUTORIZED": "Você pode responder ao questionário novamente"
+	}
+}

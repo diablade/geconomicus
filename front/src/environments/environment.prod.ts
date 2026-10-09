@@ -48,4 +48,18 @@ export const environment = {
 		END: 'game/end',
 		DELETE_GAME: 'game/delete',
 	},
+	TOOLS: {
+		SIMULATE: 'tools/simulate',
+	},
+	ACTION: {
+		GET_TARGET_CARDS: 'game-state/action/get-target-cards',
+		AVAILABLE_PLAYERS: 'game-state/action/available-players',
+		WHO_HAVE_CARD: 'game-state/action/who-have-card',
+		GIVE: 'game-state/action/give',
+		STEAL: 'game-state/action/steal',
+		SILENT_STEAL: 'game-state/action/silent-steal',
+		ASSOCIATION: 'game-state/action/association',
+		WAR: 'game-state/action/war',
+		ONG: 'game-state/action/ong',
+	},
 };

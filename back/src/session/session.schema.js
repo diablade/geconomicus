@@ -1,0 +1,21 @@
+import mongoose from 'mongoose';
+import AvatarSchema from './avatar/avatar.schema.js';
+import RulesSchema from './rules/rules.schema.js';
+const Schema = mongoose.Schema;
+
+let SessionSchema = new Schema({
+	name: { type: String, required: true },
+	animator: { type: String, required: true, default: "-" },
+	location: { type: String, required: true, default: "-" },
+	shortId: { type: String, required: true },
+	devMode: { type: Boolean, required: true, default: false },
+	theme: { type: String, required: true, default: "TWEMOJI" },
+	status: { type: String, required: true, default: "open" },
+	//open, in_progress, ended
+	gamesRules: { type: [RulesSchema], required: true, default: [] },
+	avatars: { type: [AvatarSchema], required: true, default: [] },
+	rulesIndexSeq: { type: Number, required: true, default: 0 },
+	avatarIndexSeq: { type: Number, required: true, default: 0 },
+}, { timestamps: true });
+
+export default SessionSchema;

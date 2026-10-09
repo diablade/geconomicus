@@ -1,5 +1,7 @@
 .keyboard-dialog {
 	max-width: 300px;
+    max-height: 90vh;
+    overflow: auto;
 	transform: scale(0.98) !important;
 
 	input {

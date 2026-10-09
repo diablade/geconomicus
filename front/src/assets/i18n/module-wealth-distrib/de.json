@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Verteilungsmodul",
+			"SUB_TITLE": "Die Ungerechtigkeit des Geldes mit dem Gini-Index verstehen",
+			"SUMMARY": "Dieses Modul zeigt dank dem Gini Index die Verteilung des Geldes unter den Mitgliedern an.",
+			"SUMMARY2": "Der Gini-Index misst die Ungleichheit in der Verteilung (oft von Einkommen oder Vermögen) in einer Bevölkerung.",
+			"SUMMARY3": "Der Gesamtbetrag wird je nach Parameter P unterschiedlich aufgeteilt. 💸",
+			"SUMMARY4": "Ein niedriges P bedeutet eine gleichmäßigere Verteilung. 🤝",
+			"SUMMARY5": "Ein hohes P erzeugt größere Unterschiede zwischen den Personen. 📊",
+			"DESCRIPTION": "Diese Grafik ermöglicht die Visualisierung der Vermögensverteilung nach verschiedenen Währungstypen: Euro, Dollar, Bitcoin oder Freigeld. Jedes Währungssystem erzeugt unterschiedliche Dynamiken: Einige begünstigen die Konzentration von Vermögen, andere eine gerechtere Verteilung. Durch das Bewegen der Schieberegler kannst du die Geldverteilung anpassen. So kannst du beobachten, wie sich diese Entscheidungen auf den Gini-Index auswirken, einen einfachen Indikator zur Messung von Ungleichheit.",
+			"SUMMARY7": "Der Gini-Index misst die Ungleichheit in der Verteilung (oft von Einkommen oder Vermögen) in einer Bevölkerung.",
+			"SUMMARY8": "- 0 = vollkommene Gleichheit (alle haben gleich viel)",
+			"SUMMARY9": "- 1 = völlige Ungleichheit (eine Person besitzt alles)",
+			"SUMMARY10": "☝️ Mit Freigeld strebt der Gini-Index ständig gegen 0.",
+			"TOTAL": "Gesamtbetrag",
+			"NUM_PLAYERS": "Anzahl Personen",
+			"RESULTS": "Verteilungsergebnisse",
+			"PARAM_P": "Parameter P (Ungleichheit)",
+			"PERSON": "Person",
+			"AMOUNT": "Betrag",
+			"GINI": "Gini-Index",
+			"RATIO": "Verhältnis oben/unten",
+			"SIMULATION": "Simulation",
+			"PERCENTAGE": "% des Gesamtbetrags",
+			"GRAPHIC": "Grafik",
+			"CURVE": "Kurve",
+			"CAMBER": "Kreisdiagramm"
+		}
+	}
+}

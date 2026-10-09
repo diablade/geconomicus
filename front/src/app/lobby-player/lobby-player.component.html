@@ -1,0 +1,113 @@
+<ng-container *ngIf="vm$ | async as vm">
+	<div
+		class="bgFixedLayer"
+		[ngClass]="vm.avatar?.boardConf"
+		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)"></div>
+	<div class="p-2 w-100 lobby d-flex flex-column overflow-auto aboveBg">
+		<div class="d-flex flex-row justify-content-between align-items-center m-2">
+			<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
+		</div>
+		<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
+		<div class="shadowed text-center fs-1 m-1" (click)="refresh()">
+			{{ 'AVATAR.LOBBY' | translate }}
+		</div>
+		<div class="d-flex flex-row flex-wrap gap-4 m-1 justify-content-center">
+			<div class="shadowed text-center fs-6" (click)="refresh()">
+				{{ vm.session?.name }}
+			</div>
+			-
+			<div class="shadowed text-center fs-6" (click)="refresh()">
+				{{ 'AVATAR.ANIMATOR' | translate: { name: vm.session?.animator } }}
+			</div>
+		</div>
+		<div class="m-3 d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
+			<app-notice-btn
+				[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
+				[stroked]="true"
+				[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
+			<button class="blur box-shadowed blackBtn" mat-stroked-button (click)="openTutorial()">
+				<mat-icon class="outlined">joystick</mat-icon>
+				{{ 'TUTORIAL.OPEN' | translate }}
+			</button>
+
+			<button
+				*ngIf="fullscreenService.supported"
+				class="blur box-shadowed blackBtn"
+				mat-stroked-button
+				(click)="toggleFullscreen()">
+				<mat-icon class="outlined">{{ fullscreenService.active ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+				{{ (fullscreenService.active ? 'FULLSCREEN_EXIT' : 'FULLSCREEN') | translate }}
+			</button>
+			<button class="blur box-shadowed blackBtn" mat-stroked-button (click)="refresh()">
+				<mat-icon class="outlined">refresh</mat-icon>
+				{{ 'REFRESH' | translate }}
+			</button>
+		</div>
+		<div class="d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
+			<div class="shadowed scanLabel">{{ 'AVATAR.SYS_SCAN' | translate }}</div>
+			<mat-icon
+				class="itemBg blur box-shadowed blackBtn mousePointer"
+				(click)="scanV3 = false; onChangeSysScan()">
+				dialpad
+			</mat-icon>
+			<mat-slide-toggle (click)="onChangeSysScan()" [(ngModel)]="scanV3"></mat-slide-toggle>
+			<mat-icon class="itemBg blur box-shadowed blackBtn mousePointer" (click)="scanV3 = true; onChangeSysScan()">
+				qr_code_scanner
+			</mat-icon>
+		</div>
+		<!-- /* : 'blackBtn'" */ -->
+
+		<div class="text-center mt-3 shadowed" *ngIf="avatarCode">
+			{{ 'AVATAR.YOUR_CODE' | translate }}
+			<b class="avatarCode">{{ avatarCode }}</b>
+		</div>
+
+		<div class="mt-3 d-flex flex-row flex-wrap gap-2 justify-content-center">
+			<div class="d-flex flex-column align-items-center avatar-item mousePointer" (click)="goToAvatarSettings()">
+				<avatar [avatar]="vm.avatar" [width]="'150px'" [height]="'150px'"></avatar>
+				<div class="m-1 d-flex flex-row text-center">
+					<div class="shadowed fs-3" (click)="refresh()">
+						{{ vm.avatar?.name }}
+					</div>
+					<fa-icon [icon]="faPencil" class="ms-3 fs-4"></fa-icon>
+				</div>
+			</div>
+			<div class="d-flex flex-row">
+				<div class="d-flex flex-column align-items-center" *ngFor="let game of vm.session?.gamesRules">
+					<coin
+						(click)="flipCoin(game)"
+						[forceRotate]="game.rotate"
+						[coinImage]="'./assets/images/' + game.typeMoney + '.png'"
+						[label]="(game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate"></coin>
+					<button
+						*ngIf="game.gameStatus !== GAME_STOPPED"
+						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus === undefined"
+						class="m-1 box-shadowed"
+						mat-raised-button
+						color="primary"
+						(click)="joinGame(game.gameStateId)">
+						{{ 'AVATAR.PLAY' | translate }}
+						<span *ngIf="isRejoinTarget(game.gameStateId)">&nbsp;({{ rejoinCountdown }})</span>
+						<fa-icon [icon]="faRightToBracket"></fa-icon>
+					</button>
+					<button
+						*ngIf="isRejoinTarget(game.gameStateId)"
+						class="m-1"
+						mat-stroked-button
+						(click)="cancelRejoin()">
+						{{ 'CANCEL' | translate }}
+					</button>
+					<button
+						*ngIf="game.gameStatus === GAME_STOPPED"
+						class="m-1 box-shadowed"
+						mat-raised-button
+						color="primary"
+						(click)="modifyFeedback(game.gameStateId)">
+						{{ 'AVATAR.MODIFY_FEEDBACK' | translate }}
+						<fa-icon [icon]="faPencil"></fa-icon>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-container>

@@ -1,0 +1,61 @@
+import SurveyModel from './survey.model.js';
+
+const SurveyService = {};
+
+/* Create */
+SurveyService.create = async (surveyObject) => {
+	const newSurvey = new SurveyModel({
+		sessionId: surveyObject.sessionId,
+		gameStateId: surveyObject.gameStateId,
+		avatarIdx: surveyObject.avatarIdx,
+		depressedHappy: surveyObject.depressedHappy,
+		individualCollective: surveyObject.individualCollective,
+		insatisfiedAccomplished: surveyObject.insatisfiedAccomplished,
+		greedyGenerous: surveyObject.greedyGenerous,
+		competitiveCooperative: surveyObject.competitiveCooperative,
+		anxiousConfident: surveyObject.anxiousConfident,
+		agressiveAvenant: surveyObject.agressiveAvenant,
+		irritableTolerant: surveyObject.irritableTolerant,
+		dependantAutonomous: surveyObject.dependantAutonomous,
+		poorRich: surveyObject.poorRich,
+	});
+	return await newSurvey.save();
+};
+
+/* Retrieve */
+SurveyService.getBySessionGameStateAvatarIdx = async (sessionId, gameStateId, avatarIdx) => {
+	return await SurveyModel.findOne({ sessionId: sessionId, gameStateId: gameStateId, avatarIdx: avatarIdx }).exec();
+};
+SurveyService.getByGameStateId = async (gameStateId) => {
+	return await SurveyModel.find({ gameStateId }).exec();
+};
+SurveyService.getBySessionId = async (sessionId) => {
+	return await SurveyModel.find({ sessionId }).exec();
+};
+
+/* Update */
+SurveyService.update = async (id, updates) => {
+	const updatesClean = {
+		depressedHappy: updates.depressedHappy,
+		individualCollective: updates.individualCollective,
+		insatisfiedAccomplished: updates.insatisfiedAccomplished,
+		greedyGenerous: updates.greedyGenerous,
+		competitiveCooperative: updates.competitiveCooperative,
+		anxiousConfident: updates.anxiousConfident,
+		agressiveAvenant: updates.agressiveAvenant,
+		irritableTolerant: updates.irritableTolerant,
+		dependantAutonomous: updates.dependantAutonomous,
+		poorRich: updates.poorRich,
+	};
+	return await SurveyModel.updateOne({ _id: id }, { $set: updatesClean }, { runValidators: true }).exec();
+};
+
+/* Remove */
+SurveyService.removeAllBySessionId = async (sessionId) => {
+	return await SurveyModel.deleteMany({ sessionId }).exec();
+};
+SurveyService.removeAllByGameStateId = async (gameStateId) => {
+	return await SurveyModel.deleteMany({ gameStateId }).exec();
+};
+
+export default SurveyService;

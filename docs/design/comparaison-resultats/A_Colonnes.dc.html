@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap">
+  <style>
+    :root{
+      --paper:#f4f2ec; --card:#fffdf7; --ink:#1c1a17; --soft:#6f6a63;
+      --fill:#e5e1d8; --d1:#1c1a17; --d2:#8c867d; --l1:#c8552f; --l2:#e0a06a;
+    }
+    body{margin:0;background:var(--paper);color:var(--ink);
+      font-family:'Architects Daughter','Segoe Print',ui-rounded,cursive;font-size:15px;}
+    a{color:#c8552f;} a:hover{color:#9c3a20;}
+    .mono{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:14px;letter-spacing:-0.3px;}
+    .chip{display:flex;align-items:center;gap:7px;border:2px solid var(--ink);border-radius:20px;
+      padding:5px 13px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .dot{width:12px;height:12px;border-radius:50%;display:inline-block;}
+    .card{border:2px solid var(--ink);border-radius:9px;background:var(--card);box-shadow:3px 3px 0 var(--ink);}
+    .r{text-align:right;}
+    .rule{border-bottom:1px dotted var(--soft);}
+  </style>
+</helmet>
+
+<div style="width:1360px;box-sizing:border-box;padding:22px 24px 26px;display:flex;flex-direction:column;gap:13px">
+
+  <div style="display:flex;align-items:flex-end;gap:16px">
+    <div style="flex-grow:1">
+      <div style="font-size:31px;line-height:1.1">Comparaison des résultats</div>
+      <div style="font-size:14px;color:var(--soft)">Les Fabriques du Sud — Toulouse · 4 parties</div>
+    </div>
+    <div style="border:2px dashed var(--ink);border-radius:8px;padding:5px 11px;font-size:13px;color:var(--soft)">FR / EN</div>
+  </div>
+
+  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+    <div class="chip"><span class="dot" style="background:var(--d1)"></span><span>Dette 1</span><span class="mono" style="color:var(--soft)">142 tr · 38 pr</span></div>
+    <div class="chip"><span class="dot" style="background:var(--d2)"></span><span>Dette 2</span><span class="mono" style="color:var(--soft)">118 tr · 31 pr</span></div>
+    <div class="chip"><span class="dot" style="background:var(--l1)"></span><span>Libre 1</span><span class="mono" style="color:var(--soft)">167 tr · 52 pr</span></div>
+    <div class="chip"><span class="dot" style="background:var(--l2)"></span><span>Libre 2</span><span class="mono" style="color:var(--soft)">155 tr · 49 pr</span></div>
+    <div style="border:2px dashed var(--soft);border-radius:20px;padding:5px 13px;color:var(--soft)">+ une partie d&#39;une autre session…</div>
+    <div style="margin-left:auto;border:2px solid var(--ink);border-radius:20px;padding:5px 13px;background:var(--fill)">Tous les joueurs ▾</div>
+  </div>
+
+  <div style="border:2px solid var(--ink);border-radius:9px;background:var(--fill);padding:9px 14px;line-height:1.45">
+    <b>A · Colonnes</b> — le registre. Une ligne par indicateur, une colonne par partie.
+    <span style="color:var(--soft)">Pour : on répond en une seconde à « quel chiffre diffère ». Grille parfaitement régulière, tient à 4 colonnes, s&#39;imprime tel quel. — Contre : ça se lit, ça ne se ressent pas. Faible au fond d&#39;une salle ; le mouvement début→fin n&#39;est que deux nombres posés côte à côte.</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:14px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:13px;min-width:0">
+
+      <div style="display:flex;gap:18px;align-items:center;border:2px dotted var(--soft);border-radius:8px;padding:7px 13px;font-size:13px;color:var(--soft)">
+        <span>Conditions de session (identiques partout)</span>
+        <span class="mono">12 joueur·euses</span><span class="mono">18 vies</span><span class="mono">6 morts</span><span class="mono">6 renaissances</span>
+      </div>
+
+      <div class="card" style="padding:13px 16px 15px">
+        <div style="font-size:19px;margin-bottom:9px">Comparaison</div>
+        <div style="display:grid;grid-template-columns:210px repeat(4, minmax(0,1fr));gap:0 10px;align-items:center">
+          <div></div>
+          <div class="r" style="border-bottom:2px solid var(--ink);padding-bottom:4px"><span style="border-bottom:4px solid var(--d1)">Dette 1</span></div>
+          <div class="r" style="border-bottom:2px solid var(--ink);padding-bottom:4px"><span style="border-bottom:4px solid var(--d2)">Dette 2</span></div>
+          <div class="r" style="border-bottom:2px solid var(--ink);padding-bottom:4px"><span style="border-bottom:4px solid var(--l1)">Libre 1</span></div>
+          <div class="r" style="border-bottom:2px solid var(--ink);padding-bottom:4px"><span style="border-bottom:4px solid var(--l2)">Libre 2</span></div>
+
+          <div class="rule" style="padding:9px 0">Transactions</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">142</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">118</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">167</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">155</div>
+
+          <div class="rule" style="padding:9px 0">Productions</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">38</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">31</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">52</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0">49</div>
+
+          <div class="rule" style="padding:9px 0">Ressources en jeu <span style="color:var(--soft);font-size:12px">début → fin</span></div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">40 →</span> 86</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">40 →</span> 74</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">40 →</span> 112</div>
+          <div class="mono r rule" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">40 →</span> 104</div>
+
+          <div style="padding:9px 0">Masse monétaire <span style="color:var(--soft);font-size:12px">début → fin</span></div>
+          <div class="mono r" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">240 →</span> 612</div>
+          <div class="mono r" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">240 →</span> 533</div>
+          <div class="mono r" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">360 →</span> 884</div>
+          <div class="mono r" style="font-size:19px;padding:9px 0"><span style="color:var(--soft)">360 →</span> 812</div>
+        </div>
+      </div>
+
+      <div style="border:2px dashed var(--ink);border-radius:9px;background:rgba(200,85,47,0.07);padding:12px 16px 14px">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:7px">
+          <div style="font-size:17px">Propre au type de monnaie</div>
+          <div style="font-size:12.5px;color:var(--soft)">écarté du tableau principal parce que la sélection mélange dette et libre — ne garde que Dette 1 + Dette 2 et ces lignes remontent au-dessus</div>
+        </div>
+        <div style="display:grid;grid-template-columns:210px repeat(4, minmax(0,1fr));gap:0 10px;align-items:center">
+          <div class="rule" style="padding:7px 0">Dividende Universel</div>
+          <div class="mono r rule" style="padding:7px 0;color:var(--soft)">pas de DU</div>
+          <div class="mono r rule" style="padding:7px 0;color:var(--soft)">pas de DU</div>
+          <div class="mono r rule" style="font-size:18px;padding:7px 0"><span style="color:var(--soft)">10 →</span> 31</div>
+          <div class="mono r rule" style="font-size:18px;padding:7px 0"><span style="color:var(--soft)">10 →</span> 28</div>
+
+          <div style="padding:7px 0">Dette totale</div>
+          <div class="mono r" style="font-size:18px;padding:7px 0"><span style="color:var(--soft)">0 →</span> 418</div>
+          <div class="mono r" style="font-size:18px;padding:7px 0"><span style="color:var(--soft)">0 →</span> 377</div>
+          <div class="mono r" style="padding:7px 0;color:var(--soft)">pas de banque</div>
+          <div class="mono r" style="padding:7px 0;color:var(--soft)">pas de banque</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:11px">
+        <div class="card" style="padding:10px 12px;height:150px;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Podium D1</b><span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 7px">barres</span></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px"></div>
+          <div class="mono" style="font-size:12px;margin-top:7px;color:var(--soft)">écart-type 48</div>
+        </div>
+        <div class="card" style="padding:10px 12px;height:150px;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Podium D2</b><span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 7px">barres</span></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px"></div>
+          <div class="mono" style="font-size:12px;margin-top:7px;color:var(--soft)">écart-type 52</div>
+        </div>
+        <div class="card" style="padding:10px 12px;height:150px;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Podium L1</b><span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 7px">barres</span></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px"></div>
+          <div class="mono" style="font-size:12px;margin-top:7px;color:var(--l1)">écart-type 21</div>
+        </div>
+        <div class="card" style="padding:10px 12px;height:150px;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>Podium L2</b><span style="font-size:11.5px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 7px">barres</span></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:5px"></div>
+          <div style="height:22px;background:var(--fill);border:1.5px solid var(--ink);border-radius:4px"></div>
+          <div class="mono" style="font-size:12px;margin-top:7px;color:var(--l1)">écart-type 24</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:11px">
+        <div class="card" style="padding:9px 11px;height:120px;box-sizing:border-box">
+          <b style="font-size:13.5px">Ressentis D1</b>
+          <div style="position:relative;height:82px;margin-top:5px;border-left:1.5px solid var(--soft);border-bottom:1.5px solid var(--soft)">
+            <span style="position:absolute;left:14%;top:18%;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(28,26,23,.25)"></span>
+            <span style="position:absolute;left:44%;top:48%;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(28,26,23,.25)"></span>
+            <span style="position:absolute;left:72%;top:26%;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(28,26,23,.25)"></span>
+          </div>
+        </div>
+        <div class="card" style="padding:9px 11px;height:120px;box-sizing:border-box">
+          <b style="font-size:13.5px">Ressentis D2</b>
+          <div style="position:relative;height:82px;margin-top:5px;border-left:1.5px solid var(--soft);border-bottom:1.5px solid var(--soft)">
+            <span style="position:absolute;left:18%;top:22%;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(140,134,125,.35)"></span>
+            <span style="position:absolute;left:52%;top:52%;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(140,134,125,.35)"></span>
+            <span style="position:absolute;left:76%;top:34%;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);background:rgba(140,134,125,.35)"></span>
+          </div>
+        </div>
+        <div class="card" style="padding:9px 11px;height:120px;box-sizing:border-box">
+          <b style="font-size:13.5px">Ressentis L1</b>
+          <div style="position:relative;height:82px;margin-top:5px;border-left:1.5px solid var(--soft);border-bottom:1.5px solid var(--soft)">
+            <span style="position:absolute;left:56%;top:14%;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--l1);background:rgba(200,85,47,.3)"></span>
+            <span style="position:absolute;left:74%;top:44%;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--l1);background:rgba(200,85,47,.3)"></span>
+            <span style="position:absolute;left:34%;top:58%;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--l1);background:rgba(200,85,47,.3)"></span>
+          </div>
+        </div>
+        <div class="card" style="padding:9px 11px;height:120px;box-sizing:border-box">
+          <b style="font-size:13.5px">Ressentis L2</b>
+          <div style="position:relative;height:82px;margin-top:5px;border-left:1.5px solid var(--soft);border-bottom:1.5px solid var(--soft)">
+            <span style="position:absolute;left:50%;top:20%;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--l2);background:rgba(224,160,106,.4)"></span>
+            <span style="position:absolute;left:70%;top:50%;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--l2);background:rgba(224,160,106,.4)"></span>
+            <span style="position:absolute;left:30%;top:60%;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--l2);background:rgba(224,160,106,.4)"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:11px 14px;height:132px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">
+          <b>Richesse dans le temps</b>
+          <span style="font-size:12px;border:1.5px solid var(--ink);border-radius:12px;padding:1px 8px">monnaie</span>
+          <span style="font-size:12px;border:1.5px dashed var(--soft);border-radius:12px;padding:1px 8px;color:var(--soft)">ressources</span>
+          <span style="font-size:12px;color:var(--soft);margin-left:auto">déplié à la demande — une courbe par vie, 4 blocs empilés</span>
+        </div>
+        <div style="height:74px;border:1.5px dashed var(--soft);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:13px">courbes par vie · repliées par défaut</div>
+      </div>
+
+    </div>
+
+    <div style="border:2px solid var(--ink);border-radius:9px;background:var(--fill);box-shadow:3px 3px 0 var(--ink);height:760px;display:flex;align-items:center;justify-content:center">
+      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:14px;letter-spacing:1px">◀ Évènements — 4 parties</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

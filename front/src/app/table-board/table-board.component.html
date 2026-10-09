@@ -1,0 +1,681 @@
+<ng-container *ngIf="vm$ | async as vm">
+	<div class="bgFixedLayer" [ngClass]="vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg'"></div>
+	<div class="tableBoard h-100 aboveBg">
+		<div class="h-100 overflow-auto px-3 pb-4 d-flex flex-column">
+			<!-- ── Header ── -->
+			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
+				<div class="d-flex flex-row align-items-center gap-3 flex-wrap">
+					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
+						<mat-icon>arrow_back</mat-icon>
+						{{ 'TABLE.BACK_TO_MASTER_BOARD' | translate }}
+					</button>
+					<img class="geco" src="./assets/images/geconomicus.png" alt="Geconomicus" />
+					<div>
+						<div class="title geconomicusFont contourText ombreText">
+							{{ vm.session.name }} -
+							{{ vm.rules.typeMoney === JUNE ? ('FREE_MONEY' | translate) : ('DEBT_MONEY' | translate) }}
+						</div>
+						<div class="subtitle white">
+							{{ 'TABLE.ANIMATOR_VIEW' | translate }} &middot; {{ vm.gameState.status }}
+						</div>
+					</div>
+				</div>
+				<div class="d-flex flex-row align-items-center gap-2">
+					<online-status [connection]="(masterConnection$ | async) || null"></online-status>
+					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
+						🔄️ {{ 'TABLE.REFRESH_VIEW' | translate }}
+					</button>
+					<app-language-btn [short]="true"></app-language-btn>
+				</div>
+			</div>
+
+			<!-- ── Stats strip ── -->
+			<div class="d-flex flex-row flex-wrap gap-2 mt-2">
+				<div class="chip frame frame-light box-shadowed">
+					🟢
+					<b>{{ vm.connectedCount }}</b>
+					{{ 'TABLE.CONNECTED' | translate }} &middot; 🔴 {{ vm.alive.length - vm.connectedCount }}
+					{{ 'TABLE.DISCONNECTED' | translate }}
+				</div>
+				<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
+				<div class="chip frame frame-light box-shadowed">
+					⏱️
+					<b>{{ vm.minutes }}:{{ vm.seconds }}</b>
+					&middot; {{ vm.rules.roundMinutes }} {{ 'TABLE.MIN' | translate }}
+				</div>
+				<div class="chip frame frame-light box-shadowed">
+					👥
+					<b>{{ 'TABLE.DEAD_PLAYERS' | translate: { count: vm.dead.length } }}</b>
+				</div>
+				<!-- Death queue: transparent progress fill behind the label + countdown, popover lists the order -->
+				<div
+					class="chip frame frame-light box-shadowed deathQueueChip"
+					*ngIf="vm.deathQueueCount > 0"
+					[matMenuTriggerFor]="deathQueueMenu">
+					<span class="deathProgressFill" [style.width.%]="vm.deathProgressPct"></span>
+					<span class="deathChipContent">
+						💀
+						<b>{{ 'TABLE.DEATHS_TO_COME' | translate: { count: vm.deathQueueCount } }}</b>
+						<span *ngIf="vm.nextDeathLabel" class="nextDeath">&middot; ⏳ {{ vm.nextDeathLabel }}</span>
+					</span>
+				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.ghostMoney > 0">
+					👻💰
+					<b>{{ vm.ghostMoney | number: '1.0-2' }}</b>
+					<span *ngIf="vm.rules.typeMoney === JUNE">
+						&middot; {{ vm.ghostMoneyDU | number: '1.2-2' }} {{ 'TABLE.DU_EQ' | translate }}
+					</span>
+					{{ 'TABLE.GHOST_MONEY' | translate }}
+				</div>
+				<div class="chip frame frame-light box-shadowed">
+					💰
+					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
+					{{ 'TABLE.MONETARY_MASS' | translate }}
+				</div>
+				<div class="chip frame frame-light box-shadowed">
+					⚡
+					<b>{{ vm.totalTokens }}</b>
+					{{ 'TABLE.ACTION_TOKENS_IN_PLAY' | translate }}
+				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE">
+					☀️
+					<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
+					{{ 'TABLE.CURRENT_DU' | translate }}
+				</div>
+			</div>
+
+			<div class="boardLayout flex-grow-1 mt-2">
+				<!-- ── Rules: vertical panel on the right ── -->
+				<div class="rulesPanel frame frame-light box-shadowed" [class.rulesCollapsed]="!rulesOpen">
+					<button class="panelHead" type="button" (click)="rulesOpen = !rulesOpen">
+						<span class="panelTitle contourText ombreText">
+							<span>{{ rulesOpen ? '▾ ' : '▸ ' }}</span>
+							{{ 'TABLE.RULES_AND_PARAMS' | translate }}
+						</span>
+					</button>
+					<div class="rulesGrid" *ngIf="rulesOpen">
+						<div class="ruleGroup">
+							<div class="ruleTitle">🎲 {{ 'TABLE.GAME' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.STATUS' | translate }}</span>
+								<b>{{ vm.gameState.status }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.ROUND' | translate }}</span>
+								<b>
+									{{ vm.rules.roundMax }} &middot; {{ vm.rules.roundMinutes }}
+									{{ 'TABLE.MIN' | translate }}
+								</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.AUTO_DEATH' | translate }}</span>
+								<b>
+									{{ (vm.rules.autoDeath ? 'TABLE.YES' : 'TABLE.NO') | translate }} &middot;
+									{{ vm.rules.deathPassTimer }} {{ 'TABLE.MIN' | translate }}
+								</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.SURVEY' | translate }}</span>
+								<b>{{ (vm.rules.surveyEnabled ? 'TABLE.ENABLED' : 'TABLE.DISABLED') | translate }}</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup">
+							<div class="ruleTitle">🀄 {{ 'TABLE.CARDS_AND_PRODUCTION' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.CARDS_TO_PRODUCE' | translate }}</span>
+								<b>{{ vm.rules.amountCardsForProd }} {{ 'TABLE.IDENTICAL' | translate }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.INITIAL_DISTRIBUTION' | translate }}</span>
+								<b>{{ vm.rules.distribInitCards }} {{ 'TABLE.CARDS' | translate }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LETTERS' | translate }}</span>
+								<b>
+									{{
+										vm.rules.generateLettersAuto
+											? ('TABLE.AUTO' | translate)
+											: vm.rules.generateLettersInDeck
+									}}
+									&middot; {{ vm.rules.generatedIdenticalLetters }}
+									{{ 'TABLE.IDENTICAL' | translate }}
+								</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup">
+							<div class="ruleTitle">💶 {{ 'TABLE.LEVEL_PRICES' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LEVEL' | translate }} 1</span>
+								<b>{{ vm.rules.priceWeight1 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LEVEL' | translate }} 2</span>
+								<b>{{ vm.rules.priceWeight2 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LEVEL' | translate }} 3</span>
+								<b>{{ vm.rules.priceWeight3 }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LEVEL' | translate }} 4</span>
+								<b>{{ vm.rules.priceWeight4 }}</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup">
+							<div class="ruleTitle">⚡ {{ 'TABLE.ACTIONS_COST' | translate }}</div>
+							<div class="ruleRow" *ngFor="let action of vm.rules.actions">
+								<ng-container *ngIf="action.enabled">
+									<span>{{ getActionIcon(action.key) }} {{ action.labelKey | translate }}</span>
+									<b>⚡ {{ action.cost }}</b>
+								</ng-container>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.STARTING_TOKENS' | translate }}</span>
+								<b>⚡ {{ vm.rules.startingTokens }}</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
+							<div class="ruleTitle">🏦 {{ 'TABLE.BANK_AND_CREDIT' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.DEFAULT_CREDIT' | translate }}</span>
+								<b>
+									{{ vm.rules.defaultCreditAmount }} + {{ vm.rules.defaultInterestAmount }}
+									{{ 'TABLE.INTEREST' | translate }}
+								</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.CREDIT_DURATION' | translate }}</span>
+								<b>{{ vm.rules.durationCredit }} {{ 'TABLE.MIN' | translate }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.PRISON' | translate }}</span>
+								<b>{{ vm.rules.timerPrison }} {{ 'TABLE.MIN' | translate }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.SEIZURE' | translate }}</span>
+								<b>
+									{{
+										vm.rules.seizureType === DECOTE
+											? ('TABLE.DECOTE' | translate)
+											: ('TABLE.FEES' | translate)
+									}}
+									{{
+										vm.rules.seizureType === DECOTE
+											? vm.rules.seizureDecote + '%'
+											: vm.rules.seizureCosts
+									}}
+								</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">
+							<div class="ruleTitle">📊 {{ 'TABLE.BANK_ACCOUNTS' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.MONETARY_MASS_LABEL' | translate }}</span>
+								<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.INTERESTS_EARNED' | translate }}</span>
+								<b>{{ vm.gameState.bankInterestEarned }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.GOODS_SEIZED_LABEL' | translate }}</span>
+								<b>{{ vm.gameState.bankGoodsEarned }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.MONEY_LOST' | translate }}</span>
+								<b>{{ vm.gameState.bankMoneyLost }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.MONEY_DESTROYED' | translate }}</span>
+								<b>{{ vm.gameState.bankMoneyDestroyed }}</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === JUNE">
+							<div class="ruleTitle">☀️ {{ 'TABLE.FREE_MONEY' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.CURRENT_DU' | translate }}</span>
+								<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.GROWTH_RATE' | translate }}</span>
+								<b>{{ vm.rules.tauxCroissance }} %</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.STARTING_COINS' | translate }}</span>
+								<b>{{ vm.rules.startAmountCoins }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.UNEQUAL_START' | translate }}</span>
+								<b>
+									{{ (vm.rules.inequalityStart ? 'TABLE.YES' : 'TABLE.NO') | translate }} &middot;
+									{{ vm.rules.pctPoor }}% / {{ vm.rules.pctRich }}%
+								</b>
+							</div>
+						</div>
+
+						<div class="ruleGroup">
+							<div class="ruleTitle">ℹ️ {{ 'TABLE.SESSION' | translate }}</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.NAME' | translate }}</span>
+								<b>{{ vm.session.name }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.ANIMATOR' | translate }}</span>
+								<b>{{ vm.session.animator }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.LOCATION' | translate }}</span>
+								<b>{{ vm.session.location }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'TABLE.CODE' | translate }}</span>
+								<b>{{ vm.session.shortId }}</b>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="gamePanel">
+					<div class="decksPanel frame frame-light box-shadowed">
+						<button class="panelHead" type="button" (click)="decksOpen = !decksOpen">
+							<span class="panelTitle contourText ombreText">
+								<span>
+									{{ decksOpen ? '▾ ' : '▸ ' }}
+								</span>
+								{{ 'TABLE.DECKS' | translate }}
+							</span>
+						</button>
+						<div class="decksRow" *ngIf="decksOpen">
+							<div *ngIf="vm.decks.length <= 0">
+								{{ 'TABLE.NO_DECKS' | translate }}
+							</div>
+							<div class="deckBlock" *ngFor="let deck of vm.decks; let i = index">
+								<div class="deckHead">
+									<div class="deckDot" [ngClass]="'lvl' + (i + 1)"></div>
+									<b>{{ 'TABLE.LEVEL' | translate }} {{ i + 1 }}</b>
+									<span class="muted">
+										&middot; {{ deck.length }} {{ 'TABLE.CARDS' | translate }}
+									</span>
+								</div>
+								<div class="deckCards">
+									<ng-container *ngFor="let card of deck; trackBy: trackByCard">
+										<app-card
+											*ngIf="card.displayed"
+											[card]="card"
+											[typeMoney]="''"
+											[height]="'43px'"
+											[width]="'26px'"
+											[priceSize]="'5px'"
+											[letterSize]="'10px'"
+											[amountCardsForProd]="100"
+											[flippable]="false"></app-card>
+									</ng-container>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- ── Bank frame: global bank interventions (debt game only) ── -->
+					<div class="bankPanel frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
+						<button class="panelHead" type="button" (click)="bankOpen = !bankOpen">
+							<span class="panelTitle contourText ombreText">
+								<span>{{ bankOpen ? '▾ ' : '▸ ' }}</span>
+								🏦 {{ 'MASTER.BANK_BTN' | translate }}
+							</span>
+						</button>
+						<div class="d-flex flex-row flex-wrap gap-2 mt-2">
+							<div
+								class="chip frame frame-light box-shadowed"
+								[class.good]="vm.avgCurrency >= 2"
+								[class.warn]="vm.avgCurrency < 2"
+								[class.danger]="vm.avgCurrency < 1">
+								⚖️
+								<b>{{ vm.avgCurrency | number: '1.2-2' }}</b>
+								{{ 'BANK.AVG_PLAYERS' | translate }}
+								<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate"></fa-icon>
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								📈
+								<b>{{ vm.totalDebt }}</b>
+								{{ 'BANK.CURRENT_DEBT' | translate }}
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								📜
+								<b>{{ vm.activeCreditsCount }}</b>
+								{{ 'TABLE.ACTIVE_CREDITS' | translate }}
+							</div>
+							<div class="chip frame frame-light box-shadowed">
+								🏦
+								<b>{{ vm.gameState.bankInterestEarned }}</b>
+								{{ 'TABLE.INTERESTS' | translate }} &middot; {{ vm.gameState.bankGoodsEarned }}
+								{{ 'TABLE.GOODS_SEIZED' | translate }}
+							</div>
+						</div>
+
+						<div class="bankActions" *ngIf="bankOpen">
+							<button class="box-shadowed" mat-raised-button color="accent" (click)="showContract()">
+								<mat-icon>paid</mat-icon>
+								{{ 'BANK.GIVE_CREDIT' | translate }}
+							</button>
+							<button class="box-shadowed" mat-raised-button color="primary" (click)="creditForAll()">
+								<mat-icon>groups</mat-icon>
+								{{ 'BANK.CREDIT_FOR_ALL' | translate }}
+							</button>
+							<button class="box-shadowed" mat-raised-button color="warn" (click)="freeMoney()">
+								<mat-icon>volunteer_activism</mat-icon>
+								{{ 'FREEMONEY.TITLE' | translate }}
+							</button>
+						</div>
+					</div>
+
+					<!-- ── Players: table / boards toggle ── -->
+					<div class="playersArea">
+						<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
+							<div class="viewToggle frame frame-light box-shadowed">
+								<button
+									type="button"
+									[class.active]="viewMode === 'table'"
+									(click)="setViewMode('table')">
+									🧮 {{ 'TABLE.TABLE_VIEW' | translate }}
+								</button>
+								<button
+									type="button"
+									[class.active]="viewMode === 'boards'"
+									(click)="setViewMode('boards')">
+									🎴 {{ 'TABLE.BOARDS_VIEW' | translate }}
+								</button>
+							</div>
+							<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refreshAllPlayers()">
+								🔄️ {{ 'TABLE.REFRESH_PLAYERS' | translate }}
+							</button>
+							<div class="sortBar frame frame-light box-shadowed" *ngIf="viewMode === 'boards'">
+								<span class="muted">{{ 'TABLE.SORT' | translate }}</span>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'coins'"
+									(click)="setSort('coins')">
+									💰 {{ 'TABLE.BALANCE' | translate }}
+								</button>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'cards'"
+									(click)="setSort('cards')">
+									🀄 {{ 'TABLE.CARDS' | translate }}
+								</button>
+								<button
+									class="sortBtn"
+									[class.active]="(sortBy$ | async) === 'name'"
+									(click)="setSort('name')">
+									🔠 {{ 'TABLE.NAME' | translate }}
+								</button>
+							</div>
+						</div>
+						<div class="mt-2">
+							<!-- Players table -->
+							<div class="playersTable frame frame-light box-shadowed" *ngIf="viewMode === 'table'">
+								<div class="tRow tHead">
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'name'"
+										(click)="setSort('name')">
+										{{ 'TABLE.PLAYER' | translate }} ({{ vm.alive.length }}
+										{{ 'TABLE.ALIVE' | translate }} &middot; {{ vm.dead.length }} 💀) ↕
+									</button>
+									<div class="text-center">⚡</div>
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'coins'"
+										(click)="setSort('coins')">
+										{{ 'TABLE.BALANCE' | translate }} ↕
+									</button>
+									<div>{{ 'TABLE.CREDITS' | translate }}</div>
+									<button
+										class="sortBtn"
+										[class.active]="(sortBy$ | async) === 'cards'"
+										(click)="setSort('cards')">
+										{{ 'TABLE.HAND' | translate }} ↕
+									</button>
+								</div>
+								<div
+									class="tRow"
+									*ngFor="let row of vm.rows; trackBy: trackByRow"
+									[class.lockedRow]="row.status === DEAD || row.status === PRISON">
+									<!-- Locked overlay (prison / dead): covers row content, avatar stays above -->
+									<div class="rowLock" *ngIf="row.status === DEAD || row.status === PRISON">
+										<ng-container *ngIf="row.status === DEAD">
+											💀 {{ 'TABLE.DECEASED' | translate }}
+										</ng-container>
+										<ng-container *ngIf="row.status === PRISON">
+											🚨 {{ 'TABLE.PRISON' | translate }}
+											<span class="lockProgress">
+												<span [style.width.%]="row.progressPrison"></span>
+											</span>
+											{{ row.progressPrison }}%
+										</ng-container>
+									</div>
+									<div class="cell-player">
+										<avatar
+											class="avatarTrigger"
+											[avatar]="row.avatar"
+											width="42px"
+											height="42px"
+											[namePosition]="'right'"
+											[onlineStatus]="true"
+											[connection]="row.connection || null"
+											[playerStatus]="row.status"
+											[matMenuTriggerFor]="playerMenu"
+											[matMenuTriggerData]="{ row: row }"></avatar>
+									</div>
+									<div>
+										<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
+											⚡{{ row.actionTokens }}
+										</div>
+									</div>
+									<div>
+										<div class="coins">
+											{{ row.coins | number: '1.2-2' }}
+											{{
+												vm.rules.typeMoney === JUNE
+													? ('CURRENCY.DU' | translate)
+													: ('CURRENCY.EURO' | translate)
+											}}
+										</div>
+										<div
+											class="debtLabel"
+											*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
+											{{ 'TABLE.DEBT' | translate }} {{ row.debt }}
+											{{ 'CURRENCY.EURO' | translate }}
+										</div>
+									</div>
+									<div class="cell-credits">
+										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
+											<app-credit-chip
+												*ngFor="let credit of row.credits; trackBy: trackByCredit"
+												[credit]="credit"
+												[duration]="vm.rules.durationCredit"
+												[contractor]="row.avatar"
+												(action)="onChipAction($event)"></app-credit-chip>
+										</ng-container>
+										<div
+											class="noChip"
+											*ngIf="
+												(vm.rules.typeMoney !== DEBT || row.credits.length === 0) &&
+												row.status !== PRISON
+											">
+											&mdash;
+										</div>
+									</div>
+									<div class="cell-cards">
+										<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+											<app-card
+												*ngIf="card.displayed"
+												[card]="card"
+												[typeMoney]="''"
+												[height]="'47px'"
+												[width]="'28px'"
+												[priceSize]="'5px'"
+												[letterSize]="'11px'"
+												[amountCardsForProd]="100"
+												[flippable]="false"></app-card>
+										</ng-container>
+										<div class="noChip" *ngIf="row.nbCards === 0">
+											{{ 'TABLE.NO_CARD' | translate }}
+										</div>
+										<div class="cardCount">({{ row.nbCards }})</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Players boards (player-board style cards) -->
+							<div class="boardsGrid" *ngIf="viewMode === 'boards'">
+								<div
+									class="playerBoardCard box-shadowed"
+									[ngClass]="row.avatar?.boardConf"
+									[ngStyle]="getBackgroundStyle(row.avatar!.boardConf, row.avatar!.boardColor)"
+									*ngFor="let row of vm.rows; trackBy: trackByRow"
+									[class.deadBoard]="row.status === DEAD">
+									<div class="pbHead">
+										<avatar
+											class="avatarTrigger"
+											[avatar]="row.avatar"
+											width="52px"
+											height="52px"
+											[namePosition]="'right'"
+											[onlineStatus]="true"
+											[connection]="row.connection || null"
+											[playerStatus]="row.status"
+											[matMenuTriggerFor]="playerMenu"
+											[matMenuTriggerData]="{ row: row }"></avatar>
+										<div class="pbRight">
+											<div class="pbCoins white contourText">
+												{{ row.coins | number: '1.2-2' }}
+												{{
+													vm.rules.typeMoney === JUNE
+														? ('CURRENCY.DU' | translate)
+														: ('CURRENCY.EURO' | translate)
+												}}
+											</div>
+											<div class="tokenPill" [title]="'TABLE.ACTION_TOKENS' | translate">
+												⚡{{ row.actionTokens }}
+											</div>
+										</div>
+									</div>
+									<div class="pbChips">
+										<div
+											class="creditChip debtChip"
+											*ngIf="vm.rules.typeMoney === DEBT && row.debt > 0 && row.status !== DEAD">
+											{{ 'TABLE.DEBT' | translate }} {{ row.debt }}
+											{{ 'CURRENCY.EURO' | translate }}
+										</div>
+										<ng-container *ngIf="vm.rules.typeMoney === DEBT && row.status !== DEAD">
+											<app-credit-chip
+												*ngFor="let credit of row.credits; trackBy: trackByCredit"
+												[credit]="credit"
+												[duration]="vm.rules.durationCredit"
+												[contractor]="row.avatar"
+												(action)="onChipAction($event)"></app-credit-chip>
+										</ng-container>
+									</div>
+									<div class="pbHand">
+										<ng-container *ngFor="let card of row.dedupedCards; trackBy: trackByCard">
+											<app-card
+												*ngIf="card.displayed"
+												[card]="card"
+												[typeMoney]="''"
+												[height]="'63px'"
+												[width]="'38px'"
+												[priceSize]="'6px'"
+												[letterSize]="'14px'"
+												[amountCardsForProd]="100"
+												[flippable]="false"></app-card>
+										</ng-container>
+										<div class="noChip whiteNote" *ngIf="row.nbCards === 0">
+											{{ 'TABLE.NO_CARD_IN_HAND' | translate }}
+										</div>
+									</div>
+									<div class="pbLock" *ngIf="row.status === DEAD">
+										<div class="pbLockIcon">💀</div>
+										<div>{{ 'TABLE.DECEASED' | translate }}</div>
+									</div>
+									<div class="pbLock prison" *ngIf="row.status === PRISON">
+										<div class="pbPrisonLabel">
+											{{ 'TABLE.PRISON' | translate }} {{ row.progressPrison }}%
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Shared per-player action menu (avatar trigger, both layouts) -->
+	<mat-menu #playerMenu="matMenu">
+		<ng-template matMenuContent let-row="row">
+			<button mat-menu-item (click)="playUser(row)">
+				<mat-icon>play_arrow</mat-icon>
+				<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="copyPlayerLink(row)">
+				<mat-icon>link</mat-icon>
+				<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="reJoin(row)">
+				<mat-icon>qr_code_2</mat-icon>
+				<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="copyAvatarCode(vm.session.shortId, row)">
+				<mat-icon>pin</mat-icon>
+				<span>
+					{{ 'TABLE.AVATAR_CODE' | translate }} :
+					<b>{{ vm.session.shortId }}-{{ row.avatarIdx }}</b>
+				</span>
+			</button>
+			<button mat-menu-item (click)="refreshPlayer(row)">
+				<mat-icon>refresh</mat-icon>
+				<span>{{ 'TABLE.REFRESH_PLAYER' | translate }}</span>
+			</button>
+			<ng-container *ngIf="vm.rules.typeMoney === DEBT">
+				<button mat-menu-item (click)="showContract(row)" [disabled]="row.status !== ALIVE">
+					<mat-icon>paid</mat-icon>
+					<span>{{ 'BANK.GIVE_CREDIT' | translate }}</span>
+				</button>
+				<button mat-menu-item (click)="freeMoney(row)" [disabled]="row.status !== ALIVE">
+					<mat-icon>volunteer_activism</mat-icon>
+					<span>{{ 'FREEMONEY.TITLE' | translate }}</span>
+				</button>
+				<button mat-menu-item (click)="breakFree(row.idx)" [disabled]="row.status !== PRISON">
+					<mat-icon>lock_open</mat-icon>
+					<span>{{ 'BANK.BREAK_FREE' | translate }}</span>
+				</button>
+			</ng-container>
+			<button mat-menu-item (click)="killPlayer(row)" [disabled]="row.status === DEAD">
+				<mat-icon color="warn">person_remove</mat-icon>
+				<span>{{ 'MASTER.KILL_USER' | translate }}</span>
+			</button>
+		</ng-template>
+	</mat-menu>
+
+	<!-- Death queue popover: planned death order (next-to-die first) -->
+	<mat-menu #deathQueueMenu="matMenu" class="deathQueuePanel">
+		<div class="deathQueueHead" (click)="$event.stopPropagation()">💀 {{ 'TABLE.DEATH_ORDER' | translate }}</div>
+		<div class="deathQueueList" (click)="$event.stopPropagation()">
+			<div
+				class="deathQueueItem d-flex align-items-center"
+				*ngFor="let r of vm.deathQueueRows; let i = index"
+				[class.next]="i === 0">
+				<span class="pos ms-1">{{ i + 1 }}</span>
+				<avatar class="qAvatar ms-1" [avatar]="r.avatar" width="34px" height="34px"></avatar>
+				<span class="qName ms-1">{{ r.avatar?.name }}</span>
+				<span class="qNext ms-1" *ngIf="i === 0 && vm.nextDeathLabel">⏳ {{ vm.nextDeathLabel }}</span>
+			</div>
+		</div>
+	</mat-menu>
+</ng-container>
