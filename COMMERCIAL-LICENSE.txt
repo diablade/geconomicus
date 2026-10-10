@@ -24,6 +24,6 @@ contact@geconomicus.fr
 
 ---
 
-Copyright (c) [année] [ton nom ou entité]
+Copyright (c) 2026 Markovic Nicolas
 
 All rights reserved.
