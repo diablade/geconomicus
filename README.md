@@ -1,4 +1,6 @@
-# geconomicus
+# <img src="front/src/assets/images/guny.png" width="50" alt="Description"> <img src="front/src/assets/images/geconomicus.png" width="200" alt="Description">
+
+
 play game geconomicus
 
 to launch it (in dev env)
@@ -8,15 +10,16 @@ start your mongodb service first
 - mongod
 
 start backend api
-- npm startMon
+- npm install
+- npm run start
 
 start front
-- npm start
+- npm install
+- npm run start
 
 player view :
 
-<img src="https://github.com/diablade/geconomicus/assets/3831334/57e6efd1-554e-43a2-aeff-9c8047b99dc8" width="200" />
-
+<img src="demo.png" width="250" alt="Description">
 
 ## 📜 License
 This project is available under a dual-license model:
