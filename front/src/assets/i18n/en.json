@@ -1,249 +1,249 @@
 {
-	"HELLO": "Hello!",
-	"WELCOME": "Welcome!",
-	"ANIMATOR": "Animator",
-	"LOCATION": "Place",
-	"FREE_MONEY": "Free currency",
-	"DEBT_MONEY": "Debt currency",
-	"GAME_NOTICE": "Game notice",
-	"BY_DEFAULT": "by default",
-	"PUBLIC_KEY": "Public key:",
-	"LAST_SEEN": "Last seen: {{lastSeen}}",
-	"VALUES_BY_DEFAULT": "Default values",
-	"BACK_TO_LOBBY": "Back to the waiting room",
-	"CANCEL": "Cancel",
-	"CLOSE": "Close",
-	"REFRESH": "Refresh",
-	"FULLSCREEN": "Fullscreen",
-	"FULLSCREEN_EXIT": "Exit fullscreen",
-	"OK": "OK",
-	"ALL": "All",
-	"SAVE": "Save",
-	"DELETE": "Delete",
-	"GAME": {
-		"OPEN": "Open to join",
-		"PLAYING": "In progress",
-		"END_GAME": "Game ended",
-		"STOP_ROUND": "Round ended",
-		"PAUSED": "Game paused",
-		"STARTED": "Game started",
-		"RESUMED": "Game resumed"
-	},
-	"CARD": {
-		"LV1": "Food",
-		"LV2": "Culture and knowledge",
-		"LV3": "Energy",
-		"LV4": "Technology",
-		"BUILD_UP_0": "Create a knowledge card",
-		"BUILD_UP_1": "Create an Energy card",
-		"BUILD_UP_2": "Create a Technology card",
-		"BUILD_UP": "Create a superior card",
-		"IN_DECK": "the card <b>({{cardName}})</b> is in the <b>deck</b>",
-		"IN_PLAYER": "the card <b>({{cardName}})</b> is held by player <b>{{player}}</b>"
-	},
-	"THEME": {
-		"TITLE": "Theme",
-		"CLASSIC": "Classic cards",
-		"EMOJIS": "Emoji items",
-		"TWEMOJIS": "Uniform items"
-	},
-	"EVENTS": {
-		"GAME_ENDED": "Game over",
-		"GAME_ENDED_MESSAGE": "The game is over. Thanks for playing!",
-		"SURVEY_MESSAGE": "You are going to be redirected to a survey to capture your immediate impressions of this game. Please take 5 minutes to answer it!",
-		"ROUND_END": "Round ended",
-		"PRISON_ENDED": "A prisoner has just served their sentence",
-		"BREAK_FREE": "I want to break FREE!",
-		"DEATH_PASS": "Death has just passed 😈",
-		"NEED_DEATH_PASS": "Death needs to pass 😈! (It's your turn)",
-		"ASK_END_ROUND": "The round isn't over, are you sure you want to end the round?",
-		"SHORT_CODE_SEND": "Code sent",
-		"COPY_SUCCESS": "Copied!"
-	},
-	"GO_NEW_LIFE": "Ğo for my new life!",
-	"REINCARNATED": "Hey! You have been reincarnated!",
-	"DIALOG": {
-		"CLOSE": "Close",
-		"YES": "Yes",
-		"NO": "No",
-		"CANCEL": "Cancel",
-		"CONTINUE_SESSION": "Resume your session",
-		"ACTIVE_SESSION": "You have a session in progress:",
-		"DISMISS": "Dismiss",
-		"RESUME": "Continue",
-		"INFORMATION": {
-			"TITLE": "Information!"
-		},
-		"CONFIRM": {
-			"TITLE": "Confirm?",
-			"MESSAGE": "Are you sure?"
-		},
-		"CREATE_GAME": {
-			"TITLE": "Create a game",
-			"FIELD1": "Name the game",
-			"FIELD2": "Animator name",
-			"FIELD3": "Location",
-			"BTN1": "Yes",
-			"BTN2": "Cancel"
-		},
-		"INSTALL": {
-			"MESSAGE1": "Use Safari, Open Safari's share menu with the button",
-			"MESSAGE2": "then choose \"Add to Home Screen\""
-		},
-		"SHORT_CODE": {
-			"PLACEHOLDER": "Enter the code...",
-			"BUY": "Buy"
-		},
-		"QR_SCAN": {
-			"TITLE": "Scan QR Code",
-			"CAMERA": "Camera",
-			"SELECT_DEVICE": "Select camera"
-		},
-		"SEIZURE": {
-			"TITLE": "Payment default - seize assets",
-			"SOLD": "Balance: {{amount}}",
-			"SEIZE": "Seize",
-			"TO_SEIZE": "To seize: {{seized}} / {{objective}}",
-			"FEES": "Additional fees {{num}}",
-			"DECOTE": "{{num}}% discount on cards",
-			"DROP_ZONE": "Move cards \n to seize here",
-			"PROGRESS": "Progress",
-			"TOOLTIP_PRISON_INFO": "If objective is met, 0 minutes, prison is only if player has no more cards, (min 1min), If the shortfall is significant, the sanction must be great (max {{max}} min).",
-			"PRISON_DECISION": "Duration for prison:",
-			"MINUTES": "minute(s)",
-			"VALIDATE": "Validate seizure",
-			"SUCCESS": "Seizure completed!"
-		}
-	},
-	"RESSOURCES": {
-		"LEARN_FORWARD": "Learn more with",
-		"TITLE": "Pedagogical modules",
-		"BUTTON": "Pedagogical modules"
-	},
-	"ERROR": {
-		"SESSION_ALREADY_STARTED": "The session has already started; you can no longer create an avatar.",
-		"GENERIC": "Something bad happened; please try again later.",
-		"UNKNOWN": "An unexpected error occurred",
-		"DISTRIBUTE_CARDS": "Card distribution failed",
-		"GAME_NOT_FOUND": "Game not found",
-		"SESSION_NOT_FOUND": "Session not found",
-		"GAME_ALREADY_LAUNCHED": "The game is already open, players can join it.",
-		"DELETE_AVATAR": "Avatar deletion error.",
-		"IN_PROGRESS": "already in progress",
-		"CARDS_NOT_UNIQUE": "Cards not unique",
-		"NOT_ENOUGH_CARDS": "Not enough cards",
-		"NOT_ENOUGH_CARDS_IN_DECK": "Not enough cards in the deck",
-		"NOT_ENOUGH_MONEY": "Insufficient funds.",
-		"JOIN_REINCARNATE": "impossible to join",
-		"REINCARNATE": "impossible to reincarnate",
-		"JOIN": "impossible to join",
-		"CREATE": "creation impossible",
-		"GAME_UNAVAILABLE": "game unavailable",
-		"PLAYER_NOT_FOUND": "player non-existent",
-		"UPDATE": "modification impossible",
-		"EXCHANGE": "exchange impossible",
-		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Trade impossible with a dead or imprisoned player",
-		"ID_PLAYER_MISSING": "Player ID missing",
-		"INSUFFICIENT_FUNDS": "Insufficient funds",
-		"DELETE": "deletion impossible",
-		"START_GAME": "start game impossible",
-		"RESET_GAME": "reset game impossible",
-		"START_ROUND": "start round impossible",
-		"STOP_ROUND": "stop round impossible",
-		"INTER_ROUND": "inter round impossible",
-		"END_GAME": "stop game impossible",
-		"KILL": "kill impossible",
-		"SAVE_OPTIONS": "Options save impossible",
-		"FEEDBACKS_UNAVAILABLE": "feedbacks unavailable",
-		"SEND_SURVEY": "Survey send impossible",
-		"CREATE_CREDIT": "credit creation impossible",
-		"GET_CREDITS": "credit recovery impossible",
-		"REPAY_CREDIT": "credit repayment impossible",
-		"PAY_INTEREST": "interest payment impossible",
-		"SEIZURE": "Asset seizure impossible",
-		"BREAK_PRISON": "I can't break prison :/",
-		"LOCK_DOWN_PLAYER": "Could not send the player to prison",
-		"DELETE_GAME": "Deletion impossible",
-		"CONNECTION_EXPIRED": "Connection has expired. Automatically reloading the page...",
-		"IO_SOCKET_ERROR": "An error occurred, please try again later.",
-		"FINDING_CARD": "Card not found",
-		"GAME_STATE_OVER": "Game over",
-		"NOT_FOUND": "Not found",
-		"GET_ALL": "Could not load the sessions",
-		"GET_BY_ID": "Could not load the session",
-		"GET_BY_SHORT_ID": "No session for this code",
-		"START": "Could not start the session",
-		"SESSION_REMOVE_BY_ID": "Could not delete the session",
-		"KILL_GAME": "Could not delete the game",
-		"DEFAULT": "Could not restore the default values",
-		"GET_BY_IDX": "Could not load the rules",
-		"REMOVE_BY_IDX": "Could not delete the rules",
-		"ALLOW_AVATAR_EDIT_SURVEY": "Could not reopen the survey for this avatar",
-		"FINDING_INGREDIENT": "Ingredient not found",
-		"REFRESH": "Could not refresh the game"
-	},
-	"SOCKET": {
-		"KICKED": {
-			"TITLE": "Connection interrupted ⚠️",
-			"ANOTHER_CONNECTION": "Your seat was taken over from another device.",
-			"KICKED_BY_ANIMATOR": "The animator disconnected you. Join the game again to come back.",
-			"RETAKEN": "The player reclaimed their seat.",
-			"GENERIC": "Your connection was replaced."
-		},
-		"OFFLINE": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Waiting for reconnection..."
-		},
-		"DISCONNECTED": {
-			"TITLE": "Disconnected ⚠️",
-			"MESSAGE": "Reconnection attempts failed",
-			"REFRESH": "Refresh",
-			"TIMER": "8"
-		},
-		"RECONNECTING": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Reconnecting..."
-		},
-		"CONNECTED": "✅ You are connected.",
-		"RECONNECTED": "✅ You are reconnected.",
-		"TIMEOUT": "connection timeout..."
-	},
-	"CURRENCY": {
-		"EURO": "€",
-		"JUNE": "Ğ1",
-		"DU": "U.D"
-	},
-	"DATE_FORMAT": {
-		"DATETIME": "dd-MM-YYYY at HH:mm"
-	},
-	"CONTRIBUTION": {
-		"TITLE": "Contributions",
-		"SUBTITLE": "A big THANKS ❤️ to the following people for their contributions, supporters, advice, ideas, spelling corrections, translations, etc.."
-	},
-	"TASK": {
-		"MASTER_TASK": "Master task",
-		"UNSELECT_ALL": "Unselect all",
-		"TITLE": "List of master tasks",
-		"PREPARE": "Choose game options",
-		"PRESENT_YOURSELF": "Present yourself",
-		"PRESENT_ML": "Present the game objective (2 currencies, 2 different game results)",
-		"SOUND": "Ask players to turn on the sound on their phone for better immersion",
-		"DELAY": "Explain the delays for each of the two rounds",
-		"SQUARES": "create value by gathering identical cards through transactions",
-		"TRANSACTIONS": "Explain how to make purchases (camera or digicode) and play a fake game for a maximum of 5 minutes (use experimental mode to have the reset button)",
-		"DEATH": "explain the death (who falls arbitrarily) and immediate reincarnation",
-		"START_1": "Start once all players have joined the game, start the round when they have received the cards",
-		"SURVEY_1": "End of the round, collect feelings by a phone survey",
-		"NEXT_MONEY": "Start the round in the other currency",
-		"START_2": "Start once all players have joined the game, start the round when they have received the cards",
-		"SURVEY_2": "End of the round, collect feelings by a phone survey",
-		"RESULTS": "End of the game, reveal the results and compare the two rounds"
-	},
-	"MODULE": {
-		"BACK_HOME": "Back to home"
-	},
-	"PWA": {
-		"NEW_VERSION": "New version available, restarting...",
-		"UNRECOVERABLE": "An error occurred, the application must be reloaded"
-	}
+    "HELLO": "Hello!",
+    "WELCOME": "Welcome!",
+    "ANIMATOR": "Animator",
+    "LOCATION": "Place",
+    "FREE_MONEY": "Free currency",
+    "DEBT_MONEY": "Debt currency",
+    "GAME_NOTICE": "Game notice",
+    "BY_DEFAULT": "by default",
+    "PUBLIC_KEY": "Public key:",
+    "LAST_SEEN": "Last seen: {{lastSeen}}",
+    "VALUES_BY_DEFAULT": "Default values",
+    "BACK_TO_LOBBY": "Back to the waiting room",
+    "CANCEL": "Cancel",
+    "CLOSE": "Close",
+    "REFRESH": "Refresh",
+    "FULLSCREEN": "Fullscreen",
+    "FULLSCREEN_EXIT": "Exit fullscreen",
+    "OK": "OK",
+    "ALL": "All",
+    "SAVE": "Save",
+    "DELETE": "Delete",
+    "GAME": {
+        "OPEN": "Open to join",
+        "PLAYING": "In progress",
+        "END_GAME": "Game ended",
+        "STOP_ROUND": "Round ended",
+        "PAUSED": "Game paused",
+        "STARTED": "Game started",
+        "RESUMED": "Game resumed"
+    },
+    "CARD": {
+        "LV1": "Food",
+        "LV2": "Culture and knowledge",
+        "LV3": "Energy",
+        "LV4": "Technology",
+        "BUILD_UP_0": "Create a knowledge card",
+        "BUILD_UP_1": "Create an Energy card",
+        "BUILD_UP_2": "Create a Technology card",
+        "BUILD_UP": "Create a superior card",
+        "IN_DECK": "the card <b>({{cardName}})</b> is in the <b>deck</b>",
+        "IN_PLAYER": "the card <b>({{cardName}})</b> is held by player <b>{{player}}</b>"
+    },
+    "THEME": {
+        "TITLE": "Theme",
+        "CLASSIC": "Classic cards",
+        "EMOJIS": "Emoji items",
+        "TWEMOJIS": "Uniform items"
+    },
+    "EVENTS": {
+        "GAME_ENDED": "Game over",
+        "GAME_ENDED_MESSAGE": "The game is over. Thanks for playing!",
+        "SURVEY_MESSAGE": "You are going to be redirected to a survey to capture your immediate impressions of this game. Please take 5 minutes to answer it!",
+        "ROUND_END": "Round ended",
+        "PRISON_ENDED": "A prisoner has just served their sentence",
+        "BREAK_FREE": "I want to break FREE!",
+        "DEATH_PASS": "Death has just passed 😈",
+        "NEED_DEATH_PASS": "Death needs to pass 😈! (It's your turn)",
+        "ASK_END_ROUND": "The round isn't over, are you sure you want to end the round?",
+        "SHORT_CODE_SEND": "Code sent",
+        "COPY_SUCCESS": "Copied!"
+    },
+    "GO_NEW_LIFE": "Ğo for my new life!",
+    "REINCARNATED": "Hey! You have been reincarnated!",
+    "DIALOG": {
+        "CLOSE": "Close",
+        "YES": "Yes",
+        "NO": "No",
+        "CANCEL": "Cancel",
+        "CONTINUE_SESSION": "Resume your session",
+        "ACTIVE_SESSION": "You have a session in progress:",
+        "DISMISS": "Dismiss",
+        "RESUME": "Continue",
+        "INFORMATION": {
+            "TITLE": "Information!"
+        },
+        "CONFIRM": {
+            "TITLE": "Confirm?",
+            "MESSAGE": "Are you sure?"
+        },
+        "CREATE_GAME": {
+            "TITLE": "Create a game",
+            "FIELD1": "Name the game",
+            "FIELD2": "Animator name",
+            "FIELD3": "Location",
+            "BTN1": "Yes",
+            "BTN2": "Cancel"
+        },
+        "INSTALL": {
+            "MESSAGE1": "Use Safari, Open Safari's share menu with the button",
+            "MESSAGE2": "then choose \"Add to Home Screen\""
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "Enter the code...",
+            "BUY": "Buy"
+        },
+        "QR_SCAN": {
+            "TITLE": "Scan QR Code",
+            "CAMERA": "Camera",
+            "SELECT_DEVICE": "Select camera"
+        },
+        "SEIZURE": {
+            "TITLE": "Payment default - seize assets",
+            "SOLD": "Balance: {{amount}}",
+            "SEIZE": "Seize",
+            "TO_SEIZE": "To seize: {{seized}} / {{objective}}",
+            "FEES": "Additional fees {{num}}",
+            "DECOTE": "{{num}}% discount on cards",
+            "DROP_ZONE": "Move cards \n to seize here",
+            "PROGRESS": "Progress",
+            "TOOLTIP_PRISON_INFO": "If objective is met, 0 minutes, prison is only if player has no more cards, (min 1min), If the shortfall is significant, the sanction must be great (max {{max}} min).",
+            "PRISON_DECISION": "Duration for prison:",
+            "MINUTES": "minute(s)",
+            "VALIDATE": "Validate seizure",
+            "SUCCESS": "Seizure completed!"
+        }
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Learn more with",
+        "TITLE": "Pedagogical modules",
+        "BUTTON": "Pedagogical modules"
+    },
+    "ERROR": {
+        "SESSION_ALREADY_STARTED": "The session has already started; you can no longer create an avatar.",
+        "GENERIC": "Something bad happened; please try again later.",
+        "UNKNOWN": "An unexpected error occurred",
+        "DISTRIBUTE_CARDS": "Card distribution failed",
+        "GAME_NOT_FOUND": "Game not found",
+        "SESSION_NOT_FOUND": "Session not found",
+        "GAME_ALREADY_LAUNCHED": "The game is already open, players can join it.",
+        "DELETE_AVATAR": "Avatar deletion error.",
+        "IN_PROGRESS": "already in progress",
+        "CARDS_NOT_UNIQUE": "Cards not unique",
+        "NOT_ENOUGH_CARDS": "Not enough cards",
+        "NOT_ENOUGH_CARDS_IN_DECK": "Not enough cards in the deck",
+        "NOT_ENOUGH_MONEY": "Insufficient funds.",
+        "JOIN_REINCARNATE": "impossible to join",
+        "REINCARNATE": "impossible to reincarnate",
+        "JOIN": "impossible to join",
+        "CREATE": "creation impossible",
+        "GAME_UNAVAILABLE": "game unavailable",
+        "PLAYER_NOT_FOUND": "player non-existent",
+        "UPDATE": "modification impossible",
+        "EXCHANGE": "exchange impossible",
+        "TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Trade impossible with a dead or imprisoned player",
+        "ID_PLAYER_MISSING": "Player ID missing",
+        "INSUFFICIENT_FUNDS": "Insufficient funds",
+        "DELETE": "deletion impossible",
+        "START_GAME": "start game impossible",
+        "RESET_GAME": "reset game impossible",
+        "START_ROUND": "start round impossible",
+        "STOP_ROUND": "stop round impossible",
+        "INTER_ROUND": "inter round impossible",
+        "END_GAME": "stop game impossible",
+        "KILL": "kill impossible",
+        "SAVE_OPTIONS": "Options save impossible",
+        "FEEDBACKS_UNAVAILABLE": "feedbacks unavailable",
+        "SEND_SURVEY": "Survey send impossible",
+        "CREATE_CREDIT": "credit creation impossible",
+        "GET_CREDITS": "credit recovery impossible",
+        "REPAY_CREDIT": "credit repayment impossible",
+        "PAY_INTEREST": "interest payment impossible",
+        "SEIZURE": "Asset seizure impossible",
+        "BREAK_PRISON": "I can't break prison :/",
+        "LOCK_DOWN_PLAYER": "Could not send the player to prison",
+        "DELETE_GAME": "Deletion impossible",
+        "CONNECTION_EXPIRED": "Connection has expired. Automatically reloading the page...",
+        "IO_SOCKET_ERROR": "An error occurred, please try again later.",
+        "FINDING_CARD": "Card not found",
+        "GAME_STATE_OVER": "Game over",
+        "NOT_FOUND": "Not found",
+        "GET_ALL": "Could not load the sessions",
+        "GET_BY_ID": "Could not load the session",
+        "GET_BY_SHORT_ID": "No session for this code",
+        "START": "Could not start the session",
+        "SESSION_REMOVE_BY_ID": "Could not delete the session",
+        "KILL_GAME": "Could not delete the game",
+        "DEFAULT": "Could not restore the default values",
+        "GET_BY_IDX": "Could not load the rules",
+        "REMOVE_BY_IDX": "Could not delete the rules",
+        "ALLOW_AVATAR_EDIT_SURVEY": "Could not reopen the survey for this avatar",
+        "FINDING_INGREDIENT": "Ingredient not found",
+        "REFRESH": "Could not refresh the game"
+    },
+    "SOCKET": {
+        "KICKED": {
+            "TITLE": "Connection interrupted ⚠️",
+            "ANOTHER_CONNECTION": "Your seat was taken over from another device.",
+            "KICKED_BY_ANIMATOR": "The animator disconnected you. Join the game again to come back.",
+            "RETAKEN": "The player reclaimed their seat.",
+            "GENERIC": "Your connection was replaced."
+        },
+        "OFFLINE": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Waiting for reconnection..."
+        },
+        "DISCONNECTED": {
+            "TITLE": "Disconnected ⚠️",
+            "MESSAGE": "Reconnection attempts failed",
+            "REFRESH": "Refresh",
+            "TIMER": "8"
+        },
+        "RECONNECTING": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Reconnecting..."
+        },
+        "CONNECTED": "✅ You are connected.",
+        "RECONNECTED": "✅ You are reconnected.",
+        "TIMEOUT": "connection timeout..."
+    },
+    "CURRENCY": {
+        "EURO": "€",
+        "JUNE": "Ğ1",
+        "DU": "U.D"
+    },
+    "DATE_FORMAT": {
+        "DATETIME": "dd-MM-YYYY at HH:mm"
+    },
+    "CONTRIBUTION": {
+        "TITLE": "Contributions",
+        "SUBTITLE": "A big THANKS ❤️ to the following people for their contributions, supporters, advice, ideas, spelling corrections, translations, etc.."
+    },
+    "TASK": {
+        "MASTER_TASK": "Master task",
+        "UNSELECT_ALL": "Unselect all",
+        "TITLE": "List of master tasks",
+        "PREPARE": "Choose game options",
+        "PRESENT_YOURSELF": "Present yourself",
+        "PRESENT_ML": "Present the game objective (2 currencies, 2 different game results)",
+        "SOUND": "Ask players to turn on the sound on their phone for better immersion",
+        "DELAY": "Explain the delays for each of the two rounds",
+        "SQUARES": "create value by gathering identical cards through transactions",
+        "TRANSACTIONS": "Explain how to make purchases (camera or digicode) and play a fake game for a maximum of 5 minutes (use experimental mode to have the reset button)",
+        "DEATH": "explain the death (who falls arbitrarily) and immediate reincarnation",
+        "START_1": "Start once all players have joined the game, start the round when they have received the cards",
+        "SURVEY_1": "End of the round, collect feelings by a phone survey",
+        "NEXT_MONEY": "Start the round in the other currency",
+        "START_2": "Start once all players have joined the game, start the round when they have received the cards",
+        "SURVEY_2": "End of the round, collect feelings by a phone survey",
+        "RESULTS": "End of the game, reveal the results and compare the two rounds"
+    },
+    "MODULE": {
+        "BACK_HOME": "Back to home"
+    },
+    "PWA": {
+        "NEW_VERSION": "New version available, restarting...",
+        "UNRECOVERABLE": "An error occurred, the application must be reloaded"
+    }
 }
