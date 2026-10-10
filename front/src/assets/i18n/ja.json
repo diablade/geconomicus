@@ -1,249 +1,249 @@
 {
-	"HELLO": "こんにちは！",
-	"WELCOME": "ようこそ！",
-	"ANIMATOR": "アニメーター",
-	"LOCATION": "場所",
-	"FREE_MONEY": "自由な通貨",
-	"DEBT_MONEY": "借金通貨",
-	"GAME_NOTICE": "ゲームのお知らせ",
-	"BY_DEFAULT": "デフォルトで",
-	"PUBLIC_KEY": "公開鍵",
-	"LAST_SEEN": "最終接続：{{lastSeen}}",
-	"VALUES_BY_DEFAULT": "デフォルト値",
-	"BACK_TO_LOBBY": "待機ルームに戻る",
-	"CANCEL": "キャンセル",
-	"CLOSE": "閉じる",
-	"REFRESH": "更新",
-	"FULLSCREEN": "全画面表示",
-	"FULLSCREEN_EXIT": "全画面表示を終了",
-	"OK": "OK",
-	"ALL": "すべて",
-	"SAVE": "保存",
-	"DELETE": "削除",
-	"GAME": {
-		"OPEN": "参加可能",
-		"PLAYING": "進行中",
-		"END_GAME": "ゲーム終了",
-		"STOP_ROUND": "ラウンド終了",
-		"PAUSED": "ゲーム一時停止中",
-		"STARTED": "ゲーム開始",
-		"RESUMED": "ゲーム再開"
-	},
-	"CARD": {
-		"LV1": "食料",
-		"LV2": "文化と知識",
-		"LV3": "エネルギー",
-		"LV4": "技術",
-		"BUILD_UP_0": "知識カードを作成",
-		"BUILD_UP_1": "エネルギーカードを作成",
-		"BUILD_UP_2": "技術カードを作成",
-		"BUILD_UP": "上位カードを作成",
-		"IN_DECK": "カード <b>({{cardName}})</b> は<b>デッキ</b>にあります",
-		"IN_PLAYER": "カード <b>({{cardName}})</b> はプレイヤー <b>{{player}}</b> が持っています"
-	},
-	"THEME": {
-		"TITLE": "テーマ",
-		"CLASSIC": "クラシックカード",
-		"EMOJIS": "絵文字アイテム",
-		"TWEMOJIS": "統一アイテム"
-	},
-	"EVENTS": {
-		"GAME_ENDED": "ゲーム終了",
-		"GAME_ENDED_MESSAGE": "ゲームが終了しました。遊んでいただきありがとうございました！",
-		"SURVEY_MESSAGE": "このゲームについての率直な感想をうかがうアンケートに移動します。5分ほどお時間をいただき、ご回答ください！",
-		"ROUND_END": "ラウンドが終了しました",
-		"PRISON_ENDED": "刑務所の刑が終わりました",
-		"BREAK_FREE": "解放したい",
-		"DEATH_PASS": "死が過ぎました 😈",
-		"NEED_DEATH_PASS": "死が過ぎるまで待ってください ��! (あなたの番です)",
-		"ASK_END_ROUND": "ラウンドが終わっていないようです。ラウンドを終わらせますか？",
-		"SHORT_CODE_SEND": "短いコードを送信",
-		"COPY_SUCCESS": "コピーしました！"
-	},
-	"GO_NEW_LIFE": "新しい人生へĞo！",
-	"REINCARNATED": "おかえり！あなたは生まれ変わりました！",
-	"DIALOG": {
-		"CLOSE": "閉じる",
-		"YES": "はい",
-		"NO": "いいえ",
-		"CANCEL": "キャンセル",
-		"CONTINUE_SESSION": "セッションを再開する",
-		"ACTIVE_SESSION": "進行中のセッションがあります：",
-		"DISMISS": "閉じる",
-		"RESUME": "続ける",
-		"INFORMATION": {
-			"TITLE": "情報！"
-		},
-		"CONFIRM": {
-			"TITLE": "確認しますか？",
-			"MESSAGE": "本当にそうですか？"
-		},
-		"CREATE_GAME": {
-			"TITLE": "ゲームを作成",
-			"FIELD1": "ゲームの名前",
-			"FIELD2": "アニメーターの名前",
-			"FIELD3": "ロケーション",
-			"BTN1": "はい",
-			"BTN2": "キャンセル"
-		},
-		"INSTALL": {
-			"MESSAGE1": "Safariを使用し、ボタンでSafariの共有メニューを開きます。",
-			"MESSAGE2": "次に「ホーム画面に追加」を選択します。"
-		},
-		"SHORT_CODE": {
-			"PLACEHOLDER": "コードを入力...",
-			"BUY": "購入"
-		},
-		"QR_SCAN": {
-			"TITLE": "QRコードをスキャン",
-			"CAMERA": "カメラ",
-			"SELECT_DEVICE": "カメラを選択"
-		},
-		"SEIZURE": {
-			"TITLE": "支払い不履行 - 資産を差し押さえ",
-			"SOLD": "残高：{{amount}}",
-			"SEIZE": "差し押さえ",
-			"TO_SEIZE": "差し押さえる：{{seized}} / {{objective}}",
-			"FEES": "追加手数料{{num}}",
-			"DECOTE": "カードの{{num}}%割引",
-			"DROP_ZONE": "ここにカードを移動して差し押さえます",
-			"PROGRESS": "進捗",
-			"TOOLTIP_PRISON_INFO": "目標が達成された場合、0分、プレイヤーがカードを持っていない場合のみ刑務所に入れられます（最小1分）。不足が重大な場合、制裁は大きくなければなりません（最大{{max}}分）。",
-			"PRISON_DECISION": "刑務所の期間：",
-			"MINUTES": "分",
-			"VALIDATE": "差し押さえを確認",
-			"SUCCESS": "差し押さえが完了しました！"
-		}
-	},
-	"RESSOURCES": {
-		"LEARN_FORWARD": "もっと学ぶ",
-		"TITLE": "教育用モジュール",
-		"BUTTON": "教育用モジュール"
-	},
-	"ERROR": {
-		"SESSION_ALREADY_STARTED": "セッションは既に開始されています。新しいアバターは作成できません。",
-		"GENERIC": "何かがうまくいきませんでした。後で再試行してください。",
-		"UNKNOWN": "予期しないエラーが発生しました",
-		"DISTRIBUTE_CARDS": "カードの配布に失敗しました",
-		"GAME_NOT_FOUND": "ゲームが見つかりません",
-		"SESSION_NOT_FOUND": "セッションが見つかりません",
-		"GAME_ALREADY_LAUNCHED": "ゲームはすでに公開されており、プレイヤーは参加できます。",
-		"DELETE_AVATAR": "アバターの削除エラー。",
-		"IN_PROGRESS": "すでに進行中",
-		"CARDS_NOT_UNIQUE": "カードが重複しています",
-		"NOT_ENOUGH_CARDS": "カードが足りません",
-		"NOT_ENOUGH_CARDS_IN_DECK": "デッキにカードが足りません",
-		"NOT_ENOUGH_MONEY": "資金不足です。",
-		"JOIN_REINCARNATE": "参加できません",
-		"REINCARNATE": "再生できません",
-		"JOIN": "参加できません",
-		"CREATE": "作成できません",
-		"GAME_UNAVAILABLE": "ゲームが利用できません",
-		"PLAYER_NOT_FOUND": "プレイヤーが存在しません",
-		"UPDATE": "更新できません",
-		"EXCHANGE": "交換できません",
-		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "死亡中または投獄中のプレイヤーとは交換できません",
-		"ID_PLAYER_MISSING": "プレイヤーIDがありません",
-		"INSUFFICIENT_FUNDS": "資金が不足しています",
-		"DELETE": "削除できません",
-		"START_GAME": "ゲームを開始できません",
-		"RESET_GAME": "ゲームをリセットできません",
-		"START_ROUND": "ラウンドを開始できません",
-		"STOP_ROUND": "ラウンドを停止できません",
-		"INTER_ROUND": "ラウンド間でできません",
-		"END_GAME": "ゲームを終了できません",
-		"KILL": "殺すことができません",
-		"SAVE_OPTIONS": "オプションを保存できません",
-		"FEEDBACKS_UNAVAILABLE": "フィードバックが利用できません",
-		"SEND_SURVEY": "アンケートを送信できません",
-		"CREATE_CREDIT": "クレジットを作成できません",
-		"GET_CREDITS": "クレジットを回収できません",
-		"REPAY_CREDIT": "クレジットを返済できません",
-		"PAY_INTEREST": "利息を支払えません",
-		"SEIZURE": "資産を差し押さえることができません",
-		"BREAK_PRISON": "刑務所を破ることはできません :/",
-		"LOCK_DOWN_PLAYER": "プレイヤーを刑務所に入れられませんでした",
-		"DELETE_GAME": "削除できません",
-		"CONNECTION_EXPIRED": "接続が切れました。ページを自動的に再読み込みします...",
-		"IO_SOCKET_ERROR": "エラーが発生しました。後でもう一度お試しください。",
-		"FINDING_CARD": "カードが見つかりません",
-		"GAME_STATE_OVER": "ゲーム終了",
-		"NOT_FOUND": "見つかりません",
-		"GET_ALL": "セッションを読み込めませんでした",
-		"GET_BY_ID": "セッションを読み込めませんでした",
-		"GET_BY_SHORT_ID": "このコードに対応するセッションはありません",
-		"START": "セッションを開始できませんでした",
-		"SESSION_REMOVE_BY_ID": "セッションを削除できませんでした",
-		"KILL_GAME": "ゲームを削除できませんでした",
-		"DEFAULT": "初期値に戻せませんでした",
-		"GET_BY_IDX": "ルールを読み込めませんでした",
-		"REMOVE_BY_IDX": "ルールを削除できませんでした",
-		"ALLOW_AVATAR_EDIT_SURVEY": "このアバターのアンケートを再開できませんでした",
-		"FINDING_INGREDIENT": "材料が見つかりません",
-		"REFRESH": "ゲームを更新できませんでした"
-	},
-	"SOCKET": {
-		"KICKED": {
-			"TITLE": "接続が切断されました ⚠️",
-			"ANOTHER_CONNECTION": "別の端末からあなたの席が引き継がれました。",
-			"KICKED_BY_ANIMATOR": "ファシリテーターによって切断されました。もう一度参加してください。",
-			"RETAKEN": "プレイヤーが席を取り戻しました。",
-			"GENERIC": "接続が置き換えられました。"
-		},
-		"OFFLINE": {
-			"TITLE": "オフライン ⚠️",
-			"TEXT": "☎️ 再接続を待っています..."
-		},
-		"DISCONNECTED": {
-			"TITLE": "切断されました ⚠️",
-			"MESSAGE": "再接続の試みが失敗しました",
-			"REFRESH": "更新",
-			"TIMER": "8"
-		},
-		"RECONNECTING": {
-			"TITLE": "オフライン ⚠️",
-			"TEXT": "☎️ 再接続中..."
-		},
-		"CONNECTED": "✅ 接続されています。",
-		"RECONNECTED": "✅ 再接続しました。",
-		"TIMEOUT": "接続タイムアウト..."
-	},
-	"CURRENCY": {
-		"EURO": "€",
-		"JUNE": "Ğ1",
-		"DU": "D.U"
-	},
-	"DATE_FORMAT": {
-		"DATETIME": "YYYY-MM-DD HH:mm"
-	},
-	"CONTRIBUTION": {
-		"TITLE": "貢献者",
-		"SUBTITLE": "ご貢献、ご支援、助言、アイデア、誤字の修正、翻訳などをくださった以下の皆さまに心より感謝します ❤️"
-	},
-	"TASK": {
-		"MASTER_TASK": "ゲームマスター",
-		"UNSELECT_ALL": "選択を解除",
-		"TITLE": "ゲームマスターのタスク",
-		"PREPARE": "ゲームのオプションを選択",
-		"PRESENT_YOURSELF": "紹介",
-		"PRESENT_ML": "ゲームの目的 (2つの貨幣、2つのゲームの結果)",
-		"SOUND": "より没入感を高めるため、プレイヤーにスマートフォンの音を有効にするよう依頼",
-		"DELAY": "各ラウンドの遅延を説明",
-		"SQUARES": "同じカードを集めることで価値を作成",
-		"TRANSACTIONS": "購入 (カメラやdigicode) を説明し、5分以内で試遊をしてみてください (実験モードでリセットボタンを使用)",
-		"DEATH": "死亡 (偶然に発生) と即座の復活",
-		"START_1": "全員が参加したら、カードを受け取り、1ラウンド目を実施",
-		"SURVEY_1": "1ラウンド目の終了、電話でのアンケート",
-		"NEXT_MONEY": "2ラウンド目を実施 (反対の貨幣)",
-		"START_2": "全員が参加したら、カードを受け取り、2ラウンド目を実施",
-		"SURVEY_2": "2ラウンド目の終了、電話でのアンケート",
-		"RESULTS": "ゲームの終了、結果の発表と2ラウンドの比較"
-	},
-	"MODULE": {
-		"BACK_HOME": "ホームに戻る"
-	},
-	"PWA": {
-		"NEW_VERSION": "新しいバージョンが利用可能です。再起動しています...",
-		"UNRECOVERABLE": "エラーが発生しました。アプリケーションを再読み込みする必要があります"
-	}
+    "HELLO": "こんにちは！",
+    "WELCOME": "ようこそ！",
+    "ANIMATOR": "アニメーター",
+    "LOCATION": "場所",
+    "FREE_MONEY": "自由な通貨",
+    "DEBT_MONEY": "借金通貨",
+    "GAME_NOTICE": "ゲームのお知らせ",
+    "BY_DEFAULT": "デフォルトで",
+    "PUBLIC_KEY": "公開鍵",
+    "LAST_SEEN": "最終接続：{{lastSeen}}",
+    "VALUES_BY_DEFAULT": "デフォルト値",
+    "BACK_TO_LOBBY": "待機ルームに戻る",
+    "CANCEL": "キャンセル",
+    "CLOSE": "閉じる",
+    "REFRESH": "更新",
+    "FULLSCREEN": "全画面表示",
+    "FULLSCREEN_EXIT": "全画面表示を終了",
+    "OK": "OK",
+    "ALL": "すべて",
+    "SAVE": "保存",
+    "DELETE": "削除",
+    "GAME": {
+        "OPEN": "参加可能",
+        "PLAYING": "進行中",
+        "END_GAME": "ゲーム終了",
+        "STOP_ROUND": "ラウンド終了",
+        "PAUSED": "ゲーム一時停止中",
+        "STARTED": "ゲーム開始",
+        "RESUMED": "ゲーム再開"
+    },
+    "CARD": {
+        "LV1": "食料",
+        "LV2": "文化と知識",
+        "LV3": "エネルギー",
+        "LV4": "技術",
+        "BUILD_UP_0": "知識カードを作成",
+        "BUILD_UP_1": "エネルギーカードを作成",
+        "BUILD_UP_2": "技術カードを作成",
+        "BUILD_UP": "上位カードを作成",
+        "IN_DECK": "カード <b>({{cardName}})</b> は<b>デッキ</b>にあります",
+        "IN_PLAYER": "カード <b>({{cardName}})</b> はプレイヤー <b>{{player}}</b> が持っています"
+    },
+    "THEME": {
+        "TITLE": "テーマ",
+        "CLASSIC": "クラシックカード",
+        "EMOJIS": "絵文字アイテム",
+        "TWEMOJIS": "統一アイテム"
+    },
+    "EVENTS": {
+        "GAME_ENDED": "ゲーム終了",
+        "GAME_ENDED_MESSAGE": "ゲームが終了しました。遊んでいただきありがとうございました！",
+        "SURVEY_MESSAGE": "このゲームについての率直な感想をうかがうアンケートに移動します。5分ほどお時間をいただき、ご回答ください！",
+        "ROUND_END": "ラウンドが終了しました",
+        "PRISON_ENDED": "刑務所の刑が終わりました",
+        "BREAK_FREE": "解放したい",
+        "DEATH_PASS": "死が過ぎました 😈",
+        "NEED_DEATH_PASS": "死が過ぎるまで待ってください ��! (あなたの番です)",
+        "ASK_END_ROUND": "ラウンドが終わっていないようです。ラウンドを終わらせますか？",
+        "SHORT_CODE_SEND": "短いコードを送信",
+        "COPY_SUCCESS": "コピーしました！"
+    },
+    "GO_NEW_LIFE": "新しい人生へĞo！",
+    "REINCARNATED": "おかえり！あなたは生まれ変わりました！",
+    "DIALOG": {
+        "CLOSE": "閉じる",
+        "YES": "はい",
+        "NO": "いいえ",
+        "CANCEL": "キャンセル",
+        "CONTINUE_SESSION": "セッションを再開する",
+        "ACTIVE_SESSION": "進行中のセッションがあります：",
+        "DISMISS": "閉じる",
+        "RESUME": "続ける",
+        "INFORMATION": {
+            "TITLE": "情報！"
+        },
+        "CONFIRM": {
+            "TITLE": "確認しますか？",
+            "MESSAGE": "本当にそうですか？"
+        },
+        "CREATE_GAME": {
+            "TITLE": "ゲームを作成",
+            "FIELD1": "ゲームの名前",
+            "FIELD2": "アニメーターの名前",
+            "FIELD3": "ロケーション",
+            "BTN1": "はい",
+            "BTN2": "キャンセル"
+        },
+        "INSTALL": {
+            "MESSAGE1": "Safariを使用し、ボタンでSafariの共有メニューを開きます。",
+            "MESSAGE2": "次に「ホーム画面に追加」を選択します。"
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "コードを入力...",
+            "BUY": "購入"
+        },
+        "QR_SCAN": {
+            "TITLE": "QRコードをスキャン",
+            "CAMERA": "カメラ",
+            "SELECT_DEVICE": "カメラを選択"
+        },
+        "SEIZURE": {
+            "TITLE": "支払い不履行 - 資産を差し押さえ",
+            "SOLD": "残高：{{amount}}",
+            "SEIZE": "差し押さえ",
+            "TO_SEIZE": "差し押さえる：{{seized}} / {{objective}}",
+            "FEES": "追加手数料{{num}}",
+            "DECOTE": "カードの{{num}}%割引",
+            "DROP_ZONE": "ここにカードを移動して差し押さえます",
+            "PROGRESS": "進捗",
+            "TOOLTIP_PRISON_INFO": "目標が達成された場合、0分、プレイヤーがカードを持っていない場合のみ刑務所に入れられます（最小1分）。不足が重大な場合、制裁は大きくなければなりません（最大{{max}}分）。",
+            "PRISON_DECISION": "刑務所の期間：",
+            "MINUTES": "分",
+            "VALIDATE": "差し押さえを確認",
+            "SUCCESS": "差し押さえが完了しました！"
+        }
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "もっと学ぶ",
+        "TITLE": "教育用モジュール",
+        "BUTTON": "教育用モジュール"
+    },
+    "ERROR": {
+        "SESSION_ALREADY_STARTED": "セッションは既に開始されています。新しいアバターは作成できません。",
+        "GENERIC": "何かがうまくいきませんでした。後で再試行してください。",
+        "UNKNOWN": "予期しないエラーが発生しました",
+        "DISTRIBUTE_CARDS": "カードの配布に失敗しました",
+        "GAME_NOT_FOUND": "ゲームが見つかりません",
+        "SESSION_NOT_FOUND": "セッションが見つかりません",
+        "GAME_ALREADY_LAUNCHED": "ゲームはすでに公開されており、プレイヤーは参加できます。",
+        "DELETE_AVATAR": "アバターの削除エラー。",
+        "IN_PROGRESS": "すでに進行中",
+        "CARDS_NOT_UNIQUE": "カードが重複しています",
+        "NOT_ENOUGH_CARDS": "カードが足りません",
+        "NOT_ENOUGH_CARDS_IN_DECK": "デッキにカードが足りません",
+        "NOT_ENOUGH_MONEY": "資金不足です。",
+        "JOIN_REINCARNATE": "参加できません",
+        "REINCARNATE": "再生できません",
+        "JOIN": "参加できません",
+        "CREATE": "作成できません",
+        "GAME_UNAVAILABLE": "ゲームが利用できません",
+        "PLAYER_NOT_FOUND": "プレイヤーが存在しません",
+        "UPDATE": "更新できません",
+        "EXCHANGE": "交換できません",
+        "TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "死亡中または投獄中のプレイヤーとは交換できません",
+        "ID_PLAYER_MISSING": "プレイヤーIDがありません",
+        "INSUFFICIENT_FUNDS": "資金が不足しています",
+        "DELETE": "削除できません",
+        "START_GAME": "ゲームを開始できません",
+        "RESET_GAME": "ゲームをリセットできません",
+        "START_ROUND": "ラウンドを開始できません",
+        "STOP_ROUND": "ラウンドを停止できません",
+        "INTER_ROUND": "ラウンド間でできません",
+        "END_GAME": "ゲームを終了できません",
+        "KILL": "殺すことができません",
+        "SAVE_OPTIONS": "オプションを保存できません",
+        "FEEDBACKS_UNAVAILABLE": "フィードバックが利用できません",
+        "SEND_SURVEY": "アンケートを送信できません",
+        "CREATE_CREDIT": "クレジットを作成できません",
+        "GET_CREDITS": "クレジットを回収できません",
+        "REPAY_CREDIT": "クレジットを返済できません",
+        "PAY_INTEREST": "利息を支払えません",
+        "SEIZURE": "資産を差し押さえることができません",
+        "BREAK_PRISON": "刑務所を破ることはできません :/",
+        "LOCK_DOWN_PLAYER": "プレイヤーを刑務所に入れられませんでした",
+        "DELETE_GAME": "削除できません",
+        "CONNECTION_EXPIRED": "接続が切れました。ページを自動的に再読み込みします...",
+        "IO_SOCKET_ERROR": "エラーが発生しました。後でもう一度お試しください。",
+        "FINDING_CARD": "カードが見つかりません",
+        "GAME_STATE_OVER": "ゲーム終了",
+        "NOT_FOUND": "見つかりません",
+        "GET_ALL": "セッションを読み込めませんでした",
+        "GET_BY_ID": "セッションを読み込めませんでした",
+        "GET_BY_SHORT_ID": "このコードに対応するセッションはありません",
+        "START": "セッションを開始できませんでした",
+        "SESSION_REMOVE_BY_ID": "セッションを削除できませんでした",
+        "KILL_GAME": "ゲームを削除できませんでした",
+        "DEFAULT": "初期値に戻せませんでした",
+        "GET_BY_IDX": "ルールを読み込めませんでした",
+        "REMOVE_BY_IDX": "ルールを削除できませんでした",
+        "ALLOW_AVATAR_EDIT_SURVEY": "このアバターのアンケートを再開できませんでした",
+        "FINDING_INGREDIENT": "材料が見つかりません",
+        "REFRESH": "ゲームを更新できませんでした"
+    },
+    "SOCKET": {
+        "KICKED": {
+            "TITLE": "接続が切断されました ⚠️",
+            "ANOTHER_CONNECTION": "別の端末からあなたの席が引き継がれました。",
+            "KICKED_BY_ANIMATOR": "ファシリテーターによって切断されました。もう一度参加してください。",
+            "RETAKEN": "プレイヤーが席を取り戻しました。",
+            "GENERIC": "接続が置き換えられました。"
+        },
+        "OFFLINE": {
+            "TITLE": "オフライン ⚠️",
+            "TEXT": "☎️ 再接続を待っています..."
+        },
+        "DISCONNECTED": {
+            "TITLE": "切断されました ⚠️",
+            "MESSAGE": "再接続の試みが失敗しました",
+            "REFRESH": "更新",
+            "TIMER": "8"
+        },
+        "RECONNECTING": {
+            "TITLE": "オフライン ⚠️",
+            "TEXT": "☎️ 再接続中..."
+        },
+        "CONNECTED": "✅ 接続されています。",
+        "RECONNECTED": "✅ 再接続しました。",
+        "TIMEOUT": "接続タイムアウト..."
+    },
+    "CURRENCY": {
+        "EURO": "€",
+        "JUNE": "Ğ1",
+        "DU": "D.U"
+    },
+    "DATE_FORMAT": {
+        "DATETIME": "YYYY-MM-DD HH:mm"
+    },
+    "CONTRIBUTION": {
+        "TITLE": "貢献者",
+        "SUBTITLE": "ご貢献、ご支援、助言、アイデア、誤字の修正、翻訳などをくださった以下の皆さまに心より感謝します ❤️"
+    },
+    "TASK": {
+        "MASTER_TASK": "ゲームマスター",
+        "UNSELECT_ALL": "選択を解除",
+        "TITLE": "ゲームマスターのタスク",
+        "PREPARE": "ゲームのオプションを選択",
+        "PRESENT_YOURSELF": "紹介",
+        "PRESENT_ML": "ゲームの目的 (2つの貨幣、2つのゲームの結果)",
+        "SOUND": "より没入感を高めるため、プレイヤーにスマートフォンの音を有効にするよう依頼",
+        "DELAY": "各ラウンドの遅延を説明",
+        "SQUARES": "同じカードを集めることで価値を作成",
+        "TRANSACTIONS": "購入 (カメラやdigicode) を説明し、5分以内で試遊をしてみてください (実験モードでリセットボタンを使用)",
+        "DEATH": "死亡 (偶然に発生) と即座の復活",
+        "START_1": "全員が参加したら、カードを受け取り、1ラウンド目を実施",
+        "SURVEY_1": "1ラウンド目の終了、電話でのアンケート",
+        "NEXT_MONEY": "2ラウンド目を実施 (反対の貨幣)",
+        "START_2": "全員が参加したら、カードを受け取り、2ラウンド目を実施",
+        "SURVEY_2": "2ラウンド目の終了、電話でのアンケート",
+        "RESULTS": "ゲームの終了、結果の発表と2ラウンドの比較"
+    },
+    "MODULE": {
+        "BACK_HOME": "ホームに戻る"
+    },
+    "PWA": {
+        "NEW_VERSION": "新しいバージョンが利用可能です。再起動しています...",
+        "UNRECOVERABLE": "エラーが発生しました。アプリケーションを再読み込みする必要があります"
+    }
 }
