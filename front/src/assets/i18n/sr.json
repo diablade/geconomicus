@@ -1,249 +1,249 @@
 {
-	"HELLO": "Zdravo!",
-	"WELCOME": "Dobrodošli!",
-	"ANIMATOR": "Animator",
-	"LOCATION": "Mesto",
-	"FREE_MONEY": "Slobodna valuta",
-	"DEBT_MONEY": "Dugovna valuta",
-	"GAME_NOTICE": "Obaveštenje o igri",
-	"BY_DEFAULT": "po defaultu",
-	"PUBLIC_KEY": "public key",
-	"LAST_SEEN": "Poslednje povezivanje: {{lastSeen}}",
-	"VALUES_BY_DEFAULT": "Podrazumevane vrednosti",
-	"BACK_TO_LOBBY": "Nazad u čekaonicu",
-	"CANCEL": "Otkaži",
-	"CLOSE": "Zatvori",
-	"REFRESH": "Osveži",
-	"FULLSCREEN": "Ceo ekran",
-	"FULLSCREEN_EXIT": "Izađi iz celog ekrana",
-	"OK": "U redu",
-	"ALL": "Svi",
-	"SAVE": "Sačuvaj",
-	"DELETE": "Obriši",
-	"GAME": {
-		"OPEN": "Otvoreno za pridruživanje",
-		"PLAYING": "U toku",
-		"END_GAME": "Igra završena",
-		"STOP_ROUND": "Kraj runde",
-		"PAUSED": "Igra pauzirana",
-		"STARTED": "Igra počela",
-		"RESUMED": "Igra nastavljena"
-	},
-	"CARD": {
-		"LV1": "Ishrana",
-		"LV2": "Kultura i znanje",
-		"LV3": "Energija",
-		"LV4": "Tehnologija",
-		"BUILD_UP_0": "Kreiraj kartu znanja",
-		"BUILD_UP_1": "Kreiraj kartu energije",
-		"BUILD_UP_2": "Kreiraj kartu tehnologije",
-		"BUILD_UP": "Kreiraj superiornu kartu",
-		"IN_DECK": "karta <b>({{cardName}})</b> je u <b>špilu</b>",
-		"IN_PLAYER": "kartu <b>({{cardName}})</b> ima igrač <b>{{player}}</b>"
-	},
-	"THEME": {
-		"TITLE": "Tema",
-		"CLASSIC": "Klasične karte",
-		"EMOJIS": "Emodži predmeti",
-		"TWEMOJIS": "Ujednačeni predmeti"
-	},
-	"EVENTS": {
-		"GAME_ENDED": "Igra je završena",
-		"GAME_ENDED_MESSAGE": "Igra je završena. Hvala što ste igrali!",
-		"SURVEY_MESSAGE": "Bićete preusmereni na upitnik kako bismo prikupili vaše neposredne utiske o ovoj igri. Odvojite 5 minuta da odgovorite!",
-		"ROUND_END": "Runda završena",
-		"PRISON_ENDED": "Zatvoreničar je upravo odslužio svoju kaznu",
-		"BREAK_FREE": "Želim da budem SLOBODAN!",
-		"DEATH_PASS": "Smrt je upravo prosla 😈",
-		"NEED_DEATH_PASS": "Smrt mora da prođe 😈! (Vas je red)",
-		"ASK_END_ROUND": "Runda nije završena, da li ste sigurni da želite da završite rundu?",
-		"SHORT_CODE_SEND": "Kod poslat",
-		"COPY_SUCCESS": "Kopirano!"
-	},
-	"GO_NEW_LIFE": "Ğo u moj novi život!",
-	"REINCARNATED": "Hej! Reinkarniran si!",
-	"DIALOG": {
-		"CLOSE": "Zatvori",
-		"YES": "Da",
-		"NO": "Ne",
-		"CANCEL": "Otkaži",
-		"CONTINUE_SESSION": "Nastavi svoju sesiju",
-		"ACTIVE_SESSION": "Imaš sesiju u toku:",
-		"DISMISS": "Zatvori",
-		"RESUME": "Nastavi",
-		"INFORMATION": {
-			"TITLE": "Informacije!"
-		},
-		"CONFIRM": {
-			"TITLE": "Potvrdi?",
-			"MESSAGE": "Da li si siguran?"
-		},
-		"CREATE_GAME": {
-			"TITLE": "Kreiraj igru",
-			"FIELD1": "Nazovi igru",
-			"FIELD2": "Ime animatora",
-			"FIELD3": "Lokacija",
-			"BTN1": "Da",
-			"BTN2": "Otkaži"
-		},
-		"INSTALL": {
-			"MESSAGE1": "Koristi Safari, otvori meni deljenja u Safariju sa dugmetom",
-			"MESSAGE2": "zatim izaberi \"Dodaj na početni ekran\""
-		},
-		"SHORT_CODE": {
-			"PLACEHOLDER": "Unesite kod...",
-			"BUY": "Kupiti"
-		},
-		"QR_SCAN": {
-			"TITLE": "Skeniraj QR kod",
-			"CAMERA": "Kamera",
-			"SELECT_DEVICE": "Izaberi kameru"
-		},
-		"SEIZURE": {
-			"TITLE": "Neplaćanje - zapleni imovinu",
-			"SOLD": "Saldo: {{amount}}",
-			"SEIZE": "Zapleni",
-			"TO_SEIZE": "Za zaplenu: {{seized}} / {{objective}}",
-			"FEES": "Dodatne naknade {{num}}",
-			"DECOTE": "Popust od {{num}}% na karte",
-			"DROP_ZONE": "Premesti karte \n za zaplenu ovde",
-			"PROGRESS": "Progres",
-			"TOOLTIP_PRISON_INFO": "Ako je cilj ispunjen, 0 minuta, zatvor je samo ako igrač nema više karata, (min 1min), Ako je nedostatak značajan, kazna mora biti velika (max {{max}} min).",
-			"PRISON_DECISION": "Trajanje za zatvor:",
-			"MINUTES": "minuta(e)",
-			"VALIDATE": "Potvrdi zaplenu",
-			"SUCCESS": "Zaplena završena!"
-		}
-	},
-	"RESSOURCES": {
-		"LEARN_FORWARD": "Idite dalje sa",
-		"TITLE": "Obrazovni moduli",
-		"BUTTON": "Obrazovni moduli"
-	},
-	"ERROR": {
-		"SESSION_ALREADY_STARTED": "Sesija je već počela; više ne možeš da napraviš avatar.",
-		"GENERIC": "Nešto je pošlo po zlu; pokušajte ponovo kasnije.",
-		"UNKNOWN": "Došlo je do neočekivane greške",
-		"DISTRIBUTE_CARDS": "Deljenje karata nije uspelo",
-		"GAME_NOT_FOUND": "Igra nije pronađena",
-		"SESSION_NOT_FOUND": "Sesija nije pronađena",
-		"GAME_ALREADY_LAUNCHED": "Igra je već otvorena, igrači mogu da se pridruže.",
-		"DELETE_AVATAR": "Greška pri brisanju avatara.",
-		"IN_PROGRESS": "već u toku",
-		"CARDS_NOT_UNIQUE": "Karte nisu jedinstvene",
-		"NOT_ENOUGH_CARDS": "Nema dovoljno karata",
-		"NOT_ENOUGH_CARDS_IN_DECK": "Nema dovoljno karata u špilu",
-		"NOT_ENOUGH_MONEY": "Nedovoljno sredstava.",
-		"JOIN_REINCARNATE": "nemoguće se pridružiti",
-		"REINCARNATE": "nemoguće se reinkarnirati",
-		"JOIN": "nemoguće se pridružiti",
-		"CREATE": "kreacija nemoguća",
-		"GAME_UNAVAILABLE": "igra nedostupna",
-		"PLAYER_NOT_FOUND": "igrač ne postoji",
-		"UPDATE": "izmena nemoguća",
-		"EXCHANGE": "razmena nemoguća",
-		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Razmena nemoguća sa mrtvim igračem ili igračem u zatvoru",
-		"ID_PLAYER_MISSING": "Nedostaje ID igrača",
-		"INSUFFICIENT_FUNDS": "Nedovoljno sredstava",
-		"DELETE": "brisanje nemoguće",
-		"START_GAME": "pokreni igru nemoguće",
-		"RESET_GAME": "resetuj igru nemoguće",
-		"START_ROUND": "pokreni rundu nemoguće",
-		"STOP_ROUND": "zaustavi rundu nemoguće",
-		"INTER_ROUND": "između rundi nemoguće",
-		"END_GAME": "zaustavi igru nemoguće",
-		"KILL": "ubij nemoguće",
-		"SAVE_OPTIONS": "Čuvanje opcija nemoguće",
-		"FEEDBACKS_UNAVAILABLE": "povratne informacije nedostupne",
-		"SEND_SURVEY": "Slanje ankete nemoguće",
-		"CREATE_CREDIT": "kreacija kredita nemoguća",
-		"GET_CREDITS": "oporavak kredita nemoguć",
-		"REPAY_CREDIT": "otplata kredita nemoguća",
-		"PAY_INTEREST": "plaćanje kamata nemoguće",
-		"SEIZURE": "Zaplena imovine nemoguća",
-		"BREAK_PRISON": "Ne mogu da prekinem zatvor :/",
-		"LOCK_DOWN_PLAYER": "Nije moguće poslati igrača u zatvor",
-		"DELETE_GAME": "Ne mogu da obrišem",
-		"CONNECTION_EXPIRED": "Veza je istekla. Automatsko ponovno ucitavanje stranice...",
-		"IO_SOCKET_ERROR": "Došlo je do greške, pokušajte ponovo kasnije.",
-		"FINDING_CARD": "Karta nije pronađena",
-		"GAME_STATE_OVER": "Igra je završena",
-		"NOT_FOUND": "Nije pronađeno",
-		"GET_ALL": "Nije moguće učitati sesije",
-		"GET_BY_ID": "Nije moguće učitati sesiju",
-		"GET_BY_SHORT_ID": "Nema sesije za ovaj kod",
-		"START": "Nije moguće pokrenuti sesiju",
-		"SESSION_REMOVE_BY_ID": "Nije moguće obrisati sesiju",
-		"KILL_GAME": "Nije moguće obrisati igru",
-		"DEFAULT": "Nije moguće vratiti podrazumevane vrednosti",
-		"GET_BY_IDX": "Nije moguće učitati pravila",
-		"REMOVE_BY_IDX": "Nije moguće obrisati pravila",
-		"ALLOW_AVATAR_EDIT_SURVEY": "Nije moguće ponovo otvoriti upitnik za ovaj avatar",
-		"FINDING_INGREDIENT": "Sastojak nije pronađen",
-		"REFRESH": "Nije moguće osvežiti igru"
-	},
-	"SOCKET": {
-		"KICKED": {
-			"TITLE": "Konekcija prekinuta ⚠️",
-			"ANOTHER_CONNECTION": "Tvoje mesto je preuzeto sa drugog uređaja.",
-			"KICKED_BY_ANIMATOR": "Animator te je isključio. Pridruži se igri ponovo.",
-			"RETAKEN": "Igrač je povratio svoje mesto.",
-			"GENERIC": "Tvoja konekcija je zamenjena."
-		},
-		"OFFLINE": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Čekam ponovnu konekciju..."
-		},
-		"DISCONNECTED": {
-			"TITLE": "Diskonektovan ⚠️",
-			"MESSAGE": "Pokušaji ponovne konekcije nisu uspeli",
-			"REFRESH": "Osveži",
-			"TIMER": "8"
-		},
-		"RECONNECTING": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Ponovno povezivanje..."
-		},
-		"CONNECTED": "✅ Povezan si.",
-		"RECONNECTED": "✅ Ponovo ste povezani.",
-		"TIMEOUT": "timeout veze..."
-	},
-	"CURRENCY": {
-		"EURO": "€",
-		"JUNE": "Ğ1",
-		"DU": "D.U"
-	},
-	"DATE_FORMAT": {
-		"DATETIME": "dd-MM-YYYY u HH:mm"
-	},
-	"CONTRIBUTION": {
-		"TITLE": "Doprinosi",
-		"SUBTITLE": "Veliko HVALA ❤️ sledećim osobama na doprinosima, podršci, savetima, idejama, ispravkama pravopisa, prevodima itd."
-	},
-	"TASK": {
-		"MASTER_TASK": "Animatore",
-		"UNSELECT_ALL": "Poništi sve",
-		"TITLE": "Lista zadataka animatorea",
-		"PREPARE": "Izaberite opcije igre",
-		"PRESENT_YOURSELF": "Predstavite se",
-		"PRESENT_ML": "Predstavi cilj igre (2 valute, 2 različita rezultata igre)",
-		"SOUND": "Zamolite igrače da uključe zvuk na telefonu radi bolje uživljenosti",
-		"DELAY": "Objasnite vremenske okvire za svaku od dve runde",
-		"SQUARES": "stvaranje vrednosti putem trgovine identičnim kartama",
-		"TRANSACTIONS": "Objasnite kako izvršiti kupovinu (kamera ili kod) i izvršite lažnu igru najviše 5 minuta (koristite eksperimentalni režim za dobijanje dugmeta za ponovno pokretanje)",
-		"DEATH": "objasnite smrt (koja se događa slučajno) i trenutno rođenje",
-		"START_1": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
-		"SURVEY_1": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
-		"NEXT_MONEY": "pokrenite rundu u drugoj valuti",
-		"START_2": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
-		"SURVEY_2": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
-		"RESULTS": "Kraj igre, objavite rezultate i poređenje dve runde"
-	},
-	"MODULE": {
-		"BACK_HOME": "Nazad na početnu"
-	},
-	"PWA": {
-		"NEW_VERSION": "Nova verzija je dostupna, ponovno pokretanje...",
-		"UNRECOVERABLE": "Došlo je do greške, aplikacija mora biti ponovo učitana"
-	}
+    "HELLO": "Zdravo!",
+    "WELCOME": "Dobrodošli!",
+    "ANIMATOR": "Animator",
+    "LOCATION": "Mesto",
+    "FREE_MONEY": "Slobodna valuta",
+    "DEBT_MONEY": "Dugovna valuta",
+    "GAME_NOTICE": "Obaveštenje o igri",
+    "BY_DEFAULT": "po defaultu",
+    "PUBLIC_KEY": "public key",
+    "LAST_SEEN": "Poslednje povezivanje: {{lastSeen}}",
+    "VALUES_BY_DEFAULT": "Podrazumevane vrednosti",
+    "BACK_TO_LOBBY": "Nazad u čekaonicu",
+    "CANCEL": "Otkaži",
+    "CLOSE": "Zatvori",
+    "REFRESH": "Osveži",
+    "FULLSCREEN": "Ceo ekran",
+    "FULLSCREEN_EXIT": "Izađi iz celog ekrana",
+    "OK": "U redu",
+    "ALL": "Svi",
+    "SAVE": "Sačuvaj",
+    "DELETE": "Obriši",
+    "GAME": {
+        "OPEN": "Otvoreno za pridruživanje",
+        "PLAYING": "U toku",
+        "END_GAME": "Igra završena",
+        "STOP_ROUND": "Kraj runde",
+        "PAUSED": "Igra pauzirana",
+        "STARTED": "Igra počela",
+        "RESUMED": "Igra nastavljena"
+    },
+    "CARD": {
+        "LV1": "Ishrana",
+        "LV2": "Kultura i znanje",
+        "LV3": "Energija",
+        "LV4": "Tehnologija",
+        "BUILD_UP_0": "Kreiraj kartu znanja",
+        "BUILD_UP_1": "Kreiraj kartu energije",
+        "BUILD_UP_2": "Kreiraj kartu tehnologije",
+        "BUILD_UP": "Kreiraj superiornu kartu",
+        "IN_DECK": "karta <b>({{cardName}})</b> je u <b>špilu</b>",
+        "IN_PLAYER": "kartu <b>({{cardName}})</b> ima igrač <b>{{player}}</b>"
+    },
+    "THEME": {
+        "TITLE": "Tema",
+        "CLASSIC": "Klasične karte",
+        "EMOJIS": "Emodži predmeti",
+        "TWEMOJIS": "Ujednačeni predmeti"
+    },
+    "EVENTS": {
+        "GAME_ENDED": "Igra je završena",
+        "GAME_ENDED_MESSAGE": "Igra je završena. Hvala što ste igrali!",
+        "SURVEY_MESSAGE": "Bićete preusmereni na upitnik kako bismo prikupili vaše neposredne utiske o ovoj igri. Odvojite 5 minuta da odgovorite!",
+        "ROUND_END": "Runda završena",
+        "PRISON_ENDED": "Zatvoreničar je upravo odslužio svoju kaznu",
+        "BREAK_FREE": "Želim da budem SLOBODAN!",
+        "DEATH_PASS": "Smrt je upravo prosla 😈",
+        "NEED_DEATH_PASS": "Smrt mora da prođe 😈! (Vas je red)",
+        "ASK_END_ROUND": "Runda nije završena, da li ste sigurni da želite da završite rundu?",
+        "SHORT_CODE_SEND": "Kod poslat",
+        "COPY_SUCCESS": "Kopirano!"
+    },
+    "GO_NEW_LIFE": "Ğo u moj novi život!",
+    "REINCARNATED": "Hej! Reinkarniran si!",
+    "DIALOG": {
+        "CLOSE": "Zatvori",
+        "YES": "Da",
+        "NO": "Ne",
+        "CANCEL": "Otkaži",
+        "CONTINUE_SESSION": "Nastavi svoju sesiju",
+        "ACTIVE_SESSION": "Imaš sesiju u toku:",
+        "DISMISS": "Zatvori",
+        "RESUME": "Nastavi",
+        "INFORMATION": {
+            "TITLE": "Informacije!"
+        },
+        "CONFIRM": {
+            "TITLE": "Potvrdi?",
+            "MESSAGE": "Da li si siguran?"
+        },
+        "CREATE_GAME": {
+            "TITLE": "Kreiraj igru",
+            "FIELD1": "Nazovi igru",
+            "FIELD2": "Ime animatora",
+            "FIELD3": "Lokacija",
+            "BTN1": "Da",
+            "BTN2": "Otkaži"
+        },
+        "INSTALL": {
+            "MESSAGE1": "Koristi Safari, otvori meni deljenja u Safariju sa dugmetom",
+            "MESSAGE2": "zatim izaberi \"Dodaj na početni ekran\""
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "Unesite kod...",
+            "BUY": "Kupiti"
+        },
+        "QR_SCAN": {
+            "TITLE": "Skeniraj QR kod",
+            "CAMERA": "Kamera",
+            "SELECT_DEVICE": "Izaberi kameru"
+        },
+        "SEIZURE": {
+            "TITLE": "Neplaćanje - zapleni imovinu",
+            "SOLD": "Saldo: {{amount}}",
+            "SEIZE": "Zapleni",
+            "TO_SEIZE": "Za zaplenu: {{seized}} / {{objective}}",
+            "FEES": "Dodatne naknade {{num}}",
+            "DECOTE": "Popust od {{num}}% na karte",
+            "DROP_ZONE": "Premesti karte \n za zaplenu ovde",
+            "PROGRESS": "Progres",
+            "TOOLTIP_PRISON_INFO": "Ako je cilj ispunjen, 0 minuta, zatvor je samo ako igrač nema više karata, (min 1min), Ako je nedostatak značajan, kazna mora biti velika (max {{max}} min).",
+            "PRISON_DECISION": "Trajanje za zatvor:",
+            "MINUTES": "minuta(e)",
+            "VALIDATE": "Potvrdi zaplenu",
+            "SUCCESS": "Zaplena završena!"
+        }
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Idite dalje sa",
+        "TITLE": "Obrazovni moduli",
+        "BUTTON": "Obrazovni moduli"
+    },
+    "ERROR": {
+        "SESSION_ALREADY_STARTED": "Sesija je već počela; više ne možeš da napraviš avatar.",
+        "GENERIC": "Nešto je pošlo po zlu; pokušajte ponovo kasnije.",
+        "UNKNOWN": "Došlo je do neočekivane greške",
+        "DISTRIBUTE_CARDS": "Deljenje karata nije uspelo",
+        "GAME_NOT_FOUND": "Igra nije pronađena",
+        "SESSION_NOT_FOUND": "Sesija nije pronađena",
+        "GAME_ALREADY_LAUNCHED": "Igra je već otvorena, igrači mogu da se pridruže.",
+        "DELETE_AVATAR": "Greška pri brisanju avatara.",
+        "IN_PROGRESS": "već u toku",
+        "CARDS_NOT_UNIQUE": "Karte nisu jedinstvene",
+        "NOT_ENOUGH_CARDS": "Nema dovoljno karata",
+        "NOT_ENOUGH_CARDS_IN_DECK": "Nema dovoljno karata u špilu",
+        "NOT_ENOUGH_MONEY": "Nedovoljno sredstava.",
+        "JOIN_REINCARNATE": "nemoguće se pridružiti",
+        "REINCARNATE": "nemoguće se reinkarnirati",
+        "JOIN": "nemoguće se pridružiti",
+        "CREATE": "kreacija nemoguća",
+        "GAME_UNAVAILABLE": "igra nedostupna",
+        "PLAYER_NOT_FOUND": "igrač ne postoji",
+        "UPDATE": "izmena nemoguća",
+        "EXCHANGE": "razmena nemoguća",
+        "TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Razmena nemoguća sa mrtvim igračem ili igračem u zatvoru",
+        "ID_PLAYER_MISSING": "Nedostaje ID igrača",
+        "INSUFFICIENT_FUNDS": "Nedovoljno sredstava",
+        "DELETE": "brisanje nemoguće",
+        "START_GAME": "pokreni igru nemoguće",
+        "RESET_GAME": "resetuj igru nemoguće",
+        "START_ROUND": "pokreni rundu nemoguće",
+        "STOP_ROUND": "zaustavi rundu nemoguće",
+        "INTER_ROUND": "između rundi nemoguće",
+        "END_GAME": "zaustavi igru nemoguće",
+        "KILL": "ubij nemoguće",
+        "SAVE_OPTIONS": "Čuvanje opcija nemoguće",
+        "FEEDBACKS_UNAVAILABLE": "povratne informacije nedostupne",
+        "SEND_SURVEY": "Slanje ankete nemoguće",
+        "CREATE_CREDIT": "kreacija kredita nemoguća",
+        "GET_CREDITS": "oporavak kredita nemoguć",
+        "REPAY_CREDIT": "otplata kredita nemoguća",
+        "PAY_INTEREST": "plaćanje kamata nemoguće",
+        "SEIZURE": "Zaplena imovine nemoguća",
+        "BREAK_PRISON": "Ne mogu da prekinem zatvor :/",
+        "LOCK_DOWN_PLAYER": "Nije moguće poslati igrača u zatvor",
+        "DELETE_GAME": "Ne mogu da obrišem",
+        "CONNECTION_EXPIRED": "Veza je istekla. Automatsko ponovno ucitavanje stranice...",
+        "IO_SOCKET_ERROR": "Došlo je do greške, pokušajte ponovo kasnije.",
+        "FINDING_CARD": "Karta nije pronađena",
+        "GAME_STATE_OVER": "Igra je završena",
+        "NOT_FOUND": "Nije pronađeno",
+        "GET_ALL": "Nije moguće učitati sesije",
+        "GET_BY_ID": "Nije moguće učitati sesiju",
+        "GET_BY_SHORT_ID": "Nema sesije za ovaj kod",
+        "START": "Nije moguće pokrenuti sesiju",
+        "SESSION_REMOVE_BY_ID": "Nije moguće obrisati sesiju",
+        "KILL_GAME": "Nije moguće obrisati igru",
+        "DEFAULT": "Nije moguće vratiti podrazumevane vrednosti",
+        "GET_BY_IDX": "Nije moguće učitati pravila",
+        "REMOVE_BY_IDX": "Nije moguće obrisati pravila",
+        "ALLOW_AVATAR_EDIT_SURVEY": "Nije moguće ponovo otvoriti upitnik za ovaj avatar",
+        "FINDING_INGREDIENT": "Sastojak nije pronađen",
+        "REFRESH": "Nije moguće osvežiti igru"
+    },
+    "SOCKET": {
+        "KICKED": {
+            "TITLE": "Konekcija prekinuta ⚠️",
+            "ANOTHER_CONNECTION": "Tvoje mesto je preuzeto sa drugog uređaja.",
+            "KICKED_BY_ANIMATOR": "Animator te je isključio. Pridruži se igri ponovo.",
+            "RETAKEN": "Igrač je povratio svoje mesto.",
+            "GENERIC": "Tvoja konekcija je zamenjena."
+        },
+        "OFFLINE": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Čekam ponovnu konekciju..."
+        },
+        "DISCONNECTED": {
+            "TITLE": "Diskonektovan ⚠️",
+            "MESSAGE": "Pokušaji ponovne konekcije nisu uspeli",
+            "REFRESH": "Osveži",
+            "TIMER": "8"
+        },
+        "RECONNECTING": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Ponovno povezivanje..."
+        },
+        "CONNECTED": "✅ Povezan si.",
+        "RECONNECTED": "✅ Ponovo ste povezani.",
+        "TIMEOUT": "timeout veze..."
+    },
+    "CURRENCY": {
+        "EURO": "€",
+        "JUNE": "Ğ1",
+        "DU": "D.U"
+    },
+    "DATE_FORMAT": {
+        "DATETIME": "dd-MM-YYYY u HH:mm"
+    },
+    "CONTRIBUTION": {
+        "TITLE": "Doprinosi",
+        "SUBTITLE": "Veliko HVALA ❤️ sledećim osobama na doprinosima, podršci, savetima, idejama, ispravkama pravopisa, prevodima itd."
+    },
+    "TASK": {
+        "MASTER_TASK": "Animatore",
+        "UNSELECT_ALL": "Poništi sve",
+        "TITLE": "Lista zadataka animatorea",
+        "PREPARE": "Izaberite opcije igre",
+        "PRESENT_YOURSELF": "Predstavite se",
+        "PRESENT_ML": "Predstavi cilj igre (2 valute, 2 različita rezultata igre)",
+        "SOUND": "Zamolite igrače da uključe zvuk na telefonu radi bolje uživljenosti",
+        "DELAY": "Objasnite vremenske okvire za svaku od dve runde",
+        "SQUARES": "stvaranje vrednosti putem trgovine identičnim kartama",
+        "TRANSACTIONS": "Objasnite kako izvršiti kupovinu (kamera ili kod) i izvršite lažnu igru najviše 5 minuta (koristite eksperimentalni režim za dobijanje dugmeta za ponovno pokretanje)",
+        "DEATH": "objasnite smrt (koja se događa slučajno) i trenutno rođenje",
+        "START_1": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
+        "SURVEY_1": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
+        "NEXT_MONEY": "pokrenite rundu u drugoj valuti",
+        "START_2": "Pokrenite kada svi igrači uđu u igru, pokrenite rundu kada dobiju karte",
+        "SURVEY_2": "Kraj runde, prikupite utiske igrača putem ankete na telefonu",
+        "RESULTS": "Kraj igre, objavite rezultate i poređenje dve runde"
+    },
+    "MODULE": {
+        "BACK_HOME": "Nazad na početnu"
+    },
+    "PWA": {
+        "NEW_VERSION": "Nova verzija je dostupna, ponovno pokretanje...",
+        "UNRECOVERABLE": "Došlo je do greške, aplikacija mora biti ponovo učitana"
+    }
 }
