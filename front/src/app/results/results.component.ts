@@ -467,6 +467,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
 	) {
 		this.i18nService.loadNamespace('results');
 		this.i18nService.loadNamespace('module-galileo');
+		this.i18nService.loadNamespace('survey');
 	}
 
 	ngOnInit(): void {
@@ -621,11 +622,11 @@ export class ResultsComponent implements OnInit, OnDestroy {
 				},
 			},
 			scales: {
-				x: {display: false, ticks: {stepSize: 1}},
-				y: {display: false, ticks: {stepSize: 1}, type: "linear", min: -3, max: 3},
-				x2: {position: "top", type: "category", labels: this.feedbacksLabelsTop},
-				x3: {position: "bottom", type: "category", labels: this.feedbacksLabelsBottom},
-				y2: {position: "left", type: "category", labels: this.leftLabels},
+				x: {display: false, type: "linear", min: -0.5, max: this.topLabelKeys.length - 0.5},
+				y: {display: false, type: "linear", min: -3.5, max: 3.5},
+				x2: {position: "top", type: "category", offset: true, labels: this.feedbacksLabelsTop},
+				x3: {position: "bottom", type: "category", offset: true, labels: this.feedbacksLabelsBottom},
+				y2: {position: "left", type: "category", offset: true, labels: this.leftLabels},
 			},
 		};
 	}
