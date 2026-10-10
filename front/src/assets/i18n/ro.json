@@ -1,249 +1,249 @@
 {
-	"HELLO": "Bună!",
-	"WELCOME": "Bine ai venit!",
-	"ANIMATOR": "Animator",
-	"LOCATION": "Loc",
-	"FREE_MONEY": "Monedă liberă",
-	"DEBT_MONEY": "Monedă de datorie",
-	"GAME_NOTICE": "Notificare de joc",
-	"BY_DEFAULT": "implicit",
-	"PUBLIC_KEY": "cheia publică",
-	"LAST_SEEN": "Ultima conectare: {{lastSeen}}",
-	"VALUES_BY_DEFAULT": "Valori implicite",
-	"BACK_TO_LOBBY": "Înapoi în sala de așteptare",
-	"CANCEL": "Anulează",
-	"CLOSE": "Închide",
-	"REFRESH": "Reîmprospătează",
-	"FULLSCREEN": "Ecran complet",
-	"FULLSCREEN_EXIT": "Ieși din ecran complet",
-	"OK": "OK",
-	"ALL": "Toate",
-	"SAVE": "Salvează",
-	"DELETE": "Șterge",
-	"GAME": {
-		"OPEN": "Deschis pentru a te alătura",
-		"PLAYING": "În desfășurare",
-		"END_GAME": "Jocul s-a încheiat",
-		"STOP_ROUND": "Sfârșitul rundei",
-		"PAUSED": "Joc în pauză",
-		"STARTED": "Jocul a început",
-		"RESUMED": "Joc reluat"
-	},
-	"CARD": {
-		"LV1": "Alimentație",
-		"LV2": "Cultură și cunoștințe",
-		"LV3": "Energie",
-		"LV4": "Tehnologie",
-		"BUILD_UP_0": "Creează o carte de cunoștințe",
-		"BUILD_UP_1": "Creează o carte de energie",
-		"BUILD_UP_2": "Creează o carte de tehnologie",
-		"BUILD_UP": "Creează o carte superioară",
-		"IN_DECK": "cartea <b>({{cardName}})</b> este în <b>pachet</b>",
-		"IN_PLAYER": "cartea <b>({{cardName}})</b> este la jucătorul <b>{{player}}</b>"
-	},
-	"THEME": {
-		"TITLE": "Temă",
-		"CLASSIC": "Cărți clasice",
-		"EMOJIS": "Obiecte emoji",
-		"TWEMOJIS": "Obiecte uniforme"
-	},
-	"EVENTS": {
-		"GAME_ENDED": "Partidă terminată",
-		"GAME_ENDED_MESSAGE": "Partida s-a încheiat. Mulțumim că ai jucat!",
-		"SURVEY_MESSAGE": "Vei fi redirecționat către un chestionar pentru a-ți culege la cald impresiile despre această partidă. Te rugăm să acorzi 5 minute pentru a răspunde!",
-		"ROUND_END": "Runda s-a încheiat",
-		"PRISON_ENDED": "Un prizonier tocmai și-a ispășit pedeapsa",
-		"BREAK_FREE": "Vreau să fiu LIBER!",
-		"DEATH_PASS": "Moartea tocmai a trecut 😈",
-		"NEED_DEATH_PASS": "Moartea trebuie să treacă ��! (E rândul tău)",
-		"ASK_END_ROUND": "Runda nu s-a terminat, ești sigur că vrei să închei runda?",
-		"SHORT_CODE_SEND": "Cod trimis",
-		"COPY_SUCCESS": "Copiat!"
-	},
-	"GO_NEW_LIFE": "Ğo pentru noua mea viață!",
-	"REINCARNATED": "Hei! Ai fost reîncarnat!",
-	"DIALOG": {
-		"CLOSE": "Închide",
-		"YES": "Da",
-		"NO": "Nu",
-		"CANCEL": "Anulează",
-		"CONTINUE_SESSION": "Reia sesiunea ta",
-		"ACTIVE_SESSION": "Ai o sesiune în curs:",
-		"DISMISS": "Închide",
-		"RESUME": "Continua",
-		"INFORMATION": {
-			"TITLE": "Informații!"
-		},
-		"CONFIRM": {
-			"TITLE": "Confirmi?",
-			"MESSAGE": "Ești sigur?"
-		},
-		"CREATE_GAME": {
-			"TITLE": "Creează un joc",
-			"FIELD1": "Nume joc",
-			"FIELD2": "Numele animatorului",
-			"FIELD3": "Locație",
-			"BTN1": "Da",
-			"BTN2": "Anulează"
-		},
-		"INSTALL": {
-			"MESSAGE1": "Folosește Safari, deschide meniul de partajare din Safari cu butonul",
-			"MESSAGE2": "apoi alege \"Adaugă pe ecranul de start\""
-		},
-		"SHORT_CODE": {
-			"PLACEHOLDER": "Introdu codul...",
-			"BUY": "Cumpără"
-		},
-		"QR_SCAN": {
-			"TITLE": "Scanează codul QR",
-			"CAMERA": "Cameră",
-			"SELECT_DEVICE": "Selectează cameră"
-		},
-		"SEIZURE": {
-			"TITLE": "Neplată - sechestrare bunuri",
-			"SOLD": "Sold: {{amount}}",
-			"SEIZE": "Sechestrare",
-			"TO_SEIZE": "De sechestrat: {{seized}} / {{objective}}",
-			"FEES": "Taxe suplimentare {{num}}",
-			"DECOTE": "Reducere de {{num}}% pe cărți",
-			"DROP_ZONE": "Mută cărțile \n de sechestrat aici",
-			"PROGRESS": "Progres",
-			"TOOLTIP_PRISON_INFO": "Dacă obiectivul este îndeplinit, 0 minute, închisoarea este doar dacă jucătorul nu mai are cărți, (min 1min), Dacă lipsa este semnificativă, sancțiunea trebuie să fie mare (max {{max}} min).",
-			"PRISON_DECISION": "Durata pentru închisoare:",
-			"MINUTES": "minut(e)",
-			"VALIDATE": "Confirmă sechestrarea",
-			"SUCCESS": "Sechestrarea a fost finalizată!"
-		}
-	},
-	"RESSOURCES": {
-		"LEARN_FORWARD": "Alăturiți-vă într-o viață mai bună",
-		"TITLE": "Moduri de învățare",
-		"BUTTON": "Moduri de învățare"
-	},
-	"ERROR": {
-		"SESSION_ALREADY_STARTED": "Sesiunea a început deja; nu mai poți crea un avatar.",
-		"GENERIC": "Ceva a mers prost; te rugăm să încerci din nou mai târziu.",
-		"UNKNOWN": "A apărut o eroare neașteptată",
-		"DISTRIBUTE_CARDS": "Distribuirea cărților a eșuat",
-		"GAME_NOT_FOUND": "Partidă negăsită",
-		"SESSION_NOT_FOUND": "Sesiune negăsită",
-		"GAME_ALREADY_LAUNCHED": "Partida este deja deschisă, jucătorii se pot alătura.",
-		"DELETE_AVATAR": "Eroare la ștergerea avatarului.",
-		"IN_PROGRESS": "deja în curs",
-		"CARDS_NOT_UNIQUE": "Cărți care nu sunt unice",
-		"NOT_ENOUGH_CARDS": "Nu sunt destule cărți",
-		"NOT_ENOUGH_CARDS_IN_DECK": "Nu sunt destule cărți în pachet",
-		"NOT_ENOUGH_MONEY": "Fonduri insuficiente.",
-		"JOIN_REINCARNATE": "imposibil de alăturat",
-		"REINCARNATE": "imposibil de reîncarnat",
-		"JOIN": "imposibil de alăturat",
-		"CREATE": "creație imposibilă",
-		"GAME_UNAVAILABLE": "joc indisponibil",
-		"PLAYER_NOT_FOUND": "jucător inexistent",
-		"UPDATE": "modificare imposibilă",
-		"EXCHANGE": "schimb imposibil",
-		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Schimb imposibil cu un jucător mort sau în închisoare",
-		"ID_PLAYER_MISSING": "Lipsește ID-ul jucătorului",
-		"INSUFFICIENT_FUNDS": "Fonduri insuficiente",
-		"DELETE": "ștergere imposibilă",
-		"START_GAME": "începerea jocului imposibilă",
-		"RESET_GAME": "resetare joc imposibilă",
-		"START_ROUND": "începerea rundei imposibilă",
-		"STOP_ROUND": "oprirea rundei imposibilă",
-		"INTER_ROUND": "între runde imposibilă",
-		"END_GAME": "încheierea jocului imposibilă",
-		"KILL": "ucidere imposibilă",
-		"SAVE_OPTIONS": "Salvarea opțiunilor imposibilă",
-		"FEEDBACKS_UNAVAILABLE": "feedback indisponibil",
-		"SEND_SURVEY": "Trimiterea sondajului imposibilă",
-		"CREATE_CREDIT": "crearea creditului imposibilă",
-		"GET_CREDITS": "recuperarea creditelor imposibilă",
-		"REPAY_CREDIT": "rambursarea creditului imposibilă",
-		"PAY_INTEREST": "plata dobânzii imposibilă",
-		"SEIZURE": "Sechestrarea bunurilor imposibilă",
-		"BREAK_PRISON": "Nu pot să rup închisoarea :/",
-		"LOCK_DOWN_PLAYER": "Nu s-a putut trimite jucătorul la închisoare",
-		"DELETE_GAME": "Ștergere imposibilă",
-		"CONNECTION_EXPIRED": "Conexiunea a expirat. Se reîncarcă pagina automat...",
-		"IO_SOCKET_ERROR": "A apărut o eroare, vă rugăm să încercați din nou mai târziu.",
-		"FINDING_CARD": "Carte negăsită",
-		"GAME_STATE_OVER": "Partidă terminată",
-		"NOT_FOUND": "Negăsit",
-		"GET_ALL": "Nu s-au putut încărca sesiunile",
-		"GET_BY_ID": "Nu s-a putut încărca sesiunea",
-		"GET_BY_SHORT_ID": "Nicio sesiune pentru acest cod",
-		"START": "Nu s-a putut porni sesiunea",
-		"SESSION_REMOVE_BY_ID": "Nu s-a putut șterge sesiunea",
-		"KILL_GAME": "Nu s-a putut șterge partida",
-		"DEFAULT": "Nu s-a putut reveni la valorile implicite",
-		"GET_BY_IDX": "Nu s-au putut încărca regulile",
-		"REMOVE_BY_IDX": "Nu s-au putut șterge regulile",
-		"ALLOW_AVATAR_EDIT_SURVEY": "Nu s-a putut redeschide chestionarul pentru acest avatar",
-		"FINDING_INGREDIENT": "Ingredient negăsit",
-		"REFRESH": "Nu s-a putut reîmprospăta partida"
-	},
-	"SOCKET": {
-		"KICKED": {
-			"TITLE": "Conexiune întreruptă ⚠️",
-			"ANOTHER_CONNECTION": "Locul tău a fost preluat de pe alt dispozitiv.",
-			"KICKED_BY_ANIMATOR": "Animatorul te-a deconectat. Alătură-te din nou jocului.",
-			"RETAKEN": "Jucătorul și-a recuperat locul.",
-			"GENERIC": "Conexiunea ta a fost înlocuită."
-		},
-		"OFFLINE": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Aștept reconectarea..."
-		},
-		"DISCONNECTED": {
-			"TITLE": "Deconectat ⚠️",
-			"MESSAGE": "Încercările de reconectare au eșuat",
-			"REFRESH": "Actualizează",
-			"TIMER": "8"
-		},
-		"RECONNECTING": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Reconectare în curs..."
-		},
-		"CONNECTED": "✅ Ești conectat.",
-		"RECONNECTED": "✅ Te-ai reconectat.",
-		"TIMEOUT": "timeout de conexiune..."
-	},
-	"CURRENCY": {
-		"EURO": "€",
-		"JUNE": "Ğ1",
-		"DU": "D.U"
-	},
-	"DATE_FORMAT": {
-		"DATETIME": "dd-MM-YYYY HH:mm"
-	},
-	"CONTRIBUTION": {
-		"TITLE": "Contribuții",
-		"SUBTITLE": "Un mare MULȚUMESC ❤️ persoanelor următoare pentru contribuțiile, sprijinul, sfaturile, ideile, corecturile ortografice, traducerile lor etc."
-	},
-	"TASK": {
-		"MASTER_TASK": "Animator",
-		"UNSELECT_ALL": "Deselectați tot",
-		"TITLE": "Lista de sarcini ale animatorului",
-		"PREPARE": "Selectați opțiunile jocului",
-		"PRESENT_YOURSELF": "Prezentați-vă",
-		"PRESENT_ML": "Prezentați scopul jocului (2 monede, 2 rezultate diferite)",
-		"SOUND": "Cereți jucătorilor să activeze sunetul telefonului pentru o imersiune mai bună",
-		"DELAY": "Explicați termenele pentru fiecare dintre cele două manșe",
-		"SQUARES": "Creați valoare prin reunirea de cărți identice prin tranzacții",
-		"TRANSACTIONS": "Explicați cum să faceți achiziții (cameră sau cod de acces) și să faceți o parte pentru 5 minute (utilizați modul experimental pentru a obține butonul de resetare)",
-		"DEATH": "Explicați moartea (care are loc arbitrar) și renașterea imediată",
-		"START_1": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
-		"SURVEY_1": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
-		"NEXT_MONEY": "Lansați manșa în cealaltă monedă",
-		"START_2": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
-		"SURVEY_2": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
-		"RESULTS": "Sfârșitul părții, dezvăluirea rezultatelor și compararea celor două manșe"
-	},
-	"MODULE": {
-		"BACK_HOME": "Înapoi acasă"
-	},
-	"PWA": {
-		"NEW_VERSION": "Versiune nouă disponibilă, se repornește...",
-		"UNRECOVERABLE": "A apărut o eroare, aplicația trebuie reîncărcată"
-	}
+    "HELLO": "Bună!",
+    "WELCOME": "Bine ai venit!",
+    "ANIMATOR": "Animator",
+    "LOCATION": "Loc",
+    "FREE_MONEY": "Monedă liberă",
+    "DEBT_MONEY": "Monedă de datorie",
+    "GAME_NOTICE": "Notificare de joc",
+    "BY_DEFAULT": "implicit",
+    "PUBLIC_KEY": "cheia publică",
+    "LAST_SEEN": "Ultima conectare: {{lastSeen}}",
+    "VALUES_BY_DEFAULT": "Valori implicite",
+    "BACK_TO_LOBBY": "Înapoi în sala de așteptare",
+    "CANCEL": "Anulează",
+    "CLOSE": "Închide",
+    "REFRESH": "Reîmprospătează",
+    "FULLSCREEN": "Ecran complet",
+    "FULLSCREEN_EXIT": "Ieși din ecran complet",
+    "OK": "OK",
+    "ALL": "Toate",
+    "SAVE": "Salvează",
+    "DELETE": "Șterge",
+    "GAME": {
+        "OPEN": "Deschis pentru a te alătura",
+        "PLAYING": "În desfășurare",
+        "END_GAME": "Jocul s-a încheiat",
+        "STOP_ROUND": "Sfârșitul rundei",
+        "PAUSED": "Joc în pauză",
+        "STARTED": "Jocul a început",
+        "RESUMED": "Joc reluat"
+    },
+    "CARD": {
+        "LV1": "Alimentație",
+        "LV2": "Cultură și cunoștințe",
+        "LV3": "Energie",
+        "LV4": "Tehnologie",
+        "BUILD_UP_0": "Creează o carte de cunoștințe",
+        "BUILD_UP_1": "Creează o carte de energie",
+        "BUILD_UP_2": "Creează o carte de tehnologie",
+        "BUILD_UP": "Creează o carte superioară",
+        "IN_DECK": "cartea <b>({{cardName}})</b> este în <b>pachet</b>",
+        "IN_PLAYER": "cartea <b>({{cardName}})</b> este la jucătorul <b>{{player}}</b>"
+    },
+    "THEME": {
+        "TITLE": "Temă",
+        "CLASSIC": "Cărți clasice",
+        "EMOJIS": "Obiecte emoji",
+        "TWEMOJIS": "Obiecte uniforme"
+    },
+    "EVENTS": {
+        "GAME_ENDED": "Partidă terminată",
+        "GAME_ENDED_MESSAGE": "Partida s-a încheiat. Mulțumim că ai jucat!",
+        "SURVEY_MESSAGE": "Vei fi redirecționat către un chestionar pentru a-ți culege la cald impresiile despre această partidă. Te rugăm să acorzi 5 minute pentru a răspunde!",
+        "ROUND_END": "Runda s-a încheiat",
+        "PRISON_ENDED": "Un prizonier tocmai și-a ispășit pedeapsa",
+        "BREAK_FREE": "Vreau să fiu LIBER!",
+        "DEATH_PASS": "Moartea tocmai a trecut 😈",
+        "NEED_DEATH_PASS": "Moartea trebuie să treacă ��! (E rândul tău)",
+        "ASK_END_ROUND": "Runda nu s-a terminat, ești sigur că vrei să închei runda?",
+        "SHORT_CODE_SEND": "Cod trimis",
+        "COPY_SUCCESS": "Copiat!"
+    },
+    "GO_NEW_LIFE": "Ğo pentru noua mea viață!",
+    "REINCARNATED": "Hei! Ai fost reîncarnat!",
+    "DIALOG": {
+        "CLOSE": "Închide",
+        "YES": "Da",
+        "NO": "Nu",
+        "CANCEL": "Anulează",
+        "CONTINUE_SESSION": "Reia sesiunea ta",
+        "ACTIVE_SESSION": "Ai o sesiune în curs:",
+        "DISMISS": "Închide",
+        "RESUME": "Continua",
+        "INFORMATION": {
+            "TITLE": "Informații!"
+        },
+        "CONFIRM": {
+            "TITLE": "Confirmi?",
+            "MESSAGE": "Ești sigur?"
+        },
+        "CREATE_GAME": {
+            "TITLE": "Creează un joc",
+            "FIELD1": "Nume joc",
+            "FIELD2": "Numele animatorului",
+            "FIELD3": "Locație",
+            "BTN1": "Da",
+            "BTN2": "Anulează"
+        },
+        "INSTALL": {
+            "MESSAGE1": "Folosește Safari, deschide meniul de partajare din Safari cu butonul",
+            "MESSAGE2": "apoi alege \"Adaugă pe ecranul de start\""
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "Introdu codul...",
+            "BUY": "Cumpără"
+        },
+        "QR_SCAN": {
+            "TITLE": "Scanează codul QR",
+            "CAMERA": "Cameră",
+            "SELECT_DEVICE": "Selectează cameră"
+        },
+        "SEIZURE": {
+            "TITLE": "Neplată - sechestrare bunuri",
+            "SOLD": "Sold: {{amount}}",
+            "SEIZE": "Sechestrare",
+            "TO_SEIZE": "De sechestrat: {{seized}} / {{objective}}",
+            "FEES": "Taxe suplimentare {{num}}",
+            "DECOTE": "Reducere de {{num}}% pe cărți",
+            "DROP_ZONE": "Mută cărțile \n de sechestrat aici",
+            "PROGRESS": "Progres",
+            "TOOLTIP_PRISON_INFO": "Dacă obiectivul este îndeplinit, 0 minute, închisoarea este doar dacă jucătorul nu mai are cărți, (min 1min), Dacă lipsa este semnificativă, sancțiunea trebuie să fie mare (max {{max}} min).",
+            "PRISON_DECISION": "Durata pentru închisoare:",
+            "MINUTES": "minut(e)",
+            "VALIDATE": "Confirmă sechestrarea",
+            "SUCCESS": "Sechestrarea a fost finalizată!"
+        }
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Alăturiți-vă într-o viață mai bună",
+        "TITLE": "Moduri de învățare",
+        "BUTTON": "Moduri de învățare"
+    },
+    "ERROR": {
+        "SESSION_ALREADY_STARTED": "Sesiunea a început deja; nu mai poți crea un avatar.",
+        "GENERIC": "Ceva a mers prost; te rugăm să încerci din nou mai târziu.",
+        "UNKNOWN": "A apărut o eroare neașteptată",
+        "DISTRIBUTE_CARDS": "Distribuirea cărților a eșuat",
+        "GAME_NOT_FOUND": "Partidă negăsită",
+        "SESSION_NOT_FOUND": "Sesiune negăsită",
+        "GAME_ALREADY_LAUNCHED": "Partida este deja deschisă, jucătorii se pot alătura.",
+        "DELETE_AVATAR": "Eroare la ștergerea avatarului.",
+        "IN_PROGRESS": "deja în curs",
+        "CARDS_NOT_UNIQUE": "Cărți care nu sunt unice",
+        "NOT_ENOUGH_CARDS": "Nu sunt destule cărți",
+        "NOT_ENOUGH_CARDS_IN_DECK": "Nu sunt destule cărți în pachet",
+        "NOT_ENOUGH_MONEY": "Fonduri insuficiente.",
+        "JOIN_REINCARNATE": "imposibil de alăturat",
+        "REINCARNATE": "imposibil de reîncarnat",
+        "JOIN": "imposibil de alăturat",
+        "CREATE": "creație imposibilă",
+        "GAME_UNAVAILABLE": "joc indisponibil",
+        "PLAYER_NOT_FOUND": "jucător inexistent",
+        "UPDATE": "modificare imposibilă",
+        "EXCHANGE": "schimb imposibil",
+        "TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Schimb imposibil cu un jucător mort sau în închisoare",
+        "ID_PLAYER_MISSING": "Lipsește ID-ul jucătorului",
+        "INSUFFICIENT_FUNDS": "Fonduri insuficiente",
+        "DELETE": "ștergere imposibilă",
+        "START_GAME": "începerea jocului imposibilă",
+        "RESET_GAME": "resetare joc imposibilă",
+        "START_ROUND": "începerea rundei imposibilă",
+        "STOP_ROUND": "oprirea rundei imposibilă",
+        "INTER_ROUND": "între runde imposibilă",
+        "END_GAME": "încheierea jocului imposibilă",
+        "KILL": "ucidere imposibilă",
+        "SAVE_OPTIONS": "Salvarea opțiunilor imposibilă",
+        "FEEDBACKS_UNAVAILABLE": "feedback indisponibil",
+        "SEND_SURVEY": "Trimiterea sondajului imposibilă",
+        "CREATE_CREDIT": "crearea creditului imposibilă",
+        "GET_CREDITS": "recuperarea creditelor imposibilă",
+        "REPAY_CREDIT": "rambursarea creditului imposibilă",
+        "PAY_INTEREST": "plata dobânzii imposibilă",
+        "SEIZURE": "Sechestrarea bunurilor imposibilă",
+        "BREAK_PRISON": "Nu pot să rup închisoarea :/",
+        "LOCK_DOWN_PLAYER": "Nu s-a putut trimite jucătorul la închisoare",
+        "DELETE_GAME": "Ștergere imposibilă",
+        "CONNECTION_EXPIRED": "Conexiunea a expirat. Se reîncarcă pagina automat...",
+        "IO_SOCKET_ERROR": "A apărut o eroare, vă rugăm să încercați din nou mai târziu.",
+        "FINDING_CARD": "Carte negăsită",
+        "GAME_STATE_OVER": "Partidă terminată",
+        "NOT_FOUND": "Negăsit",
+        "GET_ALL": "Nu s-au putut încărca sesiunile",
+        "GET_BY_ID": "Nu s-a putut încărca sesiunea",
+        "GET_BY_SHORT_ID": "Nicio sesiune pentru acest cod",
+        "START": "Nu s-a putut porni sesiunea",
+        "SESSION_REMOVE_BY_ID": "Nu s-a putut șterge sesiunea",
+        "KILL_GAME": "Nu s-a putut șterge partida",
+        "DEFAULT": "Nu s-a putut reveni la valorile implicite",
+        "GET_BY_IDX": "Nu s-au putut încărca regulile",
+        "REMOVE_BY_IDX": "Nu s-au putut șterge regulile",
+        "ALLOW_AVATAR_EDIT_SURVEY": "Nu s-a putut redeschide chestionarul pentru acest avatar",
+        "FINDING_INGREDIENT": "Ingredient negăsit",
+        "REFRESH": "Nu s-a putut reîmprospăta partida"
+    },
+    "SOCKET": {
+        "KICKED": {
+            "TITLE": "Conexiune întreruptă ⚠️",
+            "ANOTHER_CONNECTION": "Locul tău a fost preluat de pe alt dispozitiv.",
+            "KICKED_BY_ANIMATOR": "Animatorul te-a deconectat. Alătură-te din nou jocului.",
+            "RETAKEN": "Jucătorul și-a recuperat locul.",
+            "GENERIC": "Conexiunea ta a fost înlocuită."
+        },
+        "OFFLINE": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Aștept reconectarea..."
+        },
+        "DISCONNECTED": {
+            "TITLE": "Deconectat ⚠️",
+            "MESSAGE": "Încercările de reconectare au eșuat",
+            "REFRESH": "Actualizează",
+            "TIMER": "8"
+        },
+        "RECONNECTING": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Reconectare în curs..."
+        },
+        "CONNECTED": "✅ Ești conectat.",
+        "RECONNECTED": "✅ Te-ai reconectat.",
+        "TIMEOUT": "timeout de conexiune..."
+    },
+    "CURRENCY": {
+        "EURO": "€",
+        "JUNE": "Ğ1",
+        "DU": "D.U"
+    },
+    "DATE_FORMAT": {
+        "DATETIME": "dd-MM-YYYY HH:mm"
+    },
+    "CONTRIBUTION": {
+        "TITLE": "Contribuții",
+        "SUBTITLE": "Un mare MULȚUMESC ❤️ persoanelor următoare pentru contribuțiile, sprijinul, sfaturile, ideile, corecturile ortografice, traducerile lor etc."
+    },
+    "TASK": {
+        "MASTER_TASK": "Animator",
+        "UNSELECT_ALL": "Deselectați tot",
+        "TITLE": "Lista de sarcini ale animatorului",
+        "PREPARE": "Selectați opțiunile jocului",
+        "PRESENT_YOURSELF": "Prezentați-vă",
+        "PRESENT_ML": "Prezentați scopul jocului (2 monede, 2 rezultate diferite)",
+        "SOUND": "Cereți jucătorilor să activeze sunetul telefonului pentru o imersiune mai bună",
+        "DELAY": "Explicați termenele pentru fiecare dintre cele două manșe",
+        "SQUARES": "Creați valoare prin reunirea de cărți identice prin tranzacții",
+        "TRANSACTIONS": "Explicați cum să faceți achiziții (cameră sau cod de acces) și să faceți o parte pentru 5 minute (utilizați modul experimental pentru a obține butonul de resetare)",
+        "DEATH": "Explicați moartea (care are loc arbitrar) și renașterea imediată",
+        "START_1": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
+        "SURVEY_1": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
+        "NEXT_MONEY": "Lansați manșa în cealaltă monedă",
+        "START_2": "Începeți odată ce toți jucătorii s-au alăturat părții, lansați manșa atunci când primesc cărțile",
+        "SURVEY_2": "Sfârșitul manșei, colectarea sentimentelor prin sondaj pe telefon",
+        "RESULTS": "Sfârșitul părții, dezvăluirea rezultatelor și compararea celor două manșe"
+    },
+    "MODULE": {
+        "BACK_HOME": "Înapoi acasă"
+    },
+    "PWA": {
+        "NEW_VERSION": "Versiune nouă disponibilă, se repornește...",
+        "UNRECOVERABLE": "A apărut o eroare, aplicația trebuie reîncărcată"
+    }
 }
