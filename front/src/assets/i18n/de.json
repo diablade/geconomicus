@@ -1,249 +1,249 @@
 {
-	"HELLO": "Hallo!",
-	"WELCOME": "Willkommen!",
-	"ANIMATOR": "Moderator",
-	"LOCATION": "Ort",
-	"FREE_MONEY": "Freigeld",
-	"DEBT_MONEY": "Schuldgeld",
-	"GAME_NOTICE": "Spielanleitung",
-	"BY_DEFAULT": "Standardmäßig",
-	"PUBLIC_KEY": "Öffentlicher Schlüssel:",
-	"LAST_SEEN": "Zuletzt online: {{lastSeen}}",
-	"VALUES_BY_DEFAULT": "Standardwerte",
-	"BACK_TO_LOBBY": "Zurück in den Wartebereich",
-	"CANCEL": "Abbrechen",
-	"CLOSE": "Schließen",
-	"REFRESH": "Aktualisieren",
-	"FULLSCREEN": "Vollbild",
-	"FULLSCREEN_EXIT": "Vollbild beenden",
-	"OK": "OK",
-	"ALL": "Alle",
-	"SAVE": "Speichern",
-	"DELETE": "Löschen",
-	"GAME": {
-		"OPEN": "Spiel offen, beitreten ist möglich",
-		"PLAYING": "Läuft",
-		"END_GAME": "Runde beendet",
-		"STOP_ROUND": "Runde beendet",
-		"PAUSED": "Spiel pausiert",
-		"STARTED": "Spiel gestartet",
-		"RESUMED": "Spiel fortgesetzt"
-	},
-	"CARD": {
-		"LV1": "Ernährung",
-		"LV2": "Wissen",
-		"LV3": "Energie",
-		"LV4": "Technologie",
-		"BUILD_UP_0": "Eine Wissenskarte erstellen",
-		"BUILD_UP_1": "Eine Energiekarte erstellen",
-		"BUILD_UP_2": "Eine Technologiekarte erstellen",
-		"BUILD_UP": "Eine Karte mit höherem Wert erstellen",
-		"IN_DECK": "die Karte <b>({{cardName}})</b> liegt im <b>Deck</b>",
-		"IN_PLAYER": "die Karte <b>({{cardName}})</b> ist bei Spieler <b>{{player}}</b>"
-	},
-	"THEME": {
-		"TITLE": "Thema",
-		"CLASSIC": "Klassische Karten",
-		"EMOJIS": "Emoji-Items",
-		"TWEMOJIS": "Einheitliche Items"
-	},
-	"EVENTS": {
-		"GAME_ENDED": "Spiel beendet",
-		"GAME_ENDED_MESSAGE": "Das Spiel ist vorbei. Danke fürs Mitspielen!",
-		"SURVEY_MESSAGE": "Du wirst zu einem Fragebogen weitergeleitet, um deine unmittelbaren Eindrücke von diesem Spiel festzuhalten. Bitte nimm dir 5 Minuten Zeit zum Beantworten!",
-		"ROUND_END": "Runde beendet",
-		"PRISON_ENDED": "Ein Gefangener hat seine Haftstrafe verbüßt",
-		"BREAK_FREE": "Ich will FREIHEIT!",
-		"DEATH_PASS": "Der Tod war hier 😈",
-		"NEED_DEATH_PASS": "Der Tod muss vorbeikommen 😈! (Ihr seid dran)",
-		"ASK_END_ROUND": "Die Runde ist noch nicht vorbei, willst du sie wirklich beenden?",
-		"SHORT_CODE_SEND": "Code gesendet",
-		"COPY_SUCCESS": "Kopiert!"
-	},
-	"GO_NEW_LIFE": "Ğo für mein neues Leben!",
-	"REINCARNATED": "Hey! Du wurdest wiedergeboren!",
-	"DIALOG": {
-		"CLOSE": "Schließen",
-		"YES": "Ja",
-		"NO": "Nein",
-		"CANCEL": "Abbrechen",
-		"CONTINUE_SESSION": "Sitzung fortsetzen",
-		"ACTIVE_SESSION": "Du hast eine laufende Sitzung:",
-		"DISMISS": "Schliessen",
-		"RESUME": "Fortsetzen",
-		"INFORMATION": {
-			"TITLE": "Information!"
-		},
-		"CONFIRM": {
-			"TITLE": "Bestätigen?",
-			"MESSAGE": "Bestätigst du?"
-		},
-		"CREATE_GAME": {
-			"TITLE": "Spiel erstellen",
-			"FIELD1": "Spiel benennen",
-			"FIELD2": "Name des Spielleiters",
-			"FIELD3": "Ort",
-			"BTN1": "Erstellen",
-			"BTN2": "Abbrechen"
-		},
-		"INSTALL": {
-			"MESSAGE1": "Öffne In Safari das Teilen-Menü mit der Taste",
-			"MESSAGE2": "und wähle \"Zum Home-Bildschirm\""
-		},
-		"SHORT_CODE": {
-			"PLACEHOLDER": "Code eingeben...",
-			"BUY": "Kaufen"
-		},
-		"QR_SCAN": {
-			"TITLE": "QR-Code scannen",
-			"CAMERA": "Kamera",
-			"SELECT_DEVICE": "Kamera auswählen"
-		},
-		"SEIZURE": {
-			"TITLE": "Zahlungsausfall - Vermögenswerte pfänden",
-			"SOLD": "Guthaben: {{amount}}",
-			"SEIZE": "Pfänden",
-			"TO_SEIZE": "Zu pfänden: {{seized}} / {{objective}}",
-			"FEES": "Zusätzliche Gebühren {{num}}",
-			"DECOTE": "Abschlag von {{num}} % auf die Karten",
-			"DROP_ZONE": "Hier die zu pfändenden\nKarten ablegen",
-			"PROGRESS": "Fortschritt",
-			"TOOLTIP_PRISON_INFO": "Wenn das Ziel erreicht ist: 0 Minuten. Gefängnis ist nur für Spieler ohne Karten: mindestens 1 Min. Bei schwerwiegendem Verstoß sollte die Strafe höher sein (maximal {{max}} Min.).",
-			"PRISON_DECISION": "Haftdauer:",
-			"MINUTES": "Minute(n)",
-			"VALIDATE": "Pfändung bestätigen",
-			"SUCCESS": "Pfändung durchgeführt!"
-		}
-	},
-	"RESSOURCES": {
-		"LEARN_FORWARD": "Weiterführende",
-		"TITLE": "Lernmodule",
-		"BUTTON": "Pädagogische Module"
-	},
-	"ERROR": {
-		"SESSION_ALREADY_STARTED": "Die Sitzung hat bereits begonnen; du kannst keinen Avatar mehr erstellen.",
-		"GENERIC": "Ein Fehler ist aufgetreten, bitte versuche es später nochmals.",
-		"UNKNOWN": "Ein unerwarteter Fehler ist aufgetreten",
-		"DISTRIBUTE_CARDS": "Kartenverteilung fehlgeschlagen",
-		"GAME_NOT_FOUND": "Spiel nicht gefunden",
-		"SESSION_NOT_FOUND": "Sitzung nicht gefunden",
-		"GAME_ALREADY_LAUNCHED": "Das Spiel ist bereits offen, die Spieler können beitreten.",
-		"DELETE_AVATAR": "Fehler beim Löschen des Avatars.",
-		"IN_PROGRESS": "bereits im Gange",
-		"CARDS_NOT_UNIQUE": "Karten nicht eindeutig",
-		"NOT_ENOUGH_CARDS": "Nicht genug Karten",
-		"NOT_ENOUGH_CARDS_IN_DECK": "Nicht genug Karten im Deck",
-		"NOT_ENOUGH_MONEY": "Unzureichende Mittel.",
-		"JOIN_REINCARNATE": "Beitritt nicht möglich",
-		"REINCARNATE": "Wiedererstehung fehlgeschlagen",
-		"JOIN": "Beitritt nicht möglich",
-		"CREATE": "Erstellung fehlgeschlagen",
-		"GAME_UNAVAILABLE": "Spiel nicht verfügbar",
-		"PLAYER_NOT_FOUND": "Spieler nicht gefunden",
-		"UPDATE": "Aktualisierung fehlgeschlagen",
-		"EXCHANGE": "Austausch nicht möglich",
-		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Austausch mit einem toten oder inhaftierten Spieler nicht möglich",
-		"ID_PLAYER_MISSING": "Spieler-ID fehlt",
-		"INSUFFICIENT_FUNDS": "Nicht genug Geld",
-		"DELETE": "Löschen fehlgeschlagen",
-		"START_GAME": "Spielstart fehlgeschlagen",
-		"RESET_GAME": "Spielzurücksetzung fehlgeschlagen",
-		"START_ROUND": "Rundenstart fehlgeschlagen",
-		"STOP_ROUND": "Rundenstopp fehlgeschlagen",
-		"INTER_ROUND": "Zwischenrunde nicht möglich",
-		"END_GAME": "Spielende fehlgeschlagen",
-		"KILL": "Töten nicht möglich",
-		"SAVE_OPTIONS": "Speichern der Optionen fehlgeschlagen",
-		"FEEDBACKS_UNAVAILABLE": "Rückmeldungen nicht verfügbar",
-		"SEND_SURVEY": "Umfrageversand fehlgeschlagen",
-		"CREATE_CREDIT": "Krediterstellung fehlgeschlagen",
-		"GET_CREDITS": "Kreditabruf fehlgeschlagen",
-		"REPAY_CREDIT": "Kredittilgung fehlgeschlagen",
-		"PAY_INTEREST": "Zahlung der Zinsen nicht möglich",
-		"SEIZURE": "Beschlagnahme von Vermögenswerten nicht möglich",
-		"BREAK_PRISON": "Haftentlassung fehlgeschlagen :/",
-		"LOCK_DOWN_PLAYER": "Inhaftierung des Spielers fehlgeschlagen",
-		"DELETE_GAME": "Löschen fehlgeschlagen",
-		"CONNECTION_EXPIRED": "Verbindung abgelaufen. Die Seite wird automatisch neu geladen...",
-		"IO_SOCKET_ERROR": "Ein Fehler ist aufgetreten, bitte versuche es später erneut.",
-		"FINDING_CARD": "Karte nicht gefunden",
-		"GAME_STATE_OVER": "Spiel beendet",
-		"NOT_FOUND": "Nicht gefunden",
-		"GET_ALL": "Sitzungen konnten nicht geladen werden",
-		"GET_BY_ID": "Sitzung konnte nicht geladen werden",
-		"GET_BY_SHORT_ID": "Keine Sitzung für diesen Code",
-		"START": "Sitzung konnte nicht gestartet werden",
-		"SESSION_REMOVE_BY_ID": "Sitzung konnte nicht gelöscht werden",
-		"KILL_GAME": "Spiel konnte nicht gelöscht werden",
-		"DEFAULT": "Zurücksetzen auf die Standardwerte fehlgeschlagen",
-		"GET_BY_IDX": "Regeln konnten nicht geladen werden",
-		"REMOVE_BY_IDX": "Regeln konnten nicht gelöscht werden",
-		"ALLOW_AVATAR_EDIT_SURVEY": "Fragebogen konnte für diesen Avatar nicht freigegeben werden",
-		"FINDING_INGREDIENT": "Zutat nicht gefunden",
-		"REFRESH": "Spiel konnte nicht aktualisiert werden"
-	},
-	"SOCKET": {
-		"KICKED": {
-			"TITLE": "Verbindung unterbrochen ⚠️",
-			"ANOTHER_CONNECTION": "Dein Platz wurde von einem anderen Gerät übernommen.",
-			"KICKED_BY_ANIMATOR": "Der Moderator hat dich getrennt. Tritt dem Spiel erneut bei.",
-			"RETAKEN": "Der Spieler hat seinen Platz zurückgenommen.",
-			"GENERIC": "Deine Verbindung wurde ersetzt."
-		},
-		"OFFLINE": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Warte auf Wiederverbindung..."
-		},
-		"DISCONNECTED": {
-			"TITLE": "Verbindung getrennt ⚠️",
-			"MESSAGE": "Keine Wiederverbindung möglich",
-			"REFRESH": "Aktualisieren",
-			"TIMER": "8"
-		},
-		"RECONNECTING": {
-			"TITLE": "Offline ⚠️",
-			"TEXT": "☎️ Verbindung wird wiederhergestellt..."
-		},
-		"CONNECTED": "✅ Sie sind verbunden.",
-		"RECONNECTED": "✅ Du bist wieder verbunden.",
-		"TIMEOUT": "Verbindungstimeout abgelaufen."
-	},
-	"CURRENCY": {
-		"EURO": "€",
-		"JUNE": "Ğ1",
-		"DU": "DU"
-	},
-	"DATE_FORMAT": {
-		"DATETIME": "dd.MM.yyyy, HH:mm"
-	},
-	"CONTRIBUTION": {
-		"TITLE": "Beiträge",
-		"SUBTITLE": "Ein herzliches DANKESCHÖN ❤️ an die folgenden Personen für ihre Beiträge, Unterstützung, Ratschläge, Ideen, Rechtschreibkorrekturen, Übersetzungen usw."
-	},
-	"TASK": {
-		"MASTER_TASK": "Spielleiter",
-		"UNSELECT_ALL": "Alles abwählen",
-		"TITLE": "Aufgabenliste des Spielleiters",
-		"PREPARE": "Spieloptionen wählen",
-		"PRESENT_YOURSELF": "Sich vorstellen",
-		"PRESENT_ML": "Ziel des Spiels erklären (2 Geldarten, 2 verschiedene Spielergebnisse)",
-		"SOUND": "Die Spieler bitten, den Ton ihres Telefons für ein besseres Eintauchen einzuschalten",
-		"DELAY": "Zeitrahmen für jede der beiden Runden erläutern",
-		"SQUARES": "Wertschöpfung durch Sammeln identischer Karten durch Transaktionen",
-		"TRANSACTIONS": "Erklären Sie, wie Sie Einkäufe tätigen (Kamera oder digitaler Code) und spielen Sie maximal 5 Minuten lang ein Spiel (verwenden Sie den Experimentalmodus, um die Reset-Taste zu haben).",
-		"DEATH": "Tod (der zufällig eintritt) und sofortige Wiedergeburt erklären",
-		"START_1": "Das Spiel starten, sobald alle Spieler beigetreten sind.Die Runde beginnen, wenn alle ihre Karten erhalten haben",
-		"SURVEY_1": "Ende der Runde. Empfindungen durch eine Umfrage auf dem Handy sammeln",
-		"NEXT_MONEY": "Runde in der anderen Geldart starten",
-		"START_2": "Das Speil starten, sobald alle Spieler beigetreten sind. Die Runde beginnen, wenn alle ihre Karten erhalten haben",
-		"SURVEY_2": "Ende der Runde, Empfindungen durch eine Umfrage auf dem Handy sammeln",
-		"RESULTS": "Spielende, Ergebnisvorstellung und Vergleich der beiden Runden"
-	},
-	"MODULE": {
-		"BACK_HOME": "Zurück zur Startseite"
-	},
-	"PWA": {
-		"NEW_VERSION": "Neue Version verfügbar, wird neu gestartet...",
-		"UNRECOVERABLE": "Ein Fehler ist aufgetreten, die Anwendung muss neu geladen werden"
-	}
+    "HELLO": "Hallo!",
+    "WELCOME": "Willkommen!",
+    "ANIMATOR": "Moderator",
+    "LOCATION": "Ort",
+    "FREE_MONEY": "Freigeld",
+    "DEBT_MONEY": "Schuldgeld",
+    "GAME_NOTICE": "Spielanleitung",
+    "BY_DEFAULT": "Standardmäßig",
+    "PUBLIC_KEY": "Öffentlicher Schlüssel:",
+    "LAST_SEEN": "Zuletzt online: {{lastSeen}}",
+    "VALUES_BY_DEFAULT": "Standardwerte",
+    "BACK_TO_LOBBY": "Zurück in den Wartebereich",
+    "CANCEL": "Abbrechen",
+    "CLOSE": "Schließen",
+    "REFRESH": "Aktualisieren",
+    "FULLSCREEN": "Vollbild",
+    "FULLSCREEN_EXIT": "Vollbild beenden",
+    "OK": "OK",
+    "ALL": "Alle",
+    "SAVE": "Speichern",
+    "DELETE": "Löschen",
+    "GAME": {
+        "OPEN": "Spiel offen, beitreten ist möglich",
+        "PLAYING": "Läuft",
+        "END_GAME": "Runde beendet",
+        "STOP_ROUND": "Runde beendet",
+        "PAUSED": "Spiel pausiert",
+        "STARTED": "Spiel gestartet",
+        "RESUMED": "Spiel fortgesetzt"
+    },
+    "CARD": {
+        "LV1": "Ernährung",
+        "LV2": "Wissen",
+        "LV3": "Energie",
+        "LV4": "Technologie",
+        "BUILD_UP_0": "Eine Wissenskarte erstellen",
+        "BUILD_UP_1": "Eine Energiekarte erstellen",
+        "BUILD_UP_2": "Eine Technologiekarte erstellen",
+        "BUILD_UP": "Eine Karte mit höherem Wert erstellen",
+        "IN_DECK": "die Karte <b>({{cardName}})</b> liegt im <b>Deck</b>",
+        "IN_PLAYER": "die Karte <b>({{cardName}})</b> ist bei Spieler <b>{{player}}</b>"
+    },
+    "THEME": {
+        "TITLE": "Thema",
+        "CLASSIC": "Klassische Karten",
+        "EMOJIS": "Emoji-Items",
+        "TWEMOJIS": "Einheitliche Items"
+    },
+    "EVENTS": {
+        "GAME_ENDED": "Spiel beendet",
+        "GAME_ENDED_MESSAGE": "Das Spiel ist vorbei. Danke fürs Mitspielen!",
+        "SURVEY_MESSAGE": "Du wirst zu einem Fragebogen weitergeleitet, um deine unmittelbaren Eindrücke von diesem Spiel festzuhalten. Bitte nimm dir 5 Minuten Zeit zum Beantworten!",
+        "ROUND_END": "Runde beendet",
+        "PRISON_ENDED": "Ein Gefangener hat seine Haftstrafe verbüßt",
+        "BREAK_FREE": "Ich will FREIHEIT!",
+        "DEATH_PASS": "Der Tod war hier 😈",
+        "NEED_DEATH_PASS": "Der Tod muss vorbeikommen 😈! (Ihr seid dran)",
+        "ASK_END_ROUND": "Die Runde ist noch nicht vorbei, willst du sie wirklich beenden?",
+        "SHORT_CODE_SEND": "Code gesendet",
+        "COPY_SUCCESS": "Kopiert!"
+    },
+    "GO_NEW_LIFE": "Ğo für mein neues Leben!",
+    "REINCARNATED": "Hey! Du wurdest wiedergeboren!",
+    "DIALOG": {
+        "CLOSE": "Schließen",
+        "YES": "Ja",
+        "NO": "Nein",
+        "CANCEL": "Abbrechen",
+        "CONTINUE_SESSION": "Sitzung fortsetzen",
+        "ACTIVE_SESSION": "Du hast eine laufende Sitzung:",
+        "DISMISS": "Schliessen",
+        "RESUME": "Fortsetzen",
+        "INFORMATION": {
+            "TITLE": "Information!"
+        },
+        "CONFIRM": {
+            "TITLE": "Bestätigen?",
+            "MESSAGE": "Bestätigst du?"
+        },
+        "CREATE_GAME": {
+            "TITLE": "Spiel erstellen",
+            "FIELD1": "Spiel benennen",
+            "FIELD2": "Name des Spielleiters",
+            "FIELD3": "Ort",
+            "BTN1": "Erstellen",
+            "BTN2": "Abbrechen"
+        },
+        "INSTALL": {
+            "MESSAGE1": "Öffne In Safari das Teilen-Menü mit der Taste",
+            "MESSAGE2": "und wähle \"Zum Home-Bildschirm\""
+        },
+        "SHORT_CODE": {
+            "PLACEHOLDER": "Code eingeben...",
+            "BUY": "Kaufen"
+        },
+        "QR_SCAN": {
+            "TITLE": "QR-Code scannen",
+            "CAMERA": "Kamera",
+            "SELECT_DEVICE": "Kamera auswählen"
+        },
+        "SEIZURE": {
+            "TITLE": "Zahlungsausfall - Vermögenswerte pfänden",
+            "SOLD": "Guthaben: {{amount}}",
+            "SEIZE": "Pfänden",
+            "TO_SEIZE": "Zu pfänden: {{seized}} / {{objective}}",
+            "FEES": "Zusätzliche Gebühren {{num}}",
+            "DECOTE": "Abschlag von {{num}} % auf die Karten",
+            "DROP_ZONE": "Hier die zu pfändenden\nKarten ablegen",
+            "PROGRESS": "Fortschritt",
+            "TOOLTIP_PRISON_INFO": "Wenn das Ziel erreicht ist: 0 Minuten. Gefängnis ist nur für Spieler ohne Karten: mindestens 1 Min. Bei schwerwiegendem Verstoß sollte die Strafe höher sein (maximal {{max}} Min.).",
+            "PRISON_DECISION": "Haftdauer:",
+            "MINUTES": "Minute(n)",
+            "VALIDATE": "Pfändung bestätigen",
+            "SUCCESS": "Pfändung durchgeführt!"
+        }
+    },
+    "RESSOURCES": {
+        "LEARN_FORWARD": "Weiterführende",
+        "TITLE": "Lernmodule",
+        "BUTTON": "Pädagogische Module"
+    },
+    "ERROR": {
+        "SESSION_ALREADY_STARTED": "Die Sitzung hat bereits begonnen; du kannst keinen Avatar mehr erstellen.",
+        "GENERIC": "Ein Fehler ist aufgetreten, bitte versuche es später nochmals.",
+        "UNKNOWN": "Ein unerwarteter Fehler ist aufgetreten",
+        "DISTRIBUTE_CARDS": "Kartenverteilung fehlgeschlagen",
+        "GAME_NOT_FOUND": "Spiel nicht gefunden",
+        "SESSION_NOT_FOUND": "Sitzung nicht gefunden",
+        "GAME_ALREADY_LAUNCHED": "Das Spiel ist bereits offen, die Spieler können beitreten.",
+        "DELETE_AVATAR": "Fehler beim Löschen des Avatars.",
+        "IN_PROGRESS": "bereits im Gange",
+        "CARDS_NOT_UNIQUE": "Karten nicht eindeutig",
+        "NOT_ENOUGH_CARDS": "Nicht genug Karten",
+        "NOT_ENOUGH_CARDS_IN_DECK": "Nicht genug Karten im Deck",
+        "NOT_ENOUGH_MONEY": "Unzureichende Mittel.",
+        "JOIN_REINCARNATE": "Beitritt nicht möglich",
+        "REINCARNATE": "Wiedererstehung fehlgeschlagen",
+        "JOIN": "Beitritt nicht möglich",
+        "CREATE": "Erstellung fehlgeschlagen",
+        "GAME_UNAVAILABLE": "Spiel nicht verfügbar",
+        "PLAYER_NOT_FOUND": "Spieler nicht gefunden",
+        "UPDATE": "Aktualisierung fehlgeschlagen",
+        "EXCHANGE": "Austausch nicht möglich",
+        "TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Austausch mit einem toten oder inhaftierten Spieler nicht möglich",
+        "ID_PLAYER_MISSING": "Spieler-ID fehlt",
+        "INSUFFICIENT_FUNDS": "Nicht genug Geld",
+        "DELETE": "Löschen fehlgeschlagen",
+        "START_GAME": "Spielstart fehlgeschlagen",
+        "RESET_GAME": "Spielzurücksetzung fehlgeschlagen",
+        "START_ROUND": "Rundenstart fehlgeschlagen",
+        "STOP_ROUND": "Rundenstopp fehlgeschlagen",
+        "INTER_ROUND": "Zwischenrunde nicht möglich",
+        "END_GAME": "Spielende fehlgeschlagen",
+        "KILL": "Töten nicht möglich",
+        "SAVE_OPTIONS": "Speichern der Optionen fehlgeschlagen",
+        "FEEDBACKS_UNAVAILABLE": "Rückmeldungen nicht verfügbar",
+        "SEND_SURVEY": "Umfrageversand fehlgeschlagen",
+        "CREATE_CREDIT": "Krediterstellung fehlgeschlagen",
+        "GET_CREDITS": "Kreditabruf fehlgeschlagen",
+        "REPAY_CREDIT": "Kredittilgung fehlgeschlagen",
+        "PAY_INTEREST": "Zahlung der Zinsen nicht möglich",
+        "SEIZURE": "Beschlagnahme von Vermögenswerten nicht möglich",
+        "BREAK_PRISON": "Haftentlassung fehlgeschlagen :/",
+        "LOCK_DOWN_PLAYER": "Inhaftierung des Spielers fehlgeschlagen",
+        "DELETE_GAME": "Löschen fehlgeschlagen",
+        "CONNECTION_EXPIRED": "Verbindung abgelaufen. Die Seite wird automatisch neu geladen...",
+        "IO_SOCKET_ERROR": "Ein Fehler ist aufgetreten, bitte versuche es später erneut.",
+        "FINDING_CARD": "Karte nicht gefunden",
+        "GAME_STATE_OVER": "Spiel beendet",
+        "NOT_FOUND": "Nicht gefunden",
+        "GET_ALL": "Sitzungen konnten nicht geladen werden",
+        "GET_BY_ID": "Sitzung konnte nicht geladen werden",
+        "GET_BY_SHORT_ID": "Keine Sitzung für diesen Code",
+        "START": "Sitzung konnte nicht gestartet werden",
+        "SESSION_REMOVE_BY_ID": "Sitzung konnte nicht gelöscht werden",
+        "KILL_GAME": "Spiel konnte nicht gelöscht werden",
+        "DEFAULT": "Zurücksetzen auf die Standardwerte fehlgeschlagen",
+        "GET_BY_IDX": "Regeln konnten nicht geladen werden",
+        "REMOVE_BY_IDX": "Regeln konnten nicht gelöscht werden",
+        "ALLOW_AVATAR_EDIT_SURVEY": "Fragebogen konnte für diesen Avatar nicht freigegeben werden",
+        "FINDING_INGREDIENT": "Zutat nicht gefunden",
+        "REFRESH": "Spiel konnte nicht aktualisiert werden"
+    },
+    "SOCKET": {
+        "KICKED": {
+            "TITLE": "Verbindung unterbrochen ⚠️",
+            "ANOTHER_CONNECTION": "Dein Platz wurde von einem anderen Gerät übernommen.",
+            "KICKED_BY_ANIMATOR": "Der Moderator hat dich getrennt. Tritt dem Spiel erneut bei.",
+            "RETAKEN": "Der Spieler hat seinen Platz zurückgenommen.",
+            "GENERIC": "Deine Verbindung wurde ersetzt."
+        },
+        "OFFLINE": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Warte auf Wiederverbindung..."
+        },
+        "DISCONNECTED": {
+            "TITLE": "Verbindung getrennt ⚠️",
+            "MESSAGE": "Keine Wiederverbindung möglich",
+            "REFRESH": "Aktualisieren",
+            "TIMER": "8"
+        },
+        "RECONNECTING": {
+            "TITLE": "Offline ⚠️",
+            "TEXT": "☎️ Verbindung wird wiederhergestellt..."
+        },
+        "CONNECTED": "✅ Sie sind verbunden.",
+        "RECONNECTED": "✅ Du bist wieder verbunden.",
+        "TIMEOUT": "Verbindungstimeout abgelaufen."
+    },
+    "CURRENCY": {
+        "EURO": "€",
+        "JUNE": "Ğ1",
+        "DU": "DU"
+    },
+    "DATE_FORMAT": {
+        "DATETIME": "dd.MM.yyyy, HH:mm"
+    },
+    "CONTRIBUTION": {
+        "TITLE": "Beiträge",
+        "SUBTITLE": "Ein herzliches DANKESCHÖN ❤️ an die folgenden Personen für ihre Beiträge, Unterstützung, Ratschläge, Ideen, Rechtschreibkorrekturen, Übersetzungen usw."
+    },
+    "TASK": {
+        "MASTER_TASK": "Spielleiter",
+        "UNSELECT_ALL": "Alles abwählen",
+        "TITLE": "Aufgabenliste des Spielleiters",
+        "PREPARE": "Spieloptionen wählen",
+        "PRESENT_YOURSELF": "Sich vorstellen",
+        "PRESENT_ML": "Ziel des Spiels erklären (2 Geldarten, 2 verschiedene Spielergebnisse)",
+        "SOUND": "Die Spieler bitten, den Ton ihres Telefons für ein besseres Eintauchen einzuschalten",
+        "DELAY": "Zeitrahmen für jede der beiden Runden erläutern",
+        "SQUARES": "Wertschöpfung durch Sammeln identischer Karten durch Transaktionen",
+        "TRANSACTIONS": "Erklären Sie, wie Sie Einkäufe tätigen (Kamera oder digitaler Code) und spielen Sie maximal 5 Minuten lang ein Spiel (verwenden Sie den Experimentalmodus, um die Reset-Taste zu haben).",
+        "DEATH": "Tod (der zufällig eintritt) und sofortige Wiedergeburt erklären",
+        "START_1": "Das Spiel starten, sobald alle Spieler beigetreten sind.Die Runde beginnen, wenn alle ihre Karten erhalten haben",
+        "SURVEY_1": "Ende der Runde. Empfindungen durch eine Umfrage auf dem Handy sammeln",
+        "NEXT_MONEY": "Runde in der anderen Geldart starten",
+        "START_2": "Das Speil starten, sobald alle Spieler beigetreten sind. Die Runde beginnen, wenn alle ihre Karten erhalten haben",
+        "SURVEY_2": "Ende der Runde, Empfindungen durch eine Umfrage auf dem Handy sammeln",
+        "RESULTS": "Spielende, Ergebnisvorstellung und Vergleich der beiden Runden"
+    },
+    "MODULE": {
+        "BACK_HOME": "Zurück zur Startseite"
+    },
+    "PWA": {
+        "NEW_VERSION": "Neue Version verfügbar, wird neu gestartet...",
+        "UNRECOVERABLE": "Ein Fehler ist aufgetreten, die Anwendung muss neu geladen werden"
+    }
 }
