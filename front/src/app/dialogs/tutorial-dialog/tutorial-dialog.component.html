@@ -1,7 +1,7 @@
 <div class="tutorial-dialog d-flex flex-column">
 
 	<!-- Header -->
-	<div class="dialog-header d-flex justify-content-between align-items-center p-3">
+	<div class="dialog-header d-flex justify-content-between align-items-center p-2">
 		<h2 class="m-0 slide-title">{{ currentSlide.title | translate }}</h2>
 		<div class="d-flex align-items-center gap-2">
 			<span class="step-counter text-muted">{{ currentIndex + 1 }} / {{ slides.length }}</span>
@@ -11,6 +11,7 @@
 		</div>
 	</div>
 
+	<div class="tutorial-body">
 	<!-- Carousel viewport -->
 	<div class="carousel-viewport">
 		<div
@@ -22,52 +23,62 @@
 				class="carousel-slide"
 				*ngFor="let slide of slides; let i = index"
 				[style.width.%]="100 / slides.length">
-
-				<video
-					#videoEl
+				<img
+					*ngIf="isImage(slide); else videoTpl"
 					[src]="slide.videoSrc"
-					muted
-					loop
-					playsinline
-					class="slide-video">
-				</video>
+					class="slide-media"
+					alt=""/>
+				<ng-template #videoTpl>
+					<video
+						#videoEl
+						[attr.data-index]="i"
+						[src]="slide.videoSrc"
+						muted
+						loop
+						playsinline
+						class="slide-media">
+					</video>
+				</ng-template>
 
 			</div>
 		</div>
 	</div>
 
 	<!-- Description -->
-	<div class="slide-description p-3">
-		<p class="m-0">{{ currentSlide.description | translate }}</p>
+	<div class="slide-description p-2">
+		<div [innerHTML]="currentSlide.description | translate"></div>
 	</div>
-
-	<!-- Dot indicators -->
-	<div class="dot-row d-flex justify-content-center gap-2 pb-2">
-		<button
-			*ngFor="let slide of slides; let i = index"
-			class="dot"
-			[class.dot--active]="i === currentIndex"
-			(click)="goTo(i)"
-			[attr.aria-label]="'TUTORIAL.GO_TO' | translate: { n: i + 1 }">
-		</button>
 	</div>
 
 	<!-- Navigation -->
-	<div class="nav-row d-flex justify-content-between align-items-center p-3">
+	<div class="nav-row d-flex justify-content-between align-items-center p-2">
 		<button
 			mat-stroked-button
+			class="nav-btn"
 			[disabled]="isFirst"
 			(click)="goTo(currentIndex - 1)">
-			<mat-icon>arrow_back</mat-icon>
-			{{ 'TUTORIAL.PREV' | translate }}
+			<mat-icon class="nav-icon">arrow_back</mat-icon>
+			<span class="nav-label">{{ (isFirst ? 'TUTORIAL.PREV' : slides[currentIndex - 1].title) | translate }}</span>
 		</button>
+
+		<!-- Dot indicators -->
+		<div class="dot-row d-flex justify-content-center">
+			<button
+				*ngFor="let slide of slides; let i = index"
+				class="dot"
+				[class.dot--active]="i === currentIndex"
+				(click)="goTo(i)"
+				[attr.aria-label]="'TUTORIAL.GO_TO' | translate: { n: i + 1 }">
+			</button>
+		</div>
 
 		<button
 			*ngIf="!isLast"
 			mat-stroked-button
+			class="nav-btn"
 			(click)="goTo(currentIndex + 1)">
-			{{ 'TUTORIAL.NEXT' | translate }}
-			<mat-icon>arrow_forward</mat-icon>
+			<span class="nav-label">{{ slides[currentIndex + 1].title | translate }}</span>
+			<mat-icon class="nav-icon">arrow_forward</mat-icon>
 		</button>
 
 		<button

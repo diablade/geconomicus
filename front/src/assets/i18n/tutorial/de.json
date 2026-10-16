@@ -7,39 +7,43 @@
 		"GO_TO": "Zu Folie {{n}} gehen",
 		"CARDS": {
 			"TITLE": "Die Ressourcenkarten",
-			"DESC": "Jede Karte steht für eine Ressource: Nahrung (rot, 1), Wissen (gelb, 2), Energie (grün, 4), Technologie (blau, 8). Jede Kartenfamilie trägt einen Buchstaben (A, B, C…). Dein Vermögen = deine Münzen + der Wert deiner Karten."
+			"DESC": "Jede Karte steht für eine Ressource:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Nahrung</b></td><td>Stufe 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Wissen</b></td><td>Stufe 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energie</b></td><td>Stufe 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Technologie</b></td><td>Stufe 4</td><td>=>💰💰💰💰</td></tr></table>Jede Kartenfamilie trägt einen Buchstaben (A, B, C…).<br><b>Dein Vermögen = deine Münzen + der Wert deiner Karten.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "Das Ziel: reich werden",
-			"DESC": "Sammle bis zum Spielende so viel Vermögen wie möglich an (Münzen + Kartenwert). Die Rangliste belohnt den reichsten Spieler, den mit den meisten Münzen, den mit den meisten Ressourcen und den aktivsten."
+			"TITLE": "Das Ziel",
+			"DESC": "Das Ziel: vor Spielende am <b>reichsten</b> sein (Münzen + Wert der Karten). Dafür:<ul><li><b>Produziere</b>: sammle Quadrate aus identischen Karten, um eine Karte von höherem Wert zu produzieren</li><li><b>Kaufe</b> die Karten, die dir fehlen, mit deinem Geld bei den anderen Spielern</li><li><b>Verkaufe</b> die Karten, die du nicht für Quadrate brauchst, um Geld zu bekommen</li></ul>Wie produziert, kauft und verkauft man? Siehe die nächsten Schritte."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Die Transaktionen",
-			"DESC": "Jeder Spieler kann eine Karte verkaufen, indem er sie umdreht (QR-Code oder Kurzcode). Der Käufer scannt oder tippt den Code ein, um zum Preis der Ressource zu kaufen. So zirkuliert das Vermögen zwischen den Spielern."
+		"ACQUIRE": {
+			"TITLE": "Kaufen / verkaufen",
+			"DESC": "Um deine Quadrate zu vervollständigen, handle mit den anderen Spielern. Zwei Methoden zum Kaufen (wähle die, die dir am besten passt):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>QR-Code</b>: scanne die Karte des Verkäufers (schnell)</li><li><span class=\"material-icons\">dialpad</span> <b>Digicode</b>: tippe die im QR-Code enthaltene Nummer ein</li></ul>Zum <b>Verkaufen</b> drehe deine Karte um: der QR-Code und sein Digicode werden dem Käufer angezeigt. Beim Kauf wird die Karte sofort übertragen."
 		},
 		"PRODUCTION": {
-			"TITLE": "Die Produktion",
-			"DESC": "Sammle 4 Karten mit demselben Buchstaben UND derselben Stufe → drücke auf Produzieren → du erhältst 1 Karte der nächsthöheren Stufe + 4 neue Karten. Nahrung×4 → 1 Wissen. Jede Produktion bringt dir außerdem +1 Aktionsjeton."
+			"TITLE": "Produzieren",
+			"DESC": "Sammle ein <b>Quadrat</b>: 4 Karten mit gleichem Buchstaben und gleicher Farbe (Stufe), dann tippe auf <b>Bauen</b>. Du erhältst:<ul><li>🎁 1 Karte der nächsten Stufe</li><li>🟥🟥🟥🟥 4 neue Karten derselben Stufe</li><li>⚡ 1 Aktionsjeton</li></ul>Fehlen dir Karten? Kaufe sie bei den anderen Spielern."
 		},
 		"ACTIONS": {
 			"TITLE": "Die Aktionen",
-			"DESC": "Gib deine Aktionsjetons aus, um mit den anderen Spielern zu interagieren: suchen, wer eine Karte hat, eine verschenken, eine stehlen, einen Konflikt auslösen… Du beginnst mit 1 Jeton und gewinnst bei jeder Produktion weitere."
+			"DESC": "Gib deine <b>Aktionsjetons</b> aus, um mit den anderen Spielern zu interagieren: suchen, wer eine Karte hat, eine verschenken, eine stehlen, einen Konflikt auslösen oder Gutes um dich herum tun!<br>Du beginnst mit <b>1 Jeton</b> und bekommst bei jeder Produktion weitere."
+		},
+		"DEATH": {
+			"TITLE": "Der Tod 💀",
+			"DESC": "Wie im echten Leben <b>schlägt der Tod zufällig zu</b>, und niemand entkommt ihm. Aber keine Panik: <b>ein neues Leben beginnt sofort</b> 🐣<ul><li>💀 Am Ende werden die Ergebnisse deines ersten Lebens mit denen des zweiten zusammengezählt</li><li>🐣 Du wirst mit neuen Karten und 0 Münzen wiedergeboren</li></ul>Das hält die Wirtschaft am Laufen: nichts häuft sich ewig an. Behalte es im Kopf, es zählt beim Vergleich der beiden Währungen 😉"
 		},
 		"JUNE": {
-			"TITLE": "Modus Freies Geld (JUNE)",
-			"DESC": "Jede Minute wird eine Geldmenge (das Universelle Dividende) gleichmäßig an alle lebenden Spieler verteilt. Die Kartenpreise passen sich dem UD an. Keine Bank, keine Schulden — das Geld wird automatisch geschaffen und geteilt."
+			"TITLE": "Freies Geld",
+			"DESC": "Jede Minute wird die <b>Universelle Dividende (UD)</b> gleichmäßig an alle lebenden Spieler verteilt.<ul><li>Die Kartenpreise passen sich der UD an</li><li>Keine Bank, keine Schulden</li><li>Das Geld wird automatisch geschaffen und geteilt</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Modus Schuldgeld",
-			"DESC": "Du beginnst mit 0 Münzen. Du musst dir bei der Bank Geld leihen, um zu spielen. Bei jedem Kredit: du erhältst Münzen und musst innerhalb der Frist Kapital + Zinsen zurückzahlen."
+			"TITLE": "Schuldgeld",
+			"DESC": "Du beginnst mit <b>0 Münzen</b>: du musst dir bei der Bank Geld leihen, um zu spielen.<br>Bei jedem Kredit erhältst du Münzen und musst <b>den Kapitalbetrag + die Zinsen</b> innerhalb der Frist zurückzahlen (standardmäßig 5 Minuten)."
 		},
 		"REPAYMENT": {
-			"TITLE": "Zurückzahlen oder verlängern",
-			"DESC": "Bei Fälligkeit: alles zurückzahlen (Kredit getilgt) oder nur die Zinsen zahlen, um die Laufzeit zu verlängern (du schuldest weiterhin das Kapital). Wenn du nicht zahlen kannst → Pfändung."
+			"TITLE": "Zurückzahlen, verlängern",
+			"DESC": "Bei Fälligkeit hast du zwei Möglichkeiten:<ul><li><b>Alles zurückzahlen</b>: der Kredit ist getilgt (du kannst ihn jederzeit tilgen, ohne auf die Fälligkeit zu warten)</li><li><b>Die Zinsen zahlen</b>: die Laufzeit wird verlängert, aber du schuldest weiterhin den Kapitalbetrag</li></ul>⚠️ Wenn du den Kapitalbetrag nicht zahlen kannst → werden die Zinsen automatisch abgebucht und der Kredit verlängert, aber wenn du auch für die Zinsen kein Geld hast → <b>🚨 Zahlungsausfall: Pfändung</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Pfändung und Gefängnis",
-			"DESC": "Bei Zahlungsausfall pfändet die Bank deine Karten (mit einem Abschlag von 33 %) und deine Münzen, um die Schuld einzutreiben. Reicht das nicht, kommst du für einige Minuten ins Gefängnis — vom Spiel ausgeschlossen bis zum Ende der Strafe."
+			"DESC": "Bei Zahlungsausfall pfändet die Bank deine <b>Karten</b> (mit 33 % Abschlag) und deine <b>Münzen</b>, um die Schulden einzutreiben.<br>Reicht das nicht: <b>Gefängnis</b> für 1 bis 5 Minuten, vom Spiel ausgeschlossen bis zum Ende der Strafe."
 		}
 	}
 }

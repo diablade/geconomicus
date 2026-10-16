@@ -7,39 +7,43 @@
 		"GO_TO": "Vai alla diapositiva {{n}}",
 		"CARDS": {
 			"TITLE": "Le carte risorsa",
-			"DESC": "Ogni carta rappresenta una risorsa: Alimentazione (rossa, 1), Sapere (gialla, 2), Energia (verde, 4), Tecnologia (blu, 8). Ogni famiglia di carte porta una lettera (A, B, C…). La tua ricchezza = le tue monete + il valore delle tue carte."
+			"DESC": "Ogni carta rappresenta una risorsa:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Alimentazione</b></td><td>livello 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Sapere</b></td><td>livello 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energia</b></td><td>livello 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Tecnologia</b></td><td>livello 4</td><td>=>💰💰💰💰</td></tr></table>Ogni famiglia di carte porta una lettera (A, B, C…).<br><b>La tua ricchezza = le tue monete + il valore delle tue carte.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "L'obiettivo: arricchirsi",
-			"DESC": "Accumula più ricchezza possibile (monete + valore delle carte) prima della fine della partita. La classifica premia il giocatore più ricco, quello con più monete, con più risorse e il più attivo."
+			"TITLE": "L'obiettivo",
+			"DESC": "Lo scopo: essere il più <b>ricco</b> prima della fine della partita (monete + valore delle carte). Per farlo:<ul><li><b>Produci</b>: raccogli quadrati di carte identiche per produrre una carta di valore superiore</li><li><b>Compra</b> dagli altri giocatori, con i tuoi soldi, le carte che ti mancano</li><li><b>Vendi</b> le carte che non ti servono per fare quadrati, per ottenere soldi</li></ul>Come produrre, comprare e vendere? Vedi i passaggi successivi."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Le transazioni",
-			"DESC": "Ogni giocatore può vendere una carta girandola (codice QR o codice breve). L'acquirente scansiona o digita il codice per comprare al prezzo della risorsa. È così che la ricchezza circola tra i giocatori."
+		"ACQUIRE": {
+			"TITLE": "Comprare / vendere",
+			"DESC": "Per completare i tuoi quadrati, fai scambi con gli altri giocatori. Due metodi per comprare (scegli quello che preferisci):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>Codice QR</b>: scansiona la carta del venditore (rapido)</li><li><span class=\"material-icons\">dialpad</span> <b>Digicode</b>: digita il numero contenuto nel codice QR</li></ul>Per <b>vendere</b>, gira la tua carta: il codice QR e il suo digicode vengono mostrati all'acquirente. All'acquisto, la carta viene trasferita immediatamente."
 		},
 		"PRODUCTION": {
-			"TITLE": "La produzione",
-			"DESC": "Riunisci 4 carte con la stessa lettera E lo stesso livello → premi Produrre → ricevi 1 carta di livello superiore + 4 nuove carte. Alimentazione×4 → 1 Sapere. Ogni produzione ti dà anche +1 gettone azione."
+			"TITLE": "Produrre",
+			"DESC": "Riunisci un <b>quadrato</b>: 4 carte con la stessa lettera e lo stesso colore (livello), poi premi <b>Costruire</b>. Ricevi:<ul><li>🎁 1 carta del livello superiore</li><li>🟥🟥🟥🟥 4 nuove carte dello stesso livello</li><li>⚡ 1 gettone azione</li></ul>Ti mancano delle carte? Comprale dagli altri giocatori."
 		},
 		"ACTIONS": {
 			"TITLE": "Le azioni",
-			"DESC": "Spendi i tuoi gettoni azione per interagire con gli altri giocatori: cercare chi ha una carta, darne una, rubarne una, scatenare un conflitto… Inizi con 1 gettone e ne guadagni a ogni produzione."
+			"DESC": "Spendi i tuoi <b>gettoni azione</b> per interagire con gli altri giocatori: cercare chi ha una carta, darne una, rubarne una, scatenare un conflitto o fare del bene intorno a te!<br>Inizi con <b>1 gettone</b> e ne guadagni a ogni produzione."
+		},
+		"DEATH": {
+			"TITLE": "La morte 💀",
+			"DESC": "Come nella vita vera, <b>la morte colpisce a caso</b>, e nessuno le sfugge. Ma niente panico: <b>una nuova vita inizia subito</b> 🐣<ul><li>💀 Alla fine, i risultati della prima vita si sommano a quelli della seconda</li><li>🐣 Rinasci con nuove carte e 0 monete</li></ul>È ciò che fa girare l'economia: niente si accumula per sempre. Tienilo a mente, conterà per confrontare le due monete 😉"
 		},
 		"JUNE": {
-			"TITLE": "Modalità Moneta Libera (JUNE)",
-			"DESC": "Ogni minuto una quantità di moneta (il Dividendo Universale) viene distribuita equamente a tutti i giocatori vivi. I prezzi delle carte si adeguano al DU. Nessuna banca, nessun debito: la moneta viene creata e condivisa automaticamente."
+			"TITLE": "Moneta libera",
+			"DESC": "Ogni minuto, il <b>Dividendo Universale (DU)</b> viene distribuito equamente a tutti i giocatori vivi.<ul><li>I prezzi delle carte si adeguano al DU</li><li>Nessuna banca, nessun debito</li><li>La moneta viene creata e condivisa automaticamente</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Modalità Moneta Debito",
-			"DESC": "Inizi con 0 monete. Devi prendere in prestito dalla banca per giocare. Per ogni credito: ricevi monete e devi rimborsare capitale + interessi entro il termine previsto."
+			"TITLE": "Moneta debito",
+			"DESC": "Inizi con <b>0 monete</b>: devi prendere un prestito dalla banca per giocare.<br>A ogni credito ricevi delle monete e devi rimborsare <b>il capitale + gli interessi</b> entro il tempo previsto (5 minuti di default)."
 		},
 		"REPAYMENT": {
-			"TITLE": "Rimborsare o prolungare",
-			"DESC": "Alla scadenza: rimborsa tutto (credito estinto) oppure paga solo gli interessi per prolungare la durata (devi ancora il capitale). Se non puoi pagare → pignoramento."
+			"TITLE": "Rimborsare, prolungare",
+			"DESC": "Alla scadenza, due scelte:<ul><li><b>Rimborsare tutto</b>: il credito è saldato (puoi saldarlo in qualsiasi momento senza aspettare la scadenza)</li><li><b>Pagare gli interessi</b>: la durata viene prolungata, ma devi ancora il capitale</li></ul>⚠️ Se non puoi pagare il capitale → gli interessi vengono prelevati automaticamente e il credito viene prolungato, ma se non hai soldi nemmeno per gli interessi → <b>🚨 Insolvenza: pignoramento</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Pignoramento e prigione",
-			"DESC": "In caso di insolvenza, la banca pignora le tue carte (con uno sconto del 33%) e le tue monete per recuperare il debito. Se non basta, vai in prigione per qualche minuto — escluso dal gioco fino alla fine della pena."
+			"DESC": "In caso di insolvenza, la banca pignora le tue <b>carte</b> (con uno sconto del 33%) e le tue <b>monete</b> per recuperare il debito.<br>Se non basta: <b>prigione</b> da 1 a 5 minuti, escluso dal gioco fino alla fine della pena."
 		}
 	}
 }

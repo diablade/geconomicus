@@ -34,9 +34,10 @@ export class AvatarComponent implements AfterViewInit {
 		this.renderSvg();
 	}
 
+	/** Injects the avatar SVG, dropping dicebear's shared `#viewboxMask` reference so a hidden avatar elsewhere on the page cannot clip this one. */
 	private renderSvg() {
 		if (this.svgContainer?.nativeElement && this._avatar?.image) {
-			this.svgContainer.nativeElement.innerHTML = this._avatar.image;
+			this.svgContainer.nativeElement.innerHTML = this._avatar.image.replace(/ mask="url\(#viewboxMask\)"/g, '');
 		}
 	}
 

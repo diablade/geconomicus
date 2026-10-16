@@ -67,6 +67,11 @@
 					</span>
 					{{ 'TABLE.GHOST_MONEY' | translate }}
 				</div>
+				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE && vm.nextDULabel">
+					⏳
+					<b>{{ vm.nextDULabel }}</b>
+					{{ 'TABLE.DU_EQ' | translate }}
+				</div>
 				<div class="chip frame frame-light box-shadowed">
 					💰
 					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
@@ -210,6 +215,24 @@
 									}}
 								</b>
 							</div>
+							<div class="ruleRow">
+								<span>{{ 'OPTION.AUTO_SEIZURE' | translate }}</span>
+								<b>{{ (vm.rules.autoSeizure ? 'TABLE.YES' : 'TABLE.NO') | translate }}</b>
+							</div>
+							<div class="ruleRow">
+								<span>{{ 'OPTION.AUTO_BANK' | translate }}</span>
+								<b>{{ (vm.rules.autoBank ? 'TABLE.YES' : 'TABLE.NO') | translate }}</b>
+							</div>
+							<ng-container *ngIf="vm.rules.autoBank">
+								<div class="ruleRow">
+									<span>{{ 'OPTION.BANK_PROFILE' | translate }}</span>
+									<b>{{ 'OPTION.PROFILE_' + vm.rules.bankProfile.toUpperCase() | translate }}</b>
+								</div>
+								<div class="ruleRow" *ngFor="let tier of vm.rules.rateSchedule">
+									<span>&lt; {{ tier.threshold }}</span>
+									<b>{{ tier.amount }} + {{ tier.interest }} {{ 'TABLE.INTEREST' | translate }}</b>
+								</div>
+							</ng-container>
 						</div>
 
 						<div class="ruleGroup" *ngIf="vm.rules.typeMoney === DEBT">

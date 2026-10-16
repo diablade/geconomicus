@@ -123,6 +123,9 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				deathProgress = intoInterval / deathIntervalMs;
 			}
 
+			const duIntervalMs = (vm.rules.timerDUInterval || 60) * 1000;
+			const nextDUInMs = remainingMs > 0 ? duIntervalMs - (Math.max(0, totalRoundMs - remainingMs) % duIntervalMs) : 0;
+
 			return {
 				...vm,
 				alive,
@@ -141,6 +144,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				ghostMoney,
 				ghostMoneyDU,
 				nextDeathLabel: this.formatDeathCountdown(nextDeathInMs),
+				nextDULabel: this.formatDeathCountdown(nextDUInMs),
 				deathProgressPct: Math.round(deathProgress * 100),
 			};
 		})
@@ -157,6 +161,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		this.i18nService.loadNamespace('master');
 		this.i18nService.loadNamespace('table');
 		this.i18nService.loadNamespace('bank');
+		this.i18nService.loadNamespace('option');
 	}
 
 	ngOnInit(): void {

@@ -6,40 +6,44 @@
 		"FINISH": "Gata",
 		"GO_TO": "Mergi la diapozitivul {{n}}",
 		"CARDS": {
-			"TITLE": "Cărțile de resurse",
-			"DESC": "Fiecare carte reprezintă o resursă: Alimentație (roșu, 1), Cunoaștere (galben, 2), Energie (verde, 4), Tehnologie (albastru, 8). Fiecare familie de cărți poartă o literă (A, B, C…). Averea ta = monedele tale + valoarea cărților tale."
+			"TITLE": "Cărțile resurse",
+			"DESC": "Fiecare carte reprezintă o resursă:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Alimentație</b></td><td>nivel 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Cunoaștere</b></td><td>nivel 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energie</b></td><td>nivel 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Tehnologie</b></td><td>nivel 4</td><td>=>💰💰💰💰</td></tr></table>Fiecare familie de cărți poartă o literă (A, B, C…).<br><b>Averea ta = monedele tale + valoarea cărților tale.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "Obiectivul: să te îmbogățești",
-			"DESC": "Adună cât mai multă avere (monede + valoarea cărților) până la sfârșitul jocului. Clasamentul îl recompensează pe cel mai bogat jucător, pe cel cu cele mai multe monede, cu cele mai multe resurse și pe cel mai activ."
+			"TITLE": "Obiectivul",
+			"DESC": "Scopul: să fii cel mai <b>bogat</b> înainte de sfârșitul jocului (monede + valoarea cărților). Pentru asta:<ul><li><b>Produci</b>: aduni pătrate de cărți identice ca să produci o carte de valoare mai mare</li><li><b>Cumperi</b> de la ceilalți jucători, cu banii tăi, cărțile care îți lipsesc</li><li><b>Vinzi</b> cărțile care nu-ți folosesc pentru pătrate, ca să obții bani</li></ul>Cum produci, cumperi și vinzi? Vezi pașii următori."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Tranzacțiile",
-			"DESC": "Orice jucător poate vinde o carte întorcând-o (cod QR sau cod scurt). Cumpărătorul scanează sau introduce codul pentru a cumpăra la prețul resursei. Astfel circulă averea între jucători."
+		"ACQUIRE": {
+			"TITLE": "Cumpără / vinde",
+			"DESC": "Ca să-ți completezi pătratele, fă schimburi cu ceilalți jucători. Două metode de cumpărare (alege-o pe cea care ți se potrivește):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>Cod QR</b>: scanează cartea vânzătorului (rapid)</li><li><span class=\"material-icons\">dialpad</span> <b>Digicod</b>: introdu numărul conținut în codul QR</li></ul>Ca să <b>vinzi</b>, întoarce-ți cartea: codul QR și digicodul ei apar pentru cumpărător. La cumpărare, cartea este transferată imediat."
 		},
 		"PRODUCTION": {
 			"TITLE": "Producția",
-			"DESC": "Adună 4 cărți cu aceeași literă ȘI același nivel → apasă pe Produce → primești 1 carte de nivel superior + 4 cărți noi. Alimentație×4 → 1 Cunoaștere. Fiecare producție îți dă și +1 jeton de acțiune."
+			"DESC": "Adună un <b>pătrat</b>: 4 cărți cu aceeași literă și aceeași culoare (nivel), apoi apasă <b>Construiește</b>. Primești:<ul><li>🎁 1 carte de nivelul următor</li><li>🟥🟥🟥🟥 4 cărți noi de același nivel</li><li>⚡ 1 jeton de acțiune</li></ul>Îți lipsesc cărți? Cumpără-le de la ceilalți jucători."
 		},
 		"ACTIONS": {
 			"TITLE": "Acțiunile",
-			"DESC": "Cheltuiește-ți jetoanele de acțiune ca să interacționezi cu ceilalți jucători: să cauți cine are o carte, să dai una, să furi una, să declanșezi un conflict… Începi cu 1 jeton și câștigi altele la fiecare producție."
+			"DESC": "Cheltuiește-ți <b>jetoanele de acțiune</b> ca să interacționezi cu ceilalți jucători: să cauți cine are o carte, să dai una, să furi una, să declanșezi un conflict sau să faci bine în jurul tău!<br>Începi cu <b>1 jeton</b> și câștigi altele la fiecare producție."
+		},
+		"DEATH": {
+			"TITLE": "Moartea 💀",
+			"DESC": "Ca în viața reală, <b>moartea lovește la întâmplare</b>, și nimeni nu scapă de ea. Dar fără panică: <b>o viață nouă începe imediat</b> 🐣<ul><li>💀 La final, rezultatele primei vieți se adună cu cele ale celei de-a doua</li><li>🐣 Renaști cu cărți noi și 0 monede</li></ul>Asta pune economia în mișcare: nimic nu se acumulează la nesfârșit. Ține minte, va conta când comparăm cele două monede 😉"
 		},
 		"JUNE": {
-			"TITLE": "Mod Monedă Liberă (JUNE)",
-			"DESC": "În fiecare minut, o cantitate de monedă (Dividendul Universal) este distribuită echitabil tuturor jucătorilor în viață. Prețurile cărților se ajustează odată cu DU. Fără bancă, fără datorie — moneda este creată și împărțită automat."
+			"TITLE": "Monedă liberă",
+			"DESC": "În fiecare minut, <b>Dividendul Universal (DU)</b> este distribuit echitabil tuturor jucătorilor în viață.<ul><li>Prețurile cărților se ajustează odată cu DU</li><li>Fără bancă, fără datorie</li><li>Moneda este creată și împărțită automat</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Mod Monedă Datorie",
-			"DESC": "Începi cu 0 monede. Trebuie să împrumuți de la bancă pentru a juca. La fiecare credit: primești monede și trebuie să rambursezi principalul + dobânzile în termenul stabilit."
+			"TITLE": "Monedă datorie",
+			"DESC": "Începi cu <b>0 monede</b>: trebuie să te împrumuți de la bancă ca să joci.<br>La fiecare credit primești monede și trebuie să rambursezi <b>principalul + dobânzile</b> în termenul stabilit (implicit 5 minute)."
 		},
 		"REPAYMENT": {
-			"TITLE": "Rambursează sau prelungește",
-			"DESC": "La scadență: rambursează tot (credit închis) sau plătește doar dobânzile pentru a prelungi durata (rămâi dator cu principalul). Dacă nu poți plăti → sechestru."
+			"TITLE": "Rambursează, prelungește",
+			"DESC": "La scadență, două variante:<ul><li><b>Rambursezi tot</b>: creditul este achitat (îl poți achita oricând, fără să aștepți scadența)</li><li><b>Plătești dobânzile</b>: durata este prelungită, dar datorezi în continuare principalul</li></ul>⚠️ Dacă nu poți plăti principalul → dobânzile se iau automat și creditul este prelungit, dar dacă nu ai bani nici pentru dobânzi → <b>🚨 Neplată: sechestru</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Sechestru și închisoare",
-			"DESC": "În caz de neplată, banca îți sechestrează cărțile (cu o reducere de 33%) și monedele pentru a recupera datoria. Dacă nu este de ajuns, ajungi la închisoare pentru câteva minute — exclus din joc până la sfârșitul pedepsei."
+			"DESC": "În caz de neplată, banca îți sechestrează <b>cărțile</b> (cu o reducere de 33%) și <b>monedele</b> ca să recupereze datoria.<br>Dacă nu ajunge: <b>închisoare</b> între 1 și 5 minute, exclus din joc până la sfârșitul pedepsei."
 		}
 	}
 }

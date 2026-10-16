@@ -6,7 +6,6 @@ import {
 	combineLatest,
 	debounceTime,
 	distinctUntilChanged,
-	from,
 	map,
 	Observable,
 	Subject,
@@ -175,8 +174,7 @@ export class PlayerStateService {
 				});
 			}
 
-			// return _.orderBy(annotated, ['count', 'weight', 'letter'], ['desc', 'asc', 'asc']);
-			return cards;
+			return _.orderBy(annotated, ['count', 'weight', 'letter'], ['desc', 'asc', 'asc']);
 		})
 	);
 

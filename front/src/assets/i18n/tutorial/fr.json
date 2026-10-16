@@ -1,5 +1,5 @@
 {
-    "TUTORIAL": {
+	"TUTORIAL": {
 		"OPEN": "Comment jouer ?",
 		"PREV": "Précédent",
 		"NEXT": "Suivant",
@@ -7,39 +7,44 @@
 		"GO_TO": "Aller à la diapo {{n}}",
 		"CARDS": {
 			"TITLE": "Les cartes ressources",
-			"DESC": "Chaque carte représente une ressource : Alimentation (rouge, 1), Savoir (jaune, 2), Énergie (verte, 4), Technologie (bleue, 8). Chaque famille de cartes porte une lettre (A, B, C…). Votre richesse = vos pièces + la valeur de vos cartes."
+			"DESC": "Chaque carte représente une ressource :<table class=\"cards-table\"><tr><td>🟥</td><td><b>Alimentation</b></td><td>niveau 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Savoir</b></td><td>niveau 2</td><td>=>\uD83D\uDCB0\uD83D\uDCB0</td></tr><tr><td>🟩</td><td><b>Énergie</b></td><td>niveau 3</td><td>=>\uD83D\uDCB0\uD83D\uDCB0\uD83D\uDCB0</td></tr><tr><td>🟦</td><td><b>Technologie</b></td><td>niveau 4</td><td>=>\uD83D\uDCB0\uD83D\uDCB0\uD83D\uDCB0\uD83D\uDCB0</td></tr></table>Chaque famille de cartes porte une lettre (A, B, C…).<br><b>Votre richesse = vos pièces + la valeur de vos cartes.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "L'objectif : s'enrichir",
-			"DESC": "Accumulez un maximum de richesse (pièces + valeur des cartes) avant la fin de la partie. Le classement récompense le joueur le plus riche, celui qui a le plus de pièces, le plus de ressources, et le plus actif."
+			"TITLE": "L'objectif",
+			"DESC": "Le but : être le plus <b>riche</b> avant la fin de la partie (pièces + valeur des cartes). Pour ça :<ul><li><b>Produisez</b> : collectez des carrés de cartes identiques pour produire une carte de valeur supérieur</li><li><b>Achetez</b> les cartes qui vous manquent auprès des autres joueurs avec votre argent</li><li><b>Vendez</b> les cartes qui ne vous servent pas à faire des carrés pour obtenir de l'argent</li></ul>Comment produire, acheter et vendre ? Voir les étapes suivantes."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Les transactions",
-			"DESC": "Tout joueur peut vendre une carte en la retournant (QR code ou code court). L'acheteur scanne ou saisit le code pour acheter au prix de la ressource. C'est ainsi que la richesse circule entre joueurs."
+		"ACQUIRE": {
+			"TITLE": "Acheter / vendre",
+			"DESC": "Pour compléter vos carrés, faites des échanges avec les autres joueurs. Deux méthodes pour acheter (choisissez celle qui vous convient le mieux) :<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>QR code</b> : scannez la carte du vendeur (rapide)</li><li><span class=\"material-icons\">dialpad</span> <b>Digicode</b> : saisissez le numéro contenu dans le QR code</li></ul>Pour <b>vendre</b>, retournez votre carte : le QR code et son digicode s'affichent pour l'acheteur. A l'achat le transfert de la carte se fait immédiatement"
 		},
 		"PRODUCTION": {
-			"TITLE": "La production",
-			"DESC": "Réunissez 4 cartes de même lettre ET même niveau → appuyez sur Produire → vous recevez 1 carte du niveau supérieur + 4 nouvelles cartes. Alimentation×4 → 1 Savoir. Chaque production vous donne aussi +1 jeton d'action."
+			"TITLE": "Produire",
+			"DESC": "Réunissez un <b>carré</b> : 4 cartes de même lettre et même couleur (niveau), puis appuyez sur <b>Construire</b>. Vous recevez :<ul><li>🎁 1 carte du niveau supérieur</li><li>🟥🟥🟥🟥 4 nouvelles cartes du même niveau</li><li>⚡ 1 jeton d'action</li></ul>Il vous manque des cartes ? Achetez-les aux autres joueurs."
 		},
 		"ACTIONS": {
 			"TITLE": "Les actions",
-			"DESC": "Dépensez vos jetons d'action pour interagir avec les autres joueurs : chercher qui a une carte, en donner une, en voler une, déclencher un conflit… Vous commencez avec 1 jeton et en gagnez à chaque production."
+			"DESC": "Dépensez vos <b>jetons d'action</b> pour interagir avec les autres joueurs : chercher qui a une carte, en donner une, en voler une, déclencher un conflit ou faire le bien autour de vous !<br>Vous commencez avec <b>1 jeton</b> et en gagnez à chaque production."
+		},
+		"DEATH": {
+			"TITLE": "La mort 💀",
+			"DESC": "Comme dans la vraie vie, <b>la mort frappe au hasard</b>, et personne n'y échappe. Mais pas de panique : <b>une nouvelle vie commence aussitôt</b> 🐣<ul><li>💀 Les résultats de la première vie seront cumulés avec la deuxième, à la fin</li><li>🐣 Vous renaissez avec de nouvelles cartes et 0 pièce</li></ul>C'est ce qui fait tourner l'économie : rien ne s'accumule éternellement. Gardez-le en tête, ça comptera pour comparer les deux monnaies 😉"
 		},
 		"JUNE": {
-			"TITLE": "Mode Monnaie Libre (JUNE)",
-			"DESC": "Chaque minute, une quantité de monnaie (le Dividende Universel) est distribuée équitablement à tous les joueurs vivants. Les prix des cartes s'ajustent avec le DU. Pas de banque, pas de dette — la monnaie est créée et partagée automatiquement."
+			"TITLE": "Monnaie Libre",
+			"DESC": "Chaque minute, le <b>Dividende Universel (DU)</b> est distribué équitablement à tous les joueurs vivants.<ul><li>Les prix des cartes s'ajustent avec le DU</li><li>Pas de banque, pas de dette</li><li>La monnaie est créée et partagée automatiquement</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Mode Monnaie Dette",
-			"DESC": "Vous commencez avec 0 pièce. Vous devez emprunter à la banque pour jouer. Chaque crédit : vous recevez des pièces, vous devez rembourser le principal + les intérêts dans le délai imparti."
+			"TITLE": "Monnaie Dette",
+			"DESC": "Vous commencez avec <b>0 pièce</b> : vous devez emprunter à la banque pour jouer.<br>À chaque crédit, vous recevez des pièces et devez rembourser <b>le principal + les intérêts</b> dans le délai imparti. (par défaut 5 minutes)"
 		},
 		"REPAYMENT": {
-			"TITLE": "Rembourser ou prolonger",
-			"DESC": "À l'échéance : remboursez tout (crédit soldé), ou payez uniquement les intérêts pour prolonger la durée (vous devez toujours le principal). Si vous ne pouvez pas payer → saisie."
+			"TITLE": "Rembourser, prolonger",
+			"DESC": "À l'échéance, deux choix :<ul><li><b>Tout rembourser</b> : le crédit est soldé (il peut être soldé à tout moment sans attendre l'échéance)</li><li><b>Payer les intérêts</b> : la durée est prolongée, mais vous devez toujours le principal</li></ul>⚠️ Si vous ne pouvez pas payer le principal → les intérêts sont prélevés automatiquement et vous êtes prolongés, mais si vous n'avez pas d'argent non plus pour payer l'intérêt → <b>🚨Défaut de paiement: saisie</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Saisie et prison",
-			"DESC": "En cas de défaut de paiement, la banque saisit vos cartes (avec une décote de 33%) et vos pièces pour récupérer la dette. Si ça ne suffit pas, vous allez en prison pour quelques minutes — exclu du jeu jusqu'à la fin de la peine."
+			"DESC": "En cas de défaut de paiement, la banque saisit vos <b>cartes</b> (décote de 33 %) et vos <b>pièces</b> pour récupérer la dette.<br>Si ça ne suffit pas : <b>prison</b> pour 1 à 5 minutes, exclu du jeu jusqu'à la fin de la peine."
 		}
 	}
 }
+

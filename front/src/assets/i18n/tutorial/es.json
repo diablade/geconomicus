@@ -7,39 +7,43 @@
 		"GO_TO": "Ir a la diapositiva {{n}}",
 		"CARDS": {
 			"TITLE": "Las cartas de recursos",
-			"DESC": "Cada carta representa un recurso: Alimentación (roja, 1), Conocimiento (amarilla, 2), Energía (verde, 4), Tecnología (azul, 8). Cada familia de cartas lleva una letra (A, B, C…). Tu riqueza = tus monedas + el valor de tus cartas."
+			"DESC": "Cada carta representa un recurso:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Alimentación</b></td><td>nivel 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Conocimiento</b></td><td>nivel 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energía</b></td><td>nivel 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Tecnología</b></td><td>nivel 4</td><td>=>💰💰💰💰</td></tr></table>Cada familia de cartas lleva una letra (A, B, C…).<br><b>Tu riqueza = tus monedas + el valor de tus cartas.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "El objetivo: enriquecerse",
-			"DESC": "Acumula el máximo de riqueza (monedas + valor de las cartas) antes del final de la partida. La clasificación premia al jugador más rico, al que tiene más monedas, más recursos y al más activo."
+			"TITLE": "El objetivo",
+			"DESC": "El objetivo: ser el más <b>rico</b> antes del final de la partida (monedas + valor de las cartas). Para ello:<ul><li><b>Produce</b>: reúne cuadrados de cartas idénticas para producir una carta de mayor valor</li><li><b>Compra</b> a los demás jugadores, con tu dinero, las cartas que te faltan</li><li><b>Vende</b> las cartas que no te sirven para hacer cuadrados, para obtener dinero</li></ul>¿Cómo producir, comprar y vender? Mira los pasos siguientes."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Las transacciones",
-			"DESC": "Cualquier jugador puede vender una carta dándole la vuelta (código QR o código corto). El comprador escanea o introduce el código para comprar al precio del recurso. Así circula la riqueza entre jugadores."
+		"ACQUIRE": {
+			"TITLE": "Comprar / vender",
+			"DESC": "Para completar tus cuadrados, haz intercambios con los demás jugadores. Dos métodos para comprar (elige el que más te convenga):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>Código QR</b>: escanea la carta del vendedor (rápido)</li><li><span class=\"material-icons\">dialpad</span> <b>Digicode</b>: introduce el número contenido en el código QR</li></ul>Para <b>vender</b>, dale la vuelta a tu carta: el código QR y su digicode se muestran al comprador. Al comprar, la carta se transfiere de inmediato."
 		},
 		"PRODUCTION": {
-			"TITLE": "La producción",
-			"DESC": "Reúne 4 cartas de la misma letra Y del mismo nivel → pulsa Producir → recibes 1 carta del nivel superior + 4 cartas nuevas. Alimentación×4 → 1 Conocimiento. Cada producción también te da +1 ficha de acción."
+			"TITLE": "Producir",
+			"DESC": "Reúne un <b>cuadrado</b>: 4 cartas con la misma letra y el mismo color (nivel), y pulsa <b>Construir</b>. Recibes:<ul><li>🎁 1 carta del nivel superior</li><li>🟥🟥🟥🟥 4 cartas nuevas del mismo nivel</li><li>⚡ 1 ficha de acción</li></ul>¿Te faltan cartas? Cómpraselas a los demás jugadores."
 		},
 		"ACTIONS": {
 			"TITLE": "Las acciones",
-			"DESC": "Gasta tus fichas de acción para interactuar con los demás jugadores: buscar quién tiene una carta, dar una, robar una, desencadenar un conflicto… Empiezas con 1 ficha y ganas más con cada producción."
+			"DESC": "Gasta tus <b>fichas de acción</b> para interactuar con los demás jugadores: buscar quién tiene una carta, dar una, robar una, desencadenar un conflicto ¡o hacer el bien a tu alrededor!<br>Empiezas con <b>1 ficha</b> y ganas más con cada producción."
+		},
+		"DEATH": {
+			"TITLE": "La muerte 💀",
+			"DESC": "Como en la vida real, <b>la muerte golpea al azar</b>, y nadie se libra. Pero que no cunda el pánico: <b>una nueva vida empieza enseguida</b> 🐣<ul><li>💀 Al final, los resultados de tu primera vida se suman a los de la segunda</li><li>🐣 Renaces con cartas nuevas y 0 monedas</li></ul>Esto es lo que hace girar la economía: nada se acumula eternamente. Tenlo en cuenta, contará al comparar las dos monedas 😉"
 		},
 		"JUNE": {
-			"TITLE": "Modo Moneda Libre (JUNE)",
-			"DESC": "Cada minuto se distribuye equitativamente una cantidad de moneda (el Dividendo Universal) entre todos los jugadores vivos. Los precios de las cartas se ajustan con el DU. Sin banco, sin deuda: la moneda se crea y se comparte automáticamente."
+			"TITLE": "Moneda libre",
+			"DESC": "Cada minuto, el <b>Dividendo Universal (DU)</b> se reparte equitativamente entre todos los jugadores vivos.<ul><li>Los precios de las cartas se ajustan con el DU</li><li>Sin banco, sin deuda</li><li>La moneda se crea y se comparte automáticamente</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Modo Moneda Deuda",
-			"DESC": "Empiezas con 0 monedas. Debes pedir prestado al banco para jugar. En cada crédito: recibes monedas y debes devolver el capital + los intereses dentro del plazo."
+			"TITLE": "Moneda deuda",
+			"DESC": "Empiezas con <b>0 monedas</b>: debes pedir prestado al banco para jugar.<br>Con cada crédito recibes monedas y debes devolver <b>el principal + los intereses</b> en el plazo fijado (5 minutos por defecto)."
 		},
 		"REPAYMENT": {
-			"TITLE": "Devolver o prolongar",
-			"DESC": "Al vencimiento: devuelve todo (crédito saldado) o paga solo los intereses para prolongar el plazo (sigues debiendo el capital). Si no puedes pagar → embargo."
+			"TITLE": "Devolver, prolongar",
+			"DESC": "Al vencimiento, dos opciones:<ul><li><b>Devolverlo todo</b>: el crédito queda saldado (puedes saldarlo en cualquier momento sin esperar al vencimiento)</li><li><b>Pagar los intereses</b>: el plazo se prolonga, pero sigues debiendo el principal</li></ul>⚠️ Si no puedes pagar el principal → los intereses se cobran automáticamente y el crédito se prolonga, pero si tampoco tienes dinero para los intereses → <b>🚨 Impago: embargo</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Embargo y prisión",
-			"DESC": "En caso de impago, el banco embarga tus cartas (con un descuento del 33 %) y tus monedas para recuperar la deuda. Si no basta, vas a prisión unos minutos: excluido del juego hasta el final de la condena."
+			"DESC": "En caso de impago, el banco embarga tus <b>cartas</b> (con un descuento del 33 %) y tus <b>monedas</b> para recuperar la deuda.<br>Si no basta: <b>prisión</b> de 1 a 5 minutos, fuera del juego hasta el final de la condena."
 		}
 	}
 }

@@ -7,39 +7,43 @@
 		"GO_TO": "Idi na slajd {{n}}",
 		"CARDS": {
 			"TITLE": "Karte resursa",
-			"DESC": "Svaka karta predstavlja resurs: Hrana (crvena, 1), Znanje (žuta, 2), Energija (zelena, 4), Tehnologija (plava, 8). Svaka porodica karata nosi slovo (A, B, C…). Tvoje bogatstvo = tvoji novčići + vrednost tvojih karata."
+			"DESC": "Svaka karta predstavlja resurs:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Hrana</b></td><td>nivo 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Znanje</b></td><td>nivo 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energija</b></td><td>nivo 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Tehnologija</b></td><td>nivo 4</td><td>=>💰💰💰💰</td></tr></table>Svaka porodica karata nosi slovo (A, B, C…).<br><b>Tvoje bogatstvo = tvoji novčići + vrednost tvojih karata.</b>"
 		},
 		"WEALTH": {
-			"TITLE": "Cilj: obogatiti se",
-			"DESC": "Sakupi što više bogatstva (novčići + vrednost karata) pre kraja igre. Rang-lista nagrađuje najbogatijeg igrača, onog sa najviše novčića, sa najviše resursa i najaktivnijeg."
+			"TITLE": "Cilj",
+			"DESC": "Cilj: biti <b>najbogatiji</b> pre kraja igre (novčići + vrednost karata). Za to:<ul><li><b>Proizvodi</b>: skupljaj kvadrate identičnih karata da bi proizveo kartu veće vrednosti</li><li><b>Kupuj</b> od drugih igrača, svojim novcem, karte koje ti nedostaju</li><li><b>Prodaj</b> karte koje ti ne trebaju za kvadrate, da bi dobio novac</li></ul>Kako proizvoditi, kupovati i prodavati? Pogledaj sledeće korake."
 		},
-		"TRANSACTIONS": {
-			"TITLE": "Transakcije",
-			"DESC": "Svaki igrač može da proda kartu tako što je okrene (QR kod ili kratki kod). Kupac skenira ili unese kod da bi kupio po ceni resursa. Tako bogatstvo kruži među igračima."
+		"ACQUIRE": {
+			"TITLE": "Kupi / prodaj",
+			"DESC": "Da bi dopunio svoje kvadrate, razmenjuj sa drugim igračima. Dva načina kupovine (izaberi onaj koji ti najviše odgovara):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>QR kod</b>: skeniraj kartu prodavca (brzo)</li><li><span class=\"material-icons\">dialpad</span> <b>Digikod</b>: unesi broj koji se nalazi u QR kodu</li></ul>Da bi <b>prodao</b>, okreni svoju kartu: QR kod i njegov digikod se prikazuju kupcu. Pri kupovini karta se odmah prenosi."
 		},
 		"PRODUCTION": {
 			"TITLE": "Proizvodnja",
-			"DESC": "Sakupi 4 karte istog slova I istog nivoa → pritisni Proizvedi → dobijaš 1 kartu višeg nivoa + 4 nove karte. Hrana×4 → 1 Znanje. Svaka proizvodnja ti donosi i +1 žeton akcije."
+			"DESC": "Sakupi <b>kvadrat</b>: 4 karte sa istim slovom i istom bojom (nivoom), pa pritisni <b>Izgradi</b>. Dobijaš:<ul><li>🎁 1 kartu sledećeg nivoa</li><li>🟥🟥🟥🟥 4 nove karte istog nivoa</li><li>⚡ 1 žeton akcije</li></ul>Nedostaju ti karte? Kupi ih od drugih igrača."
 		},
 		"ACTIONS": {
 			"TITLE": "Akcije",
-			"DESC": "Potroši svoje žetone akcije da bi stupio u interakciju sa drugim igračima: potraži ko ima kartu, pokloni je, ukradi je, izazovi sukob… Počinješ sa 1 žetonom i dobijaš još pri svakoj proizvodnji."
+			"DESC": "Potroši svoje <b>žetone akcije</b> da bi stupio u interakciju sa drugim igračima: potraži ko ima kartu, pokloni je, ukradi je, izazovi sukob ili čini dobro oko sebe!<br>Počinješ sa <b>1 žetonom</b> i dobijaš još pri svakoj proizvodnji."
+		},
+		"DEATH": {
+			"TITLE": "Smrt 💀",
+			"DESC": "Kao u stvarnom životu, <b>smrt udara nasumično</b>, i niko joj ne izmiče. Ali bez panike: <b>novi život počinje odmah</b> 🐣<ul><li>💀 Na kraju se rezultati prvog života sabiraju sa rezultatima drugog</li><li>🐣 Ponovo se rađaš sa novim kartama i 0 novčića</li></ul>To pokreće ekonomiju: ništa se ne gomila zauvek. Zapamti to, biće važno kad budemo poredili dve valute 😉"
 		},
 		"JUNE": {
-			"TITLE": "Režim Slobodnog Novca (JUNE)",
-			"DESC": "Svakog minuta se određena količina novca (Univerzalni Dividend) ravnomerno deli svim živim igračima. Cene karata se prilagođavaju UD-u. Nema banke, nema duga — novac se stvara i deli automatski."
+			"TITLE": "Slobodni novac",
+			"DESC": "Svakog minuta se <b>Univerzalni Dividend (UD)</b> ravnomerno deli svim živim igračima.<ul><li>Cene karata se prilagođavaju UD-u</li><li>Nema banke, nema duga</li><li>Novac se stvara i deli automatski</li></ul>"
 		},
 		"DEBT": {
-			"TITLE": "Režim Dužničkog Novca",
-			"DESC": "Počinješ sa 0 novčića. Moraš da pozajmiš od banke da bi igrao. Za svaki kredit: dobijaš novčiće i moraš da vratiš glavnicu + kamatu u zadatom roku."
+			"TITLE": "Dužnički novac",
+			"DESC": "Počinješ sa <b>0 novčića</b>: moraš da pozajmiš od banke da bi igrao.<br>Uz svaki kredit dobijaš novčiće i moraš da vratiš <b>glavnicu + kamatu</b> u zadatom roku (podrazumevano 5 minuta)."
 		},
 		"REPAYMENT": {
-			"TITLE": "Otplatiti ili produžiti",
-			"DESC": "O roku dospeća: otplati sve (kredit zatvoren) ili plati samo kamatu da produžiš rok (glavnicu i dalje duguješ). Ako ne možeš da platiš → zaplena."
+			"TITLE": "Otplatiti, produžiti",
+			"DESC": "Po dospeću, dva izbora:<ul><li><b>Otplatiti sve</b>: kredit je izmiren (možeš ga izmiriti bilo kada, bez čekanja dospeća)</li><li><b>Platiti kamatu</b>: rok se produžava, ali i dalje duguješ glavnicu</li></ul>⚠️ Ako ne možeš da platiš glavnicu → kamata se automatski naplaćuje i kredit se produžava, ali ako nemaš novca ni za kamatu → <b>🚨 Neplaćanje: zaplena</b>."
 		},
 		"SEIZURE": {
 			"TITLE": "Zaplena i zatvor",
-			"DESC": "U slučaju neplaćanja, banka zaplenjuje tvoje karte (uz umanjenje od 33%) i tvoje novčiće da bi naplatila dug. Ako to nije dovoljno, ideš u zatvor na nekoliko minuta — isključen iz igre do kraja kazne."
+			"DESC": "U slučaju neplaćanja, banka zaplenjuje tvoje <b>karte</b> (uz popust od 33%) i tvoje <b>novčiće</b> da bi naplatila dug.<br>Ako to nije dovoljno: <b>zatvor</b> od 1 do 5 minuta, isključen iz igre do kraja kazne."
 		}
 	}
 }
