@@ -468,6 +468,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
 		this.i18nService.loadNamespace('results');
 		this.i18nService.loadNamespace('module-galileo');
 		this.i18nService.loadNamespace('survey');
+		this.i18nService.loadNamespace('home');
 	}
 
 	ngOnInit(): void {
