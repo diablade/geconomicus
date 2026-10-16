@@ -1,0 +1,65 @@
+{
+	"MODULE": {
+		"FISCALITE": {
+			"TITLE": "Impostado laŭ decilo",
+			"SUB_TITLE": "40 jaroj da politikaj elektoj kaj ilia efiko sur la havaĵon",
+			"SUMMARY": "Simuli la efikon de 40 jaroj da francaj impostaj reformoj sur la akumuladon de havaĵo de la dek enspezaj deciloj.",
+			"INTRO": "Ĉi tiu modulo retrorigardas kvardek jarojn da francaj impostaj politikoj (1983-2023) kaj ilian efikon sur la akumuladon de havaĵo de la dek enspezaj deciloj. De sama deirpunkto — kie la komenca havaĵo proporcias al la enspezo kaj kie la ŝparo kaj la kapitala profito estas identaj — nur la impostado varias laŭ la elektita reformo. Jaron post jaro, pli alta efektiva imposto malrapidigas la havaĵan « neĝbulon » de decilo, dum malpli impostita kapitalo akcelas ĝin (r > g). La diferencoj, nerimarkeblaj la unuan jaron, fariĝas rimarkindaj post kvar jardekoj.",
+			"DISCLAIMER": "La antaŭdifinitaj agordoj baziĝas sur realaj kaj dokumentitaj historiaj orientiloj (marĝenaj procentoj, nombro de tavoloj, imposta ŝildo, kontribuo je 75 %, PFU/ebena imposto, ŝanĝo ISF/IFI; fontoj IPP kaj INSEE). Kontraste, la efektivaj procentoj laŭ decilo, la ŝparaj procentoj, la kapitalaj profitoj kaj la rezultoj de la simulado estas simpligita kaj alĝustigebla pedagogia modelo: ili respektas grandordojn (datumoj de INSEE, verkoj de Piketty) sed ne pretendas precize rekonstrui la impostan ŝarĝon de ĉiu domanaro. Vi povas modifi ĉiujn parametrojn por provi aliajn scenarojn.",
+			"PRESETS_TITLE": "Historiaj orientiloj (dokumentitaj realaj procentoj)",
+			"MARGINAL_TOP": "Maksimuma marĝena procento",
+			"CUSTOM": "personigita",
+			"CUSTOM_HELP": "Vi mane alĝustigis la procentojn: personigita scenaro. Alklaku historian orientilon por reŝargi antaŭdifinitan agordon.",
+			"PRESETS": {
+				"mitterrand": {
+					"LABEL": "Mitterrand 1983-1986",
+					"BRACKETS": "14 tavoloj, TMI 65 %",
+					"CONTEXT": "Je la komenco de la unua sepjara oficperiodo de François Mitterrand, la skalo de la enspeza imposto havas 14 tavolojn kaj kulminas je marĝena procento de 65 %, unu el la plej altaj punktoj de la progresemo de la moderna skalo (la supera marĝena procento superis 60 % antaŭ la milito kaj post 1945). La kapitalaj enspezoj tiam estas impostataj laŭ la skalo. La tavolo je 65 % estas reduktita al 58 % ekde la impostado de la enspezoj de 1986."
+				},
+				"sarkozy": {
+					"LABEL": "Sarkozy 2007-2012",
+					"BRACKETS": "TMI 40-41 % + imposta ŝildo 50 %",
+					"CONTEXT": "La imposta ŝildo, kreita de la financleĝo por 2006 (limo de la rektaj impostoj je 60 % de la enspezoj), estas malaltigita al 50 % kaj etendita al la sociaj enspezpreno per la leĝo TEPA (aŭgusto 2007); la marĝena procento de la IR tiam estas ĉirkaŭ 40-41 %. Tre favora al la plej altaj havaĵoj, la mekanismo estas forigita en 2011."
+				},
+				"hollande": {
+					"LABEL": "Hollande 2012-2017",
+					"BRACKETS": "TMI 45 % + escepta kontribuo 75 % (> 1 M€)",
+					"CONTEXT": "La kvinjara oficperiodo kreas IR-tavolon je 45 % kaj escepton kontribuon de 75 % sur la enspezoj super 1 M€. Cenzurita de la Konstitucia Konsilio fine de 2012 pro rompo de egaleco antaŭ la publikaj ŝarĝoj, ĉi tiu imposto estas reenkondukita en 2013-2014 kiel kontribuo pagata de la entreprenoj. La progresemo ĉe la supro provizore reprenas."
+				},
+				"macron": {
+					"LABEL": "Macron 2017-nun",
+					"BRACKETS": "5 tavoloj, TMI 45 % + PFU 30 % sur la kapitalo; ISF → IFI",
+					"CONTEXT": "Ekde 2018, la marĝena procento de la skalo restas 45 % por la laborenspezoj, sed la kapitalaj enspezoj dependas de unika ebena enspezpreno (« flat tax ») de 30 %, kaj la ISF estas anstataŭita de la IFI, limigita al nemoveblaĵoj. La plej altaj enspezoj, plejparte devenantaj de kapitalo, vidas sian efektivan procenton platiĝi ĉe la supro de la distribuo."
+				}
+			},
+			"DECILES_TITLE": "Efektiva impostprocento laŭ decilo",
+			"DECILES_HELP": "Reguligu la mezan efektivan procenton aplikatan al ĉiu decilo, de D1 (la plej modestaj) ĝis D10 (la plej bonhavaj). La gradiento blua → ruĝa bildigas la progresemon.",
+			"TAX_RATE": "Impostprocento",
+			"POOREST": "D1 · plej modestaj",
+			"RICHEST": "D10 · plej bonhavaj",
+			"SIM_TITLE": "Parametroj de la simulado",
+			"GROWTH": "Ĉiujara ekonomia kresko",
+			"CAPITAL_RETURN": "Kapitala profito (altaj deciloj)",
+			"CAPITAL_RETURN_HELP": "Reala ĉiujara profito de la kapitalo por la plej bonhava decilo. Kiam ĉi tiu profito superas la kreskon (r > g), la havaĵo de la supro de la distribuo faras « neĝbulon ».",
+			"DURATION": "Daŭro de la simulado",
+			"YEARS": "jaroj",
+			"EDIT_INCOMES": "Redakti la referencajn enspezojn laŭ decilo",
+			"HIDE_INCOMES": "Kaŝi la referencajn enspezojn",
+			"INCOME_REF": "Referenca ĉiujara enspezo laŭ decilo (€)",
+			"RESET_PARAMS": "Restarigi",
+			"VIZ_TITLE": "Akumulita havaĵo laŭ decilo",
+			"VIZ_LEGEND": "La grandeco de ĉiu veziko proporcias al la akumulita havaĵo (kaj ne al la momenta enspezo).",
+			"YEAR": "Jaro",
+			"CURRENT_RATIO": "la plej bonhava decilo (D10) posedas <b>{{ratio}}×</b> la havaĵon de la plej modesta (D1)",
+			"PLAY": "Ludi",
+			"PAUSE": "Paŭzo",
+			"RESET_ANIM": "Reveni al la komenco",
+			"COMPARE_TOGGLE": "Kompari du impostadojn",
+			"COMPARE_WITH": "Kompari kun",
+			"COMPARE_TITLE": "Kompara legado",
+			"KEY_FIGURE": "Kun la impostado {{preset}}, la plej bonhava decilo (D10) posedas {{ratio}}× la havaĵon de la plej modesta decilo (D1) post {{years}} jaroj.",
+			"SOURCES_TITLE": "Por iri pli for",
+			"GO_FURTHER": "Por iri pli for: komparu la efikon de sama afiŝita marĝena procento sed de malsamaj bazoj (laboro kontraŭ kapitalo), alĝustigu mem la efektivajn procentojn laŭ decilo, kaj observu kiel la neta profito de la kapitalo — pli ol la skalo mem — regas la koncentriĝon de havaĵo ĉe la supro de la distribuo longtempe."
+		}
+	}
+}

@@ -1,0 +1,57 @@
+{
+	"ACTION": {
+		"TITLE": "Agoj",
+		"PICK_TARGET": "Elekti ludanton",
+		"PICK_TARGET2": "Elekti duan ludanton",
+		"PICK_CARD": "Elekti karton",
+		"PICK_ONG_CARDS": "Elekti 4 kartojn por doni",
+		"PICK_ASSOCIATION_CARDS": "Elekti 2 kartojn por doni",
+		"CONFIRMING": "En okazo...",
+		"CONFIRM": "Konfirmi",
+		"NO_CARDS": "Neniu karto disponebla",
+		"ONG_SELECT_HINT": "{{selected}}/4 kartoj elektitaj",
+		"ONG_AUTO_TARGET": "Doni al la 2 plej malriĉaj ludantoj",
+		"ASSOCIATION_SELECT_HINT": "{{selected}}/2 kartoj elektitaj",
+		"ASSOCIATION_TARGET_HINT": "Ĉi tiu karto iros al la ludanto elektita sube",
+		"RECEIVED_GIVE": "{{fromName}} donis al vi karton!",
+		"RECEIVED_ONG": "{{fromName}} donacis al vi {{count}} karto(j)n (ago NRO)!",
+		"RECEIVED_ASSOCIATION": "{{fromName}} donis al vi karton (ago Asocio)!",
+		"ROBBED_STEAL": "Iu ŝtelis de vi karton!",
+		"ROBBED_WAR": "Oni atakis vin! 2 kartoj estis prenitaj de vi.",
+		"SHOP_HINT": "Produktu kvadraton por gajni poentojn!",
+		"WHO_HAVE_CARD": {
+			"LABEL": "Kiu havas ĉi tiun karton?",
+			"DESC": "Malkovru kiu posedas karton de la familio, kiu mankas al vi. Kostas 1 ĵetonon.",
+			"PICK": "Elekti la familion por lokalizi",
+			"HINT": "Elektu la familion de la karto, kiun vi serĉas, kaj vi ekscios kiu posedas unu",
+			"SEARCH": "Serĉi",
+			"RESULT_PLAYER": "{{name}} posedas karton de ĉi tiu familio.",
+			"RESULT_DECK": "Karto de ĉi tiu familio estas en la stako.",
+			"RESULT_UNKNOWN": "Neniu posedas karton de ĉi tiu familio nuntempe."
+		},
+		"GIVE": {
+			"LABEL": "Doni karton",
+			"DESC": "Donacu unu el viaj kartoj al ludanto laŭ via elekto."
+		},
+		"STEAL": {
+			"LABEL": "Ŝteli karton",
+			"DESC": "Prenu karton de alia ludanto. Li estos sciigita."
+		},
+		"SILENT_STEAL": {
+			"LABEL": "Silenta ŝtelo",
+			"DESC": "Prenu karton sen ke la alia ludanto estu sciigita."
+		},
+		"ASSOCIATION": {
+			"LABEL": "Asocio",
+			"DESC": "Donu 2 el viaj kartoj al 2 ludantoj laŭ via elekto (1 al ĉiu)."
+		},
+		"WAR": {
+			"LABEL": "Milito",
+			"DESC": "Ŝtelu 2 hazardajn kartojn de ĉiu el 2 ludantoj."
+		},
+		"ONG": {
+			"LABEL": "NRO",
+			"DESC": "Donu 4 el viaj kartoj al la 2 plej malriĉaj ludantoj (2 al ĉiu)."
+		}
+	}
+}

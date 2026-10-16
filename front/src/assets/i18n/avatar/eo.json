@@ -1,0 +1,24 @@
+{
+	"AVATAR": {
+		"LOBBY": "Atendejo",
+		"ANIMATOR": "Animanto: {{name}}",
+		"NAME": "Persona nomo aŭ kromnomo",
+		"YOUR_AVATAR": "Via avataro",
+		"SYS_SCAN": "Aĉeti per",
+		"EYES": "Okuloj",
+		"EYEBROWS": "Brovoj",
+		"MOUTH": "Buŝo",
+		"GLASSES": "Okulvitroj",
+		"EARRINGS": "Oreloj",
+		"FEATURES": "Diversaĵoj",
+		"GAME_TABLE": "Luda tablo",
+		"SKIN": "Haŭto",
+		"HAIR": "Haroj",
+		"PLAY": "Iri al la ludo",
+		"YOUR_CODE": "Via kodo por reveni:",
+		"UPDATED": "Avataro ĝisdatigita",
+		"MODIFY_FEEDBACK": "Korekti miajn respondojn",
+		"MODIFY_FEEDBACK_MESSAGE": "Petu la animanton permesi al vi korekti viajn respondojn, poste reprovu.",
+		"SURVEY_AUTORIZED": "Vi povas denove respondi la demandaron"
+	}
+}

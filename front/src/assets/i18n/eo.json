@@ -1,65 +1,249 @@
 {
-    "HELLO": "Saluton!",
-    "WELCOME": "Bonvenon!",
-    "FREE_MONEY": "Libera mono",
-    "DEBT_MONEY": "Ŝuldo-mono",
-    "GAME_NOTICE": "Reguloj de la ludo",
-    "BY_DEFAULT": "implicita",
-    "PUBLIC_KEY": "Publika ŝlosilo:",
-    "VALUES_BY_DEFAULT": "Implicitaj valoroj",
-    "CANCEL": "Nuligi",
-    "OK": "OK",
-    "SAVE": "Registri",
-    "DELETE": "Forigi",
-    "ALL": "Ĉiuj",
-    "HOME": {
-        "PAGE": "Hejmpaĝo",
-        "CONTRIBUTION": "Kontribuaĵoj",
-        "WELCOME": "Malkovru la liberan monon per ludo!",
-        "INSTALL": "Instali la apon (malnepra)",
-        "CREATE_GAME": "Krei partion",
-        "JOIN_GAME": "Kuniĝi al partio",
-        "JOIN_VIA_SHORT_ID": "Per la mallonga kodo",
-        "JOIN_VIA_CAM": "Per la kamerao",
-        "HOW_TO_PLAY": "Kiel tio funkcias?",
-        "FUND_RAISE": "Donaco por subteni min, ",
-        "IN": "en",
-        "OR_IN": " aŭ en",
-        "SAY_HI": "Ĉu vi bezonas helpon, havas ideon konindan, volas sciigi fuŝon, aŭ simple deziras saluti?",
-        "LINK_SAY_HI": "Iru ĉi tien",
-        "LOOKING_FOR_PAPER_GAME": "La origina luda en papera versio?"
-    },
-    "GAME": {
-        "OPEN": "Partio malfermita, alkuniĝebla",
-        "PLAYING": "Okazanta",
-        "END_GAME": "raŭndo finita",
-        "STOP_ROUND": "Raŭndo finita",
-        "INTER_ROUND": "Inter-raŭndo",
-        "START_GAME": "Partio ekinta"
-    },
-    "MASTER": {
-        "SCAN_QR": "Iru al {{webHost}}, poste alklaku 'Kuniĝi'!",
-        "JOIN": "Kuniĝu al la partio {{name}}",
-        "GUNY_WELCOME": "Hej! Skanu mian QR-kodon por kuniĝi al la partio.",
-        "TYPE_OF_MONEY": "Tipo de mono",
-        "GAME_OPTION": "Opcioj de la ludo",
-        "START": "Disdoni la kartojn",
-        "ROUND": "raŭndo",
-        "LIVE_EVENT_BTN": "Malfermi la paĝon pri la tujaj rezultoj",
-        "RESET": "RESTARIGO",
-        "WAITING": "Restas {{count}} ludanto(j) antaŭ ol disdoni la kartojn",
-        "START_ROUND": "Ekigi la raŭndon",
-        "STOP_ROUND": "Ĉesigi",
-        "NEXT_ROUND": "Venonta raŭndo",
-        "SEND_SURVEY": "Ekigi la demandaron kaj montri la rezultojn",
-        "SHOW_RESULTS": "Montri la rezultojn",
-        "BANK_BTN": "Vidi la bankon",
-        "DELETE_USER": "Forigi ludanton?",
-        "USERS_CONNECTED": "Ludantoj konektitaj",
-        "PLAYERS": "Ludantoj",
-        "KILL_USERS": "Ĉu pasigi la morton?"
-    },
-    "NOTICE": {
-        "TITLE": "Gvidilo"
-    }
+	"HELLO": "Saluton!",
+	"WELCOME": "Bonvenon!",
+	"ANIMATOR": "Animanto",
+	"LOCATION": "Loko",
+	"FREE_MONEY": "Libera mono",
+	"DEBT_MONEY": "Ŝuldo-mono",
+	"GAME_NOTICE": "Reguloj de la ludo",
+	"BY_DEFAULT": "implicita",
+	"PUBLIC_KEY": "Publika ŝlosilo:",
+	"LAST_SEEN": "Lasta konekto: {{lastSeen}}",
+	"VALUES_BY_DEFAULT": "Implicitaj valoroj",
+	"BACK_TO_LOBBY": "Reen al la atendejo",
+	"CANCEL": "Nuligi",
+	"CLOSE": "Fermi",
+	"REFRESH": "Aktualigi",
+	"FULLSCREEN": "Plena ekrano",
+	"FULLSCREEN_EXIT": "Eliri el la plena ekrano",
+	"OK": "OK",
+	"ALL": "Ĉiuj",
+	"SAVE": "Registri",
+	"DELETE": "Forigi",
+	"GAME": {
+		"OPEN": "Partio malfermita, alkuniĝebla",
+		"PLAYING": "Okazanta",
+		"END_GAME": "Raŭndo finita",
+		"STOP_ROUND": "Raŭndo finita",
+		"PAUSED": "Partio paŭzita",
+		"STARTED": "Partio ekinta",
+		"RESUMED": "Partio daŭrigita"
+	},
+	"CARD": {
+		"LV1": "Nutraĵo",
+		"LV2": "Scio",
+		"LV3": "Energio",
+		"LV4": "Teknologio",
+		"BUILD_UP_0": "Krei Scio-karton",
+		"BUILD_UP_1": "Krei Energio-karton",
+		"BUILD_UP_2": "Krei Teknologio-karton",
+		"BUILD_UP": "Krei karton de pli alta valoro",
+		"IN_DECK": "la karto <b>({{cardName}})</b> estas en la <b>stako</b>",
+		"IN_PLAYER": "la karto <b>({{cardName}})</b> estas ĉe la ludanto <b>{{player}}</b>"
+	},
+	"THEME": {
+		"TITLE": "Etoso",
+		"CLASSIC": "Klasikaj kartoj",
+		"EMOJIS": "Emoĝiaj eroj",
+		"TWEMOJIS": "Unuformaj eroj"
+	},
+	"EVENTS": {
+		"GAME_ENDED": "Partio finita",
+		"GAME_ENDED_MESSAGE": "La partio finiĝis. Dankon pro la ludado!",
+		"SURVEY_MESSAGE": "Vi estos redirektita al demandaro por tuj kolekti viajn impresojn pri ĉi tiu partio. Bonvolu pasigi 5 minutojn por respondi!",
+		"ROUND_END": "Raŭndo finita",
+		"PRISON_ENDED": "malliberulo ĵus finis sian punon",
+		"BREAK_FREE": "I want to break FREEEEEE !",
+		"DEATH_PASS": "La morto ĵus pasis 😈",
+		"NEED_DEATH_PASS": "La morto devas pasi 😈! (via vico)",
+		"ASK_END_ROUND": "La raŭndo ne finiĝis, ĉu vi certe volas ĝin fini?",
+		"SHORT_CODE_SEND": "Kodo sendita",
+		"COPY_SUCCESS": "Kopiita!"
+	},
+	"GO_NEW_LIFE": "Ğo por mia nova vivo!",
+	"REINCARNATED": "He! Vi reenkarniĝis!",
+	"DIALOG": {
+		"CLOSE": "Fermi",
+		"YES": "Jes",
+		"NO": "Ne",
+		"CANCEL": "Nuligi",
+		"CONTINUE_SESSION": "Daŭrigi vian seancon",
+		"ACTIVE_SESSION": "Vi havas seancon en okazo:",
+		"DISMISS": "Fermi",
+		"RESUME": "Daŭrigi",
+		"INFORMATION": {
+			"TITLE": "Informo!"
+		},
+		"CONFIRM": {
+			"TITLE": "Konfirmi?",
+			"MESSAGE": "Ĉu vi certas?"
+		},
+		"CREATE_GAME": {
+			"TITLE": "Krei partion",
+			"FIELD1": "Nomi la partion",
+			"FIELD2": "Nomo de la animanto",
+			"FIELD3": "Loko",
+			"BTN1": "Krei",
+			"BTN2": "Nuligi"
+		},
+		"INSTALL": {
+			"MESSAGE1": "En Safari, malfermu la diskonigan menuon per la butono",
+			"MESSAGE2": "poste elektu \"al la hejma ekrano\""
+		},
+		"SHORT_CODE": {
+			"PLACEHOLDER": "Enigu la kodon...",
+			"BUY": "Aĉeti"
+		},
+		"QR_SCAN": {
+			"TITLE": "Skani la QR-kodon",
+			"CAMERA": "Kamerao",
+			"SELECT_DEVICE": "Elekti la kameraon"
+		},
+		"SEIZURE": {
+			"TITLE": "Neplenumo de pago - sekvestri havaĵojn",
+			"SOLD": "Saldo: {{amount}}",
+			"SEIZE": "Sekvestri",
+			"TO_SEIZE": "Sekvestrota: {{seized}} / {{objective}}",
+			"FEES": "Aldonaj kostoj {{num}}",
+			"DECOTE": "Rabato de {{num}} % sur la kartoj",
+			"DROP_ZONE": "Metu ĉi tien la kartojn \n sekvestrotajn",
+			"PROGRESS": "Progreso",
+			"TOOLTIP_PRISON_INFO": "Se la celo estas atingita: 0 minutoj. La malliberejo validas nur por ludanto sen kartoj: almenaŭ 1 min. Se la neplenumo estas granda, la puno devas esti granda (maksimume {{max}} min).",
+			"PRISON_DECISION": "Daŭro de la malliberejo:",
+			"MINUTES": "minuto(j)",
+			"VALIDATE": "Validigi la sekvestron",
+			"SUCCESS": "Sekvestro farita!"
+		}
+	},
+	"RESSOURCES": {
+		"LEARN_FORWARD": "Iru pli for kun la",
+		"TITLE": "Pedagogiaj moduloj",
+		"BUTTON": "Pedagogiaj moduloj"
+	},
+	"ERROR": {
+		"SESSION_ALREADY_STARTED": "La seanco jam ekis, vi ne plu povas krei avataron.",
+		"GENERIC": "Eraro okazis, bonvolu reprovi poste.",
+		"UNKNOWN": "Neatendita eraro okazis",
+		"DISTRIBUTE_CARDS": "Malsukceso de la kartodisdono",
+		"GAME_NOT_FOUND": "Partio ne trovita",
+		"SESSION_NOT_FOUND": "Seanco ne trovita",
+		"GAME_ALREADY_LAUNCHED": "La partio jam estas malfermita, la ludantoj povas aliĝi.",
+		"DELETE_AVATAR": "Eraro dum la forigo de la avataro.",
+		"IN_PROGRESS": "jam en okazo",
+		"CARDS_NOT_UNIQUE": "Kartoj ne unikaj",
+		"NOT_ENOUGH_CARDS": "Ne sufiĉe da kartoj",
+		"NOT_ENOUGH_CARDS_IN_DECK": "Ne sufiĉe da kartoj en la stako",
+		"NOT_ENOUGH_MONEY": "Nesufiĉaj financoj.",
+		"JOIN_REINCARNATE": "Aliĝo neebla",
+		"REINCARNATE": "Malsukceso de la relivigo",
+		"JOIN": "Aliĝo neebla",
+		"CREATE": "Malsukceso de la kreo",
+		"GAME_UNAVAILABLE": "Partio nedisponebla",
+		"PLAYER_NOT_FOUND": "Ludanto neekzistanta",
+		"UPDATE": "Malsukceso de la modifo",
+		"EXCHANGE": "Interŝanĝo neebla",
+		"TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER": "Interŝanĝo neebla kun mortinta aŭ malliberigita ludanto",
+		"ID_PLAYER_MISSING": "Identigilo de la ludanto mankas",
+		"INSUFFICIENT_FUNDS": "Nesufiĉaj financoj",
+		"DELETE": "Malsukceso de la forigo",
+		"START_GAME": "Malsukceso de la ekigo de la partio",
+		"RESET_GAME": "Malsukceso de la restarigo de la partio",
+		"START_ROUND": "Malsukceso de la ekigo de la raŭndo",
+		"STOP_ROUND": "Malsukceso de la haltigo de la raŭndo",
+		"INTER_ROUND": "Inter-raŭndo neebla",
+		"END_GAME": "Malsukceso de la haltigo de la partio",
+		"KILL": "Mortigo neebla",
+		"SAVE_OPTIONS": "Malsukceso de la registrado de la opcioj",
+		"FEEDBACKS_UNAVAILABLE": "Respondoj nedisponeblaj",
+		"SEND_SURVEY": "Malsukceso de la sendo de la demandaro",
+		"CREATE_CREDIT": "Malsukceso de la kreo de la kredito",
+		"GET_CREDITS": "Malsukceso de la alporto de la kreditoj",
+		"REPAY_CREDIT": "Malsukceso de la repago de la kredito",
+		"PAY_INTEREST": "Neeble pagi la intereson",
+		"SEIZURE": "Neeble sekvestri la havaĵojn",
+		"BREAK_PRISON": "Malsukceso de la elpreno el malliberejo :/",
+		"LOCK_DOWN_PLAYER": "Malsukceso de la malliberigo de la ludanto",
+		"DELETE_GAME": "Malsukceso de la forigo",
+		"CONNECTION_EXPIRED": "La konekto eksvalidiĝis. Aŭtomata reŝargo de la paĝo...",
+		"IO_SOCKET_ERROR": "Eraro okazis, bonvolu reprovi poste.",
+		"FINDING_CARD": "Karto ne trovita",
+		"GAME_STATE_OVER": "Partio finita",
+		"NOT_FOUND": "Ne trovita",
+		"GET_ALL": "Malsukceso de la ŝargo de la seancoj",
+		"GET_BY_ID": "Malsukceso de la ŝargo de la seanco",
+		"GET_BY_SHORT_ID": "Neniu seanco por ĉi tiu kodo",
+		"START": "Malsukceso de la ekigo de la seanco",
+		"SESSION_REMOVE_BY_ID": "Malsukceso de la forigo de la seanco",
+		"KILL_GAME": "Malsukceso de la forigo de la partio",
+		"DEFAULT": "Malsukceso de la reveno al la implicitaj valoroj",
+		"GET_BY_IDX": "Malsukceso de la ŝargo de la reguloj",
+		"REMOVE_BY_IDX": "Malsukceso de la forigo de la reguloj",
+		"ALLOW_AVATAR_EDIT_SURVEY": "Malsukceso de la malfermo de la demandaro por ĉi tiu avataro",
+		"FINDING_INGREDIENT": "Ingredienco ne trovita",
+		"REFRESH": "Malsukceso de la aktualigo de la partio"
+	},
+	"SOCKET": {
+		"KICKED": {
+			"TITLE": "Konekto interrompita ⚠️",
+			"ANOTHER_CONNECTION": "Via loko estis reprenita de alia aparato.",
+			"KICKED_BY_ANIMATOR": "La animanto malkonektis vin. Aliĝu al la partio por reveni.",
+			"RETAKEN": "La ludanto reprenis sian lokon.",
+			"GENERIC": "Via konekto estis anstataŭigita."
+		},
+		"OFFLINE": {
+			"TITLE": "Senkonekta ⚠️",
+			"TEXT": "☎️ Atendado de rekonekto..."
+		},
+		"DISCONNECTED": {
+			"TITLE": "Malkonektita ⚠️",
+			"MESSAGE": "La provoj de rekonekto malsukcesis",
+			"REFRESH": "Aktualigi",
+			"TIMER": "8"
+		},
+		"RECONNECTING": {
+			"TITLE": "Senkonekta ⚠️",
+			"TEXT": "☎️ Rekonektado en progreso..."
+		},
+		"CONNECTED": "✅ Vi estas konektita.",
+		"RECONNECTED": "✅ Vi estas rekonektita.",
+		"TIMEOUT": "Konekta templimo superita."
+	},
+	"CURRENCY": {
+		"EURO": "€",
+		"JUNE": "Ğ1",
+		"DU": "DU"
+	},
+	"DATE_FORMAT": {
+		"DATETIME": "dd-MM-YYYY je HH:mm"
+	},
+	"CONTRIBUTION": {
+		"TITLE": "Kontribuaĵoj",
+		"SUBTITLE": "Granda DANKON  ❤️ al la sekvaj homoj pro iliaj kontribuoj, subteno, konsiloj, ideoj, ortografiaj korektoj, tradukoj, ktp."
+	},
+	"TASK": {
+		"MASTER_TASK": "Animanto",
+		"UNSELECT_ALL": "Malelekti ĉion",
+		"TITLE": "Listo de la taskoj de la animanto",
+		"PREPARE": "Elekti la opciojn de la ludo",
+		"PRESENT_YOURSELF": "Sin prezenti",
+		"PRESENT_ML": "Prezenti la celon de la ludo (2 monoj, 2 malsamaj ludrezultoj)",
+		"SOUND": "Peti la ludantojn aktivigi la sonon de sia telefono por pli bona mergiĝo",
+		"DELAY": "Klarigi la templimojn de ĉiu el la du raŭndoj",
+		"SQUARES": "Krei valoron kunigante identajn kartojn per transakcioj",
+		"TRANSACTIONS": "Klarigi kiel fari aĉetojn (kamerao aŭ ciferkodo) kaj fari fiktivan partion dum maksimume 5 min (uzu la eksperimentan reĝimon por havi la restarigan butonon)",
+		"DEATH": "Klarigi la morton (kiu falas hazarde) kaj la tujan renaskiĝon",
+		"START_1": "Ekigi kiam ĉiuj ludantoj aliĝis al la partio, komenci la raŭndon kiam ili ricevis la kartojn",
+		"SURVEY_1": "Fino de la raŭndo, kolekto de impresoj per telefona demandaro",
+		"NEXT_MONEY": "Komenci la raŭndon per la alia mono",
+		"START_2": "Ekigi kiam ĉiuj ludantoj aliĝis al la partio, komenci la raŭndon kiam ili ricevis la kartojn",
+		"SURVEY_2": "Fino de la raŭndo, kolekto de impresoj per telefona demandaro",
+		"RESULTS": "Fino de la partio, rivelo de la rezultoj kaj komparo de la du raŭndoj"
+	},
+	"MODULE": {
+		"BACK_HOME": "Reiri al la hejmo"
+	},
+	"PWA": {
+		"NEW_VERSION": "Nova versio disponebla, restartigo en progreso...",
+		"UNRECOVERABLE": "Eraro okazis, la aplikaĵo devas esti reŝargita"
+	}
 }

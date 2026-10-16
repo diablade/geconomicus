@@ -1,0 +1,50 @@
+{
+	"HOME": {
+		"PAGE": "Hejmpaĝo",
+		"CONTRIBUTION": "Kontribuaĵoj",
+		"WELCOME": "Malkovru la liberan monon per ludo!",
+		"INSTALL": "Instali la apon (malnepra)",
+		"CREATE_SESSION": "Krei seancon",
+		"JOIN_SESSION": "Aliĝi al seanco",
+		"JOIN_VIA_SHORT_ID": "Per la mallonga kodo",
+		"JOIN_VIA_QR_CODE": "Per la QR-kodo",
+		"HOW_TO_PLAY": "Kiel tio funkcias?",
+		"FUND_RAISE": "Donaca kaso por subteni min, ",
+		"IN": "en",
+		"OR_IN": " aŭ en",
+		"SAY_HI": "Ĉu vi bezonas helpon, havas ideon, trovis cimon, aŭ simple volas saluti?",
+		"LINK_SAY_HI": "Jen ĉi tie",
+		"LOOKING_FOR_PAPER_GAME": "La originala ludo en papera versio?",
+		"CLOSE": "Fermi",
+		"YES": "Jes",
+		"NO": "Ne",
+		"CANCEL": "Nuligi",
+		"CONTINUE_SESSION": "Daŭrigi vian seancon",
+		"ACTIVE_SESSION": "Vi havas aktivan seancon:",
+		"DISMISS": "Fermi",
+		"RESUME": "Daŭrigi"
+	},
+	"DIALOG_CREATE_SESSION": {
+		"TITLE": "Krei seancon",
+		"NAME": "Nomi la seancon",
+		"ANIMATOR": "Nomo de la animanto",
+		"LOCATION": "Loko",
+		"THEME": "Etoso",
+		"BTN1": "Krei",
+		"BTN2": "Nuligi"
+	},
+	"DIALOG_INSTALL": {
+		"MESSAGE1": "En Safari, malfermu la diskonigan menuon per la butono",
+		"MESSAGE2": "poste elektu \"al la hejma ekrano\""
+	},
+	"DIALOG_JOIN_SHORT_CODE": {
+		"PLACEHOLDER": "Enigu la kodon...",
+		"SHORT_ID_TITLE": "Enigu la kodon de la seanco, aŭ vian plenan kodon",
+		"SHORT_ID_DESC": "4 ciferoj por aliĝi kiel nova ludanto (ekz.: 0042). Aldonu vian numeron por retrovi vian avataron (ekz.: 0042-7) — la animanto povas doni ĝin al vi.",
+		"SEARCH": "Serĉi",
+		"INVALID_FORMAT": "Atendata formato: 4 ciferoj, eble sekvataj de - kaj via numero. Ekz.: 0042 aŭ 0042-7",
+		"UNKNOWN_SESSION": "Neniu seanco respondas al ĉi tiu kodo.",
+		"UNKNOWN_AVATAR": "Ĉi tiu seanco enhavas neniun avataron kun ĉi tiu numero.",
+		"NEEDS_AVATAR_CODE": "Ĉi tiu seanco jam ekis: vi bezonas vian plenan kodon, kun via numero (ekz.: 0042-7)."
+	}
+}

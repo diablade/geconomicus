@@ -1,0 +1,110 @@
+{
+	"PLAYER": {
+		"INIT": "Vi ricevis {{cardsLength}} kartojn 🎴 kaj {{coins}}{{currency}} 👛. Bonŝancon!",
+		"INIT_DEBT": "Vi ricevis {{cardsLength}} kartojn 🎴 kaj {{coins}}{{currency}} 👛. Iru al la bankisto por ricevi monon. Bonŝancon!",
+		"GO_TO_BANK": "🚨 IRU AL LA BANKO !!! 🚨",
+		"THIS_LIFE_IS_GONE": "Ĉi tiu vivo finiĝis 🪦",
+		"GO_TO_SECOND_LIFE": "Komencu vian duan vivon!",
+		"OUT_PRISON_TITLE": "Vi estas libera!",
+		"OUT_PRISON_TEXT": "Via puno finiĝis, reiru ludi",
+		"WAITING": "Atendante la animanton...",
+		"GAME_OVER": "Partio finita...",
+		"GAME_PAUSED": "Partio paŭzita",
+		"ANSWER_SURVEY": "Respondi la demandaron",
+		"DEBT": "Ŝuldoj",
+		"BUY": "Aĉeti",
+		"CREDITS": "KREDITOJ",
+		"OBJECTIVES": "Celoj",
+		"TAKEN_OVER_TITLE": "La animanto stiras vian tabulon",
+		"TAKEN_OVER_TEXT": "Iu ludas anstataŭ vi nuntempe. Reprenu la kontrolon kiam vi volas.",
+		"RETAKE": "Repreni la kontrolon",
+		"NOT_ALIVE": "Vi ne plu vivas",
+		"NOT_ALIVE_OR_GAME_NOT_PLAYING": "La partio ne okazas, aŭ vi ne plu vivas",
+		"GAME_NOT_PLAYING": "La partio ne okazas",
+		"INSUFFICIENT_FUNDS": "Nesufiĉaj financoj",
+		"INSUFFICIENT_CARDS": "Ne sufiĉe da identaj kartoj por produkti",
+		"SETTLE_FAILED": "Malsukceso de la repago de la kredito",
+		"EXTEND_FAILED": "Malsukceso de la plilongigo de la kredito",
+		"INVALID_STATE": "Tabulo ne ŝargita, aktualigu la paĝon",
+		"INVALID_IDS": "Partio ne trovita, aktualigu la paĝon",
+		"SOLD": "Vendita",
+		"BOUGHT": "Aĉetita"
+	},
+	"DIALOG": {
+		"CREDIT_EXTENDED": {
+			"TITLE": "La kredito eksvalidiĝis!",
+			"MESSAGE": "Ni prenis la intereson de {{interest}} kaj plilongigis vian krediton je 5 pliaj minutoj"
+		},
+		"CREDIT_SETTLE_EXTEND": {
+			"TITLE": "Repagi aŭ plilongigi la krediton?",
+			"MESSAGE": "Vi povas repagi la tutan krediton pagante {{amount}} jam nun",
+			"MESSAGE2": "aŭ plilongigi je 5 pliaj min pagante la intereson de {{interest}}",
+			"BTN_SETTLE": "Repagi",
+			"BTN_EXTEND": "Plilongigi"
+		},
+		"CREDIT_SETTLE": {
+			"TITLE": "Repagi la krediton?",
+			"MESSAGE": "Ĉu vi konfirmas la repagon de via kredito, pagante {{amount}} € ?",
+			"BTN_CONFIRM": "Repagi tute"
+		},
+		"CREDIT_FAULT": {
+			"TITLE": "Repagi la krediton?",
+			"MESSAGE": "!!! KREDITO ESTAS EN NEPLENUMO DE PAGO !!!"
+		},
+		"REQUEST_CREDIT": {
+			"TITLE": "Konfirmu la peton de kredito",
+			"MESSAGE": "Por pago de {{amount}} € kaj {{interest}} € da intereso",
+			"MESSAGE2": "Por tuto de {{total}} € repagenda?  (t.e. {{rate}}% interezo-procento)",
+			"BTN_CONFIRM": "Peti"
+		},
+		"RATE_CHANGED": {
+			"TITLE": "Nova kredita procento!"
+		},
+		"SEIZURE_RESULT": {
+			"TITLE": "Sekvestro farita",
+			"MESSAGE": "-{{coins}} 💰 kaj {{cardsCount}} karto(j) sekvestrita(j) (-{{cardsValue}} 💰)",
+			"PRISON": "Restas nenio sekvestrebla: direkto al malliberejo por {{minutes}} minuto(j)."
+		}
+	},
+	"CREDIT": {
+		"SIMPLE": "simpla",
+		"DOUBLE": "duobla",
+		"IDLE": "Atendante...",
+		"PAUSED": "Ludo paŭzita...",
+		"RUNNING": "En okazo...",
+		"REQUEST": "Peto...",
+		"DEFAULT": "Neplenumo de pago",
+		"DONE": "Finita",
+		"NEW": "Kredito ricevita (+{{amount}}💰)",
+		"FREE_MONEY": "Senpaga mono ricevita (+{{amount}}💰)",
+
+		"ANSWER": "Respondi",
+		"SETTLE": "Repagi",
+		"DEBT": "Ŝuldo",
+		"INTEREST": "Intereso",
+
+		"CANCEL_SUCCESS": "Kredito nuligita, {{amount}} € repagitaj",
+		"CANCELED": "Kredito nuligita",
+
+		"NOTICE_INTEREST": "Intereso, pagebla por plilongigi je {{ interestMinutes }} minutoj",
+		"DONE_AT": "Fermita je",
+		"EXTENDED": "Plilongigita",
+		"CREDIT_SETTLED": "Kredito repagita",
+		"BORROW": "Preni krediton",
+		"REFUSED_NEGOTIATE": "Kredito rifuzita — negocu kun la animanto",
+		"RATE_CHANGED": "Nova procento: {{amount}}/{{interest}} ({{pct}}%)",
+		"RATE_HURRY": "Rapide! Pruntu antaŭ ol la procento denove altiĝos",
+		"FIRST_Q_TITLE": "Ĉu vi volas preni unuan krediton?",
+		"DECLINE": "Ne dankon",
+		"HALFWAY_NUDGE": "Duontempo por repagi vian krediton",
+		"FINAL_MINUTE": "Malpli ol minuto! Repagu vian krediton, rapide!",
+		"FAULT_OVERLAY_TITLE": "Kredito en neplenumo",
+		"FAULT_OVERLAY_TEXT": "Vi ne repagis ĝustatempe. Iru al la animanto por la sekvestro.",
+		"FAULT_OVERLAY_TEXT_AUTO": "Vi ne repagis ĝustatempe. Sekvestro en progreso..."
+	},
+	"PRODUCTION": {
+		"BUILD": "Konstrui",
+		"REVEAL_TITLE": "Konstruita!",
+		"REVEAL_HINT": "{{count}} kartoj Niv. {{level}} reprenitaj... +1 ĵetono (⚡)"
+	}
+}

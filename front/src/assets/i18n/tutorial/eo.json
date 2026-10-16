@@ -1,0 +1,49 @@
+{
+	"TUTORIAL": {
+		"OPEN": "Kiel ludi?",
+		"PREV": "Antaŭa",
+		"NEXT": "Sekva",
+		"FINISH": "Finita",
+		"GO_TO": "Iri al la bildo {{n}}",
+		"CARDS": {
+			"TITLE": "La rimedaj kartoj",
+			"DESC": "Ĉiu karto reprezentas rimedon:<table class=\"cards-table\"><tr><td>🟥</td><td><b>Nutraĵo</b></td><td>nivelo 1</td><td>=>💰</td></tr><tr><td>🟨</td><td><b>Scio</b></td><td>nivelo 2</td><td>=>💰💰</td></tr><tr><td>🟩</td><td><b>Energio</b></td><td>nivelo 3</td><td>=>💰💰💰</td></tr><tr><td>🟦</td><td><b>Teknologio</b></td><td>nivelo 4</td><td>=>💰💰💰💰</td></tr></table>Ĉiu karta familio portas literon (A, B, C…).<br><b>Via riĉeco = viaj moneroj + la valoro de viaj kartoj.</b>"
+		},
+		"WEALTH": {
+			"TITLE": "La celo",
+			"DESC": "La celo: esti la plej <b>riĉa</b> antaŭ la fino de la partio (moneroj + valoro de la kartoj). Por tio:<ul><li><b>Produktu</b>: kolektu kvadratojn de identaj kartoj por produkti karton de pli alta valoro</li><li><b>Aĉetu</b> la kartojn, kiuj mankas al vi, de la aliaj ludantoj per via mono</li><li><b>Vendu</b> la kartojn, kiuj ne utilas al vi por fari kvadratojn, por akiri monon</li></ul>Kiel produkti, aĉeti kaj vendi? Vidu la sekvajn paŝojn."
+		},
+		"ACQUIRE": {
+			"TITLE": "Aĉeti / vendi",
+			"DESC": "Por kompletigi viajn kvadratojn, interŝanĝu kun la aliaj ludantoj. Du metodoj por aĉeti (elektu tiun, kiu pli taŭgas por vi):<ul><li><span class=\"material-icons\">qr_code_scanner</span> <b>QR-kodo</b>: skanu la karton de la vendanto (rapide)</li><li><span class=\"material-icons\">dialpad</span> <b>Ciferkodo</b>: enigu la numeron enhavatan en la QR-kodo</li></ul>Por <b>vendi</b>, turnu vian karton: la QR-kodo kaj ĝia ciferkodo montriĝas por la aĉetanto. Ĉe la aĉeto la transdono de la karto okazas tuj"
+		},
+		"PRODUCTION": {
+			"TITLE": "Produkti",
+			"DESC": "Kunigu <b>kvadraton</b>: 4 kartojn kun sama litero kaj sama koloro (nivelo), poste premu <b>Konstrui</b>. Vi ricevas:<ul><li>🎁 1 karton de la supera nivelo</li><li>🟥🟥🟥🟥 4 novajn kartojn de la sama nivelo</li><li>⚡ 1 agan ĵetonon</li></ul>Ĉu kartoj mankas al vi? Aĉetu ilin de la aliaj ludantoj."
+		},
+		"ACTIONS": {
+			"TITLE": "La agoj",
+			"DESC": "Elspezu viajn <b>agajn ĵetonojn</b> por interagi kun la aliaj ludantoj: serĉi kiu havas karton, doni unu, ŝteli unu, ekigi konflikton aŭ fari bonon ĉirkaŭ vi!<br>Vi komencas kun <b>1 ĵetono</b> kaj gajnas pliajn ĉe ĉiu produktado."
+		},
+		"DEATH": {
+			"TITLE": "La morto 💀",
+			"DESC": "Kiel en la reala vivo, <b>la morto frapas hazarde</b>, kaj neniu eskapas ĝin. Sed neniu paniko: <b>nova vivo tuj komenciĝas</b> 🐣<ul><li>💀 La rezultoj de la unua vivo estos akumulitaj kun tiuj de la dua, ĉe la fino</li><li>🐣 Vi renaskiĝas kun novaj kartoj kaj 0 moneroj</li></ul>Tio movas la ekonomion: nenio akumuliĝas eterne. Memoru tion, ĝi gravos por kompari la du monojn 😉"
+		},
+		"JUNE": {
+			"TITLE": "Libera Mono",
+			"DESC": "Ĉiun minuton, la <b>Universala Dividendo (UD)</b> estas egale disdonata al ĉiuj vivantaj ludantoj.<ul><li>La prezoj de la kartoj alĝustiĝas kun la UD</li><li>Neniu banko, neniu ŝuldo</li><li>La mono estas kreata kaj dividata aŭtomate</li></ul>"
+		},
+		"DEBT": {
+			"TITLE": "Ŝuldo-Mono",
+			"DESC": "Vi komencas kun <b>0 moneroj</b>: vi devas prunti de la banko por ludi.<br>Je ĉiu kredito, vi ricevas monerojn kaj devas repagi <b>la ĉefsumon + la interezojn</b> ene de la difinita templimo. (implicite 5 minutoj)"
+		},
+		"REPAYMENT": {
+			"TITLE": "Repagi, plilongigi",
+			"DESC": "Ĉe la limdato, du eblecoj:<ul><li><b>Repagi ĉion</b>: la kredito estas kvitigita (ĝi povas esti kvitigita iam ajn sen atendi la limdaton)</li><li><b>Pagi la interezojn</b>: la daŭro estas plilongigita, sed vi ĉiam ŝuldas la ĉefsumon</li></ul>⚠️ Se vi ne povas pagi la ĉefsumon → la interezoj estas aŭtomate prenataj kaj vi estas plilongigita, sed se vi ankaŭ ne havas monon por pagi la intereson → <b>🚨Neplenumo de pago: sekvestro</b>."
+		},
+		"SEIZURE": {
+			"TITLE": "Sekvestro kaj malliberejo",
+			"DESC": "Okaze de neplenumo de pago, la banko sekvestras viajn <b>kartojn</b> (rabato de 33 %) kaj viajn <b>monerojn</b> por reakiri la ŝuldon.<br>Se tio ne sufiĉas: <b>malliberejo</b> dum 1 ĝis 5 minutoj, ekskludita el la ludo ĝis la fino de la puno."
+		}
+	}
+}

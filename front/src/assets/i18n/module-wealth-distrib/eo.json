@@ -1,0 +1,31 @@
+{
+	"MODULE": {
+		"WEALTH": {
+			"TITLE": "Modulo pri la disdivido",
+			"SUB_TITLE": "Kompreni la neegalaĵojn de la mono per la Gini-indico",
+			"SUMMARY": "Ĉi tiu modulo ebligas vidi la disdividon de mono inter ĝiaj membroj, danke al la Gini-indico.",
+			"SUMMARY2": "La Gini-indico mezuras la neegalaĵojn de distribuo (ofte de enspezoj aŭ riĉaĵoj) en loĝantaro.",
+			"SUMMARY3": "La tuta sumo disdividiĝas alimaniere laŭ la parametro P. 💸",
+			"SUMMARY4": "Malalta P signifas pli egalan disdividon. 🤝",
+			"SUMMARY5": "Alta P kreas pli da diferencoj inter la homoj. 📊",
+			"DESCRIPTION": "Ĉi tiu grafikaĵo ebligas vidi la disdividon de riĉaĵoj laŭ malsamaj tipoj de mono: eŭro, dolaro, bitmono aŭ libera mono. Ĉiu mona sistemo kaŭzas malsamajn dinamikojn: iuj favoras la koncentriĝon de riĉaĵoj, aliaj pli justan distribuon. Ludante per la glitiloj, vi ŝanĝas la monan disdividon. Tiel vi povas observi kiel tiuj elektoj influas la Gini-indicon, simplan indikilon, kiu mezuras la neegalaĵojn.",
+			"SUMMARY7": "La Gini-indico mezuras la neegalaĵojn de distribuo (ofte de enspezoj aŭ riĉaĵoj) en loĝantaro.",
+			"SUMMARY8": "- 0 = perfekta egaleco (ĉiuj havas la saman)",
+			"SUMMARY9": "- 1 = tuta neegaleco (nur unu persono havas ĉion)",
+			"SUMMARY10": "☝️ En libera mono, la Gini-indico senĉese tendencas al 0.",
+			"TOTAL": "Tuta sumo",
+			"NUM_PLAYERS": "Nombro de personoj",
+			"RESULTS": "Rezultoj de la distribuo",
+			"PARAM_P": "Parametro P (neegaleco)",
+			"PERSON": "Persono",
+			"AMOUNT": "Sumo",
+			"GINI": "Gini-indico",
+			"RATIO": "Rilatumo alta/malalta",
+			"SIMULATION": "Simulado",
+			"PERCENTAGE": "% de la tuto",
+			"GRAPHIC": "Grafikaĵo",
+			"CURVE": "Kurbo",
+			"CAMBER": "Cirkla diagramo"
+		}
+	}
+}

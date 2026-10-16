@@ -1,0 +1,10 @@
+{
+	"JOIN": {
+		"TITLE": "Aliĝi al la seanco!",
+		"GUNY_INTRO": "He, bonvenon! Mi nomiĝas Ğuny",
+		"GUNY_INTRO2": "kaj kiel vi nomiĝas?",
+		"NAME_PROMPT": "Via kromnomo?",
+		"GO_BUTTON": "Ğo!",
+		"UNKNOWN_AVATAR_NOTICE": "Neniu avataro havis la numeron, kiun vi tajpis: vi kreos novan, kun alia numero."
+	}
+}

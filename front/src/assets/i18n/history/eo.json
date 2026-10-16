@@ -1,0 +1,40 @@
+{
+	"HISTORY": {
+		"TITLE": "Historio de la kreitaj seancoj",
+		"DELETE_CONFIRM": "Forigi seancon?",
+		"AUTO_DELETE": "La seancoj pli ol 2 monatojn aĝaj baldaŭ estos aŭtomate forigitaj.",
+		"IMPORT_EXPORT": "(La importo kaj eksporto de seancoj baldaŭ eblos).",
+		"JOIN_AS_NEW_PLAYER": "Aliĝi (nova ludanto)",
+		"JOIN_AS_MASTER": "Aliĝi kiel animanto",
+		"CREATED_ON": "Kreita je",
+		"PLAYERS": "ludantoj",
+		"GAMES": "ludoj",
+		"SESSION": "Seanco",
+		"TYPE": "tipo:",
+		"LOCATION": "Loko:",
+		"ANIMATOR": "Animanto:",
+		"VIEW_RESULTS": "Vidi la rezultojn",
+		"VIEW": "Vidi",
+		"NAME_PARTY": "Nomo de la partio",
+		"TYPE_MONEY": "Tipo de mono",
+		"STATUS_TEXT": "Stato",
+		"SORT": "Ordigi laŭ",
+		"BY_DATE": "Dato",
+		"BY_PLAYERS": "Nombro de ludantoj",
+		"BY_TYPE": "Tipo",
+		"BY_LOCATION": "Loko",
+		"BY_ANIMATOR": "Animanto",
+		"BY_STATUS": "Stato",
+		"STATUS": {
+			"ENDED": "Finita",
+			"OPEN": "Malfermita",
+			"IN_PROGRESS": "En okazo"
+		},
+		"DELETE_SESSION": "La seanco estas forigita",
+		"DELETE_GAME": "la seanco estas forigita",
+		"DELETE_DIALOG": {
+			"TITLE": "Ĉu vi konfirmas?",
+			"MESSAGE": "Ĉi tiu ago estas nemalfarebla."
+		}
+	}
+}
