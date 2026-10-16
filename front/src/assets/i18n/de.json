@@ -319,5 +319,18 @@
     "PWA": {
         "NEW_VERSION": "Neue Version verfügbar, wird neu gestartet...",
         "UNRECOVERABLE": "Ein Fehler ist aufgetreten, die Anwendung muss neu geladen werden"
+    },
+    "TAB_TITLE": {
+        "HISTORY": "Verlauf",
+        "LOBBY_MASTER": "Wartezimmer",
+        "JOIN": "Beitreten",
+        "SURVEY": "Fragebogen",
+        "GAME_MASTER": "Spielleiter",
+        "COCKPIT": "Cockpit",
+        "RESULTS": "Ergebnisse",
+        "TOOLS": "Werkzeuge",
+        "GALILEO": "Galileo",
+        "GINI": "Gini",
+        "FISCALITE": "Besteuerung"
     }
 }

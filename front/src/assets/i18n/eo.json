@@ -319,5 +319,18 @@
 	"PWA": {
 		"NEW_VERSION": "Nova versio disponebla, restartigo en progreso...",
 		"UNRECOVERABLE": "Eraro okazis, la aplikaĵo devas esti reŝargita"
+	},
+	"TAB_TITLE": {
+		"HISTORY": "Historio",
+		"LOBBY_MASTER": "Atendoĉambro",
+		"JOIN": "Aliĝi",
+		"SURVEY": "Enketo",
+		"GAME_MASTER": "Ludestro",
+		"COCKPIT": "Pilotejo",
+		"RESULTS": "Rezultoj",
+		"TOOLS": "Iloj",
+		"GALILEO": "Galileo",
+		"GINI": "Gini",
+		"FISCALITE": "Impostado"
 	}
 }

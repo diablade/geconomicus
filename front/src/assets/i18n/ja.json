@@ -319,5 +319,18 @@
     "PWA": {
         "NEW_VERSION": "新しいバージョンが利用可能です。再起動しています...",
         "UNRECOVERABLE": "エラーが発生しました。アプリケーションを再読み込みする必要があります"
+    },
+    "TAB_TITLE": {
+        "HISTORY": "履歴",
+        "LOBBY_MASTER": "待合室",
+        "JOIN": "参加",
+        "SURVEY": "アンケート",
+        "GAME_MASTER": "ゲームマスター",
+        "COCKPIT": "コックピット",
+        "RESULTS": "結果",
+        "TOOLS": "ツール",
+        "GALILEO": "ガリレオ",
+        "GINI": "ジニ",
+        "FISCALITE": "税制"
     }
 }

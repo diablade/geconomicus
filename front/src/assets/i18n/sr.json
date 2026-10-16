@@ -319,5 +319,18 @@
     "PWA": {
         "NEW_VERSION": "Nova verzija je dostupna, ponovno pokretanje...",
         "UNRECOVERABLE": "Došlo je do greške, aplikacija mora biti ponovo učitana"
+    },
+    "TAB_TITLE": {
+        "HISTORY": "Istorija",
+        "LOBBY_MASTER": "Čekaonica",
+        "JOIN": "Pridruži se",
+        "SURVEY": "Upitnik",
+        "GAME_MASTER": "Voditelj igre",
+        "COCKPIT": "Kokpit",
+        "RESULTS": "Rezultati",
+        "TOOLS": "Alati",
+        "GALILEO": "Galileo",
+        "GINI": "Gini",
+        "FISCALITE": "Oporezivanje"
     }
 }

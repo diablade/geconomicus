@@ -65,6 +65,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
 import { GameInfosDialog, NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
 import { I18nService } from './services/i18n.service';
+import { TitleStrategy } from '@angular/router';
+import { TabTitleStrategy } from './services/tab-title.strategy';
 import { ModuleWealthDistribComponent } from './components/module-wealth-distrib/module-wealth-distrib.component';
 import { ModuleGalileoComponent } from './components/module-galileo/module-galileo.component';
 import { ModuleFiscaliteComponent } from './components/module-fiscalite/module-fiscalite.component';
@@ -219,7 +221,7 @@ LOAD_WASM().subscribe();
 			registrationStrategy: 'registerWhenStable:30000',
 		}),
 	],
-	providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }, I18nService],
+	providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }, I18nService, { provide: TitleStrategy, useClass: TabTitleStrategy }],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

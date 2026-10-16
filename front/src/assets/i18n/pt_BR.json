@@ -777,5 +777,18 @@
             "CURVE": "Curva",
             "CAMBER": "Pizza"
         }
+    },
+    "TAB_TITLE": {
+        "HISTORY": "Histórico",
+        "LOBBY_MASTER": "Sala de espera",
+        "JOIN": "Entrar",
+        "SURVEY": "Questionário",
+        "GAME_MASTER": "Mestre do jogo",
+        "COCKPIT": "Cockpit",
+        "RESULTS": "Resultados",
+        "TOOLS": "Ferramentas",
+        "GALILEO": "Galileo",
+        "GINI": "Gini",
+        "FISCALITE": "Tributação"
     }
 }

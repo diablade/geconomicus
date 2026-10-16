@@ -319,5 +319,18 @@
     "PWA": {
         "NEW_VERSION": "Versiune nouă disponibilă, se repornește...",
         "UNRECOVERABLE": "A apărut o eroare, aplicația trebuie reîncărcată"
+    },
+    "TAB_TITLE": {
+        "HISTORY": "Istoric",
+        "LOBBY_MASTER": "Sală de așteptare",
+        "JOIN": "Alătură-te",
+        "SURVEY": "Chestionar",
+        "GAME_MASTER": "Maestrul jocului",
+        "COCKPIT": "Cockpit",
+        "RESULTS": "Rezultate",
+        "TOOLS": "Instrumente",
+        "GALILEO": "Galileo",
+        "GINI": "Gini",
+        "FISCALITE": "Fiscalitate"
     }
 }

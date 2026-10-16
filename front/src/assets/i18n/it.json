@@ -319,5 +319,18 @@
     "PWA": {
         "NEW_VERSION": "Nuova versione disponibile, riavvio in corso...",
         "UNRECOVERABLE": "Si è verificato un errore, l'applicazione deve essere ricaricata"
+    },
+    "TAB_TITLE": {
+        "HISTORY": "Cronologia",
+        "LOBBY_MASTER": "Sala d'attesa",
+        "JOIN": "Unisciti",
+        "SURVEY": "Questionario",
+        "GAME_MASTER": "Maestro del gioco",
+        "COCKPIT": "Cockpit",
+        "RESULTS": "Risultati",
+        "TOOLS": "Strumenti",
+        "GALILEO": "Galileo",
+        "GINI": "Gini",
+        "FISCALITE": "Fiscalità"
     }
 }
