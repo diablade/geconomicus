@@ -136,6 +136,13 @@
 								<b>{{ vm.rules.distribInitCards }} {{ 'TABLE.CARDS' | translate }}</b>
 							</div>
 							<div class="ruleRow">
+								<span>{{ 'TABLE.UNEQUAL_CARDS_START' | translate }}</span>
+								<b>
+									{{ (vm.rules.inequalityCards ? 'TABLE.YES' : 'TABLE.NO') | translate }} &middot;
+									{{ vm.rules.pctPoorCards }}% / {{ vm.rules.pctRichCards }}%
+								</b>
+							</div>
+							<div class="ruleRow">
 								<span>{{ 'TABLE.LETTERS' | translate }}</span>
 								<b>
 									{{

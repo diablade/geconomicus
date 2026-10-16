@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { isValidObjectId, isValidNanoId4 } from '../../misc/validate.tool.js';
+import { isValidObjectId } from '../../misc/validate.tool.js';
 import { GAME_TYPE, CREDIT_STATUS, BANK_PROFILE } from '@geco/shared';
 
 const rateTier = Joi.object({
@@ -25,6 +25,9 @@ export const sanitize = {
 			generateLettersAuto: Joi.boolean().default(true),
 			generateLettersInDeck: Joi.number(),
 			distribInitCards: Joi.number().default(4),
+			inequalityCards: Joi.boolean().default(false),
+			pctRichCards: Joi.number().min(0).max(100).default(10),
+			pctPoorCards: Joi.number().min(0).max(100).default(0),
 			latentSquares: Joi.boolean().default(false),
 			latentSquaresPct: Joi.number().min(0).max(100).default(30),
 			surveyEnabled: Joi.boolean().default(true),
@@ -85,6 +88,9 @@ export const sanitize = {
 			generateLettersAuto: Joi.boolean().optional(),
 			generateLettersInDeck: Joi.number().optional(),
 			distribInitCards: Joi.number().optional(),
+			inequalityCards: Joi.boolean().optional(),
+			pctRichCards: Joi.number().min(0).max(100).optional(),
+			pctPoorCards: Joi.number().min(0).max(100).optional(),
 			latentSquares: Joi.boolean().optional(),
 			latentSquaresPct: Joi.number().min(0).max(100).optional(),
 			surveyEnabled: Joi.boolean().optional(),

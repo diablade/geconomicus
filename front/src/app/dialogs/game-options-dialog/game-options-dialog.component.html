@@ -11,7 +11,7 @@
 					min="1"
 					matInput
 					[placeholder]="'25 ' + getTranslate('BY_DEFAULT')"
-					[(ngModel)]="rules.roundMinutes" />
+					[(ngModel)]="rules.roundMinutes"/>
 			</mat-form-field>
 		</div>
 		<div *ngIf="devMode" class="text-center">
@@ -27,7 +27,7 @@
 
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level1.png" />
+					<img class="imgCardValeur" src="assets/images/level1.png"/>
 					{{ 'CARD.LV1' | translate }}
 				</div>
 				<mat-form-field *ngIf="rules" class="input" appearance="fill">
@@ -37,12 +37,12 @@
 						min="0"
 						matInput
 						[placeholder]="(rules.typeMoney === 'june' ? '3 ' : '1 ') + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.priceWeight1" />
+						[(ngModel)]="rules.priceWeight1"/>
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level2.png" />
+					<img class="imgCardValeur" src="assets/images/level2.png"/>
 					{{ 'CARD.LV2' | translate }}
 				</div>
 				<mat-form-field *ngIf="rules" class="input">
@@ -52,12 +52,12 @@
 						min="0"
 						matInput
 						[placeholder]="(rules.typeMoney === 'june' ? '6 ' : '2 ') + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.priceWeight2" />
+						[(ngModel)]="rules.priceWeight2"/>
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level3.png" />
+					<img class="imgCardValeur" src="assets/images/level3.png"/>
 					{{ 'CARD.LV3' | translate }}
 				</div>
 				<mat-form-field *ngIf="rules" class="input">
@@ -67,12 +67,12 @@
 						min="0"
 						matInput
 						[placeholder]="(rules.typeMoney === 'june' ? '9 ' : '4 ') + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.priceWeight3" />
+						[(ngModel)]="rules.priceWeight3"/>
 				</mat-form-field>
 			</div>
 			<div class="d-inline-flex">
 				<div class="imgText">
-					<img class="imgCardValeur" src="assets/images/level4.png" />
+					<img class="imgCardValeur" src="assets/images/level4.png"/>
 					{{ 'CARD.LV4' | translate }}
 				</div>
 				<mat-form-field *ngIf="rules" class="input">
@@ -84,7 +84,7 @@
 						min="0"
 						matInput
 						[placeholder]="(rules.typeMoney === 'june' ? '12 ' : '8 ') + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.priceWeight4" />
+						[(ngModel)]="rules.priceWeight4"/>
 				</mat-form-field>
 			</div>
 			<div>
@@ -95,7 +95,7 @@
 						min="0"
 						matInput
 						[placeholder]="'10' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.timerSaveInterval" />
+						[(ngModel)]="rules.timerSaveInterval"/>
 				</mat-form-field>
 			</div>
 			<div class="d-flex flex-column">
@@ -106,9 +106,9 @@
 					{{
 						'OPTION.DEATH_MINUTES'
 							| translate
-								: {
-										deathMinute: Math.round(rules.roundMinutes / playersLength),
-								  }
+							: {
+								deathMinute: Math.round(rules.roundMinutes / playersLength),
+							}
 					}}
 				</p>
 				<p>frq = {{ 'OPTION.DEATH_MINUTES_FORMULA' | translate }}</p>
@@ -118,7 +118,7 @@
 				<div class="fs-5 m-3 geconomicusFont shadowed">{{ 'OPTION.ACTIONS_TITLE' | translate }}</div>
 				<mat-form-field class="largeInput" appearance="fill">
 					<mat-label>{{ 'OPTION.STARTING_TOKENS' | translate }}</mat-label>
-					<input type="number" min="0" matInput [(ngModel)]="rules.startingTokens" />
+					<input type="number" min="0" matInput [(ngModel)]="rules.startingTokens"/>
 				</mat-form-field>
 				<div
 					*ngFor="let action of rules.actions; let i = index"
@@ -128,7 +128,7 @@
 					<span class="action-text">{{ action.labelKey | translate }}</span>
 					<mat-form-field class="input" appearance="fill">
 						<mat-label>{{ 'OPTION.COST' | translate }}</mat-label>
-						<input type="number" min="0" matInput [(ngModel)]="rules.actions[i].cost" />
+						<input type="number" min="0" matInput [(ngModel)]="rules.actions[i].cost"/>
 					</mat-form-field>
 				</div>
 			</div>
@@ -144,7 +144,7 @@
 						min="0"
 						matInput
 						[placeholder]="'60' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.timerDUInterval" />
+						[(ngModel)]="rules.timerDUInterval"/>
 				</mat-form-field>
 			</div>
 			<div *ngIf="rules.typeMoney === JUNE">
@@ -155,7 +155,7 @@
 						min="0"
 						matInput
 						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.tauxCroissance" />
+						[(ngModel)]="rules.tauxCroissance"/>
 				</mat-form-field>
 			</div>
 			<div *ngIf="rules.typeMoney === JUNE">
@@ -166,7 +166,7 @@
 						min="0"
 						matInput
 						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.startAmountCoins" />
+						[(ngModel)]="rules.startAmountCoins"/>
 				</mat-form-field>
 			</div>
 			<div *ngIf="rules.typeMoney === JUNE" class="mb-4 d-flex flex-column">
@@ -180,7 +180,7 @@
 							class="smallInput"
 							type="number"
 							[disabled]="!rules.inequalityStart"
-							[(ngModel)]="rules.pctRich" />
+							[(ngModel)]="rules.pctRich"/>
 						{{ 'OPTION.RICH' | translate }}
 					</div>
 					<div>•{{ 100 - (rules.pctPoor + rules.pctRich) }}{{ 'OPTION.MIDDLE' | translate }}</div>
@@ -190,7 +190,7 @@
 							class="smallInput"
 							type="number"
 							[disabled]="!rules.inequalityStart"
-							[(ngModel)]="rules.pctPoor" />
+							[(ngModel)]="rules.pctPoor"/>
 						{{ 'OPTION.POOR' | translate }}
 					</div>
 				</div>
@@ -206,7 +206,7 @@
 						min="0"
 						matInput
 						[placeholder]="'3 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.defaultCreditAmount" />
+						[(ngModel)]="rules.defaultCreditAmount"/>
 				</mat-form-field>
 			</div>
 			<div *ngIf="rules.typeMoney === DEBT">
@@ -217,7 +217,7 @@
 						min="0"
 						matInput
 						[placeholder]="'1 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.defaultInterestAmount" />
+						[(ngModel)]="rules.defaultInterestAmount"/>
 				</mat-form-field>
 			</div>
 			<div *ngIf="rules.typeMoney === DEBT">
@@ -228,7 +228,7 @@
 						min="0"
 						matInput
 						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.durationCredit" />
+						[(ngModel)]="rules.durationCredit"/>
 				</mat-form-field>
 			</div>
 			<!-- Auto-bank: profile + variable-length rate schedule -->
@@ -270,19 +270,19 @@
 								min="0"
 								class="smallInput tier-col"
 								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
-								[(ngModel)]="tier.threshold" />
+								[(ngModel)]="tier.threshold"/>
 							<input
 								type="number"
 								min="0"
 								class="smallInput tier-col"
 								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
-								[(ngModel)]="tier.amount" />
+								[(ngModel)]="tier.amount"/>
 							<input
 								type="number"
 								min="0"
 								class="smallInput tier-col"
 								[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
-								[(ngModel)]="tier.interest" />
+								[(ngModel)]="tier.interest"/>
 							<span class="tier-col fs-7">
 								{{ tier.amount ? ((tier.interest / tier.amount) * 100 | number: '1.0-0') : 0 }}%
 							</span>
@@ -324,7 +324,7 @@
 								min="0"
 								class="smallInput"
 								placeholder="2"
-								[(ngModel)]="rules.seizureCosts" />
+								[(ngModel)]="rules.seizureCosts"/>
 						</div>
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="'decote'">
@@ -335,7 +335,7 @@
 								min="0"
 								class="smallInput"
 								placeholder="33"
-								[(ngModel)]="rules.seizureDecote" />
+								[(ngModel)]="rules.seizureDecote"/>
 							%
 						</div>
 					</mat-radio-button>
@@ -350,7 +350,7 @@
 						min="0"
 						matInput
 						[placeholder]="'5 ' + getTranslate('BY_DEFAULT')"
-						[(ngModel)]="rules.timerPrison" />
+						[(ngModel)]="rules.timerPrison"/>
 				</mat-form-field>
 			</div>
 			<!-- Auto-seizure: independent of autoBank — automates collections on a FAULT credit -->
@@ -373,6 +373,34 @@
 			<div class="fs-5 m-3 geconomicusFont shadowed">
 				{{ 'OPTION.TITLE_CARDS' | translate }}
 			</div>
+			<mat-checkbox class="mt-3" [(ngModel)]="rules.inequalityCards">
+				{{ 'OPTION.START_CARDS_INEQUALITY' | translate }}
+			</mat-checkbox>
+			<div class="infoLabel">
+				<div>
+					•
+					<input
+						class="smallInput"
+						type="number"
+						min="0"
+						max="100"
+						[disabled]="!rules.inequalityCards"
+						[(ngModel)]="rules.pctRichCards"/>
+					{{ 'OPTION.RICH_CARDS' | translate }}
+				</div>
+				<div>•{{ 100 - (rules.pctPoorCards + rules.pctRichCards) }}{{ 'OPTION.MIDDLE_CARDS' | translate }}</div>
+				<div>
+					•
+					<input
+						class="smallInput"
+						type="number"
+						min="0"
+						max="100"
+						[disabled]="!rules.inequalityCards"
+						[(ngModel)]="rules.pctPoorCards"/>
+					{{ 'OPTION.POOR_CARDS' | translate }}
+				</div>
+			</div>
 			<div class="d-flex flex-column">
 				<mat-label class="mt-2 fw-bold">{{ 'OPTION.GEN_LETTERS' | translate }}</mat-label>
 				<mat-radio-group [(ngModel)]="rules.generateLettersAuto">
@@ -385,7 +413,7 @@
 							class="smallInput"
 							type="number"
 							[disabled]="rules.generateLettersAuto"
-							[(ngModel)]="rules.generateLettersInDeck" />
+							[(ngModel)]="rules.generateLettersInDeck"/>
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ 'OPTION.GEN_LETTERS_IDENTICAL' | translate }}</mat-label>
@@ -401,7 +429,7 @@
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="rules.generatedIdenticalLetters">
 						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-						<input class="smallInput" type="number" [(ngModel)]="rules.generatedIdenticalLetters" />
+						<input class="smallInput" type="number" [(ngModel)]="rules.generatedIdenticalLetters"/>
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ 'OPTION.START_DISTRIB_CARDS' | translate }}</mat-label>
@@ -414,7 +442,7 @@
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="rules.distribInitCards">
 						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-						<input class="smallInput" type="number" [(ngModel)]="rules.distribInitCards" />
+						<input class="smallInput" type="number" [(ngModel)]="rules.distribInitCards"/>
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-label class="mt-2 fw-bold">{{ 'OPTION.BUILD_AMOUNT' | translate }}</mat-label>
@@ -427,7 +455,7 @@
 					</mat-radio-button>
 					<mat-radio-button class="d-flex ms-3" [value]="rules.amountCardsForProd">
 						{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-						<input class="smallInput" type="number" [(ngModel)]="rules.amountCardsForProd" />
+						<input class="smallInput" type="number" [(ngModel)]="rules.amountCardsForProd"/>
 					</mat-radio-button>
 				</mat-radio-group>
 				<mat-checkbox class="mt-3" [(ngModel)]="rules.latentSquares">
@@ -435,10 +463,10 @@
 				</mat-checkbox>
 				<div class="fs-7 infoLabel">{{ 'OPTION.LATENT_SQUARES_INFO' | translate }}</div>
 				<div *ngIf="rules.latentSquares" class="d-flex flex-row align-items-center ms-3 mt-1">
-					<input class="smallInput" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct" />
+					<input class="smallInput" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct"/>
 					<span class="ms-2">{{
-						'OPTION.LATENT_SQUARES_PCT' | translate: { count: Math.round(((playersLength || 0) * rules.latentSquaresPct) / 100) }
-					}}</span>
+							'OPTION.LATENT_SQUARES_PCT' | translate: { count: Math.round(((playersLength || 0) * rules.latentSquaresPct) / 100) }
+						}}</span>
 				</div>
 			</div>
 		</div>

@@ -13,6 +13,9 @@ export class Rules {
 	generateLettersAuto = false;
 	generateLettersInDeck = 0;
 	distribInitCards = 0;
+	inequalityCards = false;
+	pctRichCards = 10;
+	pctPoorCards = 0;
 	latentSquares = false;
 	latentSquaresPct = 0;
 	surveyEnabled = false;
