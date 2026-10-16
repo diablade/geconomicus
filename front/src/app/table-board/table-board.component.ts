@@ -69,7 +69,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 
 	// one card per (weight, letter) with a count badge, like master-admin
 	decks$ = this.gameStateService.gameState$.pipe(
-		map((gs) => (gs.decks ?? []).map((deck) => this.countOccurrencesAndHideDuplicates([...deck])))
+		map((gs) => (gs.decks ?? []).map((deck) => this.countOccurrencesAndHideDuplicates([...deck]))),
 	);
 
 	rows$ = combineLatest({
@@ -134,7 +134,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 					.length,
 				totalTokens: vm.rows.reduce(
 					(sum, r) => (r.status !== PLAYER_STATUS.DEAD ? sum + (r.actionTokens ?? 0) : sum),
-					0
+					0,
 				),
 				activeCreditsCount: vm.credits.filter((c) => this.isCreditActive(c)).length,
 				totalDebt,
@@ -147,7 +147,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				nextDULabel: this.formatDeathCountdown(nextDUInMs),
 				deathProgressPct: Math.round(deathProgress * 100),
 			};
-		})
+		}),
 	);
 
 	constructor(
@@ -155,7 +155,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		private gameStateService: GameStateService,
 		private i18nService: I18nService,
 		private snackbarService: SnackbarService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
 	) {
 		this.i18nService.loadNamespace('action');
 		this.i18nService.loadNamespace('master');
@@ -180,7 +180,7 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 			this.gameStateService.reincarnation$.subscribe((e) => {
 				const name = this.avatarName(e.avatarIdx);
 				this.snackbarService.showNotif(this.i18nService.instant('TABLE.PLAYER_REINCARNATED', { name }));
-			})
+			}),
 		);
 	}
 
@@ -474,6 +474,11 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 			'/' +
 			row.idx;
 		return assistMode ? `${url}?assist=${assistMode}` : url;
+	}
+
+	/** Converts a stored balance to the unit shown on the board: DU for June, unchanged for debt. */
+	displayCoins(coins: number, typeMoney: string, currentDU?: number): number {
+		return typeMoney === GAME_TYPE.JUNE && currentDU && currentDU > 0 ? coins / currentDU : coins;
 	}
 
 	trackByRow(index: number, row: TableRow): number {

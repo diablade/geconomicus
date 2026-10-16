@@ -5,10 +5,10 @@
 			<!-- ── Header ── -->
 			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
 				<div class="d-flex flex-row align-items-center gap-3 flex-wrap">
-					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
-						<mat-icon>arrow_back</mat-icon>
-						{{ 'TABLE.BACK_TO_MASTER_BOARD' | translate }}
-					</button>
+<!--					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">-->
+<!--						<mat-icon>arrow_back</mat-icon>-->
+<!--						{{ 'TABLE.BACK_TO_MASTER_BOARD' | translate }}-->
+<!--					</button>-->
 					<img class="geco" src="./assets/images/geconomicus.png" alt="Geconomicus" />
 					<div>
 						<div class="title geconomicusFont contourText ombreText">
@@ -501,7 +501,7 @@
 									</div>
 									<div>
 										<div class="coins">
-											{{ row.coins | number: '1.2-2' }}
+											{{ displayCoins(row.coins, vm.rules.typeMoney, vm.gameState.currentDU) | number: '1.2-2' }}
 											{{
 												vm.rules.typeMoney === JUNE
 													? ('CURRENCY.DU' | translate)
@@ -576,7 +576,7 @@
 											[matMenuTriggerData]="{ row: row }"></avatar>
 										<div class="pbRight">
 											<div class="pbCoins white contourText">
-												{{ row.coins | number: '1.2-2' }}
+												{{ displayCoins(row.coins, vm.rules.typeMoney, vm.gameState.currentDU) | number: '1.2-2' }}
 												{{
 													vm.rules.typeMoney === JUNE
 														? ('CURRENCY.DU' | translate)
