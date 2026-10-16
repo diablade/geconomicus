@@ -43,17 +43,17 @@ const createCredit = async (idGame, idPlayer, amount, interest, startNow) => {
 const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
     const credit = await getCreditOfPlayer(idGame, idPlayer, idCredit);
     if (!credit) {
-        throw new Error("Can't find credit to check amount to pay");
+        throw new Error("ERROR.CREDIT_NOT_FOUND");
     }
     const player = await playerService.getPlayer(idGame, idPlayer);
     if (!player) {
-        throw new Error("Can't find player to check amount to pay");
+        throw new Error("ERROR.PLAYER_NOT_FOUND");
     }
     if (credit.idPlayer !== idPlayer) {
-        throw new Error("Player is not the owner of this credit");
+        throw new Error("ERROR.OWNERSHIP_CREDIT");
     }
     if (credit.status === C.CREDIT_DONE) {
-        throw new Error("Credit is already done");
+        throw new Error("ERROR.CREDIT_ALREADY_DONE_OR_CANCELED");
     }
 
     if (action === C.SETTLE_CREDIT) {
@@ -78,7 +78,7 @@ const getCreditOnActionPayment = async (idGame, idPlayer, idCredit, action) => {
         };
     }
     else {
-        throw new Error("Action not found");
+        throw new Error("ERROR.ACTION_NOT_FOUND");
     }
 }
 const addDebtTimer = (id, startTickNow, duration, data) => {
@@ -134,7 +134,7 @@ const seizure = async (idCredit, idGame, idPlayer, seizure) => {
         canPay
     } = await getCreditOnActionPayment(idGame, idPlayer, idCredit, C.SEIZURE);
     if (!canPay) {
-        throw new Error("wrong credit");
+        throw new Error("ERROR.CREDIT_NOT_FOUND");
     }
     let newEvent = constructor.event(C.SEIZURE, idPlayer, C.BANK, seizure.coins, seizure.cards, Date.now());
     let interestSeized = seizure.interest >= seizure.coins ? seizure.interest : 0;
@@ -364,7 +364,7 @@ const payInterest = async (idCredit, idGame, idPlayer) => {
     } = await getCreditOnActionPayment(idGame, idPlayer, idCredit, C.PAY_INTEREST);
 
     if (!canPay) {
-        throw new Error("Not enough coins to pay interest.");
+        throw new Error("ERROR.NOT_ENOUGH_COINS");
     }
 
     const newEvent = constructor.event(C.PAYED_INTEREST, idPlayer, C.BANK, credit.interest, [credit], Date.now());
@@ -382,7 +382,7 @@ const payInterest = async (idCredit, idGame, idPlayer) => {
     }, {new: true});
 
     if (!updatedGameAfterCoins) {
-        throw new Error("Player not found or insufficient coins.");
+        throw new Error("ERROR.PLAYER_NOT_FOUND_OR_NOT_ENOUGH_COINS");
     }
 
     const updatedGameAfterCredit = await GameModel.findOneAndUpdate({
@@ -394,13 +394,13 @@ const payInterest = async (idCredit, idGame, idPlayer) => {
     }, {new: true});
 
     if (!updatedGameAfterCredit) {
-        throw new Error("Credit not found for update.");
+        throw new Error("ERROR.CREDIT_NOT_FOUND");
     }
 
     const creditUpdated = updatedGameAfterCredit.credits.find(c => c._id.toString() === credit._id.toString());
 
     if (!creditUpdated) {
-        throw new Error("Updated credit not found after update.");
+        throw new Error("ERROR.CREDIT_NOT_FOUND");
     }
 
     addDebtTimer(credit._id.toString(), true, updatedGameAfterCredit.timerCredit, creditUpdated);

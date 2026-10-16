@@ -378,14 +378,14 @@ async function updateGame(game) {
         return gameUpdated;
     }
     else {
-        throw new Error("Game not found");
+        throw new Error("ERROR.GAME_NOT_FOUND");
     }
 }
 
 async function getGameById(id) {
     let game = await GameModel.findById(id);
     if (!game) {
-        throw new Error("Game not found");
+        throw new Error("ERROR.GAME_NOT_FOUND");
     }
     return game;
 }
@@ -393,7 +393,7 @@ async function getGameById(id) {
 async function getGameByShortId(shortId) {
     let game = await GameModel.findOne({shortId});
     if (!game) {
-        throw new Error("Game not found");
+        throw new Error("ERROR.GAME_NOT_FOUND");
     }
     return game;
 }
@@ -417,7 +417,7 @@ async function startRound(idGame, round, next) {
             log.error('Start round game error:', err);
             next({
                 status:  404,
-                message: "Start round game error"
+                message: "ERROR.START_ROUND"
             });
         })
 }
@@ -500,7 +500,7 @@ async function resetGame(idGame) {
         return true;
     }
     else {
-        throw new Error("Reset Game error");
+        throw new Error("ERROR.RESET_GAME");
     }
 }
 
@@ -513,7 +513,7 @@ async function refreshForceAllPlayers(idGame) {
         return true;
     }
     else {
-        throw new Error("Refresh force all players error");
+        throw new Error("ERROR.REFRESH_FORCE_ALL_PLAYERS");
     }
 }
 
@@ -526,11 +526,11 @@ async function refreshPlayer(idGame, idPlayer) {
             return true;
         }
         else {
-            throw new Error("Refresh player error");
+            throw new Error("ERROR.REFRESH_FORCE_PLAYER");
         }
     }
     else {
-        throw new Error("Refresh player error");
+        throw new Error("ERROR.REFRESH_FORCE_PLAYER");
     }
 }
 
@@ -577,11 +577,11 @@ async function whoHaveCard(idGame, cardKey) {
                     name:   ""
                 };
             }
-            throw new Error("Player not found");
+            throw new Error("ERROR.PLAYER_NOT_FOUND");
         }
     }
     else {
-        throw new Error("Game not found");
+        throw new Error("ERROR.GAME_NOT_FOUND");
     }
 }
 

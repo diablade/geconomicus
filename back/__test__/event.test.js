@@ -100,7 +100,7 @@ describe('EVENT controller tests', () => {
             const res = await agent.get(`/events/session/${sessionId}`).send();
             expect(res.status).toBe(500);
             expect(res.body).toBeTruthy();
-            expect(res.body.message).toBe('Failed to fetch event');
+            expect(res.body.message).toBe('ERROR.GET_EVENTS');
             expect(res.body.error).toBe('forced failure');
 
             spy.mockRestore();
@@ -166,7 +166,7 @@ describe('EVENT controller tests', () => {
             const res = await agent.get(`/events/game/${gameStateId}`).send();
             expect(res.status).toBe(500);
             expect(res.body).toBeTruthy();
-            expect(res.body.message).toBe('Failed to fetch events');
+            expect(res.body.message).toBe('ERROR.GET_EVENTS');
             expect(res.body.error).toBe('forced failure');
 
             spy.mockRestore();

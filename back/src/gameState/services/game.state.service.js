@@ -251,7 +251,7 @@ GameStateService.initGame = async (gameStateId) => {
 		await EventService.postNow(DB_EVENTS.GAME_INIT, gameState.sessionId, gameStateId, PLAYER_TYPE.MASTER, '-', {});
 	} else {
 		log.error(`[GameStateService] Unknown game type: ${gameState.typeMoney}`);
-		throw new Error('Unknown game type');
+		throw new Error('ERROR.UNKNOWN_GAME_TYPE');
 	}
 
 	// Compute timer duration
@@ -337,7 +337,7 @@ GameStateService.getBySessionIdAndRuleIdx = async (sessionId, ruleIdx) => {
  */
 GameStateService.loadGameStateToMemory = async (gameStateId) => {
 	const state = await GameStateModel.findById(gameStateId).lean();
-	if (!state) throw new Error('GameState not found');
+	if (!state) throw new Error('ERROR.GAME_STATE_NOT_FOUND');
 	const rules = await RulesService.getByIdx(state.sessionId, state.ruleIdx);
 	GameStateManager.store(gameStateId, state, rules);
 	return { state, rules };

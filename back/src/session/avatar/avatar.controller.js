@@ -35,7 +35,7 @@ AvatarController.join = async (req, res, next) => {
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({message: "Game not found"});
+        return res.status(404).json({message: "ERROR.SESSION_NOT_FOUND"});
     }
 };
 AvatarController.getByIdx = async (req, res, next) => {
@@ -51,7 +51,7 @@ AvatarController.getByIdx = async (req, res, next) => {
     catch (err) {
         log.error(err);
         return res.status(404).json({
-            message: "Avatar not found"
+            message: "ERROR.AVATAR_NOT_FOUND"
         });
     }
 };
@@ -104,7 +104,7 @@ AvatarController.delete = async (req, res, next) => {
     catch (error) {
         log.error(`delete avatar error: `, error);
         return res.status(404).json({
-            message: "can't delete avatar not found",
+            message: "ERROR.AVATAR_NOT_FOUND",
         });
     }
 };

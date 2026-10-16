@@ -14,7 +14,7 @@ EventController.getBySessionId = async (req, res) => {
 
         if (!event) {
             return res.status(404).json({
-                message: 'Event not found'
+                message: 'ERROR.EVENT_NOT_FOUND'
             });
         }
 
@@ -23,7 +23,7 @@ EventController.getBySessionId = async (req, res) => {
     catch (error) {
         log.error(`Error fetching event: `, error);
         return res.status(500).json({
-            message: 'Failed to fetch event',
+            message: 'ERROR.GET_EVENTS',
             error: error.message
         });
     }
@@ -48,7 +48,7 @@ EventController.getByGameStateId = async (req, res) => {
     catch (error) {
         log.error(`Error fetching events: `, error);
         return res.status(500).json({
-            message: 'Failed to fetch events',
+            message: 'ERROR.GET_EVENTS',
             error: error.message
         });
     }

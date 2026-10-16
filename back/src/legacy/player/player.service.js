@@ -41,24 +41,24 @@ const killPlayer = async (idGame, idPlayer) => {
     }
     catch (err) {
         log.error('kill player error:', err);
-        throw new Error("kill player failed");
+        throw new Error("ERROR.KILL");
     }
 }
 
 const getPlayer = async (idGame, idPlayer, statusGame = false) => {
     try {
         if (!idPlayer || !idGame) {
-            throw new Error("Bad request: missing game ID or player ID");
+            throw new Error("ERROR.ID_PLAYER_MISSING");
         }
 
         const game = await GameModel.findById(idGame);
         if (!game) {
-            throw new Error("Game not found");
+            throw new Error("ERROR.GAME_NOT_FOUND");
         }
 
         const player = game.players.find(p => p.id === idPlayer);
         if (!player) {
-            throw new Error("Player not found");
+            throw new Error("ERROR.PLAYER_NOT_FOUND");
         }
         if (statusGame) {
             return ({
@@ -87,13 +87,13 @@ const getPlayer = async (idGame, idPlayer, statusGame = false) => {
 
 const join = async (game, name, copyPlayer) => {
     if (game.status === C.END_GAME) {
-        throw new Error("Game is finished");
+        throw new Error("ERROR.GAME_STATE_OVER");
     }
     else if (game.status !== C.OPEN) {
-        throw new Error("Game is already started");
+        throw new Error("ERROR.GAME_ALREADY_STARTED");
     }
     else if (game.players.length >= 25) {
-        throw new Error("25 players max");
+        throw new Error("ERROR.MAX_PLAYERS");
     }
     else {
         const idPlayer = new mongoose.Types.ObjectId();
@@ -143,7 +143,7 @@ const join = async (game, name, copyPlayer) => {
             return player._id.toString();
         }
         else {
-            throw new Error("Join game error: game not found");
+            throw new Error("ERROR.GAME_NOT_FOUND");
         }
     }
 }
@@ -171,7 +171,7 @@ const produceCardLevelUp = async (idGame, idPlayer, cards) => {
 
     const weight = cardsToExchange[0].weight;
     if (weight >= 3) {
-        throw new Error("Technological change not yet implemented");
+        throw new Error("ERROR.TECH_CHANGE_NOT_IMPLEMENTED");
     }
 
     // Remove the production cards from player's hand

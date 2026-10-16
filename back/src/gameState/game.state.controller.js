@@ -21,10 +21,10 @@ GameStateController.create = asyncHandler(async (req, res, next) => {
 	const rules = session.gamesRules.find((rule) => rule.idx === ruleIdx);
 
 	if (!session || !rules) {
-		throw new AppError('Session or rules not found', 404, { sessionId, ruleIdx });
+		throw new AppError('ERROR.SESSION_OR_RULES_NOT_FOUND', 404, { sessionId, ruleIdx });
 	}
 	if (session.status === SESSION_STATUS.OPEN || session.status === SESSION_STATUS.ENDED) {
-		throw new AppError('Cannot create game while session is not in progress', 400, {
+		throw new AppError('ERROR.SESSION_NOT_IN_PROGRESS', 400, {
 			sessionId,
 			status: session.status,
 		});
@@ -34,7 +34,7 @@ GameStateController.create = asyncHandler(async (req, res, next) => {
 			log.info('[GameStateController] game state already created', { gameStateId: gameStateFound._id });
 			return res.status(200).json({ gameStateId: gameStateFound._id, gameStatus: gameStateFound.status });
 		} else {
-			throw new AppError('Game state mismatch detected', 409, {
+			throw new AppError('ERROR.GAME_STATE_MISMATCH', 409, {
 				gameStateFoundId: gameStateFound._id,
 				rulesGameStateId: rules.gameStateId,
 			});
@@ -71,7 +71,7 @@ GameStateController.getById = asyncHandler(async (req, res, next) => {
 	const { gameStateId } = req.params;
 	const payload = await GameStateService.getById(gameStateId, req.query.enriched);
 	if (!payload) {
-		throw new AppError('Game state not found', 404, { gameStateId });
+		throw new AppError('ERROR.GAME_STATE_NOT_FOUND', 404, { gameStateId });
 	}
 	return res.status(200).json(payload);
 });
@@ -118,7 +118,7 @@ GameStateController.refreshAllPlayers = asyncHandler(async (req, res) => {
 	log.info('[GameStateController] refreshing all players', { gameStateId });
 	const payload = await GameStateService.getById(gameStateId, false);
 	if (!payload?.gameState) {
-		throw new AppError('Game state not found', 404, { gameStateId });
+		throw new AppError('ERROR.GAME_STATE_NOT_FOUND', 404, { gameStateId });
 	}
 	await Promise.all(
 		payload.gameState.playersStates.map((playerState) =>
@@ -142,7 +142,7 @@ GameStateController.getPlayerState = asyncHandler(async (req, res) => {
 		parseInt(playerStateIdx)
 	);
 	if (!payload) {
-		throw new AppError('Player not found', 404, { sessionId, gameStateId, avatarIdx });
+		throw new AppError('ERROR.PLAYER_NOT_FOUND', 404, { sessionId, gameStateId, avatarIdx });
 	}
 	return res.status(200).json(payload);
 });
@@ -169,7 +169,7 @@ GameStateController.whoHaveCard = asyncHandler(async (req, res) => {
 	const { gameStateId, cardKey } = req.params;
 	const payload = await DecksStateService.whoHaveCard(gameStateId, cardKey);
 	if (!payload || payload.status === 'ko') {
-		throw new AppError('Card not found', 404, { gameStateId, cardKey, reason: payload?.reason });
+		throw new AppError('ERROR.CARD_NOT_FOUND', 404, { gameStateId, cardKey, reason: payload?.reason });
 	}
 	return res.status(200).json(payload);
 });

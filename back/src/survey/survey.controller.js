@@ -22,7 +22,7 @@ SurveyController.addFeedback = async (req, res, next) => {
 				notifyFeedback();
 				return res.status(200).json(newFeedback);
 			} else {
-				return res.status(500).json({ message: 'internal server error' });
+				return res.status(500).json({ message: 'ERROR.GENERIC' });
 			}
 		} else {
 			log.info(`[SurveyController] updating feedback for game state ${gameStateId}, avatar ${avatarIdx}`);
@@ -32,7 +32,7 @@ SurveyController.addFeedback = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 SurveyController.allowAvatarEditSurvey = async (req, res, next) => {
@@ -61,7 +61,7 @@ SurveyController.getBySessionId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 SurveyController.getByGameStateId = async (req, res, next) => {
@@ -74,7 +74,7 @@ SurveyController.getByGameStateId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 SurveyController.getBySessionGameStateAvatarIdx = async (req, res, next) => {
@@ -94,7 +94,7 @@ SurveyController.getBySessionGameStateAvatarIdx = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 SurveyController.removeAllByGameStateId = async (req, res, next) => {
@@ -108,7 +108,7 @@ SurveyController.removeAllByGameStateId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 SurveyController.removeAllBySessionId = async (req, res, next) => {
@@ -122,7 +122,7 @@ SurveyController.removeAllBySessionId = async (req, res, next) => {
 		}
 	} catch (error) {
 		log.error(error);
-		return res.status(500).json({ message: 'internal server error', error });
+		return res.status(500).json({ message: 'ERROR.GENERIC', error });
 	}
 };
 

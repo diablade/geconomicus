@@ -136,7 +136,7 @@ export default {
             log.error(err);
             next({
                 status:  500,
-                message: err
+                message: err.message
             });
         }
     },

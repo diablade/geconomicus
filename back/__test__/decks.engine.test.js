@@ -162,7 +162,7 @@ describe('DecksEngine — produce', () => {
 		gameState.playersStates[0].cards = completeRecipe('A', 3);
 		const entry = makeEntry(gameState);
 
-		expect(() => DecksEngine.produce(entry, 0, completeRecipe('A', 3))).toThrow(/Technological change/);
+		expect(() => DecksEngine.produce(entry, 0, completeRecipe('A', 3))).toThrow(/TECH_CHANGE_NOT_IMPLEMENTED/);
 	});
 
 	it('refuses an unknown producer', () => {

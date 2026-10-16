@@ -41,7 +41,7 @@ const getById = async (req, res, next) => {
         log.error(err);
         next({
             status:  404,
-            message: "Player not found"
+            message: "ERROR.PLAYER_NOT_FOUND"
         });
     }
 };
@@ -54,14 +54,14 @@ const join = async (req, res, next) => {
     try {
         let game = await gameService.getGameById(idGame);
         if (!game) {
-            return res.status(404).json({message: "Game not found"});
+            return res.status(404).json({message: "ERROR.GAME_NOT_FOUND"});
         }
         const idPlayer = await playerService.join(game, name);
         return res.status(200).json(idPlayer);
     }
     catch (err) {
         log.error(err);
-        return res.status(404).json({message: "Game not found"});
+        return res.status(404).json({message: "ERROR.GAME_NOT_FOUND"});
     }
 };
 const update = async (req, res, next) => {
@@ -71,7 +71,7 @@ const update = async (req, res, next) => {
 
     try {
         if (!idGame && !idPlayer) {
-            throw new Error("Bad request");
+            throw new Error("ERROR.BAD_REQUEST");
         }
 
         // Step 1: Find the document containing the player
@@ -79,7 +79,7 @@ const update = async (req, res, next) => {
 
         // Step 2: Check the player's status or any other property
         if (existingPlayer.status === C.DEAD) { // Adjust this check as needed
-            throw new Error("Player is DEAD and cannot be updated");
+            throw new Error("ERROR.PLAYER_NOT_ALIVE");
         }
         const game = await GameModel.findOneAndUpdate({
             _id:           idGame,
@@ -112,7 +112,7 @@ const update = async (req, res, next) => {
         log.error(err);
         next({
             status:  400,
-            message: err
+            message: err.message
         });
     }
 };
@@ -127,7 +127,7 @@ const produce = async (req, res, next) => {
     if (activeTransactions.has(idGame) || activeTransactions.has(idPlayer)) {
         const resultWaitingQueue = await waitForProductionToClear(activeTransactions, idGame);
         if (resultWaitingQueue === 'timeout') {
-            return res.status(409).json({message: 'Producing already in progress'});
+            return res.status(409).json({message: 'ERROR.IN_PROGRESS'});
         }
     }
     try {
@@ -144,7 +144,7 @@ const produce = async (req, res, next) => {
         log.error('Production error:', err);
         return next({
             status:  400,
-            message: err.message || err || "Production error"
+            message: err.message || "ERROR.PRODUCTION"
         });
     }
 };
@@ -158,7 +158,7 @@ const transaction = async (req, res, next) => {
 
     // Check if the transaction is already in progress
     if (activeTransactions.has(idBuyer) || activeTransactions.has(idSeller)) {
-        return res.status(409).json({message: 'Transaction already in progress'});
+        return res.status(409).json({message: 'ERROR.IN_PROGRESS'});
     }
     activeTransactions.add(idBuyer); // Mark the transaction as active
     activeTransactions.add(idSeller); // for both seller and buyer
@@ -166,26 +166,26 @@ const transaction = async (req, res, next) => {
     try {
         const game = await GameModel.findById(idGame);
         if (!game) {
-            return res.status(404).json({message: 'Transaction error, game not found'});
+            return res.status(404).json({message: 'ERROR.GAME_NOT_FOUND'});
         }
 
         const buyer = game.players.find(p => p.id === idBuyer);
         const seller = game.players.find(p => p.id === idSeller);
         if (!buyer || !seller) {
-            return res.status(404).json({message: "Transaction error, Buyer or seller not found"});
+            return res.status(404).json({message: "ERROR.PLAYER_NOT_FOUND"});
         }
         if (buyer.status === C.DEAD || seller.status === C.DEAD) {
-            return res.status(400).json({message: "Transaction cannot involves a dead player, fool !"});
+            return res.status(400).json({message: "ERROR.TRANSACTION_CANNOT_INVOLVE_DEAD_OR_PRISONER"});
         }
 
         const card = seller.cards.find(c => c.id === idCard);
         if (!card) {
-            return res.status(404).json({message: "Transaction error, card not found"});
+            return res.status(404).json({message: "ERROR.CARD_NOT_FOUND"});
         }
 
         const cost = game.typeMoney === C.JUNE ? Number((card.price * game.currentDU).toFixed(2)) : card.price;
         if (buyer.coins < cost) {
-            return res.status(400).json({message: "Transaction error, Insufficient funds"});
+            return res.status(400).json({message: "ERROR.INSUFFICIENT_FUNDS"});
         }
 
         const eventTransaction = constructor.event(C.TRANSACTION, idBuyer, idSeller, cost, [card], Date.now());
@@ -227,7 +227,7 @@ const transaction = async (req, res, next) => {
         });
 
         if (!updatedGame) {
-            return res.status(400).json({message: "Transaction failed: conditions not met"});
+            return res.status(400).json({message: "ERROR.TRANSACTION"});
         }
 
         buyer.coins = Number((buyer.coins - cost).toFixed(2));
@@ -247,7 +247,7 @@ const transaction = async (req, res, next) => {
     }
     catch (err) {
         log.error('Transaction error:', err);
-        return res.status(500).json({message: 'Transaction error'});
+        return res.status(500).json({message: 'ERROR.TRANSACTION'});
     }
     finally {
         activeTransactions.delete(idBuyer);
@@ -260,7 +260,7 @@ const isReincarnated = async (req, res, next) => {
     if (!idGame && !from) {
         next({
             status:  400,
-            message: "bad request"
+            message: "ERROR.BAD_REQUEST"
         });
     }
     else {
@@ -279,7 +279,7 @@ const isReincarnated = async (req, res, next) => {
                 log.error(error);
                 next({
                     status:  404,
-                    message: "game Not found"
+                    message: "ERROR.GAME_NOT_FOUND"
                 });
             });
     }
@@ -294,12 +294,12 @@ const joinReincarnate = async (req, res, next) => {
         const game = await GameModel.findById(idGame);
         if (!game) {
             log.error('JoinReincarnate error: game not found');
-            return res.status(404).json({message: "Reincarnate error, Game not found"});
+            return res.status(404).json({message: "ERROR.GAME_NOT_FOUND"});
         }
         const playerFromId = game.players.find(p => p._id.toString() === fromId);
         if (!playerFromId) {
             log.error('JoinReincarnate error: Player to reincarnate from, not found');
-            return res.status(404).json({message: "Player to reincarnate from, not found"});
+            return res.status(404).json({message: "ERROR.PLAYER_NOT_FOUND"});
         }
         let playerAlreadyReincarnated = game.players.find(p => p.reincarnateFromId === fromId);
         if (playerAlreadyReincarnated) {
@@ -343,7 +343,7 @@ const joinReincarnate = async (req, res, next) => {
             const newCardsIds = newCards.map(c => c._id);
             if (!decksService.areCardIdsUnique(newCardsIds, game.distribInitCards)) {
                 log.error('JoinReincarnate error: duplicate new cards');
-                return res.status(500).json({message: "duplicate new cards for reincarnate"});
+                return res.status(500).json({message: "ERROR.CARDS_NOT_UNIQUE"});
             }
             //create events
             birthEvent = constructor.event(C.BIRTH, C.MASTER, idPlayer, 0, newCards, Date.now());
@@ -372,7 +372,7 @@ const joinReincarnate = async (req, res, next) => {
     }
     catch (err) {
         log.error('JoinReincarnate error:', err);
-        return res.status(500).json({message: "Reincarnate failed"});
+        return res.status(500).json({message: "ERROR.REINCARNATE"});
     }
 };
 const addFeedback = async (req, res, next) => {
@@ -391,7 +391,7 @@ const addFeedback = async (req, res, next) => {
         return res.status(200).json({"status": "feedback saved"});
     }).catch((error) => {
         log.error(error);
-        return res.status(500).json({message: "Feedback not saved"});
+        return res.status(500).json({message: "ERROR.SAVE_FEEDBACK"});
     });
 };
 

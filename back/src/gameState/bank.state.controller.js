@@ -93,7 +93,7 @@ BankController.iveGotToBreakFree = async (req, res, next) => {
 		log.error('[BankController] prison break error: ', err);
 		next({
 			status: 500,
-			message: err,
+			message: err.message,
 		});
 	}
 };

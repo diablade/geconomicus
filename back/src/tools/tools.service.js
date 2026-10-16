@@ -54,7 +54,7 @@ ToolsService.simulate = (options) =>
 			if (settled) return;
 			settled = true;
 			clearTimeout(timer);
-			rejectPromise(new Error(`ERROR.SIMULATION_WORKER_EXIT_${code}`));
+			rejectPromise(new Error('ERROR.SIMULATION_WORKER_EXIT'));
 		});
 	});
 

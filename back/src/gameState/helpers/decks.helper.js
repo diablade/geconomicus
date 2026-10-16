@@ -316,7 +316,7 @@ DecksHelper.produce = (gameState, rules, playerStateIdx, cards) => {
 		throw new Error('ERROR.CARDS_MUST_HAVE_SAME_WEIGHT');
 	}
 
-	if (weight >= 3) throw new Error('Technological change not yet implemented');
+	if (weight >= 3) throw new Error('ERROR.TECH_CHANGE_NOT_IMPLEMENTED');
 
 	const sameLevelAfterReturn = (gameState.decks[weight]?.length ?? 0) + cardsToExchange.length;
 	if (sameLevelAfterReturn < amountCardsForProd || (gameState.decks[weight + 1]?.length ?? 0) < 1) {

@@ -14,7 +14,7 @@ class AppError extends Error {
 
 const formatErrorForResponse = (err, isDev) => {
 	const response = {
-		message: err.message || 'Internal Server Error',
+		message: err.message || 'ERROR.GENERIC',
 		status: err.statusCode || 500,
 	};
 
@@ -59,7 +59,7 @@ const errorHandler = (err, req, res, next) => {
 	let normalizedError = err;
 	if (!(err instanceof AppError)) {
 		const statusCode = err.statusCode || err.status || 500;
-		const message = err.message || 'Internal Server Error';
+		const message = err.message || 'ERROR.GENERIC';
 		normalizedError = new AppError(message, statusCode);
 	}
 
