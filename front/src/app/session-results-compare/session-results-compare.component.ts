@@ -50,7 +50,8 @@ interface ChartBlock {
 
 interface ScoreBar {
 	entry: PodiumEntry;
-	percent: number;
+	coinsPercent: number;
+	cardsPercent: number;
 }
 
 /** Every score of one game as bars, plus the two markers the bars are read against. */
@@ -566,7 +567,11 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		const scale = Math.max(1, ...scores, average + deviation);
 		const round = (v: number) => Math.round(v * 100) / 100;
 		return {
-			bars: entries.map((entry) => ({ entry, percent: (entry.score / scale) * 100 })),
+			bars: entries.map((entry) => ({
+				entry,
+				coinsPercent: (Math.max(0, entry.coins) / scale) * 100,
+				cardsPercent: (Math.max(0, entry.cardsValue) / scale) * 100,
+			})),
 			average: round(average),
 			deviation: round(deviation),
 			averagePercent: (average / scale) * 100,
@@ -801,6 +806,11 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 
 	medalOf(rank: number): string {
 		return ['🥇', '🥈', '🥉'][rank - 1] ?? '';
+	}
+
+	/** Returns the global metal background class for a podium rank, empty past third place. */
+	metalOf(rank: number): string {
+		return ['gold-metal', 'silver-metal', 'bronze-metal'][rank - 1] ?? '';
 	}
 
 	timeOf(iso: string): string {

@@ -125,13 +125,31 @@
 							</div>
 
 							<ng-container *ngIf="!scoreBars.has(card.id)">
-								<div class="pod-row" *ngFor="let p of card.game.podium | slice: 0 : 3">
-									<avatar [avatar]="p.avatar" width="34px" height="34px"></avatar>
-									<span class="name">
-										{{ p.avatar.name }}
-										<small>{{ num(p.score) }} ({{ num(p.coins) }} + {{ num(p.cardsValue) }})</small>
-									</span>
-									<span class="medal">{{ medalOf(p.rank) }}</span>
+								<div class="pod-lines">
+									<div
+										class="pod-row"
+										[ngClass]="['rank' + p.rank, metalOf(p.rank)]"
+										*ngFor="let p of card.game.podium | slice: 0 : 3">
+										<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
+										<span class="name">
+											{{ p.avatar.name }}
+											<small>{{ num(p.score) }} ({{ num(p.coins) }} + {{ num(p.cardsValue) }})</small>
+										</span>
+										<span class="medal">{{ medalOf(p.rank) }}</span>
+									</div>
+								</div>
+								<div class="pod-stairs" *ngIf="card.game.podium.length">
+									<div
+										class="pod-step"
+										[ngClass]="'rank' + p.rank"
+										*ngFor="let p of card.game.podium | slice: 0 : 3">
+										<avatar [avatar]="p.avatar" width="50px" height="50px"></avatar>
+										<span class="name">{{ p.avatar.name }}</span>
+<!--										<small>{{ num(p.score) }}</small>-->
+										<div class="block" [ngClass]="metalOf(p.rank)">
+											<span class="medal">{{ medalOf(p.rank) }}</span>
+										</div>
+									</div>
 								</div>
 							</ng-container>
 
@@ -146,12 +164,14 @@
 										</div>
 									</div>
 									<div class="score-row" *ngFor="let bar of board.bars">
-										<span class="score-name">{{ bar.entry.avatar.name }}</span>
+										<span class="score-name" [ngClass]="metalOf(bar.entry.rank)">{{ bar.entry.avatar.name }}</span>
 										<div class="score-bar">
-											<span
-												class="fill"
-												[style.width.%]="bar.percent"
-												[style.background]="card.color"></span>
+											<span class="fill coins" [style.width.%]="bar.coinsPercent">
+												<i>{{ num(bar.entry.coins) }}</i>
+											</span>
+											<span class="fill" [style.width.%]="bar.cardsPercent" [style.background]="card.color">
+												<i>{{ num(bar.entry.cardsValue) }}</i>
+											</span>
 											<b>{{ num(bar.entry.score) }}</b>
 										</div>
 									</div>
