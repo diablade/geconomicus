@@ -217,6 +217,11 @@ export class FakePlayerPanelComponent {
 		this.audioService.playSound(sold ? 'coin' : 'cardFlipBack');
 	}
 
+	/** Simulates a DU payout on the board. */
+	testDU(): void {
+		this.playerStateService.triggerFakeDU();
+	}
+
 	testTakeover(): void {
 		this.overlayConfig = {
 			phases: [

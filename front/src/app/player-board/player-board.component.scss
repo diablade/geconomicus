@@ -369,3 +369,33 @@
 		height: auto;
 	}
 }
+
+.du-pop {
+	position: absolute;
+	top: 0%;
+	right: 0;
+	font-size: 1.4em;
+	font-weight: bold;
+	white-space: nowrap;
+	pointer-events: none;
+	z-index: 11;
+	animation: du-pop 1.5s ease-out forwards;
+}
+.game.landscape .du-pop {
+	right: auto;
+	left: 0;
+}
+@keyframes du-pop {
+	0% {
+		opacity: 1;
+		transform: translateY(-140%) scale(1.5);
+	}
+	20% {
+		opacity: 1;
+		transform: translateY(10%) scale(1.5);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(10%) scale(1);
+	}
+}

@@ -82,6 +82,8 @@ export class PlayerStateService {
 	creditTimeout$ = this.creditTimeoutSubject.asObservable();
 	private tradeSubject = new Subject<{ sold: boolean; amount: string }>();
 	trade$ = this.tradeSubject.asObservable();
+	private duReceivedSubject = new Subject<void>();
+	duReceived$ = this.duReceivedSubject.asObservable();
 	private readonly WARN_FRACTION = 0.5;
 	private readonly FINAL_MS = 60_000;
 
@@ -173,7 +175,8 @@ export class PlayerStateService {
 				});
 			}
 
-			return _.orderBy(annotated, ['count', 'weight', 'letter'], ['desc', 'asc', 'asc']);
+			// return _.orderBy(annotated, ['count', 'weight', 'letter'], ['desc', 'asc', 'asc']);
+			return cards;
 		})
 	);
 
@@ -453,6 +456,7 @@ export class PlayerStateService {
 				cb?.({ status: 'ok', _ackId: data._ackId });
 			}
 			this.coinsSubject.next(data.coinsLK);
+			this.duReceivedSubject.next();
 			this.audioService.playSound('du');
 
 			const currentGameState = this.gameStateSubject.getValue();
@@ -1178,6 +1182,13 @@ export class PlayerStateService {
 			return { ...c, remainingTime, endAt: new Date(Date.now() + remainingTime) };
 		});
 		this.creditsSubject.next(updatedCredits);
+	}
+
+	/** Simulates a DU payout: credits one DU and fires the +1 DU animation. */
+	triggerFakeDU(): void {
+		this.coinsSubject.next(this.coinsSubject.getValue() + this.gameStateSubject.getValue().currentDU);
+		this.duReceivedSubject.next();
+		this.audioService.playSound('du');
 	}
 
 	triggerFakeProduction(letter: string, weight: number, producedCard: Card, newCards: Card[]): void {

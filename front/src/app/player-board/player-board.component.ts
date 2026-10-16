@@ -286,6 +286,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	private creditTimeoutSub: Subscription | undefined;
 	private deathSub: Subscription | undefined;
 	private tradeSub: Subscription | undefined;
+	private duReceivedSub: Subscription | undefined;
+	private duPopTimeout: ReturnType<typeof setTimeout> | undefined;
 	private firstCreditDialogRef: MatDialogRef<ContractDialogComponent> | null = null;
 	creditCountdown: CreditCountdown | null = null;
 	alarmConfig: OverlayConfig | null = null;
@@ -299,6 +301,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 	fakeMode = false;
 	scanV3 = true;
 	flipCoin = false;
+	duPop = false;
 	panelCreditOpenState = false;
 	panelRecipeOpenState = false;
 	shortCode: ShortCode | undefined;
@@ -354,6 +357,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		if (this.creditTimeoutSub) this.creditTimeoutSub.unsubscribe();
 		if (this.deathSub) this.deathSub.unsubscribe();
 		if (this.tradeSub) this.tradeSub.unsubscribe();
+		if (this.duReceivedSub) this.duReceivedSub.unsubscribe();
+		clearTimeout(this.duPopTimeout);
 		window.removeEventListener('resize', this._resizeHandler);
 	}
 
@@ -388,6 +393,8 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 		this.tradeSub = this.playerStateService.trade$.subscribe(
 			({ sold, amount }) => (this.tradeConfig = tradeOverlay(sold, amount))
 		);
+
+		this.duReceivedSub = this.playerStateService.duReceived$.subscribe(() => this.showDuPop());
 
 		this.creditFaultSub = this.warningCredit$
 			.pipe(distinctUntilChanged())
@@ -488,6 +495,16 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 				}
 				this.playerStateService.refreshRate();
 			}
+		});
+	}
+
+	/** Restarts the floating +1 DU label over the coin. */
+	showDuPop() {
+		this.duPop = false;
+		clearTimeout(this.duPopTimeout);
+		this.duPopTimeout = setTimeout(() => {
+			this.duPop = true;
+			this.duPopTimeout = setTimeout(() => (this.duPop = false), 1500);
 		});
 	}
 
