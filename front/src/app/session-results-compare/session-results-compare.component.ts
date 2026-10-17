@@ -696,7 +696,7 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 		return indicators.map((indicator) => {
 			const meta = this.INDICATOR_META[indicator.key] ?? { label: indicator.key, color: '#455a64', dash: true };
 			return {
-				label: meta.label,
+				label: this.i18n.instant(meta.label),
 				data: indicator.points.map((pt: SeriesPoint) => ({ x: pt.x as any, y: pt.y })),
 				borderColor: meta.color,
 				backgroundColor: meta.color,
