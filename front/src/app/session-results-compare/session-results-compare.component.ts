@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of, catchError, switchMap } from 'rxjs';
 import { ChartConfiguration, ChartDataset } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { BaseChartDirective } from 'ng2-charts';
 import { DB_EVENTS, GAME_TYPE, IO, LK_KEYS, ROOMS, SESSION_STATUS } from '@geco/shared';
 import { EventService } from '../services/api/event.service';
 import { SurveyService, SurveyAnswer } from '../services/api/survey.service';
@@ -802,6 +803,14 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	toggleLegend(block: ChartBlock): void {
 		this.legends[block.key] = !this.legends[block.key];
 		block.options = this.lineOpts(block);
+	}
+
+	/** Shows or hides every dataset of the given chart. */
+	setAllDatasetsVisible(chart: BaseChartDirective, visible: boolean): void {
+		const instance = chart.chart;
+		if (!instance) return;
+		instance.data.datasets.forEach((_dataset, index) => instance.setDatasetVisibility(index, visible));
+		instance.update();
 	}
 
 	medalOf(rank: number): string {

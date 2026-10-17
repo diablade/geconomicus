@@ -1118,4 +1118,12 @@ export class ResultsComponent implements OnInit, OnDestroy {
 	displayLegendResources() {
 		this.legendResources = !this.legendResources;
 	}
+
+	/** Shows or hides every dataset of the given chart. */
+	setAllDatasetsVisible(chart: BaseChartDirective, visible: boolean) {
+		const instance = chart.chart;
+		if (!instance) return;
+		instance.data.datasets.forEach((_dataset, index) => instance.setDatasetVisibility(index, visible));
+		instance.update();
+	}
 }

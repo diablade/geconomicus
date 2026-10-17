@@ -1,4 +1,4 @@
-<div class="bgGradien7 bgFixedLayer"></div>
+<div class="bgGradien6 bgFixedLayer"></div>
 <div class="compare-page aboveBg">
 	<!-- ── header ── -->
 	<div class="cp-header">
@@ -194,26 +194,34 @@
 
 						<div class="cp-chart" *ngIf="chartOf(card) as block">
 							<div class="cp-block-head"><span>{{ 'RESULTS.COMPARE.OVER_TIME' | translate }}</span></div>
-							<div class="cp-chart-switch">
-								<button
-									type="button"
-									*ngFor="let b of card.charts"
-									[class.on]="b.key === block.key"
-									(click)="chooseChart(card, b)">
-									{{ b.label }}
-								</button>
-								<button type="button" class="cp-legend-btn" (click)="toggleLegend(block)">
-									{{ 'RESULTS.COMPARE.LEGEND' | translate }} {{ legends[block.key] ? '✓' : '' }}
-								</button>
-							</div>
-							<div class="cp-canvas">
-								<canvas
-									*ngFor="let key of [block.key]"
-									baseChart
-									[type]="'line'"
-									[data]="block.data"
-									[options]="block.options"></canvas>
-							</div>
+							<ng-container *ngFor="let key of [block.key]">
+								<div class="cp-chart-switch">
+									<button
+										type="button"
+										*ngFor="let b of card.charts"
+										[class.on]="b.key === block.key"
+										(click)="chooseChart(card, b)">
+										{{ b.label }}
+									</button>
+									<button type="button" (click)="setAllDatasetsVisible(lineChart, true)">
+										{{ 'RESULTS.COMPARE.CHECK_ALL' | translate }}
+									</button>
+									<button type="button" (click)="setAllDatasetsVisible(lineChart, false)">
+										{{ 'RESULTS.COMPARE.UNCHECK_ALL' | translate }}
+									</button>
+									<button type="button" class="cp-legend-btn" (click)="toggleLegend(block)">
+										{{ 'RESULTS.COMPARE.LEGEND' | translate }} {{ legends[block.key] ? '✓' : '' }}
+									</button>
+								</div>
+								<div class="cp-canvas">
+									<canvas
+										#lineChart="base-chart"
+										baseChart
+										[type]="'line'"
+										[data]="block.data"
+										[options]="block.options"></canvas>
+								</div>
+							</ng-container>
 						</div>
 
 						<div class="cp-feel">

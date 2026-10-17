@@ -311,13 +311,22 @@
 
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
 			<h1 class="m-2 mt-4 contour">{{ 'RESULTS.QUANTITATIVE_ACCOUNTS' | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">
-				{{ 'MODULE.GALILEO.LEGEND' | translate }}
-			</mat-slide-toggle>
+			<div class="d-flex flex-row align-items-center">
+				<button mat-button color="primary" (click)="setAllDatasetsVisible(quantChart, true)">
+					{{ 'RESULTS.CHECK_ALL' | translate }}
+				</button>
+				<button mat-button color="primary" (click)="setAllDatasetsVisible(quantChart, false)">
+					{{ 'RESULTS.UNCHECK_ALL' | translate }}
+				</button>
+				<mat-slide-toggle (change)="displayLegendQuantitative()" [checked]="legendQuantitative">
+					{{ 'MODULE.GALILEO.LEGEND' | translate }}
+				</mat-slide-toggle>
+			</div>
 		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas
 				baseChart
+				#quantChart="base-chart"
 				id="chartQuant"
 				[legend]="legendQuantitative"
 				class="chart"
@@ -326,31 +335,51 @@
 				[options]="lineChartOptions"
 				[type]="'line'"></canvas>
 		</div>
-		<div *ngIf="game?.typeMoney === C.JUNE" class="mt-4 d-flex flex-row justify-content-between align-items-end">
-			<h1 class="contour">{{ 'RESULTS.RELATIVE_ACCOUNTS' | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">
-				{{ 'MODULE.GALILEO.LEGEND' | translate }}
-			</mat-slide-toggle>
-		</div>
-		<div *ngIf="game?.typeMoney === C.JUNE" class="graph bg-white rounded shadow">
-			<canvas
-				baseChart
-				class="chart"
-				height="500"
-				[data]="lineChartDataRelatif"
-				[options]="lineChartOptionsRelatif"
-				[legend]="legendRelative"
-				[type]="'line'"></canvas>
-		</div>
+		<ng-container *ngIf="game?.typeMoney === C.JUNE">
+			<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
+				<h1 class="contour">{{ 'RESULTS.RELATIVE_ACCOUNTS' | translate }}</h1>
+				<div class="d-flex flex-row align-items-center">
+					<button mat-button color="primary" (click)="setAllDatasetsVisible(relatifChart, true)">
+						{{ 'RESULTS.CHECK_ALL' | translate }}
+					</button>
+					<button mat-button color="primary" (click)="setAllDatasetsVisible(relatifChart, false)">
+						{{ 'RESULTS.UNCHECK_ALL' | translate }}
+					</button>
+					<mat-slide-toggle (change)="displayLegendRelative()" [checked]="legendRelative">
+						{{ 'MODULE.GALILEO.LEGEND' | translate }}
+					</mat-slide-toggle>
+				</div>
+			</div>
+			<div class="graph bg-white rounded shadow">
+				<canvas
+					baseChart
+					#relatifChart="base-chart"
+					class="chart"
+					height="500"
+					[data]="lineChartDataRelatif"
+					[options]="lineChartOptionsRelatif"
+					[legend]="legendRelative"
+					[type]="'line'"></canvas>
+			</div>
+		</ng-container>
 		<div class="mt-4 d-flex flex-row justify-content-between align-items-end">
 			<h1 class="contour">{{ 'RESULTS.RESOURCES' | translate }}</h1>
-			<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">
-				{{ 'MODULE.GALILEO.LEGEND' | translate }}
-			</mat-slide-toggle>
+			<div class="d-flex flex-row align-items-center">
+				<button mat-button color="primary" (click)="setAllDatasetsVisible(resourcesChart, true)">
+					{{ 'RESULTS.CHECK_ALL' | translate }}
+				</button>
+				<button mat-button color="primary" (click)="setAllDatasetsVisible(resourcesChart, false)">
+					{{ 'RESULTS.UNCHECK_ALL' | translate }}
+				</button>
+				<mat-slide-toggle (change)="displayLegendResources()" [checked]="legendResources">
+					{{ 'MODULE.GALILEO.LEGEND' | translate }}
+				</mat-slide-toggle>
+			</div>
 		</div>
 		<div class="graph bg-white rounded shadow">
 			<canvas
 				baseChart
+				#resourcesChart="base-chart"
 				class="chart"
 				height="500"
 				[data]="lineChartDataResources"
