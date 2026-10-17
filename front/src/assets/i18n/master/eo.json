@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Vidi la ludan tablon",
 		"ALLOW_SURVEY_REDO": "Resendi la demandaron",
 		"SURVEY_REDO_ALLOWED": "La demandaro povas esti resendita de la ludanto",
-		"WARNING_RESULTS": "Ambaŭ partioj devas esti finitaj por kompari la rezultojn"
+		"WARNING_RESULTS": "Ambaŭ partioj devas esti finitaj por kompari la rezultojn",
+		"END_SESSION": "Fini la seancon kaj montri la rezultojn",
+		"END_SESSION_CONFIRM": "⚠️ Ĉu vi vere volas fini la seancon?",
+		"END_SESSION_CONFIRM_2": "Post la fino, ne plu eblos krei aŭ rekomenci partion."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Kelkaj harkoloroj estas identaj",

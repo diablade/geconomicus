@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { SESSION_STATUS } from '@geco/shared';
 import { isValidObjectId, isValidNumberId4 } from '../misc/validate.tool.js';
 
 export const sanitize = {
@@ -39,11 +40,12 @@ export const sanitize = {
 			'any.required': 'Session ID is required',
 		}),
 		updates: Joi.object({
-			name: Joi.string().required(),
+			name: Joi.string(),
 			animator: Joi.string(),
 			location: Joi.string(),
 			devMode: Joi.boolean(),
 			theme: Joi.string(),
+			status: Joi.string().valid(...Object.values(SESSION_STATUS)),
 		}).required(),
 	}).required(),
 	deleteSession: Joi.object({

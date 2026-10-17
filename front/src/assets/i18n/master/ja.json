@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "ゲームテーブルを見る",
 		"ALLOW_SURVEY_REDO": "アンケートを再送する",
 		"SURVEY_REDO_ALLOWED": "プレイヤーはアンケートを再送できます",
-		"WARNING_RESULTS": "結果を比較するには、両方のゲームが終了している必要があります"
+		"WARNING_RESULTS": "結果を比較するには、両方のゲームが終了している必要があります",
+		"END_SESSION": "セッションを終了して結果を表示",
+		"END_SESSION_CONFIRM": "⚠️ 本当にセッションを終了しますか？",
+		"END_SESSION_CONFIRM_2": "終了すると、ゲームの作成や再開はできなくなります。"
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ 同じ髪の色があります",

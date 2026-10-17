@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "View the game table",
 		"ALLOW_SURVEY_REDO": "Send the survey again",
 		"SURVEY_REDO_ALLOWED": "The survey can be sent again by the player",
-		"WARNING_RESULTS": "Both games must be finished to compare the results"
+		"WARNING_RESULTS": "Both games must be finished to compare the results",
+		"END_SESSION": "End the session and show results",
+		"END_SESSION_CONFIRM": "⚠️ Do you really want to end the session?",
+		"END_SESSION_CONFIRM_2": "Once ended, it will no longer be possible to create or restart a game."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Some hair colours are identical",

@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Vedere il tavolo da gioco",
 		"ALLOW_SURVEY_REDO": "Rinviare il questionario",
 		"SURVEY_REDO_ALLOWED": "Il questionario può essere rinviato dal giocatore",
-		"WARNING_RESULTS": "Entrambe le partite devono essere terminate per confrontare i risultati"
+		"WARNING_RESULTS": "Entrambe le partite devono essere terminate per confrontare i risultati",
+		"END_SESSION": "Terminare la sessione e vedere i risultati",
+		"END_SESSION_CONFIRM": "⚠️ Vuoi davvero terminare la sessione?",
+		"END_SESSION_CONFIRM_2": "Una volta terminata, non sarà più possibile creare o riavviare una partita."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Alcuni colori di capelli sono identici",

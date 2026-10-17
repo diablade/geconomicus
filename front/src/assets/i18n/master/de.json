@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Spieltisch ansehen",
 		"ALLOW_SURVEY_REDO": "Fragebogen erneut senden",
 		"SURVEY_REDO_ALLOWED": "Der Fragebogen kann vom Spieler erneut gesendet werden",
-		"WARNING_RESULTS": "Beide Spiele müssen beendet sein, um die Ergebnisse zu vergleichen"
+		"WARNING_RESULTS": "Beide Spiele müssen beendet sein, um die Ergebnisse zu vergleichen",
+		"END_SESSION": "Sitzung beenden und Ergebnisse anzeigen",
+		"END_SESSION_CONFIRM": "⚠️ Willst du die Sitzung wirklich beenden?",
+		"END_SESSION_CONFIRM_2": "Nach dem Beenden kann kein Spiel mehr erstellt oder neu gestartet werden."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Einige Haarfarben sind identisch",

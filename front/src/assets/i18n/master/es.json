@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Ver la mesa de juego",
 		"ALLOW_SURVEY_REDO": "Reenviar el cuestionario",
 		"SURVEY_REDO_ALLOWED": "El cuestionario puede ser reenviado por el jugador",
-		"WARNING_RESULTS": "Ambas partidas deben estar terminadas para comparar los resultados"
+		"WARNING_RESULTS": "Ambas partidas deben estar terminadas para comparar los resultados",
+		"END_SESSION": "Terminar la sesión y ver los resultados",
+		"END_SESSION_CONFIRM": "⚠️ ¿Realmente quieres terminar la sesión?",
+		"END_SESSION_CONFIRM_2": "Una vez terminada, ya no será posible crear ni reiniciar una partida."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Hay colores de pelo idénticos",

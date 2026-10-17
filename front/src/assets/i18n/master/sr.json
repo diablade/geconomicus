@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Pogledaj sto za igru",
 		"ALLOW_SURVEY_REDO": "Ponovo pošalji upitnik",
 		"SURVEY_REDO_ALLOWED": "Igrač može ponovo da pošalje upitnik",
-		"WARNING_RESULTS": "Obe igre moraju biti završene da bi se uporedili rezultati"
+		"WARNING_RESULTS": "Obe igre moraju biti završene da bi se uporedili rezultati",
+		"END_SESSION": "Završi sesiju i prikaži rezultate",
+		"END_SESSION_CONFIRM": "⚠️ Da li zaista želiš da završiš sesiju?",
+		"END_SESSION_CONFIRM_2": "Kada se završi, više neće biti moguće napraviti ili ponovo pokrenuti igru."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Neke boje kose su identične",

@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Session } from '../models/session';
 import { Avatar } from '../models/avatar';
 import { SessionService } from '../services/api/session.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
@@ -68,6 +68,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private sessionService: SessionService,
 		private rulesService: RulesService,
 		private avatarService: AvatarService,
@@ -340,6 +341,25 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	allowRedirectSurvey(avatarIdx: number) {
 		this.sessionService.allowRedoSurvey(this.sessionId, avatarIdx).subscribe();
 		this.snackbarService.showSuccess(this.i18nService.instant('MASTER.SURVEY_REDO_ALLOWED'));
+	}
+
+	/** Asks for confirmation, then marks the session as ended and opens its results. */
+	endSession() {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			data: {
+				title: this.i18nService.instant('MASTER.END_SESSION_CONFIRM'),
+				message: this.i18nService.instant('MASTER.END_SESSION_CONFIRM_2'),
+				labelBtnConfirm: this.i18nService.instant('MASTER.END_SESSION'),
+				styleBtnConfirm: 'warn',
+			},
+		});
+		dialogRef.afterClosed().subscribe((results) => {
+			if (results === 'btnConfirm') {
+				this.sessionService.update(this.sessionId, { status: SESSION_STATUS.ENDED }).subscribe(() => {
+					this.router.navigate(['/results', this.sessionId]);
+				});
+			}
+		});
 	}
 
 	isBothGamesStopped(): boolean {

@@ -78,7 +78,10 @@
 		"GAME_TABLE_VIEW": "Vezi masa de joc",
 		"ALLOW_SURVEY_REDO": "Retrimite chestionarul",
 		"SURVEY_REDO_ALLOWED": "Chestionarul poate fi retrimis de jucător",
-		"WARNING_RESULTS": "Ambele partide trebuie terminate pentru a compara rezultatele"
+		"WARNING_RESULTS": "Ambele partide trebuie terminate pentru a compara rezultatele",
+		"END_SESSION": "Încheie sesiunea și arată rezultatele",
+		"END_SESSION_CONFIRM": "⚠️ Chiar vrei să închei sesiunea?",
+		"END_SESSION_CONFIRM_2": "Odată încheiată, nu va mai fi posibil să creezi sau să repornești o partidă."
 	},
 	"WARNING": {
 		"DUPLICATE_COLOR": "⚠️ Unele culori de păr sunt identice",

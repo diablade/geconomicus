@@ -206,6 +206,12 @@
 							</div>
 						</div>
 					</div>
+					<div *ngIf="isBothGamesStopped()" class="d-flex justify-content-center mt-3">
+						<button class="box-shadowed" mat-raised-button color="accent" (click)="endSession()">
+							<mat-icon>flag</mat-icon>
+							{{ 'MASTER.END_SESSION' | translate }}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
