@@ -48,7 +48,7 @@
 		"IF_PRISON": "Se il prestito non viene recuperato, massima prigione",
 		"PRISON_TIMER": "Durata massima dell'imprigionamento(in minuti):",
 		"GEN_LETTERS": "Numero di lettere utilizzate nel gioco",
-		"GEN_LETTERS_AUTO": "auto (numero giocatori + 1)",
+		"GEN_LETTERS_AUTO": "auto (numero giocatori * 1,25)",
 		"GEN_LETTERS_MANU": "manuale",
 		"GEN_LETTERS_IDENTICAL": "Numero di carte identiche generate",
 		"PLAYERS_3TO5": "(da 3 a 5 giocatori)",

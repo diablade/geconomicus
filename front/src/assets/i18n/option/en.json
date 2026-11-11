@@ -48,7 +48,7 @@
 		"IF_PRISON": "If loan not recovered, maximum prison",
 		"PRISON_TIMER": "Maximum prison duration (in minutes):",
 		"GEN_LETTERS": "Number of letters generated in game",
-		"GEN_LETTERS_AUTO": "auto (nb players + 1)",
+		"GEN_LETTERS_AUTO": "auto (nb players * 1,25)",
 		"GEN_LETTERS_MANU": "manual",
 		"GEN_LETTERS_IDENTICAL": "Identical number of cards generated in game and starting cards",
 		"PLAYERS_3TO5": "(3 to 5 players)",

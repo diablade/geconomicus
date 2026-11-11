@@ -48,7 +48,7 @@
 		"IF_PRISON": "Ako kredit nije naplaćen, maksimalna zatvor",
 		"PRISON_TIMER": "Maksimalno vreme zatvora (u minutima):",
 		"GEN_LETTERS": "Broj generisanih pisama u igri",
-		"GEN_LETTERS_AUTO": "auto (nb igrača + 1)",
+		"GEN_LETTERS_AUTO": "auto (nb igrača * 1,25)",
 		"GEN_LETTERS_MANU": "ručno",
 		"GEN_LETTERS_IDENTICAL": "Identičan broj karata generisanih u igri i početnim kartama",
 		"PLAYERS_3TO5": "(od 3 do 5 igrača)",

@@ -48,7 +48,7 @@
 		"IF_PRISON": "Se kredito ne reakirita, malliberigo maksimume",
 		"PRISON_TIMER": "Maksimuma daŭro de la restado en malliberejo (en minutoj):",
 		"GEN_LETTERS": "Nombro de literoj uzataj en la partio",
-		"GEN_LETTERS_AUTO": "aŭto (nombro de ludantoj + 1)",
+		"GEN_LETTERS_AUTO": "aŭto (nombro de ludantoj * 1,25)",
 		"GEN_LETTERS_MANU": "mana",
 		"GEN_LETTERS_IDENTICAL": "Nombro de generitaj identaj kartoj",
 		"PLAYERS_3TO5": "(de 3 ĝis 5 ludantoj)",

@@ -239,7 +239,7 @@
         "IF_PRISON": "Se o empréstimo não for recuperado, pena máxima",
         "PRISON_TIMER": "Duração máxima da prisão (em minutos):",
         "GEN_LETTERS": "Número de letras usadas na partida",
-        "GEN_LETTERS_AUTO": "auto (número de jogadores + 1)",
+        "GEN_LETTERS_AUTO": "auto (número de jogadores * 1,25)",
         "GEN_LETTERS_MANU": "manual",
         "GEN_LETTERS_IDENTICAL": "Número de cartas idênticas geradas",
         "PLAYERS_3TO5": "(de 3 a 5 jogadores)",

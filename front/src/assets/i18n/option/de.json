@@ -48,7 +48,7 @@
 		"IF_PRISON": "Wenn der Kredit nicht beglichen wird, maximale Gefängnisstrafe",
 		"PRISON_TIMER": "Maximale Dauer des Gefängnisstrafe (in Minuten) :",
 		"GEN_LETTERS": "Anzahl der im Spiel verwendeten Buchstaben",
-		"GEN_LETTERS_AUTO": "automatisch (Anzahl der Spieler + 1)",
+		"GEN_LETTERS_AUTO": "automatisch (Anzahl der Spieler * 1,25)",
 		"GEN_LETTERS_MANU": "manuell",
 		"GEN_LETTERS_IDENTICAL": "Anzahl der identischen Karten, die generiert werden",
 		"PLAYERS_3TO5": "(3 bis 5 Spieler)",

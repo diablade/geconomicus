@@ -48,7 +48,7 @@
 		"IF_PRISON": "Si el crédito no se recupera, pena máxima de prisión",
 		"PRISON_TIMER": "Duración máx. de la estancia en prisión (en minutos):",
 		"GEN_LETTERS": "Número de letras utilizadas en la partida",
-		"GEN_LETTERS_AUTO": "auto (número de jugadores +1)",
+		"GEN_LETTERS_AUTO": "auto (número de jugadores * 1,25)",
 		"GEN_LETTERS_MANU": "manual",
 		"GEN_LETTERS_IDENTICAL": "Número de cartas idénticas generadas",
 		"PLAYERS_3TO5": "(de 3 a 5 jugadores)",

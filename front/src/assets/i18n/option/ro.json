@@ -48,7 +48,7 @@
 		"IF_PRISON": "Dacă creditul nu este recuperat, închisoare maximă",
 		"PRISON_TIMER": "Timp maxim de închisoare (în minute):",
 		"GEN_LETTERS": "Numărul de scrisori generate în joc",
-		"GEN_LETTERS_AUTO": "auto (nb jucători + 1)",
+		"GEN_LETTERS_AUTO": "auto (nb jucători * 1,25)",
 		"GEN_LETTERS_MANU": "manual",
 		"GEN_LETTERS_IDENTICAL": "Numărul identic de cărți generate în joc și cărțile de început",
 		"PLAYERS_3TO5": "(de la 3 la 5 jucători)",

@@ -48,7 +48,7 @@
 		"IF_PRISON": "ローンが回収されない場合、最大の刑務所",
 		"PRISON_TIMER": "最大の刑務所の時間（分）：",
 		"GEN_LETTERS": "ゲーム内で生成された手紙の数",
-		"GEN_LETTERS_AUTO": "自動（プレイヤー数 + 1）",
+		"GEN_LETTERS_AUTO": "自動（プレイヤー数 * 1,25）",
 		"GEN_LETTERS_MANU": "手動",
 		"GEN_LETTERS_IDENTICAL": "ゲーム内で生成されたカードの数と開始カードの数が同じ",
 		"PLAYERS_3TO5": "(3人から5人のプレイヤー)",
