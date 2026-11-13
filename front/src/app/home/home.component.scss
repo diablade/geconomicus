@@ -1,32 +1,64 @@
 .geco {
 	width: 100%;
-	max-width: 400px;
+	max-width: 420px;
 	padding: 10px;
+	cursor: pointer;
 }
+
 .bulleHome {
 	font-size: 18px;
 }
 
-.img-top {
-	width: 150px;
+.guny {
+	cursor: pointer;
 }
 
 .img-bottom {
-	text-align: center;
 	max-width: 500px;
 	width: 100%;
+	filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
 }
 
 .home {
 	display: flex;
 	flex-direction: column;
-	align-content: center;
 	align-items: center;
-	z-index: 1;
+	gap: 1.5rem;
+	padding: 2rem 1rem 3rem;
+	max-width: 550px;
+	margin: 0 auto;
 }
 
-.bg {
-	background: #20072e; /* fallback for old browsers */
-	background: -webkit-linear-gradient(111.9deg, #19547b, #ffd89b); /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(111.9deg, #19547b, #ffd89b);
+.hero {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+}
+
+.frame-glass {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+	text-align: center;
+}
+
+.big-btn {
+	font-size: 1.1rem;
+	padding: 0.6rem 1.5rem !important;
+	height: auto !important;
+	border-radius: 14px !important;
+}
+
+.footer a {
+	color: #9ed8ff;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	[data-reveal],
+	[data-in-view] {
+		opacity: 0;
+	}
 }

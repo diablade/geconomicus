@@ -43,6 +43,7 @@
 		"html5-qrcode": "^2.3.8",
 		"kjua-svg": "^1.13.1",
 		"lodash-es": "^4.17.21",
+		"motion": "^14.10.1",
 		"ng2-charts": "^4.1.1",
 		"ngx-colors": "3.5.2",
 		"ngx-scanner-qrcode": "1.7.2",
