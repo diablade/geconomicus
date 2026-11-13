@@ -36,14 +36,16 @@ pipeline {
                     '''
                 }
                 sh 'echo "Version déployée:" && grep GECO_VERSION .env'
+                sh 'docker compose -p geco-qa -f geco-qa.yaml build'
                 sh 'docker compose -p geco-qa -f geco-qa.yaml down --remove-orphans'
-                sh 'docker compose -p geco-qa -f geco-qa.yaml up -d --build'
+                sh 'docker compose -p geco-qa -f geco-qa.yaml up -d'
             }
         }
     }
     post {
         always {
             sh 'rm -f .env'
+            sh 'docker image prune -f && docker builder prune -f'
         }
     }
 }
