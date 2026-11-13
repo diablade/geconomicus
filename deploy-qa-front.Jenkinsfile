@@ -41,29 +41,31 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                ftpPublisher alwaysPublishFromMaster: true,
-                    continueOnError: true,
-                    failOnError: true,
-                    publishers: [
-                        [
-                            configName: 'devGecoFTP',
-                            transfers: [
-                                [
-                                    asciiMode: false,
-                                    cleanRemote: true,
-                                    excludes: 'clear-cache.php',
-                                    flatten: false,
-                                    makeEmptyDirs: true,
-                                    noDefaultExcludes: false,
-                                    patternSeparator: '[, ]+',
-                                    remoteDirectory: '/www',
-                                    remoteDirectorySDF: false,
-                                    removePrefix: 'front/dist/front/',
-                                    sourceFiles: 'front/dist/front/**'
+                script {
+                    ftpPublisher alwaysPublishFromMaster: true,
+                        continueOnError: true,
+                        failOnError: true,
+                        publishers: [
+                            [
+                                configName: 'devGecoFTP',
+                                transfers: [
+                                    [
+                                        asciiMode: false,
+                                        cleanRemote: true,
+                                        excludes: 'clear-cache.php',
+                                        flatten: false,
+                                        makeEmptyDirs: true,
+                                        noDefaultExcludes: false,
+                                        patternSeparator: '[, ]+',
+                                        remoteDirectory: '/www',
+                                        remoteDirectorySDF: false,
+                                        removePrefix: 'front/dist/front/',
+                                        sourceFiles: 'front/dist/front/**'
+                                    ]
                                 ]
                             ]
                         ]
-                    ]
+                }
             }
         }
     }
