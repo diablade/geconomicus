@@ -1,3 +1,4 @@
 {
+  "name": "geconomicus",
   "workspaces": ["shared", "back", "front"]
 }
