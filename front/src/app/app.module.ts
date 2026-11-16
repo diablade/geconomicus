@@ -94,6 +94,7 @@ import { TableBoardComponent } from './table-board/table-board.component';
 import { EventsV2Component } from './events-v2/events-v2.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 import { ToolsComponent } from './tools/tools.component';
+import { ToolsExplainComponent } from './tools/tools-explain.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { OverlayComponent } from './components/overlay/overlay.component';
 import { PrisonComponent } from './components/prison/prison.component';
@@ -170,6 +171,7 @@ LOAD_WASM().subscribe();
         EventsV2Component,
         SessionResultsCompareComponent,
         ToolsComponent,
+        ToolsExplainComponent,
 		OverlayComponent,
 		PrisonComponent,
 		FakePlayerPanelComponent,

@@ -94,6 +94,7 @@ export class ToolsComponent {
 
 	optionsOpen = true;
 	methodOpen = false;
+	explainOpen = false;
 	logOpen = false;
 	tableOpen: { [chart: string]: boolean } = {};
 

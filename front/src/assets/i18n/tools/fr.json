@@ -270,6 +270,96 @@
 			"AVATAR": "avatar",
 			"ALIVE": "vivants",
 			"DECK_TOTAL": "total"
+		},
+		"EXPLAIN": {
+			"OPEN": "Simulation du joueur",
+			"TITLE": "Comment fonctionne le simulateur ?",
+			"INTRO": "Le simulateur fait jouer une partie entière par des joueurs automatiques, en quelques secondes. Il n'imite pas de vrais humains : il vérifie que les règles choisies donnent une partie jouable. Tout le monde arrive-t-il à produire ? Des cartes restent-elles bloquées ? Le rythme est-il trop lent ou trop rapide ?",
+			"YES": "oui",
+			"NO": "non",
+			"FLOW": {
+				"TITLE": "Le déroulé",
+				"SETUP": "Réglages",
+				"SETUP_SUB": "joueur·euses, monnaie, règles",
+				"GAME": "Partie simulée",
+				"GAME_SUB": "tour après tour",
+				"MEASURE": "Mesures",
+				"MEASURE_SUB": "relevées à chaque tour",
+				"VERDICT": "Verdict",
+				"VERDICT_SUB": "réussi ou à revoir",
+				"NOTE": "Un tour représente environ 30 secondes de jeu. Avec les mêmes réglages et la même graine, on rejoue exactement la même partie."
+			},
+			"ROUND": {
+				"TITLE": "Ce qui se passe à chaque tour, dans l'ordre",
+				"DEATHS": "Les morts prévues arrivent : la personne rend ses cartes et renaît avec une nouvelle main.",
+				"PRISON": "Celles et ceux dont la peine est finie sortent de prison.",
+				"DIVIDEND": "En monnaie libre, le dividende universel est versé à intervalle régulier.",
+				"CREDITS": "En monnaie dette, les crédits arrivés à échéance sont réglés.",
+				"PLAYERS": "Chaque joueur·euse joue son tour, dans un ordre tiré au hasard."
+			},
+			"TURN": {
+				"TITLE": "Ce que décide un joueur à son tour",
+				"START": "Début du tour",
+				"PRODUCE": "Produire",
+				"PRODUCE_SUB": "chaque carré complet, autant de fois que possible",
+				"TARGET": "Choisir le carré visé",
+				"TARGET_SUB": "celui dont on a déjà le plus de cartes",
+				"BUY_Q": "Une personne croisée vend la carte qui manque ?",
+				"BUY_Q_SUB": "à un prix qu'on peut payer, et elle accepte de vendre",
+				"BUY": "Acheter la carte",
+				"BUY_SUB": "puis produire si le carré est complet",
+				"CREDIT_Q": "Emprunter ?",
+				"CREDIT_Q_SUB": "monnaie dette seulement : il manque de l'argent, mais on pourra rembourser",
+				"CREDIT": "Emprunter à la banque",
+				"CREDIT_SUB": "un crédit avec intérêts",
+				"SEARCH": "Chercher",
+				"SEARCH_SUB": "le tour est perdu",
+				"RULE": "Acheter, emprunter ou chercher : une seule de ces actions par tour, puis on passe la main. Produire, vendre et rembourser ne coûtent pas de tour.",
+				"MEET": "À chaque tour, on ne croise que quelques personnes tirées au hasard (réglable). Les joueurs simulés n'ont ni mémoire ni plan : ils regardent seulement leur main et les personnes croisées.",
+				"REENTRY": "Main vide, ou plus rien à compléter ? On achète la carte la moins chère du plus petit niveau pour revenir dans le jeu."
+			},
+			"LEGEND": {
+				"DECISION": "Question",
+				"ACTION": "Action",
+				"LOST": "Rien ne se passe"
+			},
+			"SELL": {
+				"TITLE": "Quand accepte-t-on de vendre ?",
+				"INTRO": "C'est le seul calcul stratégique des joueurs simulés : on garde les cartes du carré qu'on vise.",
+				"Q_OTHER": "La carte ne sert pas au carré que vise le vendeur ?",
+				"Q_AHEAD": "L'acheteur a déjà plus de cartes de ce carré ?",
+				"Q_AHEAD_SUB": "la course est perdue de toute façon",
+				"Q_TIE": "Égalité, et l'acheteur est plus riche ?",
+				"SELLS": "Le vendeur vend",
+				"KEEPS": "Le vendeur garde la carte"
+			},
+			"DEBT": {
+				"TITLE": "Quand un crédit arrive à échéance",
+				"SETTLE": "On rembourse tout, s'il reste assez pour le prochain achat.",
+				"EXTEND": "Sinon, on paie seulement les intérêts et l'échéance est repoussée.",
+				"FAULT": "Si on ne peut même pas payer les intérêts : défaut de paiement, saisie des biens, et parfois la prison."
+			},
+			"LOST": {
+				"TITLE": "Pourquoi un tour est perdu",
+				"BROKE": "Pas assez d'argent : un vendeur était d'accord, mais c'était trop cher.",
+				"REFUSED": "Refus : la personne croisée garde la carte pour elle.",
+				"NOT_MET": "Pas croisé : quelqu'un a la carte, mais on ne l'a pas rencontré ce tour-ci.",
+				"NOWHERE": "Introuvable : plus personne n'a la carte, elle dort dans la pioche."
+			},
+			"CHECKS": {
+				"TITLE": "Ce qui est vérifié à la fin",
+				"NO_THROW": "Aucune production n'a échoué faute de cartes dans la pioche.",
+				"DEADLOCK": "À chaque tour, au moins un carré pouvait être assemblé avec les cartes en main.",
+				"EVERYONE": "Chaque joueur·euse a produit au moins une fois.",
+				"LATENT": "Il y a toujours eu assez de carrés possibles pour la taille de la table.",
+				"STRANDED": "Peu de cartes sont restées bloquées dans un carré impossible à finir.",
+				"TEMPO": "Le rythme de production reste proche d'une vraie partie observée.",
+				"TECH": "Le changement technologique arrive, mais pas trop tôt."
+			},
+			"LIMITS": {
+				"TITLE": "À garder en tête",
+				"BODY": "Les joueurs simulés ne négocient pas, ne mentent pas et ne s'entraident pas. Une vraie table est plus vivante : le simulateur sert à repérer des règles qui bloquent, pas à prédire une partie."
+			}
 		}
 	}
 }

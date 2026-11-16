@@ -270,6 +270,96 @@
 			"AVATAR": "avataro",
 			"ALIVE": "vivantaj",
 			"DECK_TOTAL": "tuto"
+		},
+		"EXPLAIN": {
+			"OPEN": "Simulado de ludanto",
+			"TITLE": "Kiel funkcias la simulilo?",
+			"INTRO": "La simulilo igas aŭtomatajn ludantojn ludi tutan ludon en kelkaj sekundoj. Ĝi ne imitas verajn homojn: ĝi kontrolas, ĉu la elektitaj reguloj donas ludeblan ludon. Ĉu ĉiuj sukcesas produkti? Ĉu kartoj restas blokitaj? Ĉu la ritmo estas tro malrapida aŭ tro rapida?",
+			"YES": "jes",
+			"NO": "ne",
+			"FLOW": {
+				"TITLE": "La paŝoj",
+				"SETUP": "Agordoj",
+				"SETUP_SUB": "ludantoj, mono, reguloj",
+				"GAME": "Simulita ludo",
+				"GAME_SUB": "vicon post vico",
+				"MEASURE": "Mezuroj",
+				"MEASURE_SUB": "prenitaj ĉe ĉiu vico",
+				"VERDICT": "Verdikto",
+				"VERDICT_SUB": "sukcesa aŭ revizienda",
+				"NOTE": "Unu vico egalas ĉirkaŭ 30 sekundojn da ludo. Kun la samaj agordoj kaj la sama greno, la ĝuste sama ludo ripetiĝas."
+			},
+			"ROUND": {
+				"TITLE": "Kio okazas en ĉiu vico, laŭorde",
+				"DEATHS": "La planitaj mortoj okazas: la ludanto redonas siajn kartojn kaj renaskiĝas kun nova mano.",
+				"PRISON": "Tiuj, kies puno finiĝis, eliras el la malliberejo.",
+				"DIVIDEND": "Kun libera mono, la universala dividendo estas pagata je regulaj intervaloj.",
+				"CREDITS": "Kun ŝuldo-mono, la kreditoj, kies limdato venis, estas traktataj.",
+				"PLAYERS": "Ĉiu ludanto ludas sian vicon, en hazarda ordo."
+			},
+			"TURN": {
+				"TITLE": "Kion ludanto decidas dum sia vico",
+				"START": "Komenco de la vico",
+				"PRODUCE": "Produkti",
+				"PRODUCE_SUB": "ĉiun kompletan kvadraton, kiom eble plej ofte",
+				"TARGET": "Elekti la celatan kvadraton",
+				"TARGET_SUB": "tiun, de kiu oni jam havas plej multe da kartoj",
+				"BUY_Q": "Ĉu renkontita persono vendas la mankantan karton?",
+				"BUY_Q_SUB": "je prezo, kiun oni povas pagi, kaj la vendanto konsentas",
+				"BUY": "Aĉeti la karton",
+				"BUY_SUB": "poste produkti, se la kvadrato estas kompleta",
+				"CREDIT_Q": "Prunti?",
+				"CREDIT_Q_SUB": "nur kun ŝuldo-mono: mankas mono, sed oni povos repagi",
+				"CREDIT": "Prunti de la banko",
+				"CREDIT_SUB": "kredito kun interezo",
+				"SEARCH": "Serĉi",
+				"SEARCH_SUB": "la vico estas perdita",
+				"RULE": "Aĉeti, prunti aŭ serĉi: nur unu el tiuj agoj por vico, poste venas la sekva ludanto. Produkti, vendi kaj repagi kostas neniun vicon.",
+				"MEET": "En ĉiu vico, oni renkontas nur kelkajn hazarde elektitajn personojn (agordeble). La simulitaj ludantoj havas nek memoron nek planon: ili rigardas nur sian manon kaj la renkontitajn personojn.",
+				"REENTRY": "Ĉu malplena mano, aŭ nenio plu kompletigenda? Oni aĉetas la plej malmultekostan karton de la plej malalta nivelo por reeniri la ludon."
+			},
+			"LEGEND": {
+				"DECISION": "Demando",
+				"ACTION": "Ago",
+				"LOST": "Nenio okazas"
+			},
+			"SELL": {
+				"TITLE": "Kiam oni konsentas vendi?",
+				"INTRO": "Jen la sola strategia kalkulo de la simulitaj ludantoj: oni konservas la kartojn de la celata kvadrato.",
+				"Q_OTHER": "Ĉu la karto ne utilas al la kvadrato, kiun celas la vendanto?",
+				"Q_AHEAD": "Ĉu la aĉetanto jam havas pli da kartoj de tiu kvadrato?",
+				"Q_AHEAD_SUB": "la konkurso estas ĉiuokaze perdita",
+				"Q_TIE": "Egaleco, kaj la aĉetanto estas pli riĉa?",
+				"SELLS": "La vendanto vendas",
+				"KEEPS": "La vendanto konservas la karton"
+			},
+			"DEBT": {
+				"TITLE": "Kiam kredito atingas sian limdaton",
+				"SETTLE": "Oni repagas ĉion, se restas sufiĉe por la sekva aĉeto.",
+				"EXTEND": "Alie, oni pagas nur la interezon kaj la limdato estas prokrastita.",
+				"FAULT": "Se oni eĉ ne povas pagi la interezon: pagodefaŭlto, konfisko de la havaĵoj, kaj foje malliberejo."
+			},
+			"LOST": {
+				"TITLE": "Kial vico estas perdita",
+				"BROKE": "Ne sufiĉe da mono: vendanto konsentis, sed ĝi estis tro multekosta.",
+				"REFUSED": "Rifuzo: la renkontita persono konservas la karton por si.",
+				"NOT_MET": "Ne renkontita: iu havas la karton, sed oni ne renkontis tiun personon en ĉi tiu vico.",
+				"NOWHERE": "Netrovebla: neniu plu havas la karton, ĝi kuŝas en la stako."
+			},
+			"CHECKS": {
+				"TITLE": "Kio estas kontrolata ĉe la fino",
+				"NO_THROW": "Neniu produktado malsukcesis pro manko de kartoj en la stako.",
+				"DEADLOCK": "En ĉiu vico, almenaŭ unu kvadrato povis esti kunmetita el la kartoj en mano.",
+				"EVERYONE": "Ĉiu ludanto produktis almenaŭ unufoje.",
+				"LATENT": "Ĉiam estis sufiĉe da eblaj kvadratoj por la grandeco de la tablo.",
+				"STRANDED": "Malmultaj kartoj restis blokitaj en kvadrato, kiun oni ne povas fini.",
+				"TEMPO": "La ritmo de produktado restas proksima al vera observita ludo.",
+				"TECH": "La teknologia ŝanĝo okazas, sed ne tro frue."
+			},
+			"LIMITS": {
+				"TITLE": "Memoru",
+				"BODY": "La simulitaj ludantoj ne negocas, ne mensogas kaj ne helpas unu la alian. Vera tablo estas pli vigla: la simulilo servas por trovi regulojn, kiuj blokas la ludon, ne por antaŭdiri ludon."
+			}
 		}
 	}
 }

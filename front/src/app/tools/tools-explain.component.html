@@ -1,0 +1,181 @@
+<div class="explain">
+	<h2>{{ 'TOOLS.EXPLAIN.TITLE' | translate }}</h2>
+	<p class="intro">{{ 'TOOLS.EXPLAIN.INTRO' | translate }}</p>
+
+	<h3>{{ 'TOOLS.EXPLAIN.FLOW.TITLE' | translate }}</h3>
+	<div class="pipeline">
+		<div class="node neutral">
+			<strong>{{ 'TOOLS.EXPLAIN.FLOW.SETUP' | translate }}</strong>
+			<span>{{ 'TOOLS.EXPLAIN.FLOW.SETUP_SUB' | translate }}</span>
+		</div>
+		<span class="arrow" aria-hidden="true">→</span>
+		<div class="node neutral">
+			<strong>{{ 'TOOLS.EXPLAIN.FLOW.GAME' | translate }}</strong>
+			<span>{{ 'TOOLS.EXPLAIN.FLOW.GAME_SUB' | translate }}</span>
+		</div>
+		<span class="arrow" aria-hidden="true">→</span>
+		<div class="node neutral">
+			<strong>{{ 'TOOLS.EXPLAIN.FLOW.MEASURE' | translate }}</strong>
+			<span>{{ 'TOOLS.EXPLAIN.FLOW.MEASURE_SUB' | translate }}</span>
+		</div>
+		<span class="arrow" aria-hidden="true">→</span>
+		<div class="node neutral">
+			<strong>{{ 'TOOLS.EXPLAIN.FLOW.VERDICT' | translate }}</strong>
+			<span>{{ 'TOOLS.EXPLAIN.FLOW.VERDICT_SUB' | translate }}</span>
+		</div>
+	</div>
+	<p class="note">{{ 'TOOLS.EXPLAIN.FLOW.NOTE' | translate }}</p>
+
+	<h3>{{ 'TOOLS.EXPLAIN.ROUND.TITLE' | translate }}</h3>
+	<ol class="steps">
+		<li>{{ 'TOOLS.EXPLAIN.ROUND.DEATHS' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.ROUND.PRISON' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.ROUND.DIVIDEND' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.ROUND.CREDITS' | translate }}</li>
+		<li class="highlight">{{ 'TOOLS.EXPLAIN.ROUND.PLAYERS' | translate }}</li>
+	</ol>
+
+	<h3>{{ 'TOOLS.EXPLAIN.TURN.TITLE' | translate }}</h3>
+	<div class="tree">
+		<div class="row">
+			<div class="node neutral">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.START' | translate }}</strong>
+			</div>
+		</div>
+		<div class="down" aria-hidden="true">↓</div>
+		<div class="row">
+			<div class="node action">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.PRODUCE' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.TURN.PRODUCE_SUB' | translate }}</span>
+			</div>
+		</div>
+		<div class="down" aria-hidden="true">↓</div>
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.TARGET' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.TURN.TARGET_SUB' | translate }}</span>
+			</div>
+		</div>
+		<div class="down" aria-hidden="true">↓</div>
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.BUY_Q' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.TURN.BUY_Q_SUB' | translate }}</span>
+			</div>
+			<div class="branch">
+				<span class="label">{{ 'TOOLS.EXPLAIN.YES' | translate }} →</span>
+				<div class="node action">
+					<strong>{{ 'TOOLS.EXPLAIN.TURN.BUY' | translate }}</strong>
+					<span>{{ 'TOOLS.EXPLAIN.TURN.BUY_SUB' | translate }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="down">↓ {{ 'TOOLS.EXPLAIN.NO' | translate }}</div>
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.CREDIT_Q' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.TURN.CREDIT_Q_SUB' | translate }}</span>
+			</div>
+			<div class="branch">
+				<span class="label">{{ 'TOOLS.EXPLAIN.YES' | translate }} →</span>
+				<div class="node action">
+					<strong>{{ 'TOOLS.EXPLAIN.TURN.CREDIT' | translate }}</strong>
+					<span>{{ 'TOOLS.EXPLAIN.TURN.CREDIT_SUB' | translate }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="down">↓ {{ 'TOOLS.EXPLAIN.NO' | translate }}</div>
+		<div class="row">
+			<div class="node lost">
+				<strong>{{ 'TOOLS.EXPLAIN.TURN.SEARCH' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.TURN.SEARCH_SUB' | translate }}</span>
+			</div>
+		</div>
+	</div>
+	<ul class="legend">
+		<li><span class="swatch decision"></span>{{ 'TOOLS.EXPLAIN.LEGEND.DECISION' | translate }}</li>
+		<li><span class="swatch action"></span>{{ 'TOOLS.EXPLAIN.LEGEND.ACTION' | translate }}</li>
+		<li><span class="swatch lost"></span>{{ 'TOOLS.EXPLAIN.LEGEND.LOST' | translate }}</li>
+	</ul>
+	<ul class="facts">
+		<li>{{ 'TOOLS.EXPLAIN.TURN.RULE' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.TURN.MEET' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.TURN.REENTRY' | translate }}</li>
+	</ul>
+
+	<h3>{{ 'TOOLS.EXPLAIN.SELL.TITLE' | translate }}</h3>
+	<p>{{ 'TOOLS.EXPLAIN.SELL.INTRO' | translate }}</p>
+	<div class="tree">
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.SELL.Q_OTHER' | translate }}</strong>
+			</div>
+			<div class="branch">
+				<span class="label">{{ 'TOOLS.EXPLAIN.YES' | translate }} →</span>
+				<div class="node action">
+					<strong>{{ 'TOOLS.EXPLAIN.SELL.SELLS' | translate }}</strong>
+				</div>
+			</div>
+		</div>
+		<div class="down">↓ {{ 'TOOLS.EXPLAIN.NO' | translate }}</div>
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.SELL.Q_AHEAD' | translate }}</strong>
+				<span>{{ 'TOOLS.EXPLAIN.SELL.Q_AHEAD_SUB' | translate }}</span>
+			</div>
+			<div class="branch">
+				<span class="label">{{ 'TOOLS.EXPLAIN.YES' | translate }} →</span>
+				<div class="node action">
+					<strong>{{ 'TOOLS.EXPLAIN.SELL.SELLS' | translate }}</strong>
+				</div>
+			</div>
+		</div>
+		<div class="down">↓ {{ 'TOOLS.EXPLAIN.NO' | translate }}</div>
+		<div class="row">
+			<div class="node decision">
+				<strong>{{ 'TOOLS.EXPLAIN.SELL.Q_TIE' | translate }}</strong>
+			</div>
+			<div class="branch">
+				<span class="label">{{ 'TOOLS.EXPLAIN.YES' | translate }} →</span>
+				<div class="node action">
+					<strong>{{ 'TOOLS.EXPLAIN.SELL.SELLS' | translate }}</strong>
+				</div>
+			</div>
+		</div>
+		<div class="down">↓ {{ 'TOOLS.EXPLAIN.NO' | translate }}</div>
+		<div class="row">
+			<div class="node lost">
+				<strong>{{ 'TOOLS.EXPLAIN.SELL.KEEPS' | translate }}</strong>
+			</div>
+		</div>
+	</div>
+
+	<h3>{{ 'TOOLS.EXPLAIN.DEBT.TITLE' | translate }}</h3>
+	<ol class="steps">
+		<li>{{ 'TOOLS.EXPLAIN.DEBT.SETTLE' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.DEBT.EXTEND' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.DEBT.FAULT' | translate }}</li>
+	</ol>
+
+	<h3>{{ 'TOOLS.EXPLAIN.LOST.TITLE' | translate }}</h3>
+	<ul class="facts">
+		<li>{{ 'TOOLS.EXPLAIN.LOST.BROKE' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.LOST.REFUSED' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.LOST.NOT_MET' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.LOST.NOWHERE' | translate }}</li>
+	</ul>
+
+	<h3>{{ 'TOOLS.EXPLAIN.CHECKS.TITLE' | translate }}</h3>
+	<ul class="checks">
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.NO_THROW' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.DEADLOCK' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.EVERYONE' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.LATENT' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.STRANDED' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.TEMPO' | translate }}</li>
+		<li>{{ 'TOOLS.EXPLAIN.CHECKS.TECH' | translate }}</li>
+	</ul>
+
+	<h3>{{ 'TOOLS.EXPLAIN.LIMITS.TITLE' | translate }}</h3>
+	<p>{{ 'TOOLS.EXPLAIN.LIMITS.BODY' | translate }}</p>
+</div>

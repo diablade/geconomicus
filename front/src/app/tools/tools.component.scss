@@ -67,6 +67,13 @@
 			flex: 1 1 auto;
 		}
 
+		.toggles {
+			display: flex;
+			flex: 1 0 100%;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+
 		.runfield {
 			width: 92px;
 			font-size: 0.85rem;

@@ -270,6 +270,96 @@
 			"AVATAR": "avatar",
 			"ALIVE": "alive",
 			"DECK_TOTAL": "total"
+		},
+		"EXPLAIN": {
+			"OPEN": "Player simulation",
+			"TITLE": "How does the simulator work?",
+			"INTRO": "The simulator has automatic players play a whole game in a few seconds. It does not imitate real people: it checks that the chosen rules make a playable game. Can everyone produce? Do cards get stuck? Is the pace too slow or too fast?",
+			"YES": "yes",
+			"NO": "no",
+			"FLOW": {
+				"TITLE": "How a run goes",
+				"SETUP": "Settings",
+				"SETUP_SUB": "players, money, rules",
+				"GAME": "Simulated game",
+				"GAME_SUB": "round after round",
+				"MEASURE": "Measures",
+				"MEASURE_SUB": "taken every round",
+				"VERDICT": "Verdict",
+				"VERDICT_SUB": "passed or needs work",
+				"NOTE": "A round stands for about 30 seconds of play. With the same settings and the same seed, the exact same game replays."
+			},
+			"ROUND": {
+				"TITLE": "What happens each round, in order",
+				"DEATHS": "Scheduled deaths happen: the player gives back their cards and is reborn with a new hand.",
+				"PRISON": "Players whose sentence is over leave prison.",
+				"DIVIDEND": "With free money, the universal dividend is paid at regular intervals.",
+				"CREDITS": "With debt money, credits that have come due are dealt with.",
+				"PLAYERS": "Every player takes their turn, in a random order."
+			},
+			"TURN": {
+				"TITLE": "What a player decides on their turn",
+				"START": "Start of the turn",
+				"PRODUCE": "Produce",
+				"PRODUCE_SUB": "every complete square, as many times as possible",
+				"TARGET": "Pick the square to aim for",
+				"TARGET_SUB": "the one they already hold the most cards of",
+				"BUY_Q": "Does someone they meet sell the missing card?",
+				"BUY_Q_SUB": "at a price they can pay, and the seller agrees",
+				"BUY": "Buy the card",
+				"BUY_SUB": "then produce if the square is complete",
+				"CREDIT_Q": "Borrow?",
+				"CREDIT_Q_SUB": "debt money only: short of money, but able to pay it back",
+				"CREDIT": "Borrow from the bank",
+				"CREDIT_SUB": "a credit with interest",
+				"SEARCH": "Search",
+				"SEARCH_SUB": "the turn is lost",
+				"RULE": "Buy, borrow or search: only one of these per turn, then the next player goes. Producing, selling and paying back cost no turn.",
+				"MEET": "Each round a player only meets a few people picked at random (adjustable). Simulated players have no memory and no plan: they only look at their hand and at the people they meet.",
+				"REENTRY": "Empty hand, or nothing left to complete? They buy the cheapest card of the lowest level to get back into the game."
+			},
+			"LEGEND": {
+				"DECISION": "Question",
+				"ACTION": "Action",
+				"LOST": "Nothing happens"
+			},
+			"SELL": {
+				"TITLE": "When does a player agree to sell?",
+				"INTRO": "This is the only strategic reasoning simulated players do: they keep the cards of the square they aim for.",
+				"Q_OTHER": "Is the card outside the square the seller aims for?",
+				"Q_AHEAD": "Does the buyer already hold more cards of that square?",
+				"Q_AHEAD_SUB": "the race is lost anyway",
+				"Q_TIE": "A tie, and the buyer is richer?",
+				"SELLS": "The seller sells",
+				"KEEPS": "The seller keeps the card"
+			},
+			"DEBT": {
+				"TITLE": "When a credit comes due",
+				"SETTLE": "The player pays it all back, if enough is left for the next purchase.",
+				"EXTEND": "Otherwise they pay only the interest and the due date is pushed back.",
+				"FAULT": "If they cannot even pay the interest: default, their goods are seized, and sometimes prison."
+			},
+			"LOST": {
+				"TITLE": "Why a turn is lost",
+				"BROKE": "Not enough money: a seller agreed, but it was too expensive.",
+				"REFUSED": "Refused: the person met keeps the card for themselves.",
+				"NOT_MET": "Not met: someone holds the card, but they did not meet this round.",
+				"NOWHERE": "Nowhere: nobody holds the card any more, it sits in the deck."
+			},
+			"CHECKS": {
+				"TITLE": "What is checked at the end",
+				"NO_THROW": "No production failed for lack of cards in the deck.",
+				"DEADLOCK": "Every round, at least one square could be put together from the cards in hand.",
+				"EVERYONE": "Every player produced at least once.",
+				"LATENT": "There were always enough possible squares for the size of the table.",
+				"STRANDED": "Few cards stayed stuck in a square that cannot be finished.",
+				"TEMPO": "The production pace stays close to a real observed game.",
+				"TECH": "The technological shift happens, but not too early."
+			},
+			"LIMITS": {
+				"TITLE": "Keep in mind",
+				"BODY": "Simulated players do not negotiate, lie or help each other. A real table is livelier: the simulator is for spotting rules that block the game, not for predicting a game."
+			}
 		}
 	}
 }

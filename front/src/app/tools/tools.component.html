@@ -78,22 +78,32 @@
 
 		<span class="spacer"></span>
 
-		<button mat-button (click)="optionsOpen = !optionsOpen">
-			{{ optionsOpen ? '▾' : '▸' }} {{ 'TOOLS.OPTIONS' | translate }}
-		</button>
-		<button mat-button (click)="methodOpen = !methodOpen">
-			{{ methodOpen ? '▾' : '▸' }} {{ 'TOOLS.NOTE.TITLE' | translate }}
-		</button>
 		<span class="elapsed" *ngIf="elapsedMs">{{ 'TOOLS.ELAPSED' | translate: { ms: elapsedMs } }}</span>
 		<button mat-raised-button color="primary" [disabled]="running" (click)="sessionRun()">
 			{{ running ? ('TOOLS.ACTION.RUNNING' | translate) : ('TOOLS.ACTION.RUN' | translate) }}
 		</button>
+
+		<div class="toggles">
+			<button mat-button (click)="explainOpen = !explainOpen">
+				{{ explainOpen ? '▾' : '▸' }} {{ 'TOOLS.EXPLAIN.OPEN' | translate }}
+			</button>
+			<button mat-button (click)="methodOpen = !methodOpen">
+				{{ methodOpen ? '▾' : '▸' }} {{ 'TOOLS.NOTE.TITLE' | translate }}
+			</button>
+			<button mat-button (click)="optionsOpen = !optionsOpen">
+				{{ optionsOpen ? '▾' : '▸' }} {{ 'TOOLS.OPTIONS' | translate }}
+			</button>
+		</div>
 	</div>
 
 	<p class="warn" *ngIf="alphabetOverflow > 0">
 		{{ 'TOOLS.ALPHABET_WARNING' | translate: { count: alphabetOverflow } }}
 	</p>
 	<p class="error" *ngIf="error">{{ error }}</p>
+
+	<section class="panel" *ngIf="explainOpen">
+		<app-tools-explain></app-tools-explain>
+	</section>
 
 	<section class="panel note" *ngIf="methodOpen">
 		<h2>{{ 'TOOLS.NOTE.TITLE' | translate }}</h2>
