@@ -43,6 +43,12 @@ pipeline {
         }
     }
     post {
+        success {
+            sh '''
+                VERSION=$(grep '^GECO_VERSION=' back/.env | cut -d= -f2)
+                docker images geco-api-qa --format '{{.Repository}}:{{.Tag}}' | grep -vxF "geco-api-qa:${VERSION}" | xargs -r docker rmi || true
+            '''
+        }
         always {
             sh 'rm -f .env'
             sh 'docker image prune -f && docker builder prune -f'

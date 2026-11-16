@@ -28,6 +28,7 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo:8.0.9-noble
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${GECO_DB_CONFIG_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${GECO_DB_CONFIG_PASSWORD}
@@ -36,6 +37,7 @@ services:
     networks:
       - backnet
   mongo-express:
+    profiles: ["admin"]
     image: mongo-express
     container_name: mongo-express
     ports:
