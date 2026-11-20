@@ -3,7 +3,7 @@
 		"TITLE": "Game table",
 		"RULES": "Rules",
 		"NO_DECKS": "No deck",
-		"BACK_TO_MASTER_BOARD": "Back to the game table",
+		"BACK_TO_MASTER_BOARD": "Back to the game",
 		"REFRESH_PLAYERS": "Refresh the players",
 		"ALIVE_PLAYERS": "Living players",
 		"DEAD_PLAYERS": "{{count}} dead players",

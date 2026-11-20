@@ -20,6 +20,7 @@
     "ALL": "Svi",
     "SAVE": "Sačuvaj",
     "DELETE": "Obriši",
+    "QUIT": "Izađi",
     "GAME": {
         "OPEN": "Otvoreno za pridruživanje",
         "PLAYING": "U toku",

@@ -134,10 +134,21 @@
 							mat-raised-button
 							color="accent"
 							[disabled]="vm.gameState.status === CREATED"
-							(click)="goToAdmin()">
+							[matMenuTriggerFor]="cockpitMenu">
 							<mat-icon class="outlined">table_eye</mat-icon>
 							{{ 'MASTER.GAME_TABLE_VIEW' | translate }}
+							<mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
 						</button>
+						<mat-menu #cockpitMenu="matMenu">
+							<button mat-menu-item [routerLink]="['/table', sessionId, gameStateId]">
+								<mat-icon>tab</mat-icon>
+								<span>{{ 'MASTER.OPEN_SAME_TAB' | translate }}</span>
+							</button>
+							<button mat-menu-item (click)="goToAdmin()">
+								<mat-icon>open_in_new</mat-icon>
+								<span>{{ 'MASTER.OPEN_NEW_TAB' | translate }}</span>
+							</button>
+						</mat-menu>
 						<button
 							*ngIf="vm.gameState.status !== STOPPED"
 							mat-icon-button

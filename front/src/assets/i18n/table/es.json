@@ -3,7 +3,7 @@
 		"TITLE": "Mesa de juego",
 		"RULES": "Reglas",
 		"NO_DECKS": "Ningún mazo",
-		"BACK_TO_MASTER_BOARD": "Volver a la mesa de juego",
+		"BACK_TO_MASTER_BOARD": "Volver a la partida",
 		"REFRESH_PLAYERS": "Actualizar los jugadores",
 		"ALIVE_PLAYERS": "Jugadores vivos",
 		"DEAD_PLAYERS": "{{count}} jugadores muertos",

@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { inject, NgModule } from '@angular/core';
+import { CanDeactivateFn, Routes, RouterModule, Router } from '@angular/router';
 import { PlayerBoardComponent } from './player-board/player-board.component';
 import { MasterBoardComponent } from './master-board/master-board.component';
 import { HomeComponent } from './home/home.component';
@@ -18,18 +18,21 @@ import { TableBoardComponent } from './table-board/table-board.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 import { ToolsComponent } from './tools/tools.component';
 
+/** Refuses browser back/forward (swipe gesture, hardware back button) on player and animator pages, so navigation only follows the app's own buttons. */
+const blockBrowserHistory: CanDeactivateFn<unknown> = () => inject(Router).getCurrentNavigation()?.trigger !== 'popstate';
+
 const routes: Routes = [
 	{ path: '', component: HomeComponent },
 	{ path: 'history', component: HistoryGamesComponent, title: 'TAB_TITLE.HISTORY' },
-	{ path: 'session/:sessionId', component: LobbyMasterComponent, title: 'TAB_TITLE.LOBBY_MASTER' },
+	{ path: 'session/:sessionId', component: LobbyMasterComponent, title: 'TAB_TITLE.LOBBY_MASTER', canDeactivate: [blockBrowserHistory] },
 	{ path: 'join/:sessionId', component: JoinComponent, title: 'TAB_TITLE.JOIN' },
-	{ path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent, data: { avatarTitle: true } },
-	{ path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent, data: { avatarTitle: true } },
-	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent, data: { avatarTitle: true } },
+	{ path: 'avatar/:sessionId/:avatarIdx', component: LobbyPlayerComponent, data: { avatarTitle: true }, canDeactivate: [blockBrowserHistory] },
+	{ path: 'avatar/:sessionId/:avatarIdx/settings', component: AvatarSettingsComponent, data: { avatarTitle: true }, canDeactivate: [blockBrowserHistory] },
+	{ path: 'player/:sessionId/:avatarIdx/:gameStateId/:playerStateIdx', component: PlayerBoardComponent, data: { avatarTitle: true }, canDeactivate: [blockBrowserHistory] },
 	{ path: 'fake', component: PlayerBoardComponent, data: { fake: true, avatarTitle: true } },
-	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent, title: 'TAB_TITLE.SURVEY' },
-	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent, title: 'TAB_TITLE.GAME_MASTER' },
-	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent, title: 'TAB_TITLE.COCKPIT' },
+	{ path: 'survey/:sessionId/:gameStateId/:avatarIdx/:edit', component: SurveyComponent, title: 'TAB_TITLE.SURVEY', canDeactivate: [blockBrowserHistory] },
+	{ path: 'master/:sessionId/:gameStateId', component: MasterBoardComponent, title: 'TAB_TITLE.GAME_MASTER', canDeactivate: [blockBrowserHistory] },
+	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent, title: 'TAB_TITLE.COCKPIT', canDeactivate: [blockBrowserHistory] },
 	{ path: 'results/:sessionId', component: SessionResultsCompareComponent, title: 'TAB_TITLE.RESULTS' },
 	{ path: 'tools', component: ToolsComponent, title: 'TAB_TITLE.TOOLS' },
 	{ path: 'module/galileo', component: ModuleGalileoComponent, title: 'TAB_TITLE.GALILEO' },
@@ -48,7 +51,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	imports: [RouterModule.forRoot(routes)],
+	imports: [RouterModule.forRoot(routes, { canceledNavigationResolution: 'computed' })],
 	exports: [RouterModule],
 })
 export class AppRoutingModule {}

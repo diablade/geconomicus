@@ -20,6 +20,7 @@
     "ALL": "All",
     "SAVE": "Save",
     "DELETE": "Delete",
+    "QUIT": "Leave",
     "GAME": {
         "OPEN": "Open to join",
         "PLAYING": "In progress",

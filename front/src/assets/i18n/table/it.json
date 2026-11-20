@@ -3,7 +3,7 @@
 		"TITLE": "Tavolo da gioco",
 		"RULES": "Regole",
 		"NO_DECKS": "Nessun mazzo",
-		"BACK_TO_MASTER_BOARD": "Torna al tavolo da gioco",
+		"BACK_TO_MASTER_BOARD": "Torna alla partita",
 		"REFRESH_PLAYERS": "Aggiornare i giocatori",
 		"ALIVE_PLAYERS": "Giocatori in vita",
 		"DEAD_PLAYERS": "{{count}} giocatori morti",

@@ -20,6 +20,7 @@
 	"ALL": "Todos",
 	"SAVE": "Salvar",
 	"DELETE": "Excluir",
+	"QUIT": "Sair",
 	"GAME": {
 		"OPEN": "Partida aberta, para se juntar",
 		"PLAYING": "Em progresso",

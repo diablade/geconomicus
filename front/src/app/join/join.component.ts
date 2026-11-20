@@ -39,7 +39,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 		if (!name || this.joining) return;
 		this.joining = true;
 		this.sessionService.join(this.sessionId, name).subscribe({
-			next: (data: any) => this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings']),
+			next: (data: any) => this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings'], { replaceUrl: true }),
 			error: () => (this.joining = false),
 		});
 	}

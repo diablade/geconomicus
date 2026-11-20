@@ -3,7 +3,7 @@
 		"TITLE": "ゲームテーブル",
 		"RULES": "ルール",
 		"NO_DECKS": "デッキがありません",
-		"BACK_TO_MASTER_BOARD": "ゲームテーブルに戻る",
+		"BACK_TO_MASTER_BOARD": "ゲームに戻る",
 		"REFRESH_PLAYERS": "プレイヤーを更新",
 		"ALIVE_PLAYERS": "生存プレイヤー",
 		"DEAD_PLAYERS": "死亡プレイヤー{{count}}人",
