@@ -4,7 +4,7 @@
 		class="bgFixedLayer"
 		[ngClass]="avatar!.boardConf"
 		[ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)"></div>
-	<div class="settings-scroll aboveBg">
+	<div class="settings-scroll aboveBg" [class.light-bg]="isLightBoard(avatar!.boardConf, avatar!.boardColor)">
 		<div class="settings">
 			<header class="topbar">
 				<h1 class="title shadowed">{{ 'AVATAR.YOUR_AVATAR' | translate }}</h1>

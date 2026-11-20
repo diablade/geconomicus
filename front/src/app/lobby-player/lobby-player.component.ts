@@ -6,7 +6,7 @@ import { GAME_TYPE, GAME_STATUS } from '@geco/shared';
 import { MatDialog } from '@angular/material/dialog';
 import { I18nService } from '../services/i18n.service';
 import { faPencil, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
-import { getBackgroundStyle } from '../services/avatarTools';
+import { getBackgroundStyle, isLightBoard } from '../services/avatarTools';
 import { formatAvatarCode } from '../services/avatarCode';
 import { AudioService } from '../services/audio.service';
 import { SnackbarService } from '../services/snackbar.service';
@@ -22,6 +22,7 @@ import { LocalStorageService } from '../services/local-storage/local-storage.ser
 })
 export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	protected readonly getBackgroundStyle = getBackgroundStyle;
+	protected readonly isLightBoard = isLightBoard;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly GAME_INITIALIZED = GAME_STATUS.INITIALIZED;
 	protected readonly GAME_CREATED = GAME_STATUS.CREATED;

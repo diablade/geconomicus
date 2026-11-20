@@ -283,13 +283,30 @@ html {
 	}
 
 	&-glass {
-		color: white;
+		color: var(--ink, white);
 		padding: 1.5rem;
 		border-radius: 24px;
 		border: 1px solid rgba(255, 255, 255, 0.18);
 		background: rgba(255, 255, 255, 0.07);
 		backdrop-filter: blur(16px);
 		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+	}
+}
+
+.light-bg {
+	--ink: #1d1d1d;
+	--ink-muted: rgba(0, 0, 0, 0.62);
+	--line: rgba(0, 0, 0, 0.22);
+
+	.frame-glass {
+		background: rgba(255, 255, 255, 0.45);
+		border-color: rgba(255, 255, 255, 0.6);
+	}
+
+	.whiteBtn {
+		border-color: rgba(0, 0, 0, 0.35) !important;
+		color: #1d1d1d !important;
+		background: rgba(255, 255, 255, 0.5) !important;
 	}
 }
 

@@ -1,5 +1,5 @@
-$panel-border: rgba(255, 255, 255, 0.16);
-$text-muted: rgba(255, 255, 255, 0.7);
+$panel-border: var(--line, rgba(255, 255, 255, 0.16));
+$text-muted: var(--ink-muted, rgba(255, 255, 255, 0.7));
 
 :host {
 	display: block;
@@ -20,7 +20,7 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
-	color: white;
+	color: var(--ink, white);
 }
 
 .topbar {
@@ -123,12 +123,12 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	padding: 0.5rem 1rem;
 	border-radius: 14px;
 	background: rgba(255, 255, 255, 0.08);
-	border: 1px dashed rgba(255, 255, 255, 0.35);
+	border: 1px dashed var(--line, rgba(255, 255, 255, 0.35));
 	color: $text-muted;
 	font-size: 0.875rem;
 
 	b {
-		color: white;
+		color: var(--ink, white);
 		font-size: 1.5rem;
 		letter-spacing: 0.12em;
 		font-variant-numeric: tabular-nums;
@@ -182,7 +182,7 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	border-radius: 12px;
 	font-size: 0.75rem;
 	font-weight: 600;
-	color: rgb(var(--tone-rgb));
+	color: var(--ink, rgb(var(--tone-rgb)));
 	background: rgba(var(--tone-rgb), 0.14);
 	border: 1px solid rgba(var(--tone-rgb), 0.35);
 }
@@ -213,7 +213,7 @@ $text-muted: rgba(255, 255, 255, 0.7);
 }
 
 .ghost-btn {
-	color: white !important;
+	color: var(--ink, white) !important;
 	border-color: $panel-border !important;
 }
 
@@ -256,7 +256,7 @@ $text-muted: rgba(255, 255, 255, 0.7);
 		}
 
 		&:focus-visible {
-			outline: 2px solid rgba(255, 255, 255, 0.8);
+			outline: 2px solid var(--ink, rgba(255, 255, 255, 0.8));
 			outline-offset: 2px;
 		}
 	}
@@ -283,6 +283,6 @@ $text-muted: rgba(255, 255, 255, 0.7);
 }
 
 .round-btn:disabled {
-	background: rgba(255, 255, 255, 0.12) !important;
-	color: rgba(255, 255, 255, 0.55) !important;
+	background: var(--line, rgba(255, 255, 255, 0.12)) !important;
+	color: var(--ink-muted, rgba(255, 255, 255, 0.55)) !important;
 }

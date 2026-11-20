@@ -11,6 +11,7 @@ import {
 	getBackgroundStyle,
 	getRandomBackgroundBoard,
 	getRandomAvatar,
+	isLightBoard,
 	hairPalette,
 	skinPalette,
 	boardPalette,
@@ -24,6 +25,7 @@ import { SnackbarService } from '../services/snackbar.service';
 })
 export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	protected readonly boardPalette = boardPalette;
+	protected readonly isLightBoard = isLightBoard;
 	protected readonly properties = properties;
 	protected readonly skinPalette = skinPalette;
 	protected readonly hairPalette = hairPalette;

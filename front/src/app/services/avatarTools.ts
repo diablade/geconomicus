@@ -109,6 +109,20 @@ export function getBackgroundStyle(boardConf = '', boardColor = '#8e6beeab') {
     return {};
 }
 
+const LIGHT_BOARDS = ['bgWood', 'bgGradien2', 'bgGradien3', 'bgGradien5', 'bgGradien6'];
+
+/** Tells whether a game-table background is light enough to need dark text on top of it; a custom color counts as light only when mostly opaque and bright. */
+export function isLightBoard(boardConf = '', boardColor = ''): boolean {
+	if (boardConf !== 'bgCustom') return LIGHT_BOARDS.includes(boardConf);
+	const hex = boardColor.match(/^#([0-9a-f]{6}|[0-9a-f]{8})$/i)?.[1];
+	const channels = hex
+		? hex.match(/../g)!.map((pair, i) => parseInt(pair, 16) / (i === 3 ? 255 : 1))
+		: boardColor.match(/[\d.]+/g)?.map(Number);
+	if (!channels || channels.length < 3) return false;
+	const [r, g, b, alpha = 1] = channels;
+	return alpha >= 0.5 && (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6;
+}
+
 export function getRandomInt(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }

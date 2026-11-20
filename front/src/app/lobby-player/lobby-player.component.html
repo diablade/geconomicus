@@ -3,7 +3,7 @@
 		class="bgFixedLayer"
 		[ngClass]="vm.avatar?.boardConf"
 		[ngStyle]="getBackgroundStyle(vm.avatar?.boardConf, vm.avatar?.boardColor)"></div>
-	<div class="lobby-scroll aboveBg">
+	<div class="lobby-scroll aboveBg" [class.light-bg]="isLightBoard(vm.avatar?.boardConf, vm.avatar?.boardColor)">
 		<div class="lobby">
 			<header class="topbar">
 				<img class="geco glow" src="./assets/images/geconomicus.png" alt="" />
