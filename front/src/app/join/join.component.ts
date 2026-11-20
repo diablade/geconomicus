@@ -13,6 +13,7 @@ export class JoinComponent implements OnInit, OnDestroy {
 	sessionId = "";
 	name = "";
 	fromUnknownAvatar = false;
+	joining = false;
 	private subscription: Subscription | undefined;
 
 	constructor(private route: ActivatedRoute, private router: Router, private sessionService: SessionService, private i18n: I18nService) {
@@ -32,11 +33,14 @@ export class JoinComponent implements OnInit, OnDestroy {
 			this.subscription.unsubscribe()
 	}
 
+	/** Creates the player's avatar once, then opens its settings; a double tap cannot create two avatars. */
 	join() {
-		if (this.name) {
-			this.sessionService.join(this.sessionId, this.name).subscribe((data: any) => {
-				this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings']);
-			});
-		}
+		const name = this.name.trim();
+		if (!name || this.joining) return;
+		this.joining = true;
+		this.sessionService.join(this.sessionId, name).subscribe({
+			next: (data: any) => this.router.navigate(['avatar', this.sessionId, data.avatarIdx, 'settings']),
+			error: () => (this.joining = false),
+		});
 	}
 }

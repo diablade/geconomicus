@@ -1,25 +1,37 @@
 <div class="bgGradien7 bgFixedLayer"></div>
-<div class="h-100 aboveBg">
-	<div class="join h-100 overflow-auto">
-		<h1 class="shadowed geconomicusFont">{{ 'JOIN.TITLE' | translate }}</h1>
+<div class="join-scroll aboveBg">
+	<div class="join">
+		<h1 class="title shadowed geconomicusFont">{{ 'JOIN.TITLE' | translate }}</h1>
+
 		<!--  GUNY  -->
-		<div class="mt-4">
+		<div class="guny-block">
 			<bulle [pointer]="true" [contents]="['JOIN.GUNY_INTRO', 'JOIN.GUNY_INTRO2']"></bulle>
-		</div>
-		<div class="mt-1 col-md-12 text-center">
 			<img class="guny halo" src="./assets/images/guny.png" alt="" />
 		</div>
-		<div class="newAvatarNotice mt-2" *ngIf="fromUnknownAvatar">
-			{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
-		</div>
-		<div>
-			<mat-form-field appearance="fill">
-				<mat-label>{{ 'JOIN.NAME_PROMPT' | translate }}</mat-label>
-				<input matInput required [(ngModel)]="name" (keydown.enter)="join()" />
-			</mat-form-field>
-		</div>
-		<button mat-raised-button class="big-btn box-shadowed" color="primary" data-pop [disabled]="!name" (click)="join()">
-			{{ 'JOIN.GO_BUTTON' | translate }}
-		</button>
+
+		<form class="panel" (ngSubmit)="join()">
+			<div class="notice" *ngIf="fromUnknownAvatar">
+				{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
+			</div>
+			<label class="field-label" for="joinName">{{ 'JOIN.NAME_PROMPT' | translate }}</label>
+			<input
+				id="joinName"
+				name="name"
+				class="field"
+				type="text"
+				autocomplete="nickname"
+				enterkeyhint="go"
+				required
+				[(ngModel)]="name" />
+			<button
+				mat-raised-button
+				type="submit"
+				class="big-btn box-shadowed go-btn"
+				color="primary"
+				data-pop
+				[disabled]="!name.trim() || joining">
+				{{ 'JOIN.GO_BUTTON' | translate }}
+			</button>
+		</form>
 	</div>
 </div>
