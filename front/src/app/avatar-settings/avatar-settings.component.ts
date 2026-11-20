@@ -27,6 +27,16 @@ export class AvatarSettingsComponent implements OnInit, OnDestroy {
 	protected readonly properties = properties;
 	protected readonly skinPalette = skinPalette;
 	protected readonly hairPalette = hairPalette;
+	protected readonly boardGradients = [1, 2, 3, 4, 5, 6, 7].map((n) => 'bgGradien' + n);
+	protected readonly traits = [
+		{ key: 'hair', label: 'AVATAR.HAIR', step: (up: boolean) => this.changeHair(up) },
+		{ key: 'eyes', label: 'AVATAR.EYES', step: (up: boolean) => this.changeEyes(up) },
+		{ key: 'eyebrows', label: 'AVATAR.EYEBROWS', step: (up: boolean) => this.changeEyeBrows(up) },
+		{ key: 'mouth', label: 'AVATAR.MOUTH', step: (up: boolean) => this.changeMouth(up) },
+		{ key: 'glasses', label: 'AVATAR.GLASSES', step: (up: boolean) => this.changeGlasses(up) },
+		{ key: 'earrings', label: 'AVATAR.EARRINGS', step: (up: boolean) => this.changeEarrings(up) },
+		{ key: 'features', label: 'AVATAR.FEATURES', step: (up: boolean) => this.changeFeature(up) },
+	];
 	getBackgroundStyle = getBackgroundStyle;
 	getRandomBackgroundBoard = getRandomBackgroundBoard;
 	sessionId = '';

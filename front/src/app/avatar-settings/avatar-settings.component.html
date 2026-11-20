@@ -4,254 +4,126 @@
 		class="bgFixedLayer"
 		[ngClass]="avatar!.boardConf"
 		[ngStyle]="getBackgroundStyle(avatar!.boardConf, avatar!.boardColor)"></div>
-	<div class="settings w-100 h-100 p-2 aboveBg">
-		<app-language-btn [short]="true" [cornerScreen]="true"></app-language-btn>
-		<avatar [avatar]="avatar!" [width]="'180px'" [height]="'180px'" class="mx-auto"></avatar>
-		<div class="text-center mt-2">
-			<mat-form-field appearance="fill" *ngIf="avatar">
-				<mat-label>{{ 'AVATAR.NAME' | translate }}</mat-label>
-				<input matInput [(ngModel)]="avatar.name" (keydown.enter)="saveAndClose()" />
-			</mat-form-field>
-		</div>
-		<div class="items-box-container" *ngIf="avatar">
-			<div class="items-box" [ngStyle]="{ 'border-color': hairColor }">
-				<div class="items p-1">
-					<div class="item w-100 mt-2">
-						<div class="optionsLabel-withColor img-thumbnail">{{ 'AVATAR.SKIN' | translate }}</div>
-						<ngx-colors
-							class=""
-							[palette]="skinPalette"
-							[acceptLabel]="'SAVE' | translate"
-							[cancelLabel]="'CANCEL' | translate"
-							ngx-colors-trigger
-							(change)="changeSkin()"
-							[(ngModel)]="skin"></ngx-colors>
-						<div class="flex-grow-1 text-center">
-							<button data-pop (click)="randomize()" class="box-shadowed" mat-raised-button color="warn">
-								<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
-							</button>
-						</div>
-					</div>
-					<div class="item">
-						<div class="optionsLabel-withColor img-thumbnail">{{ 'AVATAR.HAIR' | translate }}</div>
-						<ngx-colors
-							[palette]="hairPalette"
-							[acceptLabel]="'SAVE' | translate"
-							[cancelLabel]="'CANCEL' | translate"
-							class=""
-							ngx-colors-trigger
-							(change)="changeHairColor()"
-							[(ngModel)]="hairColor"></ngx-colors>
-						<button data-pop
-							(click)="changeHair(false)"
+	<div class="settings-scroll aboveBg">
+		<div class="settings">
+			<header class="topbar">
+				<h1 class="title shadowed">{{ 'AVATAR.YOUR_AVATAR' | translate }}</h1>
+				<app-language-btn [short]="true"></app-language-btn>
+			</header>
+
+			<section class="preview">
+				<div class="avatar-wrap">
+					<avatar [avatar]="avatar!" [width]="'150px'" [height]="'150px'"></avatar>
+					<button
+						data-pop
+						class="random-btn box-shadowed"
+						mat-mini-fab
+						color="warn"
+						[matTooltip]="'AVATAR.RANDOMIZE' | translate"
+						[attr.aria-label]="'AVATAR.RANDOMIZE' | translate"
+						(click)="randomize()">
+						<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
+					</button>
+				</div>
+			</section>
+
+			<section class="name-block">
+				<label class="field-label shadowed" for="avatarName">{{ 'AVATAR.NAME' | translate }}</label>
+				<input
+					id="avatarName"
+					class="field"
+					type="text"
+					autocomplete="nickname"
+					enterkeyhint="done"
+					[(ngModel)]="avatar.name"
+					(keydown.enter)="saveAndClose()" />
+			</section>
+
+			<section class="panel colors">
+				<div class="color-row">
+					<span class="row-label">{{ 'AVATAR.SKIN' | translate }}</span>
+					<ngx-colors
+						[palette]="skinPalette"
+						[acceptLabel]="'SAVE' | translate"
+						[cancelLabel]="'CANCEL' | translate"
+						ngx-colors-trigger
+						(change)="changeSkin()"
+						[(ngModel)]="skin"></ngx-colors>
+				</div>
+				<div class="color-row">
+					<span class="row-label">{{ 'AVATAR.HAIR' | translate }}</span>
+					<ngx-colors
+						[palette]="hairPalette"
+						[acceptLabel]="'SAVE' | translate"
+						[cancelLabel]="'CANCEL' | translate"
+						ngx-colors-trigger
+						(change)="changeHairColor()"
+						[(ngModel)]="hairColor"></ngx-colors>
+				</div>
+			</section>
+
+			<section class="panel traits">
+				<div class="trait" *ngFor="let trait of traits">
+					<span class="row-label">{{ trait.label | translate }}</span>
+					<div class="stepper">
+						<button
+							data-pop
 							class="box-shadowed"
 							mat-mini-fab
 							color="accent"
-							aria-label="previous">
+							[attr.aria-label]="('AVATAR.PREVIOUS' | translate) + ' ' + (trait.label | translate)"
+							(click)="trait.step(false)">
 							<fa-icon [icon]="faChevronLeft"></fa-icon>
 						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.hair + 1 }}/{{ properties.hair.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeHair(true)"
+						<span class="trait-value">
+							{{ $any(avatar)[trait.key] + 1 }}/{{ properties[trait.key].default.length }}
+						</span>
+						<button
+							data-pop
 							class="box-shadowed"
 							mat-mini-fab
 							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EYES' | translate }}</div>
-						<button data-pop
-							(click)="changeEyes(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.eyes + 1 }}/{{ properties.eyes.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeEyes(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EYEBROWS' | translate }}</div>
-						<button data-pop
-							(click)="changeEyeBrows(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeEyeBrows(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.MOUTH' | translate }}</div>
-						<button data-pop
-							(click)="changeMouth(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.mouth + 1 }}/{{ properties.mouth.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeMouth(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.GLASSES' | translate }}</div>
-						<button data-pop
-							(click)="changeGlasses(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.glasses + 1 }}/{{ properties.glasses.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeGlasses(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EARRINGS' | translate }}</div>
-						<button data-pop
-							(click)="changeEarrings(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.earrings + 1 }}/{{ properties.earrings.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeEarrings(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
-							<fa-icon [icon]="faChevronRight"></fa-icon>
-						</button>
-					</div>
-					<div class="item">
-						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.FEATURES' | translate }}</div>
-						<button data-pop
-							(click)="changeFeature(false)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="previous">
-							<fa-icon [icon]="faChevronLeft"></fa-icon>
-						</button>
-						<div class="img-thumbnail m-2 optionsLabelNumber">
-							{{ avatar.features + 1 }}/{{ properties.features.default.length }}
-						</div>
-						<button data-pop
-							(click)="changeFeature(true)"
-							class="box-shadowed"
-							mat-mini-fab
-							color="accent"
-							aria-label="next">
+							[attr.aria-label]="('AVATAR.NEXT' | translate) + ' ' + (trait.label | translate)"
+							(click)="trait.step(true)">
 							<fa-icon [icon]="faChevronRight"></fa-icon>
 						</button>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="d-flex align-items-center flex-column" *ngIf="avatar">
-			<div class="d-flex align-items-start flex-column">
-				<div class="d-flex justify-content-center align-items-center mt-2">
-					<div class="optionsLabel img-thumbnail">{{ 'AVATAR.GAME_TABLE' | translate }}</div>
-					<div class="d-flex flex-row boardConf gap-1">
-						<mat-radio-group class="gap-1" [(ngModel)]="avatar.boardConf">
-							<mat-radio-button value="bgWood">
-								<img class="thumbnail-bg box-shadowed" src="assets/images/wood.png" />
-							</mat-radio-button>
-							<mat-radio-button value="bgGreen">
-								<img class="thumbnail-bg box-shadowed" src="assets/images/green.png" />
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien1">
-								<div class="thumbnail-bg box-shadowed bgGradien1"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien2">
-								<div class="thumbnail-bg box-shadowed bgGradien2"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien3">
-								<div class="thumbnail-bg box-shadowed bgGradien3"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien4">
-								<div class="thumbnail-bg box-shadowed bgGradien4"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien5">
-								<div class="thumbnail-bg box-shadowed bgGradien5"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien6">
-								<div class="thumbnail-bg box-shadowed bgGradien6"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgGradien7">
-								<div class="thumbnail-bg box-shadowed bgGradien7"></div>
-							</mat-radio-button>
-							<mat-radio-button value="bgCustom">
-								<ngx-colors
-									class="box-shadowed"
-									[acceptLabel]="'SAVE' | translate"
-									[cancelLabel]="'CANCEL' | translate"
-									[palette]="boardPalette"
-									ngx-colors-trigger
-									[format]="'string'"
-									[(ngModel)]="avatar.boardColor"></ngx-colors>
-							</mat-radio-button>
-						</mat-radio-group>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="d-flex mt-2 mb-2 justify-content-evenly">
-			<button data-pop (click)="close()" class="big-btn box-shadowed" mat-raised-button color="accent">
-				{{ 'CANCEL' | translate }}
-			</button>
-			<button data-pop (click)="saveAndClose()" class="big-btn box-shadowed" mat-raised-button color="primary">
-				{{ 'SAVE' | translate }}
-			</button>
+			</section>
+
+			<section class="panel board">
+				<h2 class="row-label">{{ 'AVATAR.GAME_TABLE' | translate }}</h2>
+				<mat-radio-group class="board-grid" [(ngModel)]="avatar.boardConf">
+					<mat-radio-button value="bgWood">
+						<img class="thumbnail-bg" src="assets/images/wood.png" alt="" />
+					</mat-radio-button>
+					<mat-radio-button value="bgGreen">
+						<img class="thumbnail-bg" src="assets/images/green.png" alt="" />
+					</mat-radio-button>
+					<mat-radio-button *ngFor="let gradient of boardGradients" [value]="gradient">
+						<div class="thumbnail-bg" [ngClass]="gradient"></div>
+					</mat-radio-button>
+					<mat-radio-button value="bgCustom">
+						<ngx-colors
+							class="thumbnail-custom"
+							[acceptLabel]="'SAVE' | translate"
+							[cancelLabel]="'CANCEL' | translate"
+							[palette]="boardPalette"
+							ngx-colors-trigger
+							[format]="'string'"
+							[(ngModel)]="avatar.boardColor"></ngx-colors>
+					</mat-radio-button>
+				</mat-radio-group>
+			</section>
+
+			<footer class="actions">
+				<button data-pop (click)="close()" class="big-btn box-shadowed" mat-raised-button color="accent">
+					{{ 'CANCEL' | translate }}
+				</button>
+				<button data-pop (click)="saveAndClose()" class="big-btn box-shadowed" mat-raised-button color="primary">
+					{{ 'SAVE' | translate }}
+				</button>
+			</footer>
 		</div>
 	</div>
 </ng-container>
