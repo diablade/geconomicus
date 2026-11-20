@@ -76,6 +76,7 @@ html {
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont3';
 	src: url('/assets/fonts/HVD_Comic_Serif_Pro.woff2') format('woff2');
@@ -89,36 +90,42 @@ html {
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont5';
 	src: url('/assets/fonts/KRONIKA_.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont6';
 	src: url('/assets/fonts/MulledWineSeason-Medium.woff2') format('woff2');
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont7';
 	src: url('/assets/fonts/ComicHelvetic_Medium.woff2') format('woff2');
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont8';
 	src: url('/assets/fonts/ComickBook_Simple.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont9';
 	src: url('/assets/fonts/Hey Comic.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'GecoFont10';
 	src: url('/assets/fonts/BadComic-Regular.ttf') format('truetype');
@@ -136,19 +143,19 @@ html {
 
 	text-shadow: //TOP
 		0px -1.5px 0px black,
-		//TOP RIGHT
+			//TOP RIGHT
 		1.5px -1.5px 0px black,
-		//RIGHT
+			//RIGHT
 		1.5px 0px 0px black,
-		//BOTTOM
+			//BOTTOM
 		0px 1.5px 0px black,
-		//BOTTOM RIGHT
+			//BOTTOM RIGHT
 		1.5px 1.5px 0px black,
-		//BOTTOM LEFT
+			//BOTTOM LEFT
 		-1.5px 1.5px 0px black,
-		//LEFT
+			//LEFT
 		-1.5px 0px 0px black,
-		//TOP LEFT
+			//TOP LEFT
 		-1.5px -1.5px 0px black;
 }
 
@@ -170,8 +177,7 @@ html {
 
 .glow {
 	// animation: shadow-rotate 2s linear infinite;
-	filter: drop-shadow(0px 0px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77))
-		drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
+	filter: drop-shadow(0px 0px 2px rgb(255, 230, 0)) drop-shadow(-2px 0px 2px rgba(255, 28, 141, 0.77)) drop-shadow(0px 2px 2px rgba(149, 36, 255, 0.77)) drop-shadow(2px 0px 2px rgba(27, 31, 253, 0.77));
 }
 
 // @property --glow-angle {
@@ -225,21 +231,21 @@ html {
 	color: white;
 	text-shadow: //TOP
 		0px -1.5px 0px black,
-		//TOP RIGHT
+			//TOP RIGHT
 		1.5px -1.5px 0px black,
-		//RIGHT
+			//RIGHT
 		1.5px 0px 0px black,
-		//BOTTOM
+			//BOTTOM
 		0px 1.5px 0px black,
-		//BOTTOM RIGHT
+			//BOTTOM RIGHT
 		1.5px 1.5px 0px black,
-		//BOTTOM LEFT
+			//BOTTOM LEFT
 		-1.5px 1.5px 0px black,
-		//LEFT
+			//LEFT
 		-1.5px 0px 0px black,
-		//TOP LEFT
+			//TOP LEFT
 		-1.5px -1.5px 0px black,
-		//la trainé vers en bas à droite
+			//la trainé vers en bas à droite
 		1px 1px 0px black,
 		2px 2px 0px black,
 		3px 3px 0px black,
@@ -263,10 +269,12 @@ html {
 		border: 1px solid #dfdfdf;
 		background-color: rgba(255, 255, 255, 0.4);
 	}
+
 	&-dark {
 		border: solid 2px black !important;
 		background: rgba(0, 0, 0, 0.1);
 	}
+
 	&-glass {
 		color: white;
 		padding: 1.5rem;
@@ -302,24 +310,24 @@ html {
 	color: white;
 	text-shadow: //TOP
 		0px -1.5px 0px black,
-		//TOP RIGHT
+			//TOP RIGHT
 		1.5px -1.5px 0px black,
-		//RIGHT
+			//RIGHT
 		1.5px 0px 0px black,
-		//BOTTOM
+			//BOTTOM
 		0px 1.5px 0px black,
-		//BOTTOM RIGHT
+			//BOTTOM RIGHT
 		1.5px 1.5px 0px black,
-		//BOTTOM LEFT
+			//BOTTOM LEFT
 		-1.5px 1.5px 0px black,
-		//LEFT
+			//LEFT
 		-1.5px 0px 0px black,
-		//TOP LEFT
+			//TOP LEFT
 		-1.5px -1.5px 0px black;
 }
+
 .ombreText {
-	text-shadow:
-	//la trainé vers en bas à droite
+	text-shadow: //la trainé vers en bas à droite
 		1px 1px 0px black,
 		2px 2px 0px black,
 		3px 3px 0px black,
@@ -459,9 +467,8 @@ html {
 
 /* twemoji */
 .twemoji {
-	font-family:
-		'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
-		'EmojiOne Color', 'Android Emoji', sans-serif;
+	font-family: 'Twemoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI', 'Apple Color Emoji', 'Noto Color Emoji',
+	'EmojiOne Color', 'Android Emoji', sans-serif;
 }
 
 /* Target landscape mode */
@@ -604,21 +611,26 @@ mat-chip {
 .bgWood {
 	background-image: url('/assets/images/woodJapAlt.jpg');
 }
+
 .bgGreen {
 	background-image: url('/assets/images/green-carpet.jpg');
 }
+
 .bgGradien1 {
 	@extend .dots;
 	background: linear-gradient(109.6deg, rgba(83, 94, 161, 1) 44.5%, rgba(188, 14, 107, 1) 100.2%);
 }
+
 .bgGradien2 {
 	@extend .dots;
 	background: linear-gradient(111.9deg, #19547b, #ffd89b);
 }
+
 .bgGradien3 {
 	@extend .dots;
 	background: linear-gradient(to bottom, #fddf62 0%, #fc9088 50%, #ff59d1 100%);
 }
+
 .bgGradien4 {
 	@extend .dots;
 	background: conic-gradient(
@@ -628,6 +640,7 @@ mat-chip {
 		rgba(255, 175, 123, 1) 97.2%
 	);
 }
+
 .bgGradien5 {
 	@extend .dots;
 	background: linear-gradient(
@@ -641,17 +654,18 @@ mat-chip {
 		rgba(83, 0, 166, 1) 88.1%
 	);
 }
+
 .bgGradien6 {
 	@extend .dots;
 	background: linear-gradient(20.5deg, #ffd89b 0%, #fc9088 50%, #090152 100%);
 }
+
 .bgGradien7 {
 	@extend .dots;
-	background:
-		radial-gradient(ellipse at 20% 30%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),
-		radial-gradient(ellipse at 80% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
-		radial-gradient(ellipse at 50% 90%, rgba(100, 255, 150, 0.5) 0%, transparent 40%),
-		radial-gradient(ellipse at 100% 0%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
+	background: radial-gradient(ellipse at 20% 20%, rgba(255, 100, 200, 0.6) 0%, transparent 50%),
+	radial-gradient(ellipse at 90% 70%, rgba(100, 200, 255, 0.6) 0%, transparent 50%),
+	radial-gradient(ellipse at 30% 110%, rgba(100, 255, 150, 0.6) 0%, transparent 40%),
+	radial-gradient(ellipse at 100% 10%, rgba(255, 227, 100, 0.6) 0%, transparent 30%), #0a0a1a;
 }
 
 .bgFixedLayer {
@@ -670,6 +684,7 @@ mat-chip {
 // credit-chip detail popover: let the app-credit card breathe inside the mat-menu panel
 .creditDetailMenu.mat-mdc-menu-panel {
 	max-width: none;
+
 	.mat-mdc-menu-content {
 		padding: 0;
 	}
