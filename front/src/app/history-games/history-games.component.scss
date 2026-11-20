@@ -87,11 +87,6 @@ $text-muted: rgba(255, 255, 255, 0.65);
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.75rem;
-	border-radius: 20px;
-	background: rgba(15, 12, 35, 0.55);
-	border: 1px solid $glass-border;
-	backdrop-filter: blur(16px);
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .field {
@@ -262,20 +257,11 @@ $text-muted: rgba(255, 255, 255, 0.65);
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
-	padding: 1rem 1.25rem 1.25rem;
-	border-radius: 16px;
-	background: $glass-bg;
-	border: 1px solid $glass-border;
-	backdrop-filter: blur(16px);
-	box-shadow:
-		inset 0 3px 0 rgba(var(--status-rgb, 255, 255, 255), 0.9),
-		0 10px 30px rgba(0, 0, 0, 0.25);
-	transition: transform 150ms ease-out, border-color 150ms ease-out, background-color 150ms ease-out;
+	border-top: 3px solid rgba(var(--status-rgb, 255, 255, 255), 0.9);
+	transition: transform 150ms ease-out;
 
 	&:hover {
 		transform: translateY(-2px);
-		background: $glass-bg-strong;
-		border-color: rgba(255, 255, 255, 0.25);
 	}
 }
 
@@ -350,17 +336,10 @@ $text-muted: rgba(255, 255, 255, 0.65);
 }
 
 .legacy {
-	border-radius: 20px;
-	background: $glass-bg;
-	border: 1px solid $glass-border;
-	backdrop-filter: blur(16px);
-	overflow: hidden;
-
 	summary {
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 1rem 1.25rem;
 		font-size: 1.25rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -368,10 +347,6 @@ $text-muted: rgba(255, 255, 255, 0.65);
 
 		&::-webkit-details-marker {
 			display: none;
-		}
-
-		&:hover {
-			background: $glass-bg;
 		}
 	}
 
@@ -388,7 +363,7 @@ $text-muted: rgba(255, 255, 255, 0.65);
 .legacy-list {
 	list-style: none;
 	margin: 0;
-	padding: 0 0.75rem 0.75rem;
+	padding: 1rem 0 0;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;

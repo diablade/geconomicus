@@ -22,7 +22,7 @@
 			</div>
 		</header>
 
-		<section class="toolbar">
+		<section class="frame frame-glass toolbar">
 			<label class="field search">
 				<fa-icon [icon]="faMagnifyingGlass"></fa-icon>
 				<input
@@ -80,7 +80,7 @@
 
 		<section class="grid">
 			<article
-				class="session-card"
+				class="frame frame-glass session-card"
 				*ngFor="let session of filteredSessions; trackBy: trackById"
 				[ngClass]="getStatusClass(session.status)">
 				<div class="card-head">
@@ -149,7 +149,7 @@
 			</article>
 		</section>
 
-		<details *ngIf="games?.length" class="legacy" [open]="legacyOpen" (toggle)="legacyOpen = $any($event.target).open">
+		<details *ngIf="games?.length" class="frame frame-glass legacy" [open]="legacyOpen" (toggle)="legacyOpen = $any($event.target).open">
 			<summary>
 				<fa-icon class="chevron" [icon]="faChevronRight"></fa-icon>
 				{{ 'HISTORY.LEGACY_TITLE' | translate }}

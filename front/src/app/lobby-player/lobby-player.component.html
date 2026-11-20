@@ -20,7 +20,7 @@
 				</div>
 			</section>
 
-			<section class="panel player">
+			<section class="frame frame-glass player">
 				<button
 					class="avatar-btn"
 					type="button"
@@ -40,7 +40,7 @@
 
 			<section class="rounds" *ngIf="vm.session?.gamesRules?.length">
 				<article
-					class="panel round"
+					class="frame frame-glass round"
 					*ngFor="let game of vm.session?.gamesRules"
 					[ngClass]="ROUND_STATUS[game.gameStatus || GAME_NONE].tone">
 					<coin
@@ -85,7 +85,7 @@
 				</article>
 			</section>
 
-			<section class="panel scan">
+			<section class="frame frame-glass scan">
 				<span class="scan-label">{{ 'AVATAR.SYS_SCAN' | translate }}</span>
 				<div class="segmented" role="radiogroup" [attr.aria-label]="'AVATAR.SYS_SCAN' | translate">
 					<button
@@ -110,7 +110,7 @@
 			</section>
 			<!-- /* : 'blackBtn'" */ -->
 
-			<section class="panel tools">
+			<section class="frame frame-glass tools">
 				<app-notice-btn
 					[amountCardsForProd]="vm.session?.gamesRules?.[0]?.amountCardsForProd || 0"
 					[stroked]="true"

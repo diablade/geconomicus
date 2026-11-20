@@ -9,7 +9,7 @@
 			<img class="guny halo" src="./assets/images/guny.png" alt="" />
 		</div>
 
-		<form class="panel" (ngSubmit)="join()">
+		<form class="frame frame-glass join-form" (ngSubmit)="join()">
 			<div class="notice" *ngIf="fromUnknownAvatar">
 				{{ 'JOIN.UNKNOWN_AVATAR_NOTICE' | translate }}
 			</div>

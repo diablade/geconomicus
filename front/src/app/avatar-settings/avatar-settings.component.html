@@ -11,7 +11,7 @@
 				<app-language-btn [short]="true"></app-language-btn>
 			</header>
 
-			<section class="preview">
+			<section class="frame frame-glass preview">
 				<div class="avatar-wrap">
 					<avatar [avatar]="avatar!" [width]="'150px'" [height]="'150px'"></avatar>
 					<button
@@ -27,8 +27,8 @@
 				</div>
 			</section>
 
-			<section class="name-block">
-				<label class="field-label shadowed" for="avatarName">{{ 'AVATAR.NAME' | translate }}</label>
+			<section class="frame frame-glass name-block">
+				<label class="field-label" for="avatarName">{{ 'AVATAR.NAME' | translate }}</label>
 				<input
 					id="avatarName"
 					class="field"
@@ -39,7 +39,7 @@
 					(keydown.enter)="saveAndClose()" />
 			</section>
 
-			<section class="panel colors">
+			<section class="frame frame-glass colors">
 				<div class="color-row">
 					<span class="row-label">{{ 'AVATAR.SKIN' | translate }}</span>
 					<ngx-colors
@@ -62,7 +62,7 @@
 				</div>
 			</section>
 
-			<section class="panel traits">
+			<section class="frame frame-glass traits">
 				<div class="trait" *ngFor="let trait of traits">
 					<span class="row-label">{{ trait.label | translate }}</span>
 					<div class="stepper">
@@ -91,7 +91,7 @@
 				</div>
 			</section>
 
-			<section class="panel board">
+			<section class="frame frame-glass board">
 				<h2 class="row-label">{{ 'AVATAR.GAME_TABLE' | translate }}</h2>
 				<mat-radio-group class="board-grid" [(ngModel)]="avatar.boardConf">
 					<mat-radio-button value="bgWood">
@@ -116,7 +116,7 @@
 				</mat-radio-group>
 			</section>
 
-			<footer class="actions">
+			<footer class="frame frame-glass actions">
 				<button data-pop (click)="close()" class="big-btn box-shadowed" mat-raised-button color="accent">
 					{{ 'CANCEL' | translate }}
 				</button>

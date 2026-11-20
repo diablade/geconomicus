@@ -61,7 +61,7 @@
 				<img class="guny halo" src="./assets/images/guny.png" alt="" />
 			</div>
 
-			<aside class="panel session-panel">
+			<aside class="frame frame-glass session-panel">
 				<h2 class="panel-title">
 					<mat-icon>info_outline</mat-icon>
 					{{ 'MASTER.SESSION_INFO' | translate }}
@@ -132,7 +132,7 @@
 				<div class="rounds">
 					<article
 						*ngFor="let rule of session.gamesRules"
-						class="panel round"
+						class="frame frame-glass round"
 						[ngClass]="ROUND_STATUS[rule.gameStatus || NONE].tone">
 						<coin
 							[coinImage]="'./assets/images/' + rule.typeMoney + '.png'"
@@ -217,7 +217,7 @@
 		</section>
 
 		<!-- PLAYERS  -->
-		<section class="panel players">
+		<section class="frame frame-glass players">
 			<h2 class="players-title">
 				<span class="shadowed geconomicusFont">{{ 'MASTER.USERS_CONNECTED' | translate }}</span>
 				<span class="count">{{ session.avatars.length }}</span>
