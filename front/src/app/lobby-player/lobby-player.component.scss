@@ -292,3 +292,8 @@ $text-muted: rgba(255, 255, 255, 0.7);
 		animation: none;
 	}
 }
+
+.round-btn:disabled {
+	background: rgba(255, 255, 255, 0.12) !important;
+	color: rgba(255, 255, 255, 0.55) !important;
+}
