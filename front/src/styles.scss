@@ -310,6 +310,82 @@ html {
 	}
 }
 
+.tone-waiting {
+	--tone-rgb: 203, 213, 225;
+}
+
+.tone-open {
+	--tone-rgb: 52, 211, 153;
+}
+
+.tone-playing {
+	--tone-rgb: 96, 165, 250;
+}
+
+.tone-paused {
+	--tone-rgb: 251, 191, 36;
+}
+
+.tone-ended {
+	--tone-rgb: 248, 113, 113;
+}
+
+.tone-stripe {
+	border-top: 3px solid rgba(var(--tone-rgb, 255, 255, 255), 0.9) !important;
+}
+
+.status-dot {
+	flex-shrink: 0;
+	width: 8px;
+	height: 8px;
+	border-radius: 9999px;
+	background: rgb(var(--tone-rgb, 255, 255, 255));
+	box-shadow: 0 0 8px rgba(var(--tone-rgb, 255, 255, 255), 0.8);
+}
+
+.status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	flex-shrink: 0;
+	padding: 0.125rem 0.625rem;
+	border-radius: 12px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--ink, rgb(var(--tone-rgb, 255, 255, 255)));
+	background: rgba(var(--tone-rgb, 255, 255, 255), 0.14);
+	border: 1px solid rgba(var(--tone-rgb, 255, 255, 255), 0.35);
+
+	&::before {
+		content: '';
+		@extend .status-dot;
+	}
+}
+
+.tone-open .status-dot,
+.tone-playing .status-dot,
+.tone-open.status-dot,
+.tone-playing.status-dot,
+.tone-open .status-pill::before,
+.tone-playing .status-pill::before,
+.status-pill.tone-open::before,
+.status-pill.tone-playing::before {
+	animation: tone-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tone-pulse {
+	50% {
+		opacity: 0.35;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.status-dot,
+	.status-pill::before {
+		animation: none !important;
+	}
+}
+
 .blur {
 	backdrop-filter: blur(20px);
 }

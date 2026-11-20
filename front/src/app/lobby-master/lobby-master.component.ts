@@ -19,6 +19,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { SnackbarService } from '../services/snackbar.service';
 import { IO, GAME_TYPE, SESSION_STATUS, GAME_STATUS } from '@geco/shared';
 import { I18nService } from '../services/i18n.service';
+import { MASTER_GAME_STATUS } from '../services/gameStatus';
+import { confirmQuit } from '../dialogs/confirm-dialog/confirm-quit';
 import { AudioService } from '../services/audio.service';
 import * as _ from 'lodash-es';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
@@ -48,14 +50,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 	protected readonly PAUSED = GAME_STATUS.PAUSED;
 	protected readonly STOPPED = GAME_STATUS.STOPPED;
 	protected readonly MIN_PLAYERS = 6;
-	protected readonly ROUND_STATUS: Record<string, { key: string; tone: string }> = {
-		[GAME_STATUS.NONE]: { key: 'MASTER.GAME_NOT_PLAYED', tone: 'waiting' },
-		[GAME_STATUS.CREATED]: { key: 'MASTER.GAME_OPEN', tone: 'open' },
-		[GAME_STATUS.INITIALIZED]: { key: 'MASTER.GAME_OPEN', tone: 'open' },
-		[GAME_STATUS.PLAYING]: { key: 'MASTER.GAME_IN_PROGRESS', tone: 'playing' },
-		[GAME_STATUS.PAUSED]: { key: 'MASTER.GAME_PAUSED', tone: 'paused' },
-		[GAME_STATUS.STOPPED]: { key: 'MASTER.GAME_ENDED', tone: 'ended' },
-	};
+	protected readonly ROUND_STATUS = MASTER_GAME_STATUS;
 	protected readonly environment = environment;
 	protected readonly faTrashCan = faTrashCan;
 	protected readonly faQrcode = faQrcode;
@@ -149,6 +144,11 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 				url: this.createAvatarUrl(avatarIdx),
 			},
 		});
+	}
+
+	/** Asks the animator to confirm, then leaves the lobby for the home page. */
+	quit() {
+		confirmQuit(this.dialog, this.router, 'DIALOG.QUIT.MASTER');
 	}
 
 	refresh() {

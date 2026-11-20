@@ -41,7 +41,7 @@
 					[class.active]="filterByStatus === option.value"
 					[ngClass]="option.value ? getStatusClass(option.value) : ''"
 					(click)="filterByStatus = option.value">
-					<span *ngIf="option.value" class="dot"></span>
+					<span *ngIf="option.value" class="status-dot"></span>
 					{{ option.label | translate }}
 					<span class="seg-count">{{ option.value ? statusCounts[option.value] || 0 : sessions?.length ?? 0 }}</span>
 				</button>
@@ -80,13 +80,12 @@
 
 		<section class="grid">
 			<article
-				class="frame frame-glass session-card"
+				class="frame frame-glass tone-stripe session-card"
 				*ngFor="let session of filteredSessions; trackBy: trackById"
 				[ngClass]="getStatusClass(session.status)">
 				<div class="card-head">
 					<h2 class="name" [title]="session.name">{{ session.name }}</h2>
-					<span class="status">
-						<span class="dot"></span>
+					<span class="status-pill">
 						{{ getStatus(session.status) | translate }}
 					</span>
 				</div>
@@ -160,8 +159,7 @@
 					<div class="legacy-main">
 						<div class="card-head">
 							<span class="name" [title]="game.name">{{ game.name }}</span>
-							<span class="status">
-								<span class="dot"></span>
+							<span class="status-pill">
 								{{ getStatusLegacy(game.status) | translate }}
 							</span>
 						</div>

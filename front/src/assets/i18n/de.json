@@ -79,6 +79,12 @@
             "TITLE": "Bestätigen?",
             "MESSAGE": "Bestätigst du?"
         },
+        "QUIT": {
+            "TITLE": "Verlassen?",
+            "PLAYER": "Du kehrst zur Startseite zurück. Mit deinem Code findest du deinen Platz im Spiel wieder.",
+            "MASTER": "Sie kehren zur Startseite zurück. Die Sitzung bleibt im Verlauf verfügbar.",
+            "DEMO": "Demo verlassen und zur Startseite zurückkehren?"
+        },
         "CREATE_GAME": {
             "TITLE": "Spiel erstellen",
             "FIELD1": "Spiel benennen",

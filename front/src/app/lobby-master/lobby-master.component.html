@@ -10,7 +10,7 @@
 				[matTooltip]="'REFRESH' | translate"
 				(click)="refresh()" />
 			<div class="topbar-actions">
-				<button class="box-shadowed blur" mat-stroked-button color="warn" routerLink="/">
+				<button class="box-shadowed blur" mat-stroked-button color="warn" (click)="quit()">
 					<mat-icon>logout</mat-icon>
 					{{ 'QUIT' | translate }}
 				</button>
@@ -136,7 +136,7 @@
 				<div class="rounds">
 					<article
 						*ngFor="let rule of session.gamesRules"
-						class="frame frame-glass round"
+						class="frame frame-glass tone-stripe round"
 						[ngClass]="ROUND_STATUS[rule.gameStatus || NONE].tone">
 						<coin
 							[coinImage]="'./assets/images/' + rule.typeMoney + '.png'"
@@ -147,8 +147,7 @@
 						<div class="money shadowed">
 							{{ (rule.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate }}
 						</div>
-						<div class="round-status">
-							<span class="dot"></span>
+						<div class="status-pill">
 							{{ ROUND_STATUS[rule.gameStatus || NONE].key | translate }}
 						</div>
 						<div class="round-actions">

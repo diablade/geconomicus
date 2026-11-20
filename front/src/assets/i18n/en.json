@@ -79,6 +79,12 @@
             "TITLE": "Confirm?",
             "MESSAGE": "Are you sure?"
         },
+        "QUIT": {
+            "TITLE": "Leave?",
+            "PLAYER": "You will go back to the home page. Your code lets you get your seat back in the game.",
+            "MASTER": "You will go back to the home page. The session stays available in the history.",
+            "DEMO": "Leave the demo and go back to the home page?"
+        },
         "CREATE_GAME": {
             "TITLE": "Create a game",
             "FIELD1": "Name the game",

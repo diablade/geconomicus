@@ -1,5 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { confirmQuit } from '../dialogs/confirm-dialog/confirm-quit';
 import confetti from 'canvas-confetti';
 import { GAME_TYPE } from '@geco/shared';
 import { AudioService } from '../services/audio.service';
@@ -38,6 +40,7 @@ export class FakePlayerPanelComponent {
 	private i18nService = inject(I18nService);
 	private snackbarService = inject(SnackbarService);
 	private dialog = inject(MatDialog);
+	private router = inject(Router);
 
 	readonly soundKeys = SOUND_KEYS;
 	readonly hapticTiers = HAPTIC_TIERS;
@@ -79,6 +82,11 @@ export class FakePlayerPanelComponent {
 	toggleAutoSeizure(): void {
 		this.autoSeizure = !this.autoSeizure;
 		this.reload();
+	}
+
+	/** Asks to confirm, then leaves the demo board for the home page. */
+	quit(): void {
+		confirmQuit(this.dialog, this.router, 'DIALOG.QUIT.DEMO');
 	}
 
 	private reload(): void {

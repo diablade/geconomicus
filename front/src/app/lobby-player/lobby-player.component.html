@@ -40,7 +40,7 @@
 
 			<section class="rounds" *ngIf="vm.session?.gamesRules?.length">
 				<article
-					class="frame frame-glass round"
+					class="frame frame-glass tone-stripe round"
 					*ngFor="let game of vm.session?.gamesRules"
 					[ngClass]="ROUND_STATUS[game.gameStatus || GAME_NONE].tone">
 					<coin
@@ -50,8 +50,7 @@
 						[height]="'88px'"
 						[coinImage]="'./assets/images/' + game.typeMoney + '.png'"></coin>
 					<div class="money shadowed">{{ (game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate }}</div>
-					<div class="round-status">
-						<span class="dot"></span>
+					<div class="status-pill">
 						{{ ROUND_STATUS[game.gameStatus || GAME_NONE].key | translate }}
 					</div>
 					<button
@@ -132,7 +131,7 @@
 					<mat-icon class="outlined">refresh</mat-icon>
 					{{ 'REFRESH' | translate }}
 				</button>
-				<button class="blur box-shadowed" color="warn" mat-stroked-button routerLink="/">
+				<button class="blur box-shadowed" color="warn" mat-stroked-button (click)="quit()">
 					<mat-icon class="outlined">logout</mat-icon>
 					{{ 'QUIT' | translate }}
 				</button>

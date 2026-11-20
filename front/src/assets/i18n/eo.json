@@ -79,6 +79,12 @@
 			"TITLE": "Konfirmi?",
 			"MESSAGE": "Ĉu vi certas?"
 		},
+		"QUIT": {
+			"TITLE": "Ĉu eliri?",
+			"PLAYER": "Vi revenos al la hejmpaĝo. Via kodo ebligas retrovi vian lokon en la ludo.",
+			"MASTER": "Vi revenos al la hejmpaĝo. La seanco restas disponebla en la historio.",
+			"DEMO": "Ĉu eliri el la demo kaj reveni al la hejmpaĝo?"
+		},
 		"CREATE_GAME": {
 			"TITLE": "Krei partion",
 			"FIELD1": "Nomi la partion",

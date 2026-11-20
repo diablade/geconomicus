@@ -79,6 +79,12 @@
             "TITLE": "Potvrdi?",
             "MESSAGE": "Da li si siguran?"
         },
+        "QUIT": {
+            "TITLE": "Izaći?",
+            "PLAYER": "Vratićeš se na početnu stranu. Tvoj kod ti omogućava da se vratiš na svoje mesto u igri.",
+            "MASTER": "Vratićete se na početnu stranu. Sesija ostaje dostupna u istoriji.",
+            "DEMO": "Izaći iz demoa i vratiti se na početnu stranu?"
+        },
         "CREATE_GAME": {
             "TITLE": "Kreiraj igru",
             "FIELD1": "Nazovi igru",

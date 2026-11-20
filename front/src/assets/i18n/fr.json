@@ -79,6 +79,12 @@
 			"TITLE": "Confirmer ?",
 			"MESSAGE": "Êtes-vous sûr ?"
 		},
+		"QUIT": {
+			"TITLE": "Quitter ?",
+			"PLAYER": "Tu reviendras à l’accueil. Ton code te permettra de retrouver ta place dans la partie.",
+			"MASTER": "Vous reviendrez à l’accueil. La session reste disponible dans l’historique.",
+			"DEMO": "Quitter la démo et revenir à l’accueil ?"
+		},
 		"CREATE_GAME": {
 			"TITLE": "Créer une partie",
 			"FIELD1": "Nommer la partie",

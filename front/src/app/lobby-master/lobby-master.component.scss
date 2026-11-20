@@ -192,25 +192,10 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	gap: 1rem;
 }
 
-.waiting {
-	--tone-rgb: 203, 213, 225;
-}
 
-.open {
-	--tone-rgb: 52, 211, 153;
-}
 
-.playing {
-	--tone-rgb: 96, 165, 250;
-}
 
-.paused {
-	--tone-rgb: 251, 191, 36;
-}
 
-.ended {
-	--tone-rgb: 248, 113, 113;
-}
 
 .round {
 	width: 260px;
@@ -219,39 +204,14 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	align-items: center;
 	gap: 0.625rem;
 	text-align: center;
-	border-top: 3px solid rgba(var(--tone-rgb), 0.9);
 }
 
 .money {
 	font-size: 1.25rem;
 }
 
-.round-status {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.375rem;
-	padding: 0.125rem 0.75rem;
-	border-radius: 12px;
-	font-size: 0.8125rem;
-	font-weight: 600;
-	color: rgb(var(--tone-rgb));
-	background: rgba(var(--tone-rgb), 0.14);
-	border: 1px solid rgba(var(--tone-rgb), 0.35);
-}
 
-.dot {
-	flex-shrink: 0;
-	width: 8px;
-	height: 8px;
-	border-radius: 9999px;
-	background: rgb(var(--tone-rgb));
-	box-shadow: 0 0 8px rgba(var(--tone-rgb), 0.8);
-}
 
-.playing .dot,
-.open .dot {
-	animation: pulse 1.6s ease-in-out infinite;
-}
 
 .round-actions {
 	width: 100%;
@@ -331,11 +291,6 @@ $text-muted: rgba(255, 255, 255, 0.7);
 	}
 }
 
-@keyframes pulse {
-	50% {
-		opacity: 0.35;
-	}
-}
 
 @media (max-width: 480px) {
 	.qr-card {
@@ -348,11 +303,6 @@ $text-muted: rgba(255, 255, 255, 0.7);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.playing .dot,
-	.open .dot {
-		animation: none;
-	}
-
 	.player-tile:hover {
 		transform: none;
 	}

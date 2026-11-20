@@ -79,6 +79,12 @@
             "TITLE": "Confirmi?",
             "MESSAGE": "Ești sigur?"
         },
+        "QUIT": {
+            "TITLE": "Ieși?",
+            "PLAYER": "Te vei întoarce la pagina principală. Codul tău îți permite să-ți recuperezi locul în joc.",
+            "MASTER": "Vă veți întoarce la pagina principală. Sesiunea rămâne disponibilă în istoric.",
+            "DEMO": "Ieși din demo și revii la pagina principală?"
+        },
         "CREATE_GAME": {
             "TITLE": "Creează un joc",
             "FIELD1": "Nume joc",

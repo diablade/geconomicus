@@ -87,3 +87,10 @@
 	background: rgba(0, 0, 0, 0.55);
 	pointer-events: none;
 }
+
+.fake-quit {
+	position: fixed;
+	top: 6px;
+	left: calc(50% + 30px);
+	z-index: 2600;
+}

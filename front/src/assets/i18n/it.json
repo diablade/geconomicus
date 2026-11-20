@@ -79,6 +79,12 @@
             "TITLE": "Confermare?",
             "MESSAGE": "Confermi?"
         },
+        "QUIT": {
+            "TITLE": "Uscire?",
+            "PLAYER": "Tornerai alla home. Il tuo codice ti permetterà di ritrovare il tuo posto nella partita.",
+            "MASTER": "Tornerà alla home. La sessione resta disponibile nella cronologia.",
+            "DEMO": "Uscire dalla demo e tornare alla home?"
+        },
         "CREATE_GAME": {
             "TITLE": "Crea un gioco",
             "FIELD1": "Nomina il gioco",

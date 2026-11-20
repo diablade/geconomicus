@@ -79,6 +79,12 @@
             "TITLE": "¿Confirmar?",
             "MESSAGE": "¿Confirmas?"
         },
+        "QUIT": {
+            "TITLE": "¿Salir?",
+            "PLAYER": "Volverás al inicio. Tu código te permitirá recuperar tu lugar en la partida.",
+            "MASTER": "Volverá al inicio. La sesión sigue disponible en el historial.",
+            "DEMO": "¿Salir de la demo y volver al inicio?"
+        },
         "CREATE_GAME": {
             "TITLE": "Crear una partida",
             "FIELD1": "Nombrar la partida",

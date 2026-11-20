@@ -185,11 +185,11 @@ export class HistoryGamesComponent implements OnInit, AfterViewInit, OnDestroy {
 	getStatusClass(status: string): string {
 		switch (status) {
 			case this.ENDED:
-				return 'statusClosed';
+				return 'tone-ended';
 			case this.OPEN:
-				return 'statusOpen';
+				return 'tone-open';
 			case this.IN_PROGRESS:
-				return 'statusOnGoing';
+				return 'tone-playing';
 			default:
 				return '';
 		}
