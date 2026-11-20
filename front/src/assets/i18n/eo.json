@@ -295,7 +295,7 @@
 		"DU": "DU"
 	},
 	"DATE_FORMAT": {
-		"DATETIME": "dd-MM-YYYY je HH:mm"
+		"DATETIME": "dd-MMM-YYYY je HH:mm"
 	},
 	"CONTRIBUTION": {
 		"TITLE": "Kontribuaĵoj",

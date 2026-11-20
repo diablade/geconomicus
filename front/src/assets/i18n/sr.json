@@ -295,7 +295,7 @@
         "DU": "D.U"
     },
     "DATE_FORMAT": {
-        "DATETIME": "dd-MM-YYYY u HH:mm"
+        "DATETIME": "dd-MMM-YYYY u HH:mm"
     },
     "CONTRIBUTION": {
         "TITLE": "Doprinosi",

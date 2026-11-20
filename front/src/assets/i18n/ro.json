@@ -295,7 +295,7 @@
         "DU": "D.U"
     },
     "DATE_FORMAT": {
-        "DATETIME": "dd-MM-YYYY HH:mm"
+        "DATETIME": "dd-MMM-YYYY HH:mm"
     },
     "CONTRIBUTION": {
         "TITLE": "Contribuții",

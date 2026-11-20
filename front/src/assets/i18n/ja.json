@@ -295,7 +295,7 @@
         "DU": "D.U"
     },
     "DATE_FORMAT": {
-        "DATETIME": "YYYY-MM-DD HH:mm"
+        "DATETIME": "YYYY-MMM-DD HH:mm"
     },
     "CONTRIBUTION": {
         "TITLE": "貢献者",

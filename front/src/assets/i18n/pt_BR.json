@@ -674,7 +674,7 @@
         "GUNY_INTRO": "Hey ! Eu me chamo Ğuny."
     },
     "DATE_FORMAT": {
-        "DATETIME": "dd-MM-YYYY à HH:mm"
+        "DATETIME": "dd-MMM-YYYY à HH:mm"
     },
     "CONTRIBUTION": {
         "TITLE": "Contribuições",

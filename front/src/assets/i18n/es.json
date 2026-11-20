@@ -295,7 +295,7 @@
         "DU": "DU"
     },
     "DATE_FORMAT": {
-        "DATETIME": "dd-MM-AAAA a HH:mm"
+        "DATETIME": "dd-MMM-YYYY a HH:mm"
     },
     "CONTRIBUTION": {
         "TITLE": "Contribuciones",
