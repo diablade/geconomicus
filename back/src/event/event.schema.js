@@ -19,10 +19,10 @@ const EventSchema = new Schema(
 		payload: { type: Object },
 		at: { type: Date, default: Date.now },
 	},
-	{ timestamps: true }
+	{ versionKey: false }
 );
 
-EventSchema.index({ sessionId: 1, createdAt: 1 });
-EventSchema.index({ gameStateId: 1, createdAt: 1 });
+EventSchema.index({ sessionId: 1, at: 1, _id: 1 });
+EventSchema.index({ gameStateId: 1, at: 1, _id: 1 });
 
 export default EventSchema;

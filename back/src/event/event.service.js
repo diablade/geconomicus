@@ -19,6 +19,7 @@ EventService.getBySessionId = async (sessionId) => {
 		sessionId,
 	})
 		.sort(REPLAY_ORDER)
+		.lean()
 		.exec();
 };
 /** Every event of one game, in replay order. */
@@ -27,6 +28,7 @@ EventService.getByGameStateId = async (gameStateId) => {
 		gameStateId,
 	})
 		.sort(REPLAY_ORDER)
+		.lean()
 		.exec();
 };
 
@@ -37,6 +39,7 @@ EventService.getByAvatarIdx = async (gameStateId, avatarIdx) => {
 		$or: [{ emitter: avatarIdx }, { receiver: avatarIdx }],
 	})
 		.sort(REPLAY_ORDER)
+		.lean()
 		.exec();
 };
 

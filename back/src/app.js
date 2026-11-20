@@ -2,6 +2,7 @@ import express from 'express';
 import env from '#config/env';
 import morgan from 'morgan';
 import cors from 'cors';
+import compression from 'compression';
 import { errorHandler } from './middleware/errorHandler.middleware.js';
 
 // IMPORT ROUTES
@@ -60,6 +61,8 @@ app.use(
 		}
 	)
 );
+
+app.use(compression());
 
 // Ensure all requests and responses use UTF-8 encoding
 app.use(express.json());

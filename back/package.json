@@ -4,6 +4,7 @@
     "dependencies": {
         "@geco/shared": "file:../shared",
         "bcrypt": "^6.0.0",
+        "compression": "^1.8.2",
         "cors": "^2.8.5",
         "date-fns": "^2.30.0",
         "dotenv": "^16.4.5",
