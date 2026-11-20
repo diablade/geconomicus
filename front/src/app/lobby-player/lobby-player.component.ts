@@ -29,6 +29,14 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 	protected readonly GAME_PAUSED = GAME_STATUS.PAUSED;
 	protected readonly GAME_STOPPED = GAME_STATUS.STOPPED;
 	protected readonly GAME_NONE = GAME_STATUS.NONE;
+	protected readonly ROUND_STATUS: Record<string, { key: string; tone: string }> = {
+		[GAME_STATUS.NONE]: { key: 'AVATAR.ROUND_WAITING', tone: 'waiting' },
+		[GAME_STATUS.CREATED]: { key: 'GAME.OPEN', tone: 'open' },
+		[GAME_STATUS.INITIALIZED]: { key: 'GAME.OPEN', tone: 'open' },
+		[GAME_STATUS.PLAYING]: { key: 'GAME.PLAYING', tone: 'playing' },
+		[GAME_STATUS.PAUSED]: { key: 'GAME.PAUSED', tone: 'paused' },
+		[GAME_STATUS.STOPPED]: { key: 'GAME.END_GAME', tone: 'ended' },
+	};
 	faRightToBracket = faRightToBracket;
 	faPencil = faPencil;
 	allowEditFeedback = false;
