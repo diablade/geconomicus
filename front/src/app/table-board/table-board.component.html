@@ -1,58 +1,70 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<div class="bgFixedLayer" [ngClass]="vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg'"></div>
-	<div class="tableBoard h-100 aboveBg">
-		<div class="h-100 overflow-auto px-3 pb-4 d-flex flex-column">
+	<div class="tableBoard h-100 aboveBg light-bg">
+		<div class="h-100 overflow-auto px-2 pb-4 d-flex flex-column">
 			<!-- ── Header ── -->
-			<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
-				<div class="d-flex flex-row align-items-center gap-3 flex-wrap">
+			<header class="frame frame-glass topbar">
+				<div class="topbar-left">
 					<button
 						mat-stroked-button
+						 color="accent"
 						class="box-shadowed blur whiteBtn"
 						[routerLink]="['/master', sessionId, gameStateId]">
 						<mat-icon>arrow_back</mat-icon>
 						{{ 'TABLE.BACK_TO_MASTER_BOARD' | translate }}
 					</button>
-					<img class="geco" src="./assets/images/geconomicus.png" alt="Geconomicus" />
-					<div>
-						<div class="title geconomicusFont contourText ombreText">
+					<!--					<img class="geco" src="./assets/images/geconomicus.png" alt="Geconomicus" />-->
+					<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
+					<div class="title-block">
+						<div class="title contourText ombreText">
 							{{ vm.session.name }} -
 							{{ vm.rules.typeMoney === JUNE ? ('FREE_MONEY' | translate) : ('DEBT_MONEY' | translate) }}
 						</div>
-						<div class="subtitle white">
-							{{ 'TABLE.ANIMATOR_VIEW' | translate }} &middot; {{ vm.gameState.status }}
-						</div>
+
+						<span class="status-pill"
+							  [ngClass]="GAME_STATUS_DISPLAY[vm.gameState.status || 'created'].tone">
+								{{ GAME_STATUS_DISPLAY[vm.gameState.status || 'created'].key | translate }}
+							</span>
+
+						<!--						<div class="subtitle-row">-->
+						<!--						<span class="status-pill"-->
+						<!--						      [ngClass]="GAME_STATUS_DISPLAY[vm.gameState.status || 'created'].tone">-->
+						<!--								{{ GAME_STATUS_DISPLAY[vm.gameState.status || 'created'].key | translate }}-->
+						<!--							</span>-->
+						<!--						<span class="subtitle">{{ 'TABLE.ANIMATOR_VIEW' | translate }}</span>-->
+						<!--						</div>-->
 					</div>
 				</div>
-				<div class="d-flex flex-row align-items-center gap-2">
+				<div class="topbar-actions">
 					<online-status [connection]="(masterConnection$ | async) || null"></online-status>
 					<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refresh()">
 						🔄️ {{ 'TABLE.REFRESH_VIEW' | translate }}
 					</button>
 					<app-language-btn [short]="true"></app-language-btn>
 				</div>
-			</div>
+			</header>
 
 			<!-- ── Stats strip ── -->
 			<div class="d-flex flex-row flex-wrap gap-2 mt-2">
-				<div class="chip frame frame-light box-shadowed">
+				<div class="chip frame frame-glass">
 					🟢
 					<b>{{ vm.connectedCount }}</b>
 					{{ 'TABLE.CONNECTED' | translate }} &middot; 🔴 {{ vm.alive.length - vm.connectedCount }}
 					{{ 'TABLE.DISCONNECTED' | translate }}
 				</div>
-				<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
-				<div class="chip frame frame-light box-shadowed">
+				<!--				<app-game-controls [gameStateId]="gameStateId"></app-game-controls>-->
+				<div class="chip frame frame-glass">
 					⏱️
 					<b>{{ vm.minutes }}:{{ vm.seconds }}</b>
 					&middot; {{ vm.rules.roundMinutes }} {{ 'TABLE.MIN' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed">
+				<div class="chip frame frame-glass">
 					👥
 					<b>{{ 'TABLE.DEAD_PLAYERS' | translate: { count: vm.dead.length } }}</b>
 				</div>
 				<!-- Death queue: transparent progress fill behind the label + countdown, popover lists the order -->
 				<div
-					class="chip frame frame-light box-shadowed deathQueueChip"
+					class="chip frame frame-glass deathQueueChip"
 					*ngIf="vm.deathQueueCount > 0"
 					[matMenuTriggerFor]="deathQueueMenu">
 					<span class="deathProgressFill" [style.width.%]="vm.deathProgressPct"></span>
@@ -62,7 +74,7 @@
 						<span *ngIf="vm.nextDeathLabel" class="nextDeath">&middot; ⏳ {{ vm.nextDeathLabel }}</span>
 					</span>
 				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.ghostMoney > 0">
+				<div class="chip frame frame-glass" *ngIf="vm.ghostMoney > 0">
 					👻💰
 					<b>{{ vm.ghostMoney | number: '1.0-2' }}</b>
 					<span *ngIf="vm.rules.typeMoney === JUNE">
@@ -70,22 +82,22 @@
 					</span>
 					{{ 'TABLE.GHOST_MONEY' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE && vm.nextDULabel">
+				<div class="chip frame frame-glass" *ngIf="vm.rules.typeMoney === JUNE && vm.nextDULabel">
 					⏳
 					<b>{{ vm.nextDULabel }}</b>
 					{{ 'TABLE.DU_EQ' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed">
+				<div class="chip frame frame-glass">
 					💰
 					<b>{{ vm.gameState.currentMassMonetary | number: '1.2-2' }}</b>
 					{{ 'TABLE.MONETARY_MASS' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed">
+				<div class="chip frame frame-glass">
 					⚡
 					<b>{{ vm.totalTokens }}</b>
 					{{ 'TABLE.ACTION_TOKENS_IN_PLAY' | translate }}
 				</div>
-				<div class="chip frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === JUNE">
+				<div class="chip frame frame-glass" *ngIf="vm.rules.typeMoney === JUNE">
 					☀️
 					<b>{{ vm.gameState.currentDU | number: '1.2-2' }}</b>
 					{{ 'TABLE.CURRENT_DU' | translate }}
@@ -94,7 +106,7 @@
 
 			<div class="boardLayout flex-grow-1 mt-2">
 				<!-- ── Rules: vertical panel on the right ── -->
-				<div class="rulesPanel frame frame-light box-shadowed" [class.rulesCollapsed]="!rulesOpen">
+				<div class="rulesPanel frame frame-glass" [class.rulesCollapsed]="!rulesOpen">
 					<button class="panelHead" type="button" (click)="rulesOpen = !rulesOpen">
 						<span class="panelTitle contourText ombreText">
 							<span>{{ rulesOpen ? '▾ ' : '▸ ' }}</span>
@@ -314,7 +326,7 @@
 					</div>
 				</div>
 				<div class="gamePanel">
-					<div class="decksPanel frame frame-light box-shadowed">
+					<div class="decksPanel frame frame-glass">
 						<button class="panelHead" type="button" (click)="decksOpen = !decksOpen">
 							<span class="panelTitle contourText ombreText">
 								<span>
@@ -354,7 +366,7 @@
 					</div>
 
 					<!-- ── Bank frame: global bank interventions (debt game only) ── -->
-					<div class="bankPanel frame frame-light box-shadowed" *ngIf="vm.rules.typeMoney === DEBT">
+					<div class="bankPanel frame frame-glass" *ngIf="vm.rules.typeMoney === DEBT">
 						<button class="panelHead" type="button" (click)="bankOpen = !bankOpen">
 							<span class="panelTitle contourText ombreText">
 								<span>{{ bankOpen ? '▾ ' : '▸ ' }}</span>
@@ -363,7 +375,7 @@
 						</button>
 						<div class="d-flex flex-row flex-wrap gap-2 mt-2">
 							<div
-								class="chip frame frame-light box-shadowed"
+								class="chip frame frame-glass"
 								[class.good]="vm.avgCurrency >= 2"
 								[class.warn]="vm.avgCurrency < 2"
 								[class.danger]="vm.avgCurrency < 1">
@@ -372,17 +384,17 @@
 								{{ 'BANK.AVG_PLAYERS' | translate }}
 								<fa-icon [icon]="faCircleInfo" [matTooltip]="'BANK.AVG_NOTICE' | translate"></fa-icon>
 							</div>
-							<div class="chip frame frame-light box-shadowed">
+							<div class="chip frame frame-glass">
 								📈
 								<b>{{ vm.totalDebt }}</b>
 								{{ 'BANK.CURRENT_DEBT' | translate }}
 							</div>
-							<div class="chip frame frame-light box-shadowed">
+							<div class="chip frame frame-glass">
 								📜
 								<b>{{ vm.activeCreditsCount }}</b>
 								{{ 'TABLE.ACTIVE_CREDITS' | translate }}
 							</div>
-							<div class="chip frame frame-light box-shadowed">
+							<div class="chip frame frame-glass">
 								🏦
 								<b>{{ vm.gameState.bankInterestEarned }}</b>
 								{{ 'TABLE.INTERESTS' | translate }} &middot; {{ vm.gameState.bankGoodsEarned }}
@@ -409,7 +421,7 @@
 					<!-- ── Players: table / boards toggle ── -->
 					<div class="playersArea">
 						<div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2 mt-3">
-							<div class="viewToggle frame frame-light box-shadowed">
+							<div class="viewToggle frame frame-glass">
 								<button
 									type="button"
 									[class.active]="viewMode === 'table'"
@@ -426,7 +438,7 @@
 							<button mat-stroked-button class="box-shadowed blur whiteBtn" (click)="refreshAllPlayers()">
 								🔄️ {{ 'TABLE.REFRESH_PLAYERS' | translate }}
 							</button>
-							<div class="sortBar frame frame-light box-shadowed" *ngIf="viewMode === 'boards'">
+							<div class="sortBar frame frame-glass" *ngIf="viewMode === 'boards'">
 								<span class="muted">{{ 'TABLE.SORT' | translate }}</span>
 								<button
 									class="sortBtn"
@@ -450,7 +462,7 @@
 						</div>
 						<div class="mt-2">
 							<!-- Players table -->
-							<div class="playersTable frame frame-light box-shadowed" *ngIf="viewMode === 'table'">
+							<div class="playersTable frame frame-glass" *ngIf="viewMode === 'table'">
 								<div class="tRow tHead">
 									<button
 										class="sortBtn"

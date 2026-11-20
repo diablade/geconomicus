@@ -1,220 +1,216 @@
 <ng-container *ngIf="vm$ | async as vm">
 	<div class="bgFixedLayer" [ngClass]="[vm.rules.typeMoney === JUNE ? 'juneBg' : 'debtBg']"></div>
-	<div class="h-100 aboveBg">
-		<div class="h-100 overflow-auto">
-			<div class="d-flex flex-row justify-content-between flex-wrap">
+	<div class="mb-scroll aboveBg" [class.light-bg]="vm.rules.typeMoney === JUNE">
+		<div class="mb">
+			<!-- HEADER  -->
+			<header class="topbar">
 				<img
 					class="geco glow mousePointer"
 					src="./assets/images/geconomicus.png"
 					alt=""
 					[matTooltip]="'REFRESH' | translate"
 					(click)="refresh()" />
-				<div class="d-flex flex-row align-items-center">
+				<div class="topbar-actions">
 					<online-status [connection]="(masterConnection$ | async) || null"></online-status>
-					<app-tasklist-btn [white]="vm.rules.typeMoney !== JUNE" [stroked]="true"></app-tasklist-btn>
+					<app-tasklist-btn [white]="true" [stroked]="true"></app-tasklist-btn>
 					<app-notice-btn
 						[amountCardsForProd]="vm.rules.amountCardsForProd || 0"
 						[durationCredit]="vm.rules.durationCredit || 0"
 						[stroked]="true"
-						[white]="vm.rules.typeMoney !== JUNE"></app-notice-btn>
+						[white]="true"></app-notice-btn>
 					<app-language-btn [short]="true"></app-language-btn>
 				</div>
+			</header>
+
+			<!-- TIMER  -->
+			<section class="stage">
+				<div class="video-col">
+					<video
+						class="videoCard box-shadowed"
+						#videoPlayerLT
+						(click)="videoPlayerLT.play()"
+						playsinline
+						autoplay
+						muted>
+						<source src="assets/videos/panier.mp4" type="video/mp4" />
+					</video>
+					<video
+						class="videoCard box-shadowed"
+						#videoPlayerL
+						(click)="videoPlayerL.play()"
+						playsinline
+						autoplay
+						muted>
+						<source src="assets/videos/bike.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="countDownContainer">
+					<coin
+						class="coin"
+						[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
+						[height]="'100%'"
+						[width]="'100%'"
+						(click)="toggleCoinRotate()"
+						[forceRotate]="coinRotate"></coin>
+					<div class="time">
+						<div class="minute shadowed">{{ vm.minutes }}</div>
+						<div class="deuxpoints shadowed">:</div>
+						<div class="seconds shadowed">{{ vm.seconds }}</div>
+					</div>
+					<mat-progress-spinner
+						[color]="'primary'"
+						[mode]="'determinate'"
+						[diameter]="spinnerDiameter()"
+						strokeWidth="10"
+						[value]="vm.timerProgress"></mat-progress-spinner>
+				</div>
+				<div class="video-col">
+					<video
+						class="videoCard box-shadowed"
+						#videoPlayerRT
+						playsinline
+						(click)="videoPlayerRT.play()"
+						autoplay
+						muted>
+						<source src="assets/videos/owl.mp4" type="video/mp4" />
+					</video>
+					<video
+						class="videoCard box-shadowed"
+						#videoPlayerR
+						playsinline
+						(click)="videoPlayerR.play()"
+						autoplay
+						muted>
+						<source src="assets/videos/sun.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</section>
+
+			<div class="title-block">
+				<h1 class="title shadowed">
+					{{ vm.session.name }} -
+					{{ vm.gameState.typeMoney === DEBT ? ('DEBT_MONEY' | translate) : ('FREE_MONEY' | translate) }}
+				</h1>
+				<span class="status-pill" [ngClass]="GAME_STATUS_DISPLAY[vm.gameState.status || CREATED].tone">
+					{{ GAME_STATUS_DISPLAY[vm.gameState.status || CREATED].key | translate }}
+				</span>
 			</div>
-			<div class="d-flex flex-column">
-				<div class="container z1">
-					<div class="d-flex align-items-center justify-content-evenly flex-row flex-wrap">
-						<div class="d-flex flex-column">
-							<video
-								class="videoCard box-shadowed"
-								#videoPlayerLT
-								(click)="videoPlayerLT.play()"
-								playsinline
-								autoplay
-								muted>
-								<source src="assets/videos/panier.mp4" type="video/mp4" />
-							</video>
-							<video
-								class="videoCard box-shadowed"
-								#videoPlayerL
-								(click)="videoPlayerL.play()"
-								playsinline
-								autoplay
-								muted>
-								<source src="assets/videos/bike.mp4" type="video/mp4" />
-							</video>
-						</div>
-						<div class="countDownContainer">
-							<coin
-								class="coin"
-								[coinImage]="'./assets/images/' + vm.rules.typeMoney + '.png'"
-								[height]="'100%'"
-								[width]="'100%'"
-								(click)="toggleCoinRotate()"
-								[forceRotate]="coinRotate"></coin>
-							<div class="time">
-								<div class="minute shadowed">{{ vm.minutes }}</div>
-								<div class="deuxpoints shadowed">:</div>
-								<div class="seconds shadowed">{{ vm.seconds }}</div>
-							</div>
-							<mat-progress-spinner
-								[color]="'primary'"
-								[mode]="'determinate'"
-								[diameter]="spinnerDiameter()"
-								strokeWidth="10"
-								[value]="vm.timerProgress"></mat-progress-spinner>
-						</div>
-						<div class="d-flex flex-column">
-							<video
-								class="videoCard box-shadowed"
-								#videoPlayerRT
-								playsinline
-								(click)="videoPlayerRT.play()"
-								autoplay
-								muted>
-								<source src="assets/videos/owl.mp4" type="video/mp4" />
-							</video>
-							<video
-								class="videoCard box-shadowed"
-								#videoPlayerR
-								playsinline
-								(click)="videoPlayerR.play()"
-								autoplay
-								muted>
-								<source src="assets/videos/sun.mp4" type="video/mp4" />
-							</video>
-						</div>
-					</div>
-					<div class="fs-3 text-center pb-1 shadowed">
-						{{ vm.session.name }} -
-						{{ vm.gameState.typeMoney === DEBT ? ('DEBT_MONEY' | translate) : ('FREE_MONEY' | translate) }}
-					</div>
-					<ng-container *ngIf="vm.gameState.status === STOPPED">
-						<div class="mt-4 fs-2 fw-bold text-center pb-1 shadowed">
-							{{ 'MASTER.GAME_ENDED' | translate }}
-						</div>
-					</ng-container>
-					<div class="d-flex mt-5 justify-content-center">
-						<button
-							class="ms-2 box-shadowed blur"
-							[ngClass]="vm.rules.typeMoney !== JUNE ? 'whiteBtn' : 'blackBtn'"
-							mat-stroked-button
-							color="primary"
-							(click)="goBackToLobby()">
-							<mat-icon>arrow_back</mat-icon>
-							{{ 'BACK_TO_LOBBY' | translate }}
+
+			<!-- CONTROLS  -->
+			<section class="frame frame-glass controls">
+				<div class="controls-row">
+					<button
+						*ngIf="vm.gameState.status === CREATED"
+						mat-raised-button
+						color="accent"
+						class="box-shadowed"
+						data-pop
+						(click)="initGame()">
+						<mat-icon class="outlined">playing_cards</mat-icon>
+						{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
+					</button>
+					<!-- Send the opening First Credit Question (after cards distributed) -->
+					<button
+						*ngIf="
+							vm.gameState.status === INITIALIZED &&
+							vm.rules.typeMoney === DEBT &&
+							!vm.gameState.firstCreditAsked
+						"
+						class="box-shadowed"
+						mat-raised-button
+						color="accent"
+						data-pop
+						(click)="askFirstCredit()">
+						<mat-icon class="outlined">contact_support</mat-icon>
+						{{ 'MASTER.ASK_FIRST_CREDIT' | translate }}
+					</button>
+					<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
+				</div>
+				<div class="divider"></div>
+				<div class="controls-row">
+					<button class="box-shadowed blur whiteBtn" mat-stroked-button (click)="goBackToLobby()">
+						<mat-icon>arrow_back</mat-icon>
+						{{ 'BACK_TO_LOBBY' | translate }}
+					</button>
+					<button
+						class="box-shadowed"
+						mat-raised-button
+						color="accent"
+						[disabled]="vm.gameState.status === CREATED"
+						[matMenuTriggerFor]="cockpitMenu">
+						<mat-icon class="outlined">table_eye</mat-icon>
+						{{ 'MASTER.GAME_TABLE_VIEW' | translate }}
+						<mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+					</button>
+					<mat-menu #cockpitMenu="matMenu">
+						<button mat-menu-item [routerLink]="['/table', sessionId, gameStateId]">
+							<mat-icon>tab</mat-icon>
+							<span>{{ 'MASTER.OPEN_SAME_TAB' | translate }}</span>
 						</button>
-						<button
-							*ngIf="vm.gameState.status === CREATED"
-							mat-raised-button
-							color="accent"
-							class="ms-2 box-shadowed"
-							(click)="initGame()">
-							<mat-icon class="outlined">playing_cards</mat-icon>
-							{{ 'MASTER.DISTRIBUTE_CARDS' | translate }}
+						<button mat-menu-item (click)="goToAdmin()">
+							<mat-icon>open_in_new</mat-icon>
+							<span>{{ 'MASTER.OPEN_NEW_TAB' | translate }}</span>
 						</button>
-						<!-- Send the opening First Credit Question (after cards distributed) -->
-						<button
-							*ngIf="
-								vm.gameState.status === INITIALIZED &&
-								vm.rules.typeMoney === DEBT &&
-								!vm.gameState.firstCreditAsked
-							"
-							class="ms-2 box-shadowed"
-							mat-raised-button
-							color="accent"
-							(click)="askFirstCredit()">
-							<mat-icon class="outlined">contact_support</mat-icon>
-							{{ 'MASTER.ASK_FIRST_CREDIT' | translate }}
-						</button>
-						<app-game-controls [gameStateId]="gameStateId"></app-game-controls>
-					</div>
-					<div class="d-flex flex-row mt-4 align-items-center justify-content-center">
-						<button
-							class="m-2 box-shadowed"
-							mat-raised-button
-							color="accent"
-							[disabled]="vm.gameState.status === CREATED"
-							[matMenuTriggerFor]="cockpitMenu">
-							<mat-icon class="outlined">table_eye</mat-icon>
-							{{ 'MASTER.GAME_TABLE_VIEW' | translate }}
-							<mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-						</button>
-						<mat-menu #cockpitMenu="matMenu">
-							<button mat-menu-item [routerLink]="['/table', sessionId, gameStateId]">
-								<mat-icon>tab</mat-icon>
-								<span>{{ 'MASTER.OPEN_SAME_TAB' | translate }}</span>
-							</button>
-							<button mat-menu-item (click)="goToAdmin()">
-								<mat-icon>open_in_new</mat-icon>
-								<span>{{ 'MASTER.OPEN_NEW_TAB' | translate }}</span>
-							</button>
-						</mat-menu>
-						<button
+						<button mat-menu-item
 							*ngIf="vm.gameState.status !== STOPPED"
-							mat-icon-button
 							[matTooltip]="'MASTER.GAME_TABLE_VIEW' | translate"
+							[attr.aria-label]="'MASTER.GAME_TABLE_VIEW' | translate"
 							(click)="qrCodeBank()">
 							<mat-icon>qr_code</mat-icon>
+							<span>{{ 'MASTER.QR_CODE' | translate }}</span>
 						</button>
+					</mat-menu>
+				</div>
+			</section>
+
+			<!-- PLAYERS  -->
+			<section class="frame frame-glass players" *ngIf="playersAC$ | async as players">
+				<h2 class="players-title">
+					<span class="shadowed geconomicusFont">{{ 'MASTER.PLAYERS' | translate }}</span>
+					<span class="count">{{ players.length }}</span>
+				</h2>
+				<div class="players-grid">
+					<div *ngFor="let player of players" class="player-tile" [matMenuTriggerFor]="aboveMenu">
+						<mat-icon
+							*ngIf="player.firstCreditAnswer && player.firstCreditAnswer !== PENDING"
+							class="first-credit-check"
+							color="accent">
+							check_circle
+						</mat-icon>
+						<avatar
+							[avatar]="player.avatar"
+							[width]="'80px'"
+							[height]="'80px'"
+							[playerStatus]="player.status"
+							[onlineStatus]="true"
+							[connection]="player.connection || null"
+							[namePosition]="'bottom'"></avatar>
+						<mat-menu #aboveMenu="matMenu" yPosition="above">
+							<button
+								mat-menu-item
+								[routerLink]="['/player', sessionId, player.avatar?.idx, gameStateId, player.idx]">
+								<mat-icon>play_arrow</mat-icon>
+								<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+							</button>
+							<button mat-menu-item (click)="copyPlayerLink(player)">
+								<mat-icon>link</mat-icon>
+								<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
+							</button>
+							<button mat-menu-item (click)="reJoin(player)">
+								<mat-icon>qr_code_2</mat-icon>
+								<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
+							</button>
+							<button mat-menu-item (click)="copyAvatarCode(player)">
+								<mat-icon>pin</mat-icon>
+								<span>
+									{{ 'MASTER.AVATAR_CODE' | translate }} :
+									<b>{{ vm.session.shortId }}-{{ player.avatarIdx }}</b>
+								</span>
+							</button>
+						</mat-menu>
 					</div>
 				</div>
-				<div class="backgroundPlayers mt-4">
-					<div class="d-flex justify-content-center">
-						<div class="players frame frame-light">
-							<div class="d-flex flex-row justify-content-center flex-wrap">
-								<div *ngFor="let player of playersAC$ | async" class="player d-flex flex-column">
-									<div class="avatar-container">
-										<mat-icon
-											*ngIf="player.firstCreditAnswer && player.firstCreditAnswer !== PENDING"
-											class="first-credit-check"
-											color="accent">
-											check_circle
-										</mat-icon>
-										<avatar
-											[avatar]="player.avatar"
-											[width]="'80px'"
-											[height]="'80px'"
-											[playerStatus]="player.status"
-											[onlineStatus]="true"
-											[connection]="player.connection || null"
-											[namePosition]="'bottom'"
-											[matMenuTriggerFor]="aboveMenu"></avatar>
-									</div>
-									<mat-menu #aboveMenu="matMenu" yPosition="above">
-										<button
-											mat-menu-item
-											[routerLink]="[
-												'/player',
-												sessionId,
-												player.avatar?.idx,
-												gameStateId,
-												player.idx,
-											]">
-											<mat-icon>play_arrow</mat-icon>
-											<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
-										</button>
-										<button mat-menu-item (click)="copyPlayerLink(player)">
-											<mat-icon>link</mat-icon>
-											<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>
-										</button>
-										<button mat-menu-item (click)="reJoin(player)">
-											<mat-icon>qr_code_2</mat-icon>
-											<span>{{ 'MASTER.JOIN_VIA_QR_CODE' | translate }}</span>
-										</button>
-										<button mat-menu-item (click)="copyAvatarCode(player)">
-											<mat-icon>pin</mat-icon>
-											<span>
-												{{ 'MASTER.AVATAR_CODE' | translate }} :
-												<b>{{ vm.session.shortId }}-{{ player.avatarIdx }}</b>
-											</span>
-										</button>
-									</mat-menu>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			</section>
 		</div>
 	</div>
 </ng-container>

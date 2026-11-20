@@ -13,6 +13,7 @@ import { WebSocketService } from '../services/web-socket.service';
 import { formatAvatarCode } from '../services/avatarCode';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { MASTER_GAME_STATUS } from '../services/gameStatus';
 import * as _ from 'lodash-es';
 
 @Component({
@@ -32,6 +33,7 @@ export class MasterBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
 	protected readonly PENDING = CREDIT_QUESTION_ANSWER.PENDING;
 	protected readonly environment = environment;
+	protected readonly GAME_STATUS_DISPLAY = MASTER_GAME_STATUS;
 
 	@ViewChild('videoPlayerL') videoPlayerL!: ElementRef;
 	@ViewChild('videoPlayerLT') videoPlayerLT!: ElementRef;

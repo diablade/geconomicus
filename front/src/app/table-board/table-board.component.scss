@@ -3,9 +3,39 @@
 	width: 100%;
 }
 
+.topbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+	padding: 0.4rem 0.3rem !important;
+}
+
+.topbar-left,
+.topbar-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.title-block {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.subtitle-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+}
+
 .geco {
 	width: 150px;
-	margin-top: 10px;
 }
 
 .title {
@@ -14,7 +44,7 @@
 
 .subtitle {
 	font-size: 13px;
-	text-shadow: 1px 1px 0 black;
+	color: var(--ink-muted, inherit);
 }
 
 .chip {
@@ -352,6 +382,10 @@
 .gamePanel {
 	flex-grow: 1;
 	order: 1;
+}
+
+.decksPanel{
+	padding:10px;
 }
 
 .rulesPanel {

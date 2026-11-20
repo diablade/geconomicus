@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { PLAYER_GAME_STATUS } from '../services/gameStatus';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription, combineLatest, map, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,6 +43,7 @@ export interface TableRow extends PlayerState {
 })
 export class TableBoardComponent implements OnInit, OnDestroy {
 	protected readonly DEBT = GAME_TYPE.DEBT;
+	protected readonly GAME_STATUS_DISPLAY = PLAYER_GAME_STATUS;
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly ALIVE = PLAYER_STATUS.ALIVE;
 	protected readonly DEAD = PLAYER_STATUS.DEAD;
