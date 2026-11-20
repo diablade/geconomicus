@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "History of created games",
+		"GUNY_BUBBLE": "Find every session played since I came to life… my memory is a vault!",
+		"LEGACY_TITLE": "Old games (V1)",
+		"EMPTY": "No game found.",
 		"DELETE_CONFIRM": "Delete a game?",
-		"AUTO_DELETE": "Games older than 2 months will soon be automatically deleted.",
-		"IMPORT_EXPORT": "(Import and export of games will also be possible soon).",
 		"JOIN_AS_NEW_PLAYER": "Join (new player)",
 		"JOIN_AS_MASTER": "Join as facilitator",
 		"CREATED_ON": "Created on",

@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "Verlauf der erstellten Spiele",
+		"GUNY_BUBBLE": "Hier findest du alle Spiele, die gespielt wurden, seit es mich gibt… mein Gedächtnis ist ein Tresor!",
+		"LEGACY_TITLE": "Alte Spiele (V1)",
+		"EMPTY": "Keine Spiele gefunden.",
 		"DELETE_CONFIRM": "Ein Spiel löschen?",
-		"AUTO_DELETE": "Spiele, die älter als 2 Monate sind, werden bald automatisch gelöscht.",
-		"IMPORT_EXPORT": "(Das Importieren und Exportieren von Spielen wird bald möglich sein).",
 		"JOIN_AS_NEW_PLAYER": "Beitreten (neuer Spieler)",
 		"JOIN_AS_MASTER": "Als Spielleiter beitreten",
 		"CREATED_ON": "Erstellt am",

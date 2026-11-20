@@ -6,6 +6,7 @@
 		"INSTALL": "App installieren (optional)",
 		"CREATE_SESSION": "Eine Sitzung erstellen",
 		"JOIN_SESSION": "Einer Sitzung beitreten",
+		"HISTORY": "Verlauf",
 		"JOIN_VIA_SHORT_ID": "Mit Kurzcode",
 		"JOIN_VIA_QR_CODE": "Über den QR-Code",
 		"HOW_TO_PLAY": "Wie funktioniert es?",

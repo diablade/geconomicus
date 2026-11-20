@@ -18,7 +18,7 @@
 				<input matInput required [(ngModel)]="name" (keydown.enter)="join()" />
 			</mat-form-field>
 		</div>
-		<button mat-raised-button color="primary" [disabled]="!name" (click)="join()">
+		<button mat-raised-button class="big-btn box-shadowed" color="primary" data-pop [disabled]="!name" (click)="join()">
 			{{ 'JOIN.GO_BUTTON' | translate }}
 		</button>
 	</div>

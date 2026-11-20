@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "Histórico das partidas criadas",
+		"GUNY_BUBBLE": "Encontra todas as partidas jogadas desde que eu existo… a minha memória é um cofre!",
+		"LEGACY_TITLE": "Partidas antigas (V1)",
+		"EMPTY": "Nenhuma partida encontrada.",
 		"DELETE_CONFIRM": "Excluir uma partida ?",
-		"AUTO_DELETE": "As partidas superiores a 2 meses serão brevemente e automaticamente apagadas.",
-		"IMPORT_EXPORT": "(A importação e a exportação de partidas serão possíveis em breve).",
 		"JOIN_AS_NEW_PLAYER": "Entrar (novo jogador)",
 		"JOIN_AS_MASTER": "Entrar como animador",
 		"CREATED_ON": "Criado em",

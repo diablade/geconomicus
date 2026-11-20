@@ -82,9 +82,10 @@
 					<button
 						*ngIf="game.gameStatus !== GAME_STOPPED"
 						[disabled]="game.gameStatus === GAME_NONE || game.gameStatus === undefined"
-						class="m-1 box-shadowed"
+						class="m-1 big-btn box-shadowed"
 						mat-raised-button
 						color="primary"
+						data-pop
 						(click)="joinGame(game.gameStateId)">
 						{{ 'AVATAR.PLAY' | translate }}
 						<span *ngIf="isRejoinTarget(game.gameStateId)">&nbsp;({{ rejoinCountdown }})</span>

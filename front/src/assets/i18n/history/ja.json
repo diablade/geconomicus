@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "作成されたゲームの履歴",
+		"GUNY_BUBBLE": "ボクが生まれてから遊ばれたゲームは全部ここにあるよ… 記憶力は金庫なみ！",
+		"LEGACY_TITLE": "旧バージョンのゲーム (V1)",
+		"EMPTY": "該当するゲームはありません。",
 		"DELETE_CONFIRM": "ゲームを削除しますか？",
-		"AUTO_DELETE": "2ヶ月以上前のゲームは自動的に削除されます。",
-		"IMPORT_EXPORT": "(ゲームのインポートとエクスポートもすぐに可能になります)。",
 		"JOIN_AS_NEW_PLAYER": "参加（新しいプレイヤー）",
 		"JOIN_AS_MASTER": "進行役として参加",
 		"CREATED_ON": "作成日",

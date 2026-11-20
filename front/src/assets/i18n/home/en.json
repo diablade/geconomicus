@@ -6,6 +6,7 @@
 		"INSTALL": "Install the application",
 		"CREATE_SESSION": "Create a session",
 		"JOIN_SESSION": "Join a session",
+		"HISTORY": "History",
 		"JOIN_VIA_SHORT_ID": "Via the short code",
 		"JOIN_VIA_QR_CODE": "Via the QR code",
 		"HOW_TO_PLAY": "How does it work?",

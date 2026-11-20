@@ -1,196 +1,199 @@
-<div class="container white">
-	<h1 class="text-center" mat-dialog-title>{{ 'HISTORY.TITLE' | translate }}</h1>
-	<div class="d-flex flex-row flex-wrap">
-		<div class="d-flex flex-column" style="max-width: 400px">
-			<!--  GUNY  -->
-			<div class="mt-1 col-md-12 text-center">
-				<div class="text-center bulle bulle-point bienvenue">
-					<div>
-						{{ 'HISTORY.IMPORT_EXPORT' | translate }}
-					</div>
-				</div>
+<div class="bgGradien7 bgFixedLayer"></div>
+<div #scroller class="history-scroll aboveBg">
+	<div class="history">
+		<header class="hero">
+			<button
+				class="back-btn"
+				mat-icon-button
+				routerLink="/"
+				[matTooltip]="'MODULE.BACK_HOME' | translate"
+				[attr.aria-label]="'MODULE.BACK_HOME' | translate">
+				<fa-icon [icon]="faArrowLeft"></fa-icon>
+			</button>
+			<div class="hero-text">
+				<h1 class="title contourText">
+					{{ 'HISTORY.TITLE' | translate }}
+					<span class="count">{{ sessions?.length ?? 0 }}</span>
+				</h1>
+			</div>
+			<div class="hero-guny">
+				<bulle [pointer]="true" [contents]="['HISTORY.GUNY_BUBBLE']"></bulle>
 				<img class="guny halo" src="./assets/images/guny.png" alt="" />
 			</div>
-		</div>
-		<div class="d-flex flex-column align-items-center">
-			<div class="d-flex flex-row">
-				<div class="form-group">
-					<label for="filterByName">{{ 'HISTORY.NAME_PARTY' | translate }}</label>
-					<input type="text" class="form-control" id="filterByName" [(ngModel)]="filterByName" />
-				</div>
-				<div class="form-group">
-					<label for="filterByStatus">{{ 'HISTORY.STATUS_TEXT' | translate }}</label>
-					<select class="form-select" id="filterByStatus" [(ngModel)]="filterByStatus">
-						<option value="">{{ 'ALL' | translate }}</option>
-						<option value="{{ OPEN }}">{{ 'HISTORY.STATUS.OPEN' | translate }}</option>
-						<option value="{{ IN_PROGRESS }}">{{ 'HISTORY.STATUS.IN_PROGRESS' | translate }}</option>
-						<option value="{{ ENDED }}">{{ 'HISTORY.STATUS.ENDED' | translate }}</option>
-					</select>
-				</div>
+		</header>
+
+		<section class="toolbar">
+			<label class="field search">
+				<fa-icon [icon]="faMagnifyingGlass"></fa-icon>
+				<input
+					type="search"
+					[placeholder]="'HISTORY.NAME_PARTY' | translate"
+					[attr.aria-label]="'HISTORY.NAME_PARTY' | translate"
+					[(ngModel)]="filterByName" />
+			</label>
+
+			<div class="segmented" role="radiogroup" [attr.aria-label]="'HISTORY.STATUS_TEXT' | translate">
+				<button
+					*ngFor="let option of statusOptions"
+					type="button"
+					role="radio"
+					[attr.aria-checked]="filterByStatus === option.value"
+					[class.active]="filterByStatus === option.value"
+					[ngClass]="option.value ? getStatusClass(option.value) : ''"
+					(click)="filterByStatus = option.value">
+					<span *ngIf="option.value" class="dot"></span>
+					{{ option.label | translate }}
+					<span class="seg-count">{{ option.value ? statusCounts[option.value] || 0 : sessions?.length ?? 0 }}</span>
+				</button>
 			</div>
-			<div class="d-flex flex-row justify-content-between align-items-center">
-				<label class="me-2" for="sortBy">{{ 'HISTORY.SORT' | translate }}</label>
-				<select class="form-select" id="sortBy" [(ngModel)]="sortBy">
-					<option value="created">{{ 'HISTORY.BY_DATE' | translate }}</option>
+
+			<div class="field sort">
+				<label for="sortBy">{{ 'HISTORY.SORT' | translate }}</label>
+				<select id="sortBy" [(ngModel)]="sortBy">
+					<option value="createdAt">{{ 'HISTORY.BY_DATE' | translate }}</option>
 					<option value="avatarsCount">{{ 'HISTORY.BY_PLAYERS' | translate }}</option>
 					<option value="location">{{ 'HISTORY.BY_LOCATION' | translate }}</option>
 					<option value="animator">{{ 'HISTORY.BY_ANIMATOR' | translate }}</option>
 					<option value="status">{{ 'HISTORY.BY_STATUS' | translate }}</option>
 				</select>
-				<button mat-icon-button id="sortOrder" (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'">
+				<button
+					class="order-btn"
+					type="button"
+					[attr.aria-label]="'HISTORY.SORT' | translate"
+					(click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'">
 					<fa-icon [icon]="sortOrder === 'asc' ? faArrowUpWideShort : faArrowDownShortWide"></fa-icon>
 				</button>
 			</div>
-			<div class="text-center">
-				<mat-slide-toggle class="" [color]="'warn'" [(ngModel)]="deleteGames">
-					{{ 'HISTORY.DELETE_CONFIRM' | translate }}
-				</mat-slide-toggle>
-			</div>
-			<div class="items">
-				<div class="item" *ngFor="let session of filteredSessions">
-					<mat-card class="d-flex flex-row p-2">
-						<div class="d-flex flex-column">
-							<div class="d-flex flex-row justify-content-between">
-								<div class="name">• {{ session.name }}</div>
-								<div class="status" [ngClass]="getStatusClass(session.status)">
-									{{ getStatus(session.status) | translate }}
-								</div>
-							</div>
-							<div class="ms-2">
-								<div>📅 {{ session.createdAt | date: ('DATE_FORMAT.DATETIME' | translate) }}</div>
-								<div>
-									📍
-									<span class="fw-bold">{{ session.location ? session.location : '-' }}</span>
-								</div>
-								<div>
-									👤
-									<span class="fw-bold">{{ session.animator ? session.animator : '-' }}</span>
-								</div>
-								<div>
-									👥
-									<span class="fw-bold">{{ session.avatarsCount }}</span>
-									{{ 'HISTORY.PLAYERS' | translate }}
-								</div>
-								<div>
-									🎨
-									<span class="fw-bold">{{ getThemeName(session.theme) }}</span>
-								</div>
-								<!-- <div>
-									🎰
-									<span class="fw-bold">{{ session.gamesRulesCount }}</span>
-									{{ 'HISTORY.GAMES' | translate }}
-								</div> -->
-							</div>
-						</div>
-						<div class="d-flex flex-column gap-2">
-							<button
-								*ngIf="session.status === OPEN"
-								class="ms-2"
-								mat-raised-button
-								[routerLink]="['/join', session._id]"
-								color="primary">
-								{{ 'HISTORY.JOIN_AS_NEW_PLAYER' | translate }}
-							</button>
-							<button
-								*ngIf="session.status === IN_PROGRESS || session.status === OPEN"
-								class="ms-2"
-								mat-raised-button
-								[routerLink]="['/session', session._id]"
-								color="warn">
-								{{ 'HISTORY.JOIN_AS_MASTER' | translate }}
-							</button>
-							<button
-								*ngIf="session.status === ENDED"
-								class="ms-2"
-								mat-raised-button
-								[routerLink]="['/results', session._id]"
-								color="accent">
-								{{ 'HISTORY.VIEW_RESULTS' | translate }}
-							</button>
-							<button
-								*ngIf="deleteGames"
-								class="ms-2"
-								mat-raised-button
-								color="warn"
-								(click)="onDeleteSession(session)">
-								<fa-icon class="delete" [icon]="faTrashCan"></fa-icon>
-							</button>
-						</div>
-					</mat-card>
+
+			<mat-slide-toggle class="delete-toggle" [color]="'warn'" [(ngModel)]="deleteGames">
+				{{ 'HISTORY.DELETE_CONFIRM' | translate }}
+			</mat-slide-toggle>
+		</section>
+
+		<div *ngIf="!sessions" class="state">
+			<mat-spinner diameter="48"></mat-spinner>
+		</div>
+
+		<div *ngIf="sessions && !filteredSessions.length" class="state empty">
+			{{ 'HISTORY.EMPTY' | translate }}
+		</div>
+
+		<section class="grid">
+			<article
+				class="session-card"
+				*ngFor="let session of filteredSessions; trackBy: trackById"
+				[ngClass]="getStatusClass(session.status)">
+				<div class="card-head">
+					<h2 class="name" [title]="session.name">{{ session.name }}</h2>
+					<span class="status">
+						<span class="dot"></span>
+						{{ getStatus(session.status) | translate }}
+					</span>
 				</div>
-			</div>
-			<!-- filtering -->
-			<h1 class="mt-3">Old V1 games</h1>
-			<div class="items frame-light rounded-3">
-				<div class="item" *ngFor="let game of games">
-					<div class="d-flex flex-row">
-						<div class="d-flex flex-column">
-							<div class="d-flex flex-row justify-content-between">
-								<div class="name">• {{ game.name }}</div>
-								<div class="status" [ngClass]="getStatusClassLegacy(game.status)">
-									{{ getStatusLegacy(game.status) | translate }}
-								</div>
-							</div>
-							<div class="ms-2">
-								<div>
-									{{ 'HISTORY.CREATED_ON' | translate }}
-									{{ game.created | date: ('DATE_FORMAT.DATETIME' | translate) }}
-								</div>
-								<div>
-									<span class="fw-bold">👥 {{ game.playersCount }}</span>
-									{{ 'HISTORY.PLAYERS' | translate }} , {{ 'HISTORY.TYPE' | translate }}
-									<span class="fw-bold">
-										{{
-											game.typeMoney === JUNE
-												? ('FREE_MONEY' | translate)
-												: ('DEBT_MONEY' | translate)
-										}}
-										<img
-											*ngIf="game.typeMoney === DEBT"
-											class="icon"
-											[src]="'/assets/images/debt.png'" />
-										<img
-											*ngIf="game.typeMoney === JUNE"
-											class="icon"
-											[src]="'/assets/images/june.png'" />
-									</span>
-								</div>
-								<div class=""></div>
-								<div>
-									{{ 'HISTORY.LOCATION' | translate }}
-									<span class="fw-bold">{{ game.location ? game.location : '-' }}</span>
-									, {{ 'HISTORY.ANIMATOR' | translate }}
-									<span class="fw-bold">{{ game.animator ? game.animator : '-' }}</span>
-								</div>
-								<div class="d-flex flex-row"></div>
-							</div>
+
+				<div class="date">📅 {{ session.createdAt | date: ('DATE_FORMAT.DATETIME' | translate) }}</div>
+
+				<dl class="meta">
+					<div>
+						<dt>📍</dt>
+						<dd>{{ session.location || '-' }}</dd>
+					</div>
+					<div>
+						<dt>👤</dt>
+						<dd>{{ session.animator || '-' }}</dd>
+					</div>
+					<div>
+						<dt>👥</dt>
+						<dd>{{ session.avatarsCount }} {{ 'HISTORY.PLAYERS' | translate }}</dd>
+					</div>
+					<div>
+						<dt>🎨</dt>
+						<dd>{{ getThemeName(session.theme) }}</dd>
+					</div>
+				</dl>
+
+				<div class="actions">
+					<button
+						class="box-shadowed"
+						*ngIf="session.status === OPEN"
+						mat-flat-button
+						color="primary"
+						[routerLink]="['/join', session._id]">
+						{{ 'HISTORY.JOIN_AS_NEW_PLAYER' | translate }}
+					</button>
+					<button
+						class="box-shadowed"
+						*ngIf="session.status === IN_PROGRESS || session.status === OPEN"
+						mat-flat-button
+						color="warn"
+						[routerLink]="['/session', session._id]">
+						{{ 'HISTORY.JOIN_AS_MASTER' | translate }}
+					</button>
+					<button
+						class="box-shadowed"
+						*ngIf="session.status === ENDED"
+						mat-flat-button
+						color="accent"
+						[routerLink]="['/results', session._id]">
+						{{ 'HISTORY.VIEW_RESULTS' | translate }}
+					</button>
+					<button
+						*ngIf="deleteGames"
+						class="trash"
+						mat-icon-button
+						[attr.aria-label]="'DELETE' | translate"
+						(click)="onDeleteSession(session)">
+						<fa-icon [icon]="faTrashCan"></fa-icon>
+					</button>
+				</div>
+			</article>
+		</section>
+
+		<details *ngIf="games?.length" class="legacy" [open]="legacyOpen" (toggle)="legacyOpen = $any($event.target).open">
+			<summary>
+				<fa-icon class="chevron" [icon]="faChevronRight"></fa-icon>
+				{{ 'HISTORY.LEGACY_TITLE' | translate }}
+				<span class="count">{{ games.length }}</span>
+			</summary>
+			<ul class="legacy-list">
+				<li class="legacy-row" *ngFor="let game of games; trackBy: trackById" [ngClass]="getStatusClassLegacy(game.status)">
+					<div class="legacy-main">
+						<div class="card-head">
+							<span class="name" [title]="game.name">{{ game.name }}</span>
+							<span class="status">
+								<span class="dot"></span>
+								{{ getStatusLegacy(game.status) | translate }}
+							</span>
 						</div>
+						<div class="legacy-meta">
+							<span>📅 {{ game.created | date: ('DATE_FORMAT.DATETIME' | translate) }}</span>
+							<span>👥 {{ game.playersCount }} {{ 'HISTORY.PLAYERS' | translate }}</span>
+							<span>
+								<img class="money-icon" [src]="game.typeMoney === JUNE ? '/assets/images/june.png' : '/assets/images/debt.png'" alt="" />
+								{{ (game.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate }}
+							</span>
+							<span>📍 {{ game.location || '-' }}</span>
+							<span>👤 {{ game.animator || '-' }}</span>
+						</div>
+					</div>
+					<div class="actions">
 						<button
-							class="ms-2"
-							mat-raised-button
-							[routerLink]="
-								game.status === C.END_GAME
-									? ['/ogame', game._id, 'results']
-									: ['/ogame', game._id, 'master']
-							"
-							color="accent">
-							{{
-								game.status === C.END_GAME
-									? ('HISTORY.VIEW_RESULTS' | translate)
-									: ('HISTORY.VIEW' | translate)
-							}}
+							mat-stroked-button
+							class="ghost-btn"
+							[routerLink]="game.status === C.END_GAME ? ['/ogame', game._id, 'results'] : ['/ogame', game._id, 'master']">
+							{{ (game.status === C.END_GAME ? 'HISTORY.VIEW_RESULTS' : 'HISTORY.VIEW') | translate }}
 						</button>
 						<button
 							*ngIf="deleteGames"
-							class="ms-2"
-							mat-raised-button
-							color="warn"
+							class="trash"
+							mat-icon-button
+							[attr.aria-label]="'DELETE' | translate"
 							(click)="onDeleteGame(game)">
-							<fa-icon class="delete" [icon]="faTrashCan"></fa-icon>
+							<fa-icon [icon]="faTrashCan"></fa-icon>
 						</button>
 					</div>
-				</div>
-			</div>
-		</div>
+				</li>
+			</ul>
+		</details>
 	</div>
 </div>

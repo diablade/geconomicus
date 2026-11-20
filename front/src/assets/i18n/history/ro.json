@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "Istoricul jocurilor create",
+		"GUNY_BUBBLE": "Găsește toate jocurile jucate de când exist… am o memorie de seif!",
+		"LEGACY_TITLE": "Jocuri vechi (V1)",
+		"EMPTY": "Niciun joc găsit.",
 		"DELETE_CONFIRM": "Ștergi jocul?",
-		"AUTO_DELETE": "Jocurile mai vechi de 2 luni vor fi șterse automat în curând.",
-		"IMPORT_EXPORT": "(Importul și exportul jocurilor vor fi, de asemenea, posibile în curând).",
 		"JOIN_AS_NEW_PLAYER": "Alătură-te (jucător nou)",
 		"JOIN_AS_MASTER": "Alătură-te ca animator",
 		"CREATED_ON": "Creat pe",

@@ -6,6 +6,7 @@
 		"INSTALL": "アプリをインストール",
 		"CREATE_SESSION": "セッションを作成",
 		"JOIN_SESSION": "セッションに参加",
+		"HISTORY": "履歴",
 		"JOIN_VIA_SHORT_ID": "短いコードで",
 		"JOIN_VIA_QR_CODE": "QRコードで",
 		"HOW_TO_PLAY": "どうやって遊ぶの？",

@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, OnInit, OnDestroy, ElementRef, NgZone } from '@angular/core';
-import { animate, hover, inView, press, stagger } from 'motion';
+import { animate, inView, stagger } from 'motion';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { faCamera, faChevronDown, faKeyboard } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faChevronDown, faClockRotateLeft, faKeyboard } from '@fortawesome/free-solid-svg-icons';
 import { ReJoinQrDialogComponent } from '../dialogs/re-join-qr-dialog/re-join-qr-dialog.component';
 import { Platform } from '@angular/cdk/platform';
 import { ScannerQrCode } from '../dialogs/scanner-qr-code/scanner-qr-code.component';
@@ -25,6 +25,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	faCamera = faCamera;
 	faChevronDown = faChevronDown;
 	faKeyboard = faKeyboard;
+	faClockRotateLeft = faClockRotateLeft;
+
 	modalPwaEvent: any;
 	modalPwaPlatform: string | undefined;
 	private stopAnimations: (() => void)[] = [];
@@ -67,7 +69,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.stopAnimations.forEach((stop) => stop());
 	}
 
-	/** Plays the Motion entrance, scroll-reveal, and hover/press animations of the home page. */
+	/** Plays the Motion entrance, and scroll-reveal animations of the home page. */
 	private playIntroAnimations(): void {
 		const root = this.host.nativeElement;
 		const reveal = root.querySelectorAll('[data-reveal]');
@@ -88,20 +90,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 			{ amount: 0.2 }
 		);
-		const stopHover = hover(root.querySelectorAll('[data-pop], .geco, .guny, .img-bottom'), (element) => {
-			animate(element, { scale: 1.06 }, { type: 'spring', stiffness: 400, damping: 15 });
-			return () => animate(element, { scale: 1 }, { type: 'spring', stiffness: 400, damping: 20 });
-		});
-		const stopPress = press(root.querySelectorAll('[data-pop], .geco, .guny, .img-bottom'), (element) => {
-			animate(element, { scale: 0.92 }, { type: 'spring', stiffness: 600, damping: 20 });
-			return () => animate(element, { scale: 1 }, { type: 'spring', stiffness: 500, damping: 12 });
-		});
 		this.stopAnimations = [
 			() => intro.stop(),
 			() => logo.stop(),
 			stopInView,
-			stopHover,
-			stopPress,
 		];
 	}
 

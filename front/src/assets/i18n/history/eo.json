@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "Historio de la kreitaj seancoj",
+		"GUNY_BUBBLE": "Retrovu ĉiujn seancojn luditajn ekde kiam mi ekzistas… mia memoro estas monŝranko!",
+		"LEGACY_TITLE": "Malnovaj seancoj (V1)",
+		"EMPTY": "Neniu seanco trovita.",
 		"DELETE_CONFIRM": "Forigi seancon?",
-		"AUTO_DELETE": "La seancoj pli ol 2 monatojn aĝaj baldaŭ estos aŭtomate forigitaj.",
-		"IMPORT_EXPORT": "(La importo kaj eksporto de seancoj baldaŭ eblos).",
 		"JOIN_AS_NEW_PLAYER": "Aliĝi (nova ludanto)",
 		"JOIN_AS_MASTER": "Aliĝi kiel animanto",
 		"CREATED_ON": "Kreita je",

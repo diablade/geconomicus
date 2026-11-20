@@ -27,7 +27,7 @@
 							(change)="changeSkin()"
 							[(ngModel)]="skin"></ngx-colors>
 						<div class="flex-grow-1 text-center">
-							<button (click)="randomize()" class="box-shadowed" mat-raised-button color="warn">
+							<button data-pop (click)="randomize()" class="box-shadowed" mat-raised-button color="warn">
 								<fa-icon [icon]="faWandMagicSparkles"></fa-icon>
 							</button>
 						</div>
@@ -42,7 +42,7 @@
 							ngx-colors-trigger
 							(change)="changeHairColor()"
 							[(ngModel)]="hairColor"></ngx-colors>
-						<button
+						<button data-pop
 							(click)="changeHair(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -53,7 +53,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.hair + 1 }}/{{ properties.hair.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeHair(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -64,7 +64,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EYES' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeEyes(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -75,7 +75,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.eyes + 1 }}/{{ properties.eyes.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeEyes(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -86,7 +86,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EYEBROWS' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeEyeBrows(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -97,7 +97,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.eyebrows + 1 }}/{{ properties.eyebrows.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeEyeBrows(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -108,7 +108,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.MOUTH' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeMouth(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -119,7 +119,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.mouth + 1 }}/{{ properties.mouth.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeMouth(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -130,7 +130,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.GLASSES' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeGlasses(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -141,7 +141,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.glasses + 1 }}/{{ properties.glasses.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeGlasses(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -152,7 +152,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.EARRINGS' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeEarrings(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -163,7 +163,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.earrings + 1 }}/{{ properties.earrings.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeEarrings(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -174,7 +174,7 @@
 					</div>
 					<div class="item">
 						<div class="optionsLabel img-thumbnail">{{ 'AVATAR.FEATURES' | translate }}</div>
-						<button
+						<button data-pop
 							(click)="changeFeature(false)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -185,7 +185,7 @@
 						<div class="img-thumbnail m-2 optionsLabelNumber">
 							{{ avatar.features + 1 }}/{{ properties.features.default.length }}
 						</div>
-						<button
+						<button data-pop
 							(click)="changeFeature(true)"
 							class="box-shadowed"
 							mat-mini-fab
@@ -246,10 +246,10 @@
 			</div>
 		</div>
 		<div class="d-flex mt-2 mb-2 justify-content-evenly">
-			<button (click)="close()" class="box-shadowed" mat-raised-button color="accent">
+			<button data-pop (click)="close()" class="big-btn box-shadowed" mat-raised-button color="accent">
 				{{ 'CANCEL' | translate }}
 			</button>
-			<button (click)="saveAndClose()" class="box-shadowed" mat-raised-button color="primary">
+			<button data-pop (click)="saveAndClose()" class="big-btn box-shadowed" mat-raised-button color="primary">
 				{{ 'SAVE' | translate }}
 			</button>
 		</div>

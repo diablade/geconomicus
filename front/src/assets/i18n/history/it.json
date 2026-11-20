@@ -1,9 +1,10 @@
 {
 	"HISTORY": {
 		"TITLE": "Cronologia delle partite create",
+		"GUNY_BUBBLE": "Ritrova tutte le partite giocate da quando esisto… ho una memoria da cassaforte!",
+		"LEGACY_TITLE": "Partite precedenti (V1)",
+		"EMPTY": "Nessuna partita trovata.",
 		"DELETE_CONFIRM": "Eliminare un gioco?",
-		"AUTO_DELETE": "A breve, le partite più vecchie di 2 mesi verranno eliminate automaticamente.",
-		"IMPORT_EXPORT": "(L'importazione e l'esportazione delle partite saranno presto possibili).",
 		"JOIN_AS_NEW_PLAYER": "Unisciti (nuovo giocatore)",
 		"JOIN_AS_MASTER": "Unisciti come animatore",
 		"CREATED_ON": "Creato il",

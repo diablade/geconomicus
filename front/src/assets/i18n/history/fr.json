@@ -1,9 +1,10 @@
 {
     "HISTORY": {
         "TITLE": "Historique des sessions créées",
+        "GUNY_BUBBLE": "Retrouve toutes les sessions jouées depuis que j’existe… j’ai une mémoire de coffre-fort !",
+        "LEGACY_TITLE": "Anciennes sessions (V1)",
+        "EMPTY": "Aucune session trouvée.",
         "DELETE_CONFIRM": "Supprimer une session ?",
-        "AUTO_DELETE": "Les sessions de plus de 2 mois seront bientôt automatiquement supprimées.",
-        "IMPORT_EXPORT": "(L'importation et l'exportation de session seront bientôt possibles).",
         "JOIN_AS_NEW_PLAYER": "Rejoindre (nouveau joueur)",
         "JOIN_AS_MASTER": "Rejoindre en tant qu'animateur",
         "CREATED_ON": "Créé le",

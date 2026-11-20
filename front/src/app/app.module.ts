@@ -87,6 +87,7 @@ import { AssistModeDialogComponent } from './dialogs/assist-mode-dialog/assist-m
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { SessionEditDialogComponent } from './dialogs/session-edit/session-edit-dialog.component';
 import { CoinComponent } from './components/coin/coin.component';
+import { PopEffectDirective } from './components/pop-effect/pop-effect.directive';
 import { BulleComponent } from './components/bulle/bulle.component';
 import { OnlineStatusComponent } from './components/online-status/online-status.component';
 import { GameControlsComponent } from './components/game-controls/game-controls.component';
@@ -164,6 +165,7 @@ LOAD_WASM().subscribe();
 		ReJoinQrDialogComponent,
 		AvatarComponent,
 		CoinComponent,
+		PopEffectDirective,
 		BulleComponent,
 		OnlineStatusComponent,
 		GameControlsComponent,
