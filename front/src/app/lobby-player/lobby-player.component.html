@@ -17,6 +17,7 @@
 					<span class="chip" *ngIf="vm.session.animator">
 						👤 {{ 'AVATAR.ANIMATOR' | translate: { name: vm.session.animator } }}
 					</span>
+					<span class="chip">🔢 code: {{ avatarCode }}</span>
 				</div>
 			</section>
 
@@ -32,10 +33,10 @@
 					</span>
 					<span class="player-name shadowed">{{ vm.avatar?.name }}</span>
 				</button>
-				<div class="code" *ngIf="avatarCode">
-					<span>{{ 'AVATAR.YOUR_CODE' | translate }}</span>
-					<b>{{ avatarCode }}</b>
-				</div>
+<!--				<div class="code" *ngIf="avatarCode">-->
+<!--					<span>{{ 'AVATAR.YOUR_CODE' | translate }}</span>-->
+<!--					<b>{{ avatarCode }}</b>-->
+<!--				</div>-->
 			</section>
 
 			<section class="rounds" *ngIf="vm.session?.gamesRules?.length">
