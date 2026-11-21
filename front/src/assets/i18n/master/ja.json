@@ -74,6 +74,7 @@
 		"GAME_PAUSED": "ゲームは一時停止中です。",
 		"GAME_ENDED": "ゲームは終了しました。",
 		"PLAY_USER": "このプレイヤーを操作する",
+		"PLAY_USER_NEW_TAB": "新しいタブで操作する",
 		"COPY_USER_LINK": "プレイヤーのリンクをコピー",
 		"JOIN_VIA_QR_CODE": "QRコードで",
 		"GAME_TABLE_VIEW": "コックピット",

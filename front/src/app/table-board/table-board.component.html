@@ -664,9 +664,13 @@
 	<!-- Shared per-player action menu (avatar trigger, both layouts) -->
 	<mat-menu #playerMenu="matMenu">
 		<ng-template matMenuContent let-row="row">
-			<button mat-menu-item (click)="playUser(row)">
+			<button mat-menu-item (click)="playUser(row, false)">
 				<mat-icon>play_arrow</mat-icon>
 				<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
+			</button>
+			<button mat-menu-item (click)="playUser(row, true)">
+				<mat-icon>open_in_new</mat-icon>
+				<span>{{ 'MASTER.PLAY_USER_NEW_TAB' | translate }}</span>
 			</button>
 			<button mat-menu-item (click)="copyPlayerLink(row)">
 				<mat-icon>link</mat-icon>

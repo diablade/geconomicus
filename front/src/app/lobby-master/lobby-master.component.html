@@ -243,6 +243,10 @@
 							<mat-icon>play_arrow</mat-icon>
 							<span>{{ 'MASTER.PLAY_USER' | translate }}</span>
 						</button>
+						<a mat-menu-item target="_blank" [routerLink]="['/avatar', sessionId, avatar.idx]">
+							<mat-icon>open_in_new</mat-icon>
+							<span>{{ 'MASTER.PLAY_USER_NEW_TAB' | translate }}</span>
+						</a>
 						<button mat-menu-item (click)="copyPlayerLink(avatar.idx)">
 							<mat-icon>link</mat-icon>
 							<span>{{ 'MASTER.COPY_USER_LINK' | translate }}</span>

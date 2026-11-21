@@ -74,6 +74,7 @@
 		"GAME_PAUSED": "Partida este în pauză.",
 		"GAME_ENDED": "Partida s-a încheiat.",
 		"PLAY_USER": "Joacă acest jucător",
+		"PLAY_USER_NEW_TAB": "Joacă într-o filă nouă",
 		"COPY_USER_LINK": "Copiază linkul jucătorului",
 		"JOIN_VIA_QR_CODE": "Prin codul QR",
 		"GAME_TABLE_VIEW": "Cockpit",

@@ -74,6 +74,7 @@
 		"GAME_PAUSED": "A partida está em pausa.",
 		"GAME_ENDED": "A partida está encerrada.",
 		"PLAY_USER": "Jogar como este jogador",
+		"PLAY_USER_NEW_TAB": "Jogar numa nova aba",
 		"COPY_USER_LINK": "Copiar o link do jogador",
 		"JOIN_VIA_QR_CODE": "Usando o QR code",
 		"GAME_TABLE_VIEW": "Cockpit",

@@ -74,6 +74,7 @@
 		"GAME_PAUSED": "La partio estas paŭzita.",
 		"GAME_ENDED": "La partio finiĝis.",
 		"PLAY_USER": "Ludi ĉi tiun ludanton",
+		"PLAY_USER_NEW_TAB": "Ludi en nova langeto",
 		"COPY_USER_LINK": "Kopii la ligilon de la ludanto",
 		"JOIN_VIA_QR_CODE": "Per la QR-kodo",
 		"GAME_TABLE_VIEW": "Pilotejo",

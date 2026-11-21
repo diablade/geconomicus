@@ -74,6 +74,7 @@
 		"GAME_PAUSED": "Igra je pauzirana.",
 		"GAME_ENDED": "Igra je završena.",
 		"PLAY_USER": "Igraj kao ovaj igrač",
+		"PLAY_USER_NEW_TAB": "Igraj u novoj kartici",
 		"COPY_USER_LINK": "Kopiraj link igrača",
 		"JOIN_VIA_QR_CODE": "Preko QR koda",
 		"GAME_TABLE_VIEW": "Kokpit",

@@ -425,7 +425,8 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	playUser(row: TableRow): void {
+	/** Opens the player's board, in a new tab or in the current one. */
+	playUser(row: TableRow, newTab: boolean): void {
 		// If the player is live on their own device, ask how to attach: co-exist,
 		// take-over, or kick (ADR-0010). Otherwise just open their board.
 		if (row.connection?.isConnected) {
@@ -434,11 +435,20 @@ export class TableBoardComponent implements OnInit, OnDestroy {
 				.afterClosed()
 				.subscribe((mode: AssistMode | undefined) => {
 					if (mode) {
-						window.open(this.getPlayerStateUrl(row, mode), '_blank');
+						this.openUrl(this.getPlayerStateUrl(row, mode), newTab);
 					}
 				});
 		} else {
-			window.open(this.getPlayerStateUrl(row), '_blank');
+			this.openUrl(this.getPlayerStateUrl(row), newTab);
+		}
+	}
+
+	/** Opens a URL in a new tab or in the current one. */
+	private openUrl(url: string, newTab: boolean): void {
+		if (newTab) {
+			window.open(url, '_blank');
+		} else {
+			window.location.href = url;
 		}
 	}
 
