@@ -49,6 +49,7 @@
 		"SESSION_STATE": "Stato de la seanco",
 		"JOIN_LINK": "Ligilo por aliĝi",
 		"EDIT": "Redakti la seancon",
+		"DEV_MODE": "Programista reĝimo",
 		"DELETE_USER_CONFIRM": "Ĉu vi vere volas forigi {{player}}?",
 		"DELETE_PLAYER_SUCCESS": "La ludanto estis sukcese forigita.",
 		"START_CONFIRM": "⚠️ Ĉu vi vere volas ekigi la seancon?",

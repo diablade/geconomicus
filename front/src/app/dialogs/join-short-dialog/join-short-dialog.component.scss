@@ -1,17 +1,27 @@
-.join-short {
-	max-height: 90vh;
-	max-width: 400px;
-	overflow: auto;
+.code-field {
+	position: relative;
 }
-.inputShort {
-	width: 200px;
-}
-.codeError {
-	color: #c62828;
+
+.code-input {
+	height: 56px;
+	padding-right: 3rem;
+	font-size: 1.5rem;
 	text-align: center;
-	max-width: 260px;
-	margin-bottom: 0.5rem;
+	letter-spacing: 0.08em;
 }
-.keyboard{
-    max-width: 400px;
+
+.code-clear {
+	position: absolute;
+	top: 50%;
+	right: 0.25rem;
+	transform: translateY(-50%);
+}
+
+.code-error {
+	padding: 0.5rem 0.75rem;
+	border-radius: 10px;
+	background: #ffecec;
+	color: #b3261e;
+	font-size: 0.875rem;
+	text-align: center;
 }

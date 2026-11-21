@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Nuova partita",
+		"ADD_GAME": {
+			"TITLE": "Aggiungi una partita",
+			"NOTE": "Si aggiunge accanto alle altre solo per il confronto. Non viene salvato nulla: al ricaricamento, la pagina torna alle partite di questa sessione.",
+			"SEARCH": "Cerca una sessione — nome, luogo, animatore…",
+			"LOADING": "Caricamento…",
+			"EMPTY": "Nessun’altra sessione con una partita giocata.",
+			"UNNAMED": "Senza nome",
+			"LOADING_GAMES": "Caricamento delle partite…",
+			"NO_GAMES": "Nessuna partita giocata.",
+			"ALREADY_SHOWN": "già mostrata",
+			"ADD": "aggiungi"
+		},
 		"NEXT_GAME_COPY": "nuova manche",
 		"LEARN_MORE": "Scopri di più sulla moneta libera?",
 		"LEARN_MORE_MOBILE": "Scopri di più sulla moneta libera?",

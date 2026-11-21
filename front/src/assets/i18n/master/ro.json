@@ -49,6 +49,7 @@
 		"SESSION_STATE": "Starea sesiunii",
 		"JOIN_LINK": "Link pentru a te alătura",
 		"EDIT": "Editează sesiunea",
+		"DEV_MODE": "Mod dezvoltator",
 		"DELETE_USER_CONFIRM": "Chiar vrei să îl ștergi pe {{player}}?",
 		"DELETE_PLAYER_SUCCESS": "Jucătorul a fost șters cu succes.",
 		"START_CONFIRM": "⚠️ Chiar vrei să pornești sesiunea?",

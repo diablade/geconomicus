@@ -13,6 +13,6 @@ export class PedagoBtnComponent {
 	constructor(public dialog: MatDialog) {
 	}
 	show() {
-		this.dialog.open(PedagoDialogComponent, {});
+		this.dialog.open(PedagoDialogComponent, { maxWidth: '80vw' });
 	}
 }

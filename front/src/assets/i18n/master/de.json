@@ -49,6 +49,7 @@
 		"SESSION_STATE": "Status der Sitzung",
 		"JOIN_LINK": "Link zum Beitreten",
 		"EDIT": "Sitzung bearbeiten",
+		"DEV_MODE": "Entwicklermodus",
 		"DELETE_USER_CONFIRM": "Willst du {{player}} wirklich löschen?",
 		"DELETE_PLAYER_SUCCESS": "Der Spieler wurde erfolgreich gelöscht.",
 		"START_CONFIRM": "⚠️ Willst du die Sitzung wirklich starten?",

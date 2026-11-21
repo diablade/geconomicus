@@ -1,6 +1,8 @@
-<div class="seizure p-4 d-flex flex-column">
-	<div class="fs-3 geconomicusFont mb-3">{{ 'DIALOG.SEIZURE.TITLE' | translate }}</div>
-	<div class="flex-grow-1">
+<div class="dlg dlg-xwide seizure">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'DIALOG.SEIZURE.TITLE' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
 		<div class="d-flex flex-row flex-wrap justify-content-between" cdkDropListGroup>
 			<div
 				cdkDropList
@@ -114,16 +116,14 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="m-2 d-flex flex-row justify-content-center">
-		<div>
+		<div class="dlg-section prison-row">
 			<fa-icon
 				class="ms-2 icon"
 				[matTooltip]="'DIALOG.SEIZURE.TOOLTIP_PRISON_INFO' | translate: { max: timerPrisonMax }"
 				[icon]="faInfoCircle"></fa-icon>
 			{{ 'DIALOG.SEIZURE.PRISON_DECISION' | translate }}
 			<input
-				class="smallInput"
+				class="dlg-num xs"
 				type="number"
 				[disabled]="playerCards.length > 0"
 				[min]="getMinTimerPrison()"
@@ -132,10 +132,11 @@
 			{{ 'DIALOG.SEIZURE.MINUTES' | translate }}
 		</div>
 	</div>
-	<div class="d-flex flex-row justify-content-end">
-		<button mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
-		<button mat-raised-button (click)="validate()" color="accent" class="ms-2">
+	<footer class="dlg-actions">
+		<button mat-stroked-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
+		<span class="dlg-spacer"></span>
+		<button mat-raised-button color="accent" class="box-shadowed" (click)="validate()">
 			{{ 'DIALOG.SEIZURE.VALIDATE' | translate }}
 		</button>
-	</div>
+	</footer>
 </div>

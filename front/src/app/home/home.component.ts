@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		const session: any = this.localStorageService.getItem('session');
-		if (session && session.idGame && session.idPlayer) {
+		if (session?.sessionId && session.avatarIdx != null) {
 			const dialogRef = this.dialog.open(ResumeSessionPromptComponent, {
 				disableClose: true,
 				data: session,

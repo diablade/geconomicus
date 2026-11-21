@@ -55,3 +55,20 @@
 		opacity: 0;
 	}
 }
+
+.help-btns {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.5rem;
+
+	::ng-deep button {
+		margin-left: 0 !important;
+		padding: 0 0.625rem !important;
+		letter-spacing: 0.25px;
+	}
+
+	::ng-deep button .mat-icon {
+		margin-right: 4px;
+	}
+}

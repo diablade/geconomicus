@@ -49,6 +49,7 @@
 		"SESSION_STATE": "Stanje sesije",
 		"JOIN_LINK": "Link za pridruživanje",
 		"EDIT": "Izmeni sesiju",
+		"DEV_MODE": "Programerski režim",
 		"DELETE_USER_CONFIRM": "Da li zaista želiš da obrišeš igrača {{player}}?",
 		"DELETE_PLAYER_SUCCESS": "Igrač je uspešno obrisan.",
 		"START_CONFIRM": "⚠️ Da li zaista želiš da pokreneš sesiju?",

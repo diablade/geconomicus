@@ -21,6 +21,8 @@
 	"SAVE": "Registri",
 	"DELETE": "Forigi",
 	"QUIT": "Eliri",
+	"CLEAR": "Viŝi",
+	"REOPEN": "Remalfermi",
 	"GAME": {
 		"OPEN": "Partio malfermita, alkuniĝebla",
 		"PLAYING": "Okazanta",

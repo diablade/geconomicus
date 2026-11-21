@@ -8,7 +8,7 @@ import { CreateSessionDialog, HomeComponent, InstallAppDialog } from './home/hom
 import { AppRoutingModule } from './app-routing.module';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpClient } from '@angular/common/http';
@@ -64,6 +64,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LanguageBtnComponent } from './components/language-btn/language-btn.component';
 import { GameInfosDialog, NoticeBtnComponent } from './components/notice-btn/notice-btn.component';
+import { TutorialBtnComponent } from './components/tutorial-btn/tutorial-btn.component';
 import { I18nService } from './services/i18n.service';
 import { TitleStrategy } from '@angular/router';
 import { TabTitleStrategy } from './services/tab-title.strategy';
@@ -147,6 +148,7 @@ LOAD_WASM().subscribe();
 		MasterAdminComponent,
 		LanguageBtnComponent,
 		NoticeBtnComponent,
+		TutorialBtnComponent,
 		ContributionsComponent,
 		ModuleWealthDistribComponent,
 		ModuleGalileoComponent,
@@ -225,7 +227,12 @@ LOAD_WASM().subscribe();
 			registrationStrategy: 'registerWhenStable:30000',
 		}),
 	],
-	providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }, I18nService, { provide: TitleStrategy, useClass: TabTitleStrategy }],
+	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
+		I18nService,
+		{ provide: TitleStrategy, useClass: TabTitleStrategy },
+		{ provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { ...new MatDialogConfig(), maxWidth: '96vw' } },
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

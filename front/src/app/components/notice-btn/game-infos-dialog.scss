@@ -1,0 +1,38 @@
+.notice-body {
+	line-height: 1.5;
+
+	p {
+		margin: 0.5rem 0;
+	}
+
+	ul {
+		margin: 0.25rem 0 0.5rem;
+		padding-left: 1.25rem;
+	}
+
+	mat-icon {
+		vertical-align: middle;
+	}
+}
+
+.notice-split {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 1rem;
+
+	ul {
+		flex: 1 1 220px;
+	}
+}
+
+.dlg-media {
+	display: block;
+	max-width: 100%;
+	margin: 0.5rem auto;
+	border-radius: 12px;
+}
+
+.notice-video {
+	width: 180px;
+}

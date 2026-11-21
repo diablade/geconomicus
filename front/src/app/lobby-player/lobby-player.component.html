@@ -115,10 +115,7 @@
 					[stroked]="true"
 					[white]="true"
 					[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
-				<button class="whiteBtn blur box-shadowed" mat-stroked-button (click)="openTutorial()">
-					<mat-icon class="outlined">joystick</mat-icon>
-					{{ 'TUTORIAL.OPEN' | translate }}
-				</button>
+				<app-tutorial-btn [stroked]="true" [white]="true"></app-tutorial-btn>
 				<button
 					*ngIf="fullscreenService.supported"
 					class="whiteBtn blur box-shadowed"

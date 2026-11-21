@@ -1,23 +1,36 @@
-<div class="join-short m-2">
-	<h1 mat-dialog-title>{{ 'DIALOG_JOIN_SHORT_CODE.SHORT_ID_TITLE' | translate }}</h1>
-	<div mat-dialog-content>
-		<div class="d-flex flex-column align-items-center">
-			<div class="mb-2">{{ 'DIALOG_JOIN_SHORT_CODE.SHORT_ID_DESC' | translate }}</div>
-			<mat-form-field class="inputShort">
-				<mat-label>Ex: 0042 / 0042-7</mat-label>
-				<input matInput type="text" required readonly [(ngModel)]="code" (keyup.enter)="submit()" />
-				<button *ngIf="code" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
-					<fa-icon [icon]="faXmark"></fa-icon>
-				</button>
-			</mat-form-field>
-			<div class="codeError" *ngIf="error">{{ error | translate }}</div>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'DIALOG_JOIN_SHORT_CODE.SHORT_ID_TITLE' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<p class="dlg-text">{{ 'DIALOG_JOIN_SHORT_CODE.SHORT_ID_DESC' | translate }}</p>
+		<div class="code-field">
+			<input
+				class="dlg-field code-input"
+				type="text"
+				placeholder="0042 / 0042-7"
+				required
+				readonly
+				[(ngModel)]="code"
+				(keyup.enter)="submit()" />
+			<button
+				*ngIf="code"
+				type="button"
+				class="code-clear"
+				mat-icon-button
+				[attr.aria-label]="'CLEAR' | translate"
+				(click)="clear()">
+				<fa-icon [icon]="faXmark"></fa-icon>
+			</button>
 		</div>
+		<div class="code-error" *ngIf="error">{{ error | translate }}</div>
 		<div class="simple-keyboard"></div>
 	</div>
-	<div mat-dialog-actions class="d-flex justify-content-between">
-		<button mat-button [mat-dialog-close]="">{{ 'CANCEL' | translate }}</button>
-		<button mat-raised-button color="primary" [disabled]="!canSubmit" (click)="submit()">
+	<footer class="dlg-actions">
+		<button mat-stroked-button [mat-dialog-close]="">{{ 'CANCEL' | translate }}</button>
+		<span class="dlg-spacer"></span>
+		<button mat-raised-button color="primary" class="box-shadowed" [disabled]="!canSubmit" (click)="submit()">
 			{{ 'DIALOG_JOIN_SHORT_CODE.SEARCH' | translate }}
 		</button>
-	</div>
+	</footer>
 </div>

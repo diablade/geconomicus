@@ -21,6 +21,8 @@
     "SAVE": "Speichern",
     "DELETE": "Löschen",
     "QUIT": "Verlassen",
+    "CLEAR": "Löschen",
+    "REOPEN": "Wieder öffnen",
     "GAME": {
         "OPEN": "Spiel offen, beitreten ist möglich",
         "PLAYING": "Läuft",

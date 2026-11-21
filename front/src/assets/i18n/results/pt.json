@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Nova partida",
+		"ADD_GAME": {
+			"TITLE": "Adicionar uma partida",
+			"NOTE": "Ela aparece ao lado das outras só para a comparação. Nada é salvo: ao recarregar, a página volta às partidas desta sessão.",
+			"SEARCH": "Buscar uma sessão — nome, local, animador(a)…",
+			"LOADING": "Carregando…",
+			"EMPTY": "Nenhuma outra sessão com uma partida jogada.",
+			"UNNAMED": "Sem nome",
+			"LOADING_GAMES": "Carregando partidas…",
+			"NO_GAMES": "Nenhuma partida jogada.",
+			"ALREADY_SHOWN": "já exibida",
+			"ADD": "adicionar"
+		},
 		"NEXT_GAME_COPY": "Nova rodada",
 		"LEARN_MORE": "Aprender mais sobre a moeda livre ?",
 		"LEARN_MORE_MOBILE": "Aprender mais sobre a moeda livre ?",

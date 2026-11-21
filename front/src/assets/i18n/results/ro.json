@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "joc nou",
+		"ADD_GAME": {
+			"TITLE": "Adaugă un joc",
+			"NOTE": "Apare lângă celelalte doar pentru comparație. Nu se salvează nimic: la reîncărcare, pagina revine la jocurile acestei sesiuni.",
+			"SEARCH": "Caută o sesiune — nume, loc, animator…",
+			"LOADING": "Se încarcă…",
+			"EMPTY": "Nicio altă sesiune cu un joc jucat.",
+			"UNNAMED": "Fără nume",
+			"LOADING_GAMES": "Se încarcă jocurile…",
+			"NO_GAMES": "Niciun joc jucat.",
+			"ALREADY_SHOWN": "deja afișat",
+			"ADD": "adaugă"
+		},
 		"NEXT_GAME_COPY": "joc nou",
 		"LEARN_MORE": "Află mai multe despre moneda liberă?",
 		"LEARN_MORE_MOBILE": "Află mai multe despre moneda liberă?",

@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Nova partio",
+		"ADD_GAME": {
+			"TITLE": "Aldoni ludon",
+			"NOTE": "Ĝi aperas apud la aliaj nur por la komparo. Nenio estas konservata: post reŝargo, la paĝo revenas al la ludoj de ĉi tiu seanco.",
+			"SEARCH": "Serĉi seancon — nomo, loko, animanto…",
+			"LOADING": "Ŝargado…",
+			"EMPTY": "Neniu alia seanco kun ludita ludo.",
+			"UNNAMED": "Sennoma",
+			"LOADING_GAMES": "Ŝargado de ludoj…",
+			"NO_GAMES": "Neniu ludo ludita.",
+			"ALREADY_SHOWN": "jam montrita",
+			"ADD": "aldoni"
+		},
 		"NEXT_GAME_COPY": "Nova raŭndo",
 		"LEARN_MORE": "Ĉu scii pli pri la libera mono?",
 		"LEARN_MORE_MOBILE": "Ĉu scii pli pri la libera mono?",

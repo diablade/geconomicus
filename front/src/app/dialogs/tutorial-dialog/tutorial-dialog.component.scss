@@ -1,10 +1,50 @@
+$tuto-gradient: linear-gradient(90deg, #ff64c8, #7c6cf2 55%, #64c8ff);
+
 .tutorial-dialog {
 	width: 100%;
 	height: 90vh;
 	height: 90dvh;
-	max-height: 600px;
+	max-height: 640px;
 	overflow: hidden;
 	container-type: size;
+}
+
+.tuto-head {
+	gap: 0.625rem;
+	border-bottom: none;
+}
+
+.step-icon {
+	flex-shrink: 0;
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 14px;
+	background: $tuto-gradient;
+	box-shadow: 0 6px 16px rgba(124, 108, 242, 0.35);
+	font-size: 1.35rem;
+}
+
+.slide-title {
+	font-size: 1.35rem !important;
+}
+
+.step-counter {
+	font-variant-numeric: tabular-nums;
+}
+
+.progress {
+	flex-shrink: 0;
+	height: 4px;
+	background: #ececf3;
+}
+
+.progress-fill {
+	height: 100%;
+	border-radius: 0 9999px 9999px 0;
+	background: $tuto-gradient;
+	transition: width 350ms ease-out;
 }
 
 .tutorial-body {
@@ -14,23 +54,22 @@
 	flex-direction: column;
 }
 
-.slide-title {
-	font-size: 1.1rem;
-	font-weight: 600;
-}
-
-.step-counter {
-	font-size: 0.85rem;
-}
-
-// Carousel
-.carousel-viewport {
-	overflow: hidden;
-	width: 100%;
-	background: #000;
+.stage {
 	flex: 1 1 auto;
 	min-height: 0;
+	display: flex;
+	padding: 0.875rem;
+}
+
+.carousel-viewport {
+	flex: 1;
 	position: relative;
+	overflow: hidden;
+	border-radius: 16px;
+	background: rgba(0, 0, 0, 0.35);
+	box-shadow:
+		0 12px 30px rgba(0, 0, 0, 0.45),
+		inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .carousel-track {
@@ -39,13 +78,21 @@
 	top: 0;
 	bottom: 0;
 	left: 0;
-	transition: transform 0.35s ease-in-out;
+	transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 	will-change: transform;
 }
 
 .carousel-slide {
 	flex-shrink: 0;
 	height: 100%;
+	opacity: 0.4;
+	transform: scale(0.94);
+	transition: opacity 0.4s ease, transform 0.4s ease;
+
+	&.current {
+		opacity: 1;
+		transform: scale(1);
+	}
 }
 
 .slide-media {
@@ -55,27 +102,73 @@
 	object-fit: contain;
 }
 
-// Description
-.slide-description {
+.guide {
 	flex-shrink: 0;
-	font-size: 0.85rem;
-	line-height: 1.4;
+	max-height: 48%;
+	overflow-y: auto;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.625rem;
+	padding: 0.75rem 1rem;
+	background: #f7f7fa;
+	border-top: 1px solid #ebebf0;
+}
+
+.guide-guny {
+	flex-shrink: 0;
+	width: 52px;
+	filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+	animation: guny-bob 3s ease-in-out infinite;
+}
+
+.guide-bubble {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	padding: 0.625rem 0.875rem;
+	border-radius: 14px;
+	background: white;
+	border: 1px solid #e5e5ee;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+	font-size: 0.875rem;
+	line-height: 1.5;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 18px;
+		left: -7px;
+		width: 12px;
+		height: 12px;
+		background: white;
+		border-left: 1px solid #e5e5ee;
+		border-bottom: 1px solid #e5e5ee;
+		transform: rotate(45deg);
+	}
 
 	::ng-deep p,
 	::ng-deep ul {
-		margin: 0 0 0.25rem;
+		margin: 0 0 0.375rem;
 	}
 
 	::ng-deep ul {
 		padding-left: 1.25rem;
 	}
 
+	::ng-deep li {
+		margin-bottom: 0.125rem;
+	}
+
+	::ng-deep b {
+		color: #4b3fc4;
+	}
+
 	::ng-deep .cards-table {
-		margin: 0.25rem 0;
+		margin: 0.375rem 0;
 		border-collapse: collapse;
 
 		td {
-			padding: 0.1rem 0.6rem 0.1rem 0;
+			padding: 0.125rem 0.625rem 0.125rem 0;
 		}
 	}
 
@@ -86,90 +179,171 @@
 	}
 }
 
-// Dots
-.dot-row {
-	padding-bottom: 4px;
-	gap: 2px;
-}
-
-.dot {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	border: 2px solid var(--primary-color, #6200ea);
-	background: transparent;
-	padding: 0;
-	cursor: pointer;
-	transition: background 0.2s;
-
-	&--active {
-		background: var(--primary-color, #6200ea);
-	}
-
-	&:hover:not(.dot--active) {
-		background: rgba(98, 0, 234, 0.2);
-	}
-}
-
-// Nav row
 .nav-row {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	gap: 0.75rem;
 }
 
 .nav-btn {
-	position: relative;
-	overflow: hidden;
-	padding-block: 0.25rem;
-}
-
-.nav-icon {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 3rem;
-	height: 3rem;
-	margin: 0;
-	font-size: 3rem;
-	transform: translate(-50%, -50%);
-	color: var(--primary-color, #6200ea);
-	opacity: 0.15;
-	pointer-events: none;
+	flex-shrink: 0;
+	max-width: 11rem;
 }
 
 .nav-label {
-	position: relative;
 	display: inline-block;
-	max-width: 7rem;
-	white-space: normal;
-	font-size: 0.75rem;
-	line-height: 1.1;
+	max-width: 7.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+	font-size: 0.8125rem;
 }
 
-@container (min-aspect-ratio: 1/1) {
+.dot-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+	min-width: 0;
+}
+
+.dot {
+	width: 8px;
+	height: 8px;
+	padding: 0;
+	border: none;
+	border-radius: 9999px;
+	background: #d6d6e0;
+	cursor: pointer;
+	transition: width 250ms ease, background-color 250ms ease;
+
+	&:hover {
+		background: #b8b0f5;
+	}
+
+	&--done {
+		background: #b8b0f5;
+	}
+
+	&--active,
+	&--active:hover {
+		width: 22px;
+		background: $tuto-gradient;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #7c6cf2;
+		outline-offset: 2px;
+	}
+}
+
+.finish-btn {
+	animation: finish-pulse 1.8s ease-in-out infinite;
+}
+
+.fade-in {
+	display: block;
+	animation: fade-in 300ms ease-out;
+}
+
+.pop-in {
+	display: inline-block;
+	animation: pop-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+}
+
+@keyframes pop-in {
+	from {
+		opacity: 0;
+		transform: scale(0.4) rotate(-20deg);
+	}
+}
+
+@keyframes guny-bob {
+	50% {
+		transform: translateY(-4px) rotate(-3deg);
+	}
+}
+
+@keyframes finish-pulse {
+	50% {
+		transform: scale(1.05);
+	}
+}
+
+@container (min-aspect-ratio: 3/2) {
 	.tutorial-body {
 		flex-direction: row-reverse;
 	}
 
-	.carousel-viewport {
-		min-width: 0;
+	.guide {
+		flex: 0 0 42%;
+		min-width: 14rem;
+		max-height: none;
+		overflow-y: auto;
+		border-top: none;
+		border-right: 1px solid #ebebf0;
+	}
+}
+
+@media (max-width: 480px) {
+	.nav-btn .nav-label {
+		display: none;
 	}
 
-	.slide-description {
-		flex: 0 0 45%;
-		min-width: 14rem;
-		overflow-y: auto;
+	.step-icon {
+		width: 36px;
+		height: 36px;
+		border-radius: 12px;
+		font-size: 1.15rem;
+	}
+
+	.slide-title {
+		font-size: 1.15rem !important;
+	}
+
+	.stage {
+		padding: 0.5rem;
+	}
+
+	.guide {
+		padding: 0.625rem;
+	}
+
+	.guide-guny {
+		width: 40px;
 	}
 }
 
 @media (max-height: 500px) {
-	.dialog-header,
-	.nav-row,
-	.slide-description {
-		padding: 0.25rem 0.75rem !important;
+	.guide {
+		padding: 0.375rem 0.75rem;
 	}
 
-	.slide-description {
+	.guide-bubble {
 		font-size: 0.75rem;
 		line-height: 1.3;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.guide-guny,
+	.finish-btn,
+	.fade-in,
+	.pop-in {
+		animation: none;
+	}
+
+	.carousel-slide,
+	.carousel-track {
+		transition: none;
 	}
 }

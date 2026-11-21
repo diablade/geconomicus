@@ -1,12 +1,16 @@
-<h1 mat-dialog-title>{{ "HISTORY.DELETE_DIALOG.TITLE" | translate }}</h1>
-<div mat-dialog-content>
-	<p>{{ "HISTORY.DELETE_DIALOG.MESSAGE" | translate }}</p>
-	<mat-form-field appearance="fill">
-		<input matInput [(ngModel)]="value">
-	</mat-form-field>
-
-</div>
-<div mat-dialog-actions>
-	<button mat-button [mat-dialog-close]="false">{{ "CANCEL" | translate }}</button>
-	<button mat-button [mat-dialog-close]="value">{{ "DELETE" | translate }}</button>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'HISTORY.DELETE_DIALOG.TITLE' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<div class="dlg-warning">{{ 'HISTORY.DELETE_DIALOG.MESSAGE' | translate }}</div>
+		<input class="dlg-field" type="password" autocomplete="off" [(ngModel)]="value" />
+	</div>
+	<footer class="dlg-actions">
+		<button mat-stroked-button [mat-dialog-close]="false">{{ 'CANCEL' | translate }}</button>
+		<span class="dlg-spacer"></span>
+		<button mat-raised-button color="warn" class="box-shadowed" [disabled]="!value" [mat-dialog-close]="value">
+			{{ 'DELETE' | translate }}
+		</button>
+	</footer>
 </div>

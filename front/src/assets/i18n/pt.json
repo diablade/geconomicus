@@ -21,6 +21,8 @@
 	"SAVE": "Salvar",
 	"DELETE": "Excluir",
 	"QUIT": "Sair",
+	"CLEAR": "Limpar",
+	"REOPEN": "Reabrir",
 	"GAME": {
 		"OPEN": "Partida aberta, para se juntar",
 		"PLAYING": "Em progresso",

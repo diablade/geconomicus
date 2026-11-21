@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "nova igra",
+		"ADD_GAME": {
+			"TITLE": "Dodaj igru",
+			"NOTE": "Prikazuje se pored ostalih samo radi poređenja. Ništa se ne čuva: pri ponovnom učitavanju stranica se vraća na igre ove sesije.",
+			"SEARCH": "Pretraži sesiju — ime, mesto, voditelj…",
+			"LOADING": "Učitavanje…",
+			"EMPTY": "Nema druge sesije sa odigranom igrom.",
+			"UNNAMED": "Bez imena",
+			"LOADING_GAMES": "Učitavanje igara…",
+			"NO_GAMES": "Nijedna igra nije odigrana.",
+			"ALREADY_SHOWN": "već prikazana",
+			"ADD": "dodaj"
+		},
 		"NEXT_GAME_COPY": "nova igra",
 		"LEARN_MORE": "Saznajte više o slobodnoj valuti?",
 		"LEARN_MORE_MOBILE": "Saznajte više o slobodnoj valuti?",

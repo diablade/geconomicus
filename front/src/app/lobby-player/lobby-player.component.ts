@@ -13,7 +13,6 @@ import { formatAvatarCode } from '../services/avatarCode';
 import { AudioService } from '../services/audio.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { InformationDialogComponent } from '../dialogs/information-dialog/information-dialog.component';
-import { TutorialDialogComponent } from '../dialogs/tutorial-dialog/tutorial-dialog.component';
 import { FullscreenService } from '../services/fullscreen.service';
 import { LocalStorageService } from '../services/local-storage/local-storage.service';
 
@@ -70,7 +69,6 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		private i18n: I18nService
 	) {
 		this.i18n.loadNamespace('avatar');
-		this.i18n.loadNamespace('tutorial');
 	}
 
 	ngOnInit() {
@@ -194,17 +192,9 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		}, 500);
 	}
 
-	/** Asks the player to confirm, then leaves the lobby for the home page. */
+	/** Asks the player to confirm, forgets the resumable session, then leaves the lobby for the home page. */
 	quit() {
-		confirmQuit(this.dialog, this.router, 'DIALOG.QUIT.PLAYER');
-	}
-
-	openTutorial() {
-		this.dialog.open(TutorialDialogComponent, {
-			data: {},
-			maxWidth: '700px',
-			width: '95vw',
-		});
+		confirmQuit(this.dialog, this.router, 'DIALOG.QUIT.PLAYER', () => this.localStorageService.removeItem('session'));
 	}
 
 	modifyFeedback(gameStateId: string) {

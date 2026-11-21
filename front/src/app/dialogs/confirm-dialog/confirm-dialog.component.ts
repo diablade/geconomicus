@@ -17,7 +17,7 @@ export class ConfirmDialogComponent {
 	timerBtnConfirm = 5;
 	btn1Enable = true;
 	styleBtnConfirm = "warn";
-	styleBtnCancel = "accent";
+	styleBtnCancel = "";
     beep = false;
 
 	constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private audioService: AudioService) {

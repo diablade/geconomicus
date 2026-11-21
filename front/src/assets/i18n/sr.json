@@ -21,6 +21,8 @@
     "SAVE": "Sačuvaj",
     "DELETE": "Obriši",
     "QUIT": "Izađi",
+    "CLEAR": "Obriši",
+    "REOPEN": "Ponovo otvori",
     "GAME": {
         "OPEN": "Otvoreno za pridruživanje",
         "PLAYING": "U toku",

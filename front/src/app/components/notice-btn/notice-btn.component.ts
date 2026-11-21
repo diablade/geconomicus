@@ -36,6 +36,7 @@ export class NoticeBtnComponent {
 @Component({
 	selector: 'game-infos-dialog',
 	templateUrl: './game-infos-dialog.html',
+	styleUrls: ['./game-infos-dialog.scss'],
 })
 export class GameInfosDialog {
 	amountCardsForProd: number;

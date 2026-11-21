@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "new game",
+		"ADD_GAME": {
+			"TITLE": "Add a game",
+			"NOTE": "It appears next to the others for the comparison only. Nothing is saved: on reload, the page goes back to this session’s games.",
+			"SEARCH": "Search a session — name, place, facilitator…",
+			"LOADING": "Loading…",
+			"EMPTY": "No other session with a played game.",
+			"UNNAMED": "Untitled",
+			"LOADING_GAMES": "Loading games…",
+			"NO_GAMES": "No game played.",
+			"ALREADY_SHOWN": "already shown",
+			"ADD": "add"
+		},
 		"NEXT_GAME_COPY": "New round",
 		"LEARN_MORE": "Learn more about free money?",
 		"LEARN_MORE_MOBILE": "Learn more about free money?",

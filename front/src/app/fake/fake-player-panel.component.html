@@ -1,11 +1,11 @@
 <!-- Always-on-top toggle -->
 <button type="button" class="fake-fab" (click)="toggleOpen()">🧪</button>
-<button type="button" class="fake-quit blur box-shadowed" color="warn" mat-stroked-button (click)="quit()">
-	<mat-icon class="outlined">logout</mat-icon>
-	{{ 'QUIT' | translate }}
-</button>
 
 <div class="fake-panel" *ngIf="open">
+	<div class="fake-section fake-head">
+		<button type="button" class="fake-btn fake-quit" (click)="quit()">🚪 {{ 'QUIT' | translate }}</button>
+	</div>
+
 	<div class="fake-section">
 		<span class="fake-label">Mode</span>
 		<button type="button" class="fake-btn" (click)="toggleMoney()">{{ isJune ? '🌱 June' : '💶 Debt' }}</button>

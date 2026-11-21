@@ -21,6 +21,8 @@
     "SAVE": "Salvează",
     "DELETE": "Șterge",
     "QUIT": "Ieși",
+    "CLEAR": "Șterge",
+    "REOPEN": "Redeschide",
     "GAME": {
         "OPEN": "Deschis pentru a te alătura",
         "PLAYING": "În desfășurare",

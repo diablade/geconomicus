@@ -21,6 +21,8 @@
 	"SAVE": "Sauvegarder",
 	"DELETE": "Supprimer",
 	"QUIT": "Quitter",
+	"CLEAR": "Effacer",
+	"REOPEN": "Rouvrir",
 	"GAME": {
 		"OPEN": "Partie ouverte, à rejoindre",
 		"PLAYING": "En cours",
@@ -43,7 +45,7 @@
 		"IN_PLAYER": "la carte <b>({{cardName}})</b> est chez le joueur <b>{{player}}</b>"
 	},
 	"THEME": {
-		"TITLE": "Theme",
+		"TITLE": "Thème",
 		"CLASSIC": "Cartes classiques",
 		"EMOJIS": "Items emoji",
 		"TWEMOJIS": "Items uniformes"

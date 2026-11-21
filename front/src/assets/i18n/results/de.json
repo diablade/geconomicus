@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Neues Spiel",
+		"ADD_GAME": {
+			"TITLE": "Spiel hinzufügen",
+			"NOTE": "Es wird nur für den Vergleich neben den anderen angezeigt. Nichts wird gespeichert: Beim Neuladen zeigt die Seite wieder die Spiele dieser Sitzung.",
+			"SEARCH": "Sitzung suchen – Name, Ort, Spielleitung…",
+			"LOADING": "Wird geladen…",
+			"EMPTY": "Keine andere Sitzung mit einem gespielten Spiel.",
+			"UNNAMED": "Ohne Namen",
+			"LOADING_GAMES": "Spiele werden geladen…",
+			"NO_GAMES": "Kein Spiel gespielt.",
+			"ALREADY_SHOWN": "bereits angezeigt",
+			"ADD": "hinzufügen"
+		},
 		"NEXT_GAME_COPY": "Neue Runde",
 		"LEARN_MORE": "Mehr erfahren über das Freigeld?",
 		"LEARN_MORE_MOBILE": "Mehr Infos über das Freigeld ?",

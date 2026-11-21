@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Nouvelle partie",
+		"ADD_GAME": {
+			"TITLE": "Ajouter une partie",
+			"NOTE": "Elle s’ajoute à côté des autres le temps de la comparaison. Rien n’est enregistré : au rechargement, la page revient aux parties de cette session.",
+			"SEARCH": "Chercher une session — nom, lieu, animateur·rice…",
+			"LOADING": "Chargement…",
+			"EMPTY": "Aucune autre session avec une partie jouée.",
+			"UNNAMED": "Sans nom",
+			"LOADING_GAMES": "Chargement des parties…",
+			"NO_GAMES": "Aucune partie jouée.",
+			"ALREADY_SHOWN": "déjà affichée",
+			"ADD": "ajouter"
+		},
 		"NEXT_GAME_COPY": "Nouvelle manche",
 		"LEARN_MORE": "En savoir plus sur la monnaie libre ?",
 		"LEARN_MORE_MOBILE": "En savoir plus sur la monnaie libre ?",

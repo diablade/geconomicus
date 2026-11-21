@@ -1,6 +1,18 @@
 {
 	"RESULTS": {
 		"NEW_GAME": "Nueva partida",
+		"ADD_GAME": {
+			"TITLE": "Añadir una partida",
+			"NOTE": "Se añade junto a las demás solo para la comparación. No se guarda nada: al recargar, la página vuelve a las partidas de esta sesión.",
+			"SEARCH": "Buscar una sesión — nombre, lugar, animador/a…",
+			"LOADING": "Cargando…",
+			"EMPTY": "Ninguna otra sesión con una partida jugada.",
+			"UNNAMED": "Sin nombre",
+			"LOADING_GAMES": "Cargando partidas…",
+			"NO_GAMES": "Ninguna partida jugada.",
+			"ALREADY_SHOWN": "ya mostrada",
+			"ADD": "añadir"
+		},
 		"NEXT_GAME_COPY": "Nueva manga",
 		"LEARN_MORE": "¿Más información sobre la moneda libre?",
 		"LEARN_MORE_MOBILE": "¿Más información sobre la moneda libre?",

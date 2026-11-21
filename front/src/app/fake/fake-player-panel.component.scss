@@ -88,9 +88,11 @@
 	pointer-events: none;
 }
 
+.fake-head {
+	justify-content: flex-end;
+}
+
 .fake-quit {
-	position: fixed;
-	top: 6px;
-	left: calc(50% + 30px);
-	z-index: 2600;
+	border-color: #e57373;
+	color: #ffb4b4;
 }

@@ -49,6 +49,7 @@
 		"SESSION_STATE": "セッションの状態",
 		"JOIN_LINK": "参加用リンク",
 		"EDIT": "セッションを編集",
+		"DEV_MODE": "開発者モード",
 		"DELETE_USER_CONFIRM": "本当に {{player}} を削除しますか？",
 		"DELETE_PLAYER_SUCCESS": "プレイヤーを削除しました。",
 		"START_CONFIRM": "⚠️ 本当にセッションを開始しますか？",

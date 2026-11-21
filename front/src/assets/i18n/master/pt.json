@@ -49,6 +49,7 @@
 		"SESSION_STATE": "Estado da sessão",
 		"JOIN_LINK": "Link para entrar",
 		"EDIT": "Editar a sessão",
+		"DEV_MODE": "Modo desenvolvedor",
 		"DELETE_USER_CONFIRM": "Você quer realmente excluir {{player}} ?",
 		"DELETE_PLAYER_SUCCESS": "O jogador foi excluído com sucesso.",
 		"START_CONFIRM": "⚠️ Você quer realmente iniciar a sessão ?",

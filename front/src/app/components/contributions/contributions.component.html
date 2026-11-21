@@ -1,15 +1,24 @@
-<div class="p-3">
-	<h1>{{ 'CONTRIBUTION.TITLE' | translate }}</h1>
-	<h2>{{ 'CONTRIBUTION.SUBTITLE' | translate }}:</h2>
-	<ul>
-		<li>Lucas Desroches</li>
-		<li>Corinne</li>
-		<li>Anthony</li>
-		<li>Cristina Abella</li>
-		<li>Paolo</li>
-		<li>Millicent</li>
-		<li>Paola</li>
-		<li>Céline Guelpe</li>
-		<li>Amigo</li>
-	</ul>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'CONTRIBUTION.TITLE' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<section class="dlg-section">
+			<h3>{{ 'CONTRIBUTION.SUBTITLE' | translate }}</h3>
+			<ul class="contributors">
+				<li>Lucas Desroches</li>
+				<li>Corinne</li>
+				<li>Anthony</li>
+				<li>Cristina Abella</li>
+				<li>Paolo</li>
+				<li>Millicent</li>
+				<li>Paola</li>
+				<li>Céline Guelpe</li>
+				<li>Amigo</li>
+			</ul>
+		</section>
+	</div>
+	<footer class="dlg-actions">
+		<button mat-raised-button color="accent" class="box-shadowed" mat-dialog-close>{{ 'CLOSE' | translate }}</button>
+	</footer>
 </div>

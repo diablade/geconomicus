@@ -1,10 +1,12 @@
-<div class="info">
-	<h1 mat-dialog-title>{{ title | translate }}</h1>
-	<div mat-dialog-content>
-		<p [innerHTML]="message | translate"></p>
-		<p *ngIf="message2" [innerHTML]="message2 | translate"></p>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ title | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<p class="dlg-text" [innerHTML]="message | translate"></p>
+		<p *ngIf="message2" class="dlg-text" [innerHTML]="message2 | translate"></p>
 	</div>
-	<div mat-dialog-actions class="d-flex justify-content-end">
+	<footer class="dlg-actions">
 		<button-timer [secondsTimer]="timerBtn" [label]="labelBtn | translate" (timerEnd)="timerEnd()"></button-timer>
-	</div>
+	</footer>
 </div>

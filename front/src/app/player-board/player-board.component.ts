@@ -718,6 +718,7 @@ export class PlayerBoardComponent implements OnInit, OnDestroy {
 					fake: this.fakeMode,
 				},
 				panelClass: 'action-dialog-panel',
+				maxWidth: '80vw',
 			})
 			.afterClosed()
 			.subscribe((result) => {

@@ -21,6 +21,8 @@
     "SAVE": "Save",
     "DELETE": "Delete",
     "QUIT": "Leave",
+    "CLEAR": "Clear",
+    "REOPEN": "Reopen",
     "GAME": {
         "OPEN": "Open to join",
         "PLAYING": "In progress",

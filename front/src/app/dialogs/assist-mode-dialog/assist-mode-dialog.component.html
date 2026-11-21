@@ -1,30 +1,36 @@
-<h2 mat-dialog-title>{{ 'TABLE.ASSIST.TITLE' | translate: { name: playerName } }}</h2>
-<mat-dialog-content>
-	<p class="assist-sub">{{ 'TABLE.ASSIST.SUBTITLE' | translate }}</p>
-	<div class="assist-options">
-		<button type="button" class="assist-opt coexist" (click)="choose(ASSIST_MODE.COEXIST)">
-			<span class="assist-opt-icon">👥</span>
-			<span class="assist-opt-body">
-				<span class="assist-opt-label">{{ 'TABLE.ASSIST.COEXIST' | translate }}</span>
-				<span class="assist-opt-desc">{{ 'TABLE.ASSIST.COEXIST_DESC' | translate }}</span>
-			</span>
-		</button>
-		<button type="button" class="assist-opt takeover" (click)="choose(ASSIST_MODE.TAKEOVER)">
-			<span class="assist-opt-icon">🎬</span>
-			<span class="assist-opt-body">
-				<span class="assist-opt-label">{{ 'TABLE.ASSIST.TAKEOVER' | translate }}</span>
-				<span class="assist-opt-desc">{{ 'TABLE.ASSIST.TAKEOVER_DESC' | translate }}</span>
-			</span>
-		</button>
-		<button type="button" class="assist-opt kick" (click)="choose(ASSIST_MODE.KICK)">
-			<span class="assist-opt-icon">🚪</span>
-			<span class="assist-opt-body">
-				<span class="assist-opt-label">{{ 'TABLE.ASSIST.KICK' | translate }}</span>
-				<span class="assist-opt-desc">{{ 'TABLE.ASSIST.KICK_DESC' | translate }}</span>
-			</span>
-		</button>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>
+			{{ 'TABLE.ASSIST.TITLE' | translate: { name: playerName } }}
+		</h2>
+	</header>
+	<div class="dlg-body">
+		<p class="dlg-text">{{ 'TABLE.ASSIST.SUBTITLE' | translate }}</p>
+		<div class="assist-options">
+			<button type="button" class="assist-opt coexist" (click)="choose(ASSIST_MODE.COEXIST)">
+				<span class="assist-opt-icon">👥</span>
+				<span class="assist-opt-body">
+					<span class="assist-opt-label">{{ 'TABLE.ASSIST.COEXIST' | translate }}</span>
+					<span class="assist-opt-desc">{{ 'TABLE.ASSIST.COEXIST_DESC' | translate }}</span>
+				</span>
+			</button>
+			<button type="button" class="assist-opt takeover" (click)="choose(ASSIST_MODE.TAKEOVER)">
+				<span class="assist-opt-icon">🎬</span>
+				<span class="assist-opt-body">
+					<span class="assist-opt-label">{{ 'TABLE.ASSIST.TAKEOVER' | translate }}</span>
+					<span class="assist-opt-desc">{{ 'TABLE.ASSIST.TAKEOVER_DESC' | translate }}</span>
+				</span>
+			</button>
+			<button type="button" class="assist-opt kick" (click)="choose(ASSIST_MODE.KICK)">
+				<span class="assist-opt-icon">🚪</span>
+				<span class="assist-opt-body">
+					<span class="assist-opt-label">{{ 'TABLE.ASSIST.KICK' | translate }}</span>
+					<span class="assist-opt-desc">{{ 'TABLE.ASSIST.KICK_DESC' | translate }}</span>
+				</span>
+			</button>
+		</div>
 	</div>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-	<button mat-button mat-dialog-close>{{ 'DIALOG.CANCEL' | translate }}</button>
-</mat-dialog-actions>
+	<footer class="dlg-actions">
+		<button mat-stroked-button mat-dialog-close>{{ 'DIALOG.CANCEL' | translate }}</button>
+	</footer>
+</div>

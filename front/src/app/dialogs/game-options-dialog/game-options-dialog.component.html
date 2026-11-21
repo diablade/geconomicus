@@ -1,32 +1,32 @@
-<div class="opt" *ngIf="rules">
-	<header class="opt-head">
-		<h2 class="opt-title geconomicusFont">{{ 'OPTION.TITLE' | translate }}</h2>
-		<span class="money-chip">
+<div class="dlg dlg-wide" *ngIf="rules">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'OPTION.TITLE' | translate }}</h2>
+		<span class="dlg-chip">
 			<img [src]="'./assets/images/' + rules.typeMoney + '.png'" alt="" />
 			{{ (rules.typeMoney === JUNE ? 'FREE_MONEY' : 'DEBT_MONEY') | translate }}
 		</span>
 	</header>
 
-	<div class="opt-body">
-		<section class="opt-section">
+	<div class="dlg-body">
+		<section class="dlg-section">
 			<h3>{{ 'OPTION.SECTION_GENERAL' | translate }}</h3>
-			<label class="opt-row">
-				<span class="row-label">{{ 'OPTION.DURATION' | translate }}</span>
-				<input class="num" type="number" min="1" placeholder="25" [(ngModel)]="rules.roundMinutes" />
+			<label class="dlg-row">
+				<span class="dlg-label">{{ 'OPTION.DURATION' | translate }}</span>
+				<input class="dlg-num" type="number" min="1" placeholder="25" [(ngModel)]="rules.roundMinutes" />
 			</label>
 			<ng-container *ngIf="devMode">
-				<div class="opt-row">
-					<span class="row-label">{{ 'OPTION.SURVEY_Q' | translate }}</span>
+				<div class="dlg-row">
+					<span class="dlg-label">{{ 'OPTION.SURVEY_Q' | translate }}</span>
 					<mat-slide-toggle [(ngModel)]="rules.surveyEnabled"></mat-slide-toggle>
 				</div>
-				<label class="opt-row">
-					<span class="row-label">{{ 'OPTION.SAVE_INTERVAL' | translate }}</span>
-					<input class="num" type="number" min="0" placeholder="10" [(ngModel)]="rules.timerSaveInterval" />
+				<label class="dlg-row">
+					<span class="dlg-label">{{ 'OPTION.SAVE_INTERVAL' | translate }}</span>
+					<input class="dlg-num" type="number" min="0" placeholder="10" [(ngModel)]="rules.timerSaveInterval" />
 				</label>
-				<div class="opt-row">
-					<span class="row-label">
+				<div class="dlg-row">
+					<span class="dlg-label">
 						{{ 'OPTION.DEATH' | translate }}
-						<span class="hint">
+						<span class="dlg-hint">
 							{{ 'OPTION.DEATH_MINUTES' | translate: { deathMinute: Math.round(rules.roundMinutes / playersLength) } }}
 							{{ 'OPTION.DEATH_MINUTES_FORMULA' | translate }}
 						</span>
@@ -52,21 +52,21 @@
 				</button>
 			</nav>
 
-			<div class="opt-warning" [innerHTML]="'OPTION.WARNING' | translate"></div>
+			<div class="dlg-warning" [innerHTML]="'OPTION.WARNING' | translate"></div>
 
-			<section class="opt-section" #pricesSection>
+			<section class="dlg-section" #pricesSection>
 				<h3>{{ 'OPTION.PRICES' | translate }}</h3>
 				<div class="prices">
 					<label class="price" *ngFor="let level of priceLevels">
 						<img [src]="'assets/images/level' + level.n + '.png'" alt="" />
 						<span class="price-name">
 							{{ level.label | translate }}
-							<span class="hint">
+							<span class="dlg-hint">
 								{{ (rules.typeMoney === JUNE ? 'OPTION.PRICE_DU' : 'OPTION.PRICE_NET') | translate }}
 							</span>
 						</span>
 						<input
-							class="num sm"
+							class="dlg-num sm"
 							type="number"
 							min="0"
 							[placeholder]="rules.typeMoney === JUNE ? level.defaultDu : level.defaultNet"
@@ -76,45 +76,45 @@
 			</section>
 
 			<!-- Actions section -->
-			<section class="opt-section" #actionsSection>
+			<section class="dlg-section" #actionsSection>
 				<h3>{{ 'OPTION.ACTIONS_TITLE' | translate }}</h3>
-				<label class="opt-row">
-					<span class="row-label">{{ 'OPTION.STARTING_TOKENS' | translate }}</span>
-					<input class="num" type="number" min="0" [(ngModel)]="rules.startingTokens" />
+				<label class="dlg-row">
+					<span class="dlg-label">{{ 'OPTION.STARTING_TOKENS' | translate }}</span>
+					<input class="dlg-num" type="number" min="0" [(ngModel)]="rules.startingTokens" />
 				</label>
-				<div class="opt-row action-row" *ngFor="let action of rules.actions; let i = index" [class.off]="!action.enabled">
+				<div class="dlg-row action-row" *ngFor="let action of rules.actions; let i = index" [class.off]="!action.enabled">
 					<mat-slide-toggle [(ngModel)]="rules.actions[i].enabled"></mat-slide-toggle>
 					<span class="action-icon">{{ getActionIcon(action.key) }}</span>
-					<span class="row-label">{{ action.labelKey | translate }}</span>
+					<span class="dlg-label">{{ action.labelKey | translate }}</span>
 					<span class="unit">{{ 'OPTION.COST' | translate }}</span>
-					<input class="num sm" type="number" min="0" [(ngModel)]="rules.actions[i].cost" />
+					<input class="dlg-num sm" type="number" min="0" [(ngModel)]="rules.actions[i].cost" />
 				</div>
 			</section>
 
-			<section class="opt-section" #moneySection>
+			<section class="dlg-section" #moneySection>
 				<h3>{{ (rules.typeMoney === JUNE ? 'OPTION.TITLE_DU' : 'OPTION.TITLE_DEBT') | translate }}</h3>
 
 				<!-- DU section -->
 				<ng-container *ngIf="rules.typeMoney === JUNE">
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.DU_INTERVAL' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="60" [(ngModel)]="rules.timerDUInterval" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.DU_INTERVAL' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="60" [(ngModel)]="rules.timerDUInterval" />
 					</label>
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.DU_RATES' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="5" [(ngModel)]="rules.tauxCroissance" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.DU_RATES' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="5" [(ngModel)]="rules.tauxCroissance" />
 					</label>
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.START_MONEY_AMOUNT' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="5" [(ngModel)]="rules.startAmountCoins" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.START_MONEY_AMOUNT' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="5" [(ngModel)]="rules.startAmountCoins" />
 					</label>
-					<div class="opt-row">
-						<span class="row-label">{{ 'OPTION.START_MONEY_INEQUALITY' | translate }}</span>
+					<div class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.START_MONEY_INEQUALITY' | translate }}</span>
 						<mat-slide-toggle [(ngModel)]="rules.inequalityStart"></mat-slide-toggle>
 					</div>
 					<div class="split" [class.disabled]="!rules.inequalityStart">
 						<label>
-							<input class="num sm" type="number" [disabled]="!rules.inequalityStart" [(ngModel)]="rules.pctRich" />
+							<input class="dlg-num sm" type="number" [disabled]="!rules.inequalityStart" [(ngModel)]="rules.pctRich" />
 							{{ 'OPTION.RICH' | translate }}
 						</label>
 						<div>
@@ -122,31 +122,31 @@
 							{{ 'OPTION.MIDDLE' | translate }}
 						</div>
 						<label>
-							<input class="num sm" type="number" [disabled]="!rules.inequalityStart" [(ngModel)]="rules.pctPoor" />
+							<input class="dlg-num sm" type="number" [disabled]="!rules.inequalityStart" [(ngModel)]="rules.pctPoor" />
 							{{ 'OPTION.POOR' | translate }}
 						</label>
 					</div>
 				</ng-container>
 
 				<ng-container *ngIf="rules.typeMoney === DEBT">
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.DEFAULT_CREDIT' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="3" [(ngModel)]="rules.defaultCreditAmount" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.DEFAULT_CREDIT' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="3" [(ngModel)]="rules.defaultCreditAmount" />
 					</label>
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.DEFAULT_INTEREST' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="1" [(ngModel)]="rules.defaultInterestAmount" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.DEFAULT_INTEREST' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="1" [(ngModel)]="rules.defaultInterestAmount" />
 					</label>
-					<label class="opt-row">
-						<span class="row-label">{{ 'OPTION.INTEREST_FREQ' | translate }}</span>
-						<input class="num" type="number" min="0" placeholder="5" [(ngModel)]="rules.durationCredit" />
+					<label class="dlg-row">
+						<span class="dlg-label">{{ 'OPTION.INTEREST_FREQ' | translate }}</span>
+						<input class="dlg-num" type="number" min="0" placeholder="5" [(ngModel)]="rules.durationCredit" />
 					</label>
 
 					<!-- Auto-bank: profile + variable-length rate schedule -->
-					<div class="opt-row">
-						<span class="row-label">
+					<div class="dlg-row">
+						<span class="dlg-label">
 							{{ 'OPTION.AUTO_BANK' | translate }}
-							<span class="hint" [innerHTML]="'OPTION.AUTO_BANK_INFO' | translate"></span>
+							<span class="dlg-hint" [innerHTML]="'OPTION.AUTO_BANK_INFO' | translate"></span>
 						</span>
 						<mat-slide-toggle [(ngModel)]="rules.autoBank"></mat-slide-toggle>
 					</div>
@@ -183,7 +183,7 @@
 									<tr *ngFor="let tier of rules.rateSchedule; let i = index">
 										<td>
 											<input
-												class="num xs"
+												class="dlg-num xs"
 												type="number"
 												step="0.1"
 												min="0"
@@ -192,7 +192,7 @@
 										</td>
 										<td>
 											<input
-												class="num xs"
+												class="dlg-num xs"
 												type="number"
 												min="0"
 												[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
@@ -200,7 +200,7 @@
 										</td>
 										<td>
 											<input
-												class="num xs"
+												class="dlg-num xs"
 												type="number"
 												min="0"
 												[disabled]="rules.bankProfile !== BANK_PROFILE.CUSTOM"
@@ -235,7 +235,7 @@
 							<mat-icon>add</mat-icon>
 							{{ 'OPTION.TIER_ADD' | translate }}
 						</button>
-						<span class="hint">{{ 'OPTION.TIER_HELP' | translate }}</span>
+						<span class="dlg-hint">{{ 'OPTION.TIER_HELP' | translate }}</span>
 					</div>
 
 					<div class="sub-block">
@@ -244,32 +244,32 @@
 							<mat-radio-button [value]="'fees'">
 								<span class="choice-text">
 									{{ 'OPTION.SEIZURE_FIX1' | translate }} {{ 'OPTION.SEIZURE_FIX2' | translate }}
-									<input class="num xs" type="number" min="0" placeholder="2" [(ngModel)]="rules.seizureCosts" />
+									<input class="dlg-num xs" type="number" min="0" placeholder="2" [(ngModel)]="rules.seizureCosts" />
 								</span>
 							</mat-radio-button>
 							<mat-radio-button [value]="'decote'">
 								<span class="choice-text">
 									{{ 'OPTION.SEIZURE_DECOTE' | translate }}
-									<input class="num xs" type="number" min="0" placeholder="33" [(ngModel)]="rules.seizureDecote" />
+									<input class="dlg-num xs" type="number" min="0" placeholder="33" [(ngModel)]="rules.seizureDecote" />
 									%
 								</span>
 							</mat-radio-button>
 						</mat-radio-group>
 					</div>
 
-					<label class="opt-row">
-						<span class="row-label">
+					<label class="dlg-row">
+						<span class="dlg-label">
 							{{ 'OPTION.PRISON_TIMER' | translate }}
-							<span class="hint">{{ 'OPTION.IF_PRISON' | translate }}</span>
+							<span class="dlg-hint">{{ 'OPTION.IF_PRISON' | translate }}</span>
 						</span>
-						<input class="num" type="number" min="0" placeholder="5" [(ngModel)]="rules.timerPrison" />
+						<input class="dlg-num" type="number" min="0" placeholder="5" [(ngModel)]="rules.timerPrison" />
 					</label>
 
 					<!-- Auto-seizure: independent of autoBank — automates collections on a FAULT credit -->
-					<div class="opt-row">
-						<span class="row-label">
+					<div class="dlg-row">
+						<span class="dlg-label">
 							{{ 'OPTION.AUTO_SEIZURE' | translate }}
-							<span class="hint" [innerHTML]="'OPTION.AUTO_SEIZURE_INFO' | translate"></span>
+							<span class="dlg-hint" [innerHTML]="'OPTION.AUTO_SEIZURE_INFO' | translate"></span>
 						</span>
 						<mat-slide-toggle [(ngModel)]="rules.autoSeizure"></mat-slide-toggle>
 					</div>
@@ -286,16 +286,16 @@
 				</ng-container>
 			</section>
 
-			<section class="opt-section" #cardsSection>
+			<section class="dlg-section" #cardsSection>
 				<h3>{{ 'OPTION.TITLE_CARDS' | translate }}</h3>
-				<div class="opt-row">
-					<span class="row-label">{{ 'OPTION.START_CARDS_INEQUALITY' | translate }}</span>
+				<div class="dlg-row">
+					<span class="dlg-label">{{ 'OPTION.START_CARDS_INEQUALITY' | translate }}</span>
 					<mat-slide-toggle [(ngModel)]="rules.inequalityCards"></mat-slide-toggle>
 				</div>
 				<div class="split" [class.disabled]="!rules.inequalityCards">
 					<label>
 						<input
-							class="num sm"
+							class="dlg-num sm"
 							type="number"
 							min="0"
 							max="100"
@@ -309,7 +309,7 @@
 					</div>
 					<label>
 						<input
-							class="num sm"
+							class="dlg-num sm"
 							type="number"
 							min="0"
 							max="100"
@@ -327,7 +327,7 @@
 							<span class="choice-text">
 								{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
 								<input
-									class="num xs"
+									class="dlg-num xs"
 									type="number"
 									[disabled]="rules.generateLettersAuto"
 									[(ngModel)]="rules.generateLettersInDeck" />
@@ -348,7 +348,7 @@
 						<mat-radio-button [value]="rules.generatedIdenticalLetters">
 							<span class="choice-text">
 								{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-								<input class="num xs" type="number" [(ngModel)]="rules.generatedIdenticalLetters" />
+								<input class="dlg-num xs" type="number" [(ngModel)]="rules.generatedIdenticalLetters" />
 							</span>
 						</mat-radio-button>
 					</mat-radio-group>
@@ -365,7 +365,7 @@
 						<mat-radio-button [value]="rules.distribInitCards">
 							<span class="choice-text">
 								{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-								<input class="num xs" type="number" [(ngModel)]="rules.distribInitCards" />
+								<input class="dlg-num xs" type="number" [(ngModel)]="rules.distribInitCards" />
 							</span>
 						</mat-radio-button>
 					</mat-radio-group>
@@ -382,36 +382,36 @@
 						<mat-radio-button [value]="rules.amountCardsForProd">
 							<span class="choice-text">
 								{{ 'OPTION.GEN_LETTERS_MANU' | translate }}
-								<input class="num xs" type="number" [(ngModel)]="rules.amountCardsForProd" />
+								<input class="dlg-num xs" type="number" [(ngModel)]="rules.amountCardsForProd" />
 							</span>
 						</mat-radio-button>
 					</mat-radio-group>
 				</div>
 
-				<div class="opt-row">
-					<span class="row-label">
+				<div class="dlg-row">
+					<span class="dlg-label">
 						{{ 'OPTION.LATENT_SQUARES' | translate }}
 						<span class="badge-exp">{{ 'OPTION.EXPERIMENTAL' | translate }}</span>
-						<span class="hint">{{ 'OPTION.LATENT_SQUARES_INFO' | translate }}</span>
+						<span class="dlg-hint">{{ 'OPTION.LATENT_SQUARES_INFO' | translate }}</span>
 					</span>
 					<mat-slide-toggle [(ngModel)]="rules.latentSquares"></mat-slide-toggle>
 				</div>
-				<label *ngIf="rules.latentSquares" class="opt-row">
-					<span class="row-label">
+				<label *ngIf="rules.latentSquares" class="dlg-row">
+					<span class="dlg-label">
 						{{
 							'OPTION.LATENT_SQUARES_PCT'
 								| translate: { count: Math.round(((playersLength || 0) * rules.latentSquaresPct) / 100) }
 						}}
 					</span>
-					<input class="num sm" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct" />
+					<input class="dlg-num sm" type="number" min="0" max="100" [(ngModel)]="rules.latentSquaresPct" />
 				</label>
 			</section>
 		</ng-container>
 	</div>
 
-	<footer class="opt-actions">
-		<button mat-button [mat-dialog-close]="">{{ 'CANCEL' | translate }}</button>
-		<span class="spacer"></span>
+	<footer class="dlg-actions">
+		<button mat-stroked-button [mat-dialog-close]="">{{ 'CANCEL' | translate }}</button>
+		<span class="dlg-spacer"></span>
 		<button mat-stroked-button color="warn" [mat-dialog-close]="'default'">
 			{{ 'VALUES_BY_DEFAULT' | translate }}
 		</button>

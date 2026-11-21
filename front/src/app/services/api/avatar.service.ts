@@ -11,6 +11,7 @@ import { AssistMode, IO, ROOMS } from '@geco/shared';
 import { I18nService } from '../i18n.service';
 import { SnackbarService } from '../snackbar.service';
 import { AudioService } from '../audio.service';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -35,6 +36,7 @@ export class AvatarService {
 		private themesService: ThemesService,
 		private audioService: AudioService,
 		private snackbarService: SnackbarService,
+		private localStorageService: LocalStorageService,
 		private i18n: I18nService
 	) {}
 
@@ -67,6 +69,14 @@ export class AvatarService {
 						this.avatarSubject.next(data.avatar);
 						if (data.session) {
 							this.sessionSubject.next(data.session);
+							if (!assistMode) {
+								this.localStorageService.setItem('session', {
+									sessionId,
+									avatarIdx,
+									name: data.session.name,
+									player: data.avatar,
+								});
+							}
 						}
 					} else {
 						this.avatarSubject.next(data);

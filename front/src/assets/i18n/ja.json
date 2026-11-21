@@ -21,6 +21,8 @@
     "SAVE": "保存",
     "DELETE": "削除",
     "QUIT": "退出",
+    "CLEAR": "クリア",
+    "REOPEN": "再開",
     "GAME": {
         "OPEN": "参加可能",
         "PLAYING": "進行中",

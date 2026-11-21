@@ -1,40 +1,30 @@
-<div class="free">
-	<div class="d-flex align-items-center flex-column">
-		<h2 class="fs-4 shadowed geconomicusFont">{{ 'FREEMONEY.TITLE' | translate }}</h2>
-		<div *ngIf="locked" class="mt-2 d-flex flex-column align-items-center">
-			<avatar
-				[avatar]="selectedPlayer?.avatar"
-				[width]="'48px'"
-				[height]="'48px'"
-				[namePosition]="'bottom'"></avatar>
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'FREEMONEY.TITLE' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<div *ngIf="locked" class="dlg-section player-locked">
+			<avatar [avatar]="selectedPlayer?.avatar" [width]="'56px'" [height]="'56px'" [namePosition]="'bottom'"></avatar>
 		</div>
-		<mat-form-field *ngIf="!locked" class="mt-2" appearance="fill">
+		<mat-form-field *ngIf="!locked" class="w-100" appearance="outline">
 			<mat-label>{{ 'FREEMONEY.TO_PLAYER' | translate }}</mat-label>
 			<mat-select [(value)]="selectedPlayer" [compareWith]="compareById">
 				<mat-select-trigger>
-					<avatar
-						[avatar]="selectedPlayer?.avatar"
-						[width]="'40px'"
-						[height]="'40px'"
-						[namePosition]="'right'"></avatar>
+					<avatar [avatar]="selectedPlayer?.avatar" [width]="'40px'" [height]="'40px'" [namePosition]="'right'"></avatar>
 				</mat-select-trigger>
 				<mat-option *ngFor="let player of players | async" [value]="player">
 					<!-- {{ player.reincarnateFromId ? '🚼' : '' }} -->
-					<avatar
-						[avatar]="player.avatar"
-						[width]="'40px'"
-						[height]="'40px'"
-						[namePosition]="'right'"></avatar>
+					<avatar [avatar]="player.avatar" [width]="'40px'" [height]="'40px'" [namePosition]="'right'"></avatar>
 				</mat-option>
 			</mat-select>
 		</mat-form-field>
-
-		<div>{{ 'FREEMONEY.DETAILS' | translate }}</div>
-		<div>
-			<button class="m-2" mat-raised-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
-			<button class="m-2" [disabled]="!selectedPlayer" mat-raised-button color="accent" (click)="giveMoney()">
-				{{ 'FREEMONEY.GIVE_1_EURO' | translate }} 💸
-			</button>
-		</div>
+		<p class="dlg-text">{{ 'FREEMONEY.DETAILS' | translate }}</p>
 	</div>
+	<footer class="dlg-actions">
+		<button mat-stroked-button (click)="cancel()">{{ 'CANCEL' | translate }}</button>
+		<span class="dlg-spacer"></span>
+		<button mat-raised-button color="accent" class="box-shadowed" [disabled]="!selectedPlayer" (click)="giveMoney()">
+			{{ 'FREEMONEY.GIVE_1_EURO' | translate }} 💸
+		</button>
+	</footer>
 </div>

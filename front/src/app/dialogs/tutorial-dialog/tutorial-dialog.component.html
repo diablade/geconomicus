@@ -1,94 +1,86 @@
-<div class="tutorial-dialog d-flex flex-column">
-
-	<!-- Header -->
-	<div class="dialog-header d-flex justify-content-between align-items-center p-2">
-		<h2 class="m-0 slide-title">{{ currentSlide.title | translate }}</h2>
-		<div class="d-flex align-items-center gap-2">
-			<span class="step-counter text-muted">{{ currentIndex + 1 }} / {{ slides.length }}</span>
-			<button mat-icon-button (click)="close()" [attr.aria-label]="'CLOSE' | translate">
-				<mat-icon>close</mat-icon>
-			</button>
-		</div>
+<div class="dlg tutorial-dialog">
+	<header class="dlg-head tuto-head">
+		<span class="step-icon" aria-hidden="true">
+			<span *ngFor="let slide of [currentSlide]" class="pop-in">{{ slide.icon }}</span>
+		</span>
+		<h2 class="dlg-title geconomicusFont slide-title" mat-dialog-title>
+			<span *ngFor="let slide of [currentSlide]" class="fade-in geconomicusFont">{{ slide.title | translate }}</span>
+		</h2>
+		<span class="dlg-chip step-counter">{{ currentIndex + 1 }} / {{ slides.length }}</span>
+		<button mat-icon-button (click)="close()" [attr.aria-label]="'CLOSE' | translate">
+			<mat-icon>close</mat-icon>
+		</button>
+	</header>
+	<div class="progress" aria-hidden="true">
+		<div class="progress-fill" [style.width.%]="((currentIndex + 1) / slides.length) * 100"></div>
 	</div>
 
 	<div class="tutorial-body">
-	<!-- Carousel viewport -->
-	<div class="carousel-viewport">
-		<div
-			class="carousel-track"
-			[style.transform]="'translateX(-' + currentIndex * (100 / slides.length) + '%)'"
-			[style.width.%]="slides.length * 100">
-
-			<div
-				class="carousel-slide"
-				*ngFor="let slide of slides; let i = index"
-				[style.width.%]="100 / slides.length">
-				<img
-					*ngIf="isImage(slide); else videoTpl"
-					[src]="slide.videoSrc"
-					class="slide-media"
-					alt=""/>
-				<ng-template #videoTpl>
-					<video
-						#videoEl
-						[attr.data-index]="i"
-						[src]="slide.videoSrc"
-						muted
-						loop
-						playsinline
-						class="slide-media">
-					</video>
-				</ng-template>
-
+		<div class="stage bgGradien7" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+			<div class="carousel-viewport">
+				<div
+					class="carousel-track"
+					[style.transform]="'translateX(-' + currentIndex * (100 / slides.length) + '%)'"
+					[style.width.%]="slides.length * 100">
+					<div
+						class="carousel-slide"
+						*ngFor="let slide of slides; let i = index"
+						[class.current]="i === currentIndex"
+						[style.width.%]="100 / slides.length">
+						<img *ngIf="isImage(slide); else videoTpl" [src]="slide.videoSrc" class="slide-media" alt="" />
+						<ng-template #videoTpl>
+							<video
+								#videoEl
+								[attr.data-index]="i"
+								[src]="slide.videoSrc"
+								muted
+								loop
+								playsinline
+								class="slide-media"></video>
+						</ng-template>
+					</div>
+				</div>
 			</div>
+		</div>
+
+		<div class="guide">
+			<img class="guide-guny" src="./assets/images/guny.png" alt="" />
+			<div
+				*ngFor="let slide of [currentSlide]"
+				class="guide-bubble fade-in"
+				[innerHTML]="slide.description | translate"></div>
 		</div>
 	</div>
 
-	<!-- Description -->
-	<div class="slide-description p-2">
-		<div [innerHTML]="currentSlide.description | translate"></div>
-	</div>
-	</div>
-
-	<!-- Navigation -->
-	<div class="nav-row d-flex justify-content-between align-items-center p-2">
-		<button
-			mat-stroked-button
-			class="nav-btn"
-			[disabled]="isFirst"
-			(click)="goTo(currentIndex - 1)">
-			<mat-icon class="nav-icon">arrow_back</mat-icon>
+	<footer class="dlg-actions nav-row">
+		<button mat-stroked-button class="nav-btn" [disabled]="isFirst" (click)="goTo(currentIndex - 1)">
+			<mat-icon>arrow_back</mat-icon>
 			<span class="nav-label">{{ (isFirst ? 'TUTORIAL.PREV' : slides[currentIndex - 1].title) | translate }}</span>
 		</button>
 
-		<!-- Dot indicators -->
-		<div class="dot-row d-flex justify-content-center">
+		<div class="dot-row">
 			<button
 				*ngFor="let slide of slides; let i = index"
+				type="button"
 				class="dot"
+				[class.dot--done]="i < currentIndex"
 				[class.dot--active]="i === currentIndex"
 				(click)="goTo(i)"
-				[attr.aria-label]="'TUTORIAL.GO_TO' | translate: { n: i + 1 }">
-			</button>
+				[attr.aria-label]="'TUTORIAL.GO_TO' | translate: { n: i + 1 }"></button>
 		</div>
 
 		<button
 			*ngIf="!isLast"
-			mat-stroked-button
-			class="nav-btn"
-			(click)="goTo(currentIndex + 1)">
-			<span class="nav-label">{{ slides[currentIndex + 1].title | translate }}</span>
-			<mat-icon class="nav-icon">arrow_forward</mat-icon>
-		</button>
-
-		<button
-			*ngIf="isLast"
 			mat-raised-button
 			color="primary"
-			(click)="close()">
-			{{ 'TUTORIAL.FINISH' | translate }}
-			<mat-icon>check</mat-icon>
+			class="nav-btn box-shadowed"
+			(click)="goTo(currentIndex + 1)">
+			<span class="nav-label">{{ slides[currentIndex + 1].title | translate }}</span>
+			<mat-icon iconPositionEnd>arrow_forward</mat-icon>
 		</button>
-	</div>
-
+		<button *ngIf="isLast" mat-raised-button color="accent" class="box-shadowed finish-btn" (click)="close()">
+			{{ 'TUTORIAL.FINISH' | translate }}
+			<mat-icon iconPositionEnd>check</mat-icon>
+		</button>
+	</footer>
 </div>
