@@ -15,6 +15,12 @@ import { getActionIcon, Rules } from 'src/app/models/rules';
 	protected readonly JUNE = GAME_TYPE.JUNE;
 	protected readonly Math = Math;
 	protected readonly BANK_PROFILE = BANK_PROFILE;
+	protected readonly priceLevels = [
+		{ n: 1, key: 'priceWeight1', label: 'CARD.LV1', defaultDu: '3', defaultNet: '1' },
+		{ n: 2, key: 'priceWeight2', label: 'CARD.LV2', defaultDu: '6', defaultNet: '2' },
+		{ n: 3, key: 'priceWeight3', label: 'CARD.LV3', defaultDu: '9', defaultNet: '4' },
+		{ n: 4, key: 'priceWeight4', label: 'CARD.LV4', defaultDu: '12', defaultNet: '8' },
+	] as const;
 	playersLength: any;
 	devMode= false;
 
@@ -36,10 +42,6 @@ import { getActionIcon, Rules } from 'src/app/models/rules';
 		this.playersLength = data.playersLength;
 		this.devMode = data.devMode;
 		//TODO return object should be only modified Partial rules, not all rules
-	}
-
-	getTranslate(key: string): string {
-		return this.i18n.instant(key);
 	}
 
 	// Auto-bank: switching to a preset overwrites the schedule; custom leaves it editable.

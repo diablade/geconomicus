@@ -258,6 +258,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 
 	editRules(rules: Rules) {
 		const dialogRef = this.dialog.open(GameOptionsDialogComponent, {
+			maxWidth: '96vw',
 			data: {
 				rules: _.clone(rules),
 				playersLength: this.session.avatars.length,
