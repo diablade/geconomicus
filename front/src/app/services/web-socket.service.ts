@@ -19,6 +19,7 @@ export class WebSocketService {
 	private ioUrl: string = environment.API_HOST;
 	private disconnected = false;
 	private kicked = false;
+	private disconnectedAt: number | null = null;
 	private connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(new ConnectionStatus());
 	connectionStatus$ = this.connectionStatusSubject.asObservable();
 	private currentQuery: any = null;
@@ -151,9 +152,7 @@ export class WebSocketService {
 			console.log('Rejoining rooms after socket reconnect:', Array.from(this.joinedRooms));
 			this.dialog.closeAll();
 			this.rejoinAllRooms();
-			const lastConnected = this.getLastConnectedTime();
-			const now = Date.now();
-			if (lastConnected && now - lastConnected > maxOfflineDuration) {
+			if (this.disconnectedAt && Date.now() - this.disconnectedAt > maxOfflineDuration) {
 				console.warn('Reconnected after long offline time — reloading page');
 				window.location.reload(); // force refresh
 			} else {
@@ -189,6 +188,7 @@ export class WebSocketService {
 		this.socket.on('disconnect', (data: any) => {
 			console.log('Socket disconnected', data);
 			this.disconnected = true;
+			this.disconnectedAt = Date.now();
 			this.updateDisconnectedStatus();
 			if (this.kicked) return;
 			this.showReconnectingDialog();
