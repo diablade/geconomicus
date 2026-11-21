@@ -1,0 +1,19 @@
+.qr-body {
+	align-items: center;
+	text-align: center;
+}
+
+.qr {
+	width: 216px;
+	height: 216px;
+	padding: 8px;
+	border-radius: 16px;
+	background: white;
+	border: 1px solid #ebebf0;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.qr-name {
+	font-size: 1.5rem;
+	overflow-wrap: anywhere;
+}

@@ -156,6 +156,11 @@ export class ContractDialogComponent {
 		}
 	}
 
+	/** Adds delta to the manual credit amount or interest, never going below zero. */
+	step(field: 'amount' | 'interest', delta: number) {
+		this[field] = Math.max(0, (this[field] || 0) + delta);
+	}
+
 	compareById(a: any, b: any): boolean {
 		return a?.idx === b?.idx;
 	}

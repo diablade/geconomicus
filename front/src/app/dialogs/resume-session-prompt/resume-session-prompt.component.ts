@@ -17,8 +17,9 @@ export class ResumeSessionPromptComponent implements OnInit, AfterViewInit{
     this.session = this.data;
   }
 
+  /** Drops the saved entry when it does not point at a v2 avatar seat. */
   ngOnInit(): void {
-    if (!this.session || !this.session.idGame || !this.session.idPlayer) {
+    if (!this.session?.sessionId || this.session.avatarIdx == null) {
      this.dismiss();
     }
   }
@@ -28,8 +29,9 @@ export class ResumeSessionPromptComponent implements OnInit, AfterViewInit{
   }
 
 
+  /** Sends the player back to their lobby, which rejoins the running game on its own. */
   resume() {
-    this.router.navigate(['ogame', this.session.idGame, 'player', this.session.idPlayer]);
+    this.router.navigate(['avatar', this.session.sessionId, this.session.avatarIdx], { queryParams: { resume: 1 } });
     this.dialogRef.close();
   }
 

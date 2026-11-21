@@ -1,8 +1,11 @@
-<div class="d-flex flex-column justify-content-center align-items-center m-2">
-	<div style="width: 200px; height: 200px;">
-		<ngx-kjua [text]="data.url" [size]="200" [render]="'svg'"></ngx-kjua>
+<div class="dlg">
+	<div class="dlg-body qr-body">
+		<div class="qr">
+			<ngx-kjua [text]="data.url" [size]="200" [render]="'svg'"></ngx-kjua>
+		</div>
+		<div class="qr-name geconomicusFont" [ngStyle]="{ 'font-size': data.textSize }">{{ data.text }}</div>
 	</div>
-	<div [ngStyle]="{'font-size': data.textSize}">
-		{{ data.text }}
-	</div>
+	<footer class="dlg-actions">
+		<button mat-raised-button color="accent" class="box-shadowed" mat-dialog-close>{{ 'CLOSE' | translate }}</button>
+	</footer>
 </div>

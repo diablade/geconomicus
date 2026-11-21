@@ -1,15 +1,20 @@
-<div class="resume-session-prompt">
-	<div class="resume-session-content">
-		<h3>{{ 'DIALOG.CONTINUE_SESSION' | translate }}</h3>
-		<p>{{ 'DIALOG.ACTIVE_SESSION' | translate }}</p>
-		<div class="session-details d-flex flex-column justify-content-between align-items-center">
+<div class="dlg">
+	<header class="dlg-head">
+		<h2 class="dlg-title geconomicusFont" mat-dialog-title>{{ 'DIALOG.CONTINUE_SESSION' | translate }}</h2>
+	</header>
+	<div class="dlg-body">
+		<p class="dlg-text">{{ 'DIALOG.ACTIVE_SESSION' | translate }}</p>
+		<div class="dlg-section session-details">
 			<strong>{{ session.name }}</strong>
 			<div class="avatar" [ngStyle]="{ 'border-color': '#' + session.player.hairColor }" #svg></div>
 			<strong>{{ session.player.name }}</strong>
 		</div>
-		<div class="d-flex justify-content-between">
-			<button mat-raised-button color="warn" (click)="dismiss()">{{ 'DIALOG.DISMISS' | translate }}</button>
-			<button mat-raised-button color="primary" (click)="resume()">{{ 'DIALOG.RESUME' | translate }}</button>
-		</div>
 	</div>
+	<footer class="dlg-actions">
+		<button mat-stroked-button color="warn" (click)="dismiss()">{{ 'DIALOG.DISMISS' | translate }}</button>
+		<span class="dlg-spacer"></span>
+		<button mat-raised-button color="primary" class="box-shadowed" (click)="resume()">
+			{{ 'DIALOG.RESUME' | translate }}
+		</button>
+	</footer>
 </div>
