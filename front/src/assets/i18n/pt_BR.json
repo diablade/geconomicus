@@ -36,7 +36,10 @@
         "END_GAME": "Rodada encerrada",
         "STOP_ROUND": "Rodada encerrada",
         "INTER_ROUND": "Rodada intermediária",
-        "START_GAME": "Partida iniciada"
+        "START_GAME": "Partida iniciada",
+        "PAUSED": "",
+        "STARTED": "",
+        "RESUMED": ""
     },
     "MASTER": {
         "SCAN_QR": "Vá em {{webHost}}, depois clique em 'Se juntar' !",
@@ -323,7 +326,10 @@
         "SHORT_CODE_SEND": "Código enviado",
         "GIFT": "Produção terminada ! Você obtém 4 novas cartas e 1 carta de valor superior.",
         "TECHNOLOGY": "Bravo, você adquiriu tecnologia (fim da partida)",
-        "COPY_SUCCESS": "Copiado !"
+        "COPY_SUCCESS": "Copiado !",
+        "GAME_ENDED": "",
+        "GAME_ENDED_MESSAGE": "",
+        "SURVEY_MESSAGE": ""
     },
     "DIALOG": {
         "CLOSE": "Fechar",
@@ -389,7 +395,15 @@
         "DELETE_GAME": {
             "TITLE": "Você confirma ?",
             "MESSAGE": "Esta ação não pode ser desfeita."
-        }
+        },
+        "QUIT": {
+            "TITLE": "",
+            "PLAYER": "",
+            "MASTER": "",
+            "DEMO": ""
+        },
+        "CONTINUE_SESSION": "",
+        "ACTIVE_SESSION": ""
     },
     "RESSOURCES": {
         "LEARN_FORWARD": "Aprenda mais com",
@@ -577,7 +591,15 @@
             "TEXT": "☎️ Reconexão em andamento..."
         },
         "CONNECTED": "✅ Você está conectado(a).",
-        "TIMEOUT": "Tempo de conexão ultrapassado."
+        "TIMEOUT": "Tempo de conexão ultrapassado.",
+        "KICKED": {
+            "TITLE": "",
+            "ANOTHER_CONNECTION": "",
+            "KICKED_BY_ANIMATOR": "",
+            "RETAKEN": "",
+            "GENERIC": ""
+        },
+        "RECONNECTED": ""
     },
     "RESULTS": {
         "NEW_GAME": "Nova partida",
@@ -696,7 +718,8 @@
         "NEXT_MONEY": "Inicie a rodada com a outra moeda",
         "START_2": "Comece assim que todos os jogadores se juntaram à partida, inicie a rodada assim que eles recebem as cartas",
         "SURVEY_2": "Final de rodada, colete os sentimentos através de uma sondagem via telefone",
-        "RESULTS": "Fim da partida, revelação dos resultados e comparação das duas rodadas"
+        "RESULTS": "Fim da partida, revelação dos resultados e comparação das duas rodadas",
+        "SOUND": ""
     },
     "MODULE": {
         "BACK_HOME": "Voltar ao início",
@@ -790,5 +813,19 @@
         "GALILEO": "Galileo",
         "GINI": "Gini",
         "FISCALITE": "Tributação"
+    },
+    "LOCATION": "",
+    "LAST_SEEN": "",
+    "BACK_TO_LOBBY": "",
+    "CLOSE": "",
+    "REFRESH": "",
+    "FULLSCREEN": "",
+    "FULLSCREEN_EXIT": "",
+    "QUIT": "",
+    "GO_NEW_LIFE": "",
+    "REINCARNATED": "",
+    "PWA": {
+        "NEW_VERSION": "",
+        "UNRECOVERABLE": ""
     }
 }
