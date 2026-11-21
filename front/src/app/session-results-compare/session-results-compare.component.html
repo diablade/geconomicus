@@ -64,8 +64,17 @@
 								<span class="cp-metric-label">
 									<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
 									{{ row.label | translate: row.params }}
+									<fa-icon
+										*ngIf="row.info"
+										class="cp-info"
+										[icon]="faCircleInfo"
+										[matTooltip]="row.info | translate"
+									></fa-icon>
 								</span>
-								<span class="cp-metric-value">{{ row.value }}</span>
+								<span class="cp-metric-value">
+									{{ row.value }}
+									<ng-container *ngIf="row.unit">{{ row.unit | translate }}</ng-container>
+								</span>
 								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
 							</div>
 						</div>
@@ -80,8 +89,17 @@
 								<span class="cp-metric-label">
 									<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
 									{{ row.label | translate: row.params }}
+									<fa-icon
+										*ngIf="row.info"
+										class="cp-info"
+										[icon]="faCircleInfo"
+										[matTooltip]="row.info | translate"
+									></fa-icon>
 								</span>
-								<span class="cp-metric-value">{{ row.value }}</span>
+								<span class="cp-metric-value">
+									{{ row.value }}
+									<ng-container *ngIf="row.unit">{{ row.unit | translate }}</ng-container>
+								</span>
 								<span class="cp-metric-growth" [class.void]="!row.growth">{{ row.growth || '—' }}</span>
 							</div>
 						</div>
@@ -110,8 +128,17 @@
 									<span class="cp-metric-label">
 										<ng-container *ngIf="row.icon">{{ row.icon }}</ng-container>
 										{{ row.label | translate: row.params }}
+										<fa-icon
+											*ngIf="row.info"
+											class="cp-info"
+											[icon]="faCircleInfo"
+											[matTooltip]="row.info | translate"
+										></fa-icon>
 									</span>
-									<span class="cp-metric-value small">{{ row.value }}</span>
+									<span class="cp-metric-value small">
+										{{ row.value }}
+										<ng-container *ngIf="row.unit">{{ row.unit | translate }}</ng-container>
+									</span>
 								</div>
 							</ng-container>
 						</div>
@@ -119,30 +146,40 @@
 						<div class="cp-podium">
 							<div class="cp-block-head">
 								<span>{{ 'RESULTS.COMPARE.RANKING' | translate }}</span>
+								<button type="button" class="cp-toggle" *ngIf="card.netRanking" (click)="toggleDebt(card)">
+									{{ 'RESULTS.COMPARE.DEDUCT_DEBT' | translate }} {{ debtDeducted.has(card.id) ? '✓' : '' }}
+								</button>
 								<button type="button" class="cp-toggle" (click)="toggleScoreBars(card)">
 									{{ (scoreBars.has(card.id) ? 'RESULTS.COMPARE.PODIUM' : 'RESULTS.COMPARE.ALL_SCORES') | translate }}
 								</button>
 							</div>
 
-							<ng-container *ngIf="!scoreBars.has(card.id)">
+							<ng-container *ngIf="!scoreBars.has(card.id) && rankingOf(card) as ranking">
 								<div class="pod-lines">
 									<div
 										class="pod-row"
 										[ngClass]="['rank' + p.rank, metalOf(p.rank)]"
-										*ngFor="let p of card.game.podium | slice: 0 : 3">
+										*ngFor="let p of ranking.podium | slice: 0 : 3">
 										<avatar [avatar]="p.avatar" width="38px" height="38px"></avatar>
 										<span class="name">
 											{{ p.avatar.name }}
-											<small>{{ num(p.score) }} ({{ num(p.coins) }} + {{ num(p.cardsValue) }})</small>
+											<span class="credits" *ngIf="p.credits">🏦{{ p.credits }}</span>
+											<small>
+												{{ num(p.score) }} {{ moneyOf(card) | translate }} = 💰 {{ num(p.coins) }} + 🃏
+												{{ num(p.cardsValue) }}
+												<span class="debt" *ngIf="p.debt">
+													{{ debtDeducted.has(card.id) ? '−' : '' }} 💳 {{ num(p.debt) }}
+												</span>
+											</small>
 										</span>
 										<span class="medal">{{ medalOf(p.rank) }}</span>
 									</div>
 								</div>
-								<div class="pod-stairs" *ngIf="card.game.podium.length">
+								<div class="pod-stairs" *ngIf="ranking.podium.length">
 									<div
 										class="pod-step"
 										[ngClass]="'rank' + p.rank"
-										*ngFor="let p of card.game.podium | slice: 0 : 3">
+										*ngFor="let p of ranking.podium | slice: 0 : 3">
 										<avatar [avatar]="p.avatar" width="50px" height="50px"></avatar>
 										<span class="name">{{ p.avatar.name }}</span>
 <!--										<small>{{ num(p.score) }}</small>-->
@@ -153,7 +190,7 @@
 								</div>
 							</ng-container>
 
-							<div class="pod-scores" *ngIf="scoreBars.has(card.id) && card.board as board">
+							<div class="pod-scores" *ngIf="scoreBars.has(card.id) && rankingOf(card).board as board">
 								<div class="score-plot">
 									<div class="score-lines">
 										<div class="score-line avg" [style.left.%]="board.averagePercent">
@@ -162,33 +199,65 @@
 										<div class="score-line dev" [style.left.%]="board.deviationPercent">
 											<span>{{ 'RESULTS.COMPARE.DEVIATION' | translate }} {{ board.deviation }}</span>
 										</div>
+										<div class="score-line poor" [style.left.%]="board.povertyPercent">
+											<span>{{ 'RESULTS.COMPARE.POVERTY_LINE' | translate }} {{ board.poverty }}</span>
+										</div>
 									</div>
 									<div class="score-row" *ngFor="let bar of board.bars">
 										<span class="score-name" [ngClass]="metalOf(bar.entry.rank)">{{ bar.entry.avatar.name }}</span>
+										<span class="credits">{{ bar.entry.credits ? '🏦' + bar.entry.credits : '' }}</span>
 										<div class="score-bar">
 											<span class="fill coins" [style.width.%]="bar.coinsPercent">
-												<i>{{ num(bar.entry.coins) }}</i>
+												<i>💰 {{ num(bar.entry.coins) }}</i>
 											</span>
 											<span class="fill" [style.width.%]="bar.cardsPercent" [style.background]="card.color">
-												<i>{{ num(bar.entry.cardsValue) }}</i>
+												<i>🃏 {{ num(bar.entry.cardsValue) }}</i>
 											</span>
-											<b>{{ num(bar.entry.score) }}</b>
+											<span
+												class="debt-zone"
+												*ngIf="bar.debtPercent"
+												[class.deducted]="debtDeducted.has(card.id)"
+												[style.left.%]="bar.debtLeftPercent"
+												[style.width.%]="bar.debtPercent"></span>
 										</div>
+										<b class="score-total">{{ num(bar.entry.score) }} {{ moneyOf(card) | translate }}</b>
 									</div>
 								</div>
 							</div>
 
 							<div class="pod-empty" *ngIf="card.game.podium.length === 0">{{ 'RESULTS.COMPARE.NO_RANKING' | translate }}</div>
+							<div class="pod-legend" *ngIf="card.game.podium.length">
+								<span>💰 {{ 'RESULTS.COMPARE.LEGEND_COINS' | translate }}</span>
+								<span *ngIf="!card.isJune">🃏 {{ 'RESULTS.COMPARE.LEGEND_CARDS' | translate }}</span>
+								<span *ngIf="card.isJune">
+									🃏 {{ 'RESULTS.COMPARE.LEGEND_CARDS_JUNE' | translate: { du: num(card.game.synthesis.duFinal) } }}
+								</span>
+								<ng-container *ngIf="!card.isJune">
+									<span>🏦 {{ 'RESULTS.COMPARE.LEGEND_CREDITS' | translate }}</span>
+									<span>
+										<span class="debt">💳</span>
+										{{ 'RESULTS.COMPARE.LEGEND_DEBT' | translate }}
+									</span>
+								</ng-container>
+								<span *ngIf="scoreBars.has(card.id)">
+									<span class="poor-mark"></span>
+									{{ 'RESULTS.COMPARE.LEGEND_POVERTY' | translate }}
+								</span>
+								<p>{{ scoreRuleOf(card) | translate }}</p>
+								<p *ngIf="card.game.synthesis.lives > card.game.synthesis.avatars">
+									💓 {{ 'RESULTS.COMPARE.LEGEND_LIVES' | translate }}
+								</p>
+							</div>
 							<div class="most-active" *ngIf="card.game.mostActive">
 								⚡ {{ 'RESULTS.COMPARE.MOST_ACTIVE' | translate }}
 								<b>{{ card.game.mostActive.avatar.name }}</b>
 								— {{ card.game.mostActive.count }} {{ 'RESULTS.COMPARE.ACTIONS' | translate }}
 							</div>
-							<div class="cp-dev" *ngIf="card.board">
+							<div class="cp-dev" *ngIf="rankingOf(card).board as board">
 								{{ 'RESULTS.COMPARE.AVERAGE_SHORT' | translate }}
-								<b>{{ card.board.average }}</b>
+								<b>{{ board.average }}</b>
 								· {{ 'RESULTS.COMPARE.DEVIATION_SHORT' | translate }}
-								<b>{{ card.board.deviation }}</b>
+								<b>{{ board.deviation }}</b>
 							</div>
 						</div>
 

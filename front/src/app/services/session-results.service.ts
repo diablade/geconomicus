@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GAME_TYPE, CREDIT_ORIGIN, CREDIT_QUESTION_ANSWER, DB_EVENTS, LK_KEYS, PLAYER_STATUS, isDeathEvent } from '@geco/shared';
 import { GecoEventV2, PlayersLk, playersLkOf, lkNumberOf } from '../models/geco-event';
-import { GameState, PlayerState } from '../models/gameState';
+import { Credit, GameState, PlayerState } from '../models/gameState';
 import { Avatar } from '../models/avatar';
 import { SurveyAnswer } from './api/survey.service';
 
@@ -112,6 +112,8 @@ export interface PodiumEntry {
 	cardsValue: number;
 	score: number;
 	rank: number;
+	credits: number;
+	debt: number;
 }
 
 export interface ActionUsage {
@@ -186,6 +188,10 @@ const GOOD_ACTIONS = new Set<string>([DB_EVENTS.ACTION_GIVE, DB_EVENTS.ACTION_AS
 
 const cardsValueOf = (playerState: PlayerState): number =>
 	(playerState.cards ?? []).reduce((sum: number, card: any) => sum + (card?.price ?? 0), 0);
+
+/** What a credit still owes the bank: principal plus interest until it is settled, seized or cancelled. */
+const owedOf = (credit: Credit): number =>
+	credit.status !== 'done' && credit.status !== 'canceled' ? (credit.amount ?? 0) + (credit.interest ?? 0) : 0;
 
 @Injectable({ providedIn: 'root' })
 export class SessionResultsService {
@@ -338,7 +344,7 @@ export class SessionResultsService {
 			lives,
 			coins: shaped(coinsSeries),
 			cardsValue: cardsSeries,
-			combined: shaped(this.wealthSeries(coinsSeries, cardsSeries, [])),
+			combined: shaped(this.wealthSeries(coinsSeries, cardsSeries, [], isJune ? duSeries : [])),
 			third: isJune
 				? this.relativeSeries(coinsSeries, duSeries)
 				: this.wealthSeries(coinsSeries, cardsSeries, debtSeries),
@@ -363,7 +369,7 @@ export class SessionResultsService {
 				count,
 				good: GOOD_ACTIONS.has(typeEvent),
 			})),
-			podium: this.buildPodium(gameState, avatarByIdx),
+			podium: this.buildPodium(gameState, avatarByIdx, isJune),
 			mostActive: this.buildMostActive(activityByAvatar, avatarByIdx),
 			health: {
 				rows: this.buildHealthRows(gameState, lives, declared, heldCoins, heldCards, isJune),
@@ -545,18 +551,19 @@ export class SessionResultsService {
 	 *
 	 * An event that moved nothing is dropped rather than plotted: a death fires on the same beat
 	 * as an issuance, and keeping its flat vertex squeezed the ramp that follows into a cliff.
-	 * Issuance vertices are never dropped — they are what gives the ramp its width.
+	 * Issuance vertices are never dropped — they are what gives the ramp its width — and neither
+	 * is the closing vertex, which carries a dead life's line flat to the end of the game.
 	 */
 	private duStepped(points: SeriesPoint[], duAt: Set<string>): SeriesPoint[] {
 		const shaped: SeriesPoint[] = [];
-		for (const point of points) {
+		points.forEach((point, i) => {
 			const previous = shaped[shaped.length - 1];
 			if (previous && !duAt.has(point.x)) {
-				if (previous.y === point.y) continue;
-				shaped.push({ x: point.x, y: previous.y });
+				if (previous.y === point.y && i < points.length - 1) return;
+				if (previous.y !== point.y) shaped.push({ x: point.x, y: previous.y });
 			}
 			shaped.push(point);
-		}
+		});
 		return shaped;
 	}
 
@@ -576,17 +583,21 @@ export class SessionResultsService {
 		});
 	}
 
-	/** Coins + cards − debt per life; pass an empty debt list for the gross wealth curve. */
-	private wealthSeries(coins: LifeSeries[], cards: LifeSeries[], debt: LifeSeries[]): LifeSeries[] {
+	/**
+	 * Coins + cards − debt per life; pass an empty debt list for the gross wealth curve.
+	 * @param du the June DU curve: cards are priced in DU, so each is converted at the DU of its moment.
+	 */
+	private wealthSeries(coins: LifeSeries[], cards: LifeSeries[], debt: LifeSeries[], du: SeriesPoint[] = []): LifeSeries[] {
 		return coins.map((series, i) => {
 			const cardPoints = cards[i]?.points ?? [];
 			const debtPoints = debt[i]?.points ?? [];
-			const vertices = this.mergeTimestamps(series.points, cardPoints, debtPoints);
+			const vertices = this.mergeTimestamps(series.points, cardPoints, debtPoints, du);
 			const points = vertices
 				.map((x) => {
 					const c = this.stepValueAt(series.points, x);
 					if (c === undefined) return null;
-					const v = this.stepValueAt(cardPoints, x) ?? 0;
+					const cardWorth = du.length ? (this.stepValueAt(du, x) ?? du[0].y) : 1;
+					const v = (this.stepValueAt(cardPoints, x) ?? 0) * cardWorth;
 					const d = this.stepValueAt(debtPoints, x) ?? 0;
 					return { x, y: this.round2(c + v - d) };
 				})
@@ -657,9 +668,7 @@ export class SessionResultsService {
 			};
 		}
 
-		const totalDebt = (gameState.credits ?? [])
-			.filter((c) => c.status !== 'done' && c.status !== 'canceled')
-			.reduce((sum, c) => sum + (c.amount ?? 0) + (c.interest ?? 0), 0);
+		const totalDebt = (gameState.credits ?? []).reduce((sum, c) => sum + owedOf(c), 0);
 
 		return {
 			...base,
@@ -684,14 +693,27 @@ export class SessionResultsService {
 		};
 	}
 
-	private buildPodium(gameState: GameState, avatarByIdx: Map<number, AvatarRef>): PodiumEntry[] {
-		const byAvatar = new Map<number, { coins: number; cardsValue: number }>();
+	/**
+	 * Ranks avatars by coins plus cards, every life summed, with their credits and the debt still owed.
+	 * A June card is priced in DU, so it is converted at the final DU to add up with coins in Ğ1.
+	 */
+	private buildPodium(gameState: GameState, avatarByIdx: Map<number, AvatarRef>, isJune: boolean): PodiumEntry[] {
+		const cardWorth = isJune ? gameState.currentDU || 1 : 1;
+		const byAvatar = new Map<number, { coins: number; cardsValue: number; credits: number; debt: number }>();
+		const avatarOfLife = new Map<number, number>();
 		for (const state of gameState.playersStates ?? []) {
 			const avatarIdx = Number(state.avatarIdx);
-			const acc = byAvatar.get(avatarIdx) ?? { coins: 0, cardsValue: 0 };
+			avatarOfLife.set(Number(state.idx), avatarIdx);
+			const acc = byAvatar.get(avatarIdx) ?? { coins: 0, cardsValue: 0, credits: 0, debt: 0 };
 			acc.coins += state.coins ?? 0;
-			acc.cardsValue += cardsValueOf(state);
+			acc.cardsValue += cardsValueOf(state) * cardWorth;
 			byAvatar.set(avatarIdx, acc);
+		}
+		for (const credit of gameState.credits ?? []) {
+			const acc = byAvatar.get(avatarOfLife.get(Number(credit.playerStateIdx)) ?? -1);
+			if (!acc) continue;
+			acc.credits++;
+			acc.debt += owedOf(credit);
 		}
 		return [...byAvatar.entries()]
 			.map(([avatarIdx, acc]) => ({
@@ -705,6 +727,8 @@ export class SessionResultsService {
 				coins: this.round2(acc.coins),
 				cardsValue: this.round2(acc.cardsValue),
 				score: this.round2(acc.coins + acc.cardsValue),
+				credits: acc.credits,
+				debt: this.round2(acc.debt),
 			}))
 			.sort((a, b) => b.score - a.score)
 			.map((entry, i) => ({ ...entry, rank: i + 1 }));

@@ -71,9 +71,41 @@ describe('SessionResultsService', () => {
 		expect(synthesis.goodsInPlay + synthesis.ghostCards).toBe(12);
 	});
 
-	it('combines coins and cards without subtracting debt', () => {
+	it('combines coins and cards without subtracting debt, June cards converted at the DU of the moment', () => {
 		const { combined } = service.compute(gameState(), stream, [], HAND);
 		const life1 = combined.find((s) => s.life.idx === 1)!;
-		expect(life1.points[life1.points.length - 1].y).toBe(47);
+		expect(life1.points[life1.points.length - 1].y).toBe(40 + 7 * 2);
+	});
+
+	it('runs a dead life\'s coin line flat to the end of the game', () => {
+		const deadKeepsCoins = gameState();
+		deadKeepsCoins.playersStates[1].coins = 20;
+		const { coins } = service.compute(deadKeepsCoins, stream, [], HAND);
+		const life2 = coins.find((s) => s.life.idx === 2)!;
+		expect(life2.points[life2.points.length - 1]).toEqual({ x: '2026-01-01T10:30:00.000Z', y: 20 });
+	});
+
+	it('scores June cards at the final DU and sums every life of an avatar', () => {
+		const { podium } = service.compute(gameState(), stream, [], HAND);
+		expect(podium.map((p) => [p.avatar.avatarIdx, p.score])).toEqual([
+			[1, 40 + 7 * 5],
+			[2, 20 + (2 + 3) * 5],
+		]);
+	});
+
+	it('counts every credit taken but only the debt still owed', () => {
+		const debtGame = {
+			...gameState(),
+			typeMoney: 'debt',
+			credits: [
+				{ playerStateIdx: 2, amount: 3, interest: 1, status: 'done' },
+				{ playerStateIdx: 3, amount: 3, interest: 1, status: 'running' },
+				{ playerStateIdx: 3, amount: 6, interest: 2, status: 'canceled' },
+			],
+		} as any;
+		const avatar2 = service.compute(debtGame, stream, [], HAND).podium.find((p) => p.avatar.avatarIdx === 2)!;
+		expect(avatar2.credits).toBe(3);
+		expect(avatar2.debt).toBe(4);
+		expect(avatar2.score).toBe(20 + 2 + 3);
 	});
 });

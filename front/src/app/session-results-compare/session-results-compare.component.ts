@@ -29,6 +29,7 @@ import { Session } from '../models/session';
 import { Avatar } from '../models/avatar';
 import { I18nService } from '../services/i18n.service';
 import { AddGameDialogComponent, AddGamePick } from '../dialogs/add-game-dialog/add-game-dialog.component';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 /** One indicator of one game, already formatted for display. */
 interface MetricRow {
@@ -38,6 +39,8 @@ interface MetricRow {
 	icon?: string;
 	value: string | number;
 	growth?: string;
+	info?: string;
+	unit?: string;
 }
 
 interface ChartBlock {
@@ -53,6 +56,8 @@ interface ScoreBar {
 	entry: PodiumEntry;
 	coinsPercent: number;
 	cardsPercent: number;
+	debtLeftPercent: number;
+	debtPercent: number;
 }
 
 /** Every score of one game as bars, plus the two markers the bars are read against. */
@@ -62,6 +67,14 @@ interface ScoreBoard {
 	deviation: number;
 	averagePercent: number;
 	deviationPercent: number;
+	poverty: number;
+	povertyPercent: number;
+}
+
+/** One ordering of a game's players, as the podium and as bars. */
+interface Ranking {
+	podium: PodiumEntry[];
+	board?: ScoreBoard;
 }
 
 /** Everything one game contributes to the page, in the order the fiche renders it. */
@@ -76,13 +89,16 @@ interface GameCard {
 	specific: MetricRow[];
 	behaviours: MetricRow[];
 	secondary: MetricRow[];
-	board?: ScoreBoard;
+	ranking: Ranking;
+	netRanking?: Ranking;
 	charts: ChartBlock[];
 	feelings?: ChartConfiguration<'bubble'>['data'];
 	feelingsOpts: ChartConfiguration<'bubble'>['options'];
 	/** name of the session this game was borrowed from — absent for the session's own games */
 	origin?: string;
 }
+
+const POVERTY_SHARE_OF_MEDIAN = 0.6;
 
 /** Left ladder of the feelings chart, read top (+3, positive) to bottom (-3, negative). */
 const FEELINGS_INTENSITIES = [
@@ -144,10 +160,12 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	games: { id: string; label: string }[] = [];
 
 	scoreBars = new Set<string>();
+	debtDeducted = new Set<string>();
 	chartChoice: { [gameStateId: string]: string } = {};
 	legends: { [chart: string]: boolean } = {};
 	eventsCollapsed = false;
 	secondaryOpen = new Set<string>();
+	faCircleInfo = faCircleInfo;
 	healthOpen = new Set<string>();
 
 	private rules: Rules[] = [];
@@ -291,7 +309,8 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 			specific: this.tidy(this.specificRows(game, isJune)),
 			behaviours: this.tidy(this.behaviourRows(rule, game)),
 			secondary: this.tidy(this.secondaryRows(game, isJune)),
-			board: this.scoreBoard(game),
+			ranking: this.ranking(game.podium, false),
+			netRanking: game.podium.some((e) => e.debt > 0) ? this.ranking(game.podium, true) : undefined,
 			charts: this.chartsFor(game, isJune),
 			feelings: undefined,
 			feelingsOpts: {},
@@ -436,6 +455,8 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 				icon: '💰',
 				value: this.range(s.massFirst, s.finalMassMonetary),
 				growth: this.growth(s.massFirst, s.finalMassMonetary),
+				info: isJune ? 'RESULTS.COMPARE.MONETARY_MASS_INFO_JUNE' : 'RESULTS.COMPARE.MONETARY_MASS_INFO_DEBT',
+				unit: isJune ? 'CURRENCY.JUNE' : 'CURRENCY.EURO',
 			},
 		];
 	}
@@ -450,9 +471,15 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 					icon: '🌞',
 					value: this.range(s.duFirst, s.duFinal),
 					growth: this.growth(s.duFirst, s.duFinal),
+					unit: 'CURRENCY.JUNE',
 				},
 				{ label: 'RESULTS.COMPARE.DU_COUNT', icon: '🔢', value: s.duCount ?? 0 },
-				{ label: 'RESULTS.COMPARE.GHOST_MONEY_IN_DU', icon: '👻', value: s.ghostMoneyInDu ?? 0 },
+				{
+					label: 'RESULTS.COMPARE.GHOST_MONEY_IN_DU',
+					icon: '👻',
+					value: s.ghostMoneyInDu ?? 0,
+					unit: 'CURRENCY.DU',
+				},
 			];
 		}
 		return [
@@ -461,24 +488,67 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 				icon: '💳',
 				value: this.range(s.debtFirst, s.totalDebt),
 				growth: this.growth(s.debtFirst, s.totalDebt),
+				unit: 'CURRENCY.EURO',
 			},
 			{ label: 'RESULTS.COMPARE.CREDITS_TAKEN', icon: '🏦', value: s.creditsTaken ?? 0 },
-			{ label: 'RESULTS.COMPARE.INTEREST_EARNED', icon: '💸', value: s.interestPaid ?? 0 },
-			{ label: 'RESULTS.COMPARE.SEIZURES', icon: '🔒', value: s.seizures ?? 0 },
-			{ label: 'RESULTS.COMPARE.MONEY_LOST', icon: '📉', value: s.bankMoneyLost ?? 0 },
-			{ label: 'RESULTS.COMPARE.MONEY_DESTROYED', icon: '🔥', value: s.bankMoneyDestroyed ?? 0 },
-			{ label: 'RESULTS.COMPARE.GOODS_SEIZED', icon: '📥', value: s.bankGoodsEarned ?? 0 },
+			{
+				label: 'RESULTS.COMPARE.INTEREST_EARNED',
+				icon: '💸',
+				value: s.interestPaid ?? 0,
+				info: 'RESULTS.COMPARE.INTEREST_EARNED_INFO',
+				unit: 'CURRENCY.EURO',
+			},
+			{
+				label: 'RESULTS.COMPARE.SEIZURES',
+				icon: '🔒',
+				value: s.seizures ?? 0,
+				info: 'RESULTS.COMPARE.SEIZURES_INFO',
+			},
+			{
+				label: 'RESULTS.COMPARE.MONEY_LOST',
+				icon: '📉',
+				value: s.bankMoneyLost ?? 0,
+				info: 'RESULTS.COMPARE.MONEY_LOST_INFO',
+				unit: 'CURRENCY.EURO',
+			},
+			{
+				label: 'RESULTS.COMPARE.MONEY_DESTROYED',
+				icon: '🔥',
+				value: s.bankMoneyDestroyed ?? 0,
+				info: 'RESULTS.COMPARE.MONEY_DESTROYED_INFO',
+				unit: 'CURRENCY.EURO',
+			},
+			{
+				label: 'RESULTS.COMPARE.GOODS_SEIZED',
+				icon: '📥',
+				value: s.bankGoodsEarned ?? 0,
+				info: 'RESULTS.COMPARE.GOODS_SEIZED_INFO',
+				unit: 'CURRENCY.EURO',
+			},
 		];
 	}
 
 	/** Everything worth keeping but not worth the top of the fiche, including the good and bad actions. */
 	private secondaryRows(game: GameResults, isJune: boolean): MetricRow[] {
 		const s = game.synthesis;
+		const money = isJune ? 'CURRENCY.JUNE' : 'CURRENCY.EURO';
 		const rows: MetricRow[] = [
-			{ label: 'RESULTS.COMPARE.EXCHANGED_VALUE', icon: '💱', value: s.totalExchangedValue },
-			{ label: 'RESULTS.COMPARE.AVERAGE_MONEY', icon: '📊', value: s.averageMoney },
-			{ label: 'RESULTS.COMPARE.GHOST_MONEY', icon: '👻', value: s.ghostMoney },
-			{ label: 'RESULTS.COMPARE.GHOST_CARDS', icon: '🎴', value: s.ghostCards },
+			{ label: 'RESULTS.COMPARE.EXCHANGED_VALUE', icon: '💱', value: s.totalExchangedValue, unit: money },
+			{ label: 'RESULTS.COMPARE.AVERAGE_MONEY', icon: '📊', value: s.averageMoney, unit: money },
+			{
+				label: 'RESULTS.COMPARE.GHOST_MONEY',
+				icon: '👻',
+				value: s.ghostMoney,
+				info: 'RESULTS.COMPARE.GHOST_MONEY_INFO',
+				unit: money,
+			},
+			{
+				label: 'RESULTS.COMPARE.GHOST_CARDS',
+				icon: '🎴',
+				value: s.ghostCards,
+				info: 'RESULTS.COMPARE.GHOST_CARDS_INFO',
+				unit: isJune ? 'CURRENCY.DU' : 'CURRENCY.EURO',
+			},
 			{ label: 'RESULTS.COMPARE.PLAYERS', icon: '🎮', value: s.avatars },
 			{ label: 'RESULTS.COMPARE.LIVES', icon: '💓', value: s.lives },
 			{ label: 'RESULTS.COMPARE.DEATHS', icon: '💀', value: s.deaths },
@@ -554,30 +624,78 @@ export class SessionResultsCompareComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Turns the whole ranking into bars scaled against the same axis as the two markers,
+	 * Turns the whole ranking into bars scaled against the same axis as the markers,
 	 * so the écart type marker stays inside the plot even when it overshoots the best score.
+	 * The poverty line sits at 60 % of the median score, the INSEE and Eurostat convention.
 	 * @returns undefined when the game has no ranked avatar to chart.
 	 */
-	private scoreBoard(game: GameResults): ScoreBoard | undefined {
-		const entries = game.podium ?? [];
+	private scoreBoard(entries: PodiumEntry[]): ScoreBoard | undefined {
 		if (entries.length === 0) return undefined;
 		const scores = entries.map((e) => e.score);
 		const average = scores.reduce((sum, s) => sum + s, 0) / scores.length;
 		const variance = scores.reduce((sum, s) => sum + (s - average) ** 2, 0) / scores.length;
 		const deviation = Math.sqrt(variance);
-		const scale = Math.max(1, ...scores, average + deviation);
+		const sorted = [...scores].sort((a, b) => a - b);
+		const middle = Math.floor(sorted.length / 2);
+		const median = sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+		const poverty = POVERTY_SHARE_OF_MEDIAN * median;
+		const held = (e: PodiumEntry) => Math.max(0, e.coins) + Math.max(0, e.cardsValue);
+		const scale = Math.max(1, ...entries.map((e) => Math.max(held(e), e.debt)), average + deviation);
 		const round = (v: number) => Math.round(v * 100) / 100;
+		const percent = (v: number) => (Math.max(0, v) / scale) * 100;
 		return {
 			bars: entries.map((entry) => ({
 				entry,
-				coinsPercent: (Math.max(0, entry.coins) / scale) * 100,
-				cardsPercent: (Math.max(0, entry.cardsValue) / scale) * 100,
+				coinsPercent: percent(entry.coins),
+				cardsPercent: percent(entry.cardsValue),
+				debtLeftPercent: percent(held(entry) - entry.debt),
+				debtPercent: percent(entry.debt),
 			})),
 			average: round(average),
 			deviation: round(deviation),
-			averagePercent: (average / scale) * 100,
-			deviationPercent: ((average + deviation) / scale) * 100,
+			averagePercent: percent(average),
+			deviationPercent: percent(average + deviation),
+			poverty: round(poverty),
+			povertyPercent: percent(poverty),
 		};
+	}
+
+	/**
+	 * Orders the players by score with their bars; deducting the debt still owed re-ranks them on
+	 * what they would keep once the bank is paid back.
+	 */
+	private ranking(entries: PodiumEntry[], deductDebt: boolean): Ranking {
+		const podium = !deductDebt
+			? entries
+			: entries
+					.map((e) => ({ ...e, score: Math.round((e.score - e.debt) * 100) / 100 }))
+					.sort((a, b) => b.score - a.score)
+					.map((e, i) => ({ ...e, rank: i + 1 }));
+		return { podium, board: this.scoreBoard(podium) };
+	}
+
+	/** The ranking a fiche currently shows, with or without the debt still owed taken off. */
+	rankingOf(card: GameCard): Ranking {
+		return this.debtDeducted.has(card.id) && card.netRanking ? card.netRanking : card.ranking;
+	}
+
+	/** Returns the i18n key of the currency a fiche's scores are counted in. */
+	moneyOf(card: GameCard): string {
+		return card.isJune ? 'CURRENCY.JUNE' : 'CURRENCY.EURO';
+	}
+
+	/** Returns the i18n key of the sentence saying what the shown score counts, debt included or not. */
+	scoreRuleOf(card: GameCard): string {
+		if (card.isJune) return 'RESULTS.COMPARE.SCORE_RULE_JUNE';
+		return this.debtDeducted.has(card.id) && card.netRanking
+			? 'RESULTS.COMPARE.SCORE_RULE_NET'
+			: 'RESULTS.COMPARE.SCORE_RULE_GROSS';
+	}
+
+	/** Switches one fiche between the plain score and the score once the debt still owed is paid back. */
+	toggleDebt(card: GameCard): void {
+		if (this.debtDeducted.has(card.id)) this.debtDeducted.delete(card.id);
+		else this.debtDeducted.add(card.id);
 	}
 
 	toggleScoreBars(card: GameCard): void {
