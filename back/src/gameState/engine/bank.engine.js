@@ -458,7 +458,8 @@ BankEngine.seizure = (entry, creditId, playerStateIdx, seizure) => {
  * Settle every defaulted credit of one player in one sweep, oldest fault first.
  *
  * Scoped per player rather than per credit because the police overlay is one boolean across all
- * of them, so a single pool of coins and cards drains across the whole batch. Prison follows
+ * of them, so a single pool of coins and cards drains across the whole batch. The bank counters
+ * move per credit, before its event, so each event's snapshot already counts its own seizure. Prison follows
  * whenever the hand ends up empty, whether or not the debt was covered — release is the only
  * path back to a playable hand.
  *
@@ -476,8 +477,6 @@ BankEngine.applyAutoSeizure = (entry, playerStateIdx) => {
 	if (faultedCredits.length === 0) return null;
 
 	let totalCoinsSeized = 0;
-	let totalInterestSeized = 0;
-	let totalCardsFaceValue = 0;
 	let totalObjective = 0;
 	let totalUnpaid = 0;
 	const allSeizedCards = [];
@@ -489,11 +488,14 @@ BankEngine.applyAutoSeizure = (entry, playerStateIdx) => {
 		playerState.cards = result.remainingCards;
 
 		totalCoinsSeized += result.coinsSeized;
-		totalInterestSeized += result.interestSeized;
-		totalCardsFaceValue += result.cardsFaceValue;
 		totalObjective += result.objective;
 		totalUnpaid += result.unpaid;
 		allSeizedCards.push(...result.cardsSeized);
+
+		gameState.currentMassMonetary -= result.coinsSeized;
+		gameState.bankInterestEarned += result.interestSeized;
+		gameState.bankGoodsEarned += result.cardsFaceValue;
+		gameState.bankMoneyLost += result.unpaid;
 
 		credit.status = CREDIT_STATUS.DONE;
 		credit.endAt = new Date();
@@ -508,10 +510,6 @@ BankEngine.applyAutoSeizure = (entry, playerStateIdx) => {
 		);
 	}
 
-	gameState.currentMassMonetary -= totalCoinsSeized;
-	gameState.bankInterestEarned += totalInterestSeized;
-	gameState.bankGoodsEarned += totalCardsFaceValue;
-	gameState.bankMoneyLost += totalUnpaid;
 	DecksHelper.pushCardsInDecks(gameState, allSeizedCards);
 
 	let prisonMinutes = 0;

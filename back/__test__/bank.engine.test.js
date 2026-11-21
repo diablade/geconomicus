@@ -275,3 +275,26 @@ describe('BankEngine — releaseFromPrison', () => {
 		expect(entry.events).toHaveLength(0);
 	});
 });
+
+describe('BankEngine — applyAutoSeizure', () => {
+	it('records each seizure event with the bank counters already counting that seizure', () => {
+		const gameState = makeGameState({
+			credits: [
+				credit({ id: 'c1', status: CREDIT_STATUS.FAULT, faultAt: new Date(1000) }),
+				credit({ id: 'c2', status: CREDIT_STATUS.FAULT, faultAt: new Date(2000) }),
+			],
+		});
+		gameState.playersStates[0].coins = 3;
+		gameState.playersStates[0].cards = ['A1', 'A2'].flatMap((k) => [card(k, 2), card(`B${k}`, 1), card(`C${k}`, 0)]);
+		const entry = makeEntry(gameState);
+
+		BankEngine.applyAutoSeizure(entry, 0);
+
+		const seizures = entry.events.filter((e) => e.typeEvent === DB_EVENTS.CREDIT_SEIZURE).map((e) => e.payload);
+		expect(seizures.map((p) => p[LK_KEYS.BANK_GOODS_EARNED])).toEqual([4, 11]);
+		expect(seizures.map((p) => p[LK_KEYS.BANK_INTEREST_EARNED])).toEqual([2, 2]);
+		expect(seizures.map((p) => p[LK_KEYS.MASS_MONETARY])).toEqual([97, 97]);
+		expect(gameState.bankGoodsEarned).toBe(11);
+		expect(gameState.currentMassMonetary).toBe(97);
+	});
+});
