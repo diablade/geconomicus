@@ -42,7 +42,8 @@ pipeline {
                 }
                 sh 'echo "Version déployée:" && grep GECO_VERSION .env'
                 sh 'docker compose -p geco-prod -f geco-prod.yaml build'
-                sh 'docker compose -p geco-prod -f geco-prod.yaml up -d --remove-orphans'
+                sh 'docker compose -p geco-prod -f geco-prod.yaml down --remove-orphans'
+                sh 'docker compose -p geco-prod -f geco-prod.yaml up -d'
             }
         }
     }
