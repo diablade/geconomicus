@@ -12,6 +12,11 @@ export class FullscreenService {
 		);
 	}
 
+	/** True in an iPhone browser tab, where fullscreen is only reachable by launching the game from the Home Screen. */
+	get needsHomeScreen(): boolean {
+		return !this.supported && /iPhone|iPad|iPod/.test(navigator.userAgent) && !(navigator as any).standalone;
+	}
+
 	get active(): boolean {
 		const doc = document as any;
 		return !!(

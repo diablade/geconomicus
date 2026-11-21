@@ -16,6 +16,7 @@
 	"REFRESH": "Atualizar",
 	"FULLSCREEN": "Tela cheia",
 	"FULLSCREEN_EXIT": "Sair da tela cheia",
+	"FULLSCREEN_IOS_HINT": "No iPhone, a tela cheia funciona pela Tela de Início: no Safari, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>, e abra o jogo pelo novo ícone.",
 	"OK": "OK",
 	"ALL": "Todos",
 	"SAVE": "Salvar",

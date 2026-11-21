@@ -16,6 +16,7 @@
     "REFRESH": "Actualizar",
     "FULLSCREEN": "Pantalla completa",
     "FULLSCREEN_EXIT": "Salir de pantalla completa",
+    "FULLSCREEN_IOS_HINT": "En iPhone, la pantalla completa pasa por la pantalla de inicio: en Safari, toca <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>, y abre el juego desde el nuevo icono.",
     "OK": "OK",
     "ALL": "Todos",
     "SAVE": "Guardar",

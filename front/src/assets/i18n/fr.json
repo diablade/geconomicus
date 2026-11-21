@@ -16,6 +16,7 @@
 	"REFRESH": "Rafraîchir",
 	"FULLSCREEN": "Plein écran",
 	"FULLSCREEN_EXIT": "Quitter le plein écran",
+	"FULLSCREEN_IOS_HINT": "Sur iPhone, le plein écran passe par l'écran d'accueil : dans Safari, touchez <b>Partager</b> puis <b>Sur l'écran d'accueil</b>, puis ouvrez le jeu depuis la nouvelle icône.",
 	"OK": "OK",
 	"ALL": "Tous",
 	"SAVE": "Sauvegarder",

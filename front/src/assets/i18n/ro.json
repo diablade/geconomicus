@@ -16,6 +16,7 @@
     "REFRESH": "Reîmprospătează",
     "FULLSCREEN": "Ecran complet",
     "FULLSCREEN_EXIT": "Ieși din ecran complet",
+    "FULLSCREEN_IOS_HINT": "Pe iPhone, ecranul complet funcționează prin ecranul principal: în Safari, atinge <b>Partajează</b>, apoi <b>Adaugă pe ecranul principal</b>, apoi deschide jocul din noua pictogramă.",
     "OK": "OK",
     "ALL": "Toate",
     "SAVE": "Salvează",

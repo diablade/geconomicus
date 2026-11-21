@@ -172,8 +172,15 @@ export class LobbyPlayerComponent implements OnInit, OnDestroy {
 		window.location.reload();
 	}
 
+	/** Toggles fullscreen, or on iPhone explains how to get it by launching the game from the Home Screen. */
 	toggleFullscreen() {
-		this.fullscreenService.toggle();
+		if (this.fullscreenService.needsHomeScreen) {
+			this.dialog.open(InformationDialogComponent, {
+				data: { title: 'FULLSCREEN', message: 'FULLSCREEN_IOS_HINT', timerBtn: 20 },
+			});
+		} else {
+			this.fullscreenService.toggle();
+		}
 	}
 
 	onChangeSysScan() {

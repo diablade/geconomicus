@@ -16,6 +16,7 @@
     "REFRESH": "Refresh",
     "FULLSCREEN": "Fullscreen",
     "FULLSCREEN_EXIT": "Exit fullscreen",
+    "FULLSCREEN_IOS_HINT": "On iPhone, fullscreen works through the Home Screen: in Safari, tap <b>Share</b> then <b>Add to Home Screen</b>, then open the game from the new icon.",
     "OK": "OK",
     "ALL": "All",
     "SAVE": "Save",

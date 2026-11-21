@@ -16,6 +16,7 @@
     "REFRESH": "Osveži",
     "FULLSCREEN": "Ceo ekran",
     "FULLSCREEN_EXIT": "Izađi iz celog ekrana",
+    "FULLSCREEN_IOS_HINT": "Na iPhone-u ceo ekran radi preko početnog ekrana: u Safariju dodirni <b>Deli</b>, zatim <b>Dodaj na početni ekran</b>, pa otvori igru preko nove ikone.",
     "OK": "U redu",
     "ALL": "Svi",
     "SAVE": "Sačuvaj",

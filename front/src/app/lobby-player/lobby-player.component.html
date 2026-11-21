@@ -117,7 +117,7 @@
 					[durationCredit]="vm.session?.gamesRules?.[0]?.durationCredit || 0"></app-notice-btn>
 				<app-tutorial-btn [stroked]="true" [white]="true"></app-tutorial-btn>
 				<button
-					*ngIf="fullscreenService.supported"
+					*ngIf="fullscreenService.supported || fullscreenService.needsHomeScreen"
 					class="whiteBtn blur box-shadowed"
 					mat-stroked-button
 					(click)="toggleFullscreen()">

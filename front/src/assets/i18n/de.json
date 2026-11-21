@@ -16,6 +16,7 @@
     "REFRESH": "Aktualisieren",
     "FULLSCREEN": "Vollbild",
     "FULLSCREEN_EXIT": "Vollbild beenden",
+    "FULLSCREEN_IOS_HINT": "Auf dem iPhone gibt es Vollbild nur über den Home-Bildschirm: Tippe in Safari auf <b>Teilen</b> und dann auf <b>Zum Home-Bildschirm</b> und öffne das Spiel danach über das neue Symbol.",
     "OK": "OK",
     "ALL": "Alle",
     "SAVE": "Speichern",

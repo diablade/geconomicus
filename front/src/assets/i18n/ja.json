@@ -16,6 +16,7 @@
     "REFRESH": "更新",
     "FULLSCREEN": "全画面表示",
     "FULLSCREEN_EXIT": "全画面表示を終了",
+    "FULLSCREEN_IOS_HINT": "iPhoneでは、全画面表示はホーム画面から利用します。Safariで<b>共有</b>をタップし、<b>ホーム画面に追加</b>を選んでから、新しいアイコンからゲームを開いてください。",
     "OK": "OK",
     "ALL": "すべて",
     "SAVE": "保存",

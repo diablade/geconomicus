@@ -16,6 +16,7 @@
     "REFRESH": "Aggiorna",
     "FULLSCREEN": "Schermo intero",
     "FULLSCREEN_EXIT": "Esci da schermo intero",
+    "FULLSCREEN_IOS_HINT": "Su iPhone, lo schermo intero passa dalla schermata Home: in Safari, tocca <b>Condividi</b> e poi <b>Aggiungi alla schermata Home</b>, quindi apri il gioco dalla nuova icona.",
     "OK": "OK",
     "ALL": "Tutto",
     "SAVE": "Salva",
