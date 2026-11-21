@@ -49,7 +49,8 @@
         "TITLE": "Tema",
         "CLASSIC": "Carte classiche",
         "EMOJIS": "Oggetti emoji",
-        "TWEMOJIS": "Oggetti uniformi"
+        "TWEMOJIS": "Oggetti uniformi",
+        "POKE": "Pokémon"
     },
     "EVENTS": {
         "GAME_ENDED": "Partita terminata",
@@ -128,7 +129,8 @@
     "RESSOURCES": {
         "LEARN_FORWARD": "Vai oltre con i",
         "TITLE": "Moduli pedagogici",
-        "BUTTON": "Moduli pedagogici"
+        "BUTTON": "Moduli pedagogici",
+        "ALL_CARDS": "Tutte le carte"
     },
     "ERROR": {
         "SESSION_ALREADY_STARTED": "La sessione è già iniziata; non puoi più creare un avatar.",
@@ -341,6 +343,7 @@
         "TOOLS": "Strumenti",
         "GALILEO": "Galileo",
         "GINI": "Gini",
-        "FISCALITE": "Fiscalità"
+        "FISCALITE": "Fiscalità",
+        "CARDS": "Carte"
     }
 }

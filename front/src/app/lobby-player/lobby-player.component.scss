@@ -163,8 +163,9 @@ $text-muted: var(--ink-muted, rgba(255, 255, 255, 0.7));
 
 .round-btn {
 	width: 100%;
+	height: auto !important;
 	margin-top: auto;
-	padding-inline: 0.75rem !important;
+	padding: 0.6rem 0.75rem !important;
 	font-size: 1rem;
 }
 

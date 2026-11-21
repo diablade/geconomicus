@@ -49,7 +49,8 @@
         "TITLE": "テーマ",
         "CLASSIC": "クラシックカード",
         "EMOJIS": "絵文字アイテム",
-        "TWEMOJIS": "統一アイテム"
+        "TWEMOJIS": "統一アイテム",
+        "POKE": "ポケモン"
     },
     "EVENTS": {
         "GAME_ENDED": "ゲーム終了",
@@ -128,7 +129,8 @@
     "RESSOURCES": {
         "LEARN_FORWARD": "もっと学ぶ",
         "TITLE": "教育用モジュール",
-        "BUTTON": "教育用モジュール"
+        "BUTTON": "教育用モジュール",
+        "ALL_CARDS": "すべてのカード"
     },
     "ERROR": {
         "SESSION_ALREADY_STARTED": "セッションは既に開始されています。新しいアバターは作成できません。",
@@ -341,6 +343,7 @@
         "TOOLS": "ツール",
         "GALILEO": "ガリレオ",
         "GINI": "ジニ",
-        "FISCALITE": "税制"
+        "FISCALITE": "税制",
+        "CARDS": "カード"
     }
 }

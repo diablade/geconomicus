@@ -1,0 +1,7 @@
+{
+	"CARDS": {
+		"FAMILY": "Porodica",
+		"LEVEL": "Nivo {{level}}",
+		"CLASSIC_HINT": "Kod klasičnih karata, svaka porodica je samo slovo (A, B, C…) kroz 4 nivoa. Primer sa porodicom A:"
+	}
+}

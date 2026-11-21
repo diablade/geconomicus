@@ -1,0 +1,7 @@
+{
+	"CARDS": {
+		"FAMILY": "Family",
+		"LEVEL": "Level {{level}}",
+		"CLASSIC_HINT": "With classic cards, each family is just a letter (A, B, C…) across the 4 levels. Example with family A:"
+	}
+}

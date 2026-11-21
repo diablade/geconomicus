@@ -49,7 +49,8 @@
         "TITLE": "Tema",
         "CLASSIC": "Klasične karte",
         "EMOJIS": "Emodži predmeti",
-        "TWEMOJIS": "Ujednačeni predmeti"
+        "TWEMOJIS": "Ujednačeni predmeti",
+        "POKE": "Pokémon"
     },
     "EVENTS": {
         "GAME_ENDED": "Igra je završena",
@@ -128,7 +129,8 @@
     "RESSOURCES": {
         "LEARN_FORWARD": "Idite dalje sa",
         "TITLE": "Obrazovni moduli",
-        "BUTTON": "Obrazovni moduli"
+        "BUTTON": "Obrazovni moduli",
+        "ALL_CARDS": "Sve karte"
     },
     "ERROR": {
         "SESSION_ALREADY_STARTED": "Sesija je već počela; više ne možeš da napraviš avatar.",
@@ -341,6 +343,7 @@
         "TOOLS": "Alati",
         "GALILEO": "Galileo",
         "GINI": "Gini",
-        "FISCALITE": "Oporezivanje"
+        "FISCALITE": "Oporezivanje",
+        "CARDS": "Karte"
     }
 }

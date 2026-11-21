@@ -49,7 +49,8 @@
 		"TITLE": "Etoso",
 		"CLASSIC": "Klasikaj kartoj",
 		"EMOJIS": "Emoĝiaj eroj",
-		"TWEMOJIS": "Unuformaj eroj"
+		"TWEMOJIS": "Unuformaj eroj",
+		"POKE": "Pokemono"
 	},
 	"EVENTS": {
 		"GAME_ENDED": "Partio finita",
@@ -128,7 +129,8 @@
 	"RESSOURCES": {
 		"LEARN_FORWARD": "Iru pli for kun la",
 		"TITLE": "Pedagogiaj moduloj",
-		"BUTTON": "Pedagogiaj moduloj"
+		"BUTTON": "Pedagogiaj moduloj",
+		"ALL_CARDS": "Ĉiuj kartoj"
 	},
 	"ERROR": {
 		"SESSION_ALREADY_STARTED": "La seanco jam ekis, vi ne plu povas krei avataron.",
@@ -341,6 +343,7 @@
 		"TOOLS": "Iloj",
 		"GALILEO": "Galileo",
 		"GINI": "Gini",
-		"FISCALITE": "Impostado"
+		"FISCALITE": "Impostado",
+		"CARDS": "Kartoj"
 	}
 }

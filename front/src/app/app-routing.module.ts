@@ -17,6 +17,7 @@ import { LobbyPlayerComponent } from './lobby-player/lobby-player.component';
 import { TableBoardComponent } from './table-board/table-board.component';
 import { SessionResultsCompareComponent } from './session-results-compare/session-results-compare.component';
 import { ToolsComponent } from './tools/tools.component';
+import { CardsComponent } from './cards/cards.component';
 
 /** Refuses browser back/forward (swipe gesture, hardware back button) on player and animator pages, so navigation only follows the app's own buttons. */
 const blockBrowserHistory: CanDeactivateFn<unknown> = () => inject(Router).getCurrentNavigation()?.trigger !== 'popstate';
@@ -35,6 +36,7 @@ const routes: Routes = [
 	{ path: 'table/:sessionId/:gameStateId', component: TableBoardComponent, title: 'TAB_TITLE.COCKPIT', canDeactivate: [blockBrowserHistory] },
 	{ path: 'results/:sessionId', component: SessionResultsCompareComponent, title: 'TAB_TITLE.RESULTS' },
 	{ path: 'tools', component: ToolsComponent, title: 'TAB_TITLE.TOOLS' },
+	{ path: 'cards', component: CardsComponent, title: 'TAB_TITLE.CARDS' },
 	{ path: 'module/galileo', component: ModuleGalileoComponent, title: 'TAB_TITLE.GALILEO' },
 	{ path: 'module/gini', component: ModuleWealthDistribComponent, title: 'TAB_TITLE.GINI' },
 	{ path: 'module/fiscalite', component: ModuleFiscaliteComponent, title: 'TAB_TITLE.FISCALITE' },

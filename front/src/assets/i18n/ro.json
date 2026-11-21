@@ -49,7 +49,8 @@
         "TITLE": "Temă",
         "CLASSIC": "Cărți clasice",
         "EMOJIS": "Obiecte emoji",
-        "TWEMOJIS": "Obiecte uniforme"
+        "TWEMOJIS": "Obiecte uniforme",
+        "POKE": "Pokémon"
     },
     "EVENTS": {
         "GAME_ENDED": "Partidă terminată",
@@ -128,7 +129,8 @@
     "RESSOURCES": {
         "LEARN_FORWARD": "Alăturiți-vă într-o viață mai bună",
         "TITLE": "Moduri de învățare",
-        "BUTTON": "Moduri de învățare"
+        "BUTTON": "Moduri de învățare",
+        "ALL_CARDS": "Toate cărțile"
     },
     "ERROR": {
         "SESSION_ALREADY_STARTED": "Sesiunea a început deja; nu mai poți crea un avatar.",
@@ -341,6 +343,7 @@
         "TOOLS": "Instrumente",
         "GALILEO": "Galileo",
         "GINI": "Gini",
-        "FISCALITE": "Fiscalitate"
+        "FISCALITE": "Fiscalitate",
+        "CARDS": "Cărți"
     }
 }

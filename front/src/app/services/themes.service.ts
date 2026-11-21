@@ -34,12 +34,11 @@ export class ThemesService {
 			this.setTypeTheme('CARD');
 		} else {
 			const namespace = this.themes[themeKey];
-			let pathIcon = this.themes[themeKey];
+			const pathIcon = this.getThemeFolder(themeKey);
 			//load icons for the theme
 			if (namespace === 'twemojis') {
 				//use emojis from twemojis  (twemoji is loaded via css)
 				this.loadTwemojiCss();
-				pathIcon = 'emojis';
 			} else {
 				this.unloadTwemojiCss();
 			}
@@ -71,7 +70,8 @@ export class ThemesService {
 		if (link) link.remove();
 	}
 
-	private stripVariationSelectors(icons: Record<string, string>): Record<string, string> {
+	/** Drops the emoji variation selectors the Twemoji font renders as stray glyphs. */
+	stripVariationSelectors(icons: Record<string, string>): Record<string, string> {
 		return Object.fromEntries(
 			Object.entries(icons).map(([key, value]) => [key, value.replace(/\uFE0F/g, '')])
 		);
@@ -91,6 +91,12 @@ export class ThemesService {
 
 	getTypeTheme(): string {
 		return this._typeTheme$.value!;
+	}
+
+	/** Folder under assets/i18n/themes holding a theme's names and icons; twemojis shares the emojis one. */
+	getThemeFolder(themeKey: string): string {
+		const namespace = this.themes[themeKey];
+		return namespace === 'twemojis' ? 'emojis' : namespace;
 	}
 
 	getThemeName(theme: string): string {

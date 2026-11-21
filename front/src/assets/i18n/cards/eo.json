@@ -1,0 +1,7 @@
+{
+	"CARDS": {
+		"FAMILY": "Familio",
+		"LEVEL": "Nivelo {{level}}",
+		"CLASSIC_HINT": "Ĉe klasikaj kartoj, ĉiu familio estas nur litero (A, B, C…) tra la 4 niveloj. Ekzemplo kun la familio A:"
+	}
+}

@@ -1,0 +1,144 @@
+:host {
+	display: block;
+	height: 100%;
+}
+
+.cards-scroll {
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
+.cards-page {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 1.5rem 1rem 4rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	color: rgba(255, 255, 255, 0.92);
+}
+
+.hero {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.back-btn {
+	flex-shrink: 0;
+	color: white;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	backdrop-filter: blur(12px);
+}
+
+.title {
+	flex: 1;
+	margin: 0;
+	font-size: clamp(1.6rem, 4vw, 2.5rem);
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem;
+}
+
+.classic p {
+	margin: 0 0 1rem;
+}
+
+.classic-cards {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1.5rem;
+
+	figure {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	figcaption {
+		text-align: center;
+	}
+}
+
+.table-frame {
+	padding: 0.5rem;
+	overflow-x: auto;
+}
+
+.cards-table {
+	width: 100%;
+	min-width: 760px;
+	border-collapse: separate;
+	border-spacing: 4px;
+
+	th,
+	td {
+		padding: 0.4rem 0.6rem;
+		border-radius: 8px;
+		vertical-align: top;
+		text-align: left;
+	}
+
+	thead th {
+		text-align: center;
+		color: #1d1d1d;
+	}
+
+	thead th:first-child {
+		color: inherit;
+	}
+
+	td {
+		color: #1d1d1d;
+		font-size: 0.85rem;
+	}
+}
+
+.family {
+	white-space: nowrap;
+	font-weight: 600;
+	background: rgba(255, 255, 255, 0.1);
+
+	.emoji,
+	.png {
+		margin: 0 0.4rem;
+	}
+}
+
+.letter {
+	display: inline-block;
+	min-width: 1.6em;
+	text-align: center;
+	padding: 0 0.3em;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.85);
+	color: #1d1d1d;
+}
+
+.item {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	line-height: 1.6;
+
+	.emoji {
+		font-size: 1.2em;
+	}
+}
+
+.png {
+	width: 1.6em;
+	height: 1.6em;
+	object-fit: contain;
+}

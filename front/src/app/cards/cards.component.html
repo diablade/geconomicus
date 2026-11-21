@@ -1,0 +1,83 @@
+<div class="bgGradien7 bgFixedLayer"></div>
+<div class="cards-scroll aboveBg">
+	<div class="cards-page">
+		<header class="hero">
+			<button
+				class="back-btn"
+				mat-icon-button
+				routerLink="/"
+				[matTooltip]="'MODULE.BACK_HOME' | translate"
+				[attr.aria-label]="'MODULE.BACK_HOME' | translate">
+				<fa-icon [icon]="faArrowLeft"></fa-icon>
+			</button>
+			<h1 class="title contourText">{{ 'RESSOURCES.ALL_CARDS' | translate }}</h1>
+			<app-language-btn [white]="true"></app-language-btn>
+		</header>
+
+		<section class="frame frame-glass toolbar">
+			<span class="contourText">{{ 'THEME.TITLE' | translate }}</span>
+			<mat-chip-listbox [attr.aria-label]="'THEME.TITLE' | translate">
+				<mat-chip-option
+					*ngFor="let key of themeKeys"
+					[selected]="key === themeKey"
+					[selectable]="key !== themeKey"
+					(selectionChange)="$event.selected && selectTheme(key)">
+					{{ key | translate }}
+				</mat-chip-option>
+			</mat-chip-listbox>
+		</section>
+
+		<section class="frame frame-glass classic" *ngIf="isClassic">
+			<p class="contourText">{{ 'CARDS.CLASSIC_HINT' | translate }}</p>
+			<div class="classic-cards">
+				<figure *ngFor="let card of classicExample">
+					<app-card
+						[card]="card"
+						[flippable]="false"
+						width="120px"
+						height="180px"
+						letterSize="24px"
+						priceSize="12px"></app-card>
+					<figcaption class="contourText">
+						{{ 'CARDS.LEVEL' | translate: { level: card.weight + 1 } }}
+						<br />
+						{{ 'CARD.LV' + (card.weight + 1) | translate }}
+					</figcaption>
+				</figure>
+			</div>
+		</section>
+
+		<section class="frame frame-glass table-frame" *ngIf="!isClassic">
+			<table class="cards-table">
+				<thead>
+					<tr>
+						<th scope="col">{{ 'CARDS.FAMILY' | translate }}</th>
+						<th scope="col" *ngFor="let level of levels" [ngClass]="levelColors[level]">
+							{{ 'CARDS.LEVEL' | translate: { level: level + 1 } }}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let row of rows">
+						<th scope="row" class="family">
+							<span class="letter">{{ row.family.key }}</span>
+							<ng-container *ngTemplateOutlet="icon; context: { $implicit: row.family }"></ng-container>
+							<span>{{ row.family.name }}</span>
+						</th>
+						<td *ngFor="let cards of row.levels; let level = index" [ngClass]="levelColors[level]">
+							<div class="item" *ngFor="let card of cards">
+								<ng-container *ngTemplateOutlet="icon; context: { $implicit: card }"></ng-container>
+								<span>{{ card.name }}</span>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</div>
+</div>
+
+<ng-template #icon let-entry>
+	<img *ngIf="entry.png" class="png" [src]="entry.png" alt="" loading="lazy" />
+	<span *ngIf="!entry.png && entry.icon" class="emoji" [class.twemoji]="isTwemoji">{{ entry.icon }}</span>
+</ng-template>
