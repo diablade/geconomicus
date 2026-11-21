@@ -160,6 +160,7 @@ export class LobbyMasterComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			rule.rotate = false;
 		}, 500);
+		this.editRules(rule)
 	}
 
 	copyJoinLink(): void {
